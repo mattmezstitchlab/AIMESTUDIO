@@ -2025,7 +2025,7 @@ Object.assign(ACTS,{
     setTimeout(()=>{const i=document.querySelector(`[data-it="${t.id}:t"]`);if(i){i.focus();i.select();}},0);},
   mGuest:()=>openSheet('mguest'),
   per:b=>setPersona(b.dataset.id),
-  copyLink:b=>{copy(ART_URL+b.dataset.v,b);note('Lien copié · à partager depuis le menu Partager de la page');},
+  copyLink:b=>{copy(ART_URL+b.dataset.v,b);note(STANDALONE?'Lien copié':'Lien copié · à partager depuis le menu Partager de la page');},
   mGuestAdd:()=>{muFor='';openSheet('music');},
   mCopy:b=>copy(spaceText(SP),b),
   mLink:b=>copy(location.href.split('#')[0]+'#'+SP,b),
@@ -2285,7 +2285,7 @@ function renderProg(){const el=$('#vProg');if(!el)return;const L=ACT.filter(e=>e
   `<div class="scroll"><ul class="L">${L.map(e=>`<li class="it nock row2 prog"><span class="tm">${hhmm(e.m)}${dayOf(e.m)?'<br>lendemain':''}</span><span><b>${esc(entryTitle(e))}</b><br><span class="hint">${esc(entryDesc(e))}</span></span></li>`).join('')}</ul></div>`;}
 
 /* =================== VISITEURS ET LIENS : un lien par invité ou par prestataire =================== */
-const STANDALONE=/^https?:$/.test(location.protocol)&&!/(^|\.)(claude\.ai|claudeusercontent\.com|anthropic\.com)$/.test(location.hostname);
+const STANDALONE=/^https?:$/.test(location.protocol)&&!/(^|\.)(claude\.ai|claudeusercontent\.com|claude\.site|claude\.com|anthropic\.com)$/.test(location.hostname)&&!(window.claude&&window.claude.use);
 const ART_URL=STANDALONE?location.origin+'/':'https://claude.ai/artifact/11TUjp2jX6S2JL2cy2C96h';
 const VIS={owner:true,canW:true};
 (function(){const h=location.hash||'';if(!/^#echos=/.test(h))return;try{const c=h.slice(7).replace(/-/g,'+').replace(/_/g,'/'),x=JSON.parse(decodeURIComponent(escape(atob(c+'==='.slice((c.length+3)%4)))));history.replaceState(null,'',location.pathname+location.search);
@@ -2555,7 +2555,7 @@ const pick8=L=>L.length<=8?L:[...new Set(Array.from({length:8},(_,i)=>Math.round
 function echosData(){const P=S.people.filter(p=>p.rsvp!=='non'),seated=P.filter(p=>p.table),vm=vendorOf('venue'),cer=ACT.find(e=>e.id==='m17')||ACT.find(e=>e.pub);
   const team=[...S.vendors.filter(v=>v.st>=1).map(v=>`${v.n} ; ${v.role}`),...(EV().proches.includes('temoin')?S.people.filter(p=>/témoin/i.test(p.note||'')).map(p=>`${p.n} ; Témoin`):[])];
   return{v:1,src:'aime',k:evKey(),back:ART_URL,rsvp:ART_URL+'#'+rsvpAnchor(),b:aimeStyle(),pack:S.type==='seminaire'?'conf':'mariage',title:B().names,date:B().date,time:cer?hhmm(cer.m):'',venue:vm?vm.n:'',city:B().city,
-    series:[...seated,...P.filter(p=>!p.table)].map(p=>`${p.n} ; ${p.table||'Table à venir'}`).join('\n'),team:team.join('\n'),list:pick8(ACT.filter(e=>e.pub)).map(e=>`${hhmm(e.m)} · ${entryTitle(e)}`).join('\n'),url:slugE()+'.fr',contact:'reponses@'+slugE()+'.fr',blurb:`Nous avons hâte de vous retrouver à ${B().city} le ${fmtDate(offDate(0))}. Tout le programme, les infos pratiques et votre réponse sont ici.`,
+    series:[...seated,...P.filter(p=>!p.table)].map(p=>`${p.n} ; ${p.table||'Table à venir'}`).join('\n'),team:team.join('\n'),list:pick8(ACT.filter(e=>e.pub)).map(e=>`${hhmm(e.m)} · ${entryTitle(e)}`).join('\n'),url:ART_URL+'#'+rsvpAnchor(),contact:(()=>{const c=myCard();return c&&c.contact?c.contact:'';})(),blurb:`Nous avons hâte de vous retrouver à ${B().city} le ${fmtDate(offDate(0))}. Tout le programme, les infos pratiques et votre réponse sont ici.`,
     ...(()=>{const c=myCard();if(!c)return{};const cv=c.cover&&typeof c.cover.src==='string'&&/^https?:/.test(c.cover.src)?c.cover.src:(typeof c.cover==='string'&&/^https?:/.test(c.cover)?c.cover:'');
       return{card:{id:c.id,code:c.code,n:c.n,roles:c.roles,status:c.status,minor:c.minor,vis:{level:c.vis.level},media:cv?{cover:cv}:{}}};})(),
     shift:+(PF().shift||0),planning:ACT.slice().sort((a,b)=>a.m-b.m).flatMap(e=>(e.who&&e.who.length?e.who:['Tous']).map(w=>({t:hhmm(e.m),role:/^tout le monde$/i.test(w)?'Tous':w,h:entryTitle(e)}))).slice(0,80),
@@ -2989,7 +2989,7 @@ const LINNO=[['entreprise-ucard','Carte universelle','Un QR pour tous vos évén
   ['avocat-bordereau','Bordereau de pièces','Les pièces du dossier, numérotées','La liste à joindre aux conclusions, générée depuis vos documents.','Avocats','regles'],
   ['heberg-wifi','Carte Wi-Fi','Le Wi-Fi en un scan','Le réseau, le mot de passe et le QR qui connecte sans rien taper.','Hébergement','local'],
   ['detective-renq','Rapport d’enquête','Un rapport sobre et daté','Constats, chronologie et annexes, dans la forme attendue.','Enquêteurs','m-hommage']];
-function ldInno(){return`<section class="ld-sx ld-inno" id="ld-inno"><div class="ld-in ld-sxh"><p class="ld-eye ld-eye-d">Les inédits</p><h2 class="ld-h2">Ce que vous ne trouverez nulle part ailleurs.</h2><p class="ld-p">Douze supports que seul AIME Studio fabrique à partir d’une seule saisie.</p></div>
+function ldInno(){return`<section class="ld-sx ld-inno" id="ld-inno"><div class="ld-in ld-sxh"><p class="ld-eye ld-eye-d">Les inédits</p><h2 class="ld-h2">Ce qu’un outil de création classique ne fait pas.</h2><p class="ld-p">Douze supports rares, fabriqués à partir d’une seule saisie.</p></div>
   <div class="ld-in"><div class="ld-igrid">${LINNO.map(([k,n,t,l,tag,g],i)=>`<a class="ld-ic" href="${ECHOS_URL}#commencer" target="_blank" rel="noopener"><div class="ld-iv" style="background:${ldGrad(g)}"><img src="sup/aime-studio-${k}.webp" alt="${esc(n)}, généré par AIME Studio" loading="lazy" decoding="async">${k==='post'?'<span class="ld-icyc" aria-hidden="true"><i>Bientôt</i><i>J-7</i><i>Ce soir</i><i>Merci</i></span>':''}</div>
     <div class="ld-it"><span class="ld-k">${String(i+1).padStart(2,'0')} · ${tag}</span><b>${t}</b><span>${l}</span><em>${n} ↗</em></div></a>`).join('')}</div></div></section>`;}
 function ldSx(c){return`<section class="ld-sx" id="${c.id}"><div class="ld-in ld-sxh"><p class="ld-eye ld-eye-d">${c.eye}</p><h2 class="ld-h2">${c.t}</h2><p class="ld-p">${c.l}</p><div class="ld-uses">${c.chips.map(x=>`<span>${x}</span>`).join('')}</div></div>
@@ -3014,7 +3014,7 @@ function renderLand(){let L=$('#land');if(!L){L=document.createElement('section'
         <div class="ld-st"><b>Vos supports</b><span>Générés, jamais ressaisis.</span></div></div></section></div>
   <section class="ld-sx ld-studio" id="ld-studio"><div class="ld-in ld-sxh">
       <p class="ld-eye ld-eye-d">AIME Studio</p><h2 class="ld-h2">Vos supports, déjà remplis.</h2>
-      <p class="ld-p">37 métiers, 150 formats, prêts pour l’imprimeur, les réseaux et le web.</p>
+      <p class="ld-p">39 métiers, plus de 130 formats, prêts pour l’imprimeur, les réseaux et le web.</p>
       <div class="ld-fam" role="group" aria-label="Filtrer par famille de métiers">${LFAM.map(([k,l])=>`<button type="button" data-lf="${k}" aria-pressed="${LF===k}">${l}</button>`).join('')}</div></div>
       <div class="ld-sxband"><div class="ld-sxbg" aria-hidden="true"><i style="background:${ldGrad(LF)}"></i></div><div class="ld-wall">${ldSupports()}</div></div>
       <div class="ld-in ld-sxf"><p class="ld-sxn">Survolez pour mettre en pause.</p><div class="ld-caps"><div><b>Un exemplaire par personne</b><span>Marque-places, badges, billets, planches d’étiquettes.</span></div>
@@ -3034,7 +3034,7 @@ function renderLand(){let L=$('#land');if(!L){L=document.createElement('section'
       <p class="ld-p" style="margin-top:18px">Mineurs : toujours privée. Aucun contact revendu. Gratuit pendant la bêta.</p></section>
     <section class="ld-sec"><h2 class="ld-h2">Par où commencer ?</h2>
       <div class="ld-doors"><button type="button" class="ld-door" data-ld="org"><span class="ld-k">Organiser</span><b>Mon événement</b><span>Invités, budget, tables, jour J.</span><span class="ld-go">Entrer <i aria-hidden="true">→</i></span></button>
-        <a class="ld-door" href="${ECHOS_URL}#commencer" target="_blank" rel="noopener"><span class="ld-k">Créer</span><b>AIME Studio</b><span>150 formats pour 37 métiers.</span><span class="ld-go">Ouvrir <i aria-hidden="true">↗</i></span></a>
+        <a class="ld-door" href="${ECHOS_URL}#commencer" target="_blank" rel="noopener"><span class="ld-k">Créer</span><b>AIME Studio</b><span>Plus de 130 formats pour 39 métiers.</span><span class="ld-go">Ouvrir <i aria-hidden="true">↗</i></span></a>
         <button type="button" class="ld-door" data-ld="make"><span class="ld-k">Ma carte</span><b>Carte et réseau</b><span>Badge, vitrine, avis vérifiés.</span><span class="ld-go">${c?'Ouvrir':'Créer'} <i aria-hidden="true">→</i></span></button></div></section>
     <footer class="ld-foot"><span>AIME® · une carte, tous vos événements</span><span>Prototype : vos données restent sur cet appareil.</span></footer></div>`;
   ldQR(L.querySelector('#ldHeroCard [data-qr]'),pre.code&&!/·/.test(pre.code)?pre:{code:'AIME',...pre});}
@@ -3100,7 +3100,7 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){if($('#ldMk.open'
 function landFromHash(){const h=(location.hash||'').slice(1);
   if(/^AIME-[A-Z0-9]{7}$/.test(h)){const c=myCard();if(c&&(c.code===h||(c.aliases||[]).includes(h))){setTimeout(()=>{openRegistry();openCard(c.id);},400);return true;}
     openLand();setTimeout(()=>openClaim(h),350);return true;}
-  if(/^capsule(-[a-z0-9-]+)?$/.test(h)){setTimeout(()=>openCapsule(h),400);return true;}
+  if(/^capsule(-|$)/.test(h)){setTimeout(()=>openCapsule(h),400);return true;}
   if(/^rsvp(-[a-z0-9-]+)?$/.test(h)){const same=h==='rsvp'||h===rsvpAnchor();setTimeout(()=>{if(!VIS.owner)showWelcome('guest');else setPersona('invite',true);if(!same)note('Cette invitation concerne un autre événement : ouvrez le lien reçu des mariés');},400);return true;}
   const nw=h.match(/^aime-?new[.=](.+)$/i);if(nw){history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>studioNew(nw[1]),300);return true;}
   if(h==='accueil'||h==='carte'){openLand();if(h==='carte')setTimeout(openMk,300);return true;}return false;}
@@ -3150,7 +3150,7 @@ document.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.clos
   if(k==='claim'){const p=(PF().pendCards||{})[code];LD.d=ldDraft();if(p){LD.d.n=p.n||LD.d.n;if(p.id)LD.d.id=p.id;if(p.minor){LD.d.minor=true;}}LD.claim=code;LD.step=0;renderMk();$('#ldMk').classList.add('open');}},true);
 /* capsule temporelle : messages scellés le jour J, ouverts à J+365 */
 function capOpenDate(){const d=new Date((B().date||'2027-01-01')+'T12:00:00');d.setFullYear(d.getFullYear()+1);return d;}
-function openCapsule(h){let M=$('#ldMk');if(!M){renderLand();M=$('#ldMk');}const C=S.capsule=S.capsule||{msgs:[]},od=capOpenDate(),open=new Date()>=od,same=h==='capsule'||h===capAnchor();
+function openCapsule(h){let M=$('#ldMk');if(!M){renderLand();M=$('#ldMk');}const C=S.capsule=S.capsule||{msgs:[]},od=capOpenDate(),open=new Date()>=od,same=h==='capsule'||h===capAnchor()||(()=>{try{return decodeURIComponent(h.slice(8))===evKey();}catch(e){return false;}})();
   M.innerHTML=`<div class="ld-mkin"><button type="button" class="x" data-cp="close" aria-label="Fermer">×</button><div class="ld-step"><span class="ld-n">Capsule · ${esc(B().names)}</span>
     ${!same?'<p class="hint">Cette capsule concerne un autre événement : ouvrez le lien reçu des mariés.</p>':open?`<h3>Un an déjà.</h3><p class="hint">${C.msgs.length} message${C.msgs.length>1?'s':''} scellé${C.msgs.length>1?'s':''} le jour J.</p><ul class="cap-l">${C.msgs.map(m=>`<li><b>${esc(m.n||'Anonyme')}</b><span>${esc(m.t)}</span></li>`).join('')||'<li><span>Aucun message.</span></li>'}</ul>`
     :`<h3>Un mot pour dans un an.</h3><p class="hint">Votre message reste scellé jusqu’au ${esc(fmtDate(od))}. Personne ne le lit avant, pas même les mariés.</p>
