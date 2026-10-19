@@ -2548,7 +2548,7 @@ const kindSel=(k,attr,extra)=>`<select ${attr}>${Object.entries({...KIND,...(ext
 const derived=lines=>`<div class="derived">${lines.join('')}</div>`;
 function focusEl(sel){const el=q(sel);if(el)setTimeout(()=>{el.focus({preventScroll:true});el.scrollIntoView({block:'center'});if(el.select&&el.type!=='time'&&el.type!=='date')el.select();},reduce?0:380);}
 
-/* pont vers Échos : une info saisie ici devient marque-places, numéros de table, programme et badges */
+/* pont vers AIME Studio : une info saisie ici devient marque-places, numéros de table, programme et badges */
 const ECHOS_URL=STANDALONE?location.origin+'/studio/':'https://claude.ai/artifact/3yP5RGnwtWqtMDp1EqwEm3';
 const slugE=()=>B().names.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,'et').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const pick8=L=>L.length<=8?L:[...new Set(Array.from({length:8},(_,i)=>Math.round(i*(L.length-1)/7)))].map(i=>L[i]);
@@ -3014,7 +3014,7 @@ function renderLand(){let L=$('#land');if(!L){L=document.createElement('section'
         <div class="ld-st"><b>Vos supports</b><span>Générés, jamais ressaisis.</span></div></div></section></div>
   <section class="ld-sx ld-studio" id="ld-studio"><div class="ld-in ld-sxh">
       <p class="ld-eye ld-eye-d">AIME Studio</p><h2 class="ld-h2">Vos supports, déjà remplis.</h2>
-      <p class="ld-p">39 métiers, plus de 130 formats, prêts pour l’imprimeur, les réseaux et le web.</p>
+      <p class="ld-p">39 métiers, plus de 150 formats, prêts pour l’imprimeur, les réseaux et le web.</p>
       <div class="ld-fam" role="group" aria-label="Filtrer par famille de métiers">${LFAM.map(([k,l])=>`<button type="button" data-lf="${k}" aria-pressed="${LF===k}">${l}</button>`).join('')}</div></div>
       <div class="ld-sxband"><div class="ld-sxbg" aria-hidden="true"><i style="background:${ldGrad(LF)}"></i></div><div class="ld-wall">${ldSupports()}</div></div>
       <div class="ld-in ld-sxf"><p class="ld-sxn">Survolez pour mettre en pause.</p><div class="ld-caps"><div><b>Un exemplaire par personne</b><span>Marque-places, badges, billets, planches d’étiquettes.</span></div>
@@ -3034,7 +3034,7 @@ function renderLand(){let L=$('#land');if(!L){L=document.createElement('section'
       <p class="ld-p" style="margin-top:18px">Mineurs : toujours privée. Aucun contact revendu. Gratuit pendant la bêta.</p></section>
     <section class="ld-sec"><h2 class="ld-h2">Par où commencer ?</h2>
       <div class="ld-doors"><button type="button" class="ld-door" data-ld="org"><span class="ld-k">Organiser</span><b>Mon événement</b><span>Invités, budget, tables, jour J.</span><span class="ld-go">Entrer <i aria-hidden="true">→</i></span></button>
-        <a class="ld-door" href="${ECHOS_URL}#commencer" target="_blank" rel="noopener"><span class="ld-k">Créer</span><b>AIME Studio</b><span>Plus de 130 formats pour 39 métiers.</span><span class="ld-go">Ouvrir <i aria-hidden="true">↗</i></span></a>
+        <a class="ld-door" href="${ECHOS_URL}#commencer" target="_blank" rel="noopener"><span class="ld-k">Créer</span><b>AIME Studio</b><span>Plus de 150 formats pour 39 métiers.</span><span class="ld-go">Ouvrir <i aria-hidden="true">↗</i></span></a>
         <button type="button" class="ld-door" data-ld="make"><span class="ld-k">Ma carte</span><b>Carte et réseau</b><span>Badge, vitrine, avis vérifiés.</span><span class="ld-go">${c?'Ouvrir':'Créer'} <i aria-hidden="true">→</i></span></button></div></section>
     <footer class="ld-foot"><span>AIME® · une carte, tous vos événements</span><span>Prototype : vos données restent sur cet appareil.</span></footer></div>`;
   ldQR(L.querySelector('#ldHeroCard [data-qr]'),pre.code&&!/·/.test(pre.code)?pre:{code:'AIME',...pre});}
