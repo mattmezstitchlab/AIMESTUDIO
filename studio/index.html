@@ -12,6 +12,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
+@font-face{font-family:"Cal Sans";font-weight:400 900;font-display:swap;src:url("/fonts/CalSans-latin.woff2") format("woff2"),url("https://aimestudio.vercel.app/fonts/CalSans-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"Cal Sans";font-weight:400 900;font-display:swap;src:url("/fonts/CalSans-latin-ext.woff2") format("woff2"),url("https://aimestudio.vercel.app/fonts/CalSans-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+A720-A7FF}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations"),url("https://aimestudio.vercel.app/fonts/InterVariable-latin.woff2") format("woff2-variations");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin-ext.woff2") format("woff2-variations"),url("https://aimestudio.vercel.app/fonts/InterVariable-latin-ext.woff2") format("woff2-variations");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+A720-A7FF}
+
 /* Layout : app plein écran. Haut = projet + règles / gauche = contenu, marque, formats / centre = mur des formats / droite = inspecteur / bas = campagne + versions. Écran Projets en surimpression. */
 :root{
   --bg:#F7F7F6; --panel:#FFFFFF; --raised:#F0F0F2; --wall:#E6E6E9; --ink:#141416; --muted:#5E6068; --line:#DCDCE1;
@@ -876,8 +881,9 @@ details.pd>summary{cursor:pointer;list-style:none}details.pd>summary::-webkit-de
 <style>.hub-ev{grid-template-rows:1fr auto}.hub-evt{display:grid;gap:4px}.hub-evt b{font:800 22px var(--f-logo);letter-spacing:-.04em}.hub-evt span:not(.leye){font-size:13px;color:var(--muted)}.atl-head .lpill.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}</style>
 <style>body.atelier #openHome,body.atelier .top [data-catopen],body.atelier #tmenu,body.atelier #modeBar{display:none!important}body.atelier .mp{padding-top:48px}</style>
 <style>
-html.osdark{--bg:#111113;--panel:#18181B;--raised:#232328;--wall:#0C0C0E;--ink:#ECECEF;--muted:#9B9BA5;--line:#2A2A31;--accent:#7C5CFF;--accent-ink:#FFFFFF;--warn:#F5A524;--hot:#F43F5E;--ok:#22C55E;color-scheme:dark}
+html.osdark{--f-ui:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;--f-logo:"Cal Sans","Inter Variable",Inter,-apple-system,"Segoe UI",sans-serif;--bg:#111113;--panel:#18181B;--raised:#232328;--wall:#0C0C0E;--ink:#ECECEF;--muted:#9B9BA5;--line:#2A2A31;--accent:#7C5CFF;--accent-ink:#FFFFFF;--warn:#F5A524;--hot:#F43F5E;--ok:#22C55E;color-scheme:dark}
 html.osdark body{background:var(--bg);color:var(--ink)}
+html.osdark :is(h1,h2,h3,.lt,.mp-h b):not(.fw *):not(.frame *){font-family:"Cal Sans","Inter Variable",Inter,-apple-system,"Segoe UI",sans-serif!important;font-weight:400!important;letter-spacing:-.025em!important}
 html.osdark .btn.primary{background:linear-gradient(135deg,#7C5CFF,#3B82F6);border-color:transparent;color:#fff}
 html.osdark .btn{background:var(--raised);border-color:var(--line);color:var(--ink)}
 html.osdark .top{background:#141416;border-bottom-color:var(--line)}
