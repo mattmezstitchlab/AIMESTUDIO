@@ -147,6 +147,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .bot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:9px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));background:var(--panel);border-top:1px solid var(--line)}
 .app.noB .bot{display:none}
 .embedded .app .bot{display:none}
+.embedded .top .logo,.embedded .top [data-catopen],.embedded .top #tmenu,.embedded .top #aimeImp,.embedded .top #aimeRet,.embedded .top #aimeBack,.embedded .top #expAll{display:none!important}
 .play{width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--accent-ink);border:0;display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
 .play svg{width:15px;height:15px}
 .camp{flex:1 1 360px;min-width:240px;display:grid;gap:4px}
@@ -3692,7 +3693,10 @@ function aimeOpenHash(h){{const e=String(h||'').match(/^#ev\.([A-Za-z0-9_-]+)(?:
  const k=A&&MP.includes(A.mode)&&fid&&mpLib(A.mode).includes(fid)?A.mode:'tout';
  if(MP.includes(k))P.mview=Object.assign({},P.mview||{},{[k]:k==='web'&&fid==='site'?'studio':'wall'});
  P.mode=k;buildWall();render();try{wsSync()}catch(_){}requestAnimationFrame(fit);if(fid)setTimeout(()=>{try{select(fid);focusFrame(fid)}catch(_){}},260);aimeCtx();return true}
-if(EMBED){document.documentElement.classList.add('embedded');window.addEventListener('message',e=>{const d=e.data||{};if(d.aime==='open'&&typeof d.hash==='string'){try{aimeOpenHash(d.hash)}catch(_){}}if(d.aime==='export'&&P&&typeof d.kind==='string'){try{exportOne(sel||P.formats[0],d.kind)}catch(_){toast('Cet export ne s\'applique pas à ce support.')}}if(d.aime==='day'&&typeof d.day==='number'&&P){P.day=d.day;try{$('#day').value=P.day>=300?4:P.day;$('#dayLab').textContent=dayLabel();const ph=phase(P.day,PACK());render('Les supports au '+dayLabel());lastPh=ph.id;save();aimeCtx()}catch(_){}}})}
+if(EMBED){document.documentElement.classList.add('embedded');window.addEventListener('message',e=>{const d=e.data||{};if(d.aime==='open'&&typeof d.hash==='string'){try{aimeOpenHash(d.hash)}catch(_){}}if(d.aime==='tool'&&typeof d.tool==='string'){try{BR.tool=d.tool;brRender()}catch(_){}}
+if(d.aime==='color'&&d.mode==='broderie'&&BRP&&d.hex){try{const D=dmcAll(),i=D.findIndex(c=>c.hex.toUpperCase()===String(d.hex).toUpperCase());if(i>=0){const ex=BRP.pal.indexOf(i);if(ex>=0)BR.col=ex;else{BRP.pal.push(i);BR.col=BRP.pal.length-1}brSave();brRender();last={};render();toast('Fil DMC '+D[i].code+' prêt')}}catch(_){}}
+if(d.aime==='snap'&&P&&Array.isArray(d.fids)){(async()=>{for(const fid of d.fids){try{const c=await capture(fid,d.scale||.5);window.parent.postMessage({aime:'snap',pid:P.id,fid:fid,name:fname(fid),url:c.toDataURL('image/jpeg',.86)},'*')}catch(_){window.parent.postMessage({aime:'snap',pid:P.id,fid:fid,err:1},'*')}}})()}
+if(d.aime==='export'&&P&&d.kind==='all'){const x=$('#expAll');if(x)x.click()}else if(d.aime==='export'&&P&&typeof d.kind==='string'){try{exportOne(sel||P.formats[0],d.kind)}catch(_){toast('Cet export ne s\'applique pas à ce support.')}}if(d.aime==='day'&&typeof d.day==='number'&&P){P.day=d.day;try{$('#day').value=P.day>=300?4:P.day;$('#dayLab').textContent=dayLabel();const ph=phase(P.day,PACK());render('Les supports au '+dayLabel());lastPh=ph.id;save();aimeCtx()}catch(_){}}})}
 
 /* ===== v82 : les ateliers du Monde AIME (Stitchlab, Web Studio, Studio Docs, Buro, Accessibilité) ===== */
 const ATELIERS={image:{n:'Image',pack:'vierge',mode:'img'},stitchlab:{n:'Stitchlab',pack:'brodeuse',mode:'brod',formats:['pdc','pdcv','post','story']},web:{n:'Web Studio',pack:'vierge',mode:'web',view:'studio'},docs:{n:'Studio Docs',pack:'artisan',mode:'docs'},buro:{n:'Buro',pack:'entreprise',mode:'badges'},accessibilite:{n:'Accessibilité',pack:'organisme',mode:'tout',formats:['falc','grandcar','declacc','plaque','signage','site','webd','webm']}};
