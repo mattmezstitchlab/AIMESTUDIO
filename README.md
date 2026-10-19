@@ -3,6 +3,7 @@
 « Une info saisie une fois, propagée partout. »
 
 - `index.html` : AIME (landing mère, carte universelle, AIME WEDDING et l'app plein écran).
+- `mariage.html` (servi en `/mariage`) : AIME WEDDING en une seule app : toute l'organisation et tous les supports sur une seule ligne du temps (échelle Point Zéro), données dans le navigateur.
 - `sup/` : rendus réels d'AIME Studio utilisés sur la landing.
 - `studio/` : AIME Studio (à venir).
 
