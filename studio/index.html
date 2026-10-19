@@ -146,6 +146,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 
 .bot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:9px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));background:var(--panel);border-top:1px solid var(--line)}
 .app.noB .bot{display:none}
+.embedded .app .bot{display:none}
 .play{width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--accent-ink);border:0;display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
 .play svg{width:15px;height:15px}
 .camp{flex:1 1 360px;min-width:240px;display:grid;gap:4px}
@@ -3680,7 +3681,7 @@ const MODES=[['tout','Tout',null],['web','Web',['Web']],['reseaux','Réseaux',['
 const modeOf=()=>MODES.find(m=>m[0]===(P.mode||'tout'))||MODES[0];
 /* ===== v83 : le Bureau (OS) — ouverture par ancre, contexte envoyé au Bureau ===== */
 const EMBED=(()=>{try{return new URLSearchParams(location.search).get('os')==='1'&&window.parent!==window}catch(_){return false}})();
-function aimeCtx(){if(!EMBED||!P)return;try{window.parent.postMessage({aime:'ctx',pid:P.id,name:P.name,pack:P.pack,atelier:ATELIER||'studio',sel:typeof sel!=='undefined'?sel:null,formats:P.formats.slice(0,200)},'*')}catch(_){}}
+function aimeCtx(){if(!EMBED||!P)return;let evd=null,camp=false;try{evd=V().d.date||null;camp=PACK().campaign!==false}catch(_){}try{window.parent.postMessage({aime:'ctx',pid:P.id,name:P.name,pack:P.pack,atelier:ATELIER||'studio',sel:typeof sel!=='undefined'?sel:null,formats:P.formats.slice(0,200),evd:evd,camp:camp,day:P.day},'*')}catch(_){}}
 function aimeOpenHash(h){{const e=String(h||'').match(/^#ev\.([A-Za-z0-9_-]+)(?:\.([A-Za-z0-9]+))?$/);if(e){try{evSup(e[1])}catch(_){return false}const f=e[2];if(f&&FL[f]&&!P.formats.includes(f)){P.formats.push(f);save();buildWall();render()}if(f)setTimeout(()=>{try{select(f);focusFrame(f)}catch(_){}},400);try{history.replaceState(null,'',location.pathname+location.search)}catch(_){}aimeCtx();return true}}const m=String(h||'').match(/^#(open|add)\.([A-Za-z0-9]+)(?:\.([A-Za-z0-9]+))?$/);if(!m)return false;
  let pid=null,fid=null;if(m[1]==='open'){pid=m[2];fid=m[3]||null}else fid=m[2];
  if(pid){const p=DB.projects.find(q=>q.id===pid);if(!p)return false;if(P!==p)switchProject(p.id)}
@@ -3691,7 +3692,7 @@ function aimeOpenHash(h){{const e=String(h||'').match(/^#ev\.([A-Za-z0-9_-]+)(?:
  const k=A&&MP.includes(A.mode)&&fid&&mpLib(A.mode).includes(fid)?A.mode:'tout';
  if(MP.includes(k))P.mview=Object.assign({},P.mview||{},{[k]:k==='web'&&fid==='site'?'studio':'wall'});
  P.mode=k;buildWall();render();try{wsSync()}catch(_){}requestAnimationFrame(fit);if(fid)setTimeout(()=>{try{select(fid);focusFrame(fid)}catch(_){}},260);aimeCtx();return true}
-if(EMBED){document.documentElement.classList.add('embedded');window.addEventListener('message',e=>{const d=e.data||{};if(d.aime==='open'&&typeof d.hash==='string'){try{aimeOpenHash(d.hash)}catch(_){}}})}
+if(EMBED){document.documentElement.classList.add('embedded');window.addEventListener('message',e=>{const d=e.data||{};if(d.aime==='open'&&typeof d.hash==='string'){try{aimeOpenHash(d.hash)}catch(_){}}if(d.aime==='day'&&typeof d.day==='number'&&P){P.day=d.day;try{$('#day').value=P.day>=300?4:P.day;$('#dayLab').textContent=dayLabel();const ph=phase(P.day,PACK());render('Les supports au '+dayLabel());lastPh=ph.id;save();aimeCtx()}catch(_){}}})}
 
 /* ===== v82 : les ateliers du Monde AIME (Stitchlab, Web Studio, Studio Docs, Buro, Accessibilité) ===== */
 const ATELIERS={image:{n:'Image',pack:'vierge',mode:'img'},stitchlab:{n:'Stitchlab',pack:'brodeuse',mode:'brod',formats:['pdc','pdcv','post','story']},web:{n:'Web Studio',pack:'vierge',mode:'web',view:'studio'},docs:{n:'Studio Docs',pack:'artisan',mode:'docs'},buro:{n:'Buro',pack:'entreprise',mode:'badges'},accessibilite:{n:'Accessibilité',pack:'organisme',mode:'tout',formats:['falc','grandcar','declacc','plaque','signage','site','webd','webm']}};
