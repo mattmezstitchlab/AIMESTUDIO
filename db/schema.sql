@@ -1,83 +1,80 @@
--- AIME · schéma Neon (PostgreSQL) — point de départ, à relire avant migration.
--- Accès uniquement par les fonctions serveur /api/* ; contrôle d'accès dans chaque fonction.
+-- AIME · schéma Neon (PostgreSQL) — base dédiée à AIMESTUDIO, région UE.
+-- Les tables de comptes (user, session, account, verification, passkey) sont créées
+-- par les migrations de Better Auth : ne pas les écrire à la main ici.
+-- Accès uniquement par /api/* ; l'identité vient toujours de la session vérifiée.
 
 create extension if not exists pgcrypto;
 
-create table if not exists users (
+-- Rôle global : 'member' par défaut, 'creator' pour le créateur d'AIME OS (design system, cartes système).
+-- Stocké comme champ additionnel de la table user de Better Auth (additionalFields: role).
+
+-- Espaces partagés : un événement, un projet, un atelier.
+create table if not exists spaces (
   id          uuid primary key default gen_random_uuid(),
-  email       text unique,
-  name        text,
-  created_at  timestamptz not null default now()
+  kind        text not null check (kind in ('evenement','projet','atelier')),
+  title       text not null,
+  owner_id    text not null,                         -- user.id (Better Auth)
+  data        jsonb not null default '{}',
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
 );
 
-create table if not exists passkeys (
-  id            text primary key,              -- credential id (base64url)
-  user_id       uuid not null references users(id) on delete cascade,
-  public_key    bytea not null,
-  counter       bigint not null default 0,
-  transports    text[],
-  created_at    timestamptz not null default now()
+-- Qui fait partie d'un espace, et avec quel rôle.
+-- owner   : tout, y compris membres, invitations, suppression
+-- editor  : modifier le contenu (futurs mariés, organisatrice)
+-- contributor : modifier ce qui lui est assigné (prestataire)
+-- viewer  : lire
+-- guest   : lire la partie publique et répondre pour soi (invité : RSVP, régime)
+create table if not exists space_members (
+  space_id    uuid not null references spaces(id) on delete cascade,
+  user_id     text not null,
+  role        text not null check (role in ('owner','editor','contributor','viewer','guest')),
+  added_at    timestamptz not null default now(),
+  primary key (space_id, user_id)
 );
+create index if not exists space_members_user on space_members(user_id);
 
-create table if not exists sessions (
-  id          text primary key,                -- jeton aléatoire, stocké haché côté serveur conseillé
-  user_id     uuid not null references users(id) on delete cascade,
+-- Invitations : jeton haché, rôle fixé à la création, usage unique, expiration.
+create table if not exists invitations (
+  id          uuid primary key default gen_random_uuid(),
+  space_id    uuid not null references spaces(id) on delete cascade,
+  role        text not null check (role in ('editor','contributor','viewer','guest')),
+  token_hash  text not null unique,
+  email       text,
+  created_by  text not null,
   expires_at  timestamptz not null,
-  created_at  timestamptz not null default now()
+  used_at     timestamptz,
+  used_by     text
 );
 
-create table if not exists cards (
+-- Éléments datés d'un espace (timeline partagée). assignee_id : le contributeur concerné.
+create table if not exists items (
   id          uuid primary key default gen_random_uuid(),
-  user_id     uuid not null references users(id) on delete cascade,
-  tpl         text not null,                   -- maries, invite, presta, artiste, brodeuse, entreprise, organisme, aime
-  name        text not null,
-  colors      text[] not null default '{}',
-  apps        text[] not null default '{}',
-  connectors  text[] not null default '{}',
-  is_public   boolean not null default false,  -- publiée dans la bibliothèque
-  updated_at  timestamptz not null default now()
-);
-
-create table if not exists events (
-  id          uuid primary key default gen_random_uuid(),
-  owner_id    uuid not null references users(id) on delete cascade,
-  kind        text not null default 'mariage',
+  space_id    uuid not null references spaces(id) on delete cascade,
+  kind        text not null,
   title       text not null,
-  starts_on   date,
-  city        text,
-  data        jsonb not null default '{}',     -- objet S (voir docs/aime-handoff.md)
-  updated_at  timestamptz not null default now()
-);
-
-create table if not exists event_members (
-  event_id    uuid not null references events(id) on delete cascade,
-  user_id     uuid not null references users(id) on delete cascade,
-  role        text not null,                   -- couple, invite, presta, coordination…
-  primary key (event_id, user_id)
-);
-
-create table if not exists timeline_items (
-  id          uuid primary key default gen_random_uuid(),
-  user_id     uuid not null references users(id) on delete cascade,
-  event_id    uuid references events(id) on delete cascade,
-  kind        text not null,                   -- rdv, rappel, mission, reservation, paiement, tache, jourj
-  title       text not null,
-  starts_at   timestamptz not null,
+  starts_at   timestamptz,
   minutes     int not null default 60,
-  done        boolean not null default false
-);
-create index if not exists timeline_user_time on timeline_items(user_id, starts_at);
-
-create table if not exists projects (
-  id          text primary key,                -- identifiant du Studio (P.id)
-  user_id     uuid not null references users(id) on delete cascade,
-  data        jsonb not null,
+  assignee_id text,
+  done        boolean not null default false,
+  updated_by  text not null,
   updated_at  timestamptz not null default now()
 );
+create index if not exists items_space_time on items(space_id, starts_at);
 
--- Le Noyau : uniquement le bloc chiffré côté client (AES-256-GCM, clé PBKDF2). Jamais de clair.
+-- Données privées d'un utilisateur (synchronisation du Bureau : aime-os, echos:v2). Propriétaire seul.
+create table if not exists user_data (
+  user_id     text not null,
+  key         text not null check (key in ('aime-os','echos:v2')),
+  data        jsonb not null,
+  rev         bigint not null default 1,
+  updated_at  timestamptz not null default now(),
+  primary key (user_id, key)
+);
+
+-- Le Noyau : uniquement le bloc chiffré côté client. Propriétaire seul. Jamais de clair.
 create table if not exists vault (
-  user_id     uuid primary key references users(id) on delete cascade,
+  user_id     text primary key,
   alg         text not null,
   iterations  int not null,
   salt        text not null,
@@ -86,12 +83,12 @@ create table if not exists vault (
   updated_at  timestamptz not null default now()
 );
 
--- Présence sur le globe : opt-in, ville seulement.
-create table if not exists map_presence (
-  user_id     uuid primary key references users(id) on delete cascade,
-  city        text not null,
-  layer       text not null,                   -- reseau, demandes, events, prestas
-  label       text not null,
-  visible     boolean not null default false,
-  updated_at  timestamptz not null default now()
+-- Journal : qui a fait quoi (y compris les actions de l'orbe), sans contenu sensible.
+create table if not exists audit (
+  id          bigserial primary key,
+  at          timestamptz not null default now(),
+  user_id     text,
+  space_id    uuid,
+  action      text not null,
+  detail      jsonb
 );
