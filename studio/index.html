@@ -3652,13 +3652,28 @@ const IC={brod:ICO('<path d="M3 3l4 4M7 3L3 7M13 3l4 4M17 3l-4 4M8 8l4 4M12 8l-4
 const EXP_HTML="<svg viewBox=\"0 0 20 20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10 3v10M6 9l4 4 4-4\"/><path d=\"M4 16h12\"/></svg><span>Exporter</span>";
 const MODES=[['tout','Tout',null],['web','Web',['Web']],['reseaux','Réseaux',['Réseaux']],['imprime','Imprimé',['Impression','Papeterie','Signalétique','Immobilier']],['event','Événement',['Événement','Série']],['docs','Documents',['Documents']],['badges','Badges et cartes',['Badges']],['brod','Broderie',['__brod']],['img','Image',['__img']]];
 const modeOf=()=>MODES.find(m=>m[0]===(P.mode||'tout'))||MODES[0];
+/* ===== v83 : le Bureau (OS) — ouverture par ancre, contexte envoyé au Bureau ===== */
+const EMBED=(()=>{try{return new URLSearchParams(location.search).get('os')==='1'&&window.parent!==window}catch(_){return false}})();
+function aimeCtx(){if(!EMBED||!P)return;try{window.parent.postMessage({aime:'ctx',pid:P.id,name:P.name,pack:P.pack,atelier:ATELIER||'studio',sel:typeof sel!=='undefined'?sel:null,formats:P.formats.slice(0,200)},'*')}catch(_){}}
+function aimeOpenHash(h){{const e=String(h||'').match(/^#ev\.([A-Za-z0-9_-]+)(?:\.([A-Za-z0-9]+))?$/);if(e){try{evSup(e[1])}catch(_){return false}const f=e[2];if(f&&FL[f]&&!P.formats.includes(f)){P.formats.push(f);save();buildWall();render()}if(f)setTimeout(()=>{try{select(f);focusFrame(f)}catch(_){}},400);try{history.replaceState(null,'',location.pathname+location.search)}catch(_){}aimeCtx();return true}}const m=String(h||'').match(/^#(open|add)\.([A-Za-z0-9]+)(?:\.([A-Za-z0-9]+))?$/);if(!m)return false;
+ let pid=null,fid=null;if(m[1]==='open'){pid=m[2];fid=m[3]||null}else fid=m[2];
+ if(pid){const p=DB.projects.find(q=>q.id===pid);if(!p)return false;if(P!==p)switchProject(p.id)}
+ if(fid&&!FL[fid])fid=null;if(fid&&!P.formats.includes(fid)){P.formats.push(fid);save();toast(`« ${FL[fid].name} » ajouté au projet.`)}
+ try{history.replaceState(null,'',location.pathname+location.search)}catch(_){}
+ if(fid==='pdc'){setMode('brod');aimeCtx();return true}
+ const A=ATELIER&&ATELIERS[ATELIER];if(A&&A.mode==='img'){setMode('img');aimeCtx();return true}
+ const k=A&&MP.includes(A.mode)&&fid&&mpLib(A.mode).includes(fid)?A.mode:'tout';
+ if(MP.includes(k))P.mview=Object.assign({},P.mview||{},{[k]:k==='web'&&fid==='site'?'studio':'wall'});
+ P.mode=k;buildWall();render();try{wsSync()}catch(_){}requestAnimationFrame(fit);if(fid)setTimeout(()=>{try{select(fid);focusFrame(fid)}catch(_){}},260);aimeCtx();return true}
+if(EMBED){document.documentElement.classList.add('embedded');window.addEventListener('message',e=>{const d=e.data||{};if(d.aime==='open'&&typeof d.hash==='string'){try{aimeOpenHash(d.hash)}catch(_){}}})}
+
 /* ===== v82 : les ateliers du Monde AIME (Stitchlab, Web Studio, Studio Docs, Buro, Accessibilité) ===== */
-const ATELIERS={stitchlab:{n:'Stitchlab',pack:'brodeuse',mode:'brod',formats:['pdc','pdcv','post','story']},web:{n:'Web Studio',pack:'vierge',mode:'web',view:'studio'},docs:{n:'Studio Docs',pack:'artisan',mode:'docs'},buro:{n:'Buro',pack:'entreprise',mode:'badges'},accessibilite:{n:'Accessibilité',pack:'organisme',mode:'tout',formats:['falc','grandcar','declacc','plaque','signage','site','webd','webm']}};
+const ATELIERS={image:{n:'Image',pack:'vierge',mode:'img'},stitchlab:{n:'Stitchlab',pack:'brodeuse',mode:'brod',formats:['pdc','pdcv','post','story']},web:{n:'Web Studio',pack:'vierge',mode:'web',view:'studio'},docs:{n:'Studio Docs',pack:'artisan',mode:'docs'},buro:{n:'Buro',pack:'entreprise',mode:'badges'},accessibilite:{n:'Accessibilité',pack:'organisme',mode:'tout',formats:['falc','grandcar','declacc','plaque','signage','site','webd','webm']}};
 const ATELIER=(typeof window.AIME_ATELIER==='string'&&ATELIERS[window.AIME_ATELIER])?window.AIME_ATELIER:null;
-function atelierBoot(){const A=ATELIERS[ATELIER];let p=DB.projects.find(q=>q.atelier===ATELIER);
- if(!p){p=newProject0(A.pack);if(A.formats)p.formats=A.formats.filter(f=>FL[f]);p.atelier=ATELIER;p.name=A.n+' · '+(p.versions[0].d.title||'exemple');DB.projects.push(p);store.set('echos:v2',DB)}
+function atelierBoot(oh){const A=ATELIERS[ATELIER];let p=DB.projects.find(q=>q.atelier===ATELIER);const ohP=oh&&(String(oh).match(/^#open\.([A-Za-z0-9]+)/)||[])[1],ohOk=ohP&&DB.projects.some(q=>q.id===ohP);
+ if(!p&&!ohOk){p=newProject0(A.pack);if(A.formats)p.formats=A.formats.filter(f=>FL[f]);p.atelier=ATELIER;p.name=A.n+' · '+(p.versions[0].d.title||'exemple');DB.projects.push(p);store.set('echos:v2',DB)}
  document.body.classList.add('atelier','at-'+ATELIER);document.title=A.n+' · Le monde AIME';const ls=document.querySelector('#logoBtn .lsub');if(ls)ls.textContent=A.n;
- switchProject(p.id);if(MP.includes(A.mode))P.mview=Object.assign({},P.mview||{},{[A.mode]:A.view||'page'});setMode(A.mode)}
+ if(ohOk&&aimeOpenHash(oh))return;switchProject(p.id);if(MP.includes(A.mode))P.mview=Object.assign({},P.mview||{},{[A.mode]:A.view||'page'});setMode(A.mode);if(oh)aimeOpenHash(oh)}
 document.addEventListener('click',e=>{if(e.target.closest('[data-atbdg]')){try{bdgOpen()}catch(_){}}});
 
 /* ===== v80 : fusion, étape 1 — les événements AIME dans « Mes projets » ===== */
@@ -4037,7 +4052,7 @@ function applyView(){wall.style.transform=`translate(${view.x}px,${view.y}px) sc
 function fit(){const r=stage.getBoundingClientRect();if(!r.width)return;view.z=Math.min((r.width-60)/WALL_W,(r.height-90)/WALL_H,1);view.x=(r.width-WALL_W*view.z)/2;view.y=(r.height-WALL_H*view.z)/2+16;applyView()}
 function zoomAt(f,px,py){const z0=view.z,z=Math.max(.06,Math.min(3,z0*f));view.x=px-(px-view.x)*z/z0;view.y=py-(py-view.y)*z/z0;view.z=z;applyView()}
 function focusFrame(id){const f=FM(id),r=stage.getBoundingClientRect(),w=f.w*f.s,h=f.h*f.s;view.z=Math.min((r.width-80)/w,(r.height-100)/h);view.x=(r.width-w*view.z)/2-f.x*view.z;view.y=(r.height-h*view.z)/2-f.y*view.z+10;applyView()}
-function select(id){if(id){const f=PF.find(q=>q.id===id);if(f&&f.hidden){const c=FL[id].cat,M=modeOf();if(M[2]&&!M[2].includes(c))P.mode='tout';P.closed=(P.closed||[]).filter(x=>x!==c);buildWall();render()}}sel=id;$$('.fw').forEach(n=>n.classList.toggle('sel',n.dataset.f===id));renderInspector()}
+function select(id){setTimeout(()=>{try{aimeCtx()}catch(_){}},0);if(id){const f=PF.find(q=>q.id===id);if(f&&f.hidden){const c=FL[id].cat,M=modeOf();if(M[2]&&!M[2].includes(c))P.mode='tout';P.closed=(P.closed||[]).filter(x=>x!==c);buildWall();render()}}sel=id;$$('.fw').forEach(n=>n.classList.toggle('sel',n.dataset.f===id));renderInspector()}
 let pan=null,moved=false;
 stage.addEventListener('pointerdown',e=>{if(e.target.closest('.float,#showB,#webStudio,#brodStudio,#imgStudio'))return;pan={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y};moved=false;stage.classList.add('panning')});
 window.addEventListener('pointermove',e=>{if(!pan)return;const dx=e.clientX-pan.x,dy=e.clientY-pan.y;if(Math.abs(dx)+Math.abs(dy)>4)moved=true;if(moved){view.x=pan.vx+dx;view.y=pan.vy+dy;applyView()}});
@@ -4940,7 +4955,7 @@ function renderHome(){const mine=[...DB.projects].sort((a,b)=>(b.updated||0)-(a.
   requestAnimationFrame(()=>$$('#home .mini>div').forEach(n=>fitEl(n)));try{hubRender()}catch(_){}}
 function openHome(){stopPlay();delArm=null;$('#home').hidden=false;$('#closeHome').hidden=!DB.projects.length;renderHome();$('#home').scrollTop=0}
 function closeHome(){$('#home').hidden=true}
-function switchProject(id){const p=DB.projects.find(x=>x.id===id);if(!p)return;P=p;DB.cur=p.id;sel=null;compare=false;loadLogo();loadPhoto();buildWall();fillAll();syncRules();render();closeHome();try{atlClose()}catch(_){}requestAnimationFrame(fit);store.set('echos:v2',DB)}
+function switchProject(id){const p=DB.projects.find(x=>x.id===id);if(!p)return;P=p;DB.cur=p.id;sel=null;compare=false;loadLogo();loadPhoto();buildWall();fillAll();syncRules();render();closeHome();try{atlClose()}catch(_){}requestAnimationFrame(fit);store.set('echos:v2',DB);try{aimeCtx()}catch(_){}}
 $('#home').addEventListener('click',e=>{let b;
   if(b=e.target.closest('[data-open]')){switchProject(b.dataset.open);return}
   if(b=e.target.closest('[data-dup]')){const src=DB.projects.find(x=>x.id===b.dataset.dup),cp=JSON.parse(JSON.stringify(src));cp.id=uid();cp.name=src.name+' (copie)';cp.updated=Date.now();DB.projects.push(cp);try{const ph=localStorage.getItem('echos:photo:'+src.id);if(ph)localStorage.setItem('echos:photo:'+cp.id,ph)}catch(_){}store.set('echos:v2',DB);renderHome();return}
@@ -5233,7 +5248,7 @@ const norm2=t=>t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/
 let ldT;$('#land').addEventListener('input',e=>{if(e.target.id==='lname'||e.target.id==='lrole'){clearTimeout(ldT);ldT=setTimeout(renderDemo,120)}});
 function openLand(){stopPlay();$('#land').hidden=false;renderLand();$('#land').scrollTop=0}
 function closeLand(){$('#land').hidden=true}
-$('#logoBtn').onclick=()=>{if(ATELIER){location.href=STANDALONE?location.origin+'/':'#';return}atlOpen(null)};
+$('#logoBtn').onclick=()=>{if(EMBED){try{window.parent.postMessage({aime:'home'},'*')}catch(_){}return}if(ATELIER){location.href=STANDALONE?location.origin+'/':'#';return}atlOpen(null)};
 document.addEventListener('click',e=>{if(e.target.closest('#homeLand')){closeHome();openLand()}});
 const lscroll=id=>{const el=$('#'+id);if(el)$('#land').scrollTo({top:el.offsetTop-70,behavior:'smooth'})};
 $('#land').addEventListener('click',e=>{let b;
@@ -5249,8 +5264,8 @@ if(innerWidth<760){$('#app').classList.add('noL','noR');$('#tglL').setAttribute(
 loadLogo();loadPhoto();buildWall();fillAll();syncRules();render();requestAnimationFrame(fit);
 let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(fit,150)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{last={};render()});
-store.set('echos:seenLand',1);store.set('echos:seenHome',1);if(ATELIER){try{atelierBoot()}catch(e){console.error(e)}}else if(!/^#aime=/.test(location.hash)&&!atlHash())atlOpen(null);
-window.addEventListener('hashchange',()=>{try{if(!ATELIER)atlHash()}catch(_){}});
+store.set('echos:seenLand',1);store.set('echos:seenHome',1);{const oh=/^#(open|add|ev)\./.test(location.hash)?location.hash:null;if(ATELIER){try{atelierBoot(oh)}catch(e){console.error(e)}}else if(oh&&aimeOpenHash(oh)){}else if(!/^#aime=/.test(location.hash)&&!atlHash())atlOpen(null);setTimeout(aimeCtx,600)}
+window.addEventListener('hashchange',()=>{try{if(/^#(open|add|ev)\./.test(location.hash)){aimeOpenHash(location.hash);return}if(!ATELIER)atlHash()}catch(_){}});
 /* ---------- Pont AIME : les données de l'événement deviennent les supports ---------- */
 function aimeDecode(c){c=String(c||'').trim().replace(/^AIME:/,'').replace(/^.*#aime=/,'');const b=c.replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(decodeURIComponent(escape(atob(b+'==='.slice((b.length+3)%4)))))}
 function aimeImport(x){if(!x||x.src!=='aime')throw new Error('format');try{uniSaveCards([x.card,...(Array.isArray(x.cards)?x.cards:[])].filter(Boolean))}catch(_){}if(x.role&&typeof x.role==='object'&&(x.role.n||x.role.dom))return aimeRoleImport(x);const pack=PK[x.pack]?x.pack:'mariage';

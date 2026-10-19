@@ -5,7 +5,8 @@
 Fusion en cours : AIME (planning) et AIME Studio (supports) deviennent une seule app.
 
 - `index.html` : **la landing « Le monde AIME »**, qui présente six ateliers séparés. Les adresses d'AIME déjà diffusées sont renvoyées vers `/v1/`, celles du Studio (`#aime=`, `#atlas…`, `#commencer`) vers `/studio/`.
-- `stitchlab/`, `web/`, `docs/`, `buro/`, `accessibilite/` : chaque atelier, ouvert seul (même moteur que le Studio, réglé par `window.AIME_ATELIER`).
+- `bureau/` : **le Bureau**, l'OS du monde AIME : Dock, fenêtres, Dossiers en arbre, « Pour continuer ». Chaque app ouvre un atelier dans une fenêtre ; les apps se passent le projet en cours (`#open.<projet>.<format>`, `#add.<format>`, `#ev.<événement>.<format>`).
+- `stitchlab/`, `web/`, `docs/`, `buro/`, `accessibilite/`, `image/` : chaque atelier, ouvert seul (même moteur que le Studio, réglé par `window.AIME_ATELIER`).
 - `v1/` : Timeline Jour J (AIME v72, gelé à la branche `avant-fusion`).
 - `studio/` : le grand Studio (mosaïque, tous les supports), caché de la landing, gardé pour les liens existants.
 - `sup/` : rendus d'AIME Studio utilisés par la landing et la Timeline.
