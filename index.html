@@ -1,4 +1,9 @@
-<title>Jour J Pièce par Pièce</title>
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="AIME : une carte, tous vos événements, tous vos supports.">
+<title>AIME</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -2280,7 +2285,8 @@ function renderProg(){const el=$('#vProg');if(!el)return;const L=ACT.filter(e=>e
   `<div class="scroll"><ul class="L">${L.map(e=>`<li class="it nock row2 prog"><span class="tm">${hhmm(e.m)}${dayOf(e.m)?'<br>lendemain':''}</span><span><b>${esc(entryTitle(e))}</b><br><span class="hint">${esc(entryDesc(e))}</span></span></li>`).join('')}</ul></div>`;}
 
 /* =================== VISITEURS ET LIENS : un lien par invité ou par prestataire =================== */
-const ART_URL='https://claude.ai/artifact/11TUjp2jX6S2JL2cy2C96h';
+const STANDALONE=/^https?:$/.test(location.protocol)&&!/(^|\.)(claude\.ai|claudeusercontent\.com|anthropic\.com)$/.test(location.hostname);
+const ART_URL=STANDALONE?location.origin+'/':'https://claude.ai/artifact/11TUjp2jX6S2JL2cy2C96h';
 const VIS={owner:true,canW:true};
 (function(){const h=location.hash||'';if(!/^#echos=/.test(h))return;try{const c=h.slice(7).replace(/-/g,'+').replace(/_/g,'/'),x=JSON.parse(decodeURIComponent(escape(atob(c+'==='.slice((c.length+3)%4)))));history.replaceState(null,'',location.pathname+location.search);
   let got='';
@@ -2543,7 +2549,7 @@ const derived=lines=>`<div class="derived">${lines.join('')}</div>`;
 function focusEl(sel){const el=q(sel);if(el)setTimeout(()=>{el.focus({preventScroll:true});el.scrollIntoView({block:'center'});if(el.select&&el.type!=='time'&&el.type!=='date')el.select();},reduce?0:380);}
 
 /* pont vers Échos : une info saisie ici devient marque-places, numéros de table, programme et badges */
-const ECHOS_URL='https://claude.ai/artifact/3yP5RGnwtWqtMDp1EqwEm3';
+const ECHOS_URL=STANDALONE?location.origin+'/studio/':'https://claude.ai/artifact/3yP5RGnwtWqtMDp1EqwEm3';
 const slugE=()=>B().names.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,'et').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const pick8=L=>L.length<=8?L:[...new Set(Array.from({length:8},(_,i)=>Math.round(i*(L.length-1)/7)))].map(i=>L[i]);
 function echosData(){const P=S.people.filter(p=>p.rsvp!=='non'),seated=P.filter(p=>p.table),vm=vendorOf('venue'),cer=ACT.find(e=>e.id==='m17')||ACT.find(e=>e.pub);
