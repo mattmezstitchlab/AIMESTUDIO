@@ -6,208 +6,431 @@
 <script>(function(){function f(){var h=location.hash||"";if(/^#(accueil|carte|AIME-[0-9A-Za-z]+|rsvp(-[^#]*)?|capsule-.+|aimenew\..+|aime-new=.+|echos=.+|invite=.+|pro=.+)$/.test(h)){location.replace("/v1/"+h);return true}if(/^#(aime=.+|atlas(-[a-z0-9-]+)?|commencer)$/i.test(h)){location.replace("/studio/"+h);return true}}if(!f())window.addEventListener("hashchange",f)})();</script>
 <title>Le monde AIME</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Le monde AIME : un bureau et huit ateliers. Stitchlab, Timeline Jour J, Studio Docs, Web Studio, Accessibilité, Buro, Supports.">
+<meta name="description" content="Le monde AIME — Architecture Intelligente de la Mémoire Ensemble. Une grille de point de croix, dix-huit ans de mariages au saxophone, la causalité, 1 191 moteurs et un bureau pour chacun.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout : portfolio sombre. Une bande par atelier : titre court à gauche, texte et lien à droite, grande capture réelle de l'app en dessous. Un seul thème, sombre. */
+/* Layout : un récit en chapitres sur fond nuit, chaque chapitre une pleine bande ; les visuels sont faits de pixels (la grille du point de croix), puis le Bureau, les univers et les ateliers. Un seul thème, sombre, par choix. */
 :root{
- --bg:#0A0A0B; --raise:#141416; --line:#232326; --fg:#F4F4F2; --dim:#9A9AA0; --mute:#6A6A71;
- --sans:"Geist",Helvetica,Arial,sans-serif; --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+ --bg:#09090B; --raise:#131317; --line:#24242A; --fg:#F3F2EF; --dim:#A3A2AB; --mute:#6E6D77;
+ --rose:#FB7185; --or:#F59E0B; --vio:#7C5CFF; --cyan:#22D3EE; --vert:#4ADE80;
+ --display:"Archivo","Arial Narrow",Helvetica,sans-serif; --sans:"Instrument Sans",Helvetica,Arial,sans-serif; --serif:"Instrument Serif",Georgia,serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
  color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 17px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--bg)}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--fg);outline-offset:3px}
 .wrap{max-width:1240px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 @media(min-width:900px){.wrap{padding-left:max(48px,env(safe-area-inset-left,0px));padding-right:max(48px,env(safe-area-inset-right,0px))}}
-.k{font:500 11.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.k{font:500 11.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font:600 14px var(--sans);padding:12px 18px;border-radius:999px;background:var(--fg);color:var(--bg);white-space:nowrap;border:0;cursor:pointer;transition:transform .15s,opacity .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.grad{background:linear-gradient(135deg,var(--rose),var(--vio));color:#fff;box-shadow:0 14px 40px -14px var(--vio)}
+.btn.ghost{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1px #3A3A42}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--dim)}
 
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:rgba(10,10,11,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.bar .wrap{display:flex;align-items:center;gap:18px;min-height:58px}
-.mark{display:flex;align-items:center;gap:10px;text-decoration:none;font:600 14px var(--sans)}
-.mark i{width:22px;height:22px;border-radius:6px;background:var(--fg);color:var(--bg);display:grid;place-items:center;font:700 11px var(--sans);font-style:normal}
+/* barre */
+.bar{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);z-index:15;transition:background .3s}
+.bar.on{background:rgba(9,9,11,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:18px;min-height:62px}
+.mark{text-decoration:none;font:900 18px var(--display);letter-spacing:-.02em}
+.mark sup{font-size:.5em}
 .nav{display:flex;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
-.nav a{flex:none;text-decoration:none;color:var(--dim);font:500 13px var(--sans);padding:7px 10px;border-radius:6px}
+.nav a{flex:none;text-decoration:none;color:var(--dim);font:500 13.5px var(--sans);padding:7px 10px;border-radius:6px}
 .nav a:hover{color:var(--fg)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font:600 13px var(--sans);padding:10px 16px;border-radius:7px;background:var(--fg);color:var(--bg);white-space:nowrap;transition:opacity .15s}
-.btn:hover{opacity:.86}
-.btn.ghost{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1px var(--line)}
-.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--dim);opacity:1}
-@media(max-width:720px){.nav{display:none}.bar .btn{margin-left:auto}}
+.bar .btn{padding:9px 15px;font-size:13px}
+@media(max-width:860px){.nav{display:none}.bar .btn{margin-left:auto}}
 
-.hero{padding-block:clamp(56px,10vw,128px) clamp(40px,6vw,72px)}
-.tag{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:5px 10px 5px 6px;font:500 12px var(--sans);color:var(--dim)}
-.tag b{background:var(--fg);color:var(--bg);border-radius:999px;padding:2px 7px;font:600 10.5px var(--mono)}
-.hero h1{margin:22px 0 0;font:600 clamp(46px,7.6vw,104px)/.96 var(--sans);letter-spacing:-.045em;max-width:13ch;text-wrap:balance}
-.hero h1 span{color:var(--mute)}
-.hero-row{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;margin-top:clamp(28px,4vw,48px)}
-@media(min-width:900px){.hero-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end}}
-.hero-row p{margin:0;max-width:46ch;color:var(--dim);font-size:16.5px}
-.hero-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;border-top:1px solid var(--line);padding-top:16px}
-.hero-meta b{display:block;font:600 22px var(--sans);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.hero-meta span{font-size:12.5px;color:var(--dim)}
-.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+/* ouverture */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden;padding-block:120px 64px}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,9,11,.2) 0%,rgba(9,9,11,.05) 40%,rgba(9,9,11,.85) 88%,var(--bg) 100%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1;width:100%}
+.hero h1{margin:0;font:900 clamp(76px,17vw,260px)/.8 var(--display);font-stretch:62%;letter-spacing:-.03em;text-transform:uppercase}
+.hero h1 span{display:block}
+.hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--rose),var(--or) 40%,var(--vio) 75%,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.acr{display:flex;flex-wrap:wrap;gap:6px 18px;margin:22px 0 0;font:500 clamp(15px,1.6vw,20px)/1.3 var(--sans);color:var(--dim)}
+.acr b{color:var(--fg);font-weight:700}
+.hero-low{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;margin-top:34px;align-items:end}
+@media(min-width:900px){.hero-low{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}}
+.hero-low p{margin:0;max-width:52ch;font-size:18px;color:#D5D4DA;text-wrap:pretty}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.cue{position:absolute;z-index:1;left:50%;bottom:18px;transform:translateX(-50%);font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
 
-.case{border-top:1px solid var(--line);padding-block:clamp(56px,8vw,112px)}
-.case-head{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;margin-bottom:clamp(28px,4vw,44px)}
-@media(min-width:900px){.case-head{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
-.case h2{margin:10px 0 0;font:600 clamp(32px,4vw,52px)/1.02 var(--sans);letter-spacing:-.035em;max-width:14ch;text-wrap:balance}
-.case-text{display:grid;gap:16px;justify-items:start;max-width:46ch}
-.case-text p{margin:0;color:var(--dim)}
-.case-text ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
-.case-text li{font:500 12px var(--mono);color:var(--dim);border:1px solid var(--line);border-radius:5px;padding:4px 8px}
-.case-text .row{display:flex;gap:8px;flex-wrap:wrap}
-.shot{margin:0;border-radius:12px;overflow:hidden;background:var(--raise);border:1px solid var(--line);box-shadow:0 40px 120px -40px rgba(0,0,0,.9)}
+/* sommaire */
+.toc{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.toc a{display:grid;gap:4px;padding:18px 14px;text-decoration:none;border-left:1px solid var(--line);height:100%}
+.toc li:first-child a{border-left:0}
+.toc a:hover{background:var(--raise)}
+.toc span{font:500 11px var(--mono);color:var(--mute)}
+.toc b{font:700 15px var(--sans)}
+
+/* chapitres */
+.ch{position:relative;padding-block:clamp(80px,12vw,160px);border-bottom:1px solid var(--line)}
+.ch-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:center}
+@media(min-width:960px){.ch-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.ch-grid.rev>:first-child{order:2}}
+.num{font:400 italic clamp(22px,2vw,28px)/1 var(--serif);color:var(--c,var(--rose))}
+.ch h2{margin:14px 0 22px;font:900 clamp(48px,7.4vw,108px)/.86 var(--display);font-stretch:62%;letter-spacing:-.02em;text-transform:uppercase;text-wrap:balance}
+.ch h2 i{font:400 italic .62em/1 var(--serif);text-transform:none;letter-spacing:0;color:var(--c,var(--rose));display:block;margin-top:.2em}
+.ch p{margin:0 0 16px;max-width:56ch;color:#C9C8D0;text-wrap:pretty}
+.ch p.big{font:400 clamp(22px,2.3vw,30px)/1.35 var(--serif);color:var(--fg)}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;padding:0;list-style:none}
+.facts li{font:500 12px var(--mono);color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:6px 11px}
+.art{position:relative;aspect-ratio:1/1;max-width:100%;border-radius:20px;overflow:hidden;background:#0D0D10;border:1px solid var(--line)}
+.art canvas{position:absolute;inset:0;width:100%;height:100%}
+.art figcaption{position:absolute;left:14px;bottom:12px;right:14px;font:500 11px var(--mono);letter-spacing:.06em;color:var(--mute)}
+
+/* temps */
+.tri{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:40px}
+@media(min-width:860px){.tri{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tri article{position:relative;border:1px solid var(--line);border-radius:18px;padding:22px;min-height:260px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:#0E0E11}
+.tri canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.tri article>div{position:relative}
+.tri h3{margin:0 0 6px;font:900 44px/.9 var(--display);font-stretch:62%;text-transform:uppercase}
+.tri p{margin:0;color:#C9C8D0;font-size:15.5px}
+
+/* semaines */
+.weeks{display:grid;grid-template-columns:repeat(52,minmax(0,1fr));gap:2px;margin-top:8px}
+.weeks i{aspect-ratio:1/1;border-radius:1.5px;background:#1E1E24;transition:background .4s}
+.weeks i.on{background:var(--c2,var(--or))}
+.wk-l{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--mute);margin-top:10px}
+.big-n{font:900 clamp(110px,16vw,220px)/.8 var(--display);font-stretch:62%;letter-spacing:-.03em;background:linear-gradient(180deg,var(--fg),#6E6D77);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* chaos */
+.chaos{position:relative;display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
+.chaos span{font:600 14px var(--sans);border:1px solid #3A2A30;background:#1A1215;color:#F2C4CC;border-radius:999px;padding:9px 14px;transform:rotate(var(--r,0deg))}
+
+/* démonstration causale */
+.demo{border:1px solid var(--line);border-radius:22px;background:#0E0E12;overflow:hidden}
+.demo-h{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.demo-h b{font:600 14px var(--sans);margin-right:auto}
+.demo-h button{font:600 13px var(--sans);border:1px solid #3A3A44;background:#17171C;color:var(--fg);border-radius:999px;padding:8px 13px;cursor:pointer}
+.demo-h button[aria-pressed=true]{background:var(--rose);border-color:transparent;color:#1A0A0F}
+.tl{list-style:none;margin:0;padding:10px 18px 18px;display:grid}
+.tl li{display:grid;grid-template-columns:64px 14px minmax(0,1fr);gap:12px;align-items:start;padding:10px 0;position:relative}
+.tl li::before{content:"";position:absolute;left:82px;top:0;bottom:0;width:2px;background:#24242A}
+.tl time{display:grid;line-height:1.15;font:600 15px var(--mono);font-variant-numeric:tabular-nums;color:var(--fg);transition:color .3s}
+.tl .dot{width:14px;height:14px;border-radius:50%;background:#2E2E36;margin-top:3px;position:relative;z-index:1;transition:background .3s,box-shadow .3s}
+.tl b{display:block;font:600 15.5px var(--sans)}
+.tl small{display:block;color:var(--mute);font-size:13.5px;min-height:1.2em;transition:color .3s}
+.tl li.hit time{color:var(--rose)}
+.tl li.hit .dot{background:var(--rose);box-shadow:0 0 0 6px rgba(251,113,133,.15)}
+.tl li.hit small{color:#F5B3BF}
+.tl li.src .dot{background:var(--or);box-shadow:0 0 0 6px rgba(245,158,11,.2)}
+.tl s{order:2;color:var(--mute);font-size:11.5px;font-weight:400;margin-top:3px}
+.demo-f{padding:14px 18px;border-top:1px solid var(--line);font:500 13px var(--mono);color:var(--dim);min-height:48px}
+
+/* moteurs */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:30px 0}
+.stats div{border-top:1px solid var(--line);padding-top:12px}
+.stats b{display:block;font:900 clamp(42px,5vw,72px)/.9 var(--display);font-stretch:62%;font-variant-numeric:tabular-nums}
+.stats span{font-size:13.5px;color:var(--dim)}
+.cloud{display:grid;grid-template-columns:repeat(auto-fill,minmax(11px,1fr));gap:3px;margin-top:10px}
+.cloud i{aspect-ratio:1/1;border-radius:2px;opacity:.85;cursor:help}
+.cloud i:hover{opacity:1;outline:2px solid #fff;outline-offset:1px}
+.cloud-t{min-height:3.2em;margin-top:14px;font:500 13px/1.5 var(--mono);color:var(--dim)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;font:500 12px var(--sans);color:var(--dim)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:2px}
+
+/* Saint-Luc */
+.stluc{background:radial-gradient(900px 500px at 80% 30%,rgba(124,92,255,.14),transparent 70%)}
+.cube{aspect-ratio:1/1;max-width:440px;width:100%;margin-inline:auto;position:relative}
+.cube canvas{width:100%;height:100%;display:block}
+
+/* OS */
+.shot{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 50px 140px -40px rgba(0,0,0,.95);background:var(--raise)}
 .shot img{display:block;width:100%;height:auto;aspect-ratio:1440/900;max-width:100%}
-.shot figcaption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid var(--line);font:500 12px var(--mono);color:var(--mute)}
-.chrome{display:flex;align-items:center;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line)}
-.chrome i{width:10px;height:10px;border-radius:50%;background:#2E2E33}
-.chrome span{margin-left:10px;font:500 12px var(--mono);color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.three{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:40px}
+@media(min-width:860px){.three{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.three article{border:1px solid var(--line);border-radius:16px;padding:22px;background:#0E0E11}
+.three b{display:block;font:900 30px/.95 var(--display);font-stretch:62%;text-transform:uppercase;margin-bottom:8px}
+.three p{margin:0;color:var(--dim);font-size:15.5px}
 
-.how{border-top:1px solid var(--line);padding-block:clamp(56px,8vw,112px)}
-.how .wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
-@media(min-width:900px){.how .wrap{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:start}}
-.how h2{margin:10px 0 18px;font:600 clamp(32px,4vw,52px)/1.02 var(--sans);letter-spacing:-.035em}
-.steps{display:grid;border-top:1px solid var(--line)}
-.steps div{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}
-.steps b{font:500 12px/1.7 var(--mono);color:var(--mute)}
-.steps h3{margin:0 0 4px;font:600 17px var(--sans);letter-spacing:-.01em}
-.steps p{margin:0;color:var(--dim);font-size:15px}
+/* univers */
+.unis{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:40px}
+.uni{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;border:1px solid var(--line);text-decoration:none;display:block;background:#0E0E11;transition:transform .2s,border-color .2s}
+.uni:hover{transform:translateY(-3px);border-color:#4A4A55}
+.uni canvas{position:absolute;inset:0;width:100%;height:100%}
+.uni span{position:absolute;left:0;right:0;bottom:0;padding:34px 16px 14px;background:linear-gradient(180deg,transparent,rgba(9,9,11,.94));display:grid;gap:3px}
+.uni b{font:900 24px/1 var(--display);font-stretch:62%;text-transform:uppercase}
+.uni small{font:500 11.5px var(--mono);color:var(--dim)}
 
-.end{border-top:1px solid var(--line);padding-block:clamp(64px,10vw,140px) 48px}
-.end h2{margin:0 0 28px;font:600 clamp(48px,8vw,112px)/.95 var(--sans);letter-spacing:-.05em;max-width:12ch}
-.end .row{display:flex;gap:10px;flex-wrap:wrap}
+/* ateliers */
+.ats{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:40px}
+@media(min-width:760px){.ats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.at{display:grid;gap:12px;text-decoration:none;border:1px solid var(--line);border-radius:16px;padding:12px;background:#0E0E11;transition:border-color .2s}
+.at:hover{border-color:#4A4A55}
+.at img{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top left;border-radius:10px;display:block;max-width:100%}
+.at div{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:0 4px 4px;flex-wrap:wrap}
+.at b{font:700 17px var(--sans)}
+.at small{color:var(--dim);font-size:13.5px}
+
+/* fin */
+.end{padding-block:clamp(90px,14vw,180px) 48px}
+.end h2{margin:0 0 30px;font:900 clamp(64px,11vw,170px)/.82 var(--display);font-stretch:62%;text-transform:uppercase;letter-spacing:-.02em}
 .foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-top:clamp(56px,8vw,96px);padding-top:24px;border-top:1px solid var(--line);font-size:13.5px;color:var(--dim)}
 .foot b{display:block;color:var(--fg);font-weight:600;margin-bottom:8px}
 .foot a{display:block;text-decoration:none;padding:2px 0}
 .foot a:hover{color:var(--fg)}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+.rv{opacity:0;transform:translateY(24px);transition:opacity .8s,transform .8s}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}.btn,.uni{transition:none}}
 </style>
 
-<header class="bar"><div class="wrap">
- <a class="mark" href="#top" aria-label="Le monde AIME, haut de page"><i>A</i>AIME®</a>
- <nav class="nav" aria-label="Ateliers"><a href="#bureau">Bureau</a><a href="#stitchlab">Stitchlab</a><a href="#jour-j">Jour J</a><a href="#docs">Docs</a><a href="#web">Web</a><a href="#accessibilite">Accessibilité</a><a href="#buro">Buro</a><a href="#supports">Supports</a><a href="#moteurs">Moteurs</a></nav>
+<header class="bar" id="bar"><div class="wrap">
+ <a class="mark" href="#top">AIME<sup>®</sup></a>
+ <nav class="nav" aria-label="Sommaire"><a href="#grille">L'histoire</a><a href="#causalite">Causalité</a><a href="#moteurs">1 191 moteurs</a><a href="#os">Le Bureau</a><a href="#univers">Univers</a><a href="#ateliers">Ateliers</a></nav>
  <a class="btn" data-at="bureau" href="/bureau/">Entrer dans le Bureau</a>
 </div></header>
 
 <main id="top">
-<section class="hero"><div class="wrap">
- <span class="tag"><b>Nouveau</b>Le Bureau, un OS dans le navigateur</span>
- <h1>Le monde AIME. <span>Un bureau, huit ateliers.</span></h1>
- <div class="hero-row">
-  <div>
-   <p>Une grille de point de croix, un mariage, une facture, un site : chaque atelier fait un métier, et tous se passent le même projet. Vous saisissez une fois, le reste suit.</p>
-   <div class="hero-cta"><a class="btn" data-at="bureau" href="/bureau/">Entrer dans le Bureau →</a><a class="btn ghost" href="#stitchlab">Voir les ateliers</a></div>
-  </div>
-  <div class="hero-meta" aria-label="En chiffres">
-   <div><b>154</b><span>formats prêts à imprimer et publier</span></div>
-   <div><b>489</b><span>couleurs DMC pour broder</span></div>
-   <div><b>39</b><span>métiers et moments de vie</span></div>
+<section class="hero" aria-labelledby="h-hero">
+ <canvas id="heroCv" aria-hidden="true"></canvas>
+ <div class="wrap">
+  <span class="k">Des années de recherche · une histoire</span>
+  <h1 id="h-hero"><span>Le monde</span><em>AIME</em></h1>
+  <div class="acr" aria-label="AIME : Architecture Intelligente de la Mémoire Ensemble"><span><b>A</b>rchitecture</span><span><b>I</b>ntelligente</span><span>de la <b>M</b>émoire</span><span><b>E</b>nsemble</span></div>
+  <div class="hero-low">
+   <p>Une grille de point de croix. Un voyage entre les générations, du passé vers le futur. Dix-huit ans de mariages, chaque semaine, au saxophone. Et au bout du chemin : la causalité, 1 191 moteurs, et un bureau pour chacun.</p>
+   <div class="cta"><a class="btn grad" href="#grille">Lire l'histoire</a><a class="btn ghost" data-at="bureau" href="/bureau/">Entrer dans le Bureau →</a></div>
   </div>
  </div>
-</div></section>
+ <span class="cue" aria-hidden="true">Défiler ↓</span>
+</section>
 
-<section class="case" id="bureau" aria-labelledby="h-bur"><div class="wrap">
- <div class="case-head">
-  <div><span class="k">Le Bureau</span><h2 id="h-bur">Un OS pour tous les ateliers</h2></div>
-  <div class="case-text"><p>Un Dock, des fenêtres, des dossiers en arbre. Chaque app s'ouvre à côté des autres, et le panneau « Pour continuer » propose l'étape suivante sur le même projet.</p><ul><li>Dock</li><li>Fenêtres</li><li>Dossiers</li><li>Pour continuer</li></ul><a class="btn ghost" data-at="bureau" href="/bureau/">Ouvrir le Bureau →</a></div>
+<nav class="toc" aria-label="Chapitres"><div class="wrap"><ol>
+ <li><a href="#grille"><span>I</span><b>La grille</b></a></li>
+ <li><a href="#temps"><span>II</span><b>Le temps</b></a></li>
+ <li><a href="#samedis"><span>III</span><b>Les samedis</b></a></li>
+ <li><a href="#causalite"><span>IV</span><b>La causalité</b></a></li>
+ <li><a href="#moteurs"><span>V</span><b>Recommencer</b></a></li>
+ <li><a href="#saint-luc"><span>VI</span><b>Saint-Luc</b></a></li>
+ <li><a href="#os"><span>VII</span><b>AIME</b></a></li>
+</ol></div></nav>
+
+<section class="ch" id="grille" style="--c:var(--rose)" aria-labelledby="h-grille"><div class="wrap ch-grid">
+ <div class="rv">
+  <span class="num">I · La grille</span>
+  <h2 id="h-grille">Tout commence par un point <i>une case, une couleur, une croix</i></h2>
+  <p class="big">Avant tout le reste, il y a eu le point de croix.</p>
+  <p>En cherchant comment une photo devient une broderie, j'ai passé des années sur la grille : tramer une image, trouver le fil DMC le plus juste, compter les écheveaux, imprimer le patron. Et j'ai compris qu'une grille sait tout ranger. Des couleurs, mais aussi des heures, des personnes, des tâches, des souvenirs.</p>
+  <p>Cette grammaire est devenue le socle de tout l'écosystème : chaque écran AIME est, au fond, une grille.</p>
+  <ul class="facts"><li>489 couleurs DMC</li><li>36 moteurs de broderie</li><li>Photo → patron PDF</li></ul>
  </div>
- <figure class="shot"><img src="/sup/monde-os.webp" alt="Le Bureau AIME : Stitchlab et Studio Docs ouverts dans deux fenêtres, le Dock en bas, les suggestions en haut à droite" width="1440" height="900"><figcaption><span>aimestudio.vercel.app/bureau</span><span>Stitchlab et Studio Docs sur le même projet</span></figcaption></figure>
+ <figure class="art rv" style="margin:0"><canvas id="cvStitch" aria-hidden="true"></canvas><figcaption>Un cœur brodé, point par point</figcaption></figure>
 </div></section>
 
-<section class="case" id="stitchlab" aria-labelledby="h-st"><div class="wrap">
- <div class="case-head">
-  <div><span class="k">Stitchlab · broderie</span><h2 id="h-st">Des grilles de point de croix, prêtes à broder</h2></div>
-  <div class="case-text"><p>Une photo, un prénom ou une toile vierge devient un patron complet avec les vraies couleurs DMC. Chaque point se retouche à la main : croix, demi-points, quarts, points arrière, nœuds, perles.</p><ul><li>489 couleurs DMC</li><li>PDF du patron</li><li>OXS</li><li>Visuel de vente</li></ul><a class="btn ghost" data-at="stitchlab" href="/stitchlab/">Ouvrir Stitchlab →</a></div>
+<section class="ch" id="temps" style="--c:var(--or)" aria-labelledby="h-temps"><div class="wrap">
+ <div class="rv" style="max-width:760px">
+  <span class="num">II · Le temps</span>
+  <h2 id="h-temps">Un voyage dans le temps <i>entre les générations</i></h2>
+  <p>La grille est devenue une machine à remonter le temps. Ce que nos aînés nous laissent, ce que nous vivons ensemble, ce que nous transmettrons : la mémoire n'appartient à personne seul, elle se tisse entre les générations.</p>
  </div>
- <figure class="shot"><div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>Stitchlab · Atelier Fil Rouge</span></div><img src="/sup/monde-stitch.webp" alt="Stitchlab : une grille de 110 × 60 points avec le texte Atelier Fil Rouge brodé en croix, la palette DMC à droite" width="1440" height="900"></figure>
-</div></section>
-
-<section class="case" id="jour-j" aria-labelledby="h-jj"><div class="wrap">
- <div class="case-head">
-  <div><span class="k">Timeline Jour J · événement</span><h2 id="h-jj">Tout un mariage sur une ligne de temps</h2></div>
-  <div class="case-text"><p>Un an avant, le jour même minute par minute, un an après. Le rétroplanning se coche tout seul, les invités répondent par leur lien, le plan de table se fait sans conflit.</p><ul><li>Rétroplanning</li><li>Invités</li><li>Prestataires</li><li>Poste de pilotage</li></ul><a class="btn ghost" data-at="jour-j" href="/v1/">Ouvrir la Timeline →</a></div>
- </div>
- <figure class="shot"><div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>Timeline Jour J · Camille &amp; Samuel</span></div><img src="/sup/monde-jourj.webp" alt="Timeline Jour J : l'événement Camille et Samuel prêt à 26 %, avec les tâches à faire maintenant" width="1440" height="900"></figure>
-</div></section>
-
-<section class="case" id="docs" aria-labelledby="h-docs"><div class="wrap">
- <div class="case-head">
-  <div><span class="k">Studio Docs · documents</span><h2 id="h-docs">Devis et factures, sans rien oublier</h2></div>
-  <div class="case-text"><p>Soixante et un documents avec les mentions obligatoires de votre métier, de la facture électronique Factur-X au rapport d'activité. Les coordonnées viennent du projet, les totaux se calculent.</p><ul><li>Factur-X</li><li>61 documents</li><li>Numérotation suivie</li></ul><a class="btn ghost" data-at="docs" href="/docs/">Ouvrir Studio Docs →</a></div>
- </div>
- <figure class="shot"><div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>Studio Docs · Durand Rénovation</span></div><img src="/sup/monde-docs.webp" alt="Studio Docs : la facture de Durand Rénovation au centre, le contenu à gauche et les contrôles à droite" width="1440" height="900"></figure>
-</div></section>
-
-<section class="case" id="web" aria-labelledby="h-web"><div class="wrap">
- <div class="case-head">
-  <div><span class="k">Web Studio · sites</span><h2 id="h-web">Un site complet, contrôlé avant publication</h2></div>
-  <div class="case-text"><p>Pages, sections, tailles d'écran. Le site reprend les textes du projet, et douze contrôles d'accessibilité passent avant chaque mise en ligne.</p><ul><li>Multipage</li><li>Mobile</li><li>12 contrôles WCAG</li></ul><a class="btn ghost" data-at="web" href="/web/">Ouvrir Web Studio →</a></div>
- </div>
- <figure class="shot"><div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>Web Studio</span></div><img src="/sup/monde-web.webp" alt="Web Studio : l'aperçu du site au centre, les sections et les contrôles d'accessibilité à droite" width="1440" height="900"></figure>
-</div></section>
-
-<section class="case" id="accessibilite" aria-labelledby="h-ac"><div class="wrap">
- <div class="case-head">
-  <div><span class="k">Accessibilité · European Accessibility Act</span><h2 id="h-ac">Ce que la loi attend, prêt à remettre</h2></div>
-  <div class="case-text"><p>Depuis juin 2025, l'accessibilité est obligatoire. Notice facile à lire, version gros caractères, plaques en braille, déclaration d'accessibilité. Pour un site existant, AccessiAudit produit le rapport.</p><ul><li>FALC</li><li>Braille</li><li>Gros caractères</li><li>Déclaration</li></ul><div class="row"><a class="btn ghost" data-at="accessibilite" href="/accessibilite/">Ouvrir l'atelier →</a><a class="btn ghost" href="https://accessi-audit-flow.base44.app" target="_blank" rel="noopener">AccessiAudit ↗</a></div></div>
- </div>
- <figure class="shot"><div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>Accessibilité · Organisme public</span></div><img src="/sup/monde-acc.webp" alt="Atelier Accessibilité : site, signalétique et documents accessibles d'une même campagne" width="1440" height="900"></figure>
-</div></section>
-
-<section class="case" id="buro" aria-labelledby="h-buro"><div class="wrap">
- <div class="case-head">
-  <div><span class="k">Buro · équipe</span><h2 id="h-buro">Badges, pointage, cartes de chacun</h2></div>
-  <div class="case-text"><p>Un badge par personne, en série depuis votre liste. La badgeuse note l'arrivée, la pause et le départ, sur place ou à distance.</p><ul><li>Badges</li><li>Badgeuse</li><li>Cartes AIME</li></ul><a class="btn ghost" data-at="buro" href="/buro/">Ouvrir Buro →</a></div>
- </div>
- <figure class="shot"><div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>Buro · Atelier Nord</span></div><img src="/sup/monde-buro.webp" alt="Buro : badges téléphone et carte, affiche « Badgez ici » et carte universelle" width="1440" height="900"></figure>
-</div></section>
-
-<section class="case" id="supports" aria-labelledby="h-sup"><div class="wrap">
- <div class="case-head">
-  <div><span class="k">Supports · tous les formats</span><h2 id="h-sup">Un contenu, tous vos supports</h2></div>
-  <div class="case-text"><p>Cartes, affiches, posts, faire-part, menus, signalétique : 154 formats composés à partir du même contenu, vus ici en mosaïque.</p><ul><li>154 formats</li><li>39 métiers</li><li>Mosaïque</li></ul><a class="btn ghost" data-at="bureau" href="/bureau/#supports">Ouvrir dans le Bureau →</a></div>
- </div>
- <figure class="shot"><img src="/sup/monde-mos.webp" alt="La mosaïque : tous les formats d'un même projet, une case par support" width="1440" height="900"></figure>
-</div></section>
-
-<section class="case" id="moteurs" aria-labelledby="h-mot"><div class="wrap">
- <div class="case-head">
-  <div><span class="k">Moteurs · l'inventaire</span><h2 id="h-mot">1 191 moteurs, rangés et expliqués</h2></div>
-  <div class="case-text"><p>Tout ce qui a été construit dans 130 dépôts, publics et privés, découpé en modules utilisables seuls : ce qu'on leur donne, ce qu'ils produisent, et un exemple concret de résultat. Plans de table, contrats, timbres, radio du jour J, scanner WCAG, calcul des droits d'intermittent…</p><ul><li>1 191 modules</li><li>28 familles</li><li>Exemple pour chacun</li></ul><a class="btn ghost" data-at="bureau" href="/bureau/#moteurs">Ouvrir Moteurs dans le Bureau →</a></div>
+ <div class="tri">
+  <article class="rv"><canvas data-art="passe" aria-hidden="true"></canvas><div><span class="k">Hier</span><h3>Le passé</h3><p>Archives, portraits, histoires de famille. Retrouver les visages et les liens qui nous ont précédés.</p></div></article>
+  <article class="rv"><canvas data-art="present" aria-hidden="true"></canvas><div><span class="k">Aujourd'hui</span><h3>Le présent</h3><p>Vivre l'instant à plusieurs : un jour J, un livre d'or, des photos partagées, une musique choisie ensemble.</p></div></article>
+  <article class="rv"><canvas data-art="futur" aria-hidden="true"></canvas><div><span class="k">Demain</span><h3>Le futur</h3><p>Transmettre : une capsule, un magazine, un livre. Et anticiper ce qui va arriver, avant que ça arrive.</p></div></article>
  </div>
 </div></section>
 
-<section class="how" aria-labelledby="h-how"><div class="wrap">
- <div><span class="k">Comment ça marche</span><h2 id="h-how">Une saisie, et chaque atelier fait sa part</h2><p style="color:var(--dim);margin:0;max-width:44ch">Les ateliers lisent le même projet. Ce que vous écrivez dans l'un sert aux autres, sans copier-coller.</p></div>
- <div class="steps">
-  <div><b>01</b><span><h3>Vous ouvrez un atelier</h3><p>Stitchlab pour un patron, la Timeline pour un mariage, Studio Docs pour un devis.</p></span></div>
-  <div><b>02</b><span><h3>Le projet se range tout seul</h3><p>Il apparaît dans Dossiers. Vous le classez dans vos propres dossiers d'un glisser-déposer.</p></span></div>
-  <div><b>03</b><span><h3>Le Bureau propose la suite</h3><p>Après un patron : le facturer, le vendre sur un site, en faire un visuel. Un clic ouvre l'atelier sur le même projet.</p></span></div>
-  <div><b>04</b><span><h3>Vos données restent chez vous</h3><p>Tout est gardé dans votre navigateur. Rien n'est envoyé sans que vous le décidiez.</p></span></div>
+<section class="ch" id="samedis" style="--c:var(--or)" aria-labelledby="h-sam"><div class="wrap ch-grid rev">
+ <div class="rv">
+  <span class="num">III · Les samedis</span>
+  <h2 id="h-sam">Dix-huit ans de mariages <i>chaque semaine, au saxophone</i></h2>
+  <p class="big">Depuis dix-huit ans, chaque semaine de ma vie, je joue du saxophone dans des mariages.</p>
+  <p>Vu depuis la scène, un mariage est un chef-d'œuvre fragile. Le traiteur prend du retard, la pluie déplace le vin d'honneur, un discours s'allonge, le photographe attend, la playlist saute un moment. Tout est lié, et tout bouge en même temps.</p>
+  <p>J'ai observé ce chaos samedi après samedi, noté, recommencé. Et une question ne m'a plus quitté : <strong>et si l'on pouvait voir les conséquences avant qu'elles n'arrivent ?</strong></p>
+  <div class="chaos" aria-label="Ce qui arrive un jour de mariage"><span style="--r:-2deg">Traiteur +40 min</span><span style="--r:1.5deg">Averse à 16 h</span><span style="--r:-1deg">Discours trop long</span><span style="--r:2deg">Photographe bloqué</span><span style="--r:-1.5deg">Table 7 en conflit</span><span style="--r:1deg">Coupure de son</span></div>
+ </div>
+ <div class="rv">
+  <div class="big-n">18 ans</div>
+  <div class="weeks" id="weeks" aria-label="18 ans de semaines, une case par semaine" role="img"></div>
+  <div class="wk-l"><span>Une case = une semaine</span><span>18 × 52</span></div>
+ </div>
+</div></section>
+
+<section class="ch" id="causalite" style="--c:var(--vio)" aria-labelledby="h-cau"><div class="wrap ch-grid">
+ <div class="rv">
+  <span class="num">IV · La causalité</span>
+  <h2 id="h-cau">Une contrariété au présent <i>montre ce qui se passerait dans le futur</i></h2>
+  <p class="big">C'est la découverte au cœur d'AIME.</p>
+  <p>Chaque moment dépend d'autres moments, chaque personne d'autres personnes. Quand quelque chose change, AIME suit le fil : il propage le changement à tout ce qui en dépend, montre l'onde de conséquences, et propose des solutions avant que la contrariété ne devienne un problème.</p>
+  <p>Né au cœur du mariage, ce principe vaut pour tout ce qui se vit à plusieurs : un festival, une entreprise, une vie.</p>
+  <ul class="facts"><li>Point Zéro</li><li>Ripple</li><li>Event OS</li><li>66 moteurs causaux</li></ul>
+ </div>
+ <div class="demo rv" aria-labelledby="demo-t">
+  <div class="demo-h"><b id="demo-t">Essayez : un samedi de juin</b>
+   <button type="button" data-cx="traiteur" aria-pressed="false">Traiteur +40 min</button>
+   <button type="button" data-cx="pluie" aria-pressed="false">Pluie à 16 h</button>
+   <button type="button" data-cx="photo" aria-pressed="false">Photographe absent</button>
+  </div>
+  <ol class="tl" id="tl"></ol>
+  <div class="demo-f" id="demoF" aria-live="polite">Choisissez une contrariété : l'onde se propage dans la journée.</div>
+ </div>
+</div></section>
+
+<section class="ch" id="moteurs" style="--c:var(--cyan)" aria-labelledby="h-mot"><div class="wrap">
+ <div class="rv" style="max-width:780px">
+  <span class="num">V · Recommencer</span>
+  <h2 id="h-mot">Des heures, des années <i>et 1 191 moteurs</i></h2>
+  <p class="big">Il y a eu des prototypes, des impasses, des recommencements. Des heures et des heures de travail et de réflexion.</p>
+  <p>Chaque essai a laissé quelque chose : un moteur qui fait une chose précise, et la fait bien. Un plan de table qui respecte les relations. Une grille qui devient un patron. Un contrat qui se remplit seul. Un scanner d'accessibilité. Aujourd'hui, ils sont tous rassemblés.</p>
+ </div>
+ <div class="stats rv"><div><b>130</b><span>dépôts, publics et privés</span></div><div><b>1 191</b><span>moteurs utilisables seuls</span></div><div><b>28</b><span>familles</span></div></div>
+ <div class="rv">
+  <span class="k">Chaque point est un moteur · survolez-les</span>
+  <div class="cloud" id="cloud" role="list" aria-label="Les 1 191 moteurs, un point chacun"></div>
+  <div class="cloud-t" id="cloudT" aria-live="polite">&nbsp;</div>
+  <div class="legend" id="legend"></div>
+ </div>
+</div></section>
+
+<section class="ch stluc" id="saint-luc" style="--c:var(--vio)" aria-labelledby="h-sl"><div class="wrap ch-grid rev">
+ <div class="rv">
+  <span class="num">VI · Saint-Luc</span>
+  <h2 id="h-sl">La boucle se referme <i>un achèvement</i></h2>
+  <p class="big">Il y a vingt-cinq ans, à Saint-Luc, mon sujet d'études était un cube : la MusicBox.</p>
+  <p>Une boîte où la musique, l'image et la mémoire se rencontraient. À l'époque, ce n'était qu'une idée et une maquette. Aujourd'hui, la grille, le temps, les samedis et la causalité ont rejoint ce cube : AIME en est l'aboutissement.</p>
+  <p>Ce qui n'était qu'un sujet d'étudiant est devenu un système complet.</p>
+ </div>
+ <div class="cube rv"><canvas id="cvCube" aria-hidden="true"></canvas></div>
+</div></section>
+
+<section class="ch" id="os" style="--c:var(--vert)" aria-labelledby="h-os"><div class="wrap">
+ <div class="ch-grid" style="align-items:end">
+  <div class="rv">
+   <span class="num">VII · AIME</span>
+   <h2 id="h-os">Un système d'exploitation <i>pour la mémoire de chacun</i></h2>
+  </div>
+  <div class="rv">
+   <p>Le Bureau AIME rassemble les 1 191 moteurs dans un seul espace, comme un ordinateur : un Dock, des fenêtres, des dossiers, et des univers à explorer. Chacun y compose son propre bureau, avec les modules dont il a besoin.</p>
+   <div class="cta"><a class="btn grad" data-at="bureau" href="/bureau/">Entrer dans le Bureau →</a></div>
+  </div>
+ </div>
+ <figure class="shot rv" style="margin-top:40px"><img src="/sup/monde-os2.webp" alt="Le Bureau AIME : l'univers Mariage en plein écran, dessiné en pixels, avec le carrousel des univers et le Dock" width="1440" height="900"></figure>
+ <div class="three">
+  <article class="rv"><b>Unique</b><p>Un bureau personnalisé, propre à chacun : vos univers, vos modules, vos dossiers, vos projets.</p></article>
+  <article class="rv"><b>Relié</b><p>Les bureaux se parlent : un couple, ses invités et ses prestataires travaillent sur la même ligne de temps.</p></article>
+  <article class="rv"><b>Universel</b><p>Un nouveau réseau social, pensé pour toute l'humanité : chacun sa mémoire, tous reliés.</p></article>
+ </div>
+</div></section>
+
+<section class="ch" id="univers" style="--c:var(--rose)" aria-labelledby="h-uni"><div class="wrap">
+ <div class="ch-grid" style="align-items:end">
+  <div class="rv"><span class="num">Les univers</span><h2 id="h-uni">Une carte, une mosaïque</h2></div>
+  <div class="rv"><p>Sur le Bureau, chaque univers s'ouvre en mosaïque : une case par module, une fonction précise par case. Et quand il faut enchaîner, des processus montrent l'ordre : de la photo au kit brodé, des invités au plan de table, du devis au paiement.</p></div>
+ </div>
+ <figure class="shot rv" style="margin-top:40px"><img src="/sup/monde-mosaique.webp" alt="La mosaïque de l'univers Broderie : un processus en cinq étapes, puis une case par module" width="1440" height="900" loading="lazy"></figure>
+ <div class="unis" id="unis"></div>
+</div></section>
+
+<section class="ch" id="ateliers" style="--c:var(--or)" aria-labelledby="h-at"><div class="wrap">
+ <div class="ch-grid" style="align-items:end">
+  <div class="rv"><span class="num">Les ateliers</span><h2 id="h-at">Déjà ouverts</h2></div>
+  <div class="rv"><p>Les premières apps du Dock, utilisables dès aujourd'hui, seules ou ensemble sur le même projet.</p></div>
+ </div>
+ <div class="ats">
+  <a class="at rv" data-at="stitchlab" href="/stitchlab/"><img src="/sup/monde-stitch.webp" alt="Stitchlab : une grille de point de croix avec la palette DMC" width="1440" height="900" loading="lazy"><div><b>Stitchlab</b><small>Grilles de point de croix</small></div></a>
+  <a class="at rv" data-at="jour-j" href="/v1/"><img src="/sup/monde-jourj.webp" alt="Timeline Jour J : un mariage sur une ligne de temps" width="1440" height="900" loading="lazy"><div><b>Timeline Jour J</b><small>Un mariage sur une ligne de temps</small></div></a>
+  <a class="at rv" data-at="docs" href="/docs/"><img src="/sup/monde-docs.webp" alt="Studio Docs : une facture avec ses mentions obligatoires" width="1440" height="900" loading="lazy"><div><b>Studio Docs</b><small>Devis, factures, contrats</small></div></a>
+  <a class="at rv" data-at="web" href="/web/"><img src="/sup/monde-web.webp" alt="Web Studio : l'aperçu d'un site et ses contrôles d'accessibilité" width="1440" height="900" loading="lazy"><div><b>Web Studio</b><small>Sites contrôlés avant publication</small></div></a>
+  <a class="at rv" data-at="accessibilite" href="/accessibilite/"><img src="/sup/monde-acc.webp" alt="Atelier Accessibilité : FALC, braille et déclaration" width="1440" height="900" loading="lazy"><div><b>Accessibilité</b><small>European Accessibility Act</small></div></a>
+  <a class="at rv" data-at="buro" href="/buro/"><img src="/sup/monde-buro.webp" alt="Buro : badges et pointage de l'équipe" width="1440" height="900" loading="lazy"><div><b>Buro</b><small>Badges, pointage, cartes</small></div></a>
  </div>
 </div></section>
 
 <section class="end" aria-labelledby="h-end"><div class="wrap">
  <h2 id="h-end">Entrez dans le monde AIME.</h2>
- <div class="row"><a class="btn" data-at="bureau" href="/bureau/">Entrer dans le Bureau →</a><a class="btn ghost" data-at="stitchlab" href="/stitchlab/">Commencer par Stitchlab</a></div>
+ <div class="cta"><a class="btn grad" data-at="bureau" href="/bureau/">Entrer dans le Bureau →</a><a class="btn ghost" href="#grille">Relire l'histoire</a></div>
  <div class="foot">
-  <div><b>AIME®</b>Le monde AIME</div>
+  <div><b>AIME®</b>Architecture Intelligente de la Mémoire Ensemble</div>
   <div><b>Ateliers</b><a data-at="stitchlab" href="/stitchlab/">Stitchlab</a><a data-at="jour-j" href="/v1/">Timeline Jour J</a><a data-at="docs" href="/docs/">Studio Docs</a><a data-at="web" href="/web/">Web Studio</a></div>
-  <div><b>Et aussi</b><a data-at="accessibilite" href="/accessibilite/">Accessibilité</a><a data-at="buro" href="/buro/">Buro</a><a data-at="image" href="/image/">Image</a><a data-at="bureau" href="/bureau/">Le Bureau</a></div>
+  <div><b>Et aussi</b><a data-at="accessibilite" href="/accessibilite/">Accessibilité</a><a data-at="buro" href="/buro/">Buro</a><a data-at="image" href="/image/">Image</a><a data-at="bureau" href="/bureau/#moteurs">Les 1 191 moteurs</a></div>
   <div><b>Crédits</b>Couleurs DMC : MakeBead, licence CC BY 4.0</div>
  </div>
 </div></section>
 </main>
 
 <script>
-(function(){var SITE=/^https?:$/.test(location.protocol)&&!/(^|\.)(claude\.ai|claudeusercontent\.com|claude\.site|claude\.com|anthropic\.com)$/.test(location.hostname);
- if(!SITE){var R='https://aimestudio.vercel.app';document.querySelectorAll('[data-at]').forEach(function(a){a.href=R+a.getAttribute('href');a.target='_blank';a.rel='noopener'});document.querySelectorAll('img[src^="/sup/"]').forEach(function(i){i.src=R+i.getAttribute('src')})}})();
+(function(){'use strict';
+var SITE=/^https?:$/.test(location.protocol)&&!/(^|\.)(claude\.ai|claudeusercontent\.com|claude\.site|claude\.com|anthropic\.com)$/.test(location.hostname),R=SITE?'':'https://aimestudio.vercel.app';
+if(!SITE){document.querySelectorAll('[data-at]').forEach(function(a){a.href=R+a.getAttribute('href');a.target='_blank';a.rel='noopener'});document.querySelectorAll('img[src^="/sup/"]').forEach(function(i){i.src=R+i.getAttribute('src')})}
+var $=function(s){return document.querySelector(s)},STILL=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches,DPR=Math.min(2,window.devicePixelRatio||1);
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function seeded(n){var s=n>>>0;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+function rgba(h,a){var n=parseInt(h.slice(1),16);return'rgba('+(n>>16)+','+(n>>8&255)+','+(n&255)+','+a+')'}
+var PAL=['#FB7185','#F59E0B','#7C5CFF','#22D3EE','#4ADE80','#F472B6'];
+/* barre */
+var bar=$('#bar');addEventListener('scroll',function(){bar.classList.toggle('on',scrollY>40)},{passive:true});
+/* apparitions */
+var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'}):null;
+document.querySelectorAll('.rv').forEach(function(el){if(io&&!STILL)io.observe(el);else el.classList.add('in')});
+/* canvas utilitaire : n'anime que s'il est visible */
+var LIVE=[];function live(cv,draw){var o={cv:cv,draw:draw,vis:false};LIVE.push(o);if('IntersectionObserver' in window)new IntersectionObserver(function(es){o.vis=es[0].isIntersecting;if(o.vis)kick()}).observe(cv);else o.vis=true;size(o);return o}
+function size(o){var r=o.cv.getBoundingClientRect();o.w=o.cv.width=Math.max(1,Math.round(r.width*DPR));o.h=o.cv.height=Math.max(1,Math.round(r.height*DPR));o.ctx=o.cv.getContext('2d')}
+var raf=0;function frame(t){raf=0;var any=false;LIVE.forEach(function(o){if(o.vis){o.draw(o,t/1000);any=true}});if(any&&!STILL)raf=requestAnimationFrame(frame)}
+function kick(){if(!raf)raf=requestAnimationFrame(frame)}
+addEventListener('resize',function(){clearTimeout(kick.t);kick.t=setTimeout(function(){LIVE.forEach(size);kick()},150)});
+/* ouverture : un champ de points de croix qui respire */
+(function(){var cv=$('#heroCv'),P=[],R=seeded(5);live(cv,function(o,t){var c=o.ctx,W=o.w,H=o.h,cell=Math.round(14*DPR),s=cell-Math.round(4*DPR);c.fillStyle='#09090B';c.fillRect(0,0,W,H);
+ var g=c.createRadialGradient(W*.72,H*.35,0,W*.72,H*.35,Math.max(W,H)*.7);g.addColorStop(0,'rgba(124,92,255,.22)');g.addColorStop(.5,'rgba(251,113,133,.07)');g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.fillRect(0,0,W,H);
+ var cols=Math.ceil(W/cell),rows=Math.ceil(H/cell);
+ for(var y=0;y<rows;y++)for(var x=0;x<cols;x++){var nx=x/cols,ny=y/rows,v=Math.sin(nx*6.2+t*.35)*Math.cos(ny*5.1-t*.27)+Math.sin((nx+ny)*9-t*.5)*.6+(nx-.2)*1.2-(ny-.1)*.6;if(v<.55)continue;var h=((x*7+y*13)%97)/97,col=PAL[Math.floor((nx*2.2+ny+h*.6)*2)%PAL.length],a=Math.min(.9,(v-.55)*1.4)*(.55+.45*Math.sin(t*1.7+h*12));c.fillStyle=rgba(col,a.toFixed(3));c.fillRect(x*cell,y*cell,s,s)}});
+})();
+/* I : un cœur brodé point par point */
+(function(){var cv=$('#cvStitch');var N=29,pts=[],R=seeded(3);for(var y=0;y<N;y++)for(var x=0;x<N;x++){var X=(x-N/2+.5)/(N*.38),Y=-(y-N/2+.5)/(N*.38)+.25,v=Math.pow(X*X+Y*Y-1,3)-X*X*Y*Y*Y;if(v<0)pts.push([x,y,v>-.05?0:(Y>.55?2:1),R()])}pts.sort(function(a,b){return a[1]-b[1]||a[0]-b[0]});var C=['#BE185D','#FB7185','#F472B6'];
+ live(cv,function(o,t){var c=o.ctx,W=o.w,H=o.h,cell=Math.min(W,H)/(N+2),ox=(W-cell*N)/2,oy=(H-cell*N)/2;c.fillStyle='#0D0D10';c.fillRect(0,0,W,H);c.strokeStyle='rgba(255,255,255,.05)';c.lineWidth=1;for(var i=0;i<=N;i++){c.beginPath();c.moveTo(ox+i*cell,oy);c.lineTo(ox+i*cell,oy+N*cell);c.stroke();c.beginPath();c.moveTo(ox,oy+i*cell);c.lineTo(ox+N*cell,oy+i*cell);c.stroke()}
+  var n=STILL?pts.length:Math.floor(((t*60)%(pts.length+90))),m=Math.min(n,pts.length);c.lineCap='round';c.lineWidth=Math.max(1.5,cell*.2);
+  for(var k=0;k<m;k++){var p=pts[k],x=ox+p[0]*cell,y=oy+p[1]*cell,q=cell*.2;c.strokeStyle=C[p[2]];c.beginPath();c.moveTo(x+q,y+q);c.lineTo(x+cell-q,y+cell-q);c.moveTo(x+cell-q,y+q);c.lineTo(x+q,y+cell-q);c.stroke()}})})();
+/* II : passé, présent, futur */
+document.querySelectorAll('[data-art]').forEach(function(cv){var k=cv.dataset.art,col=k==='passe'?['#F59E0B','#B45309']:k==='present'?['#FB7185','#F472B6']:['#7C5CFF','#22D3EE'];
+ live(cv,function(o,t){var c=o.ctx,W=o.w,H=o.h,cell=Math.round(10*DPR),s=cell-Math.round(3*DPR),cols=Math.ceil(W/cell),rows=Math.ceil(H/cell);c.fillStyle='#0E0E11';c.fillRect(0,0,W,H);
+  for(var y=0;y<rows;y++)for(var x=0;x<cols;x++){var nx=x/cols,ny=y/rows,v;
+   if(k==='passe')v=(1-nx)*.9-ny*.5+Math.sin(x*1.3+y*.7)*.15-(Math.sin(t*.4+x*.3)>.9?.3:0);
+   else if(k==='present')v=1-Math.abs(Math.hypot(nx-.5,(ny-.35)*1.3)-.22-.03*Math.sin(t*2))*7-ny*.5;
+   else v=nx*.95-ny*.45+.15*Math.sin(t*.8+x*.4-y*.2);
+   if(v<.35)continue;var a=Math.min(.85,(v-.35)*1.6);c.fillStyle=rgba(col[(x+y)%2],a.toFixed(3));c.fillRect(x*cell,y*cell,s,s)}
+  var g=c.createLinearGradient(0,H*.35,0,H);g.addColorStop(0,'rgba(14,14,17,0)');g.addColorStop(1,'rgba(14,14,17,.96)');c.fillStyle=g;c.fillRect(0,0,W,H)})});
+/* III : les semaines */
+(function(){var el=$('#weeks');var h='';for(var i=0;i<18*52;i++)h+='<i></i>';el.innerHTML=h;var cells=el.children,done=false;
+ function fill(){if(done)return;done=true;if(STILL){for(var i=0;i<cells.length;i++)cells[i].className='on';return}var i=0;(function step(){for(var k=0;k<24&&i<cells.length;k++,i++){cells[i].className='on';var yr=(i/52|0)/17;cells[i].style.setProperty('--c2','hsl('+Math.round(36-60*yr+(yr>.5?-40*(yr-.5):0))+' 90% '+(60+((i*7)%5))+'%)')}if(i<cells.length)requestAnimationFrame(step)})()}
+ if('IntersectionObserver' in window)new IntersectionObserver(function(es){if(es[0].isIntersecting)fill()},{threshold:.3}).observe(el);else fill()})();
+/* IV : la démonstration causale */
+(function(){var D=[{id:'ceremonie',t:870,n:'Cérémonie laïque',w:'jardin'},{id:'photos',t:930,n:'Photos de groupe',w:'jardin'},{id:'vin',t:960,n:'Vin d\'honneur',w:'jardin'},{id:'entree',t:1170,n:'Entrée des mariés',w:'salle'},{id:'diner',t:1200,n:'Dîner',w:'salle'},{id:'bal',t:1350,n:'Ouverture du bal',w:'salle'},{id:'piece',t:1410,n:'Pièce montée',w:'salle'}];
+ var CX={traiteur:{src:'diner',why:'Le traiteur arrive 40 min plus tard',fx:{diner:40,bal:40,piece:40},note:{diner:'Service décalé de 40 min',bal:'Le DJ doit rester plus tard',piece:'Pièce montée après minuit : prévenir le pâtissier',entree:'Prolonger l\'animation au saxophone'},sol:'Solution proposée : allonger le vin d\'honneur de 30 min, prévenir DJ et pâtissier.'},
+  pluie:{src:'vin',why:'Averse prévue à 16 h',fx:{vin:0,photos:-15},note:{photos:'Avancées de 15 min, avant la pluie',vin:'Bascule sous la tente',ceremonie:'Garder les parapluies à l\'entrée'},sol:'Solution proposée : avancer les photos, monter la tente, prévenir le traiteur pour le service au sec.'},
+  photo:{src:'photos',why:'Le photographe ne peut pas venir',fx:{},note:{photos:'Remplaçant à trouver avant 15 h 30',ceremonie:'Désigner un témoin pour les photos',entree:'Le vidéaste couvre l\'entrée'},sol:'Solution proposée : trois photographes disponibles ce samedi dans un rayon de 30 km.'}};
+ var cur=null;function hm(m){m=(m+1440)%1440;return String(m/60|0).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
+ function render(){var c=cur&&CX[cur];$('#tl').innerHTML=D.map(function(d){var dt=c&&c.fx[d.id]||0,hit=c&&(d.id in c.fx||c.note[d.id]);return'<li class="'+(hit?'hit':'')+(c&&c.src===d.id?' src':'')+'"><time>'+(dt?'<s>'+hm(d.t)+'</s>':'')+hm(d.t+dt)+'</time><span class="dot"></span><span><b>'+esc(d.n)+'</b><small>'+esc(c&&c.note[d.id]||'')+'</small></span></li>'}).join('');
+  $('#demoF').textContent=c?c.why+' → '+Object.keys(c.note).length+' moments touchés. '+c.sol:'Choisissez une contrariété : l\'onde se propage dans la journée.'}
+ document.querySelectorAll('[data-cx]').forEach(function(b){b.addEventListener('click',function(){cur=cur===b.dataset.cx?null:b.dataset.cx;document.querySelectorAll('[data-cx]').forEach(function(x){x.setAttribute('aria-pressed',String(x.dataset.cx===cur))});render()})});render()})();
+/* V : les 1 191 moteurs */
+var FAMC={'Broderie':'#F472B6','Événement':'#FBBF24','Mariage':'#FB7185','Documents':'#A78BFA','Contrats':'#C084FC','Web':'#22D3EE','Image':'#F87171','Couleur':'#F59E0B','Typographie':'#E879F9','Carte & profil':'#4ADE80','Planning':'#FACC15','Budget':'#34D399','Musique':'#818CF8','Magazine':'#FB923C','Cartographie':'#2DD4BF','3D':'#60A5FA','Jeu':'#F472B6','Données':'#38BDF8','Accessibilité':'#93C5FD','Système/OS':'#A3E635','Plan de table':'#F9A8D4','Invités':'#FDA4AF','Gestion':'#86EFAC','Médias':'#FCA5A5','Social':'#67E8F9','Design':'#D8B4FE','IA':'#7C5CFF','Autre':'#9CA3AF'};
+fetch(R+'/moteurs.json').then(function(r){return r.json()}).then(function(d){var L=[],fams={};d.repos.forEach(function(r){r.modules.forEach(function(m){var f=m.famille||'Autre';L.push([m.nom,f,m.fait,r.repo]);fams[f]=(fams[f]||0)+1})});
+ var ord=Object.keys(fams).sort(function(a,b){return fams[b]-fams[a]});L.sort(function(a,b){return ord.indexOf(a[1])-ord.indexOf(b[1])});
+ $('#cloud').innerHTML=L.map(function(x,i){return'<i role="listitem" tabindex="0" data-i="'+i+'" style="background:'+(FAMC[x[1]]||'#9CA3AF')+'" aria-label="'+esc(x[0])+'"></i>'}).join('');
+ $('#legend').innerHTML=ord.slice(0,14).map(function(f){return'<span><i style="background:'+(FAMC[f]||'#9CA3AF')+'"></i>'+esc(f)+' · '+fams[f]+'</span>'}).join('')+'<span>…</span>';
+ var show=function(e){var t=e.target.closest('[data-i]');if(!t)return;var x=L[+t.dataset.i];$('#cloudT').innerHTML='<b style="color:'+(FAMC[x[1]]||'#fff')+'">'+esc(x[1])+'</b> · '+esc(x[0])+' — '+esc((x[2]||'').slice(0,140))+' <span style="color:#6E6D77">('+esc(x[3])+')</span>'};
+ $('#cloud').addEventListener('mouseover',show);$('#cloud').addEventListener('focusin',show)}).catch(function(){$('#cloudT').textContent='Inventaire indisponible pour le moment.'});
+/* VI : le cube MusicBox en pixels */
+(function(){var cv=$('#cvCube');live(cv,function(o,t){var c=o.ctx,W=o.w,H=o.h;c.clearRect(0,0,W,H);var S=Math.min(W,H)*.25,cx=W/2,cy=H/2,a=STILL?.6:t*.35,b=.55,n=7,pts=[];
+ for(var i=0;i<n;i++)for(var j=0;j<n;j++)for(var k=0;k<n;k++){if(i>0&&i<n-1&&j>0&&j<n-1&&k>0&&k<n-1)continue;var x=(i/(n-1)-.5)*2,y=(j/(n-1)-.5)*2,z=(k/(n-1)-.5)*2,x1=x*Math.cos(a)-z*Math.sin(a),z1=x*Math.sin(a)+z*Math.cos(a),y1=y*Math.cos(b)-z1*Math.sin(b),z2=y*Math.sin(b)+z1*Math.cos(b),p=6/(6+z2);pts.push([cx+x1*S*p,cy+y1*S*p,z2,(i+j+k)%PAL.length,p])}
+ var pr=function(x,y,z){var x1=x*Math.cos(a)-z*Math.sin(a),z1=x*Math.sin(a)+z*Math.cos(a),y1=y*Math.cos(b)-z1*Math.sin(b),z2=y*Math.sin(b)+z1*Math.cos(b),p=6/(6+z2);return[cx+x1*S*p,cy+y1*S*p]};c.strokeStyle='rgba(196,181,253,.28)';c.lineWidth=1.5*DPR;[[-1,-1,-1,1,-1,-1],[-1,1,-1,1,1,-1],[-1,-1,1,1,-1,1],[-1,1,1,1,1,1],[-1,-1,-1,-1,1,-1],[1,-1,-1,1,1,-1],[-1,-1,1,-1,1,1],[1,-1,1,1,1,1],[-1,-1,-1,-1,-1,1],[1,-1,-1,1,-1,1],[-1,1,-1,-1,1,1],[1,1,-1,1,1,1]].forEach(function(e){var p1=pr(e[0],e[1],e[2]),p2=pr(e[3],e[4],e[5]);c.beginPath();c.moveTo(p1[0],p1[1]);c.lineTo(p2[0],p2[1]);c.stroke()});pts.sort(function(p,q){return q[2]-p[2]});pts.forEach(function(p){var s=Math.max(2,9*DPR*p[4]),al=.35+.55*(1-(p[2]+1.7)/3.4);c.fillStyle=rgba(PAL[p[3]],Math.max(.15,Math.min(.95,al)).toFixed(3));c.fillRect(p[0]-s/2,p[1]-s/2,s,s)})})})();
+/* les univers */
+var SH={mariage:function(x,y){var r=function(cx){var d=Math.abs(Math.hypot(x-cx,y)-.42);return Math.exp(-d*d/.004)};return Math.max(r(-.27),r(.27))},causalite:function(x,y){var r=Math.hypot(x+.5,y-.1);if(r<.07)return 1;return r>1.6?0:Math.pow(.5+.5*Math.cos(r*20),3)*Math.exp(-r*.8)},broderie:function(x,y){var X=x*1.2,Y=-y*1.2+.2,v=Math.pow(X*X+Y*Y-1,3)-X*X*Y*Y*Y;return v<0?(v>-.06?1:.55):0},memoire:function(x,y){if(Math.abs(y)>.86)return Math.abs(x)<.62&&Math.abs(y)<.94?1:0;var w=.07+.58*Math.abs(y);if(Math.abs(x)>w)return 0;if(Math.abs(x)>w-.09)return 1;return y>0?(y>.45?.8:.12):(y<-.6?.12:.7)},image:function(x,y){if(Math.abs(x)>.92||Math.abs(y)>.72)return 0;if(Math.abs(x)>.84||Math.abs(y)>.64)return 1;if(Math.hypot(x-.42,y+.3)<.16)return .95;var m=.6-.62*Math.max(0,1-Math.abs(x+.22)/.6),m2=.6-.38*Math.max(0,1-Math.abs(x-.4)/.4);return y>Math.min(m,m2)?.7:0},documents:function(x,y){var v=0;for(var k=0;k<3;k++){var cx=-.22+.2*k,cy=-.16+.16*k,dx=Math.abs(x-cx),dy=Math.abs(y-cy);if(dx<.42&&dy<.56)v=(dx>.36||dy>.5)?1:.06}return v},web:function(x,y){var r=Math.hypot(x,y);if(r>.84)return 0;if(r>.76)return 1;var v=0;[.5,.18].forEach(function(a){if(Math.abs(Math.hypot(x/a,y/.8)-1)*a<.03)v=.9});[0,-.42,.42].forEach(function(h){if(Math.abs(y-h)<.035)v=.85});return v||.05},accessibilite:function(x,y){var on=[1,0,1,1,1,0],v=0;[-.3,.3].forEach(function(cx,ci){[-.6,0,.6].forEach(function(cy,ri){var d=Math.hypot(x-cx,y-cy);if(on[ci*3+ri]){if(d<.22)v=1}else if(Math.abs(d-.17)<.04)v=.7})});return v},territoires:function(x,y){var v=x*x*.9+y*y*1.3+.22*Math.sin(3*x+1)*Math.cos(2.4*y);if(v>.95)return 0;var f=(v*7)%1;return f<.2?1:(v<.08?.9:0)},bureau:function(x,y){var v=0;[-.6,0,.6].forEach(function(cx){[-.6,0,.6].forEach(function(cy){var dx=Math.abs(x-cx),dy=Math.abs(y-cy);if(dx<.22&&dy<.22)v=(dx>.15||dy>.15)?1:.35})});return v}};
+fetch(R+'/univers.json').then(function(r){return r.json()}).then(function(d){var box=$('#unis');box.innerHTML=d.univers.map(function(u){var s={};u.aspects.forEach(function(a){a.k.forEach(function(k){s[k]=1})});return'<a class="uni rv in" data-at="bureau" href="/bureau/#u.'+u.id+'"><canvas aria-hidden="true"></canvas><span><b>'+esc(u.titre)+'</b><small>'+Object.keys(s).length+' moteurs · '+esc(u.sous)+'</small></span></a>'}).join('');
+ if(!SITE)box.querySelectorAll('[data-at]').forEach(function(a){a.href=R+a.getAttribute('href');a.target='_blank';a.rel='noopener'});
+ box.querySelectorAll('canvas').forEach(function(cv,i){var u=d.univers[i],f=SH[u.id]||SH.bureau,Rn=seeded(i*31+7);live(cv,function(o,t){var c=o.ctx,W=o.w,H=o.h,cell=Math.round(7*DPR),sz=cell-Math.round(2*DPR),S=Math.min(W*.95,H*1.2),cx=W*.6,cy=H*.42;c.fillStyle='#0E0E11';c.fillRect(0,0,W,H);var g=c.createRadialGradient(cx,cy,0,cx,cy,W*.7);g.addColorStop(0,rgba(u.c[0],.22));g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.fillRect(0,0,W,H);
+  for(var y=0;y<H;y+=cell)for(var x=0;x<W;x+=cell){var v=f((x-cx)/(S/2),(y-cy)/(S/2));if(v<.05)continue;var h=((x*13+y*7)/cell)%17/17;if(h>v*1.05+.02)continue;var a=Math.min(1,v*.85+.15)*(.6+.4*Math.sin(t*1.4+h*20));c.fillStyle=rgba(u.c[Math.floor(h*3)],a.toFixed(3));c.fillRect(x,y,sz,sz)}})})}).catch(function(){});
+kick();
+})();
 </script>
 
 </html>
