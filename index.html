@@ -989,6 +989,40 @@ body.app #phone::before,body.app #phone::after,body.app .status,body.app .homeba
   body.app #iBtn::after{content:"Ajouter";margin-left:8px;font-size:14px}
 }
 
+
+/* v72 · atlas : même entrée que le Studio */
+.atl{background:#141416;color:#fff;--c:230px;font-family:var(--disp,inherit)}
+.atl-intro,.atl-head{padding:clamp(36px,6vw,72px) clamp(16px,3vw,32px) 32px;max-width:1240px;display:grid;gap:16px}
+.atl-eye{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#A9AAB0;margin:0}
+.atl-intro h1{margin:0;font-family:var(--head);font-weight:800;font-size:clamp(46px,7.4vw,112px);line-height:.9;letter-spacing:-.03em}
+.atl-intro p:not(.atl-eye),.atl-head p{margin:0;font-size:18px;line-height:1.5;color:#C3C4CA;max-width:62ch}
+.atl-head h1{margin:0;font-family:var(--head);font-weight:800;font-size:clamp(60px,11vw,168px);line-height:.86;letter-spacing:-.03em}
+.atl-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--c),1fr));grid-auto-rows:var(--c);grid-auto-flow:dense}
+.atl-d,.atl-c{position:relative;border:0;margin:0;cursor:pointer;overflow:hidden;font:inherit;color:#141416;text-align:left;text-decoration:none;outline-offset:-4px}
+.atl-d:focus-visible,.atl-c:focus-visible{outline:3px solid #141416}
+.atl-d{padding:18px 18px 0;display:flex;flex-direction:column;align-items:flex-start}
+.atl-d b{position:relative;z-index:2;font-family:var(--head);font-weight:800;font-size:clamp(18px,1.9vw,28px);line-height:.95;letter-spacing:-.02em;overflow-wrap:break-word;max-width:100%}
+.atl-d.big b{font-size:clamp(52px,6.8vw,108px)}.atl-d.long b{font-size:clamp(15px,1.5vw,22px)}
+.atl-n{position:relative;z-index:2;display:block;margin-top:8px;font-family:var(--mono);font-size:11.5px;opacity:.72}
+.atl-pv{position:absolute;right:9%;bottom:-14%;transform:rotate(-4deg);transition:transform .35s;pointer-events:none}
+.atl-pv img{display:block;max-width:150px;max-height:170px;width:auto;height:auto;box-shadow:0 22px 44px -20px rgba(0,0,0,.5);border-radius:3px}
+.atl-d.big .atl-pv img{max-width:220px;max-height:280px}
+.atl-d:hover .atl-pv{transform:rotate(0) translateY(-10px)}
+.atl-c{padding:0;display:block}.atl-c .atl-pv{right:auto;left:50%;bottom:auto;top:46%;transform:translate(-50%,-34%) rotate(-3deg)}.atl-c:hover .atl-pv{transform:translate(-50%,-38%) rotate(0)}
+.atl-t{position:absolute;left:14px;top:10px;z-index:2;font-family:var(--head);font-weight:800;font-size:calc(var(--c)*.17);line-height:1;letter-spacing:-.02em;white-space:nowrap}
+.atl-x{position:absolute;left:14px;right:14px;bottom:12px;z-index:3;display:grid;gap:2px}
+.atl-x b{font-size:14px;line-height:1.25;background:rgba(255,255,255,.92);border-radius:10px;padding:5px 10px;justify-self:start;max-width:100%}
+.atl-x small{font-family:var(--mono);font-size:11px;opacity:.75;padding-left:4px}
+.atl-c.done .atl-x b{text-decoration:line-through;opacity:.7}
+.atl-f{position:absolute;right:12px;top:14px;z-index:4;font-size:12px;font-weight:600;background:#141416;color:#fff;border-radius:999px;padding:5px 10px;text-decoration:none}
+.atl-ov{position:fixed;inset:0;z-index:85;overflow-y:auto;display:none}.atl-ov.on{display:block}
+body.atlopen{overflow:hidden}
+.atl-bar{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;min-height:57px;box-sizing:border-box;background:rgba(20,20,22,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1)}
+.atl-logo{border:0;background:none;color:#fff;cursor:pointer;font-family:var(--head);font-weight:800;font-size:22px;padding:0 8px 0 0}.atl-logo sup{font-size:.4em}
+.atl-sp{flex:1}.atl-b{border:1px solid rgba(255,255,255,.22);background:transparent;color:#fff;border-radius:999px;padding:8px 13px;font:inherit;font-weight:600;font-size:12.5px;cursor:pointer;text-decoration:none;white-space:nowrap}.atl-b:hover{background:rgba(255,255,255,.1)}.atl-b.solid{background:#fff;color:#141416}
+.atl-phn{display:flex;gap:6px;flex-wrap:wrap}.atl-phn a{border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:999px;padding:9px 14px;font-weight:600;font-size:13px;text-decoration:none}.atl-phn a:hover{background:rgba(255,255,255,.1)}
+.atl-ph h2{display:flex;align-items:baseline;gap:12px;margin:0;padding:34px clamp(16px,3vw,32px) 14px}.atl-ph h2 span{font-family:var(--head);font-weight:800;font-size:clamp(34px,4vw,56px);letter-spacing:-.02em}.atl-ph h2 em{font-style:normal;font-family:var(--mono);font-size:12px;color:#A9AAB0}
+@media(max-width:700px){.atl{--c:150px}.atl-d{padding:12px 12px 0}.atl-d b{font-size:16px}.atl-d.big b{font-size:44px}.atl-pv img{max-width:90px;max-height:110px}.atl-d.big .atl-pv img{max-width:140px;max-height:170px}.atl-x b{font-size:12px}.atl-b:not(.solid){display:none}.atl-b[data-atlgo="home"]{display:inline-flex}}
 /* v71 · poste de pilotage du jour J */
 #cockpit{position:fixed;inset:0;z-index:70;background:#f4f4f2;color:#111;display:none;flex-direction:column;overflow:hidden}
 #cockpit.on{display:flex}
@@ -1127,7 +1161,7 @@ const RAW=[
 ["22:15",0,0,"Surprises","Vidéo, chanson ou jeu préparé par les témoins.",["Matériel vidéo testé","Durée annoncée"],["Témoins"],[["Durée","d"]]],
 ["23:00",0,1,"Pièce montée","Découpe du gâteau, champagne, et fontaines froides si le lieu les autorise.",["Couteau et pelle à gâteau","Coupes servies","Accord du lieu pour les fontaines"],["Pâtissier","Traiteur","Invités"],[["Parts","g",1],["Bouteilles de champagne","g",.17]]],
 ["23:30",0,1,"Premier bal","Les mariés ouvrent le bal, puis invitent parents et témoins à les rejoindre.",["Morceau calé avec le DJ","Lumière réglée","Piste dégagée"],["Couple","DJ","Invités"],[["Minutes de danse","v",4]]],
-["23:45",0,1,"La piste","Le DJ monte en rythme. La piste devient le cœur de la nuit.",["Playlist validée","Morceaux interdits listés","Heure de fin du lieu"],["DJ","Invités"],[["Durée","d"],["Morceaux environ","v",80]]],
+["23:45",0,1,"La soirée","Le DJ monte en rythme. La piste devient le cœur de la nuit.",["Playlist validée","Morceaux interdits listés","Heure de fin du lieu"],["DJ","Invités"],[["Durée","d"],["Morceaux environ","v",80]]],
 ["01:00",1,0,"En-cas de nuit","Food truck, crêpes ou planches. Les danseurs ont faim.",["Service de nuit prévu","Eau à volonté"],["Traiteur","Invités"],[["Portions","g",.7]]],
 ["02:30",1,0,"Dernière chanson","L'heure de fin est souvent fixée par le contrat du lieu.",["Dernière chanson choisie","Lumières rallumées en douceur"],["DJ","Lieu"],[["Minutes","v",4]]],
 ["03:00",1,1,"Le départ","Haie d'honneur aux cierges magiques, la voiture part avec ses canettes.",["Cierges et briquets","Navettes ou taxis pour les invités","Chambres réservées"],["Couple","Témoins","Invités"],[["Cierges magiques","g",1],["Navettes de 50 places","g",.02]]],
@@ -3033,8 +3067,9 @@ function renderLand(){let L=$('#land');if(!L){L=document.createElement('section'
     const M=document.createElement('div');M.className='ld-mk';M.id='ldMk';M.setAttribute('role','dialog');M.setAttribute('aria-label','Créer ma carte');document.body.appendChild(M);}
   const c=myCard(),pre=c?normCard({...c}):{...ldDraft(),code:'AIME-·······'};
   L.innerHTML=`<header class="ld-bar"><div class="ld-in"><button type="button" class="ld-logo" data-ld="top">AIME<sup>®</sup></button>
-    <nav class="ld-nav"><a href="#ld-principe" data-ld-a="ld-principe">Le principe</a><a href="#ld-studio" data-ld-a="ld-studio">Le Studio</a><a href="#ld-inno" data-ld-a="ld-inno">Les inédits</a><a href="#ld-acc" data-ld-a="ld-acc">Accessibilité</a><a href="#ld-pros" data-ld-a="ld-pros">Pour les pros</a><a href="#ld-moments" data-ld-a="ld-moments">Moments de vie</a><a href="#ld-conf" data-ld-a="ld-conf">Confiance</a></nav>
+    <nav class="ld-nav"><a href="#ld-atlas" data-ld-a="ld-atlas">Domaines</a><a href="#ld-principe" data-ld-a="ld-principe">Le principe</a><a href="#ld-studio" data-ld-a="ld-studio">Le Studio</a><a href="#ld-inno" data-ld-a="ld-inno">Les inédits</a><a href="#ld-acc" data-ld-a="ld-acc">Accessibilité</a><a href="#ld-pros" data-ld-a="ld-pros">Pour les pros</a><a href="#ld-moments" data-ld-a="ld-moments">Moments de vie</a><a href="#ld-conf" data-ld-a="ld-conf">Confiance</a></nav>
     <button type="button" class="ld-btn" data-ld="enter">Entrer dans AIME</button><button type="button" class="ld-btn solid" data-ld="make">${c?'Ma carte':'Créer ma carte'}</button></div></header>
+  ${ldAtlas()}
   <section class="ld-band ld-heroband">${ldBg('hero')}<div class="ld-in ld-hero"><div><p class="ld-eye">Architecture intelligente de la mémoire ensemble</p>
       <h1 class="ld-h1">Une carte.<br><span>Tous vos événements.</span></h1>
       <p class="ld-sub">Qui vous êtes, une fois. Vos événements, vos supports et votre badge suivent.</p>
@@ -3168,6 +3203,46 @@ function enterDemo(){APP=false;LS=LS_DEMO;try{localStorage.setItem('aime-mode','
   document.body.classList.remove('app');closeLand();lastFig=null;buildPersonas();setPersona('couple',true);lastFig=figures();note('Démo · Camille & Samuel. Changez de rôle avec « Je suis ».');}
 function createEvent(f,role){const x=appIdx(),id=uid('ev');x.events.push({id,names:f.names,date:f.date,city:f.city,type:f.type,role:role||'couple',guests:+f.guests||0,budget:+f.budget||0,created:Date.now()});x.cur=id;appSaveIdx(x);
   try{localStorage.removeItem('aime-app-ev-'+id);}catch(e){}enterApp(id);}
+
+
+/* =================== ATLAS : mosaïque des domaines (même entrée que le Studio) =================== */
+const ATL_PAL=['#F2C9B8','#C8DCE8','#DCE7C8','#E6D6F2','#F5E2A6','#CFE8E0','#F3D1DC'];
+const ATL_D=[['mariage','Mariage','card'],['fleuriste','Fleuriste',''],['traiteur','Traiteur','traiteur-devis'],['photo','Photographe','photo-bcard'],['video','Vidéaste',''],['dj','DJ',''],['musicien','Musicien',''],
+ ['fiancailles','Fiançailles','fiancailles-card'],['anniv','Anniversaire','anniv-card'],['naissance','Naissance','naissance-card'],['religieux','Communion','religieux-card'],['hommage','Hommage','hommage-card'],['retraite','Retraite','retraite-card'],['demenag','Déménagement','demenag-card'],
+ ['enfance','Enfance','enfance-diplome'],['concert','Concert','concert-ticket'],['musee','Musée','musee-card'],['conf','Séminaire','entreprise-wbadge'],['sport','Club de sport','sport-posterdate'],['asso','Association','asso-convag'],['resto','Restaurant','resto-menu'],
+ ['commerce','Commerce','commerce-etiqprix'],['heberg','Hébergement','heberg-livretacc'],['artisan','Artisan','artisan-pvrecep'],['brodeuse','Brodeuse',''],['immo','Immobilier','immo-fichebien'],['avocat','Avocat','avocat-chrono'],['notaire','Notaire','notaire-frais'],
+ ['comptable','Comptable','comptable-tdb'],['detective','Détective','detective-renq'],['formation','Formation','formation-progfo'],['entreprise','Entreprise','entreprise-ucard'],['projet','Projet','projet-deck'],['portfolio','Portfolio',''],['instit','Institution',''],
+ ['organisme','Organisme public','organisme-falc'],['intermittent','Intermittent','intermittent-releve'],['auteur','Auteur',''],['etudiant','Étudiant','etudiant-memoire']];
+const atlStudio=id=>ECHOS_URL+'#atlas-'+id;
+function ldAtlas(){return`<section class="atl" id="ld-atlas"><div class="atl-intro"><p class="atl-eye">AIME · une carte, tous vos événements</p><h1>Un événement.<br>Tout ce qu’il faut.</h1><p>Choisissez votre domaine. Le mariage s’organise ici, de J-365 au lendemain ; chaque métier retrouve ses supports dans AIME Studio.</p></div>
+  <div class="atl-g atl-dom">${ATL_D.map(([id,n,im],i)=>{const big=id==='mariage',wide=['fleuriste','traiteur','concert','entreprise'].includes(id);
+    return big?`<button type="button" class="atl-d big" data-atl="mariage" style="background:${ATL_PAL[0]};grid-column:span 2;grid-row:span 2"><b>MARIAGE</b><span class="atl-n">L’app complète · avant, jour J, après</span><span class="atl-pv"><img src="sup/aime-studio-card.webp" alt="" loading="lazy"></span></button>`
+    :`<a class="atl-d${n.length>11?' long':''}" href="${atlStudio(id)}" target="_blank" rel="noopener" style="background:${ATL_PAL[i%ATL_PAL.length]};grid-column:span ${wide?2:1}"><b>${esc(n.toUpperCase())}</b><span class="atl-n">Supports dans le Studio ↗</span>${im?`<span class="atl-pv"><img src="sup/aime-studio-${im}.webp" alt="" loading="lazy"></span>`:''}</a>`;}).join('')}</div></section>`;}
+const ATL_SUP=[[/save the date/i,'std'],[/faire-part/i,'card'],[/marque|placement|plan de table/i,'place'],[/menu/i,'menu'],[/programme|livret/i,'programme'],[/site/i,'site'],[/badge|prestataire.*feuille|feuille de route/i,'wbadge'],[/remerci|merci/i,'merci'],[/signal|panneau|fl[ée]chage/i,'signage']];
+const atlSupFor=t=>{for(const[re,k] of ATL_SUP)if(re.test(t))return k;return'';};
+const jLab=o=>o===0?'Jour J':o<0?'J'+o:'J+'+o;
+function renderAtlMariage(){let o=$('#atlM');if(!o){o=document.createElement('section');o.id='atlM';o.className='atl atl-ov';o.setAttribute('role','dialog');o.setAttribute('aria-label','Mariage : avant, jour J, après');document.body.appendChild(o);}
+  const real=APP||appIdx().events.length>0,ST=allSteps().filter(x=>x.o<0),D=ACT.slice(),AF=(S.afterTasks||[]).slice().sort((a,b)=>a.o-b.o);let k=0;const col=()=>ATL_PAL[(k++)%ATL_PAL.length];
+  const cell=(big,t,sub,extra,cls,span,act)=>`<button type="button" class="atl-c ${cls||''}" data-atlgo="${act}" style="background:${col()};grid-column:span ${span[0]};grid-row:span ${span[1]}"><span class="atl-t">${esc(big)}</span><span class="atl-x"><b>${esc(t)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span>${extra||''}</button>`;
+  const sup=(t)=>{const s2=atlSupFor(t);return s2?`<span class="atl-pv"><img src="sup/aime-studio-${s2}.webp" alt="" loading="lazy"></span><a class="atl-f" href="${atlStudio('mariage')}" target="_blank" rel="noopener" data-stop="1">Le support dans le Studio ↗</a>`:'';};
+  o.innerHTML=`<header class="atl-bar"><button type="button" class="atl-logo" data-atlgo="home">AIME<sup>®</sup></button><button type="button" class="atl-b" data-atlgo="home">← Tous les domaines</button><span class="atl-sp"></span><button type="button" class="atl-b solid" data-atlgo="app">${real?'Ouvrir mon mariage':'Créer mon mariage'}</button><a class="atl-b" href="${atlStudio('mariage')}" target="_blank" rel="noopener">AIME Studio ↗</a></header>
+  <div class="atl-head"><span class="atl-eye">Moment de vie · ${ST.length+D.length+AF.length} étapes</span><h1>MARIAGE</h1><p>Chaque étape à sa date, et le jour J heure par heure. ${real?`Composé avec « ${esc(B().names)} ».`:'Composé avec l’exemple de Camille & Samuel : votre mariage le remplace dès que vous le créez.'}</p>
+    <nav class="atl-phn"><a href="#atlm-avant" data-atlph="avant">Avant</a><a href="#atlm-jour" data-atlph="jour">Le jour J</a><a href="#atlm-apres" data-atlph="apres">Après</a></nav></div>
+  <section class="atl-ph" id="atlm-avant"><h2><span>AVANT</span><em>${ST.length} étapes</em></h2><div class="atl-g">${ST.map(x=>{const sp=atlSupFor(x.t);return cell(jLab(x.o),x.t,(x.done?'✓ fait · ':'')+(x.c||''),sup(x.t),x.done?'done':'',sp?[2,2]:[1,1],'before');}).join('')}</div></section>
+  <section class="atl-ph" id="atlm-jour"><h2><span>LE JOUR J</span><em>${esc(dayName(0,true))}</em></h2><div class="atl-g">${D.map(e=>{const big=/c[ée]r[ée]monie|mairie|d[îi]ner|bal|vin d.honneur|accueil|soir[ée]e/i.test(entryTitle(e));return cell(hhmm(e.m),entryTitle(e),(e.who||[]).slice(0,3).join(' · '),'','',big?[2,1]:[1,1],'day:'+e.id);}).join('')}</div></section>
+  <section class="atl-ph" id="atlm-apres"><h2><span>APRÈS</span><em>${AF.length+1} étapes</em></h2><div class="atl-g">${AF.map(x=>cell(jLab(x.o),x.t,atDone(x)?'✓ fait':'',sup(x.t),atDone(x)?'done':'',atlSupFor(x.t)?[2,2]:[1,1],'after')).join('')}${cell('1 an','La capsule s’ouvre','Les messages scellés le jour J','<span class="atl-pv"><img src="sup/aime-studio-merci.webp" alt="" loading="lazy"></span>','',[2,2],'capsule')}</div></section>`;
+  o.classList.add('on');o.scrollTop=0;document.body.classList.add('atlopen');}
+function closeAtlM(){const o=$('#atlM');if(o)o.classList.remove('on');document.body.classList.remove('atlopen');}
+function atlEnterApp(sec){closeAtlM();const x=appIdx();if(APP)closeLand();else if(x.events.length)enterApp(x.events.some(e=>e.id===x.cur)?x.cur:x.events[x.events.length-1].id);else if(sec==='now'){openLand();setTimeout(openEvForm,250);return;}else enterDemo();
+  if(sec)setTimeout(()=>{if(sec.startsWith('day:')){goSec('day');const e=byId(sec.slice(4));if(e){setTimeout(()=>jumpToM(e.m),700);setTimeout(()=>jumpToM(e.m),1400);}}else goSec(sec);},350);}
+document.addEventListener('click',ev=>{const t=ev.target;if(!t.closest)return;
+  if(t.closest('[data-atl="mariage"]')){ev.preventDefault();renderAtlMariage();return;}
+  const b=t.closest('#atlM [data-atlgo]');if(!b)return;if(t.closest('[data-stop]'))return;ev.preventDefault();const k=b.dataset.atlgo;
+  if(k==='home'){closeAtlM();const a=$('#ld-atlas');if(a)a.scrollIntoView();return;}
+  if(k==='app'){atlEnterApp('now');return;}if(k==='capsule'){closeAtlM();openCapsule(capAnchor());return;}
+  if(k.startsWith('ph:'))return;atlEnterApp(k);});
+document.addEventListener('click',ev=>{const a=ev.target.closest&&ev.target.closest('#atlM [data-atlph]');if(!a)return;ev.preventDefault();const x=$('#atlm-'+a.dataset.atlph);if(x)$('#atlM').scrollTo({top:x.offsetTop-64,behavior:'smooth'});},true);
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&document.body.classList.contains('atlopen'))closeAtlM();});
 
 /* =================== POSTE DE PILOTAGE DU JOUR J =================== */
 const CK={sel:null,q:''};
