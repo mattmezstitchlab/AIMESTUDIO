@@ -3676,8 +3676,8 @@ const atlHH=n=>{n=((n%1440)+1440)%1440;return String(Math.floor(n/60)).padStart(
 const atlJ=d=>d<0?'J'+d:d===0?'Jour J':d>=365?'1 an':'J+'+d;
 function atlProj(pack){const mine=[...DB.projects].filter(p=>p.pack===pack).sort((a,b)=>(b.updated||0)-(a.updated||0));if(P&&P.pack===pack)return P;if(mine[0])return mine[0];if(!ATL.proj[pack]){const p=newProject(pack);ATL.proj[pack]=PK[pack]&&PK[pack].amb?styled(p,PK[pack].amb):p}return ATL.proj[pack]}
 function atlSlots(pack,proj){const h0=atlMin(ATL_H0[pack]||'14:00'),S={};Object.keys(ATL_SLOT).forEach(k=>S[k]=h0+ATL_SLOT[k]);
- const L=proj&&proj.aimePlan;if(Array.isArray(L)&&L.length){const n=x=>String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(),R=[['accueil',/accueil|arrivee/],['ceremonie',/ceremonie|mairie|messe|celebration|office/],['cocktail',/cocktail|vin d.honneur|aperitif|photos de groupe/],['diner',/diner|repas|banquet|entree en salle/],['soiree',/bal|soiree|danse|dj|piece montee|gateau/]];
-  R.forEach(([k,re])=>{const q=L.find(x=>re.test(n(x.h)));if(q)S[k]=atlMin(q.t)});if(S.diner)S.placement=S.diner-30,S.repas=S.diner+30;S.equipe=Math.min(S.equipe,S.accueil-90)}
+ const L=proj&&proj.aimePlan;if(Array.isArray(L)&&L.length){const n=x=>String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(),R=[['accueil',[/accueil|arrivee/]],['ceremonie',[/ceremonie|messe|celebration|office/,/mairie/]],['cocktail',[/cocktail|vin d.honneur|aperitif|photos de groupe/]],['diner',[/diner|repas|banquet|entree en salle/]],['soiree',[/soiree|premier bal|bal|danse|dj|piste/,/piece montee|gateau/]]];
+  R.forEach(([k,rs])=>{for(const re of rs){const q=L.find(x=>re.test(n(x.h))&&/^\d{1,2}[:h]\d{2}/.test(String(x.t||'')));if(q){S[k]=atlMin(q.t);break}}});if(S.diner)S.placement=S.diner-30,S.repas=S.diner+30;S.equipe=Math.min(S.equipe,S.accueil-90)}
  return S}
 function atlItems(pack){const proj=atlProj(pack),pk=PK[pack],ev=ATL_EV.includes(pack),ids=newProject(pack).formats.filter(id=>FL[id]&&id!=='webt');(proj.formats||[]).forEach(id=>{if(FL[id]&&id!=='webt'&&!ids.includes(id))ids.push(id)});
  const S=atlSlots(pack,proj);
@@ -3686,6 +3686,7 @@ function atlItems(pack){const proj=atlProj(pack),pk=PK[pack],ev=ATL_EV.includes(
   else{const v=ATL_PRT[id]||ATL_PRCAT[f.cat]||['contact',-21];ph=v[0];if(typeof v[1]==='string'){ord=atlMin(v[1]);big=atlHH(ord)}else{ord=v[1]*2000;big=atlJ(v[1])}}
   return{id,ph,ord,big,name:(pk&&pk.names&&pk.names[id])||f.name,inP:(proj.formats||[]).includes(id)}})}
 function atlOpen(pack){let o=$('#atlas');if(!o){o=document.createElement('section');o.id='atlas';o.lang='fr';o.setAttribute('aria-label','AIME Studio : les domaines');document.body.appendChild(o)}ATL.pack=pack&&PK[pack]?pack:null;o.hidden=false;try{closeHome()}catch(_){}try{closeLand()}catch(_){}atlRender();o.scrollTop=0}
+function atlHash(){const m=String(location.hash||'').match(/^#atlas(?:-([a-z0-9-]+))?$/i);if(!m)return false;const id=m[1]&&m[1].toLowerCase();atlOpen(id&&PK[id]?id:null);return true}
 function atlClose(){const o=$('#atlas');if(o)o.hidden=true;if(ATL.io){ATL.io.disconnect();ATL.io=null}}
 function atlBar(){return`<header class="atl-bar"><button class="atl-logo" data-atlhome aria-label="Tous les domaines">AIME<sup>®</sup><small>Studio</small></button>${ATL.pack?`<button class="atl-b" data-atlhome>← Tous les domaines</button>`:''}<span class="atl-sp"></span><button class="atl-b" data-catopen>Rechercher</button><button class="atl-b" data-mosopen>Mosaïque complète</button><button class="atl-b" data-atlproj>Mes projets</button><a class="atl-b" href="${attrEsc(AIME_URL)}" target="_blank" rel="noopener">AIME ↗</a></header>`}
 function atlRender(){const o=$('#atlas');if(!o||o.hidden)return;const cols=MOS_PAL;
@@ -5221,7 +5222,8 @@ if(innerWidth<760){$('#app').classList.add('noL','noR');$('#tglL').setAttribute(
 loadLogo();loadPhoto();buildWall();fillAll();syncRules();render();requestAnimationFrame(fit);
 let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(fit,150)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{last={};render()});
-store.set('echos:seenLand',1);store.set('echos:seenHome',1);if(!/^#aime=/.test(location.hash))atlOpen(null);
+store.set('echos:seenLand',1);store.set('echos:seenHome',1);if(!/^#aime=/.test(location.hash)&&!atlHash())atlOpen(null);
+window.addEventListener('hashchange',()=>{try{atlHash()}catch(_){}});
 /* ---------- Pont AIME : les données de l'événement deviennent les supports ---------- */
 function aimeDecode(c){c=String(c||'').trim().replace(/^AIME:/,'').replace(/^.*#aime=/,'');const b=c.replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(decodeURIComponent(escape(atob(b+'==='.slice((b.length+3)%4)))))}
 function aimeImport(x){if(!x||x.src!=='aime')throw new Error('format');try{uniSaveCards([x.card,...(Array.isArray(x.cards)?x.cards:[])].filter(Boolean))}catch(_){}if(x.role&&typeof x.role==='object'&&(x.role.n||x.role.dom))return aimeRoleImport(x);const pack=PK[x.pack]?x.pack:'mariage';
