@@ -3691,7 +3691,7 @@ const ATL={pack:null,io:null,proj:{}};
 const atlMin=t=>{const m=String(t).match(/^(\d{1,2})[:h](\d{2})/);return m?(+m[1])*60+(+m[2]):0};
 const atlHH=n=>{n=((n%1440)+1440)%1440;return String(Math.floor(n/60)).padStart(2,'0')+'h'+String(n%60).padStart(2,'0')};
 const atlJ=d=>d<0?'J'+d:d===0?'Jour J':d>=365?'1 an':'J+'+d;
-function atlProj(pack){const mine=[...DB.projects].filter(p=>p.pack===pack).sort((a,b)=>(b.updated||0)-(a.updated||0));if(P&&P.pack===pack)return P;if(mine[0])return mine[0];if(!ATL.proj[pack]){const p=newProject(pack);ATL.proj[pack]=PK[pack]&&PK[pack].amb?styled(p,PK[pack].amb):p}return ATL.proj[pack]}
+function atlProj(pack){const mine=[...DB.projects].filter(p=>p.pack===pack).sort((a,b)=>(b.updated||0)-(a.updated||0));if(P&&P.pack===pack)return P;if(mine[0])return mine[0];if(!ATL.proj[pack])ATL.proj[pack]=newProject0(pack);return ATL.proj[pack]}
 function atlSlots(pack,proj){const h0=atlMin(ATL_H0[pack]||'14:00'),S={};Object.keys(ATL_SLOT).forEach(k=>S[k]=h0+ATL_SLOT[k]);
  const L=proj&&proj.aimePlan;if(Array.isArray(L)&&L.length){const n=x=>String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(),R=[['accueil',[/accueil|arrivee/]],['ceremonie',[/ceremonie|messe|celebration|office/,/mairie/]],['cocktail',[/cocktail|vin d.honneur|aperitif|photos de groupe/]],['diner',[/diner|repas|banquet|entree en salle/]],['soiree',[/soiree|premier bal|bal|danse|dj|piste/,/piece montee|gateau/]]];
   R.forEach(([k,rs])=>{for(const re of rs){const q=L.find(x=>re.test(n(x.h))&&/^\d{1,2}[:h]\d{2}/.test(String(x.t||'')));if(q){S[k]=atlMin(q.t);break}}});if(S.diner)S.placement=S.diner-30,S.repas=S.diner+30;S.equipe=Math.min(S.equipe,S.accueil-90)}
