@@ -147,7 +147,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .bot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:9px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));background:var(--panel);border-top:1px solid var(--line)}
 .app.noB .bot{display:none}
 .embedded .app .bot{display:none}
-.embedded #imgStudio .br-bar{display:none}
+.embedded #imgStudio .br-bar,.embedded #brodStudio .br-bar{height:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;overflow:hidden!important;opacity:0;pointer-events:none}
 .embedded .top .logo,.embedded .top [data-catopen],.embedded .top #tmenu,.embedded .top #aimeImp,.embedded .top #aimeRet,.embedded .top #aimeBack,.embedded .top #expAll{display:none!important}
 .play{width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--accent-ink);border:0;display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
 .play svg{width:15px;height:15px}
@@ -3694,7 +3694,8 @@ function aimeOpenHash(h){{const e=String(h||'').match(/^#ev\.([A-Za-z0-9_-]+)(?:
  const k=A&&MP.includes(A.mode)&&fid&&mpLib(A.mode).includes(fid)?A.mode:'tout';
  if(MP.includes(k))P.mview=Object.assign({},P.mview||{},{[k]:k==='web'&&fid==='site'?'studio':'wall'});
  P.mode=k;buildWall();render();try{wsSync()}catch(_){}requestAnimationFrame(fit);if(fid)setTimeout(()=>{try{select(fid);focusFrame(fid)}catch(_){}},260);aimeCtx();return true}
-if(EMBED){document.documentElement.classList.add('embedded');window.addEventListener('message',e=>{const d=e.data||{};if(d.aime==='open'&&typeof d.hash==='string'){try{aimeOpenHash(d.hash)}catch(_){}}if(d.aime==='act'&&typeof d.sel==='string'&&/^\[data-[a-z0-9-]+(="[A-Za-z0-9._-]+")?\]$/.test(d.sel)){const el=document.querySelector(d.sel);if(el&&!el.closest('[hidden]'))el.click();else toast(d.miss||'Cette action n\'est pas disponible sur cet écran.')}
+if(EMBED){document.documentElement.classList.add('embedded');window.addEventListener('message',e=>{const d=e.data||{};if(d.aime==='open'&&typeof d.hash==='string'){try{aimeOpenHash(d.hash)}catch(_){}}if(d.aime==='act'&&typeof d.sel==='string'&&(/^\[data-[a-z0-9-]+(="[A-Za-z0-9._+-]+")?\]$/.test(d.sel)||/^#[a-zA-Z]+$/.test(d.sel))){const el=document.querySelector(d.sel);if(el&&!el.closest('[hidden]'))el.click();else toast(d.miss||'Cette action n\'est pas disponible sur cet écran.')}
+if(d.aime==='fn'&&d.name==='bdgOpen'){try{bdgOpen()}catch(_){}}
 if(d.aime==='field'&&typeof d.k==='string'&&/^[a-z]+$/.test(d.k)){const el=document.getElementById('k-'+d.k);if(!el){toast('Ce champ n\'existe pas pour ce support.')}else{if(d.op==='append')el.value=(el.value.trim()?el.value.replace(/\s+$/,'')+'\n':'')+String(d.v||'');else if(d.op==='inc'){const m=/(\d+)(?!.*\d)/.exec(el.value);el.value=m?el.value.slice(0,m.index)+String(+m[1]+1).padStart(m[1].length,'0')+el.value.slice(m.index+m[1].length):(el.value+'-001')}el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();el.scrollIntoView({block:'center'});toast(d.done||'Fait')}}
 if(d.aime==='tool'&&typeof d.tool==='string'){try{BR.tool=d.tool;brRender()}catch(_){}}
 if(d.aime==='color'&&d.mode==='broderie'&&BRP&&d.hex){try{const D=dmcAll(),i=D.findIndex(c=>c.hex.toUpperCase()===String(d.hex).toUpperCase());if(i>=0){const ex=BRP.pal.indexOf(i);if(ex>=0)BR.col=ex;else{BRP.pal.push(i);BR.col=BRP.pal.length-1}brSave();brRender();last={};render();toast('Fil DMC '+D[i].code+' prêt')}}catch(_){}}
