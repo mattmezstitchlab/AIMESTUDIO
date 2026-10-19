@@ -988,6 +988,40 @@ body.app #phone::before,body.app #phone::after,body.app .status,body.app .homeba
   body.app #iBtn{font-size:15px;font-weight:700}
   body.app #iBtn::after{content:"Ajouter";margin-left:8px;font-size:14px}
 }
+
+/* v71 · poste de pilotage du jour J */
+#cockpit{position:fixed;inset:0;z-index:70;background:#f4f4f2;color:#111;display:none;flex-direction:column;overflow:hidden}
+#cockpit.on{display:flex}
+.ck-top{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:18px;align-items:end;padding:18px 24px 16px;border-bottom:1px solid #111;background:#fff}
+.ck-top h2{margin:2px 0 0;font-family:var(--head);font-size:clamp(26px,3vw,40px);line-height:.95}
+.ck-clock{display:grid;justify-items:end}.ck-clock b{font-family:var(--head);font-size:clamp(34px,4vw,56px);line-height:.9;font-variant-numeric:tabular-nums}.ck-clock span{font-size:12px;color:#666}
+.ck-late{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.ck-late span{font-size:12px;color:#666;margin-right:2px}
+.ck-late button{border:1px solid #111;background:#fff;border-radius:999px;padding:8px 12px;font:inherit;font-weight:700;font-size:13px;cursor:pointer}.ck-late button:hover{background:#111;color:#fff}
+.ck-x{border:0;background:#111;color:#fff;width:42px;height:42px;border-radius:50%;font-size:22px;cursor:pointer}
+.ck-grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.4fr) minmax(280px,1fr);gap:0}
+.ck-col{overflow:auto;padding:18px 20px 40px;min-width:0}.ck-col+.ck-col{border-left:1px solid #e2e2de}
+.ck-tl ol{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:2px}
+.ck-tl button{width:100%;display:grid;grid-template-columns:54px 1fr;gap:4px 10px;text-align:left;border:0;background:none;padding:9px 10px;border-radius:10px;cursor:pointer;font:inherit;color:#111}
+.ck-tl b{font-variant-numeric:tabular-nums;font-size:14px}.ck-tl span{font-size:14px}.ck-tl i{grid-column:2;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red,#c0473a)}
+.ck-tl li.past button{color:#999}.ck-tl li.now button{background:#fff;box-shadow:inset 3px 0 0 var(--red,#c0473a)}.ck-tl li.sel button{background:#111;color:#fff}.ck-tl li.sel i{color:#ffb4a8}
+.ck-mo h3{font-family:var(--head);font-size:clamp(34px,4vw,58px);line-height:.95;margin:6px 0 6px}
+.ck-when{font-size:15px;color:#444;margin:0 0 10px;font-variant-numeric:tabular-nums}.ck-desc{font-size:15px;line-height:1.55;color:#333;margin:0 0 14px;max-width:62ch}
+.ck-b{background:#fff;border:1px solid #e6e6e2;border-radius:16px;padding:14px 16px;margin:0 0 12px}
+.ck-b ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.ck-b li{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}.ck-b li b{min-width:96px}.ck-b li span{color:#444;flex:1}
+.ck-b li button{border:1px solid #d9d9d6;background:#fff;border-radius:999px;padding:5px 10px;font:inherit;font-size:12px;cursor:pointer}
+.ck-b p{margin:6px 0 0;font-size:14px}.ck-todo label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.ck-next{margin:14px 0 0;font-size:14px;color:#555}.ck-next button{border:0;background:none;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;color:#111}
+.ck-big{font-size:15px}.ck-big b{font-family:var(--head);font-size:40px}
+.ck-bar{height:6px;background:#eee;border-radius:3px;overflow:hidden;margin:6px 0 10px}.ck-bar i{display:block;height:100%;background:var(--green,#1e8e55)}
+.ck-q{width:100%;box-sizing:border-box;font:inherit;padding:10px 12px;border:1px solid #d9d9d6;border-radius:12px}
+.ck-gl button{width:100%;display:grid;grid-template-columns:1fr auto;gap:0 10px;text-align:left;border:1px solid #ececea;background:#fafaf8;border-radius:12px;padding:9px 12px;cursor:pointer;font:inherit;color:#111}
+.ck-gl small{grid-column:1;color:#777;font-size:12px}.ck-gl i{grid-row:1/span 2;grid-column:2;align-self:center;font-style:normal;font-weight:700;font-size:12px}
+.ck-gl button[aria-pressed="true"]{background:#eaf6ef;border-color:#bfe3cd}.ck-gl button[aria-pressed="true"] i{color:var(--green,#1e8e55)}
+.ck-al li i{font-style:normal;width:22px;height:22px;border-radius:50%;background:#fff2ee;color:var(--red,#c0473a);display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}
+.ck-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.ck-acts .btn{flex:0 0 auto}
+body.ckopen{overflow:hidden}
+@media (max-width:900px){.ck-top{grid-template-columns:minmax(0,1fr) auto;padding:14px 16px}.ck-late{grid-column:1/-1;order:3}.ck-x{grid-row:1;grid-column:2;justify-self:end}.ck-clock{display:none}
+  .ck-grid{display:flex;flex-direction:column;overflow:auto}.ck-col{overflow:visible;padding:14px 16px}.ck-col+.ck-col{border-left:0;border-top:1px solid #e2e2de}.ck-mo{order:1}.ck-side{order:2}.ck-tl{order:3}}
 /* v67 · inédits branchés : QR vivant, capsule, carte à réclamer, avis vérifiés */
 .wl-live{display:grid;gap:2px;margin:6px 0 10px;padding:12px 14px;border-radius:14px;background:#f3f2ee}
 .wl-live b{font-size:17px}.wl-live span{font-size:13px;color:#555}.wl-live .late{color:var(--red);font-weight:600}
@@ -1479,7 +1513,7 @@ function setSec(i){if(i===SEC)return;SEC=i;const s=SECS[i];if(!s)return;SP=s.id=
 window.addEventListener('scroll',()=>{if(mobile())return;const r=window.scrollY/window.innerHeight;setHero(r<HERO*0.5);const i=Math.max(0,Math.min(SECS.length-1,Math.round(r)-HERO));if(i!==SEC)setSec(i);},{passive:true});
 const emptyCard=(n,t,x,acts,tag)=>{const h=`<div class="emp"><span class="emp-n">${n}</span><b>${t}</b><span class="emp-x">${x}</span><div class="emp-a">${acts.map(([l,k],i)=>`<button type="button" class="btn ${i?'':'solid'}" data-new="${k}">${l}</button>`).join('')}</div></div>`;return tag==='div'?h:`<li class="stli empli">${h}</li>`;};
 document.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('[data-new]');if(!b)return;ev.stopPropagation();ev.preventDefault();const k=b.dataset.new;
-  if(k.startsWith('sheet:'))openSheet(k.slice(6),null,k.split(':')[2]);else if(k.startsWith('go:'))goSec(k.slice(3));else if(k==='auto'){autoSeat(true);commit();}else if(k==='capsule')openCapsule(capAnchor());else if(NEW[k])NEW[k]();},true);
+  if(k.startsWith('sheet:'))openSheet(k.slice(6),null,k.split(':')[2]);else if(k.startsWith('go:'))goSec(k.slice(3));else if(k==='auto'){autoSeat(true);commit();}else if(k==='capsule')openCapsule(capAnchor());else if(k==='cockpit')openCockpit();else if(NEW[k])NEW[k]();},true);
 const head=(eb,big,line,extra)=>`<div class="head"><div class="row1"><span class="eb">${eb}</span>${extra||''}</div><div class="big">${big}</div>${line?`<div class="line2">${line}</div>`:''}</div>`;
 const src=(label,sec)=>`<button type="button" class="src" data-src="${sec}">depuis ${label}</button>`;
 document.querySelector('#screen').addEventListener('click',ev=>{const s=ev.target.closest('[data-src]');if(s){ev.stopPropagation();goSec(s.dataset.src);}},true);
@@ -1591,7 +1625,7 @@ function renderNow(){
       <div class="ready">${R.parts.map(([l,a,b,sec])=>`<button type="button" data-src="${sec}"><i><b style="width:${b?a/b*100:100}%"></b></i><span>${l}</span><em>${fmtN(a)}/${fmtN(b)}</em></button>`).join('')}</div>
       <div class="basechips">${[['city',B().city],['cer',evtLabel()],['guests',fmtN(guests())+' '+EV().guestsL.toLowerCase()]].map(([k,l])=>`<button type="button" data-base="${k}">${esc(l)}</button>`).join('')}</div>
     </div>
-    <div class="scroll"><ul class="L"><li class="grp eb">À faire maintenant</li>
+    <div class="scroll"><ul class="L">${(()=>{const dd=Math.round((new Date(B().date+'T12:00:00')-todayD())/864e5);return dd>=-1&&dd<=2?`<li class="stli"><div class="emp ck-cta"><span class="emp-n">${dd===0?'C’est aujourd’hui':dd>0?'Jour J dans '+dd+' jour'+(dd>1?'s':''):'C’était hier'}</span><b>Poste de pilotage</b><span class="emp-x">La frise en direct, les arrivées, les prestataires, la musique et les alertes, sur un seul écran.</span><div class="emp-a"><button type="button" class="btn solid" data-new="cockpit">Ouvrir le poste de pilotage</button></div></div></li>`:'';})()}<li class="grp eb">À faire maintenant</li>
       ${F.length?F.map((x,i)=>`<li class="it"><span class="dot" style="background:${col[x.lvl]}"></span><button type="button" class="go" data-feed="${i}"><span class="t">${esc(x.t)}</span><span class="s ${x.lvl===2?'late':''}">${esc(x.s)}</span><span class="v">›</span></button>${x.quick?`<span class="qa">${x.quick.shift?`<button type="button" data-act="${x.quick.shift}" data-id="${esc(x.quick.id)}" data-d="7">+7 j</button>`:''}<button type="button" class="ok" data-act="${x.quick.act}" data-id="${esc(x.quick.id)}">${x.quick.l}</button></span>`:''}</li>`).join(''):'<li class="hint" style="padding:12px 18px">Rien d’urgent.</li>'}
       ${nx?`<li class="grp eb">Ensuite</li><li class="it nock"><button type="button" class="go" data-next="1"><span class="t">${esc(nx.t)}</span><span class="s">${fmtDate(offDate(nx.o))} · dans ${daysTo(nx.o)} jours</span><span class="v">›</span></button></li>`:''}
     </ul></div>`;
@@ -2155,17 +2189,17 @@ const NEW={
   atask:()=>{const a={id:uid('a'),t:'Nouvelle tâche',o:7,done:false,note:''};S.afterTasks.push(a);commit();openSheet('atask',a.id);}};
 function islandActions(){const id=SECS[SEC].id,nextPay=allSteps().find(s=>s.kind==='pay'&&!s.done);
   const A_={
-    now:[['Une étape','step'],['Des invités','guests'],['Une dépense','cost'],['Un cadeau reçu','gift'],['Les bases',()=>openSheet('base')]],
+    now:[['Poste de pilotage du jour J',()=>openCockpit()],['Une étape','step'],['Des invités','guests'],['Une dépense','cost'],['Un cadeau reçu','gift'],['Les bases',()=>openSheet('base')]],
     guests:[['Des invités','guests'],['Un groupe','group'],['Hébergement et navettes',()=>openSheet('lodging')]],
     vendors:[['Un prestataire','vendor'],...(nextPay?[[`Payer : ${nextPay.okind==='vendor'?nextPay.owner.n:nextPay.owner.l}`,()=>openSheet(nextPay.okind,nextPay.owner.id)]]:[])],
     budget:[['Une dépense','cost'],['Un prestataire','vendor'],['Objectif de budget',()=>openSheet('base',null,'target')]],
     before:[['Une étape','step'],[showDone?'Masquer les étapes faites':'Afficher les étapes faites',()=>{showDone=!showDone;renderBefore();}]],
     seating:[['Marque-places et numéros de table',()=>openSheet('echos')],['Placer automatiquement',()=>{autoSeat(true);commit();}],['Une table','table'],['Places par table',()=>openSheet('per')]],
-    day:[['Un moment','moment'],['Programme et livret · Studio',()=>openSheet('echos')],...(CONF.length?[[`Voir le conflit : ${entryTitle(CONF[0].e)}`,()=>jumpToM(CONF[0].e.m)]]:[]),['Options du jour',()=>openSheet('set')],[live?'Arrêter le direct':'Mode direct',()=>setLive(!live)],[PF().rain?'Retirer le plan pluie':'Plan pluie',()=>{PF().rain=!PF().rain;commit();}],['Feuille de route',()=>openSheet('exp')]],
+    day:[['Poste de pilotage',()=>openCockpit(curId)],['Un moment','moment'],['Programme et livret · Studio',()=>openSheet('echos')],...(CONF.length?[[`Voir le conflit : ${entryTitle(CONF[0].e)}`,()=>jumpToM(CONF[0].e.m)]]:[]),['Options du jour',()=>openSheet('set')],[live?'Arrêter le direct':'Mode direct',()=>setLive(!live)],[PF().rain?'Retirer le plan pluie':'Plan pluie',()=>{PF().rain=!PF().rain;commit();}],['Feuille de route',()=>openSheet('exp')]],
     after:[['Un cadeau reçu','gift'],['Une tâche','atask']],
-    music:musicMode()==='guest'?[['Un titre','music']]:musicMode()==='vendor'?[['Ma feuille',()=>{MVS['#vMusic']='pro';renderSpaces();}],['Copier ma feuille',()=>{try{navigator.clipboard.writeText(spaceText('music'));note('Copié');}catch(e){}}]]:[['Un titre','music'],['Voir comme un invité',()=>setPersona('invite')],['Voir comme le DJ',()=>setPersona('music')],['Feuille du DJ',()=>{MVS['#vMusic']='pro';OPEN=null;renderSpaces();}]],
-    space:[[dom(SP).add,'spItem'],['Ma feuille',()=>{MVS['#vSpace']='pro';OPEN=null;renderSpaces();}]],
-    rsvp:[['Proposer un titre','music']],prog:[],pay:[],act:[['Voir ma carte',()=>{const c=myCard();if(c){openRegistry();setTimeout(()=>openCard(c.id),300);}else startJoin(PER.dom||'');}]]};
+    music:musicMode()==='guest'?[['Un titre','music']]:musicMode()==='vendor'?[['Ma journée',()=>openCockpit()],['Ma feuille',()=>{MVS['#vMusic']='pro';renderSpaces();}],['Copier ma feuille',()=>{try{navigator.clipboard.writeText(spaceText('music'));note('Copié');}catch(e){}}]]:[['Un titre','music'],['Voir comme un invité',()=>setPersona('invite')],['Voir comme le DJ',()=>setPersona('music')],['Feuille du DJ',()=>{MVS['#vMusic']='pro';OPEN=null;renderSpaces();}]],
+    space:[['Ma journée',()=>openCockpit()],[dom(SP).add,'spItem'],['Ma feuille',()=>{MVS['#vSpace']='pro';OPEN=null;renderSpaces();}]],
+    rsvp:[['Proposer un titre','music']],prog:[['Ma journée',()=>openCockpit()]],pay:[['Ma journée',()=>openCockpit()]],act:[['Ma journée',()=>openCockpit()],['Voir ma carte',()=>{const c=myCard();if(c){openRegistry();setTimeout(()=>openCard(c.id),300);}else startJoin(PER.dom||'');}]]};
   return A_[id]||[];}
 const island=$('#island');
 function closeIsland(){island.classList.remove('open');$('#iBtn').setAttribute('aria-expanded','false');}
@@ -3134,6 +3168,62 @@ function enterDemo(){APP=false;LS=LS_DEMO;try{localStorage.setItem('aime-mode','
   document.body.classList.remove('app');closeLand();lastFig=null;buildPersonas();setPersona('couple',true);lastFig=figures();note('Démo · Camille & Samuel. Changez de rôle avec « Je suis ».');}
 function createEvent(f,role){const x=appIdx(),id=uid('ev');x.events.push({id,names:f.names,date:f.date,city:f.city,type:f.type,role:role||'couple',guests:+f.guests||0,budget:+f.budget||0,created:Date.now()});x.cur=id;appSaveIdx(x);
   try{localStorage.removeItem('aime-app-ev-'+id);}catch(e){}enterApp(id);}
+
+/* =================== POSTE DE PILOTAGE DU JOUR J =================== */
+const CK={sel:null,q:''};
+function ckRole(){if(isCouple()||!PER.dom)return null;const v=vendorOf(PER.dom);return (v&&v.role)||(dom(PER.dom)||{}).lab||null;}
+function ckMoments(){const r=ckRole();return ACT.filter(e=>!r||!e.who||!e.who.length||e.who.includes(r)||e.who.some(w=>/^tout le monde$/i.test(w)));}
+function ckNow(){const L=ckMoments(),m=nowM();let cur=null;for(const e of L){if(e.m<=m)cur=e;else break;}if(cur&&L.indexOf(cur)===L.length-1&&m>cur.m+180)cur=null;return{L,m,cur,first:cur||L.find(e=>e.m>m)||L[0]||null};}
+function ckLate(d){const dd=Math.round((new Date(B().date+'T12:00:00')-todayD())/864e5);if(dd!==0&&!confirm('Ce n’est pas le jour J : décaler quand même la suite de la frise ?'))return;const m=nowM(),moved=S.entries.filter(e=>e.m>=m);moved.forEach(e=>e.m+=d);PF().shift=(+PF().shift||0)+d;commit();
+  const who=[...new Set(moved.filter(e=>ACT.includes(e)&&e.m<m+d+240).flatMap(e=>e.who||[]))].filter(w=>!/^tout le monde$/i.test(w));
+  note(`${moved.length} moments décalés de ${d} min${who.length?' · à prévenir : '+who.slice(0,4).join(', '):''}`);renderCockpit();}
+const ckMeal=e=>/d[îi]ner|repas|d[ée]jeuner|cocktail|vin d.honneur|brunch|buffet|g[âa]teau|pi[èe]ce mont/i.test(entryTitle(e)+' '+(e.space||''));
+function ckVendorsFor(e){return (e.who||[]).filter(w=>KNOWN_ROLES.includes(w)).map(w=>({role:w,v:vendorFor(w)[0]||null}));}
+const ckPeople=e=>(e.who||[]).filter(w=>!KNOWN_ROLES.includes(w));
+function renderCockpit(){const el=$('#cockpit');if(!el||!el.classList.contains('on'))return;
+  const {L,m,cur,first}=ckNow(),sel=byId(CK.sel)||first,sh=+PF().shift||0,r=ckRole(),days=Math.round((new Date(B().date+'T12:00:00')-todayD())/864e5);
+  const P=S.people.filter(p=>p.rsvp!=='non'),here=P.filter(p=>p.here).length,att=guests();
+  const today=S.vendors.filter(v=>(r?L:ACT).some(e=>(e.who||[]).includes(v.role))&&v.role!==r);
+  const dueToday=allOwners().flatMap(x=>(x.o.dues||[]).filter(d=>!d.paid&&Math.abs(d.o)<=1).map(d=>({o:x.o,d})));
+  const missing=KNOWN_ROLES.filter(rr=>ACT.some(e=>(e.who||[]).includes(rr))&&!vendorFor(rr).length);
+  const unplaced=P.filter(p=>!p.table).length;
+  const alerts=[...CONF.slice(0,2).map(c=>['⚠',c.msg]),...missing.slice(0,3).map(x=>['!',`Aucun prestataire « ${x} »`]),...(unplaced&&!r?[['!',`${unplaced} invité${unplaced>1?'s':''} sans table`]]:[]),...dueToday.slice(0,3).map(x=>['€',`À régler : ${x.o.n||x.o.l} · ${eur(dueAmt(x.o,x.d))}`])];
+  const regs={};P.forEach(p=>{if(p.regime){const k=String(p.regime).split(':')[0].trim();regs[k]=(regs[k]||0)+1;}});
+  const mt=sel?MUS().tracks.filter(t=>t.mo===sel.id&&t.st==='ok'):[];
+  const ix=sel?L.indexOf(sel):-1,nx=ix>=0?L[ix+1]:null;
+  const q=CK.q.toLowerCase(),GL=q?P.filter(p=>p.n.toLowerCase().includes(q)).slice(0,30):P.filter(p=>!p.here).slice(0,8);
+  el.innerHTML=`<div class="ck-top"><div><span class="eb">${r?'Ma journée · '+esc(r):'Poste de pilotage'} · ${esc(dayName(0,true))}</span><h2>${esc(B().names)}</h2></div>
+    <div class="ck-clock"><b>${hhmm(m)}</b><span>${liveSim||days!==0?'simulation':'en direct'}${sh?` · <em class="late">retard ${sh} min</em>`:''}</span></div>
+    <div class="ck-late">${r?'':`<span>Décaler la suite</span>${[5,10,15].map(d=>`<button type="button" data-ck="late" data-d="${d}">+${d} min</button>`).join('')}`}</div>
+    <button type="button" class="ck-x" data-ck="close" aria-label="Fermer le poste de pilotage">×</button></div>
+  <div class="ck-grid">
+    <section class="ck-col ck-tl" aria-label="Frise du jour"><span class="eb">Frise</span><ol>${L.map(e=>`<li class="${e===cur?'now':''} ${e===sel?'sel':''} ${e.m+(e.d||0)<m&&e!==cur?'past':''}"><button type="button" data-ck="sel" data-id="${e.id}"><b>${hhmm(e.m)}</b><span>${esc(entryTitle(e))}</span>${e===cur?'<i>maintenant</i>':''}</button></li>`).join('')}</ol></section>
+    <section class="ck-col ck-mo" aria-label="Moment">${sel?`<span class="eb">${sel===cur?'En cours':sel.m>m?'À venir · dans '+Math.max(0,sel.m-m)+' min':'Passé'}</span><h3>${esc(entryTitle(sel))}</h3><p class="ck-when">${hhmm(sel.m)}${nx?' → '+hhmm(nx.m):''} · ${fmtN(presOf(sel))} sur place</p>
+      ${entryDesc(sel)?`<p class="ck-desc">${esc(entryDesc(sel))}</p>`:''}
+      ${ckVendorsFor(sel).length||ckPeople(sel).length?`<div class="ck-b"><span class="eb">Qui</span>${ckPeople(sel).length?`<p>${ckPeople(sel).map(esc).join(' · ')}</p>`:''}<ul>${ckVendorsFor(sel).map(({role,v})=>`<li><b>${esc(role)}</b><span>${v?esc(v.n)+(r||v.st>=2?'':' · <em class="late">'+esc(STATUS[v.st])+'</em>'):(r?'—':'<em class="late">à trouver</em>')}</span>${v&&v.contact?`<button type="button" data-act="copy" data-v="${esc(v.contact)}">${esc(v.contact)}</button>`:''}</li>`).join('')}</ul></div>`:''}
+      ${mt.length?`<div class="ck-b"><span class="eb">Musique</span><ul>${mt.map(t=>`<li><b>♪ ${esc(t.t)}</b><span>${esc(t.a||'')}</span></li>`).join('')}</ul></div>`:''}
+      ${ckMeal(sel)&&!r?`<div class="ck-b"><span class="eb">Table</span><p><b>${fmtN(att)}</b> couverts · <b>${tablesNeeded()}</b> tables${unplaced?` · <em class="late">${unplaced} sans table</em>`:''}</p>${Object.keys(regs).length?`<p>${Object.entries(regs).map(([k,n])=>`${n} ${esc(k.toLowerCase())}`).join(' · ')}</p>`:''}</div>`:''}
+      ${(sel.prep||[]).length?`<div class="ck-b"><span class="eb">À prévoir · ${sel.prep.filter(x=>x.done).length}/${sel.prep.length}</span><ul class="ck-todo">${sel.prep.map((x,j)=>`<li><label><input type="checkbox" data-ck="prep" data-id="${sel.id}" data-j="${j}" ${x.done?'checked':''}> ${esc(x.t)}</label></li>`).join('')}</ul></div>`:''}
+      ${nx?`<p class="ck-next">Ensuite : <button type="button" data-ck="sel" data-id="${nx.id}">${esc(entryTitle(nx))} · ${hhmm(nx.m)}</button></p>`:'<p class="ck-next">Fin de la journée</p>'}`:'<p class="hint">Aucun moment dans la frise.</p>'}</section>
+    <section class="ck-col ck-side" aria-label="Sur place">
+      ${r?'':`<div class="ck-b"><span class="eb">Accueil des invités</span><p class="ck-big"><b>${here}</b> / ${fmtN(att)} arrivés</p><div class="ck-bar"><i style="width:${att?Math.min(100,here/att*100):0}%"></i></div>
+        <input type="search" class="ck-q" placeholder="Chercher un invité" value="${esc(CK.q)}" aria-label="Chercher un invité">
+        <ul class="ck-gl">${GL.map(p=>`<li><button type="button" data-ck="here" data-id="${esc(p.id)}" aria-pressed="${!!p.here}"><span>${esc(p.n)}</span><small>${p.table?esc(p.table):'sans table'}</small><i>${p.here?'Arrivé ✓':'Pointer'}</i></button></li>`).join('')||'<li class="hint">Tout le monde est là.</li>'}</ul></div>`}
+      <div class="ck-b"><span class="eb">${r?'Mes contacts':'Prestataires du jour'}</span><ul>${today.slice(0,12).map(v=>`<li><b>${esc(v.role)}</b><span>${esc(v.n)}${r||v.st>=2?'':' · <em class="late">'+esc(STATUS[v.st])+'</em>'}</span>${v.contact?`<button type="button" data-act="copy" data-v="${esc(v.contact)}">Copier</button>`:''}</li>`).join('')||'<li class="hint">Aucun prestataire relié.</li>'}</ul></div>
+      ${alerts.length&&!r?`<div class="ck-b ck-al"><span class="eb">Alertes</span><ul>${alerts.map(([i,t])=>`<li><i>${i}</i><span>${esc(t)}</span></li>`).join('')}</ul></div>`:''}
+      ${r?'':`<div class="ck-b"><span class="eb">Supports du jour</span><div class="ck-acts"><button type="button" class="btn" data-ck="sheet" data-s="exp">Feuille de route</button><button type="button" class="btn" data-ck="sheet" data-s="echos">Marque-places et programme</button><button type="button" class="btn" data-act="copyLink" data-v="#${capAnchor()}">Lien de la capsule</button><button type="button" class="btn" data-act="copyLink" data-v="#${rsvpAnchor()}">Programme invités</button></div></div>`}
+    </section></div>`;}
+function openCockpit(id){let el=$('#cockpit');if(!el){el=document.createElement('div');el.id='cockpit';el.setAttribute('role','dialog');el.setAttribute('aria-label','Poste de pilotage du jour J');document.body.appendChild(el);}
+  CK.sel=id||null;el.classList.add('on');document.body.classList.add('ckopen');renderCockpit();clearInterval(openCockpit._t);openCockpit._t=setInterval(()=>{if(el.classList.contains('on')&&!el.contains(document.activeElement)||document.activeElement===document.body)renderCockpit();},60000);}
+function closeCockpit(){const el=$('#cockpit');if(el)el.classList.remove('on');document.body.classList.remove('ckopen');clearInterval(openCockpit._t);}
+document.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('#cockpit [data-ck]');if(!b||b.tagName==='INPUT')return;const k=b.dataset.ck;
+  if(k==='close'){closeCockpit();return;}if(k==='late'){ckLate(+b.dataset.d);return;}if(k==='sel'){CK.sel=b.dataset.id;renderCockpit();return;}
+  if(k==='here'){const p=S.people.find(x=>x.id===b.dataset.id);if(p){p.here=p.here?0:Date.now();save();renderCockpit();const i=$('#cockpit .ck-q');if(i&&CK.q){i.focus();i.setSelectionRange(i.value.length,i.value.length);}}return;}
+  if(k==='sheet'){closeCockpit();openSheet(b.dataset.s);return;}});
+document.addEventListener('change',ev=>{const c=ev.target;if(!c.closest||!c.closest('#cockpit')||c.dataset.ck!=='prep')return;const e=byId(c.dataset.id);if(e&&e.prep[+c.dataset.j]){e.prep[+c.dataset.j].done=c.checked;save();renderCockpit();}});
+document.addEventListener('input',ev=>{const c=ev.target;if(!c.classList||!c.classList.contains('ck-q'))return;CK.q=c.value;renderCockpit();const i=$('#cockpit .ck-q');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&document.body.classList.contains('ckopen')&&!ev.target.closest('input'))closeCockpit();});
+
 /* carte à réclamer (#AIME-XXXX reçu sur un marque-place ou une enveloppe) */
 function openClaim(code){const p=(PF().pendCards||{})[code],c=myCard();let M=$('#ldMk');if(!M){renderLand();M=$('#ldMk');}
   const who=p&&p.n?esc(p.n):'Une carte AIME',rl=p&&p.roles&&p.roles[0]&&p.roles[0].label?esc(p.roles[0].label):'';
