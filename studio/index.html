@@ -872,6 +872,32 @@ details.pd>summary{cursor:pointer;list-style:none}details.pd>summary::-webkit-de
 </style>
 <style>.hub-ev{grid-template-rows:1fr auto}.hub-evt{display:grid;gap:4px}.hub-evt b{font:800 22px var(--f-logo);letter-spacing:-.04em}.hub-evt span:not(.leye){font-size:13px;color:var(--muted)}.atl-head .lpill.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}</style>
 <style>body.atelier #openHome,body.atelier .top [data-catopen],body.atelier #tmenu,body.atelier #modeBar{display:none!important}body.atelier .mp{padding-top:48px}</style>
+<style>
+html.osdark{--bg:#111113;--panel:#18181B;--raised:#232328;--wall:#0C0C0E;--ink:#ECECEF;--muted:#9B9BA5;--line:#2A2A31;--accent:#7C5CFF;--accent-ink:#FFFFFF;--warn:#F5A524;--hot:#F43F5E;--ok:#22C55E;color-scheme:dark}
+html.osdark body{background:var(--bg);color:var(--ink)}
+html.osdark .btn.primary{background:linear-gradient(135deg,#7C5CFF,#3B82F6);border-color:transparent;color:#fff}
+html.osdark .btn{background:var(--raised);border-color:var(--line);color:var(--ink)}
+html.osdark .top{background:#141416;border-bottom-color:var(--line)}
+html.osdark input,html.osdark select,html.osdark textarea{background:var(--raised);color:var(--ink);border-color:var(--line)}
+html.osdark .lpill{background:linear-gradient(135deg,#7C5CFF,#3B82F6);color:#fff}
+html.osdark .lpill.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+html.osdark .leye{color:#8B8B95}
+html.osdark .br-empty h2,html.osdark .mp-hero h2{color:var(--ink)}
+html.osdark .br-empty p,html.osdark .mp-hero p{color:var(--muted)}
+html.osdark .br-bar button[aria-pressed="true"]{background:#7C5CFF;color:#fff}
+html.osdark .br-view{background:#0C0C0E}
+html.osdark .br-rep,html.osdark .br-near button{background:var(--raised);color:var(--ink)}
+html.osdark .modes{background:rgba(24,24,27,.9);border-color:var(--line)}
+html.osdark .modes button[aria-pressed=true]{background:#7C5CFF;color:#fff}
+html.osdark .mp-pv{background:#18181B;border-color:var(--line)}
+html.osdark .mp-pv:hover{border-color:#7C5CFF}
+html.osdark .mp-plus{background:#7C5CFF;color:#fff}
+html.osdark .chip[aria-pressed=true]{background:#7C5CFF;border-color:#7C5CFF;color:#fff}
+html.osdark .badge.ok{background:rgba(34,197,94,.15);color:#4ADE80}
+html.osdark .wst{background:var(--wall)}
+html.osdark .fl b{color:var(--ink)}
+html.osdark ::-webkit-scrollbar{width:10px;height:10px}html.osdark ::-webkit-scrollbar-thumb{background:#2A2A31;border-radius:10px}
+</style>
 <section class="home" id="home" hidden aria-label="Accueil du Studio"><div class="hub"><aside class="hub-side" aria-label="Navigation du Studio"><div class="hub-logo">AIME<sup>®</sup><small>Studio</small></div><button class="hub-search" data-catopen>Rechercher<kbd>Ctrl K</kbd></button><nav class="hub-nav"><button data-atlopen>Domaines</button><button data-hubgo="hubModes" aria-current="true">Mes projets</button><button data-mosopen>Mosaïque</button><button data-hubgo="myProjects">Récents</button><button data-hubgo="packs">Packs métiers</button><button data-learn>Apprendre</button><button data-hubstyles>Styles</button><button data-hubland>Présentation</button></nav><div class="hub-h">Vos projets</div><nav class="hub-list" id="hubList" aria-label="Vos projets"></nav><a class="hub-aime" id="hubAime" href="https://claude.ai/artifact/11TUjp2jX6S2JL2cy2C96h" target="_blank" rel="noopener">AIME, la planification ↗</a></aside><main class="hub-main"><div class="hwrap"><div class="hhead"><div><h1>Mes projets</h1><p id="hubHello"></p></div><div class="hub-acts"><button class="btn" id="closeHome">Revenir au projet</button><button class="btn primary" data-hubnew>+ Nouveau projet</button></div></div><div class="hsec" id="hubEvSec" hidden><h2>Vos événements · planning et supports</h2><div class="pgrid" id="hubEv"></div></div><button class="hub-mos" data-mosopen><i aria-hidden="true"><s style="background:#F2C9B8"></s><s style="background:#C8DCE8"></s><s style="background:#DCE7C8"></s><s style="background:#E6D6F2"></s><s style="background:#F5E2A6"></s><s style="background:#CFE8E0"></s><s style="background:#F3D1DC"></s><s style="background:#F2C9B8"></s><s style="background:#C8DCE8"></s><s style="background:#DCE7C8"></s><s style="background:#E6D6F2"></s><s style="background:#F5E2A6"></s><s style="background:#CFE8E0"></s><s style="background:#F3D1DC"></s><s style="background:#E6D6F2"></s><s style="background:#F5E2A6"></s><s style="background:#CFE8E0"></s><s style="background:#F3D1DC"></s><s style="background:#F2C9B8"></s><s style="background:#C8DCE8"></s><s style="background:#DCE7C8"></s><s style="background:#E6D6F2"></s><s style="background:#F5E2A6"></s><s style="background:#CFE8E0"></s><s style="background:#F3D1DC"></s><s style="background:#F2C9B8"></s><s style="background:#C8DCE8"></s><s style="background:#DCE7C8"></s><s style="background:#F3D1DC"></s><s style="background:#F2C9B8"></s><s style="background:#C8DCE8"></s><s style="background:#DCE7C8"></s><s style="background:#E6D6F2"></s><s style="background:#F5E2A6"></s><s style="background:#CFE8E0"></s><s style="background:#F3D1DC"></s><s style="background:#F2C9B8"></s><s style="background:#C8DCE8"></s><s style="background:#DCE7C8"></s><s style="background:#E6D6F2"></s><s style="background:#F5E2A6"></s><s style="background:#CFE8E0"></s></i><div><b>La mosaïque</b><span>Tous les formats du Studio d'un seul regard, composés avec votre projet. Touchez une case pour l'ouvrir ou l'ajouter.</span></div><em>Voir la totalité →</em></button><div class="hsec"><h2>Que voulez-vous créer ?</h2><div class="hub-modes" id="hubModes"></div></div><div class="hsec"><h2>Récents</h2><div class="pgrid" id="myProjects"></div></div><div class="hsec"><div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap"><h2>Nouveau projet</h2><div class="doms" id="doms"></div></div><div class="pgrid" id="packs"></div></div></div></main></div></section>
 
 <script>
@@ -3669,7 +3695,7 @@ if(EMBED){document.documentElement.classList.add('embedded');window.addEventList
 
 /* ===== v82 : les ateliers du Monde AIME (Stitchlab, Web Studio, Studio Docs, Buro, Accessibilité) ===== */
 const ATELIERS={image:{n:'Image',pack:'vierge',mode:'img'},stitchlab:{n:'Stitchlab',pack:'brodeuse',mode:'brod',formats:['pdc','pdcv','post','story']},web:{n:'Web Studio',pack:'vierge',mode:'web',view:'studio'},docs:{n:'Studio Docs',pack:'artisan',mode:'docs'},buro:{n:'Buro',pack:'entreprise',mode:'badges'},accessibilite:{n:'Accessibilité',pack:'organisme',mode:'tout',formats:['falc','grandcar','declacc','plaque','signage','site','webd','webm']}};
-const ATELIER=(typeof window.AIME_ATELIER==='string'&&ATELIERS[window.AIME_ATELIER])?window.AIME_ATELIER:null;
+const ATELIER=(typeof window.AIME_ATELIER==='string'&&ATELIERS[window.AIME_ATELIER])?window.AIME_ATELIER:null;if(ATELIER||EMBED)document.documentElement.classList.add('osdark');
 function atelierBoot(oh){const A=ATELIERS[ATELIER];let p=DB.projects.find(q=>q.atelier===ATELIER);const ohP=oh&&(String(oh).match(/^#open\.([A-Za-z0-9]+)/)||[])[1],ohOk=ohP&&DB.projects.some(q=>q.id===ohP);
  if(!p&&!ohOk){p=newProject0(A.pack);if(A.formats)p.formats=A.formats.filter(f=>FL[f]);p.atelier=ATELIER;p.name=A.n+' · '+(p.versions[0].d.title||'exemple');DB.projects.push(p);store.set('echos:v2',DB)}
  document.body.classList.add('atelier','at-'+ATELIER);document.title=A.n+' · Le monde AIME';const ls=document.querySelector('#logoBtn .lsub');if(ls)ls.textContent=A.n;
