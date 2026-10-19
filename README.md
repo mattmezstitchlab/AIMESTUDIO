@@ -4,10 +4,11 @@
 
 Fusion en cours : AIME (planning) et AIME Studio (supports) deviennent une seule app.
 
-- `index.html` : **la coque commune** (AIME Studio : mosaïque des domaines, Mes projets, supports). Les adresses d'AIME déjà diffusées (`#AIME-…`, `#rsvp…`, `#capsule-…`, `#invite=…`, `#pro=…`, `#carte`, `#accueil`, `#aimenew.…`, `#echos=…`) sont renvoyées vers `/v1/`.
-- `v1/` : le module Planning d'AIME (v72, gelé au repère `avant-fusion`), en attendant son intégration dans la coque.
-- `studio/` : la même app que la racine, gardée pour les liens existants.
-- `sup/` : rendus d'AIME Studio utilisés par le module Planning.
+- `index.html` : **la landing « Le monde AIME »**, qui présente six ateliers séparés. Les adresses d'AIME déjà diffusées sont renvoyées vers `/v1/`, celles du Studio (`#aime=`, `#atlas…`, `#commencer`) vers `/studio/`.
+- `stitchlab/`, `web/`, `docs/`, `buro/`, `accessibilite/` : chaque atelier, ouvert seul (même moteur que le Studio, réglé par `window.AIME_ATELIER`).
+- `v1/` : Timeline Jour J (AIME v72, gelé à la branche `avant-fusion`).
+- `studio/` : le grand Studio (mosaïque, tous les supports), caché de la landing, gardé pour les liens existants.
+- `sup/` : rendus d'AIME Studio utilisés par la landing et la Timeline.
 - `docs/aime-handoff.md` : passation du module Planning.
 
 ## Étapes de la fusion
