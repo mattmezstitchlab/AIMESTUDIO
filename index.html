@@ -7,14 +7,17 @@
 <title>Le monde AIME</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Le monde AIME — Architecture Intelligente de la Mémoire Ensemble. Une grille de point de croix, dix-huit ans de mariages au saxophone, la causalité, 1 191 moteurs et un bureau pour chacun.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+A720-A7FF}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin-ext.woff2") format("woff2-variations");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+A720-A7FF}
 /* Layout : un récit en chapitres sur fond nuit, chaque chapitre une pleine bande ; les visuels sont faits de pixels (la grille du point de croix), puis le Bureau, les univers et les ateliers. Un seul thème, sombre, par choix. */
 :root{
  --bg:#09090B; --raise:#131317; --line:#24242A; --fg:#F3F2EF; --dim:#A3A2AB; --mute:#6E6D77;
  --rose:#FB7185; --or:#F59E0B; --vio:#7C5CFF; --cyan:#22D3EE; --vert:#4ADE80;
- --display:"Archivo","Arial Narrow",Helvetica,sans-serif; --sans:"Instrument Sans",Helvetica,Arial,sans-serif; --serif:"Instrument Serif",Georgia,serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+ --display:"Cal Sans","Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,sans-serif; --sans:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; --serif:"Cal Sans","Inter Variable",sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
  color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -37,7 +40,7 @@ a{color:inherit}
 .bar{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);z-index:15;transition:background .3s}
 .bar.on{background:rgba(9,9,11,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line)}
 .bar .wrap{display:flex;align-items:center;gap:18px;min-height:62px}
-.mark{text-decoration:none;font:900 18px var(--display);letter-spacing:-.02em}
+.mark{text-decoration:none;font:400 20px var(--display);letter-spacing:-.02em}
 .mark sup{font-size:.5em}
 .nav{display:flex;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
 .nav a{flex:none;text-decoration:none;color:var(--dim);font:500 13.5px var(--sans);padding:7px 10px;border-radius:6px}
@@ -50,7 +53,7 @@ a{color:inherit}
 .hero canvas{position:absolute;inset:0;width:100%;height:100%}
 .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,9,11,.2) 0%,rgba(9,9,11,.05) 40%,rgba(9,9,11,.85) 88%,var(--bg) 100%);pointer-events:none}
 .hero .wrap{position:relative;z-index:1;width:100%}
-.hero h1{margin:0;font:900 clamp(76px,17vw,260px)/.8 var(--display);font-stretch:62%;letter-spacing:-.03em;text-transform:uppercase}
+.hero h1{margin:0;font:400 clamp(64px,13vw,200px)/.92 var(--display);letter-spacing:-.025em}
 .hero h1 span{display:block}
 .hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--rose),var(--or) 40%,var(--vio) 75%,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
 .acr{display:flex;flex-wrap:wrap;gap:6px 18px;margin:22px 0 0;font:500 clamp(15px,1.6vw,20px)/1.3 var(--sans);color:var(--dim)}
@@ -74,11 +77,12 @@ a{color:inherit}
 .ch{position:relative;padding-block:clamp(80px,12vw,160px);border-bottom:1px solid var(--line)}
 .ch-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:center}
 @media(min-width:960px){.ch-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.ch-grid.rev>:first-child{order:2}}
-.num{font:400 italic clamp(22px,2vw,28px)/1 var(--serif);color:var(--c,var(--rose))}
-.ch h2{margin:14px 0 22px;font:900 clamp(48px,7.4vw,108px)/.86 var(--display);font-stretch:62%;letter-spacing:-.02em;text-transform:uppercase;text-wrap:balance}
-.ch h2 i{font:400 italic .62em/1 var(--serif);text-transform:none;letter-spacing:0;color:var(--c,var(--rose));display:block;margin-top:.2em}
+.num{font:500 12px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--c,var(--rose))}
+.ch h2{margin:14px 0 22px;font:400 clamp(48px,7.4vw,108px)/.86 var(--display);letter-spacing:-.022em;line-height:1;text-wrap:balance}
+.ch h2 i{font:400 .5em/1.15 var(--sans);text-transform:none;letter-spacing:-.01em;color:var(--c,var(--rose));display:block;margin-top:.2em}
 .ch p{margin:0 0 16px;max-width:56ch;color:#C9C8D0;text-wrap:pretty}
-.ch p.big{font:400 clamp(22px,2.3vw,30px)/1.35 var(--serif);color:var(--fg)}
+.ch p.big{font:500 clamp(19px,1.9vw,24px)/1.5 var(--sans);letter-spacing:-.01em;color:var(--fg)}
+.more{display:inline-flex;align-items:center;gap:8px;margin-top:18px;text-decoration:none;font:500 14px var(--sans);color:var(--fg);border-bottom:1px solid #3A3A42;padding-bottom:4px}.more:hover{border-color:var(--fg)}.more::after{content:"→";transition:transform .2s}.more:hover::after{transform:translateX(4px)}
 .facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;padding:0;list-style:none}
 .facts li{font:500 12px var(--mono);color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:6px 11px}
 .art{position:relative;aspect-ratio:1/1;max-width:100%;border-radius:20px;overflow:hidden;background:#0D0D10;border:1px solid var(--line)}
@@ -91,7 +95,7 @@ a{color:inherit}
 .tri article{position:relative;border:1px solid var(--line);border-radius:18px;padding:22px;min-height:260px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:#0E0E11}
 .tri canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
 .tri article>div{position:relative}
-.tri h3{margin:0 0 6px;font:900 44px/.9 var(--display);font-stretch:62%;text-transform:uppercase}
+.tri h3{margin:0 0 6px;font:400 44px/.9 var(--display);letter-spacing:-.02em}
 .tri p{margin:0;color:#C9C8D0;font-size:15.5px}
 
 /* semaines */
@@ -99,7 +103,7 @@ a{color:inherit}
 .weeks i{aspect-ratio:1/1;border-radius:1.5px;background:#1E1E24;transition:background .4s}
 .weeks i.on{background:var(--c2,var(--or))}
 .wk-l{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--mute);margin-top:10px}
-.big-n{font:900 clamp(110px,16vw,220px)/.8 var(--display);font-stretch:62%;letter-spacing:-.03em;background:linear-gradient(180deg,var(--fg),#6E6D77);-webkit-background-clip:text;background-clip:text;color:transparent}
+.big-n{font:400 clamp(110px,16vw,220px)/.8 var(--display);letter-spacing:-.03em;background:linear-gradient(180deg,var(--fg),#6E6D77);-webkit-background-clip:text;background-clip:text;color:transparent}
 
 /* chaos */
 .chaos{position:relative;display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
@@ -128,7 +132,7 @@ a{color:inherit}
 /* moteurs */
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:30px 0}
 .stats div{border-top:1px solid var(--line);padding-top:12px}
-.stats b{display:block;font:900 clamp(42px,5vw,72px)/.9 var(--display);font-stretch:62%;font-variant-numeric:tabular-nums}
+.stats b{display:block;font:400 clamp(42px,5vw,72px)/.9 var(--display);font-variant-numeric:tabular-nums}
 .stats span{font-size:13.5px;color:var(--dim)}
 .cloud{display:grid;grid-template-columns:repeat(auto-fill,minmax(11px,1fr));gap:3px;margin-top:10px}
 .cloud i{aspect-ratio:1/1;border-radius:2px;opacity:.85;cursor:help}
@@ -149,7 +153,7 @@ a{color:inherit}
 .three{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:40px}
 @media(min-width:860px){.three{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .three article{border:1px solid var(--line);border-radius:16px;padding:22px;background:#0E0E11}
-.three b{display:block;font:900 30px/.95 var(--display);font-stretch:62%;text-transform:uppercase;margin-bottom:8px}
+.three b{display:block;font:400 30px/.95 var(--display);letter-spacing:-.02em;margin-bottom:8px}
 .three p{margin:0;color:var(--dim);font-size:15.5px}
 
 /* univers */
@@ -158,7 +162,7 @@ a{color:inherit}
 .uni:hover{transform:translateY(-3px);border-color:#4A4A55}
 .uni canvas{position:absolute;inset:0;width:100%;height:100%}
 .uni span{position:absolute;left:0;right:0;bottom:0;padding:34px 16px 14px;background:linear-gradient(180deg,transparent,rgba(9,9,11,.94));display:grid;gap:3px}
-.uni b{font:900 24px/1 var(--display);font-stretch:62%;text-transform:uppercase}
+.uni b{font:400 24px/1 var(--display);letter-spacing:-.02em}
 .uni small{font:500 11.5px var(--mono);color:var(--dim)}
 
 /* ateliers */
@@ -173,7 +177,7 @@ a{color:inherit}
 
 /* fin */
 .end{padding-block:clamp(90px,14vw,180px) 48px}
-.end h2{margin:0 0 30px;font:900 clamp(64px,11vw,170px)/.82 var(--display);font-stretch:62%;text-transform:uppercase;letter-spacing:-.02em}
+.end h2{margin:0 0 30px;font:400 clamp(56px,9vw,140px)/.98 var(--display);letter-spacing:-.025em}
 .foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-top:clamp(56px,8vw,96px);padding-top:24px;border-top:1px solid var(--line);font-size:13.5px;color:var(--dim)}
 .foot b{display:block;color:var(--fg);font-weight:600;margin-bottom:8px}
 .foot a{display:block;text-decoration:none;padding:2px 0}
@@ -186,7 +190,7 @@ a{color:inherit}
 
 <header class="bar" id="bar"><div class="wrap">
  <a class="mark" href="#top">AIME<sup>®</sup></a>
- <nav class="nav" aria-label="Sommaire"><a href="#grille">L'histoire</a><a href="#causalite">Causalité</a><a href="#moteurs">1 191 moteurs</a><a href="#os">Le Bureau</a><a href="#univers">Univers</a><a href="#ateliers">Ateliers</a></nav>
+ <nav class="nav" aria-label="Sommaire"><a data-at="ed" href="/monde/">Comprendre</a><a href="#grille">L'histoire</a><a href="#causalite">Causalité</a><a href="#moteurs">1 191 moteurs</a><a href="#os">Le Bureau</a><a href="#univers">Univers</a><a href="#ateliers">Ateliers</a></nav>
  <a class="btn" data-at="bureau" href="/bureau/">Entrer dans le Bureau</a>
 </div></header>
 
@@ -222,6 +226,7 @@ a{color:inherit}
   <p class="big">Avant tout le reste, il y a eu le point de croix.</p>
   <p>En cherchant comment une photo devient une broderie, j'ai passé des années sur la grille : tramer une image, trouver le fil DMC le plus juste, compter les écheveaux, imprimer le patron. Et j'ai compris qu'une grille sait tout ranger. Des couleurs, mais aussi des heures, des personnes, des tâches, des souvenirs.</p>
   <p>Cette grammaire est devenue le socle de tout l'écosystème : chaque écran AIME est, au fond, une grille.</p>
+  <a class="more" data-at="ed" href="/monde/studios/">En savoir plus : les studios</a>
   <ul class="facts"><li>489 couleurs DMC</li><li>36 moteurs de broderie</li><li>Photo → patron PDF</li></ul>
  </div>
  <figure class="art rv" style="margin:0"><canvas id="cvStitch" aria-hidden="true"></canvas><figcaption>Un cœur brodé, point par point</figcaption></figure>
@@ -232,6 +237,7 @@ a{color:inherit}
   <span class="num">II · Le temps</span>
   <h2 id="h-temps">Un voyage dans le temps <i>entre les générations</i></h2>
   <p>La grille est devenue une machine à remonter le temps. Ce que nos aînés nous laissent, ce que nous vivons ensemble, ce que nous transmettrons : la mémoire n'appartient à personne seul, elle se tisse entre les générations.</p>
+  <a class="more" data-at="ed" href="/monde/timeline/">En savoir plus : la timeline unique</a>
  </div>
  <div class="tri">
   <article class="rv"><canvas data-art="passe" aria-hidden="true"></canvas><div><span class="k">Hier</span><h3>Le passé</h3><p>Archives, portraits, histoires de famille. Retrouver les visages et les liens qui nous ont précédés.</p></div></article>
@@ -247,6 +253,7 @@ a{color:inherit}
   <p class="big">Depuis dix-huit ans, chaque semaine de ma vie, je joue du saxophone dans des mariages.</p>
   <p>Vu depuis la scène, un mariage est un chef-d'œuvre fragile. Le traiteur prend du retard, la pluie déplace le vin d'honneur, un discours s'allonge, le photographe attend, la playlist saute un moment. Tout est lié, et tout bouge en même temps.</p>
   <p>J'ai observé ce chaos samedi après samedi, noté, recommencé. Et une question ne m'a plus quitté : <strong>et si l'on pouvait voir les conséquences avant qu'elles n'arrivent ?</strong></p>
+  <a class="more" data-at="ed" href="/monde/causalite/">En savoir plus : l'orchestrateur du jour J</a>
   <div class="chaos" aria-label="Ce qui arrive un jour de mariage"><span style="--r:-2deg">Traiteur +40 min</span><span style="--r:1.5deg">Averse à 16 h</span><span style="--r:-1deg">Discours trop long</span><span style="--r:2deg">Photographe bloqué</span><span style="--r:-1.5deg">Table 7 en conflit</span><span style="--r:1deg">Coupure de son</span></div>
  </div>
  <div class="rv">
@@ -263,6 +270,7 @@ a{color:inherit}
   <p class="big">C'est la découverte au cœur d'AIME.</p>
   <p>Chaque moment dépend d'autres moments, chaque personne d'autres personnes. Quand quelque chose change, AIME suit le fil : il propage le changement à tout ce qui en dépend, montre l'onde de conséquences, et propose des solutions avant que la contrariété ne devienne un problème.</p>
   <p>Né au cœur du mariage, ce principe vaut pour tout ce qui se vit à plusieurs : un festival, une entreprise, une vie.</p>
+  <a class="more" data-at="ed" href="/monde/causalite/">En savoir plus : la causalité dans AIME</a>
   <ul class="facts"><li>Point Zéro</li><li>Ripple</li><li>Event OS</li><li>66 moteurs causaux</li></ul>
  </div>
  <div class="demo rv" aria-labelledby="demo-t">
@@ -282,6 +290,7 @@ a{color:inherit}
   <h2 id="h-mot">Des heures, des années <i>et 1 191 moteurs</i></h2>
   <p class="big">Il y a eu des prototypes, des impasses, des recommencements. Des heures et des heures de travail et de réflexion.</p>
   <p>Chaque essai a laissé quelque chose : un moteur qui fait une chose précise, et la fait bien. Un plan de table qui respecte les relations. Une grille qui devient un patron. Un contrat qui se remplit seul. Un scanner d'accessibilité. Aujourd'hui, ils sont tous rassemblés.</p>
+  <a class="more" data-at="ed" href="/monde/moteurs/">En savoir plus : les univers et les 1 191 moteurs</a>
  </div>
  <div class="stats rv"><div><b>130</b><span>dépôts, publics et privés</span></div><div><b>1 191</b><span>moteurs utilisables seuls</span></div><div><b>28</b><span>familles</span></div></div>
  <div class="rv">
@@ -299,6 +308,7 @@ a{color:inherit}
   <p class="big">Il y a vingt-cinq ans, à Saint-Luc, mon sujet d'études était un cube : la MusicBox.</p>
   <p>Une boîte où la musique, l'image et la mémoire se rencontraient. À l'époque, ce n'était qu'une idée et une maquette. Aujourd'hui, la grille, le temps, les samedis et la causalité ont rejoint ce cube : AIME en est l'aboutissement.</p>
   <p>Ce qui n'était qu'un sujet d'étudiant est devenu un système complet.</p>
+  <a class="more" data-at="ed" href="/monde/noyau/">En savoir plus : le Noyau, le cube de votre identité</a>
  </div>
  <div class="cube rv"><canvas id="cvCube" aria-hidden="true"></canvas></div>
 </div></section>
@@ -311,21 +321,21 @@ a{color:inherit}
   </div>
   <div class="rv">
    <p>Le Bureau AIME rassemble les 1 191 moteurs dans un seul espace, comme un ordinateur : un Dock, des fenêtres, des dossiers, et des univers à explorer. Chacun y compose son propre bureau, avec les modules dont il a besoin.</p>
-   <div class="cta"><a class="btn grad" data-at="bureau" href="/bureau/">Entrer dans le Bureau →</a></div>
+   <div class="cta"><a class="btn grad" data-at="bureau" href="/bureau/">Entrer dans le Bureau →</a><a class="btn ghost" data-at="ed" href="/monde/bureau/">L'architecture du Bureau</a></div>
   </div>
  </div>
- <figure class="shot rv" style="margin-top:40px"><img src="/sup/monde-os2.webp" alt="Le Bureau AIME : l'univers Mariage en plein écran, dessiné en pixels, avec le carrousel des univers et le Dock" width="1440" height="900"></figure>
+ <figure class="shot rv" style="margin-top:40px"><img src="/sup/ed-bureau.webp" alt="Le Bureau AIME : l'univers Mariage en plein écran, dessiné en pixels, avec le carrousel des univers et le Dock" width="1440" height="900"></figure>
  <div class="three">
-  <article class="rv"><b>Unique</b><p>Un bureau personnalisé, propre à chacun : vos univers, vos modules, vos dossiers, vos projets.</p></article>
-  <article class="rv"><b>Relié</b><p>Les bureaux se parlent : un couple, ses invités et ses prestataires travaillent sur la même ligne de temps.</p></article>
-  <article class="rv"><b>Universel</b><p>Un nouveau réseau social, pensé pour toute l'humanité : chacun sa mémoire, tous reliés.</p></article>
+  <article class="rv"><b>Unique</b><p>Un bureau personnalisé, propre à chacun : vos univers, vos modules, vos dossiers, vos projets.</p><a class="more" data-at="ed" href="/monde/noyau/">Le Noyau</a></article>
+  <article class="rv"><b>Relié</b><p>Les bureaux se parlent : un couple, ses invités et ses prestataires travaillent sur la même ligne de temps.</p><a class="more" data-at="ed" href="/monde/identite/">Cartes universelles</a></article>
+  <article class="rv"><b>Universel</b><p>Un nouveau réseau social, pensé pour toute l'humanité : chacun sa mémoire, tous reliés.</p><a class="more" data-at="ed" href="/monde/monde/">Le Monde</a></article>
  </div>
 </div></section>
 
 <section class="ch" id="univers" style="--c:var(--rose)" aria-labelledby="h-uni"><div class="wrap">
  <div class="ch-grid" style="align-items:end">
   <div class="rv"><span class="num">Les univers</span><h2 id="h-uni">Une carte, une mosaïque</h2></div>
-  <div class="rv"><p>Sur le Bureau, chaque univers s'ouvre en mosaïque : une case par module, une fonction précise par case. Et quand il faut enchaîner, des processus montrent l'ordre : de la photo au kit brodé, des invités au plan de table, du devis au paiement.</p></div>
+  <div class="rv"><p>Sur le Bureau, chaque univers s'ouvre en mosaïque : une case par module, une fonction précise par case. Et quand il faut enchaîner, des processus montrent l'ordre : de la photo au kit brodé, des invités au plan de table, du devis au paiement.</p><a class="more" data-at="ed" href="/monde/moteurs/">En savoir plus</a></div>
  </div>
  <figure class="shot rv" style="margin-top:40px"><img src="/sup/monde-mosaique.webp" alt="La mosaïque de l'univers Broderie : un processus en cinq étapes, puis une case par module" width="1440" height="900" loading="lazy"></figure>
  <div class="unis" id="unis"></div>
@@ -334,7 +344,7 @@ a{color:inherit}
 <section class="ch" id="ateliers" style="--c:var(--or)" aria-labelledby="h-at"><div class="wrap">
  <div class="ch-grid" style="align-items:end">
   <div class="rv"><span class="num">Les ateliers</span><h2 id="h-at">Déjà ouverts</h2></div>
-  <div class="rv"><p>Les premières apps du Dock, utilisables dès aujourd'hui, seules ou ensemble sur le même projet.</p></div>
+  <div class="rv"><p>Les premières apps du Dock, utilisables dès aujourd'hui, seules ou ensemble sur le même projet.</p><a class="more" data-at="ed" href="/monde/studios/">Tous les studios en détail</a></div>
  </div>
  <div class="ats">
   <a class="at rv" data-at="stitchlab" href="/stitchlab/"><img src="/sup/monde-stitch.webp" alt="Stitchlab : une grille de point de croix avec la palette DMC" width="1440" height="900" loading="lazy"><div><b>Stitchlab</b><small>Grilles de point de croix</small></div></a>
