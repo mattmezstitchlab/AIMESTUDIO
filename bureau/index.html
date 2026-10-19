@@ -847,6 +847,20 @@ body.wp-aime #uv p{font-size:14px;max-width:44ch}
 .tp-tip{position:absolute;top:2px;z-index:3;min-width:150px;max-width:220px;background:rgba(14,14,18,.94);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font:500 12px/1.4 var(--ui);color:#E7E7EE;pointer-events:none}
 body.tlpart #tlt{overflow:hidden}
 @media(max-width:760px){body.wp-aime #uv{width:auto}body.wp-aime #uv h1{font-size:40px!important}#uv .m4l{display:none}#menubar .scn{position:fixed;top:calc(36px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:rgba(14,14,18,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:3px 6px}#menubar .scn .m4t{display:block;width:10px}.tl-l{width:auto!important;max-width:200px}.tl-l .ib{width:24px}}
+/* v12 : colonne droite = celle de l'app ; orbe et vues au sommet de la capsule */
+.rl-mode{display:none!important}
+#rapps{width:40px;height:40px;flex:none;margin:0 auto 6px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+#rapps[hidden]{display:none}
+#rapps svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+#rapps[aria-pressed=true]{background:var(--mc,#fff);color:#0B0B0D;border-color:transparent}
+#tools .tvw{display:flex;flex-direction:column;align-items:center;gap:2px}
+#tools .orbslot2{width:40px;height:40px;flex:none;display:block}
+#tools [data-m4v]{color:var(--c);opacity:.55}
+#tools [data-m4v] svg{width:19px;height:19px}
+#tools [data-m4v]:hover{opacity:1}
+#tools [data-m4v][aria-pressed=true]{opacity:1;background:color-mix(in srgb,var(--c) 18%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 50%,transparent)}
+#orbf.tour{width:34px;height:34px;margin:-17px 0 0 -17px;box-shadow:0 0 0 3px rgba(0,0,0,.35),0 0 26px rgba(124,92,255,.9)}
+@media(min-width:761px){#menubar .scn,#menubar .orbslot{display:none}}
 #uv h1,.un-h h2,.un-s h3,.or-l h2,.ny-h h2,.gl-l h2,.ps-h h2,#cardwp h2,.tc header b,#sp h3,#wpk h3,.tx-e h3,.gu-s h3,.uc b,.ucard .b h4,.ov-h h2,.lib-d h3,.cdt h3,.board .bwm,.or-clock,.mo-d h3,.cd,.wg-clock,#who h2,.mt b,.uni b{font-family:var(--display)!important;font-weight:400!important;text-transform:none!important;letter-spacing:-.025em!important;font-stretch:100%!important}
 #uv h1{font-size:clamp(60px,7.4vw,118px)!important;line-height:.95!important}
 .or-clock{letter-spacing:-.035em!important}
@@ -2199,6 +2213,47 @@ try{var _m4=+localStorage.getItem('aime-m4');if(_m4>=0&&_m4<4)M4.v=M4.from=_m4}c
 if(!WP.k||WP.k==='univers'){WP.k='aime';try{localStorage.setItem('aime-wp','aime')}catch(_){}}
 if(WP.k==='aime'){M4.v=M4.from=0;document.body.classList.add('wp-aime','wp-other');wpInfo();pxKick();setTimeout(m4Auto,2500)}
 if(!PX.W)pxLayout();scRender();tlRender();
+/* ---------- v12 : la colonne droite devient celle de l'app ; l'orbe et les 4 vues au sommet de la capsule ---------- */
+var APPRAIL={fichiers:'media',accessibilite:'tools'};
+RAIL.showApps=false;RAIL.lastApp=null;
+$('#rail').insertAdjacentHTML('afterbegin','<button id="rapps" type="button" aria-label="Revenir aux apps" title="Revenir aux apps" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg></button>');
+$('#rapps').addEventListener('click',function(){RAIL.showApps=!RAIL.showApps;modeRender()});
+var _mr12=modeRender;modeRender=function(){var a=activeApp();if(a!==RAIL.lastApp){RAIL.lastApp=a;RAIL.showApps=false;setTimeout(function(){toolTour(a)},900)}RAIL.k=APPRAIL[a]||null;_mr12();
+ var M=MODES[curMode()],alt=!!M.pal||!!RAIL.k,b=$('#rapps');document.body.classList.toggle('rail-alt',alt);b.hidden=!alt||innerWidth<=760;
+ if(alt&&RAIL.showApps&&innerWidth>760){$('#dock').hidden=false;$('#sw').hidden=true;$('#rmedia').hidden=true;$('#rtools').hidden=true}
+ var lab=RAIL.showApps?'Revenir à '+(RAIL.k==='media'?'la playlist':RAIL.k==='tools'?'la boîte à outils':'au nuancier'):'Revenir aux apps';b.setAttribute('aria-label',lab);b.title=lab;b.setAttribute('aria-pressed',String(RAIL.showApps))};
+ZONEX[1][2]='En haut, l\'orbe AIME et les quatre vues du fond. Dessous, les outils de l\'app ouverte.';
+ZONEX[2][2]='Vos apps. Ouvrez une app : la colonne devient la sienne. Fils DMC pour la broderie, couleurs écran pour le web, couleurs d\'impression pour l\'édition, playlist pour les médias. Le picto du haut ramène les apps.';
+/* la capsule de gauche : l'orbe au sommet, puis les 4 vues sur le Bureau */
+var _tr12=toolsRender;toolsRender=function(m){_tr12(m);var t=$('#tools');var tm=t.querySelector('.tm');if(tm)tm.remove();var home=!activeApp();
+ t.insertAdjacentHTML('afterbegin','<div class="tvw"><span class="orbslot2" aria-hidden="true"></span>'+(home?M4V.map(function(V,i){return'<button data-m4v="'+i+'" aria-pressed="'+(WP.k==='aime'&&M4.v===i)+'" aria-label="'+esc(V.n+' · '+V.q)+'" title="'+esc(V.n+' · '+V.q)+'" style="--c:'+V.c+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+M4I[V.k]+'</svg></button>'}).join(''):'')+'</div><hr>');
+ if(ORB.el&&ORB.home){var h=orbHome();orbPlace(h.x,h.y)}};
+$('#tools').addEventListener('click',function(e){var b=e.target.closest('[data-m4v]');if(!b)return;if(WP.k==='scene'){sceneShow(null);document.body.classList.remove('wp-scene')}m4Go(+b.dataset.m4v,true)});
+$('#tools').addEventListener('mouseover',function(e){var b=e.target.closest('[data-m4v]');if(!b||!tip)return;tip.textContent=b.getAttribute('aria-label');var r=b.getBoundingClientRect();tip.style.left=Math.round(r.right+10)+'px';tip.style.top=Math.round(r.top+r.height/2-14)+'px';tip.hidden=false});
+function m4Marks(){$$('#tools [data-m4v]').forEach(function(b){b.setAttribute('aria-pressed',String(WP.k==='aime'&&M4.v===+b.dataset.m4v))})}
+orbHome=function(){var s=$('#tools .orbslot2');if(s&&innerWidth>760&&s.offsetParent){var r=s.getBoundingClientRect();if(r.width)return{x:r.left+r.width/2,y:r.top+r.height/2}}var b=$('#menubar .orbslot');if(!b)return{x:innerWidth-170,y:15};var q=b.getBoundingClientRect();return{x:q.left+q.width/2,y:q.top+q.height/2}};
+/* la visite : l'orbe descend de vue en vue et commente, puis vient au centre se présenter */
+var TOUR={on:false,steps:null,i:0,t:0};
+var M4S=['Au centre, vous. Chaque carré est une chose de votre vie, toujours de la même couleur.','Les mêmes carrés dans le temps : le passé à gauche, le futur à droite.','Les mêmes carrés par conséquences : ce qui dépend de quoi.','Les mêmes carrés sur la Terre : qui est où.'];
+function tourAt(el,t,d){if(!ORB.el||!el)return;var r=el.getBoundingClientRect();if(!r.width)return;TOUR.on=true;ORB.home=false;ORB.att=null;ORB.el.classList.remove('free','att');ORB.el.classList.add('tour');$$('.tour-on').forEach(function(x){x.classList.remove('tour-on')});el.classList.add('tour-on');orbPlace(r.left+r.width/2,r.top+r.height/2,true);setTimeout(function(){if(TOUR.on)orbTip({t:t,d:d})},450)}
+function tourEnd(){if(!TOUR.on)return;TOUR.on=false;clearTimeout(TOUR.t);$$('.tour-on').forEach(function(x){x.classList.remove('tour-on')});if(ORB.el){ORB.el.classList.remove('tour');ORB.tip.hidden=true;setTimeout(function(){if(!ORB.drag)orbGoHome();else{ORB.home=false;ORB.el.classList.add('free')}},0)}}
+function m4Tour(i){var V=M4V[i],el=$('#tools [data-m4v="'+i+'"]');if(!el||!el.offsetParent)el=$('#menubar [data-m4="'+i+'"]');tourAt(el,(i+1)+' / 4 · '+V.n+' · '+V.q,M4S[i])}
+var _m4Go12=m4Go;m4Go=function(i,manual){_m4Go12(i,manual);m4Marks();if(!manual&&M4.auto&&!(M4.autoN>=4))m4Tour(M4.v)};
+var _m4Stop12=m4Stop;m4Stop=function(){var natural=!!M4.auto&&M4.autoN>=4;_m4Stop12();if(natural)orbIntro();else tourEnd()};
+setTimeout(function(){if(M4.auto&&!M4.stopped)m4Tour(M4.v)},2700);
+function orbIntro(){if(!ORB.el)return;$$('.tour-on').forEach(function(x){x.classList.remove('tour-on')});ORB.el.classList.remove('tour');var n=0;try{n=+localStorage.getItem('aime-orb-intro')||0;localStorage.setItem('aime-orb-intro',n+1)}catch(_){}if(n>=3){TOUR.on=true;tourEnd();return}
+ TOUR.on=true;ORB.home=false;ORB.el.classList.add('free');orbPlace(innerWidth*(innerWidth>760?.5:.5),innerHeight*.4,true);
+ setTimeout(function(){if(!TOUR.on)return;orbTip({t:'Je suis AIME',d:'Prenez-moi et posez-moi sur n\'importe quoi : une app, un moment de la timeline, un champ, une fenêtre. Je vous explique ce que c\'est, et je peux le faire à votre place.'},[['Compris, retourne en haut',function(){tourEnd()}],['Me poser sur la timeline',function(){TOUR.on=false;var r=$('#tl').getBoundingClientRect();orbPlace(r.left+r.width*.55,r.top+r.height*.45,true);setTimeout(function(){orbExplain(true)},800)}]])},750);
+ TOUR.t=setTimeout(function(){if(TOUR.on&&!ORB.drag)tourEnd()},16000)}
+document.addEventListener('pointerdown',function(e){if(!TOUR.on||M4.auto||TOOLT.on)return;if(e.target.closest('#orbf,#orbtip'))return;tourEnd()},true);
+/* dans une app : la première fois, l'orbe passe d'outil en outil */
+var TOOLT={on:false,t:0};
+function toolTour(a){if(!a||!APP[a]||!ORB.el||innerWidth<=760||M4.auto||TOUR.on)return;var done={};try{done=JSON.parse(localStorage.getItem('aime-tour')||'{}')}catch(_){}if(done[a])return;
+ var L=$$('#tools [data-at],#tools [data-tool],#tools [data-pan]').filter(function(b){return b.offsetParent}).slice(0,8);if(!L.length)return;done[a]=1;try{localStorage.setItem('aime-tour',JSON.stringify(done))}catch(_){}
+ TOOLT.on=true;var i=-1;function step(){if(!TOOLT.on)return;i++;if(i>=L.length){TOOLT.on=false;tourEnd();return}tourAt(L[i],i===0?APP[a].n+' · ses outils':L[i].getAttribute('aria-label'),i===0?L[i].getAttribute('aria-label')+'. Je vous montre les autres, un par un.':'');TOOLT.t=setTimeout(step,i===0?2600:1700)}
+ var s=$('#tools .orbslot2');if(s)tourAt(s,APP[a].n,'Voici ses outils. Je passe de l\'un à l\'autre.');TOOLT.t=setTimeout(step,1900)}
+['pointerdown','keydown'].forEach(function(ev){window.addEventListener(ev,function(e){if(!TOOLT.on)return;if(e.target.closest&&e.target.closest('#orbf,#orbtip'))return;TOOLT.on=false;clearTimeout(TOOLT.t);tourEnd()},true)});
+modeRender();
 var h=(location.hash||'').slice(1);
 if(h&&APP[h]&&!APP[h].ext)open(h);
 else{var reopen=Object.keys(saved).filter(function(k){return saved[k].open&&APP[k]&&!APP[k].ext});if(reopen.length)reopen.forEach(function(k){open(k);if(saved[k].min)minWin(k)})}
