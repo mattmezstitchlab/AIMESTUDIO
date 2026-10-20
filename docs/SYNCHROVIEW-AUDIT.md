@@ -134,7 +134,7 @@ Format :
 | Étape | Contenu | Critère d'acceptation |
 |---|---|---|
 | **0 · fait** | Pont, sections, Liée/Libre, Focus, Inspecter (observation) | Testé ; `/tout/` inchangé |
-| **1 · Durcissement** | Pont restreint (origines, `?apercu`), `frame-ancestors`, statuts + niveaux de preuve dans l'inspecteur, deux colonnes « interface » / « règles », compositions nommées, focus animé + verrou des secondaires, pause des animations des miniatures | Aucun échange accepté depuis une origine non listée (test) ; fluidité égale à `/tout/` à 4 vues |
+| **1 · Durcissement — fait** | Pont restreint (origines, `?apercu`), `frame-ancestors`, statuts + niveaux de preuve dans l'inspecteur, deux colonnes « interface » / « règles », compositions nommées, focus animé + verrou des secondaires, pause des animations des miniatures | Aucun échange accepté depuis une origine non listée (test) ; fluidité égale à `/tout/` à 4 vues |
 | **2 · Règles** | `lib/permissions.mjs` + un test par case, après **validation de la matrice et de la correspondance profils → rôles** | 100 % des cases testées ; l'inspecteur affiche « Autorisé / Refusé · code » |
 | **3 · Serveur et identités** | Comptes et espace de test en preview, `/api/can` (évalue une action pour la session, sans l'exécuter), jeux de données fictifs par profil | « Autorisé / Refusé · serveur » ; aucune donnée réelle dans les vues de test |
 | **4 · Parcours** | Format JSON, exécuteur (un contexte par identité), résultats relus dans SynchroView, garde-fous sur les actions à effet | Un parcours n'est « réussi » que si ses conditions serveur passent |
@@ -148,3 +148,16 @@ Rien n'ira sur `main` sans votre validation explicite de l'étape correspondante
 2. Contenu de la matrice (`SYNCHROVIEW.md §7.3`).
 3. Méthode d'identités de test : sous-domaines de preview, jeton de test signé, ou exécuteur seul.
 4. Ordre : commencer par l'étape 1 (durcissement), recommandée avant tout le reste.
+
+## 9. Étape 1 · réalisée (branche `synchroview`)
+
+| Point | Fait | Vérification |
+|---|---|---|
+| Pont restreint | Actif seulement avec `?apercu` et si la page parente est le même site, `lemondeaime.com`, `ai-x-me.com` ou une preview de ce projet. Envois vers l'origine exacte, messages refusés d'une autre origine. | Page d'une autre origine qui encadre AIME et lui écrit : **0 réponse** [mesuré] |
+| Encadrement interdit aux autres sites | `vercel.json` : `Content-Security-Policy: frame-ancestors 'self' https://www.lemondeaime.com https://lemondeaime.com https://ai-x-me.com https://www.ai-x-me.com` | À vérifier sur la preview (en-tête servi par Vercel) |
+| Inspection en lecture seule | En mode Inspecter, la page encadrée ne reçoit plus aucun clic, appui ni touche : aucune sélection, aucune action déclenchée. | Clic sur « Oui » de la réponse : rien n'est envoyé ni sélectionné [mesuré] |
+| Statuts et preuves | Colonne **Interface** (Absent · Masqué · Désactivé · Visible, preuve « observation ») et colonne **Règles** (Autorisé · Refusé · Non vérifié, avec la preuve code / serveur / test). Chaque action a les deux statuts. « Masqué » n'est jamais converti en « Refusé ». | Bouton de réponse : Moi et Participant « Visible · Non vérifié », Pro et Coordinateur « Absent » [mesuré] |
+| Compositions | Toute la composition est dans l'adresse (axe, format, mode, section, vues libres `lk`, focus `fx`, miniatures figées `fz`, manipulation `act`) ; « Compositions » enregistre des noms dans ce navigateur. | Enregistrer puis rouvrir : focus et miniatures figées restaurés [mesuré] |
+| Focus | Transition animée (View Transitions quand le navigateur la propose, sinon instantané ; rien si « réduire les animations »). « Miniatures suivent / figées » : figées = plus de défilement ni d'animation (pause de `requestAnimationFrame`, des animations CSS et des vidéos), reprise exacte à la sortie. | Miniature figée : 0 image calculée en 0,5 s [mesuré] ; Échap → grille, liens d'origine rétablis |
+| Fluidité | `/tout/` et `/synchroview/` au même rythme dans le même navigateur de test. | 4 et 4 images/s (navigateur sans carte graphique : valeurs relatives) [mesuré] |
+| Non-régression | `/tout/` : aucune ligne modifiée (`git diff main -- tout/` vide). | [mesuré] |
