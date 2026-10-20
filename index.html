@@ -833,6 +833,30 @@ body.acur input,body.acur textarea,body.acur [contenteditable]{cursor:text!impor
 #ocur.dot.hov{width:28px;height:28px;margin:-14px}
 #ocur .cl{display:none!important;position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);white-space:nowrap;font:600 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#C9C9D2;text-shadow:0 1px 6px rgba(0,0,0,.9);opacity:.85}
 #ocur.on .cl{display:none}
+
+/* le cube sur le O, et la boussole autour d'AIME */
+.o0.ask{position:relative}
+.o0.ask::after{content:"";position:absolute;inset:-.18em;border-radius:50%;border:2px solid #fff;opacity:0;animation:oask 1.8s ease-out infinite}
+@keyframes oask{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+#ocube{position:absolute;z-index:6;left:0;top:0;width:60px;height:60px;padding:0;border:0;background:none;cursor:pointer;perspective:420px;opacity:0;transform:translateY(24px) scale(.4);transition:opacity .6s,transform .9s cubic-bezier(.2,1.3,.3,1)}
+#ocube{transform-origin:50% 100%}#ocube.on{opacity:1;transform:scale(var(--k,1))}
+#ocube .oc3{position:absolute;inset:0;transform-style:preserve-3d;animation:c3spin 16s linear infinite}
+#ocube .oc3>i,#ocube .core>i{position:absolute;inset:0;border-radius:10px;border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.02);transition:background .8s,border-color .8s,box-shadow .8s}
+#ocube .oc3>i.f{background:rgba(255,255,255,.16);border-color:#fff;box-shadow:inset 0 0 18px rgba(255,255,255,.25)}
+#ocube .core{position:absolute;left:19px;top:19px;width:22px;height:22px;transform-style:preserve-3d}
+#ocube .core>i{border-radius:4px;border-color:rgba(255,255,255,.35);background:rgba(255,255,255,var(--in,.04))}
+#ocube .oc3>i:nth-child(1){transform:translateZ(30px)}#ocube .oc3>i:nth-child(2){transform:rotateY(90deg) translateZ(30px)}#ocube .oc3>i:nth-child(3){transform:rotateY(180deg) translateZ(30px)}#ocube .oc3>i:nth-child(4){transform:rotateY(-90deg) translateZ(30px)}#ocube .oc3>i:nth-child(5){transform:rotateX(90deg) translateZ(30px)}#ocube .oc3>i:nth-child(6){transform:rotateX(-90deg) translateZ(30px)}
+#ocube .core>i:nth-child(1){transform:translateZ(11px)}#ocube .core>i:nth-child(2){transform:rotateY(90deg) translateZ(11px)}#ocube .core>i:nth-child(3){transform:rotateY(180deg) translateZ(11px)}#ocube .core>i:nth-child(4){transform:rotateY(-90deg) translateZ(11px)}#ocube .core>i:nth-child(5){transform:rotateX(90deg) translateZ(11px)}#ocube .core>i:nth-child(6){transform:rotateX(-90deg) translateZ(11px)}
+#ocube.full .core>i{box-shadow:0 0 14px rgba(255,255,255,.7)}
+#ocube:focus-visible{outline:2px solid #fff;outline-offset:6px;border-radius:12px}
+#gps{position:fixed;z-index:98;left:0;top:0;width:0;height:0;pointer-events:none;opacity:0;transition:opacity .3s}
+#gps.on{opacity:1}
+#gps b{position:absolute;left:-19px;top:-19px;width:38px;height:38px;border-radius:50%;border:1px dashed rgba(255,255,255,.28)}
+#gps i{position:absolute;left:0;top:0;width:0;height:0;border-left:9px solid #fff;border-top:5.5px solid transparent;border-bottom:5.5px solid transparent;margin:-5.5px 0 0 21px;filter:drop-shadow(0 0 5px rgba(255,255,255,.8))}
+#gps.near i{animation:gpsn .8s ease-in-out infinite}
+@keyframes gpsn{50%{margin-left:25px}}
+@media (pointer:coarse){#gps b{left:-30px;top:-30px;width:60px;height:60px}#gps i{margin-left:31px}@keyframes gpsn{50%{margin-left:35px}}}
+@media (prefers-reduced-motion:reduce){#ocube .oc3{animation:none;transform:rotateX(-22deg) rotateY(35deg)}.o0.ask::after{animation:none;opacity:.6}}
 #ocur.press{transform-origin:center}
 #ocur.press::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid #fff;animation:prs .45s linear forwards}
 @keyframes prs{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
@@ -1744,7 +1768,7 @@ function oc(){var r=O.getBoundingClientRect();return[r.left+r.width/2,r.top+r.he
 function keepGrid(){CALG.classList.add('on','keep');gridTick()}
 function gridTick(){if(!CALG.classList.contains('keep'))return;var cn=document.getElementById('cnv5'),c=window.__aimeCell||40,r=cn?cn.getBoundingClientRect():{left:0,top:0};CALG.style.setProperty('--c',c+'px');CALG.style.setProperty('--gx',(((r.left%c)+c)%c)+'px');CALG.style.setProperty('--gy',(((r.top%c)+c)%c)+'px')}
 addEventListener('scroll',gridTick,{passive:true});addEventListener('resize',function(){setTimeout(gridTick,200)});
-function calStart(){calOn=true;CALH.textContent=FINE?'Visez le centre du O avec la croix, puis cliquez':'Touchez le centre du O';if(!FINE)return;document.body.classList.add('cal');CALG.classList.add('on');CALG.style.setProperty('--c',(window.__aimeCell||40)+'px');
+function calStart(){calOn=true;CALH.textContent=FINE?'Cliquez au centre du O : la flèche vous y mène':'Touchez le O';if(!FINE)return;document.body.classList.add('cal');CALG.classList.add('on');CALG.style.setProperty('--c',(window.__aimeCell||40)+'px');
  skip=document.createElement('button');skip.className='calskip';skip.type='button';skip.textContent='Passer';document.body.appendChild(skip);skip.addEventListener('click',function(){calEnd(false)})}
 document.addEventListener('pointermove',function(e){if(!calOn||!FINE)return;var c=oc(),x=e.clientX,y=e.clientY,d=Math.hypot(x-c[0],y-c[1]),near=d<26;if(near){x=c[0];y=c[1]}CALX.style.transform='translate('+x+'px,'+y+'px)';CALX.classList.toggle('near',near);CALG.style.setProperty('--mx',x+'px');CALG.style.setProperty('--my',y+'px')});
 document.addEventListener('click',function(e){if(!calOn||e.target.closest('.calskip'))return;var c=oc(),d=Math.hypot(e.clientX-c[0],e.clientY-c[1]);if(d<(FINE?26:46)){e.preventDefault();e.stopPropagation();calHit(c)}else if(e.target.closest('#hero0')){CALH.textContent='Un peu plus près du centre du O…';var w=document.createElement('i');w.className='calw';w.style.left=e.clientX+'px';w.style.top=e.clientY+'px';document.body.appendChild(w);setTimeout(function(){w.remove()},1400)}},true);
@@ -1752,12 +1776,12 @@ document.addEventListener('keydown',function(e){if(calOn&&e.key==='Escape')calEn
 addEventListener('scroll',function(){if(calOn&&scrollY>innerHeight*.7)calEnd(false)},{passive:true});
 function calHit(c){calOn=false;CALG.style.setProperty('--mx',c[0]+'px');CALG.style.setProperty('--my',c[1]+'px');CALG.classList.add('lock');document.body.classList.remove('cal');if(skip)skip.remove();
  [0,220,440].forEach(function(t){setTimeout(function(){var w=document.createElement('i');w.className='calw';w.style.left=c[0]+'px';w.style.top=c[1]+'px';document.body.appendChild(w);setTimeout(function(){w.remove()},1400)},t)});
- CALH.textContent='Grille activée · AIME est là';CALH.classList.add('ok');setTimeout(function(){CALG.classList.remove('lock');keepGrid()},1300);AIMEM.grid=true;AIMEM.save();
+ CALH.textContent='Le cube est à vous : d\'abord l\'intérieur, puis l\'extérieur';CALH.classList.add('ok');setTimeout(cubeIn,500);setTimeout(function(){CALG.classList.remove('lock');keepGrid()},1300);AIMEM.grid=true;AIMEM.save();
  setTimeout(function(){GORB.style.transition='none';GORB.style.left=c[0]+'px';GORB.style.top=c[1]+'px';void GORB.offsetWidth;GORB.style.transition='';GORB.classList.add('on');window.__aimeQuest=true;setTimeout(roles,900)},700)}
 var RO=$('#role0');function roles(){RO.hidden=false;$$('button',RO).forEach(function(b){b.setAttribute('aria-pressed',b.dataset.r===AIMEM.role?'true':'false')});Q.st='role';Q.tgt=RO;bub('<small>AIME</small>Qui êtes-vous ? Moi, Pro, ou Proche de quelqu\'un : vos questions s\'adaptent.')}
 var PJ=$('#proj0');PJ.addEventListener('click',function(e){var b=e.target.closest('[data-p]');if(!b)return;AIMEM.projet=b.dataset.p;AIMEM.save();$$('button',PJ).forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});if(window.aimeRole)aimeRole();go('scroll')});
 RO.addEventListener('click',function(e){var b=e.target.closest('[data-r]');if(!b)return;AIMEM.role=b.dataset.r;AIMEM.roleSet=true;AIMEM.save();$$('button',RO).forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});if(window.aimeRole)aimeRole();PJ.hidden=false;$$('button',PJ).forEach(function(x){x.setAttribute('aria-pressed',x.dataset.p===AIMEM.projet?'true':'false')});var pl=AIMEM.role==='pro'?'Pour quel type de projet intervenez-vous le plus ?':AIMEM.role==='proche'?'À quel projet participez-vous ?':AIMEM.role==='coord'?'Quel projet coordonnez-vous ?':'Quel est votre projet ?';if(!GORB.classList.contains('on')){var r=b.getBoundingClientRect();GORB.style.transition='none';GORB.style.left=r.left+'px';GORB.style.top=r.top+'px';void GORB.offsetWidth;GORB.style.transition='';GORB.classList.add('on');window.__aimeQuest=true}Q.st='role';Q.tgt=PJ;bub('<small>Votre projet</small>'+pl)});
-function calEnd(){calOn=false;document.body.classList.remove('cal');CALG.classList.remove('on');if(skip)skip.remove();CALH.textContent='Vous êtes :';RO.hidden=false;$$('button',RO).forEach(function(b){b.setAttribute('aria-pressed',b.dataset.r===AIMEM.role?'true':'false')})}
+function calEnd(){calOn=false;cubeIn();document.body.classList.remove('cal');CALG.classList.remove('on');if(skip)skip.remove();CALH.textContent='Vous êtes :';RO.hidden=false;$$('button',RO).forEach(function(b){b.setAttribute('aria-pressed',b.dataset.r===AIMEM.role?'true':'false')})}
 /* la bulle et la cible de l'orbe */
 var Q={st:null,step:0,tgt:null},STEPS=['vous','jourj','image','supports','web'];
 var BT=0;function bub(html,btn,fn){clearTimeout(BT);GBUB.firstChild.innerHTML=html+(btn?'<button type="button">'+btn+'</button>':'');GBUB.classList.add('on');GBUB.classList.toggle('btn',!!btn);if(!btn)BT=setTimeout(function(){GBUB.classList.remove('on')},4200);if(btn)GBUB.querySelector('button').onclick=fn}
@@ -1799,6 +1823,34 @@ var QS={vous:function(){var A=window.aimeB,P=A.P(),g=cardAt('vous','<span class=
 function applyName(n){window.__aimeName=n;AIMEM.name=n;AIMEM.save();var f=document.querySelector('.f2 .o .lb2');if(f)f.innerHTML='<small>Profil</small>'+esc(n);$$('.f2 .pf b').forEach(function(b){b.textContent=n});$$('.f2 .o .mono2, .f2 .av2 span').forEach(function(x){x.textContent=n[0].toUpperCase()});CALH.textContent='Bienvenue, '+n+'.';CALH.classList.add('ok')}
 /* les apps du parcours ouvrent leur étape */
 AP.addEventListener('click',function(e){var b=e.target.closest('[data-a]');if(!b)return;var id=APPS[+b.dataset.a][0];if(id==='vous'||(window.__aimeQuest&&QS[id]&&STEPS.indexOf(id)<=Q.step+0&&STEPS.indexOf(id)>=0)){e.stopImmediatePropagation();if(b.getAttribute('aria-expanded')==='true'){closeCard();return}QS[id]()}},true);
+
+/* ---------- le cube sur le O : l'intérieur (vos infos), puis l'extérieur (vos médias) ---------- */
+var IN=[[2,'terre','Lieux',function(M){return M.pins&&M.pins.length}],[3,'frise','Le temps',function(M){return M.frise&&Object.keys(M.frise).length}],[4,'partition','Les moments',function(M){for(var k in M.notes)if(Object.keys(M.notes[k]).length)return 1}],[6,'reseau','Les liens',function(M){return M.name}],[7,'recherche','Les mots',function(M){return M.tags&&M.tags.length}],[10,'formulaire','Votre événement',function(M){return M.event&&(M.event.date||M.event.lieu)}]],
+ OUT=[[9,'carte','Votre visuel',function(M){return M.visuals||M.visual}],[8,'lecteur','La musique',function(M){return M.tracks&&M.tracks.length}],[11,'site','Votre site',function(M){return(M.site||[]).filter(Boolean).length}]];
+var CUBE=document.createElement('button');CUBE.type='button';CUBE.id='ocube';CUBE.innerHTML='<span class="oc3"><i></i><i></i><i></i><i></i><i></i><i></i><span class="core"><i></i><i></i><i></i><i></i><i></i><i></i></span></span>';document.body.appendChild(CUBE);
+var GPS=document.createElement('div');GPS.id='gps';GPS.setAttribute('aria-hidden','true');GPS.innerHTML='<b></b><i></i>';document.body.appendChild(GPS);
+O.classList.add('ask');var cubeOn=false,ni=-1,no=-1,px=-1,py=-1;
+document.addEventListener('pointermove',function(e){if(e.pointerType==='mouse'){px=e.clientX;py=e.clientY}},{passive:true});
+function cubeIn(){O.classList.remove('ask');if(cubeOn)return;cubeOn=true;cubePos();requestAnimationFrame(function(){CUBE.classList.add('on')})}
+function cubePos(){var r=O.getBoundingClientRect(),k=Math.max(1,Math.min(1.5,r.height/64));CUBE.style.setProperty('--k',k.toFixed(2));CUBE.style.left=(r.left+scrollX+r.width/2-30)+'px';CUBE.style.top=(r.top+scrollY-60-Math.max(12,r.height*.3))+'px'}
+function counts(){var M=window.AIMEM||{};return[IN.filter(function(q){return q[3](M)}).length,OUT.filter(function(q){return q[3](M)}).length]}
+function nextQ(){var M=window.AIMEM||{};for(var i=0;i<IN.length;i++)if(!IN[i][3](M))return IN[i];for(i=0;i<OUT.length;i++)if(!OUT[i][3](M))return OUT[i];return null}
+function chapY(q){var el=document.getElementById('naiss');return el.offsetTop+(el.offsetHeight-innerHeight)*(q[0]+.3)/12}
+/* où aller : le O tant qu'il n'est pas touché, l'étape du parcours en cours, sinon la prochaine chose vide (intérieur d'abord) */
+function dest(){if(calOn)return oc();if(window.__aimeQuest&&Q.tgt&&(Q.st==='role'||Q.st==='app')){var r=Q.tgt.getBoundingClientRect();if(r.width&&r.bottom>0&&r.top<innerHeight)return[r.left+r.width/2,r.top+r.height/2]}
+ var q=nextQ();if(!q){var b=document.getElementById('build').getBoundingClientRect();return b.top>innerHeight*.5||b.bottom<0?[innerWidth/2,b.top+40]:null}
+ if(window.__aimeChap===q[1]&&HINTS[q[1]]){var h=document.getElementById(HINTS[q[1]][0]);if(h){var hr=h.getBoundingClientRect();if(hr.width)return[hr.left+hr.width/2,hr.top+hr.height/2]}}
+ if(window.__aimeChap===q[1])return null;return[innerWidth/2,innerHeight/2+(chapY(q)-scrollY)]}
+CUBE.addEventListener('click',function(){var q=nextQ();if(q)scrollTo({top:chapY(q),behavior:RM?'auto':'smooth'});else document.getElementById('build').scrollIntoView({behavior:RM?'auto':'smooth'})});
+(function gps(){var c=counts();if(c[0]!==ni||c[1]!==no){var full=c[0]===IN.length,was=ni;ni=c[0];no=c[1];
+  CUBE.style.setProperty('--in',(.04+.8*ni/IN.length).toFixed(2));CUBE.classList.toggle('full',full);
+  $$('.oc3>i',CUBE).forEach(function(f,k){f.classList.toggle('f',k<Math.round(no/OUT.length*6))});
+  CUBE.setAttribute('aria-label','Votre cube : intérieur '+ni+' sur '+IN.length+', extérieur '+no+' sur '+OUT.length+'. Aller à la suite');
+  if(was>=0&&cubeOn){if(full&&was<IN.length&&no<OUT.length)bub('<small>L\'intérieur est rempli</small>Maintenant l\'extérieur : votre visuel, votre musique, vos blocs.');if(full&&no===OUT.length)bub('<small>Votre cube est complet</small>Intérieur + extérieur = votre site.')}}
+ if(cubeOn){var hr=document.getElementById('hero0').getBoundingClientRect();if(hr.bottom>0)cubePos()}
+ var ox=-1,oy=-1;if(calOn&&FINE&&px>=0){ox=px;oy=py}else if(FINE&&document.getElementById('ocur').classList.contains('dot')){ox=px;oy=py}else if(!FINE&&GORB.classList.contains('on')){var g=GORB.getBoundingClientRect();ox=g.left+g.width/2;oy=g.top+g.height/2}
+ var d=ox>=0&&!radOn?dest():null;if(d){var dx=d[0]-ox,dy=d[1]-oy,dd=Math.hypot(dx,dy);if(dd<34){GPS.classList.remove('on')}else{GPS.style.transform='translate('+ox+'px,'+oy+'px) rotate('+Math.atan2(dy,dx)+'rad)';GPS.classList.add('on');GPS.classList.toggle('near',dd<160)}}else GPS.classList.remove('on');
+ requestAnimationFrame(gps)})();
 calStart();if(AIMEM.grid&&!calOn)keepGrid();
 
 /* ---------- 3. l'orbe : un clic, elle descend au centre et ouvre ses outils ---------- */
