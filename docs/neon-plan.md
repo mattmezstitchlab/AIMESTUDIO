@@ -61,8 +61,12 @@
 
 **Données privées, propriétaire seul :** `user_data` (synchronisation du Bureau) et `vault` (le Noyau, chiffré côté client).
 
+**Garde-fous (validés) :**
+- **`creator` n'est jamais attribuable par le navigateur.** Aucune route ne modifie `role`. Il est fixé côté serveur seulement : par une variable d'environnement `CREATOR_EMAILS` lue à la création du compte, ou par une requête SQL d'administration. Le champ est `input: false` dans Better Auth.
+- **Une matrice explicite, pas une hiérarchie.** Les droits sont lus dans une table `PERMS[role][action]`, et non comparés par rang (`minRole`). Par exemple, `guest` peut « répondre pour soi », ce que `viewer` ne peut pas, et `contributor` modifie seulement ce qui lui est assigné. Chaque fonction appelle `can(session, spaceId, action, objet)`.
+
 **Dans chaque fonction `/api` :**
-- `requireSession()`, puis `requireRole(spaceId, minRole)` ;
+- `requireSession()`, puis `can(session, spaceId, action, objet)` d'après la matrice ;
 - `user_id` toujours lu dans la session, jamais dans la requête ;
 - refus par défaut ;
 - une ligne `audit` par écriture.
