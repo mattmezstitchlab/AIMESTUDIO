@@ -1385,6 +1385,41 @@ body.tlex #tl{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1f
 #tband .bc{gap:6px}
 #tl .tl-it.trk{outline:2px solid #fff;outline-offset:2px;z-index:5}
 @media(max-width:760px){#tband .bpill .bwhen small{display:none}#tband .bpill .bwhen b{max-width:120px}}
+/* v24 : barre du haut épurée */
+#menubar{height:calc(44px + env(safe-area-inset-top,0px))!important;gap:4px}
+#menubar .scn{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 22px);transform:translate(-50%,-50%);display:flex!important;background:none!important;border:0!important;padding:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#menubar .m4s{gap:6px}
+#menubar .m4s .m4t{display:none}
+#menubar .m4s button{width:34px;height:32px;border-radius:10px;opacity:.85}
+#menubar .m4s button svg{width:19px;height:19px;stroke-width:1.8}
+#menubar .m4s button:hover{opacity:1;background:color-mix(in srgb,var(--c) 14%,transparent)}
+#menubar .m4s button[aria-selected=true]{opacity:1;background:color-mix(in srgb,var(--c) 22%,transparent);box-shadow:inset 0 0 0 1.5px var(--c)}
+#menubar .m4s .orbslot{display:block!important;width:40px;height:32px;margin:0 4px}
+#menubar .sb{width:34px;height:32px}
+#menubar #clock{font-size:12.5px}
+#tools .tadd{flex:none;width:38px;height:38px;margin-top:6px;border-radius:50%;border:2px solid transparent;background:linear-gradient(#0B0B0D,#0B0B0D) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;color:#fff;display:grid;place-items:center;cursor:pointer;opacity:1}
+#tools .tadd svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round}
+#tools .tadd:hover{background:linear-gradient(#1F1F25,#1F1F25) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;transform:scale(1.06)}
+#addm{position:fixed;inset:0;z-index:9650;display:grid;place-items:center;background:rgba(0,0,0,.35)}
+#addm.anch{display:block;background:none}
+#addm.anch .add-c{position:absolute}
+#addm .add-c{width:min(380px,calc(100vw - 32px));background:#141418;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;display:grid;gap:14px;box-shadow:0 30px 70px -14px rgba(0,0,0,.85);color:#fff;font:500 13px var(--ui)}
+#addm h3{margin:0;font:600 18px var(--display);letter-spacing:-.01em}
+#addm label>span{display:block;font:600 12px var(--ui);color:var(--soft);margin-bottom:5px}
+#addm input:not([type=radio]){width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:10px 12px;font:500 14px var(--ui);color-scheme:dark}
+#addm input:focus-visible{outline:2px solid #fff;outline-offset:1px}
+#addm .add-ty{display:flex;flex-wrap:wrap;gap:6px}
+#addm .add-ty label{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 12px;cursor:pointer;font:600 12.5px var(--ui)}
+#addm .add-ty input{position:absolute;opacity:0;pointer-events:none}
+#addm .add-ty i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+#addm .add-ty label:has(input:checked){background:color-mix(in srgb,var(--c) 22%,transparent);border-color:var(--c)}
+#addm .add-ty label:has(input:focus-visible){outline:2px solid #fff;outline-offset:1px}
+#addm .add-w{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#addm .add-a{display:flex;justify-content:flex-end;gap:8px}
+#tband .bpill .bplay{width:32px;height:32px}
+#tband .bpill .bplay svg{width:17px;height:17px}
+#tband .tadd{width:30px;height:30px;margin-left:4px;border-radius:50%;border:2px solid transparent;background:linear-gradient(#000,#000) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box}#tband .tadd svg{stroke-width:2.4}
+@media(max-width:760px){#menubar .m4s{gap:2px}#menubar .m4s button{width:32px}#menubar .logo{margin-right:auto}}
 </style>
 
 <div id="desk" aria-hidden="true"><canvas id="px"></canvas></div>
@@ -2873,8 +2908,8 @@ document.addEventListener('click',function(e){var b;if(!e.target.closest)return;
 var RECIPES={
  vues:{n:'Changer de vue',d:'Les quatre vues du fond',steps:[
   {go:'#tools .orbslot2',say:'Le fond du Bureau a quatre vues. Elles sont en haut de la capsule de gauche, sous moi.',after:1800},
-  {pre:function(run){var v=M4.v;run.undo.push(function(){m4Go(v,true)});if(WP.k!=='aime')setWp('aime')},click:'#tools [data-m4v="2"]',say:'Je choisis Ripple : quand une chose bouge, les autres bougent aussi.',learn:'Cliquez sur le troisième picto : Ripple.',after:2400},
-  {click:'#tools [data-m4v="3"]',say:'Puis la Carte : qui est où.',learn:'Puis le quatrième : la Carte.',after:2400},
+  {pre:function(run){var v=M4.v;run.undo.push(function(){m4Go(v,true)});if(WP.k!=='aime')setWp('aime')},click:'#menubar [data-m4=\"2\"]',say:'Je choisis Ripple : quand une chose bouge, les autres bougent aussi.',learn:'En haut, cliquez sur le troisième picto : Ripple.',after:2400},
+  {click:'#menubar [data-m4=\"3\"]',say:'Puis la Carte : qui est où.',learn:'Puis le quatrième : la Carte.',after:2400},
   {say:'Voilà. Les mêmes carrés passent d\'une vue à l\'autre.',after:1600}]},
  devis:{n:'Faire un devis',d:'Studio Docs, une ligne, le numéro',steps:[
   {open:['docs','#add.devis'],say:'J\'ouvre Studio Docs avec un nouveau devis.',learn:'Ouvrez Studio Docs dans le Dock, à droite.',after:3200},
@@ -3578,6 +3613,27 @@ var _tex23=texRender;texRender=function(){_tex23();var h=$('#tex .tx-h');if(!h)r
 var _tlPop23=tlPop;tlPop=function(id,a){_tlPop23(id,a);var f=$('.tl-pop [data-tfold]'),w=$('.tl-pop [data-twhere]');if(f)f.innerHTML=svgI('folder')+' Retrouver';if(w)w.textContent='Chercher partout'};
 ZONEX.forEach(function(z){if(z[0]==='#tband')z[2]='À gauche, le pointeur et le dossier arc-en-ciel pour tout retrouver. Au milieu, un lecteur : ▶ pour écouter le temps, les flèches pour passer au moment d\'avant ou d\'après (gardez appuyé pour aller vite), et le bouton du milieu pour choisir le jour. À droite, les fenêtres, la taille et la frise.'});
 bandRender();
+
+/* ---------- v24 : la barre du haut épurée (les 4 vues au centre, l'orbe au centre sur mobile) ; « + » pour ajouter un moment ---------- */
+var _mb24=menubarRender;menubarRender=function(){_mb24();var m=$('#menubar');if(!m)return;['export','invite','wp','a11y','lang'].forEach(function(k){var b=m.querySelector('[data-sp="'+k+'"]');if(b)b.remove()});var c=$('#curApp');if(c&&!activeApp())c.hidden=true;scRender()};
+var _sc24=scRender;scRender=function(){_sc24();var r=$('#menubar .scn');if(!r)return;var sp=r.querySelector(':scope>span');if(sp)sp.remove();
+ var mob=innerWidth<=760,st=$('#menubar .st .orbslot'),ms=r.querySelector('.m4s');if(mob&&ms){if(st)st.remove();if(!ms.querySelector('.orbslot')){var bs=ms.querySelectorAll('button');if(bs[1])bs[1].insertAdjacentHTML('afterend','<span class="orbslot" aria-hidden="true"></span>')}}
+ if(ORB.el&&ORB.home){var h=orbHome();orbPlace(h.x,h.y)}};
+addEventListener('resize',function(){menubarRender()});
+/* « + » : ajouter un moment, simplement */
+var ADDT=[['rdv','Rendez-vous'],['tache','À faire'],['rappel','Rappel'],['paiement','Paiement'],['mission','Mission']];
+tlAdd=function(ty){addOpen(ty)};
+function addOpen(ty,anchor){var m=$('#addm');if(!m){m=document.createElement('div');m.id='addm';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-labelledby','addh');document.body.appendChild(m)}ty=ty&&TY[ty]?ty:'rdv';var d=new Date(TL.navC||Date.now());d.setMinutes(0,0,0);d.setHours(Math.min(20,Math.max(9,d.getHours()+1)));
+ m.innerHTML='<form class="add-c" id="addf"><h3 id="addh">Ajouter un moment</h3><label class="add-q"><span>Quoi ?</span><input name="ti" required autocomplete="off" placeholder="Ex. : rendez-vous avec le traiteur"></label><div class="add-ty" role="radiogroup" aria-label="Sorte de moment">'+ADDT.map(function(t){return'<label style="--c:'+TY[t[0]][1]+'"><input type="radio" name="ty" value="'+t[0]+'"'+(t[0]===ty?' checked':'')+'><i></i>'+esc(t[1])+'</label>'}).join('')+'</div><div class="add-w"><label><span>Quel jour ?</span><input type="date" name="d" required value="'+d.toISOString().slice(0,10)+'"></label><label><span>À quelle heure ?</span><input type="time" name="h" value="'+String(d.getHours()).padStart(2,'0')+':00"></label></div><div class="add-a"><button type="button" class="pill" data-addx>Annuler</button><button class="pill dark">Ajouter</button></div></form>';
+ m.hidden=false;var b=anchor||$('#tools [data-addm]');if(b&&innerWidth>760){var r=b.getBoundingClientRect();m.classList.add('anch');var fc=m.firstChild;fc.style.left=(r.right+14)+'px';fc.style.top=Math.max(54,Math.min(innerHeight-fc.offsetHeight-60,r.top+r.height/2-fc.offsetHeight/2))+'px'}else{m.classList.remove('anch')}setTimeout(function(){m.querySelector('[name=ti]').focus()},30)}
+function addClose(){var m=$('#addm');if(m)m.hidden=true;var b=$('#tools [data-addm]');if(b)b.focus()}
+document.addEventListener('submit',function(e){if(e.target.id!=='addf')return;e.preventDefault();var f=e.target,t=new Date(f.d.value+'T'+(f.h.value||'09:00')).getTime();if(isNaN(t))return;var ty=(f.querySelector('[name=ty]:checked')||{}).value||'rdv',ti=f.ti.value.trim();if(!ti){f.ti.focus();return}var it={id:'u'+Math.random().toString(36).slice(2,9),t:t,d:60,ty:ty,ti:ti.charAt(0).toUpperCase()+ti.slice(1)};OS.tl=OS.tl||[];OS.tl.push(it);saveOS();addClose();TB.trk=tlFind(it.id)||it;TL.navC=t;TB.dr=true;tlRender();setTimeout(function(){var x=$('#tl [data-ti="'+it.id+'"]');if(x)x.classList.add('trk')},80);toast('Ajouté : '+it.ti+', '+fmtD(t,{weekday:'long',day:'numeric',month:'long'})+' à '+fmtH(t))});
+document.addEventListener('click',function(e){if(!e.target.closest)return;if(e.target.closest('[data-addm]')){var m=$('#addm');if(m&&!m.hidden){addClose();return}addOpen(null,e.target.closest('[data-addm]'));return}if(e.target.closest('[data-addx]')||e.target.id==='addm'){addClose()}});
+document.addEventListener('keydown',function(e){var m=$('#addm');if(m&&!m.hidden&&e.key==='Escape'){e.stopPropagation();addClose()}},true);
+var _tr24=toolsRender;toolsRender=function(m){_tr24(m);var t=$('#tools');if(!t)return;$$('#tools button').forEach(function(b){if(/Ajouter (à la timeline|un moment)/.test(b.getAttribute('aria-label')||b.title||''))b.remove()});$$('#tools [data-m4v]').forEach(function(b){b.remove()});if(!t.querySelector('[data-addm]'))t.insertAdjacentHTML('beforeend','<button class="tadd" data-addm aria-label="Ajouter un moment" title="Ajouter un moment"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></button>');if(ORB.el&&ORB.home){var h=orbHome();orbPlace(h.x,h.y)}};
+toolsRender(curMode());menubarRender();
+var _band24=bandRender;bandRender=function(){_band24();if(innerWidth<=760){var bl=tb.querySelector('.bl');if(bl&&!bl.querySelector('[data-addm]'))bl.insertAdjacentHTML('beforeend','<button class="tadd bb" data-addm aria-label="Ajouter un moment" title="Ajouter un moment"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></button>')}};bandRender();
+
 
 dockRender();
 var h=(location.hash||'').slice(1);
