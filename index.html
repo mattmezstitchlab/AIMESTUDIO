@@ -1543,7 +1543,7 @@ function place(b){var el=b.el;el.style.left=b.x*cell+'px';el.style.top=b.y*cell+
 function layout(){B.forEach(place);CN.style.height=rows()*cell+'px'}
 function render(b){if(FORMS[b.k])b.form=formOf(b.k,b.w).n;b.el.querySelector('.fr').innerHTML=front(b.k,b);b.el.querySelector('.bk').innerHTML='<pre>'+code(b.k)+'</pre>'}
 function add(k,x,y,w){w=Math.min(COLS,w||M[k][2]);var h=hOf(k,w);if(x==null){var sp=free(w,h);x=sp[0];y=sp[1]}x=Math.max(0,Math.min(COLS-w,x));
- var el=document.createElement('div');el.className='blk'+(showCode?' code':'');el.tabIndex=0;el.setAttribute('role','group');el.setAttribute('aria-label',M[k][0]);
+ var el=document.createElement('div');el.className='blk'+(showCode?' code':'');el.tabIndex=0;el.setAttribute('role','group');el.setAttribute('aria-label',M[k][0]);el.setAttribute('data-sv-id','bloc:'+k);
  el.innerHTML='<div class="in"><div class="fr"></div><div class="bk"></div></div><span class="hd5 nw" data-h="nw"></span><span class="hd5 ne" data-h="ne"></span><span class="hd5 sw" data-h="sw"></span><span class="hd5 se" data-h="se"></span><div class="tb"><button type="button" data-t="flip" aria-label="Retourner : voir le code">&lt;/&gt;</button><button type="button" data-t="del" aria-label="Retirer">×</button></div>';
  var b={id:++uid,k:k,x:x,y:y,w:w,h:h,el:el};B.push(b);CN.appendChild(el);render(b);place(b);CN.style.height=rows()*cell+'px';return b}
 function hit(a,b){return a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h}

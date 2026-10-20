@@ -67,3 +67,54 @@ Repères : la page peut fournir `window.svAnchors()` (AIME le fait pour ses 13 t
 - `synchroview/bridge.js` — le pont universel.
 - `index.html` — ajoute `window.svAnchors` et le chargement du pont, juste avant `</body>`. Aucun autre changement ; hors cadre, le pont ne fait rien.
 - `docs/SYNCHROVIEW.md` — ce document.
+
+---
+
+## 7. Complément — comparaison fonctionnelle et permissions entre les quatre profils
+
+### 7.1 Audit : d'où peuvent venir les informations (sans rien supposer)
+
+| Information | Source réelle aujourd'hui | Fiable ? |
+|---|---|---|
+| Présence / absence | Le rendu réel de chaque vue (le DOM de la page dans le mode donné). | Oui |
+| Visibilité | Styles calculés par le navigateur : `display`, `visibility`, opacité, taille, `hidden`, `aria-hidden`. | Oui |
+| Contenu, libellé | Texte réellement rendu (sans le code au dos des blocs). | Oui |
+| Comportement visible | Boutons, liens, champs présents dans l'élément ; désactivés ou non ; masqués ou non. | Oui |
+| Incohérences de présentation | Comparaison des styles calculés (police, taille, graisse, couleurs, rayon, dimensions). | Oui |
+| **Permissions (qui a le droit de faire quoi)** | **Aucune règle exécutable dans le code.** | **Non** |
+
+Détail du dernier point, vérifié dans les branches :
+- `main` : les modes Moi / Pro / Participant / Coordinateur changent **le contenu** (textes, questions, version du mini-site), pas les droits. Rien n'est refusé à personne.
+- `auth-better-auth` : `lib/auth.mjs` fixe un rôle global `member` / `creator` (non modifiable depuis le navigateur). `db/schema.sql` décrit cinq rôles d'espace — `owner`, `editor`, `contributor`, `viewer`, `guest` — **uniquement en commentaires SQL** ; aucune route `/api/spaces`, aucune fonction de contrôle ne les applique encore.
+- La « matrice explicite plutôt que minRole » décidée plus tôt n'a pas encore été écrite.
+
+Conclusion : SynchroView peut dès aujourd'hui comparer présence, visibilité, contenu, actions et présentation **à partir du rendu réel**. Pour les permissions, il affiche honnêtement « pas de règle » tant qu'une matrice n'existe pas dans le code. Il n'invente rien.
+
+### 7.2 Extension modulaire (branche `synchroview`, fait)
+
+- **Pont v2** (`synchroview/bridge.js`) : `pick` / `picked` (choisir un élément), `find` / `found` (le retrouver ailleurs), `clear`.
+  Clé stable : `data-sv-id` (ex. `bloc:rsvp`), puis `#id`, puis « n-ième bouton/lien/champ dans cet ensemble ». Les blocs du mini-site portent maintenant `data-sv-id="bloc:<type>"`.
+- **Mode Inspecter** dans SynchroView : cliquer un élément dans une vue le surligne dans les quatre, et le panneau gauche affiche, vue par vue : Présence, Visibilité, Libellé, Contenu, Actions, Style, Taille, Permissions. Les différences avec la vue d'origine sont surlignées en ambre, et une liste d'incohérences est calculée (absent, masqué, action désactivée ou invisible, taille de texte différente). « Montrer partout » amène l'élément à l'écran dans chaque vue.
+- **Mode Focus** : un clic sur une vue l'agrandit, les trois autres restent en miniatures à droite ; Échap ou « Grille » ramène la grille. La synchronisation continue pendant le focus.
+- Rien n'est modifié dans `/tout/`.
+
+### 7.3 Proposition pour les permissions (à valider avant d'écrire le code)
+
+Une seule source de vérité, `lib/permissions.mjs`, utilisée **à la fois** par le serveur (refuser), par l'interface (montrer/masquer) et par SynchroView (afficher). Le pont l'exposera par `window.svPerm(clé, élément)` → `{allow:[…], rule:'permissions.mjs › …'}`.
+
+Matrice proposée, d'après les rôles déjà décrits dans `db/schema.sql` :
+
+| Ressource \ rôle | owner | editor | contributor | viewer | guest |
+|---|---|---|---|---|---|
+| Programme / timeline | lire, modifier, supprimer | lire, modifier | lire, modifier **ses** moments | lire | lire la partie publique |
+| Documents (devis, contrats) | tout | lire, ajouter, modifier | lire et déposer **les siens** | lire | — |
+| Paiements | tout | lire | lire **les siens** | — | payer pour soi (cagnotte) |
+| Réponse (RSVP), régime | lire tout | lire tout | — | lire | répondre **pour soi** |
+| Membres, invitations | tout | inviter viewer/guest | — | — | — |
+| Supprimer l'espace | oui | — | — | — | — |
+
+Deux décisions vous reviennent :
+1. **Correspondance profils → rôles.** Proposition : Moi = `owner`, Coordinateur = `editor`, Pro = `contributor`, Participant = `guest`. (Où placer `viewer` : un proche qui consulte sans répondre ?)
+2. **Le contenu de la matrice** ci-dessus : à corriger ligne par ligne avant que je l'écrive.
+
+Une fois validée, la matrice devient du code testé (un test par case), et SynchroView affiche les vraies permissions et signale les incohérences du type « bouton Payer visible pour un rôle qui n'a pas le droit de payer ».
