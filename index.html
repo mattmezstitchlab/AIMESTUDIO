@@ -814,6 +814,26 @@ body.cal #calx{display:block}
 .rad.crad .tl6 span{width:56px;height:56px}
 .rad.crad .tl6.home span{background:#fff}.rad.crad .tl6.home svg{stroke:#0A0A0C}
 .rad.crad .cap{position:absolute;left:var(--cx);top:calc(var(--cy) + 44px);transform:translateX(-50%);font:600 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#fff}
+
+.rnd,.rnd.me{width:auto!important;height:auto!important;min-width:0;max-width:220px;padding:2px 0!important;background:none!important;border:0!important;box-shadow:none!important;transform:translateY(-50%)!important;align-content:start;text-shadow:0 1px 10px rgba(0,0,0,.9)}
+.rnd.lf{transform:translate(-100%,-50%)!important;text-align:right}
+.rnd b{color:#fff;font:600 15px/1.25 var(--ui)}
+.rnd span{color:rgba(255,255,255,.7);font-size:12.5px}
+.rnd.me b{display:block!important;background:none!important;padding:0!important;font:400 26px/1 var(--display)!important;text-align:left}
+.rnd[aria-pressed=true] b{text-decoration:underline;text-decoration-color:var(--kc);text-underline-offset:4px}
+/* AIME en curseur */
+body.acur,body.acur a,body.acur button,body.acur [role=button],body.acur canvas{cursor:none!important}
+body.acur input,body.acur textarea,body.acur [contenteditable]{cursor:text!important}
+#ocur{transition:opacity .15s,width .25s,height .25s,margin .25s}
+#ocur.dot{opacity:1;width:20px;height:20px;margin:-10px;padding:2px;animation:ocb 2.4s ease-in-out infinite}
+#ocur.dot span{background:rgba(12,12,16,.25);font-size:0}
+#ocur.dot.hov{width:28px;height:28px;margin:-14px}
+#ocur .cl{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);white-space:nowrap;font:600 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#C9C9D2;text-shadow:0 1px 6px rgba(0,0,0,.9);opacity:.85}
+#ocur.on .cl{display:none}
+#ocur.press{transform-origin:center}
+#ocur.press::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid #fff;animation:prs .45s linear forwards}
+@keyframes prs{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+body.acur #gorb{opacity:0!important;pointer-events:none!important}
 @media(max-width:760px){
  .tx{left:max(20px,env(safe-area-inset-left,0px));right:max(20px,env(safe-area-inset-right,0px));width:auto;top:auto;bottom:calc(var(--tlh) + 12px + env(safe-area-inset-bottom,0px));transform:none;gap:10px}
  .tx .t{font-size:clamp(30px,8.4vw,40px)}
@@ -827,7 +847,7 @@ body.cal #calx{display:block}
 </style>
 </head>
 <body>
-<header class="top"><a class="mk" href="/">AIME<sup>®</sup></a><nav><a href="/lab/orb/">Lab</a><a href="/bureau/">Bureau</a></nav></header>
+<header class="top"><a class="mk" href="/">AIME<sup>®</sup></a><nav><a href="/lab/orb/">Lab</a></nav></header>
 <div class="modes" id="modes" role="group" aria-label="Les quatre vues d'AIME"></div>
 <button class="orb" id="orb" type="button" aria-label="AIME, revenir au début"></button>
 <main>
@@ -855,7 +875,7 @@ body.cal #calx{display:block}
   <div id="nov" aria-hidden="true"></div>
   <div id="gkinds" class="gkinds" role="group" aria-label="Quel repère poser"></div>
   <canvas id="glb0" tabindex="-1" role="img" aria-label="La Terre, avec les personnes reliées. Glissez ou utilisez les flèches pour la faire tourner."></canvas>
-  <div class="ntx" id="ntx" aria-live="polite"><span class="k" id="nk"></span><h2 class="t" id="nt"></h2><p class="nl" id="nl"></p><div class="ncta" id="ncta" hidden><a class="p" href="/bureau/">Entrer dans le Bureau</a><a href="/lab/orb/">Jouer avec l'orbe</a></div></div>
+  <div class="ntx" id="ntx" aria-live="polite"><span class="k" id="nk"></span><h2 class="t" id="nt"></h2><p class="nl" id="nl"></p><div class="ncta" id="ncta" hidden><a class="p" href="#build">Construire mon site</a><a href="/lab/orb/">Jouer avec l'orbe</a></div></div>
  </div>
 </section>
 <section class="story" id="story" aria-label="Naissance et cube">
@@ -904,7 +924,7 @@ body.cal #calx{display:block}
  <div class="undo5" id="undo5" role="status" hidden><span></span><button type="button">Annuler</button></div>
 </section>
 <section class="next" id="next" aria-label="La suite">
- <div class="in"><span class="k">Chapitre suivant</span><h2 class="t">La grille universelle</h2><p>Puis la messagerie flottante, le tour du monde et les planètes de chaque métier.</p><div class="ln"><a class="p" href="/bureau/">Entrer dans le Bureau</a><a href="/lab/orb/">Jouer avec l'orbe</a></div></div>
+ <div class="in"><span class="k">Chapitre suivant</span><h2 class="t">La grille universelle</h2><p>Puis la messagerie flottante, le tour du monde et les planètes de chaque métier.</p><div class="ln"><a class="p" href="#build">Construire mon site</a><a href="/lab/orb/">Jouer avec l'orbe</a></div></div>
 </section>
 </main>
 <script>
@@ -912,7 +932,11 @@ body.cal #calx{display:block}
 var $=function(s){return document.querySelector(s)};var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var SEC=document.getElementById('naiss');
 /* le curseur-orbe : l'orbe prend la place du pointeur, en loupe */
-window.aimeCur=(function(){var el=document.createElement('div');el.id='ocur';el.setAttribute('aria-hidden','true');document.body.appendChild(el);return{show:function(x,y,html){el.style.transform='translate('+x+'px,'+y+'px)';if(el._h!==html){el.innerHTML='<span>'+html+'</span>';el._h=html}el.classList.add('on')},hide:function(){el.classList.remove('on')}}})();
+window.aimeCur=(function(){var el=document.createElement('div');el.id='ocur';el.setAttribute('aria-hidden','true');document.body.appendChild(el);var FINE=matchMedia('(pointer:fine)').matches,loupe=false,lab='';
+ function put(x,y){el.style.transform='translate('+x+'px,'+y+'px)'}
+ if(FINE){document.body.classList.add('acur');document.addEventListener('pointermove',function(e){if(e.pointerType!=='mouse')return;if(document.body.classList.contains('cal')){el.classList.remove('dot');return}if(!loupe){put(e.clientX,e.clientY);el.classList.add('dot');el.classList.toggle('hov',!!e.target.closest('a,button,[role=button],input,canvas,.npc,.nfd'))}},{passive:true});document.addEventListener('mouseleave',function(){el.classList.remove('dot')})}
+ return{el:el,fine:FINE,label:function(t){if(t===lab)return;lab=t;var c=el.querySelector('.cl');if(!c){c=document.createElement('i');c.className='cl';el.appendChild(c)}c.textContent=t},
+  show:function(x,y,html){loupe=true;put(x,y);if(el._h!==html){var c=el.querySelector('.cl');el.innerHTML='<span>'+html+'</span>';if(c)el.appendChild(c);el._h=html}el.classList.add('on');el.classList.remove('dot')},hide:function(){loupe=false;el.classList.remove('on');el._h=null;var c=el.querySelector('.cl');el.innerHTML='<span></span>';if(c)el.appendChild(c)}}})();
 /* la mémoire : tout ce qu'on pose est gardé dans ce navigateur */
 window.AIMEM=(function(){var m={role:'maries',pins:[],frise:{},notes:{}};try{var v=JSON.parse(localStorage.getItem('aime-mem')||'null');if(v)for(var k in v)m[k]=v[k]}catch(_){}var MIG={maries:'moi',presta:'pro',invite:'proche'};if(MIG[m.role])m.role=MIG[m.role];if(!m.projet)m.projet='mariage';m.save=function(){try{var o={};for(var k in m)if(typeof m[k]!=='function')o[k]=m[k];localStorage.setItem('aime-mem',JSON.stringify(o))}catch(_){}};return m})();
 var envC=$('#nenvC'),envG=$('#nenvG'),sv=$('#nsv'),fx=$('#nfx'),ov=$('#nov'),cone=$('#nskin .cone');
@@ -1020,7 +1044,7 @@ function buildNet(){var old=document.getElementById('nrs');if(old)old.remove();v
   ['Mots-clés',tg.length?tg.slice(0,2).join(', '):'À écrire',tg.length>2?'+'+(tg.length-2):'','#22D3EE'],
   ['Musique',tr.length?tr.length+' morceau'+(tr.length>1?'x':''):'À ajouter',tr[0]?tr[0].n:'','#34D399']];
  var CS=['','Vos lieux guident la carte et l\'itinéraire de votre page.','Si un horaire bouge, le programme, le compte à rebours et les moments suivent.','Chaque moment noté rejoint la frise et la partition.','Vos mots-clés vous rendent trouvable, et aident à trouver.','Vos morceaux rejoignent la playlist et la face Audio de votre cube.'];
- el.innerHTML=D.map(function(d,i){var p=N[i];return i===0?'<button type="button" class="rnd me" data-n="0" style="left:'+p[0]+'px;top:'+p[1]+'px" aria-label="Vous : '+d[1]+'"><b>'+d[1]+'</b></button>':'<button type="button" class="rnd" data-n="'+i+'" aria-pressed="false" style="left:'+p[0]+'px;top:'+p[1]+'px;--kc:'+d[3]+'"><small>'+esc2(d[0])+'</small><b>'+esc2(d[1])+'</b>'+(d[2]?'<span>'+esc2(d[2])+'</span>':'')+'</button>'}).join('')+'<p class="rcs" id="rcs" style="top:'+(Math.min(H-150,C[1]+R*1.12))+'px">Touchez un lien : je montre ce qui en dépend.</p>';
+ el.innerHTML=D.map(function(d,i){var p=N[i],rr=(i?R*.09:R*.13)+12,lf=i&&p[0]<C[0];return i===0?'<button type="button" class="rnd me" data-n="0" style="left:'+(p[0]+rr)+'px;top:'+p[1]+'px" aria-label="Vous : '+d[1]+'"><b>'+d[1]+'</b></button>':'<button type="button" class="rnd'+(lf?' lf':'')+'" data-n="'+i+'" aria-pressed="false" style="left:'+(lf?p[0]-rr:p[0]+rr)+'px;top:'+p[1]+'px;--kc:'+d[3]+'"><small>'+esc2(d[0])+'</small><b>'+esc2(d[1])+'</b>'+(d[2]?'<span>'+esc2(d[2])+'</span>':'')+'</button>'}).join('')+'<p class="rcs" id="rcs" style="top:'+(Math.min(H-150,C[1]+R*1.12))+'px">Touchez un lien : je montre ce qui en dépend.</p>';
  NI.appendChild(el);el.addEventListener('click',function(e){var b=e.target.closest('.rnd');if(!b)return;var i=+b.dataset.n;HL=HL===i?-1:i;[].forEach.call(el.querySelectorAll('.rnd'),function(x){if(x.dataset.n!=='0')x.setAttribute('aria-pressed',+x.dataset.n===HL?'true':'false')});document.getElementById('rcs').textContent=HL>0?CS[HL]:(i===0?'Tout part de vous, et tout y revient.':'Touchez un lien : je montre ce qui en dépend.');if(window.aimeRuler)aimeRuler.wave()})}
 /* ---------- la recherche : vos mots-clés ---------- */
 function buildSearch(){var old=document.getElementById('nsr');if(old)old.remove();var w=Math.min(R*2.6,MW()),x=C[0]-w/2,y=C[1]-32,el=document.createElement('div');el.id='nsr';el.className='nint-w';el.style.left='0';el.style.top='0';el.style.width='100%';el.style.height='100%';
@@ -1691,9 +1715,9 @@ var APPS=[['vous','Vous','#A78BFA','#FB7185','#build',[['Qui êtes-vous ?',['Vou
  ['supports','Supports','#F59E0B','#DB2777','/studio/',[['Quel support ?',['Faire-part','Programme','Plan de table','Badge']],['Pour où ?',['Imprimé','Réseaux','PDF']]]],
  ['web','Web Studio','#22D3EE','#2563EB','#build',[['Quel site ?',['Mariage','Pro','Particulier']],['Point de départ ?',['Un modèle','Une page vide']]]],
  ['docs','Studio Docs','#FB7185','#7C5CFF','/docs/',[['Que voulez-vous faire ?',['Un devis','Une facture','Un contrat']],['Pour qui ?',['Un client existant','Un nouveau client']]]],
- ['finder','Dossiers','#60A5FA','#4F46E5','/bureau/#finder',[['Quel projet ?',['Mariage Léa & Marc','Les 30 ans de Lou','Nouveau projet']],['Que voir ?',['Documents','Photos','Tout']]]],
- ['fichiers','Visionneuse','#38BDF8','#6366F1','/bureau/#fichiers',[['Quels fichiers ?',['Photos','Vidéos','Documents','Tout']],['Rangés par ?',['Date','Projet','Personne']]]],
- ['noyau','Noyau','#7C5CFF','#111827','/bureau/#noyau',[['Votre identité',['Ma carte','Mes préférences','Ma sécurité']],['Partager avec ?',['Personne','Mes proches','Mes prestataires']]]]];
+ ['finder','Dossiers','#60A5FA','#4F46E5','#build',[['Quel projet ?',['Mariage Léa & Marc','Les 30 ans de Lou','Nouveau projet']],['Que voir ?',['Documents','Photos','Tout']]]],
+ ['fichiers','Visionneuse','#38BDF8','#6366F1','#build',[['Quels fichiers ?',['Photos','Vidéos','Documents','Tout']],['Rangés par ?',['Date','Projet','Personne']]]],
+ ['noyau','Noyau','#7C5CFF','#111827','#build',[['Votre identité',['Ma carte','Mes préférences','Ma sécurité']],['Partager avec ?',['Personne','Mes proches','Mes prestataires']]]]];
 var AP=$('#apps');AP.innerHTML=APPS.map(function(a,i){return'<button type="button" data-a="'+i+'" aria-expanded="false" aria-label="'+esc(a[1])+'" style="--a:'+a[2]+';--b:'+a[3]+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+AI[a[0]]+'</svg></button>'}).join('');
 function appStep(i,st,ans){var a=APPS[i],b=AP.children[i],n=a[5].length,html;
  if(st<n){var q=a[5][st];html='<span class="k">'+esc(a[1])+' · '+(st+1)+' / '+n+'</span><b>'+esc(q[0])+'</b><div class="ops">'+q[1].map(function(o){return'<button type="button" data-o="'+esc(o)+'">'+esc(o)+'</button>'}).join('')+'</div>'}
@@ -1825,7 +1849,7 @@ function MENU(c){var A={
  build:[['info','Vos infos',function(){clk('#plus5')}],['out','Importer',function(){clk('#imp5')}],['pdf','Exporter',function(){clk('#exh5')}],['print','Print',function(){aimeRuler.setU('cm')}],['couleurs','Couleurs',function(){pieOpen(GORB)}],['pub','Publier',function(){clk('#pub5')}]],
  carte2:[['couleurs','Couleurs',function(){pieOpen(GORB)}],['plus','Un membre',member]]
  }[c];if(!A)A=[['crayon','Crayon',function(){toolOn('crayon')}],['gomme','Gomme',function(){toolOn('gomme')}],['texte','Texte',function(){toolOn('texte')}],['formes','Formes',function(){toolOn('formes')}],['couleurs','Couleurs',function(){pieOpen(GORB)}],['membre','Un membre',member]];
- return A.concat([['home','Remonter',orbHome]])}
+ return A.concat([['home',aimeCur.fine?'Fermer':'Ranger',orbHome]])}
 function orbMenu(){if(radOn)return;var c=ctxNow(),items=MENU(c[0]),gr=GORB.getBoundingClientRect(),Rr=innerWidth<760?104:128,cx=Math.max(Rr+40,Math.min(innerWidth-Rr-40,gr.left+gr.width/2)),cy=Math.max(Rr+90,Math.min(innerHeight-Rr-50,gr.top+gr.height/2));
  radOn=true;closeCard();rad=document.createElement('div');rad.className='rad crad';rad.setAttribute('role','dialog');rad.setAttribute('aria-label','AIME : '+c[1]);rad.style.setProperty('--cx',cx+'px');rad.style.setProperty('--cy',cy+'px');
  rad.innerHTML='<button class="ro" type="button" aria-label="Refermer"></button><span class="cap">'+c[1]+'</span>'+items.map(function(t,i){var a=-Math.PI/2+i*Math.PI*2/items.length;return'<button class="tl6'+(t[0]==='home'?' home':'')+'" type="button" data-i="'+i+'" style="transform:translate(calc(-50% + '+Math.round(Math.cos(a)*Rr)+'px),calc(-50% + '+Math.round(Math.sin(a)*Rr)+'px))"><span><svg viewBox="0 0 24 24" aria-hidden="true">'+(IC2[t[0]]||TI[t[0]]||IC2.plus)+'</svg></span>'+t[1]+'</button>'}).join('');
@@ -1837,8 +1861,16 @@ function crClose(){if(!radOn||!rad)return;radOn=false;var el=rad;rad=null;GORB.s
 /* elle sort de la barre, flotte, puis remonte */
 function orbOut(open){var o=ORB.getBoundingClientRect();GORB.style.transition='none';GORB.style.left=(o.left+o.width/2)+'px';GORB.style.top=(o.top+o.height/2)+'px';void GORB.offsetWidth;GORB.style.transition='';GORB.classList.add('on');ORB.classList.add('away');if(Q.st!=='app'&&Q.st!=='chap'&&Q.st!=='look'&&Q.st!=='role')Q.st='free';
  var tx=innerWidth*.5,ty=innerHeight*.55;setTimeout(function(){GORB.style.left=tx+'px';GORB.style.top=ty+'px'},30);if(open)setTimeout(orbMenu,RM?0:820)}
-function orbHome(){var o=ORB.getBoundingClientRect();Q.st='home';Q.tgt=null;GBUB.classList.remove('on');GORB.style.left=(o.left+o.width/2)+'px';GORB.style.top=(o.top+o.height/2)+'px';setTimeout(function(){GORB.classList.remove('on');ORB.classList.remove('away');window.__aimeQuest=false},RM?0:900)}
+function orbHome(){if(aimeCur.fine){Q.st='home';Q.tgt=null;GBUB.classList.remove('on');GORB.classList.remove('on');ORB.classList.remove('away');window.__aimeQuest=false;return}var o=ORB.getBoundingClientRect();if(!o.width||getComputedStyle(ORB).visibility==='hidden'||o.top<0){Q.st='dock';GORB.style.left=(innerWidth-44)+'px';GORB.style.top=(innerHeight-64)+'px';return}Q.st='home';Q.tgt=null;GBUB.classList.remove('on');GORB.style.left=(o.left+o.width/2)+'px';GORB.style.top=(o.top+o.height/2)+'px';setTimeout(function(){GORB.classList.remove('on');ORB.classList.remove('away');window.__aimeQuest=false},RM?0:900)}
 GORB.addEventListener('click',function(e){e.stopPropagation();radOn?crClose():orbMenu()});
+function menuAt(x,y){if(radOn){crClose();return}GORB.style.transition='none';GORB.style.left=x+'px';GORB.style.top=y+'px';void GORB.offsetWidth;GORB.style.transition='';orbMenu()}
+var NOLP='a,button,input,textarea,select,canvas,label,[contenteditable],.nfd,.npc,.blk,.tile5,.rad,.gcard,.cnv';
+document.addEventListener('contextmenu',function(e){if(!aimeCur.fine||e.target.closest('input,textarea,[contenteditable]'))return;e.preventDefault();menuAt(e.clientX,e.clientY)});
+var LP=null;document.addEventListener('pointerdown',function(e){if(e.button!==0||e.target.closest(NOLP))return;var x=e.clientX,y=e.clientY;aimeCur.el.classList.add('press');LP=setTimeout(function(){LP=null;aimeCur.el.classList.remove('press');menuAt(x,y)},450);LP.x=x;LP.y=y});
+function lpEnd(){if(LP){clearTimeout(LP);LP=null}aimeCur.el.classList.remove('press')}
+document.addEventListener('pointerup',lpEnd);document.addEventListener('pointercancel',lpEnd);document.addEventListener('pointermove',function(e){if(LP&&Math.hypot(e.clientX-LP.x,e.clientY-LP.y)>8)lpEnd()},{passive:true});
+setInterval(function(){var c=ctxNow();var tips=+(AIMEM.tipN||0);aimeCur.label(tips<6?c[1]+' · clic droit':c[1])},500);
+document.addEventListener('contextmenu',function(){AIMEM.tipN=(+(AIMEM.tipN||0))+1;AIMEM.save()});
 function ripple(el){if(RM)return;var r=document.createElement('i');r.className='ring';el.parentNode.appendChild(r);setTimeout(function(){r.remove()},950)}
 function radClose(){if(rad&&rad.classList.contains('crad'))return crClose();if(!radOn)return;radOn=false;var ro=rad.querySelector('.ro'),o=ORB.getBoundingClientRect(),el=rad;
  var done=function(){el.remove();ORB.style.opacity='';ORB.focus({preventScroll:true})};if(RM){done();return}

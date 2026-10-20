@@ -91,6 +91,21 @@
       "source": "/lab/orb/naissance/:path*/",
       "destination": "/",
       "permanent": false
+    },
+    {
+      "source": "/bureau",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/bureau/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/bureau/:path*",
+      "destination": "/",
+      "permanent": false
     }
   ]
 }
