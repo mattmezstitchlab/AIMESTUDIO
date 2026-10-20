@@ -2111,5 +2111,12 @@ function jourj(){var N=window.aimeNai;if(!N)return;var b=shell('Jours · Jour J'
 window.aimeView=function(u){if(u==='cm')print();else if(u==='an')years();else if(u==='min')playlist();else if(u==='j')jourj();else if(V){V.remove();V=null;var vp=document.getElementById('vplay');if(vp)vp.remove()}};
 })();
 </script>
+<script>
+/* SynchroView : les repères de cette page (sections et temps de la naissance) */
+window.svAnchors=function(){var n=document.getElementById('naiss'),ih=innerHeight,L=[{id:'accueil',label:'Accueil',top:0}],CHN=['Un point','L\'orbe','La Terre','Le temps','Les moments','Les ondes','Les liens','Les mots','La musique','Votre carte','Votre événement','Votre site (naissance)','Fin'];
+ if(n){var sp=(n.offsetHeight-ih)/12;CHN.forEach(function(c,i){L.push({id:'naiss.'+i,label:c,top:n.offsetTop+sp*(i+.3)})})}
+ [['story2','Votre cube'],['story3','La causalité'],['build','Votre site']].forEach(function(s){var e=document.getElementById(s[0]);if(e)L.push({id:s[0],label:s[1],top:e.getBoundingClientRect().top+scrollY})});return L};
+</script>
+<script src="/synchroview/bridge.js" defer></script>
 </body>
 </html>
