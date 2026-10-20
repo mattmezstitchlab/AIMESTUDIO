@@ -1,6 +1,56 @@
 {
   "cleanUrls": true,
   "headers": [
-    { "source": "/sup/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }
+    {
+      "source": "/sup/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/monde",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/monde/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/site",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/site/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/socle",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/socle/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/orb/naissance",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/orb/naissance/:path*",
+      "destination": "/",
+      "permanent": false
+    }
   ]
 }
