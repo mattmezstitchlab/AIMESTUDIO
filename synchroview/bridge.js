@@ -28,7 +28,7 @@ function build(){var max=Math.max(1,document.documentElement.scrollHeight-innerH
  try{raw=typeof window.svAnchors==='function'?window.svAnchors():generic()}catch(_){raw=generic()}
  raw=raw.filter(function(a){return a&&a.id!=null}).sort(function(a,b){return a.top-b.top});
  if(!raw.length||raw[0].top>4)raw.unshift({id:'debut',label:'Début',top:0});
- list=raw.map(function(a,i){var top=Math.max(0,Math.min(max,a.top)),next=i<raw.length-1?Math.max(0,Math.min(max,raw[i+1].top)):max;return{id:String(a.id),label:a.label,top:Math.round(top),h:Math.max(1,Math.round(next-top))}}).filter(function(a,i,arr){return i===arr.length-1||a.h>1});
+ list=raw.map(function(a,i){var top=Math.max(0,Math.min(max,a.top)),next=i<raw.length-1?Math.max(0,Math.min(max,raw[i+1].top)):max;return{id:String(a.id),label:a.label,top:Math.round(top),h:Math.max(1,Math.round(next-top))}}).filter(function(a,i,arr){return i===arr.length-1||a.h>1||a.top>=max-1});
  return{sv:'anchors',list:list,max:max,w:innerWidth,h:innerHeight}}
 function send(m){try{PARENT.postMessage(m,PO)}catch(_){}}
 function at(){var y=scrollY,a=list[0];for(var i=0;i<list.length;i++)if(y>=list[i].top-1)a=list[i];return a?{sv:'at',id:a.id,k:Math.max(0,Math.min(1,(y-a.top)/a.h)),y:y}:null}

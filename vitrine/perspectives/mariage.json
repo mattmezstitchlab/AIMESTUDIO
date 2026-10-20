@@ -1,0 +1,61 @@
+{
+  "_": "Les quatre angles du même mariage. Une perspective choisit des sections, des filtres, des actions et des mots. Elle ne contient AUCUNE donnée de l'événement et AUCUN droit : le regard pointe une personne du contenu ; ses droits viennent de la couche d'accès.",
+  "univers": "mariage",
+  "angles": [
+    { "id": "couple", "label": "Couple organisateur", "regard": "u-lea",
+      "kicker": "Notre mariage", "intro": "Tout votre jour, en un seul endroit : le programme, les prestataires, les réponses et les documents.",
+      "sections": [
+        { "type": "compte" },
+        { "type": "programme", "titre": "Le programme complet", "filtre": "tout" },
+        { "type": "reponses", "titre": "Les réponses de vos invités" },
+        { "type": "personnes", "titre": "Vos prestataires", "groupes": ["prestataires", "equipe"], "contacts": true },
+        { "type": "documents", "titre": "Vos documents" },
+        { "type": "paiements", "titre": "Paiements à venir" },
+        { "type": "actions", "titre": "Vos actions", "liste": [
+          { "label": "Inviter un invité", "res": { "type": "space", "role": "guest" }, "action": "invite" },
+          { "label": "Régler l'acompte du photographe", "res": { "type": "payment", "ref": "acompte-lumen" }, "action": "pay" },
+          { "label": "Partager le plan de table", "res": { "type": "document", "ref": "plan-de-table" }, "action": "share" } ] }
+      ] },
+    { "id": "prestataire", "label": "Prestataire", "regard": "u-lumen",
+      "kicker": "Votre mission", "intro": "Vos créneaux, l'accès au domaine, vos contacts et vos documents, sans le reste.",
+      "sections": [
+        { "type": "programme", "titre": "Vos créneaux", "filtre": "assigne", "notes": true },
+        { "type": "lieu", "titre": "Accès au domaine", "planB": true },
+        { "type": "personnes", "titre": "Vos contacts sur place", "groupes": ["equipe", "couple"], "contacts": true },
+        { "type": "documents", "titre": "Vos documents" },
+        { "type": "paiements", "titre": "Vos paiements" },
+        { "type": "actions", "titre": "Vos actions", "liste": [
+          { "label": "Ouvrir mon contrat", "res": { "type": "document", "ref": "contrat-lumen" }, "action": "read" },
+          { "label": "Ajuster l'heure de la séance photo", "res": { "type": "event", "ref": "shooting" }, "action": "edit" },
+          { "label": "Déposer un document", "res": { "type": "document", "ref": "contrat-lumen" }, "action": "upload" } ] }
+      ] },
+    { "id": "invite", "label": "Invité · Participant", "regard": "u-lucie",
+      "kicker": "Vous êtes invité·e", "intro": "Le programme, le lieu, votre réponse et tout ce qu'il faut savoir pour profiter de la journée.",
+      "sections": [
+        { "type": "compte" },
+        { "type": "programme", "titre": "Le programme", "filtre": "public" },
+        { "type": "lieu", "titre": "Le lieu" },
+        { "type": "reponse", "titre": "Votre réponse" },
+        { "type": "hebergement", "titre": "Où dormir" },
+        { "type": "menu", "titre": "Le menu" },
+        { "type": "cadeaux", "titre": "Un cadeau ?" },
+        { "type": "galerie", "titre": "En images" },
+        { "type": "faq", "titre": "Questions" },
+        { "type": "documents", "titre": "À télécharger" }
+      ] },
+    { "id": "coordinateur", "label": "Coordinateur", "regard": "u-camille",
+      "kicker": "Votre jour J, coordonné", "intro": "Le déroulé minute par minute, l'équipe, le plan B et les contacts d'urgence.",
+      "sections": [
+        { "type": "programme", "titre": "Déroulé du jour", "filtre": "tout", "notes": true },
+        { "type": "lieu", "titre": "Lieu et plan B", "planB": true },
+        { "type": "personnes", "titre": "L'équipe et les prestataires", "groupes": ["prestataires", "couple"], "contacts": true },
+        { "type": "reponses", "titre": "Réponses et régimes" },
+        { "type": "urgences", "titre": "Contacts d'urgence" },
+        { "type": "documents", "titre": "Documents" },
+        { "type": "actions", "titre": "Vos actions", "liste": [
+          { "label": "Modifier le déroulé", "res": { "type": "event", "ref": "diner" }, "action": "edit" },
+          { "label": "Inviter un invité", "res": { "type": "space", "role": "guest" }, "action": "invite" },
+          { "label": "Régler l'acompte du photographe", "res": { "type": "payment", "ref": "acompte-lumen" }, "action": "pay" } ] }
+      ] }
+  ]
+}

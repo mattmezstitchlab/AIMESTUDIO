@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIME · Vitrine</title>
+<link rel="icon" href="data:,">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/vitrine/site/vitrine.css">
+<style id="vars"></style>
+</head>
+<body>
+<div id="app" aria-live="polite"><p style="padding:40px;font-family:system-ui">Chargement…</p></div>
+<div class="v-toast" id="toast" role="status"></div>
+<script src="/synchroview/permissions.js"></script>
+<script src="/vitrine/rendu.js"></script>
+<script>
+(function(){"use strict";
+/* Le mini-site public : ?u=univers &mode=perspective &m=modèle &amb=ambiance. Il ne fait qu'assembler les couches. */
+var Q=new URLSearchParams(location.search),U=(Q.get('u')||'mariage').replace(/[^a-z]/g,''),M=(Q.get('m')||'editorial').replace(/[^a-z]/g,'');
+function j(p){return fetch(p,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(p+' '+r.status);return r.json()})}
+Promise.all([j('/vitrine/donnees/'+U+'.json'),j('/vitrine/acces/'+U+'.json'),j('/vitrine/perspectives/'+U+'.json'),j('/vitrine/modeles/'+M+'.json'),j('/vitrine/presentation/ambiances.json')]).then(function(r){
+ var contenu=r[0],acces=r[1],ps=r[2],modele=r[3],pr=r[4];
+ var angle=ps.angles.filter(function(a){return a.id===Q.get('mode')})[0]||ps.angles[0];
+ var amb=pr.ambiances[Q.get('amb')]||pr.ambiances[modele.ambiance]||pr.ambiances[Object.keys(pr.ambiances)[0]];
+ var pol={titre:(pr.polices[modele.polices.titre]||{}).famille,texte:(pr.polices[modele.polices.texte]||{}).famille};
+ var out=AIMEVitrine.rendre({contenu:contenu,acces:acces,perspective:angle,modele:modele,presentation:{ambiance:amb,polices:pol},regles:AIMEPerms});
+ document.getElementById('vars').textContent=out.css;document.title=out.titre;document.getElementById('app').innerHTML=out.html;
+ window.__vitrine={univers:U,angle:angle.id,modele:modele.id,bilan:out.bilan};
+ /* les sections existent maintenant : SynchroView reçoit les repères à jour */
+ setTimeout(function(){dispatchEvent(new Event('resize'))},60);
+}).catch(function(e){document.getElementById('app').innerHTML='<p style="padding:40px;font-family:system-ui">Impossible de charger cette vitrine : '+String(e.message).replace(/</g,'&lt;')+'</p>'});
+var T=0;document.addEventListener('click',function(e){if(!e.target.closest('[data-demo]'))return;var t=document.getElementById('toast');t.textContent='Démonstration : aucune action réelle n\'est effectuée.';t.classList.add('on');clearTimeout(T);T=setTimeout(function(){t.classList.remove('on')},2200)});
+})();
+</script>
+<script src="/synchroview/bridge.js" defer></script>
+</body>
+</html>

@@ -107,7 +107,7 @@ button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 <header class="top" id="top">
  <a href="/">AIME<sup>®</sup></a>
  <h1>SynchroView</h1>
- <div class="seg" id="tpl" role="group" aria-label="Modèles"><button type="button" data-t="cartes">4 cartes</button><button type="button" data-t="formats">4 formats</button></div>
+ <div class="seg" id="tpl" role="group" aria-label="Modèles"><button type="button" data-t="cartes" title="Les quatre cartes d'usage, ou les quatre perspectives d'un événement">4 angles</button><button type="button" data-t="formats">4 formats</button></div>
  <div class="seg" id="cnt" role="group" aria-label="Nombre de vues"><button type="button" data-n="1">1</button><button type="button" data-n="2">2</button><button type="button" data-n="4">4</button><button type="button" data-n="6">6</button><button type="button" id="addv" aria-label="Ajouter une vue">+</button></div>
  <div class="seg" id="act" role="group" aria-label="Manipulation"><button type="button" data-a="lire" aria-pressed="true">Défiler</button><button type="button" data-a="live" aria-pressed="false">Toucher</button><button type="button" data-a="insp" aria-pressed="false">Inspecter</button></div>
  <span class="sp"></span>
@@ -129,14 +129,20 @@ button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 /* ---------- la configuration : des vues libres, chacune {page, carte, format, version}, lisible dans l'adresse ---------- */
 var PROF=window.SVProfiles||[{id:'moi',label:'Moi'},{id:'pro',label:'Pro'},{id:'proche',label:'Participant'},{id:'coord',label:'Coordinateur'}];
 var MODES=PROF.map(function(p){return[p.id,p.label,!!p.optional]});
-var PAGES=[['site','/','Le site'],['demo','/synchroview/demo/','Démo des droits']];
+/* Chaque page déclare ses angles : des CARTES D'USAGE (site, démo) ou des PERSPECTIVES d'un événement (vitrine).
+   Une carte n'est pas une perspective ; aucune des deux n'est un rôle technique. */
+var PERSP_MARIAGE=[['couple','Couple organisateur'],['prestataire','Prestataire'],['invite','Invité · Participant'],['coordinateur','Coordinateur']];
+var PAGES=[['site','/','Le site',null,'Carte d\'usage'],['demo','/synchroview/demo/','Démo des droits',null,'Carte d\'usage'],['mariage','/vitrine/site/?u=mariage','Mariage · vitrine',PERSP_MARIAGE,'Perspective']];
+function angles(pg){var p=Pg(pg)||PAGES[0];return p[3]?p[3].map(function(a){return[a[0],a[1],false]}):MODES.filter(function(m){return!m[2]||pg==='demo'})}
+function angleLabel(pg,id){var a=angles(pg).filter(function(x){return x[0]===id})[0];return a?a[1]:id}
+function quatre(pg){return angles(pg).slice(0,4).map(function(a){return a[0]})}
 var FORMATS=[['iphone','iPhone',390,844],['ipad','iPad',820,1180],['pc','Ordinateur',1440,900],['large','Écran large',1920,1080]];
 /* Versions : seules les origines autorisées. Une version ne s'active que si elle a le pont ET autorise SynchroView à l'encadrer. */
 var VERSIONS=[['ici','Cette version',location.origin,''],['prod','Production','https://www.lemondeaime.com','pas encore de pont ni d\'autorisation d\'encadrement']];
 var MAXV=6;
 function F(k){return FORMATS.filter(function(f){return f[0]===k})[0]}function Mo(k){return MODES.filter(function(m){return m[0]===k})[0]}
 function Pg(k){return PAGES.filter(function(x){return x[0]===k})[0]}function Ve(k){return VERSIONS.filter(function(x){return x[0]===k})[0]}
-function okSpec(d){d=d||{};var pg=Pg(d.page)?d.page:'site',ve=Ve(d.version)&&!Ve(d.version)[3]?d.version:'ici',c=Mo(d.card)?d.card:'moi';if(Mo(c)[2]&&pg!=='demo')c='coord';return{page:pg,card:c,format:F(d.format)?d.format:'pc',version:ve}}
+function okSpec(d){d=d||{};var pg=Pg(d.page)?d.page:'site',ve=Ve(d.version)&&!Ve(d.version)[3]?d.version:'ici',A=angles(pg),c=A.some(function(a){return a[0]===d.card})?d.card:(Pg(pg)[3]?A[0][0]:(d.card==='viewer'?'coord':'moi'));return{page:pg,card:c,format:F(d.format)?d.format:'pc',version:ve}}
 var Q=new URLSearchParams(location.search),ST={at:Q.get('at')||'',lk:Q.get('lk')||'',fx:Q.get('fx'),act:Q.get('act')||'lire',fz:Q.get('fz')==='1',views:[]};
 /* v=page.carte.format.version,… ; les anciennes adresses (axis, format, mode, pf, src) restent lisibles */
 if(Q.get('v'))ST.views=Q.get('v').split(',').slice(0,MAXV).map(function(t){var a=t.split('.');return okSpec({page:a[0],card:a[1],format:a[2],version:a[3]})});
@@ -144,7 +150,7 @@ else{var srcPg=(PAGES.filter(function(x){return x[1]===(Q.get('src')||'/')})[0]|
  if(Q.get('axis')==='formats')ST.views=FORMATS.map(function(f){return okSpec({page:srcPg,card:Q.get('mode')||'moi',format:f[0]})});
  else ST.views=(Q.get('pf')||'moi,pro,proche,coord').split(',').slice(0,MAXV).map(function(c){return okSpec({page:srcPg,card:c,format:Q.get('format')||'pc'})})}
 if(!ST.views.length)ST.views=['moi','pro','proche','coord'].map(function(c){return okSpec({card:c})});
-function vlabel(d){return Mo(d.card)[1]}
+function vlabel(d){return angleLabel(d.page,d.card)}
 var $=function(s){return document.querySelector(s)},cols=$('#cols'),idx=$('#idx'),spacer=$('#spacer'),pos=$('#pos');
 var V=[];/* {el, fr, mode, format, linked, anchors, max, ready} */
 var LINK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>';
@@ -164,18 +170,18 @@ function fit(){if(FOC)return fitFocus();var W=cols.clientWidth,H=cols.clientHeig
 function scaleAll(){V.forEach(function(v){var f=F(v.format),w=v.fw.clientWidth,h=v.fw.clientHeight,k=Math.min(w/f[2],h/f[3]);v.fr.style.width=f[2]+'px';v.fr.style.height=f[3]+'px';v.fr.style.transform='translate('+((w-f[2]*k)/2)+'px,'+((h-f[3]*k)/2)+'px) scale('+k+')'})}
 function fitFocus(){var W=cols.clientWidth,H=cols.clientHeight,n=V.length,mini=Math.max(180,Math.min(320,W*.22));cols.style.gridTemplateColumns='minmax(0,1fr) '+mini+'px';cols.style.gridTemplateRows='repeat('+(n-1)+',minmax(0,1fr))';
  var r=1;V.forEach(function(v){if(v===FOC){v.el.style.gridColumn='1';v.el.style.gridRow='1 / span '+(n-1)}else{v.el.style.gridColumn='2';v.el.style.gridRow=String(r++)}});requestAnimationFrame(scaleAll)}
-function src(d){return Pg(d.page)[1]+'?apercu&mode='+d.card}
+function src(d){var b=Pg(d.page)[1];return b+(b.indexOf('?')<0?'?':'&')+'apercu&mode='+d.card}
 function vorigin(d){return Ve(d.version)[2]}
 function opts(list,cur,dis){return list.map(function(x){var off=dis&&dis(x);return'<option value="'+x[0]+'"'+(x[0]===cur?' selected':'')+(off?' disabled':'')+'>'+x[1]+(off?' — '+off:'')+'</option>'}).join('')}
 function names(){var seen={};V.forEach(function(v){var b=vlabel(v.d)+(V.some(function(o){return o!==v&&o.d.card===v.d.card})?' · '+F(v.d.format)[1]:'');seen[b]=(seen[b]||0)+1;v.name=b+(seen[b]>1?' ('+seen[b]+')':'');v.el.querySelector('h3').textContent=v.name;v.fr.title=v.name})}
 function makeView(d){var col=document.createElement('section');col.className='col';
  col.innerHTML='<header><h3></h3><span class="mv"><button type="button" data-mv="-1" aria-label="Déplacer vers la gauche">←</button><button type="button" data-mv="1" aria-label="Déplacer vers la droite">→</button><button type="button" data-rm aria-label="Retirer cette vue">×</button></span><button class="fx" type="button" data-fz aria-pressed="false" title="Figer les miniatures : elles ne défilent plus et leurs animations s\'arrêtent">Miniatures suivent</button><button class="fx" type="button" data-fx>Grille</button><button class="lk" type="button" aria-pressed="true" title="Synchronisée : suit les autres vues">'+LINK+'<span>Liée</span></button></header>'+
-  '<div class="cfg"><select data-k="page" aria-label="Page">'+opts(PAGES.map(function(x){return[x[0],x[2]]}),d.page)+'</select><select data-k="card" aria-label="Carte d\'usage">'+opts(MODES,d.card,function(m){return m[2]&&d.page!=='demo'?'démo des droits':''})+'</select><select data-k="format" aria-label="Format d\'écran">'+opts(FORMATS,d.format)+'</select><select data-k="version" aria-label="Version">'+opts(VERSIONS,d.version,function(x){return x[3]})+'</select></div>'+
+  '<div class="cfg"><select data-k="page" aria-label="Page">'+opts(PAGES.map(function(x){return[x[0],x[2]]}),d.page)+'</select><select data-k="card" aria-label="'+Pg(d.page)[4]+'" title="'+Pg(d.page)[4]+'">'+opts(angles(d.page),d.card)+'</select><select data-k="format" aria-label="Format d\'écran">'+opts(FORMATS,d.format)+'</select><select data-k="version" aria-label="Version">'+opts(VERSIONS,d.version,function(x){return x[3]})+'</select></div>'+
   '<div class="fw"><iframe src="'+src(d)+'"></iframe><div class="lid" aria-hidden="true"></div><span class="at"></span></div>';
  var v={el:col,fw:col.querySelector('.fw'),fr:col.querySelector('iframe'),d:d,mode:d.card,format:d.format,origin:vorigin(d),linked:true,anchors:null,max:1,name:''};
  col.querySelector('.cfg').addEventListener('change',function(e){var k=e.target.dataset.k;if(!k)return;var nd=Object.assign({},v.d);nd[k]=e.target.value;nd=okSpec(nd);var reload=nd.page!==v.d.page||nd.card!==v.d.card||nd.version!==v.d.version||nd.format!==v.d.format;v.d=nd;v.mode=nd.card;v.format=nd.format;v.origin=vorigin(nd);
-  if(k==='page'){col.querySelector('[data-k=card]').innerHTML=opts(MODES,nd.card,function(m){return m[2]&&nd.page!=='demo'?'démo des droits':''})}
-  if(reload){v.anchors=null;tag(v);v.fr.src=src(nd)}names();fit();if(leader()===v||!leader())TL=[];state();say(v.name+' : '+Pg(nd.page)[2]+' · '+Mo(nd.card)[1]+' · '+F(nd.format)[1]+'.')});
+  if(k==='page'){var cs=col.querySelector('[data-k=card]');cs.innerHTML=opts(angles(nd.page),nd.card);cs.setAttribute('aria-label',Pg(nd.page)[4]);cs.title=Pg(nd.page)[4]}
+  if(reload){v.anchors=null;tag(v);v.fr.src=src(nd)}names();fit();if(leader()===v||!leader())TL=[];state();say(v.name+' : '+Pg(nd.page)[2]+' · '+angleLabel(nd.page,nd.card)+' · '+F(nd.format)[1]+'.')});
  col.querySelector('.lk').addEventListener('click',function(){v.linked=!v.linked;this.setAttribute('aria-pressed',v.linked);this.querySelector('span').textContent=v.linked?'Liée':'Libre';this.title=v.linked?'Synchronisée : suit les autres vues':'Libre : défile seule';col.classList.toggle('free',!v.linked);if(v.linked)push(true);timeline();state();say(v.linked?v.name+' suit à nouveau les autres vues.':v.name+' défile seule. Faites défiler au-dessus d\'elle.')});
  col.querySelector('.lid').addEventListener('click',function(){if(FOC!==v)focus(v)});col.querySelector('[data-fx]').addEventListener('click',function(){focus(null)});col.querySelector('[data-fz]').addEventListener('click',function(){freeze(!FRZ);state()});
  col.querySelector('.lid').addEventListener('wheel',function(e){if(v.linked)return;e.preventDefault();post(v,{sv:'by',dy:e.deltaY})},{passive:false});
@@ -248,9 +254,9 @@ function panel(){if(!PK)return;var src=PK.res.get(PK.src),rows=[],flags=[];
 /* ---------- commandes ---------- */
 idx.addEventListener('click',function(e){var b=e.target.closest('[data-k]');if(!b)return;scrollTo({top:TL[+b.dataset.k].start+2,behavior:'smooth'})});
 function base(){return V[0]?V[0].d:okSpec({})}
-$('#tpl').addEventListener('click',function(e){var b=e.target.closest('[data-t]');if(!b)return;var d=base();ST.views=b.dataset.t==='cartes'?['moi','pro','proche','coord'].map(function(c){return okSpec({page:d.page,card:c,format:d.format,version:d.version})}):FORMATS.map(function(f){return okSpec({page:d.page,card:d.card,format:f[0],version:d.version})});ST.lk='';build();say(b.dataset.t==='cartes'?'Quatre cartes, même format.':'Quatre formats, même carte.')});
-$('#cnt').addEventListener('click',function(e){if(e.target.closest('#addv')){var last=V[V.length-1]?V[V.length-1].d:okSpec({});var used=V.map(function(x){return x.d.card}),c=['moi','pro','proche','coord'].filter(function(x){return used.indexOf(x)<0})[0]||last.card;addView({page:last.page,card:c,format:last.format,version:last.version});return}
- var b=e.target.closest('[data-n]');if(!b)return;var n=+b.dataset.n;if(FOC)focus(null);while(V.length>n){var v=V.pop();v.el.remove()}var CY=['moi','pro','proche','coord'];while(V.length<n){var l=V[V.length-1]?V[V.length-1].d:okSpec({});var used=V.map(function(x){return x.d.card});var c=CY.filter(function(x){return used.indexOf(x)<0})[0]||CY[V.length%4];var nv=makeView(okSpec({page:l.page,card:c,format:l.format,version:l.version}));V.push(nv);cols.appendChild(nv.el);if(INS)post(nv,{sv:'pick',on:true})}after();timeline();push(true)});
+$('#tpl').addEventListener('click',function(e){var b=e.target.closest('[data-t]');if(!b)return;var d=base();ST.views=b.dataset.t==='cartes'?quatre(d.page).map(function(c){return okSpec({page:d.page,card:c,format:d.format,version:d.version})}):FORMATS.map(function(f){return okSpec({page:d.page,card:d.card,format:f[0],version:d.version})});ST.lk='';build();say(b.dataset.t==='cartes'?'Quatre cartes, même format.':'Quatre formats, même carte.')});
+$('#cnt').addEventListener('click',function(e){if(e.target.closest('#addv')){var last=V[V.length-1]?V[V.length-1].d:okSpec({});var used=V.map(function(x){return x.d.card}),c=quatre(last.page).filter(function(x){return used.indexOf(x)<0})[0]||last.card;addView({page:last.page,card:c,format:last.format,version:last.version});return}
+ var b=e.target.closest('[data-n]');if(!b)return;var n=+b.dataset.n;if(FOC)focus(null);while(V.length>n){var v=V.pop();v.el.remove()}while(V.length<n){var l=V[V.length-1]?V[V.length-1].d:okSpec({});var CY=quatre(l.page);var used=V.map(function(x){return x.d.card});var c=CY.filter(function(x){return used.indexOf(x)<0})[0]||CY[V.length%4];var nv=makeView(okSpec({page:l.page,card:c,format:l.format,version:l.version}));V.push(nv);cols.appendChild(nv.el);if(INS)post(nv,{sv:'pick',on:true})}after();timeline();push(true)});
 $('#act').addEventListener('click',function(e){var b=e.target.closest('[data-a]');if(!b)return;[].forEach.call(this.children,function(x){x.setAttribute('aria-pressed',x===b)});document.body.classList.toggle('live',b.dataset.a==='live');inspect(b.dataset.a==='insp');if(b.dataset.a==='insp'){say('Inspecter : cliquez un élément dans une vue.');return}say(b.dataset.a==='live'?'Toucher : cliquez et défilez dans n\'importe quelle vue, les vues liées suivent.':'Défiler : la molette fait avancer toutes les vues liées.')});
 /* un changement de format recharge les vues : la page se met en page pour ce format, pas seulement redimensionnée */
 
