@@ -4,6 +4,7 @@
 (function(){'use strict';
 var CATS=[
  {t:'Le monde AIME',d:'La causalité, l\'orbe, tout ce qui relie.',l:[
+  ['Page Zéro','/zero/','Tout commence par une intention','Nouveau'],
   ['Accueil','/','La grande landing'],
   ['Tout voir','/tout/','Toutes les vues d\'un coup'],
   ['AIME ORB','/lab/orb/','L\'orbe, en laboratoire']]},
