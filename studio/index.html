@@ -892,6 +892,7 @@ html.embedded .ws-side .sec.hl{outline:2px solid #7C5CFF;outline-offset:6px;bord
 html.embedded body .mid{grid-template-columns:0 minmax(0,1fr) 0!important;position:relative}
 html.embedded .side{position:absolute;z-index:6;top:0;bottom:0;width:min(360px,92%);box-shadow:0 0 60px -10px rgba(0,0,0,.6)}
 html.embedded #pl{left:0}html.embedded #pr{right:0}
+@media(max-width:760px){html.embedded body.brfull .app:not(.noR) #pr,html.embedded body.brfull .app:not(.noL) #pl{visibility:visible!important;width:min(360px,92%)!important;min-width:0!important;overflow:hidden!important;border:0!important}html.embedded body.brfull .app:not(.noR) #pr>.in{width:100%}}
 html.embedded #stage{grid-column:2!important;min-width:0}
 html.embedded .app.noL #pl,html.embedded .app.noR #pr{display:none}
 
@@ -4239,9 +4240,50 @@ if(EMBED){
    if(all&&from>=0){[b.cross,b.fwd,b.bwd].concat(b.q).forEach(A=>{for(let j=0;j<A.length;j++)if(A[j]===from)A[j]=to})}else{b.cross[i]=to}
    brSave();brRender();try{last={};render()}catch(_){}toast(all?(to<0?'Fil effacé partout':'Fil remplacé partout dans le motif'):(to<0?'Point effacé':'Point changé'));return}});
 }
+/* ===== v91 : contrat de commandes AIME (Bureau ↔ studio) : identifiant, conditions, état, résultat, annulation ===== */
+const CMDS={},CMDALIAS={};
+function cmdDef(id,o){CMDS[id]=o;(o.alias||[]).forEach(a=>{CMDALIAS[a]=id})}
+const cmdVis=s=>!!document.querySelector(s+':not([hidden])');
+function cmdWhy(){if(cmdVis('#brodStudio')&&!BRP)return'Commencez d\'abord un patron : une photo, un texte brodé ou une toile vierge.';if(cmdVis('#imgStudio')&&!IM.img)return'Importez d\'abord une photo : bouton « Importer une photo » dans la capsule.';return null}
+function cmdReply(id,r){const c=CMDS[id];try{window.parent.postMessage({aime:'cmdr',id:id,ok:r.ok!==false,msg:r.msg||'',state:c&&c.state?c.state():null,undo:!!(c&&c.undo)},'*')}catch(_){}}
+function cmdRun(id,args){const c=CMDS[id];let r;if(!c)r={ok:false,msg:'Commande inconnue : '+id};else{const w=cmdWhy(),can=c.can?c.can(args):(c.needs&&w?w:true);if(can!==true)r={ok:false,msg:can};else{try{r=c.run(args)||{ok:true}}catch(e){r={ok:false,msg:'Cette action a échoué : '+e.message}}}}if(r.msg)toast(r.msg);cmdReply(id,r);return r}
+/* Stitchlab : annuler, rétablir, vue */
+cmdDef('brod.undo',{alias:['[data-brundo]'],needs:1,undo:false,can:()=>cmdWhy()||(BR.hist.length?true:'Rien à annuler pour l\'instant.'),run:()=>{brUndo();const n=BR.hist.length;return{msg:n?'Annulé · encore '+n+' étape'+(n>1?'s':'')+' possible'+(n>1?'s':''):'Annulé · plus rien à annuler'}},state:()=>({undo:BR.hist.length,redo:BR.fut.length})});
+cmdDef('brod.redo',{alias:['[data-brredo]'],can:()=>cmdWhy()||(BR.fut.length?true:'Rien à rétablir.'),run:()=>{brRedo();return{msg:'Rétabli'}},state:()=>({undo:BR.hist.length,redo:BR.fut.length})});
+['both','color','sym','stitch'].forEach(v=>cmdDef('brod.view.'+v,{alias:['[data-brview="'+v+'"]'],needs:1,run:()=>{const b=document.querySelector('[data-brview="'+v+'"]');if(b)b.click();return{msg:{both:'Vue : couleur et symbole',color:'Vue : couleur',sym:'Vue : symboles',stitch:'Vue : brodé'}[v]}}}));
+cmdDef('brod.sym',{alias:['[data-brsym]'],needs:1,run:()=>{const b=document.querySelector('[data-brsym]');if(b)b.click();return{msg:'Symétrie : '+(BR.sym||'aucune')}}});
+/* Image : toutes les commandes demandent une photo */
+['[data-imtool="adjust"]','[data-imtool="crop"]','[data-imrot]','[data-imflip]','[data-imauto]','[data-imcmp]','[data-imreset]'].forEach((s,i)=>cmdDef('img.'+['adjust','crop','rotate','flip','auto','compare','reset'][i],{alias:[s],needs:1,run:()=>{const b=document.querySelector(s);if(!b)return{ok:false,msg:'Ouvrez le studio Image sur une photo.'};b.click();return{}}}));
+/* Web : reconstruire en accessible, même sans formulaire ouvert */
+cmdDef('web.a11y',{alias:['[data-wsa11y]'],run:()=>{if(WS.form&&WS.form.kind==='html'){const b=document.querySelector('[data-wsa11y]');if(b){b.click();return{msg:'Section en cours reconstruite en accessible.'}}}const w=wsWeb(),L=(w.custom||[]).filter(c=>c.kind==='html'&&(c.html||'').trim());if(!L.length)return{ok:false,msg:'Ce site n\'a pas encore de section en code : ajoutez-en une avec « Code », puis relancez.'};let fx=0;L.forEach(c=>{const r=a11yRebuild(c.html);c.orig=c.orig||c.html;c.html=r.html;fx+=r.fix.length});save();render();try{wsRender()}catch(_){}return{msg:L.length+' section'+(L.length>1?'s':'')+' en code reconstruite'+(L.length>1?'s':'')+' en accessible'+(fx?' · '+fx+' point'+(fx>1?'s':'')+' à vérifier':'')}}});
+/* Buro : la badgeuse s'ouvre toujours, et chaque bouton fait ce qu'il dit */
+const bdgEnsure=tab=>{const el=document.getElementById('bdg');if(!el||el.hidden)bdgOpen();if(tab)BDG.tab=tab;bdgRender()};
+cmdDef('buro.site',{alias:['[data-bdgm="site"]'],run:()=>{bdgEnsure('me');BDG.mode='site';bdgRender();return{msg:'Badgeuse ouverte, sur place : choisissez Arrivée, Pause, Retour ou Départ.'}}});
+cmdDef('buro.remote',{alias:['[data-bdgm="remote"]'],run:()=>{bdgEnsure('me');BDG.mode='remote';bdgRender();return{msg:'Badgeuse ouverte, à distance : choisissez Arrivée, Pause, Retour ou Départ.'}}});
+cmdDef('buro.scan',{alias:['[data-bdgscan]'],run:()=>{bdgEnsure('me');const b=document.querySelector('#bdg [data-bdgscan]');if(!b)return{ok:false,msg:'Le scanner n\'est pas disponible sur cet écran.'};b.click();return{msg:'Scanner lancé : présentez la carte à la caméra.'}}});
+cmdDef('buro.csv',{alias:['[data-bdgcsv]'],run:()=>{const p=bdgProj(),n=BDG.rows.filter(r=>(r.space||'')===(p.name||'')).length;if(!n)return{ok:false,msg:'Aucun pointage pour l\'instant : badgez d\'abord une arrivée.'};bdgEnsure('week');const b=document.querySelector('#bdg [data-bdgcsv]');if(b)b.click();return{msg:'Relevé des heures téléchargé : '+n+' pointage'+(n>1?'s':'')+'.'}}});
+/* Supports : Tout ajouter et le mur, sans dépendre d'un bouton de page */
+cmdDef('sup.addall',{alias:['[data-mpall]'],run:()=>{const k=modeOf()[0];if(!MP.includes(k))return{ok:false,msg:'Choisissez d\'abord une famille dans la barre des modes (Web, Réseaux, Imprimés…) : « Tout ajouter » ajoute toute la famille.'};const ids=mpLib(k).filter(id=>!P.formats.includes(id));if(!ids.length)return{msg:'Tous les supports de cette famille sont déjà dans le projet.'};mpAdd(ids);return{msg:ids.length+' support'+(ids.length>1?'s':'')+' ajouté'+(ids.length>1?'s':'')+' au projet.'}}});
+cmdDef('sup.wall',{alias:['[data-mpset="wall"]'],run:()=>{const k=modeOf()[0];if(MP.includes(k))mpSet(k,'wall');else{buildWall();render();setTimeout(()=>{try{fit()}catch(_){}},200)}return{msg:'Le mur des supports : '+P.formats.length+' support'+(P.formats.length>1?'s':'')+'.'}}});
+/* fonctions masquées par les barres du studio : rendues accessibles par le menu de l'app du Bureau */
+const UIC={projets:['#openHome','Projets'],tout:['[data-catopen]','Tout AIME Studio'],mosaique:['[data-mosopen]','Mosaïque'],cartes:['[data-uniopen]','Cartes'],apprendre:['[data-learn]','Apprendre'],demo:['[data-demotime]','Démo : changez une heure'],importer:['#aimeImp','Importer depuis AIME'],retour:['#aimeRet','Copier le retour pour AIME'],alertes:['#alertsBtn','Alertes'],toutexp:['#expAll','Tout exporter (ZIP)'],etsi:['#fork','Et si…'],comparer:['#cmp','Comparer'],lecture:['#play','Lire la campagne'],inspecteur:['#tglR','Inspecteur'],contenu:['#tglL','Contenu'],apercu:['#webOpen','Aperçu interactif'],reperes:['#rules [data-rule]','Repères d\'impression']};
+Object.keys(UIC).forEach(k=>cmdDef('ui.'+k,{run:()=>{const el=document.querySelector(UIC[k][0]);if(!el)return{ok:false,msg:'« '+UIC[k][1]+' » n\'existe pas pour ce projet.'};if(k==='retour'&&el.hidden)return{ok:false,msg:'Rien à copier pour AIME dans ce projet.'};el.click();return{msg:UIC[k][1]}}}));
+cmdDef('ver.list',{run:()=>({msg:''}),state:()=>({list:P.versions.map(v=>v.name),cur:P.cur})});
+cmdDef('ver.go',{run:a=>{const i=+((a||{}).i);const b=document.querySelector('#vers [data-ver="'+i+'"]');if(!b)return{ok:false,msg:'Cette version n\'existe plus.'};b.click();return{msg:'Version : '+P.versions[i].name}},state:()=>({list:P.versions.map(v=>v.name),cur:P.cur})});
+/* l'état du studio remonte au Bureau : outil actif, annuler/rétablir */
+let cmdTool='',cmdUR='';setInterval(()=>{try{if(!EMBED)return;const t=typeof BR!=='undefined'?BR.tool:'',ur=typeof BR!=='undefined'?BR.hist.length+'/'+BR.fut.length:'';if(t!==cmdTool){cmdTool=t;window.parent.postMessage({aime:'toolstate',tool:t},'*')}if(ur!==cmdUR){cmdUR=ur;window.parent.postMessage({aime:'cmdstate',id:'brod.undo',state:{undo:BR.hist.length,redo:BR.fut.length}},'*')}}catch(_){}},300);
+/* la couleur principale remonte aussi quand on la change dans le studio */
+document.addEventListener('input',e=>{if(!EMBED||!e.target||!/^#?c[12]$/.test(e.target.id||''))return;clearTimeout(window.__brt);window.__brt=setTimeout(()=>{try{window.parent.postMessage({aime:'brandstate',c1:V().b.c1},'*')}catch(_){}},200)});
+window.addEventListener('message',e=>{const d=e.data||{};if(!EMBED)return;
+ if(d.aime==='cmd'&&typeof d.id==='string'){e.stopImmediatePropagation();cmdRun(d.id,d.args);return}
+ if(d.aime==='act'&&typeof d.sel==='string'&&CMDALIAS[d.sel]){e.stopImmediatePropagation();cmdRun(CMDALIAS[d.sel]);return}
+ if(d.aime==='act'&&typeof d.sel==='string'&&!document.querySelector(d.sel)){const w=cmdWhy();if(w){e.stopImmediatePropagation();toast(w)}}
+ if(d.aime==='export'&&P&&d.kind&&d.kind!=='all'){try{toast('Export '+String(d.kind).toUpperCase()+' en préparation : '+fname(sel||P.formats[0]))}catch(_){}}
+ if(d.aime==='cmdlist'){try{window.parent.postMessage({aime:'cmdlist',ids:Object.keys(CMDS)},'*')}catch(_){}}},true);
+
 if(EMBED){let nar=null;const chk=()=>{const n=true;if(n===nar)return;const first=nar===null;nar=n;const app=$('#app');if(n){if(!first){app.dataset.wasL=app.classList.contains('noL')?'0':'1';app.dataset.wasR=app.classList.contains('noR')?'0':'1'}togglePanel('L',false);togglePanel('R',false)}else if(!first){if(app.dataset.wasL==='1')togglePanel('L',true);if(app.dataset.wasR==='1')togglePanel('R',true)}};addEventListener('resize',chk);setTimeout(chk,0)}
 $('#tglL').onclick=()=>togglePanel('L');$('#tglR').onclick=()=>togglePanel('R');$('#tglB').onclick=()=>togglePanel('B',false);$('#showB').onclick=()=>togglePanel('B',true);
-document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select'))return;if(!$('#home').hidden){if(e.key==='Escape'&&DB.projects.length)closeHome();return}
+document.addEventListener('keydown',e=>{if(e.target.matches&&e.target.matches('input,textarea,select'))return;if(!$('#home').hidden){if(e.key==='Escape'&&DB.projects.length)closeHome();return}
   if(e.key==='[')togglePanel('L');else if(e.key===']')togglePanel('R');else if(e.key==='\\')togglePanel('B',$('#app').classList.contains('noB'));else if(e.key==='0')fit();else if(e.key==='Escape')select(null)});
 let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),3800)}
 

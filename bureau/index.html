@@ -1425,6 +1425,34 @@ body.tlex #tl{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1f
 #menubar .m4s button{position:relative}
 #menubar .m4s button.dotn::after{content:"";position:absolute;top:4px;right:5px;width:7px;height:7px;border-radius:50%;background:#FB7185;box-shadow:0 0 0 2px #000}
 #sp{top:calc(50px + env(safe-area-inset-top,0px))}
+/* v26 : palette mobile */
+#mpal-h{display:none}
+@media(max-width:760px){
+#mpal-h{display:grid;place-items:center;position:fixed;z-index:9300;left:0;top:42%;width:22px;height:72px;padding:0;border:0;border-radius:0 14px 14px 0;background:rgba(14,14,18,.88);box-shadow:0 8px 24px -6px rgba(0,0,0,.6);cursor:pointer}
+#mpal-h span{width:5px;height:40px;border-radius:3px;background:linear-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF)}
+#mpal-h[aria-expanded=true]{left:min(330px,86vw)}
+#mpal-h:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#mpal{position:fixed;z-index:9290;left:0;top:calc(52px + env(safe-area-inset-top,0px));bottom:calc(var(--tlh) + 96px);width:min(330px,86vw);display:flex;flex-direction:column;background:#141418;border:1px solid rgba(255,255,255,.12);border-left:0;border-radius:0 18px 18px 0;box-shadow:20px 0 60px -12px rgba(0,0,0,.8);color:#fff}
+#mpal[hidden]{display:none}
+#mpal .mp-t{flex:none;display:flex;align-items:center;gap:4px;padding:8px 8px 6px;border-bottom:1px solid rgba(255,255,255,.08)}
+#mpal .mp-t [role=tab]{border:0;background:none;color:#A1A1AA;font:600 13px var(--ui);padding:8px 12px;border-radius:9px;cursor:pointer;min-height:40px}
+#mpal .mp-t [role=tab][aria-selected=true]{background:#fff;color:#0B0B0D}
+#mpal .mp-x{margin-left:auto;width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.08);color:#fff;font-size:20px;cursor:pointer}
+#mpal .mp-b{flex:1;min-height:0;overflow-y:auto;padding:10px}
+#mpal #tools{display:flex!important;position:static!important;transform:none!important;width:auto!important;max-height:none!important;flex-direction:row!important;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:6px;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;overflow:visible!important}
+#mpal #tools button{width:48px!important;height:48px!important;flex:none}
+#mpal #tools hr{flex-basis:100%;height:0;border:0;border-top:1px solid rgba(255,255,255,.1);margin:4px 0}
+#mpal #tools .tvw,#mpal #tools .orbslot2{display:none}
+#mpal #tools .vb{display:flex;flex-wrap:wrap;gap:6px}
+#mpal #aprail{display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:8px;overflow:visible!important;padding:0!important}
+#mpal #aprail .ar-k{flex-basis:100%}
+#mpal #aprail hr{flex-basis:100%;height:0;border:0;border-top:1px solid rgba(255,255,255,.1);margin:4px 0}
+#mpal #aprail button,#mpal #aprail .ar-col{min-width:48px;min-height:48px}
+body.expose #mpal-h{display:none}
+#mpal #tools .vb{flex-direction:row!important;flex-wrap:wrap;flex-basis:100%;align-items:center}
+#mpal .mp-more{display:grid;gap:2px}#mpal .mp-more button{text-align:left;border:0;background:none;color:#fff;font:500 15px var(--ui);padding:12px 10px;border-radius:10px;min-height:44px}#mpal .mp-more button:active,#mpal .mp-more button:focus-visible{background:rgba(255,255,255,.1)}#mpal .mp-more hr{border:0;border-top:1px solid rgba(255,255,255,.1);margin:4px 0}
+#menubar #curApp{display:none}
+}
 </style>
 
 <div id="desk" aria-hidden="true"><canvas id="px"></canvas></div>
@@ -3651,6 +3679,46 @@ if(WP.k==='aime')m4Info();menubarRender();
 
 /* v25b : Exporter reste accessible (menu Fichier), le menu de l'app revient quand une app a le focus */
 var _fc25=focus;focus=function(id){_fc25(id);var c=$('#curApp');if(c){c.hidden=!activeApp();if(activeApp())c.textContent=APP[activeApp()].n}};
+
+/* ---------- v26 : lots 0-1-2 de l'audit : contrat de commandes, états synchronisés, fonctions masquées rendues accessibles, palette mobile ---------- */
+var CMDST={},VERS={};
+/* 1. le Bureau envoie des commandes nommées, plus de clics simulés pour Annuler / Rétablir */
+APPTOOLS.stitchlab.L.forEach(function(t){if(!t)return;if(t[1]==='Annuler')t[2]={cmd:'brod.undo'};if(t[1]==='Rétablir')t[2]={cmd:'brod.redo'}});
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tools [data-at]');if(!b)return;var a=activeApp(),D=APPTOOLS[a];if(!D)return;var t=D.L[+b.dataset.at];if(!t||!t[2].cmd)return;e.stopImmediatePropagation();toFrame(a,{aime:'cmd',id:t[2].cmd,args:t[2].args})},true);
+function cmdSend(id,args){var a=activeApp();if(!a)return;toFrame(a,{aime:'cmd',id:id,args:args})}
+/* 2. le studio renvoie son état : outil actif, annuler / rétablir, couleur, versions */
+window.addEventListener('message',function(e){var d=e.data||{};var id=Object.keys(WIN).filter(function(k){return WIN[k].frame&&WIN[k].frame.contentWindow===e.source})[0];if(!id)return;
+ if(d.aime==='toolstate'&&typeof d.tool==='string'){if(ACTIVE_TOOL[id]!==d.tool){ACTIVE_TOOL[id]=d.tool;if(id===activeApp())toolsRender(curMode())}return}
+ if(d.aime==='cmdstate'||d.aime==='cmdr'){if(d.state){CMDST[id]=Object.assign(CMDST[id]||{},d.state);if(d.state.list)VERS[id]=d.state}if(id===activeApp())urMark();return}
+ if(d.aime==='brandstate'&&SIDE[id]&&d.c1){SIDE[id].brand=d.c1;if(id===activeApp())modeRender();return}});
+function urMark(){var a=activeApp(),s=CMDST[a]||{};$$('#tools [data-at]').forEach(function(b){var l=b.getAttribute('aria-label');if(l==='Annuler'||l==='Rétablir'){var n=l==='Annuler'?s.undo:s.redo;if(n==null)return;b.setAttribute('aria-disabled',String(!n));b.title=l+(n?' ('+n+')':' : rien pour l\'instant');b.style.opacity=n?'':'.4'}})}
+var _tr26=toolsRender;toolsRender=function(m){_tr26(m);urMark()};
+var _fc26=focus;focus=function(id){_fc26(id);if(STUDIOS.indexOf(id)>-1)setTimeout(function(){toFrame(id,{aime:'cmd',id:'ver.list'})},400)};
+/* 3. ce que les barres masquées du studio contenaient : dans le menu de l'app */
+var UIM=[['projets','Projets'],['tout','Tout AIME Studio'],['mosaique','Mosaïque des formats'],['cartes','Cartes'],['apprendre','Apprendre'],0,['inspecteur','Inspecteur'],['contenu','Contenu'],['alertes','Alertes'],0,['importer','Importer depuis AIME'],['retour','Copier le retour pour AIME'],['toutexp','Tout exporter (ZIP)'],0,['lecture','Lire la campagne'],['etsi','Et si… (nouvelle version)'],['comparer','Comparer deux versions']];
+var _ma26=MENUS.app;MENUS.app=function(){var L=_ma26(),a=activeApp();if(!a||STUDIOS.indexOf(a)<0)return L;var M=UIM.slice();if(a==='web')M.push(['apercu','Aperçu interactif du site']);if(['docs','buro','supports','accessibilite'].indexOf(a)>-1)M.push(['reperes','Repères d\'impression']);var out=[0];M.forEach(function(x){out.push(x===0?0:[x[1],function(){cmdSend('ui.'+x[0])}])});var V=VERS[a];if(V&&V.list&&V.list.length>1){out.push(0);V.list.forEach(function(n,i){out.push([(i===V.cur?'✓ ':'')+'Version : '+n,function(){cmdSend('ver.go',{i:i})}])})}return L.concat(out)};
+/* 4. palette mobile : un bord d'écran, une palette temporaire (outils à gauche, ressources à droite) */
+var MP2={open:false,tab:'tools',home:{}};
+document.body.insertAdjacentHTML('beforeend','<button id="mpal-h" aria-expanded="false" aria-controls="mpal" aria-label="Outils et ressources" title="Outils et ressources"><span></span></button><div id="mpal" role="dialog" aria-modal="false" aria-label="Outils et ressources" hidden><div class="mp-t" role="tablist"><button role="tab" data-mpt="tools" aria-selected="true">Outils</button><button role="tab" data-mpt="res" aria-selected="false">Ressources</button><button role="tab" data-mpt="more" aria-selected="false">Plus</button><button class="mp-x" data-mpx aria-label="Fermer">×</button></div><div class="mp-b" id="mpalb" role="tabpanel"></div></div>');
+function mpHas(){var a=activeApp();return!!(a&&SIDE[a])}
+function mpPark(el){if(!el||MP2.home[el.id])return;MP2.home[el.id]={p:el.parentNode,n:el.nextSibling}}
+function mpBack(){Object.keys(MP2.home).forEach(function(k){var el=document.getElementById(k),h=MP2.home[k];if(el&&h.p){if(h.n&&h.n.parentNode===h.p)h.p.insertBefore(el,h.n);else h.p.appendChild(el)}});MP2.home={}}
+function mpRender(){var b=$('#mpalb');if(!b)return;mpBack();var has=mpHas();if(!has&&MP2.tab==='res')MP2.tab='tools';$$('#mpal [data-mpt]').forEach(function(t){t.setAttribute('aria-selected',String(t.dataset.mpt===MP2.tab));if(t.dataset.mpt==='res')t.hidden=!has});$$('#mpal [data-mpt="more"]').forEach(function(t){t.hidden=!activeApp()});if(MP2.tab==='more'){var L=MENUS.app();MP2.more=L;b.innerHTML='<div class="mp-more" role="menu">'+L.map(function(it,i){return it===0?'<hr>':'<button role="menuitem" data-mpm="'+i+'">'+esc(it[0])+'</button>'}).join('')+'</div>';return}var mm=b.querySelector('.mp-more');if(mm)mm.remove();var el=MP2.tab==='tools'?$('#tools'):$('#aprail');if(!el)return;mpPark(el);b.appendChild(el);if(MP2.tab==='res'){aprailRender();el.hidden=false}}
+function mpOpen(on){MP2.open=on;var m=$('#mpal'),h=$('#mpal-h');if(on){MP2.tab='tools';toolsRender(curMode());mpRender();m.hidden=false;h.setAttribute('aria-expanded','true');document.body.classList.add('mpal-on');setTimeout(function(){var f=m.querySelector('#mpalb button:not([aria-disabled="true"])');if(f)f.focus()},40)}else{mpBack();m.hidden=true;h.setAttribute('aria-expanded','false');document.body.classList.remove('mpal-on');modeRender()}}
+document.addEventListener('click',function(e){if(!e.target.closest)return;var b;
+ if(e.target.closest('#mpal-h')){mpOpen(!MP2.open);return}
+ if(e.target.closest('[data-mpx]')){mpOpen(false);$('#mpal-h').focus();return}
+ if(b=e.target.closest('#mpal [data-mpt]')){MP2.tab=b.dataset.mpt;mpRender();return}
+ if(b=e.target.closest('#mpal [data-mpm]')){var it=MP2.more&&MP2.more[+b.dataset.mpm];mpOpen(false);if(it&&it[1])it[1]();return}
+ if(MP2.open&&e.target.closest('#mpalb button')&&!e.target.closest('[data-vb="gomme"],[data-vbl],[data-arall],[aria-disabled="true"]')){setTimeout(function(){if(MP2.open)mpOpen(false)},180);return}
+ if(MP2.open&&!e.target.closest('#mpal')&&e.target.isConnected)mpOpen(false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&MP2.open){e.stopPropagation();mpOpen(false);$('#mpal-h').focus()}},true);
+addEventListener('resize',function(){if(innerWidth>760&&MP2.open)mpOpen(false)});
+/* sur téléphone, le Dock reste dans la colonne ; les ressources passent dans la palette */
+var _mr26=modeRender;modeRender=function(){_mr26();if(innerWidth<=760&&!MP2.open){var d=$('#dock');if(d)d.hidden=false;var ap=$('#rail #aprail');if(ap)ap.hidden=true}};
+/* le « + » de la bande du bas, sur téléphone, rejoint la palette (il y est déjà, dans les outils) */
+var _band26=bandRender;bandRender=function(){_band26();$$('#tband [data-addm]').forEach(function(x){x.remove()})};
+bandRender();modeRender();
 
 dockRender();
 var h=(location.hash||'').slice(1);
