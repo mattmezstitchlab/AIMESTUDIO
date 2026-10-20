@@ -126,13 +126,41 @@ input[type=range]{accent-color:var(--o3);width:100%}
   .hud .t{font-size:18px}
   .say{top:9%}
 }
+
+/* ---------- terrain de jeu de l'orbe (orbe/terrain.js) ---------- */
+.jeu{display:grid;gap:18px;margin-top:40px;padding-top:40px;border-top:1px solid var(--line)}
+.jeu h2{margin:0;font:400 clamp(32px,4.4vw,56px)/1 var(--serif);letter-spacing:-.02em;text-wrap:balance}
+.jeu h3{margin:0;font:400 26px/1.1 var(--serif)}
+.gestes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.gestes div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}.gestes b{display:block;font-size:14px}.gestes span{color:var(--soft);font-size:13px}
+@media (max-width:900px){.gestes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.jeu-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.sp{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:12px;align-content:start;min-width:0}
+.sp header{display:flex;justify-content:space-between;gap:8px;align-items:center}.sp header b{font-size:14px}
+.sp-f{border:1px solid var(--line);background:var(--paper);color:var(--soft);border-radius:999px;font:500 11px var(--mono);padding:4px 9px;cursor:pointer}
+.sp-v audio,.sp-v img{max-width:100%}.sp-v{min-height:60px;display:grid;gap:8px;align-content:start;font-size:14px}.sp-v p,.sp-v ul,.sp-v blockquote,.sp-v pre{margin:0}.sp-v blockquote{border-left:2px solid var(--o3);padding-left:10px;color:#C9C9D2}
+.sp-v input[type=text],.sp-v input[type=email]{width:100%;border:1px solid var(--line);background:var(--desk);color:var(--ink);border-radius:9px;padding:8px 10px;font:14px var(--ui);margin-top:4px}
+.sp-l{display:grid;font-size:13px;color:var(--soft)}.sp-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.sp-p{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 10px;margin:2px 0}
+.sp-t{border-collapse:collapse;width:100%}.sp-t th,.sp-t td{border-bottom:1px solid var(--line);padding:6px;text-align:left}.sp-h{margin:0;font:400 24px/1.1 var(--serif)}
+.sp-c{border:1px solid var(--line);border-radius:12px;padding:10px;display:grid}.sp-c span{color:var(--soft);font-size:13px}.sp-s{border:1px dashed var(--line);border-radius:10px;padding:10px;color:var(--soft)}
+.sp footer small{display:block;font:500 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin-bottom:6px}.sp footer div{display:flex;flex-wrap:wrap;gap:4px}
+.sp-a{font-size:11.5px;border-radius:999px;padding:2px 8px;border:1px solid var(--line)}.sp-a.op{color:var(--ink)}.sp-a.pr{color:var(--soft);border-style:dashed}
+.tab-o{overflow-x:auto;border:1px solid var(--line);border-radius:14px}.tab-o table{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}.tab-o th,.tab-o td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}.tab-o th{font:500 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);background:var(--paper)}
+.tab-o code{font:11.5px var(--mono);color:var(--soft)}
+.blocs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}@media (max-width:900px){.blocs{grid-template-columns:minmax(0,1fr)}}
+.bloc-o{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
+.bloc-o p{margin:0;color:var(--soft)}
+.regles{margin:0;padding-left:18px;color:#C9C9D2;display:grid;gap:6px}
+#journalListe{list-style:none;margin:0;padding:0;display:grid;gap:8px}#journalListe li{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 36px 10px 12px}#journalListe p{margin:4px 0 0;color:var(--ink)}
+.jr-c{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--o2)}.jr-d,.jr-e{color:var(--soft)!important;font-size:12px}.jr-x{position:absolute;right:8px;top:8px;border:0;background:none;color:var(--soft);font-size:18px;cursor:pointer}.jr-vide{color:var(--soft)!important}
+.reg{display:grid;gap:8px}.reg label{display:flex;gap:10px;align-items:center;font-size:14px}
 </style>
 
 <div class="wrap">
   <header>
     <span class="tag">AIME ORB · démonstration</span>
     <h1>Le bon outil, <em>au bon moment</em></h1>
-    <p class="lead"><a href="/" style="color:inherit;text-decoration:underline;text-underline-offset:3px">Voir le monde AIME : la naissance de l'orbe et le cube qui s'ouvre →</a></p>
+    <p class="lead"><a href="/aime/" style="color:inherit;text-decoration:underline;text-underline-offset:3px">Voir le monde AIME : la naissance de l'orbe et le cube qui s'ouvre →</a></p>
     <p class="lead">L'orbe n'est pas un assistant qui parle à côté de l'interface : il devient l'interface. Un champ de recherche, un lecteur, une frise, un calendrier, une carte, un document, toujours le même objet qui change de forme.</p>
   </header>
   <div class="modes" role="group" aria-label="Mode">
@@ -142,7 +170,7 @@ input[type=range]{accent-color:var(--o3);width:100%}
   </div>
   <div class="chips" id="chips" role="group" aria-label="Formes"></div>
   <div class="lg" id="lg" hidden></div>
-  <div class="stage" id="stage">
+  <div class="stage" id="stage" data-orbe-ignorer>
     <canvas id="trail" aria-hidden="true"></canvas>
     <div id="skin" aria-hidden="true"><div class="cone"></div></div>
     <svg id="sv" aria-hidden="true">
@@ -168,7 +196,35 @@ input[type=range]{accent-color:var(--o3);width:100%}
     <div class="note"><span class="n">2</span><b>De vrais composants</b><p>À l'intérieur, de vrais champs, boutons et curseurs, utilisables au clavier et au toucher. L'effet ne remplace jamais l'outil.</p></div>
     <div class="note"><span class="n">3</span><b>Une intelligence prudente</b><p>L'orbe prépare et propose. Envoyer, publier ou payer demande toujours votre confirmation.</p></div>
   </div>
-  <p class="foot">Démonstration : exemples fictifs, aucune donnée personnelle, aucune action réelle, aucune IA branchée. Les propositions suivent des règles écrites à la main.</p>
+  <section class="jeu" id="jeu" aria-labelledby="t-jeu">
+  <span class="tag">Terrain de jeu · expérimental</span>
+  <h2 id="t-jeu">Tout ce que l'orbe sait faire, sur tout le design system</h2>
+  <p class="lead">Chaque élément ci-dessous est un vrai composant. Survolez-le : l'orbe le commente et propose une action. Touchez un contenu, ou faites un clic droit sur n'importe quel élément : le menu ne propose que ce qui marche vraiment ; le reste est marqué « prévu ». Ce qui ne va pas se verse au journal des remarques, pour être réparé, optimisé ou amélioré.</p>
+  <div class="gestes">
+   <div><b>Survoler</b><span>L'orbe commente et suggère, en disant pourquoi.</span></div>
+   <div><b>Toucher un contenu</b><span>Titre, texte, image, carte : le menu d'actions s'ouvre.</span></div>
+   <div><b>Clic droit · appui long</b><span>Le menu sur n'importe quel élément, boutons et liens compris.</span></div>
+   <div><b>Suivre la flèche</b><span>Sa pointe est le pointeur ; elle se tourne vers ce que l'orbe veut essayer.</span></div>
+   <div><b>Hésiter trois secondes</b><span>L'orbe se détache et propose deux minutes pour un concept du Monde AIME.</span></div>
+  </div>
+  <div class="sp-row"><button type="button" class="btn" id="parler">Parler à l'orbe maintenant (2 min)</button><span class="lead" id="jeuCompte" style="margin:0"></span></div>
+  <div class="jeu-g" id="jeuGrille"></div>
+  <h3>La table complète</h3>
+  <div class="tab-o"><table id="jeuTable"></table></div>
+  <div class="blocs" id="appris">
+   <div class="bloc-o"><h3>Ce que l'orbe a appris de vous</h3><p id="apprisResume"></p><p id="apprisEnvie"></p>
+    <ol class="regles"><li>Si vous faites souvent la même action sur un type d'élément, je propose celle que vous n'avez jamais essayée.</li><li>Sinon, je propose votre habitude.</li><li>Après une modification, je propose de relier : voir ce que le contenu influence.</li><li>Une suggestion refusée deux fois n'est plus proposée.</li><li>Ma flèche vise le type d'élément visible que vous avez le moins exploré.</li></ol>
+    <div class="tab-o"><table id="apprisTable"></table></div>
+    <p>Ce ne sont pas des intuitions : des règles écrites, appliquées à une mémoire gardée dans ce navigateur seulement. Aucune IA n'est branchée.</p></div>
+   <div class="bloc-o" id="reglagesOrbe"><h3>Réglages</h3><div class="reg">
+    <label><input type="checkbox" data-reg="commentaires"> Commenter au survol</label><label><input type="checkbox" data-reg="clic"> Menu au clic sur un contenu</label><label><input type="checkbox" data-reg="envie"> Flèche vers ce que l'orbe veut essayer</label><label><input type="checkbox" data-reg="hesitation"> Proposer de réfléchir après 3 s d'hésitation</label></div>
+    <div class="sp-row"><button type="button" class="btn" id="oublier">Oublier ma mémoire et le journal</button></div></div>
+  </div>
+  <div class="bloc-o" id="journal"><h3>Journal des remarques</h3><p>À réparer, à optimiser, à améliorer : tout ce que vous versez depuis n'importe quelle page du site arrive ici. Rien ne part sur un serveur.</p>
+   <div class="chips" id="journalFiltres" role="group" aria-label="Filtrer"></div><ul id="journalListe"></ul>
+   <div class="sp-row"><button type="button" class="btn" id="expMd">Copier en Markdown</button><button type="button" class="btn" id="expJson">Exporter en JSON</button><span id="journalInfo" class="lead" style="margin:0" aria-live="polite"></span></div></div>
+</section>
+<p class="foot">Démonstration : exemples fictifs, aucune donnée personnelle, aucune action réelle, aucune IA branchée. Les propositions suivent des règles écrites à la main.</p>
 </div>
 
 <script src="/vendor/gsap-3.15.0.min.js"></script>
@@ -508,4 +564,5 @@ if(!G){$('#hint').textContent='Animation simplifiée (bibliothèque indisponible
 })();
 </script>
 
+<script src="/orbe/systeme.js"></script><script src="/orbe/compagnon.js"></script><script>AIMECompagnon.demarrer({pointeur:true,envie:true,hesitation:true,clic:true})</script><script src="/orbe/terrain.js"></script>
 </html>

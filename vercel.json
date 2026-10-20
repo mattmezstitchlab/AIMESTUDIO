@@ -22,98 +22,108 @@
   ],
   "redirects": [
     {
-      "source": "/monde",
+      "source": "/zero",
       "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/zero/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/monde",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/monde/",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/monde/:path*",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/monde/:path*/",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/site",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/site/",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/site/:path*",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/site/:path*/",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/socle",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/socle/",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/socle/:path*",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/socle/:path*/",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/orb/naissance",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/orb/naissance/",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/orb/naissance/:path*",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/lab/orb/naissance/:path*/",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/bureau",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/bureau/",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     },
     {
       "source": "/bureau/:path*",
-      "destination": "/",
+      "destination": "/aime/",
       "permanent": false
     }
   ]
