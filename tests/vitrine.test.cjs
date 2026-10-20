@@ -9,11 +9,11 @@ const persp = require('../vitrine/perspectives/mariage.json');
 const editorial = require('../vitrine/modeles/editorial.json');
 const cartes = require('../synchroview/profiles.js');
 const angle = id => persp.angles.find(a => a.id === id);
-const rendu = (id, modele) => V.rendre({ contenu, acces, perspective: angle(id), modele: modele || editorial, regles: P });
+const rendu = (id, modele) => V.rendre({ contenu, acces, perspective: angle(id), libelles: persp.libelles, modele: modele || editorial, regles: P });
 // Un modèle volontairement différent : autre héro, pas de numéros, autres variantes — pour prouver que les droits ne dépendent pas du modèle.
 const autre = { id: 'test', nom: 'Test', polices: {}, composition: { hero: 'pleine-page', numeros: false, variantes: {} } };
 const visibles = html => ({
-  docs: [...html.matchAll(/<b>([^<]*)<\/b>/g)].map(m => m[1]).filter(t => contenu.documents.some(d => d.titre.replace(/'/g, '&#39;') === t)).sort(),
+  docs: [...html.matchAll(/<b>([^<]*)<\/b>/g)].map(m => m[1]).filter(t => contenu.documents.some(d => t.startsWith(d.titre.replace(/'/g, '&#39;')))).sort(),
   actions: [...html.matchAll(/<button[^>]*data-demo[^>]*>([^<]*)<\/button>/g)].map(m => m[1]).sort(),
   moments: contenu.moments.filter(m => html.includes('>' + m.titre.replace(/'/g, '&#39;') + '<')).map(m => m.id).sort()
 });

@@ -131,8 +131,8 @@ var PROF=window.SVProfiles||[{id:'moi',label:'Moi'},{id:'pro',label:'Pro'},{id:'
 var MODES=PROF.map(function(p){return[p.id,p.label,!!p.optional]});
 /* Chaque page déclare ses angles : des CARTES D'USAGE (site, démo) ou des PERSPECTIVES d'un événement (vitrine).
    Une carte n'est pas une perspective ; aucune des deux n'est un rôle technique. */
-var PERSP_MARIAGE=[['couple','Couple organisateur'],['prestataire','Prestataire'],['invite','Invité · Participant'],['coordinateur','Coordinateur']];
-var PAGES=[['site','/','Le site',null,'Carte d\'usage'],['demo','/synchroview/demo/','Démo des droits',null,'Carte d\'usage'],['mariage','/vitrine/site/?u=mariage','Mariage · vitrine',PERSP_MARIAGE,'Perspective']];
+var PAGES=[['site','/','Le site',null,'Carte d\'usage'],['demo','/synchroview/demo/','Démo des droits',null,'Carte d\'usage'],['mariage','/vitrine/site/?u=mariage','Mariage · Léa & Marc',[],'Perspective','/vitrine/perspectives/mariage.json'],['seminaire','/vitrine/site/?u=seminaire','Séminaire · Maison Orée',[],'Perspective','/vitrine/perspectives/seminaire.json']];
+function chargerAngles(){return Promise.all(PAGES.filter(function(p){return p[5]}).map(function(p){return fetch(p[5],{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){p[3]=(j.angles||[]).map(function(a){return[a.id,a.label]})}).catch(function(){p[3]=[['_','indisponible']]})}))}
 function angles(pg){var p=Pg(pg)||PAGES[0];return p[3]?p[3].map(function(a){return[a[0],a[1],false]}):MODES.filter(function(m){return!m[2]||pg==='demo'})}
 function angleLabel(pg,id){var a=angles(pg).filter(function(x){return x[0]===id})[0];return a?a[1]:id}
 function quatre(pg){return angles(pg).slice(0,4).map(function(a){return a[0]})}
@@ -145,11 +145,11 @@ function Pg(k){return PAGES.filter(function(x){return x[0]===k})[0]}function Ve(
 function okSpec(d){d=d||{};var pg=Pg(d.page)?d.page:'site',ve=Ve(d.version)&&!Ve(d.version)[3]?d.version:'ici',A=angles(pg),c=A.some(function(a){return a[0]===d.card})?d.card:(Pg(pg)[3]?A[0][0]:(d.card==='viewer'?'coord':'moi'));return{page:pg,card:c,format:F(d.format)?d.format:'pc',version:ve}}
 var Q=new URLSearchParams(location.search),ST={at:Q.get('at')||'',lk:Q.get('lk')||'',fx:Q.get('fx'),act:Q.get('act')||'lire',fz:Q.get('fz')==='1',views:[]};
 /* v=page.carte.format.version,… ; les anciennes adresses (axis, format, mode, pf, src) restent lisibles */
-if(Q.get('v'))ST.views=Q.get('v').split(',').slice(0,MAXV).map(function(t){var a=t.split('.');return okSpec({page:a[0],card:a[1],format:a[2],version:a[3]})});
+function lireVues(){if(Q.get('v'))ST.views=Q.get('v').split(',').slice(0,MAXV).map(function(t){var a=t.split('.');return okSpec({page:a[0],card:a[1],format:a[2],version:a[3]})});
 else{var srcPg=(PAGES.filter(function(x){return x[1]===(Q.get('src')||'/')})[0]||PAGES[0])[0];
  if(Q.get('axis')==='formats')ST.views=FORMATS.map(function(f){return okSpec({page:srcPg,card:Q.get('mode')||'moi',format:f[0]})});
  else ST.views=(Q.get('pf')||'moi,pro,proche,coord').split(',').slice(0,MAXV).map(function(c){return okSpec({page:srcPg,card:c,format:Q.get('format')||'pc'})})}
-if(!ST.views.length)ST.views=['moi','pro','proche','coord'].map(function(c){return okSpec({card:c})});
+if(!ST.views.length)ST.views=['moi','pro','proche','coord'].map(function(c){return okSpec({card:c})});}
 function vlabel(d){return angleLabel(d.page,d.card)}
 var $=function(s){return document.querySelector(s)},cols=$('#cols'),idx=$('#idx'),spacer=$('#spacer'),pos=$('#pos');
 var V=[];/* {el, fr, mode, format, linked, anchors, max, ready} */
@@ -207,8 +207,14 @@ function timeline(){var L=leader();if(!L)return;var s=0;TL=L.anchors.map(functio
 function outerMax(){return Math.max(1,document.documentElement.scrollHeight-innerHeight)}
 function cur(){var y=Math.min(scrollY,TOT-1),j=0;for(var i=0;i<TL.length;i++)if(y>=TL[i].start)j=i;var t=TL[j];return t?{j:j,id:t.id,k:Math.max(0,Math.min(1,(y-t.start)/t.len))}:null}
 var lastSrc=null;
-function push(force,except){var c=cur();if(!c)return;V.forEach(function(v){if(v===except||!v.anchors)return;if(!v.linked&&!force)return;if(!v.linked)return;var has=v.anchors.some(function(a){return a.id===c.id});post(v,has?{sv:'go',id:c.id,k:c.k}:{sv:'go',p:scrollY/outerMax()})});
+function push(force,except){var c=cur();if(!c)return;V.forEach(function(v){if(v===except||!v.anchors)return;if(!v.linked&&!force)return;if(!v.linked)return;post(v,cible(v,c))});
  ST.at=c.id;[].forEach.call(idx.querySelectorAll('button'),function(b){b.classList.toggle('on',+b.dataset.k===c.j)});pos.textContent=TL[c.j].label+' · '+Math.round(c.k*100)+' %'}
+/* où envoyer une vue : la même section si elle l'a ; sinon la frontière de la section commune la plus proche
+   (fin de la précédente, ou début de la suivante) ; le pourcentage n'est plus qu'un dernier recours */
+function cible(v,c){var has=function(id){return v.anchors.some(function(a){return a.id===id})};if(has(c.id))return{sv:'go',id:c.id,k:c.k};
+ for(var i=c.j-1;i>=0;i--)if(has(TL[i].id))return{sv:'go',id:TL[i].id,k:1};
+ for(i=c.j+1;i<TL.length;i++)if(has(TL[i].id))return{sv:'go',id:TL[i].id,k:0};
+ return{sv:'go',p:scrollY/outerMax()}}
 var raf=0,quiet=0;addEventListener('scroll',function(){if(performance.now()<quiet)return;if(!raf)raf=requestAnimationFrame(function(){raf=0;push(false)})},{passive:true});
 
 /* ---------- ce que disent les vues ---------- */
@@ -275,7 +281,7 @@ function top(){document.documentElement.style.setProperty('--th',$('#top').offse
 var rz=0;addEventListener('resize',function(){top();clearTimeout(rz);rz=setTimeout(fit,100)});
 document.addEventListener('keydown',function(e){if(e.target.closest('input,textarea'))return;var c=cur();if(!c)return;if(e.key==='j'||e.key==='PageDown'&&e.altKey){e.preventDefault();var n=TL[Math.min(TL.length-1,c.j+1)];scrollTo({top:n.start+2,behavior:'smooth'})}if(e.key==='k'){var p=TL[Math.max(0,c.j-(c.k<.05?1:0))];scrollTo({top:p.start+2,behavior:'smooth'})}});
 setInterval(function(){if(ST.at)state()},2000);
-top();build();
+top();chargerAngles().then(function(){lireVues();build()});
 })();
 </script>
 </body>

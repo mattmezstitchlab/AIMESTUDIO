@@ -1,67 +1,342 @@
 {
   "_": "Contenu métier du mariage de démonstration. Écrit une seule fois : les quatre perspectives le lisent, aucune ne le recopie. Données entièrement fictives.",
   "evenement": {
-    "id": "mariage-lea-marc", "univers": "mariage", "nom": "Léa & Marc", "accroche": "Nous nous marions",
-    "date": "2027-06-14", "ville": "Vertou, près de Nantes",
-    "lieu": { "nom": "Domaine des Aulnes", "adresse": "Chemin des Aulnes, 44120 Vertou", "acces": "Parking sur place · navette depuis la gare de Nantes à 14 h", "planB": "Orangerie couverte de 180 places" },
-    "visuels": { "hero": { "source": "generatif", "graine": 1406, "credit": "Création générative AIME (originale)", "photo": null } }
+    "id": "mariage-lea-marc",
+    "univers": "mariage",
+    "nom": "Léa & Marc",
+    "accroche": "Nous nous marions",
+    "date": "2027-06-14",
+    "ville": "Vertou, près de Nantes",
+    "lieu": {
+      "nom": "Domaine des Aulnes",
+      "adresse": "Chemin des Aulnes, 44120 Vertou",
+      "acces": "Parking sur place · navette depuis la gare de Nantes à 14 h",
+      "planB": "Orangerie couverte de 180 places"
+    },
+    "visuels": {
+      "hero": {
+        "source": "generatif",
+        "graine": 1406,
+        "credit": "Création générative AIME (originale)",
+        "photo": null
+      }
+    }
   },
   "personnes": [
-    { "id": "u-lea", "nom": "Léa", "fonction": "Mariée", "groupe": "couple" },
-    { "id": "u-marc", "nom": "Marc", "fonction": "Marié", "groupe": "couple" },
-    { "id": "u-camille", "nom": "Camille Roux", "fonction": "Coordination du jour J", "groupe": "equipe", "contact": "06 21 •• •• 48" },
-    { "id": "u-lumen", "nom": "Studio Lumen", "fonction": "Photographie et film", "groupe": "prestataires", "contact": "06 74 •• •• 12" },
-    { "id": "u-bleu", "nom": "Maison Bleu", "fonction": "Traiteur", "groupe": "prestataires", "contact": "02 40 •• •• 90" },
-    { "id": "u-anne", "nom": "Fleurs d'Anne", "fonction": "Fleuriste", "groupe": "prestataires", "contact": "06 55 •• •• 03" },
-    { "id": "u-nova", "nom": "Nova", "fonction": "DJ et sonorisation", "groupe": "prestataires", "contact": "07 61 •• •• 27" },
-    { "id": "u-lucie", "nom": "Lucie", "fonction": "Témoin", "groupe": "invites" },
-    { "id": "u-nina", "nom": "Nina", "fonction": "Invitée", "groupe": "invites" },
-    { "id": "u-paul", "nom": "Paul", "fonction": "Invité", "groupe": "invites" }
+    {
+      "id": "u-lea",
+      "nom": "Léa",
+      "fonction": "Mariée",
+      "groupe": "couple"
+    },
+    {
+      "id": "u-marc",
+      "nom": "Marc",
+      "fonction": "Marié",
+      "groupe": "couple"
+    },
+    {
+      "id": "u-camille",
+      "nom": "Camille Roux",
+      "fonction": "Coordination du jour J",
+      "groupe": "equipe",
+      "contact": "06 21 •• •• 48"
+    },
+    {
+      "id": "u-lumen",
+      "nom": "Studio Lumen",
+      "fonction": "Photographie et film",
+      "groupe": "prestataires",
+      "contact": "06 74 •• •• 12"
+    },
+    {
+      "id": "u-bleu",
+      "nom": "Maison Bleu",
+      "fonction": "Traiteur",
+      "groupe": "prestataires",
+      "contact": "02 40 •• •• 90"
+    },
+    {
+      "id": "u-anne",
+      "nom": "Fleurs d'Anne",
+      "fonction": "Fleuriste",
+      "groupe": "prestataires",
+      "contact": "06 55 •• •• 03"
+    },
+    {
+      "id": "u-nova",
+      "nom": "Nova",
+      "fonction": "DJ et sonorisation",
+      "groupe": "prestataires",
+      "contact": "07 61 •• •• 27"
+    },
+    {
+      "id": "u-lucie",
+      "nom": "Lucie",
+      "fonction": "Témoin",
+      "groupe": "invites"
+    },
+    {
+      "id": "u-nina",
+      "nom": "Nina",
+      "fonction": "Invitée",
+      "groupe": "invites"
+    },
+    {
+      "id": "u-paul",
+      "nom": "Paul",
+      "fonction": "Invité",
+      "groupe": "invites"
+    }
   ],
   "moments": [
-    { "id": "installation", "debut": "12:30", "fin": "14:30", "titre": "Installation des prestataires", "espace": "Grange et jardin", "public": false, "equipe": "Livraisons par l'entrée nord, déchargement avant 13 h 30." },
-    { "id": "ceremonie", "debut": "15:00", "fin": "15:45", "titre": "Cérémonie laïque", "espace": "Jardin des tilleuls", "public": true, "planB": "Orangerie", "equipe": "Micro serre-tête pour l'officiante, 120 chaises." },
-    { "id": "vin", "debut": "16:00", "fin": "18:30", "titre": "Vin d'honneur", "espace": "Orangerie et terrasse", "public": true, "equipe": "Ouverture des bars à 15 h 50." },
-    { "id": "shooting", "debut": "17:30", "fin": "18:15", "titre": "Séance photo du couple", "espace": "Allée des platanes", "public": false, "assigneeId": "u-lumen", "equipe": "Prévoir la lumière de fin d'après-midi, repli sous la halle si pluie." },
-    { "id": "diner", "debut": "19:30", "fin": "22:00", "titre": "Dîner", "espace": "Grange", "public": true, "assigneeId": "u-bleu", "equipe": "Service à l'assiette, 3 temps, 118 couverts." },
-    { "id": "discours", "debut": "21:00", "fin": "21:30", "titre": "Discours des témoins", "espace": "Grange", "public": true, "equipe": "Micro main, pas de vidéoprojection." },
-    { "id": "bal", "debut": "22:30", "fin": "01:30", "titre": "Ouverture du bal", "espace": "Grange", "public": true, "assigneeId": "u-nova", "equipe": "Première danse : morceau choisi par le couple, 3 min 40." },
-    { "id": "navettes", "debut": "01:00", "fin": "02:30", "titre": "Navettes retour", "espace": "Parking", "public": true, "equipe": "Deux rotations vers Nantes centre." },
-    { "id": "demontage", "debut": "02:00", "fin": "03:30", "titre": "Démontage", "espace": "Grange et jardin", "public": false, "equipe": "Le domaine ferme à 4 h." }
+    {
+      "id": "installation",
+      "debut": "12:30",
+      "fin": "14:30",
+      "titre": "Installation des prestataires",
+      "espace": "Grange et jardin",
+      "public": false,
+      "equipe": "Livraisons par l'entrée nord, déchargement avant 13 h 30."
+    },
+    {
+      "id": "ceremonie",
+      "debut": "15:00",
+      "fin": "15:45",
+      "titre": "Cérémonie laïque",
+      "espace": "Jardin des tilleuls",
+      "public": true,
+      "planB": "Orangerie",
+      "equipe": "Micro serre-tête pour l'officiante, 120 chaises."
+    },
+    {
+      "id": "vin",
+      "debut": "16:00",
+      "fin": "18:30",
+      "titre": "Vin d'honneur",
+      "espace": "Orangerie et terrasse",
+      "public": true,
+      "equipe": "Ouverture des bars à 15 h 50."
+    },
+    {
+      "id": "shooting",
+      "debut": "17:30",
+      "fin": "18:15",
+      "titre": "Séance photo du couple",
+      "espace": "Allée des platanes",
+      "public": false,
+      "assigneeId": "u-lumen",
+      "equipe": "Prévoir la lumière de fin d'après-midi, repli sous la halle si pluie."
+    },
+    {
+      "id": "diner",
+      "debut": "19:30",
+      "fin": "22:00",
+      "titre": "Dîner",
+      "espace": "Grange",
+      "public": true,
+      "assigneeId": "u-bleu",
+      "equipe": "Service à l'assiette, 3 temps, 118 couverts."
+    },
+    {
+      "id": "discours",
+      "debut": "21:00",
+      "fin": "21:30",
+      "titre": "Discours des témoins",
+      "espace": "Grange",
+      "public": true,
+      "equipe": "Micro main, pas de vidéoprojection."
+    },
+    {
+      "id": "bal",
+      "debut": "22:30",
+      "fin": "01:30",
+      "titre": "Ouverture du bal",
+      "espace": "Grange",
+      "public": true,
+      "assigneeId": "u-nova",
+      "equipe": "Première danse : morceau choisi par le couple, 3 min 40."
+    },
+    {
+      "id": "navettes",
+      "debut": "01:00",
+      "fin": "02:30",
+      "titre": "Navettes retour",
+      "espace": "Parking",
+      "public": true,
+      "equipe": "Deux rotations vers Nantes centre."
+    },
+    {
+      "id": "demontage",
+      "debut": "02:00",
+      "fin": "03:30",
+      "titre": "Démontage",
+      "espace": "Grange et jardin",
+      "public": false,
+      "equipe": "Le domaine ferme à 4 h."
+    }
   ],
   "documents": [
-    { "id": "contrat-lumen", "titre": "Contrat · Studio Lumen", "nature": "Contrat", "taille": "2 pages" },
-    { "id": "fiche-technique", "titre": "Fiche technique des prestataires", "nature": "Fiche", "taille": "4 pages" },
-    { "id": "deroule", "titre": "Déroulé minute par minute", "nature": "Planning", "taille": "6 pages" },
-    { "id": "plan-de-table", "titre": "Plan de table", "nature": "Plan", "taille": "1 page" },
-    { "id": "livret", "titre": "Livret d'accueil des invités", "nature": "Livret", "taille": "8 pages" }
+    {
+      "id": "contrat-lumen",
+      "titre": "Contrat",
+      "nature": "Contrat",
+      "taille": "2 pages",
+      "personne": "u-lumen"
+    },
+    {
+      "id": "fiche-technique",
+      "titre": "Fiche technique des prestataires",
+      "nature": "Fiche",
+      "taille": "4 pages"
+    },
+    {
+      "id": "deroule",
+      "titre": "Déroulé minute par minute",
+      "nature": "Planning",
+      "taille": "6 pages"
+    },
+    {
+      "id": "plan-de-table",
+      "titre": "Plan de table",
+      "nature": "Plan",
+      "taille": "1 page"
+    },
+    {
+      "id": "livret",
+      "titre": "Livret d'accueil des invités",
+      "nature": "Livret",
+      "taille": "8 pages"
+    }
   ],
   "hebergements": [
-    { "nom": "Hôtel du Port (fictif)", "distance": "8 min en voiture", "note": "Bloc de 20 chambres jusqu'au 1er mai" },
-    { "nom": "Gîtes des Aulnes", "distance": "Sur le domaine", "note": "Réservés à la famille proche" }
+    {
+      "nom": "Hôtel du Port (fictif)",
+      "distance": "8 min en voiture",
+      "note": "Bloc de 20 chambres jusqu'au 1er mai"
+    },
+    {
+      "nom": "Gîtes des Aulnes",
+      "distance": "Sur le domaine",
+      "note": "Réservés à la famille proche"
+    }
   ],
-  "menu": { "entree": "Velouté de petits pois, menthe et burrata", "plat": "Volaille fermière, jus corsé, légumes du marché", "dessert": "Pièce montée revisitée aux fruits rouges", "options": ["Végétarien", "Sans gluten", "Enfant"] },
-  "cadeaux": { "titre": "Notre voyage en Islande", "detail": "Une cagnotte plutôt qu'une liste : chaque participation devient une étape du voyage." },
+  "menu": {
+    "plats": [
+      {
+        "libelle": "Entrée",
+        "texte": "Velouté de petits pois, menthe et burrata"
+      },
+      {
+        "libelle": "Plat",
+        "texte": "Volaille fermière, jus corsé, légumes du marché"
+      },
+      {
+        "libelle": "Dessert",
+        "texte": "Pièce montée revisitée aux fruits rouges"
+      }
+    ],
+    "options": [
+      "Végétarien",
+      "Sans gluten",
+      "Enfant"
+    ]
+  },
+  "cadeaux": {
+    "titre": "Notre voyage en Islande",
+    "detail": "Une cagnotte plutôt qu'une liste : chaque participation devient une étape du voyage."
+  },
   "galerie": [
-    { "titre": "Le domaine", "graine": 31 }, { "titre": "L'orangerie", "graine": 77 }, { "titre": "Les tilleuls", "graine": 112 },
-    { "titre": "La grange", "graine": 154 }, { "titre": "L'allée", "graine": 203 }, { "titre": "Le soir", "graine": 260 }
+    {
+      "titre": "Le domaine",
+      "graine": 31
+    },
+    {
+      "titre": "L'orangerie",
+      "graine": 77
+    },
+    {
+      "titre": "Les tilleuls",
+      "graine": 112
+    },
+    {
+      "titre": "La grange",
+      "graine": 154
+    },
+    {
+      "titre": "L'allée",
+      "graine": 203
+    },
+    {
+      "titre": "Le soir",
+      "graine": 260
+    }
   ],
   "faq": [
-    { "q": "Quelle tenue ?", "r": "Chic et confortable : la cérémonie a lieu sur l'herbe." },
-    { "q": "Les enfants sont-ils invités ?", "r": "Oui, un espace jeux est prévu pendant le dîner." },
-    { "q": "Comment rentrer ?", "r": "Deux navettes vers Nantes centre, à 1 h et 2 h." }
+    {
+      "q": "Quelle tenue ?",
+      "r": "Chic et confortable : la cérémonie a lieu sur l'herbe."
+    },
+    {
+      "q": "Les enfants sont-ils invités ?",
+      "r": "Oui, un espace jeux est prévu pendant le dîner."
+    },
+    {
+      "q": "Comment rentrer ?",
+      "r": "Deux navettes vers Nantes centre, à 1 h et 2 h."
+    }
   ],
   "reponses": [
-    { "id": "rsvp-lucie", "subjectId": "u-lucie", "reponse": "Oui", "regime": "Végétarien", "telephone": "06 12 •• •• 34" },
-    { "id": "rsvp-nina", "subjectId": "u-nina", "reponse": "Non", "regime": "—", "telephone": "07 45 •• •• 81" },
-    { "id": "rsvp-paul", "subjectId": "u-paul", "reponse": "Oui", "regime": "Sans gluten", "telephone": "06 30 •• •• 66" }
+    {
+      "id": "rsvp-lucie",
+      "subjectId": "u-lucie",
+      "reponse": "Oui",
+      "regime": "Végétarien",
+      "telephone": "06 12 •• •• 34"
+    },
+    {
+      "id": "rsvp-nina",
+      "subjectId": "u-nina",
+      "reponse": "Non",
+      "regime": "—",
+      "telephone": "07 45 •• •• 81"
+    },
+    {
+      "id": "rsvp-paul",
+      "subjectId": "u-paul",
+      "reponse": "Oui",
+      "regime": "Sans gluten",
+      "telephone": "06 30 •• •• 66"
+    }
   ],
   "paiements": [
-    { "id": "acompte-lumen", "titre": "Acompte · Studio Lumen", "montant": 360, "payer": "space", "payeeId": "u-lumen", "echeance": "15 mars 2027", "statut": "à régler" },
-    { "id": "solde-bleu", "titre": "Solde · Maison Bleu", "montant": 4130, "payer": "space", "payeeId": "u-bleu", "echeance": "1er juin 2027", "statut": "prévu" }
+    {
+      "id": "acompte-lumen",
+      "titre": "Acompte",
+      "montant": 360,
+      "payer": "space",
+      "payeeId": "u-lumen",
+      "echeance": "15 mars 2027",
+      "statut": "à régler"
+    },
+    {
+      "id": "solde-bleu",
+      "titre": "Solde",
+      "montant": 4130,
+      "payer": "space",
+      "payeeId": "u-bleu",
+      "echeance": "1er juin 2027",
+      "statut": "prévu"
+    }
   ],
   "urgences": [
-    { "qui": "Camille Roux, coordination", "tel": "06 21 •• •• 48" },
-    { "qui": "Régisseur du domaine", "tel": "02 40 •• •• 15" }
+    {
+      "qui": "Coordination",
+      "personne": "u-camille"
+    },
+    {
+      "qui": "Régisseur du domaine",
+      "tel": "02 40 •• •• 15"
+    }
   ]
 }

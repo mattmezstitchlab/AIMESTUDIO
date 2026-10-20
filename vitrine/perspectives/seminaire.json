@@ -1,0 +1,332 @@
+{
+  "_": "Les quatre angles du même séminaire. Même moteur, mêmes types de sections que le mariage : seuls les choix, les filtres, les actions et les mots changent.",
+  "univers": "seminaire",
+  "libelles": {
+    "valeurs": {
+      "Inscrit": "inscrits",
+      "Excusé": "excusés"
+    },
+    "regimes": "besoins alimentaires",
+    "modifier": "Modifier mon inscription",
+    "planB": "alternative",
+    "planBLieu": "Repli",
+    "interne": "organisation",
+    "compte": "jours avant le",
+    "privees": "Les inscriptions nominatives restent privées : seuls les chiffres sont partagés.",
+    "elementsReserves": "élément(s) réservé(s) à l'organisation."
+  },
+  "angles": [
+    {
+      "id": "organisateur",
+      "label": "Organisateur",
+      "regard": "u-claire",
+      "kicker": "Pilotage du séminaire",
+      "intro": "Le programme, les inscriptions, les intervenants, le budget et les décisions à prendre, réunis.",
+      "sections": [
+        {
+          "type": "compte"
+        },
+        {
+          "type": "programme",
+          "titre": "Le programme complet",
+          "filtre": "tout"
+        },
+        {
+          "type": "reponses",
+          "titre": "Les inscriptions",
+          "champs": [
+            "reponse",
+            "atelier",
+            "regime"
+          ]
+        },
+        {
+          "type": "personnes",
+          "titre": "Intervenants et équipe",
+          "groupes": [
+            "intervenants",
+            "coordination",
+            "organisation"
+          ],
+          "contacts": true
+        },
+        {
+          "type": "paiements",
+          "titre": "Budget"
+        },
+        {
+          "type": "liste",
+          "titre": "Décisions",
+          "source": "decisions",
+          "etat": "etat",
+          "champs": [
+            [
+              "date",
+              "Échéance"
+            ]
+          ]
+        },
+        {
+          "type": "documents",
+          "titre": "Documents"
+        },
+        {
+          "type": "actions",
+          "titre": "Vos actions",
+          "liste": [
+            {
+              "label": "Inviter un participant",
+              "res": {
+                "type": "space",
+                "role": "guest"
+              },
+              "action": "invite"
+            },
+            {
+              "label": "Régler les honoraires de l'intervenante",
+              "res": {
+                "type": "payment",
+                "ref": "honoraires-ines"
+              },
+              "action": "pay"
+            },
+            {
+              "label": "Partager le budget",
+              "res": {
+                "type": "document",
+                "ref": "budget"
+              },
+              "action": "share"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "intervenant",
+      "label": "Intervenant",
+      "regard": "u-ines",
+      "kicker": "Votre intervention",
+      "intro": "Vos sessions, vos salles, le matériel prévu, vos supports et les seules personnes à contacter.",
+      "sections": [
+        {
+          "type": "programme",
+          "titre": "Vos sessions",
+          "filtre": "assigne",
+          "notes": true
+        },
+        {
+          "type": "liste",
+          "titre": "Les salles",
+          "source": "salles",
+          "champs": [
+            [
+              "capacite",
+              "Capacité"
+            ],
+            [
+              "equipement",
+              "Équipement"
+            ]
+          ]
+        },
+        {
+          "type": "documents",
+          "titre": "Supports et documents"
+        },
+        {
+          "type": "personnes",
+          "titre": "Vos contacts",
+          "groupes": [
+            "coordination",
+            "organisation"
+          ],
+          "contacts": true
+        },
+        {
+          "type": "paiements",
+          "titre": "Vos honoraires"
+        },
+        {
+          "type": "actions",
+          "titre": "Vos actions",
+          "liste": [
+            {
+              "label": "Déposer mon support",
+              "res": {
+                "type": "document",
+                "ref": "gabarit"
+              },
+              "action": "upload"
+            },
+            {
+              "label": "Ajuster ma session",
+              "res": {
+                "type": "event",
+                "ref": "keynote"
+              },
+              "action": "edit"
+            },
+            {
+              "label": "Ouvrir le brief",
+              "res": {
+                "type": "document",
+                "ref": "brief-intervenants"
+              },
+              "action": "read"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "participant",
+      "label": "Participant",
+      "regard": "u-hugo",
+      "kicker": "Vous participez",
+      "intro": "Le programme de la journée, votre inscription, les ateliers et tout ce qu'il faut pour venir.",
+      "sections": [
+        {
+          "type": "compte"
+        },
+        {
+          "type": "programme",
+          "titre": "Le programme",
+          "filtre": "public"
+        },
+        {
+          "type": "reponse",
+          "titre": "Votre inscription",
+          "champs": [
+            [
+              "reponse",
+              "Inscription"
+            ],
+            [
+              "atelier",
+              "Atelier"
+            ],
+            [
+              "regime",
+              "Besoins alimentaires"
+            ]
+          ]
+        },
+        {
+          "type": "liste",
+          "titre": "Les ateliers",
+          "source": "ateliers",
+          "etat": "places",
+          "champs": [
+            [
+              "animateurId",
+              "Avec",
+              "personne"
+            ],
+            [
+              "lieu",
+              "Salle"
+            ]
+          ]
+        },
+        {
+          "type": "lieu",
+          "titre": "Le lieu"
+        },
+        {
+          "type": "hebergement",
+          "titre": "Venir",
+          "source": "transports"
+        },
+        {
+          "type": "menu",
+          "titre": "Restauration"
+        },
+        {
+          "type": "faq",
+          "titre": "Infos pratiques"
+        },
+        {
+          "type": "documents",
+          "titre": "À télécharger"
+        }
+      ]
+    },
+    {
+      "id": "logistique",
+      "label": "Coordinateur logistique",
+      "regard": "u-julien",
+      "kicker": "Logistique du jour",
+      "intro": "Le déroulé opérationnel, les salles, le matériel, les prestataires, les incidents et les alternatives.",
+      "sections": [
+        {
+          "type": "programme",
+          "titre": "Déroulé opérationnel",
+          "filtre": "tout",
+          "notes": true
+        },
+        {
+          "type": "liste",
+          "titre": "Salles",
+          "source": "salles",
+          "champs": [
+            [
+              "capacite",
+              "Capacité"
+            ],
+            [
+              "equipement",
+              "Équipement"
+            ]
+          ]
+        },
+        {
+          "type": "liste",
+          "titre": "Matériel",
+          "source": "materiel",
+          "etat": "etat",
+          "champs": [
+            [
+              "lieu",
+              "Où"
+            ]
+          ]
+        },
+        {
+          "type": "liste",
+          "titre": "Incidents et alternatives",
+          "source": "incidents",
+          "etat": "etat",
+          "champs": [
+            [
+              "planB",
+              "Alternative"
+            ]
+          ]
+        },
+        {
+          "type": "personnes",
+          "titre": "Prestataires",
+          "groupes": [
+            "prestataires",
+            "intervenants"
+          ],
+          "contacts": true
+        },
+        {
+          "type": "lieu",
+          "titre": "Site et repli",
+          "planB": true
+        },
+        {
+          "type": "urgences",
+          "titre": "Urgences"
+        },
+        {
+          "type": "documents",
+          "titre": "Documents"
+        }
+      ]
+    }
+  ]
+}

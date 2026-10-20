@@ -58,6 +58,13 @@ var RULES={
  summary:{
   read:function(s){return s.role!=='guest'?yes('summary.read : membre (sans données nominatives)'):no('summary.read','les invités ne voient que leurs propres réponses')}
  },
+ /* ---- éléments d'une collection (salles, matériel, incidents, décisions…) selon leur audience ---- */
+ item:{
+  read:function(s,r){var a=r.audience||'public';if(a==='public'||a==='membres')return yes('item.read : '+a);
+   if(a==='equipe')return(ORGA[s.role]||s.role==='contributor')?yes('item.read : équipe'):no('item.read','réservé à l\'équipe');
+   if(a==='organisation')return ORGA[s.role]?yes('item.read : organisation'):no('item.read','réservé à l\'organisation');
+   return no('item.read','audience inconnue : refusé par défaut')}
+ },
  /* ---- 4 · paiements : rôle autorisé ET autorisation propre à la transaction ---- */
  payment:{
   read:function(s,r){if(ORGA[s.role])return yes('payment.read : organisation');if(s.role==='contributor'&&r.payeeId===s.id)return yes('payment.read : contributeur, paiement qui lui est destiné');if(r.payerId===s.id)return yes('payment.read : son propre paiement');return no('payment.read','paiement d\'un autre membre')},

@@ -100,3 +100,19 @@ Catalogue `modeles/*/modele.json` : univers, gratuit / premium (simple étiquett
 4. **Données fictives** : garder « Léa & Marc » pour le mariage (déjà dans la démo et la landing) ; nom de l'entreprise fictive du séminaire.
 5. **Modèles de départ** : 3 proposés (Éditorial gratuit, deux premium), à valider.
 6. **Branche** : créer `vitrine` depuis `synchroview`.
+
+## 5. Avancement (branche `vitrine`)
+
+### Étape 1 · Mariage — fait
+Léa & Marc, quatre perspectives, une seule source, modèle Éditorial, intégré à SynchroView.
+
+### Étape 2 · Maison Orée (séminaire) — fait
+- **Même moteur** `vitrine/rendu.js`, aucun code propre à l'entreprise. Ajouts **uniquement** : `donnees/seminaire.json`, `acces/seminaire.json`, `perspectives/seminaire.json`, l'ambiance « Pierre » et le choix d'ambiance par univers (présentation).
+- Pour que le moteur reste universel, il a été **généralisé** (et le mariage passe toujours ses tests) :
+  - toute la microcopie propre à un univers est sortie du moteur vers les perspectives (`libelles`) ;
+  - un composant générique `liste` affiche n'importe quelle collection du contenu (salles, matériel, incidents, décisions, ateliers) ;
+  - une règle d'accès générique `item` (audience : public, membres, équipe, organisation) filtre ces collections ;
+  - les documents, paiements, urgences et listes **pointent** une personne au lieu de recopier son nom ;
+  - le visuel génératif a deux natures : organique (mariage) et architecture (entreprise).
+- Perspectives : Organisateur (Claire Morel), Intervenant (Inès Garnier), Participant (Hugo Lambert), Coordinateur logistique (Julien Petit).
+- **SynchroView** : Maison Orée dans le choix des pages ; les perspectives sont lues dans leurs fichiers (plus de liste recopiée dans SynchroView) ; synchronisation améliorée quand une vue n'a pas la section : elle va à la frontière de la section commune la plus proche (fin de la précédente ou début de la suivante) au lieu d'un pourcentage. Les pages dont toutes les sections sont communes (le site AIME) ne changent pas de comportement.

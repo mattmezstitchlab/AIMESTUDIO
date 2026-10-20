@@ -47,6 +47,10 @@ const CASES = [
   ['résumé sans noms · lire (3)', 'read', { type: 'summary', id: 'r' }, null, [1, 1, 1, 1, 0]],
   ['acompte · voir', 'read', acompte, null, [1, 1, 1, 0, 0]],
   ['acompte · payer sans autorisation de transaction (4)', 'pay', acompte, null, [0, 0, 0, 0, 0]],
+  ['élément public · lire', 'read', { type: 'item', audience: 'public' }, null, [1, 1, 1, 1, 1]],
+  ['élément d\'équipe · lire', 'read', { type: 'item', audience: 'equipe' }, null, [1, 1, 1, 0, 0]],
+  ['élément de l\'organisation · lire', 'read', { type: 'item', audience: 'organisation' }, null, [1, 1, 0, 0, 0]],
+  ['élément à audience inconnue · refusé', 'read', { type: 'item', audience: 'x' }, null, [0, 0, 0, 0, 0]],
   ['action inconnue · refusée par défaut', 'publish', space, null, [0, 0, 0, 0, 0]]
 ];
 
