@@ -1312,6 +1312,63 @@ body.tldots #tl .tl-it:hover,body.tldots #tl .tl-it:focus-visible{transform:scal
 .or-clock{letter-spacing:-.035em!important}
 .tc header b{font-size:20px!important}
 
+/* v22 : bande du bas allégée */
+#tband .bwhere{background:linear-gradient(#000,#000) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;border:1.5px solid transparent;margin-left:6px}
+#tband .bwhere:hover{background:linear-gradient(#1A1A1F,#1A1A1F) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;color:#fff}
+#tband .bwhere[aria-pressed=true]{background:linear-gradient(rgba(124,92,255,.55),rgba(124,92,255,.55)) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;color:#fff}
+#tband .bwhen{flex:none;display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:#fff;padding:3px 8px 3px 14px;border-radius:999px;cursor:pointer;font:inherit;line-height:1.15;text-align:left;min-width:0}
+#tband .bwhen b{display:block;font:600 12.5px var(--ui);white-space:nowrap}
+#tband .bwhen small{display:block;font:500 10px var(--mono);color:var(--soft);white-space:nowrap}
+#tband .bwhen svg{width:14px;height:14px;opacity:.7}
+#tband .bwhen:hover,#tband .bwhen[aria-expanded=true]{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3)}
+#tpick{position:fixed;z-index:9700;width:300px;max-width:calc(100vw - 16px);background:#141418;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:8px;box-shadow:0 24px 60px -12px rgba(0,0,0,.85);display:grid;gap:4px;font:500 13px var(--ui);color:#E7E7EE}
+#tpick .tk-big{display:grid;gap:1px;text-align:left;border:0;background:none;color:#fff;padding:8px 10px;border-radius:10px;cursor:pointer}
+#tpick .tk-big b{font:600 14px var(--ui)}
+#tpick .tk-big small{font:500 11.5px var(--ui);color:var(--soft)}
+#tpick .tk-big:hover,#tpick .tk-big:focus-visible{background:rgba(255,255,255,.08);outline:none}
+#tpick .tk-big[aria-checked=true]{background:rgba(255,255,255,.1)}
+#tpick .tk-jj b{background:linear-gradient(90deg,#F59E0B,#FB7185);-webkit-background-clip:text;background-clip:text;color:transparent}
+#tpick .tk-k{display:block;font:600 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft);padding:8px 10px 2px}
+#tpick .tk-seg{display:flex;gap:2px;background:rgba(255,255,255,.06);border-radius:10px;padding:3px;margin:0 4px}
+#tpick .tk-seg button{flex:1;border:0;background:none;color:#C9C9D2;font:600 12px var(--ui);padding:6px 4px;border-radius:8px;cursor:pointer}
+#tpick .tk-seg button:hover{color:#fff}
+#tpick .tk-seg button[aria-checked=true]{background:#fff;color:#0B0B0D}
+#tpick .tk-d{display:grid;gap:4px;padding-bottom:4px}
+#tpick .tk-d input{margin:0 4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:9px;padding:7px 9px;font:500 13px var(--ui);color-scheme:dark}
+#tpick button:focus-visible{outline:2px solid #fff;outline-offset:1px}
+/* « Où ? » : une timeline de vos dossiers et fichiers */
+body.tlex #tl{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
+#tex{grid-column:1/-1;display:flex!important;flex-direction:column;background:none;gap:0;min-height:0;overflow:hidden}
+#tex .tx-h{flex:none;display:flex;align-items:center;gap:10px;padding:8px 10px 6px 14px;border-bottom:1px solid rgba(255,255,255,.07);min-width:0}
+#tex .tx-h>b{font:600 14px var(--ui);background:linear-gradient(90deg,#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF);-webkit-background-clip:text;background-clip:text;color:transparent}
+#tex .tx-h>span{font:500 11px var(--mono);color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#tex .tx-h input{margin-left:auto;flex:0 1 260px;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:5px 12px;font:500 12px var(--ui)}
+#tex .tx-h .pill{flex:none;font-size:12px;padding:5px 12px}
+#tex .tx-h .bb{flex:none;width:28px;height:28px;border:0;border-radius:8px;background:none;color:#C9C9D2;font-size:18px;cursor:pointer}
+#tex .tx-h .bb:hover{background:rgba(255,255,255,.09);color:#fff}
+#tex .tx-r{flex:1;min-height:0;display:flex;align-items:stretch;gap:14px;overflow-x:auto;overflow-y:hidden;padding:10px 14px;scroll-behavior:smooth}
+#tex .tx-g{flex:none;display:flex;flex-direction:column;gap:6px;width:200px;min-height:0;overflow-y:auto}
+#tex .tx-g h5{margin:0;font:600 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--soft);position:sticky;top:0;background:inherit}
+#tex .tx-g.today h5{color:#fff}
+#tex .tx-g.past .tx-c{opacity:.78}
+#tex .tx-g.fut .tx-c{border-style:dashed}
+#tex .tx-c{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:9px;align-items:center;text-align:left;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#fff;border-radius:11px;padding:8px 10px;cursor:pointer;font:inherit}
+#tex .tx-c:hover{background:rgba(255,255,255,.09);opacity:1}
+#tex .tx-c.hit{border-color:#fff;box-shadow:0 0 0 3px rgba(124,92,255,.5);opacity:1}
+#tex .tx-c>:first-child{grid-row:1/3}
+#tex .tx-c b{font:600 12.5px var(--ui);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tex .tx-c small{font:500 10.5px var(--ui);color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tex .tx-c .ico-folder{width:26px;height:22px}
+#tex .tx-dot{display:block;width:10px;height:10px;border-radius:50%}
+#tex .tx-dot.sq{border-radius:3px}
+#tex .tx-dot.ring{background:none;border:2px solid #fff}
+#tex .tx-now{flex:none;width:2px;align-self:stretch;background:#fff;border-radius:2px;position:relative;margin:0 4px}
+#tex .tx-now span{position:absolute;top:-2px;left:6px;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#fff;white-space:nowrap}
+#tex .tx-e{color:var(--soft);margin:auto}
+.tl-pop .row{flex-wrap:wrap}
+.tl-pop [data-tfold] svg{width:14px;height:14px;vertical-align:-2px}
+#dock [data-app="moteurs"].on{box-shadow:0 0 0 2px #fff}
+@media(max-width:760px){#tband{grid-template-columns:auto minmax(0,1fr) auto!important}#tband .bc{justify-content:center}#tband .bwhere{display:grid!important;margin-left:2px}#tband .ptr .pm-times{display:none}#tex .tx-h>span,#tex .tx-h .pill{display:none}#tex .tx-g{width:170px}}
 </style>
 
 <div id="desk" aria-hidden="true"><canvas id="px"></canvas></div>
@@ -3402,6 +3459,64 @@ document.addEventListener('click',function(e){var b;if(!e.target.closest)return;
 document.addEventListener('submit',function(e){if(e.target.id==='rxe'&&e.target.closest('#na-me')){setTimeout(function(){meAppRender();meRender();if(WIN.reseau)rxRender()},0)}});
 document.addEventListener('change',function(e){var t=e.target;if(t.name==='ph'&&t.closest&&t.closest('#na-me')&&t.files[0]){setTimeout(function(){meRender();var h=$('#na-me .mex-h .me-o');if(h&&OS.me.photo)h.innerHTML='<img src="'+esc(OS.me.photo)+'" alt="">'},400)}});
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-me="me"]');if(b){e.stopImmediatePropagation();$('#mep').hidden=true;open('me')}},true);
+/* ---------- v22 : la bande du bas allégée (sélecteur du temps centré, « Où ? » ouvre vos fichiers dans le temps, moteurs dans le Dock) ---------- */
+TB.pick=false;var TEXF=null;
+if(PM.band==='where')PM.band='arrow';
+function tbWhen(){var z=T(ZOOM[TL.zoom].lab),c=TL.navC;if(!c||Math.abs(c-Date.now())<DAY/2)return'<b>Aujourd\'hui</b><small>'+esc(z)+(TL.part?' · Partition':'')+'</small>';return'<b>'+esc(fmtD(c,{weekday:'short',day:'numeric',month:'short',year:Math.abs(c-Date.now())>300*DAY?'numeric':undefined}))+'</b><small>'+esc(z)+(TL.part?' · Partition':'')+'</small>'}
+bandRender=function(){var mob=innerWidth<=760,N=bandNext(),mins=Object.keys(WIN).filter(function(k){return WIN[k].min&&!WIN[k].closed});
+ tb.innerHTML='<div class="bl">'+pmTrio(PM.band==='where'?'arrow':PM.band,'band',false)+'<button class="bb bwhere" data-tex aria-pressed="'+!!TL.ex+'" title="Où ? Vos dossiers, fichiers et moments, du passé au futur" aria-label="Où ? Vos dossiers, fichiers et moments dans le temps">'+bI('dossier')+'</button>'+(mob?'':mins.map(function(k){return'<button class="bmin" data-bmin="'+k+'" title="'+esc(APP[k].n)+' · réduite" aria-label="Rouvrir '+esc(APP[k].n)+'">'+esc(APP[k].n)+'</button>'}).join(''))+'</div>'+
+ '<div class="bc">'+(mob?'':'<button class="bb" data-tnav="-1" title="Reculer" aria-label="Reculer dans le temps">'+bI('prev')+'</button>')+'<button class="bwhen" data-tpick aria-haspopup="menu" aria-expanded="'+TB.pick+'" title="Choisir le moment et l\'échelle" aria-label="Choisir le moment et l\'échelle du temps">'+tbWhen()+bI('down')+'</button>'+(mob?'':'<button class="bb" data-tnav="1" title="Avancer" aria-label="Avancer dans le temps">'+bI('next')+'</button><button class="bplay" data-tplay aria-pressed="'+!!PT.play+'" title="'+(PT.play?'Arrêter':'Jouer la partition')+'" aria-label="'+(PT.play?'Arrêter':'Jouer la partition')+'">'+bI(PT.play?'stop':'play')+'</button><button class="bnext" data-tgo="'+(N.t||'')+'" title="Aller à ce moment"><b>'+esc(N.s)+'</b>'+(N.sub?'<small>'+esc(N.sub)+'</small>':'')+'</button>')+'</div>'+
+ '<div class="br">'+(mob?'':'<button class="bb" data-expose aria-pressed="'+document.body.classList.contains('expose')+'" title="Vue sur tout : toutes les fenêtres" aria-label="Vue sur tout">'+bI('tout')+'</button><i class="bs"></i><button class="bb" data-zoom="-1" title="Dézoomer l\'app" aria-label="Dézoomer l\'app">'+bI('zout')+'</button><button class="bb" data-zoom="0" title="Tout voir" aria-label="Ajuster à la fenêtre">'+bI('fit')+'</button><button class="bb" data-zoom="1" title="Zoomer l\'app" aria-label="Zoomer l\'app">'+bI('zin')+'</button><i class="bs"></i>')+'<button class="bb" data-tdr aria-expanded="'+TB.dr+'" title="'+(TB.dr?'Replier la timeline':'Déplier la timeline')+'" aria-label="'+(TB.dr?'Replier la timeline':'Déplier la timeline')+'">'+bI(TB.dr?'down':'up')+'</button></div>';
+ if(TB.pick)tpickRender()};
+/* le sélecteur du temps : moment, échelle, lecture */
+function tpickRender(){var m=$('#tpick');if(!m){m=document.createElement('div');m.id='tpick';m.setAttribute('role','menu');m.setAttribute('aria-label','Le temps');document.body.appendChild(m)}var N=bandNext(),jj=tlCollect().filter(function(x){return x.ty==='jourj'&&x.t>Date.now()}).sort(function(a,b){return a.t-b.t})[0],now=!TL.navC;
+ m.innerHTML='<button role="menuitemradio" aria-checked="'+now+'" data-tpk="today" class="tk-big"><b>Aujourd\'hui</b><small>'+esc(fmtD(Date.now(),{weekday:'long',day:'numeric',month:'long'}))+'</small></button>'+
+ (jj?'<button role="menuitem" data-tpk="jj" class="tk-big tk-jj"><b>Jour J</b><small>'+esc(fmtD(jj.t,{weekday:'long',day:'numeric',month:'long'}))+' · '+esc(N.s.replace('Jour J ',''))+'</small></button>':'')+
+ '<span class="tk-k">Échelle</span><div class="tk-seg">'+Object.keys(ZOOM).map(function(k){return'<button role="menuitemradio" aria-checked="'+(TL.zoom===k)+'" data-tz="'+k+'">'+esc(T(ZOOM[k].lab))+'</button>'}).join('')+'</div>'+
+ '<span class="tk-k">Lecture</span><div class="tk-seg"><button role="menuitemradio" aria-checked="'+(!TL.part)+'" data-tpv="0">Ligne</button><button role="menuitemradio" aria-checked="'+!!TL.part+'" data-tpv="1">Partition</button></div>'+
+ '<label class="tk-d"><span class="tk-k">Aller à une date</span><input type="date" data-tpkd value="'+new Date(TL.navC||Date.now()).toISOString().slice(0,10)+'"></label>';
+ var b=$('#tband [data-tpick]');if(b){var r=b.getBoundingClientRect(),w=m.offsetWidth;m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2))+'px';m.style.bottom=(innerHeight-r.top+8)+'px'}m.hidden=false}
+function tpickClose(){TB.pick=false;var m=$('#tpick');if(m)m.hidden=true;var b=$('#tband [data-tpick]');if(b)b.setAttribute('aria-expanded','false')}
+document.addEventListener('click',function(e){TB.inPick=!!(e.target.closest&&e.target.closest('#tpick'))},true);
+document.addEventListener('click',function(e){if(!e.target.closest)return;var b;
+ if(e.target.closest('#tband [data-tpick]')){TB.pick=!TB.pick;if(TB.pick){tpickRender();$('#tband [data-tpick]').setAttribute('aria-expanded','true');setTimeout(function(){var f=$('#tpick [aria-checked="true"]');if(f)f.focus()},20)}else tpickClose();return}
+ if(TB.inPick){if(b=e.target.closest('[data-tpk]')){if(b.dataset.tpk==='today'){TL.navC=null}else{var jj=tlCollect().filter(function(x){return x.ty==='jourj'&&x.t>Date.now()}).sort(function(a,b){return a.t-b.t})[0];if(jj){TL.navC=jj.t;TL.zoom='jour';TB.dr=true}}tpickClose();tlRender();return}
+  if(e.target.closest('[data-tz],[data-tpv]')){if(e.target.closest('[data-tpv]')){TB.dr=true;try{localStorage.setItem('aime-tld','1')}catch(_){}}setTimeout(function(){if(TB.pick)tpickRender()},0);return}return}
+ if(TB.pick)tpickClose()});
+document.addEventListener('change',function(e){if(e.target.matches&&e.target.matches('[data-tpkd]')&&e.target.value){var d=new Date(e.target.value+'T12:00:00');if(!isNaN(d)){TL.navC=d.getTime();TB.dr=true;tpickClose();tlRender()}}});
+document.addEventListener('keydown',function(e){var m=$('#tpick');if(!m||m.hidden)return;if(e.key==='Escape'){e.stopPropagation();tpickClose();var b=$('#tband [data-tpick]');if(b)b.focus();return}if(e.key==='ArrowDown'||e.key==='ArrowUp'){var L=[].slice.call(m.querySelectorAll('button,input')),i=L.indexOf(document.activeElement);e.preventDefault();L[(i+(e.key==='ArrowDown'?1:-1)+L.length)%L.length].focus()}},true);
+addEventListener('resize',function(){if(TB.pick)tpickRender()});
+/* la Partition ne s'écrase plus : une hauteur minimale de cinq rangées lisibles */
+var _bl22=bandLayout;bandLayout=function(){var d=TB.dh;if(TL.part&&!TL.ex&&!TL.mo&&innerWidth>760)TB.dh=Math.max(d,128);_bl22();TB.dh=d;if(TL.ex){var mob=innerWidth<=760,bh=mob?44:40,dh=Math.round(Math.min(innerHeight*(mob?.42:.3),mob?360:250)),st=document.body.style;st.setProperty('--tld',dh+'px');st.setProperty('--tlh',(dh+bh-2)+'px');Object.keys(WIN).forEach(function(k){if(WIN[k].max)apply(WIN[k])});if(ORB.el&&ORB.home){var h=orbHome();orbPlace(h.x,h.y)}}};
+/* les moteurs passent dans le Dock : le carré ouvre la grille horizontale */
+APP.moteurs.n='Moteurs';APP.moteurs.d='Les 1 191 moteurs, en grille dans le tiroir du bas';
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#dock [data-app="moteurs"]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();TL.mo=!TL.mo;TL.ex=false;if(TL.mo)TB.dr=true;tlRender();dockRender()},true);
+var _dk22=dockRender;dockRender=function(){_dk22();var b=$('#dock [data-app="moteurs"]');if(b){b.classList.toggle('on',!!TL.mo);b.setAttribute('aria-pressed',!!TL.mo)}};
+var _tlr22=tlRender;tlRender=function(){_tlr22();var b=$('#dock [data-app="moteurs"]');if(b){b.classList.toggle('on',!!TL.mo);b.setAttribute('aria-pressed',!!TL.mo)}};
+/* « Où ? » : vos dossiers, fichiers et moments alignés sur le temps */
+texRender=function(){var el=$('#tex');if(!el){el=document.createElement('section');el.id='tex';$('#tl').appendChild(el)}el.setAttribute('aria-label','Où ? Vos dossiers, fichiers et moments dans le temps');
+ var now=Date.now(),t0=dayStart(now),I=[];
+ projects().forEach(function(p){var ap=APP[appOfProject(p)];I.push({t:p.updated||now,ic:folderSvg().replace('ico-folder','ico-folder sm'),ti:p.name||'Sans nom',s:(ap?ap.n:'Projet')+' · '+(p.formats||[]).length+' supports',a:'data-tp="'+esc(p.id)+'"',q:'dossier'})});
+ tlCollect().filter(function(x){return x.ty!=='phase'}).forEach(function(x){var c=TY[x.ty]||TY.rappel;I.push({t:x.t,ic:'<i class="tx-dot" style="background:'+c[1]+'"></i>',ti:x.ti,s:c[0]+' · '+fmtH(x.t)+(x.done?' · fait':''),a:'data-ti="'+esc(x.id)+'"',q:'moment',id:x.id})});
+ (VW.files||[]).forEach(function(f,i){if(!f.file)return;I.push({t:f.file.lastModified||now,ic:'<i class="tx-dot sq" style="background:'+(FT[f.ty]?FT[f.ty][1]:'#9CA3AF')+'"></i>',ti:f.n,s:'Fichier',a:'data-tf="'+i+'"',q:'fichier'})});
+ Object.keys(WIN).forEach(function(k){if(APP[k])I.push({t:now,ic:'<i class="tx-dot ring"></i>',ti:APP[k].n,s:'Fenêtre ouverte',a:'data-tw="'+k+'"',q:'fenetre'})});
+ I.sort(function(a,b){return a.t-b.t});
+ var G=[],cur=null;I.forEach(function(o){var d=dayStart(o.t);if(!cur||cur.d!==d){cur={d:d,L:[]};G.push(cur)}cur.L.push(o)});
+ var past=G.filter(function(g){return g.d<t0}).length,fut=G.filter(function(g){return g.d>t0}).length,html='',marked=false;
+ G.forEach(function(g){if(!marked&&g.d>=t0){html+='<div class="tx-now" aria-hidden="true">'+(g.d===t0?'':'<span>Aujourd\'hui</span>')+'</div>';marked=true}var far=Math.abs(g.d-t0)>300*DAY;html+='<section class="tx-g'+(g.d<t0?' past':g.d>t0?' fut':' today')+'"><h5>'+(g.d===t0?'Aujourd\'hui':esc(fmtD(g.d,{weekday:'short',day:'numeric',month:'short',year:far?'numeric':undefined})))+'</h5>'+g.L.map(function(o){return'<button class="tx-c'+(o.id&&o.id===TEXF?' hit':'')+'" '+o.a+' data-txs="'+esc((o.ti+' '+o.s+' '+o.q).toLowerCase())+'">'+o.ic+'<b>'+esc(o.ti)+'</b><small>'+esc(o.s)+'</small></button>'}).join('')+'</section>'});
+ if(!marked)html+='<div class="tx-now" aria-hidden="true"><span>Aujourd\'hui</span></div>';
+ el.innerHTML='<header class="tx-h"><b>Où ?</b><span>'+past+' jours passés · '+fut+' à venir · '+I.length+' éléments</span><input type="search" data-txq placeholder="Chercher un dossier, un fichier, un moment" aria-label="Chercher dans le temps"><button class="pill" data-txpt title="Puis cliquez n\'importe quel objet : AIME vous montre où il se trouve">Montrer du doigt</button><button class="bb" data-tex aria-label="Fermer">×</button></header><div class="tx-r" tabindex="0" aria-label="Du passé, à gauche, au futur, à droite">'+(I.length?html:'<p class="tx-e">Rien encore. Vos projets, fichiers et moments viendront s\'aligner ici.</p>')+'</div>';
+ var r=el.querySelector('.tx-r'),h=TEXF&&r.querySelector('.hit'),n=r.querySelector('.tx-now');requestAnimationFrame(function(){var tg=h||n;if(tg)r.scrollLeft=Math.max(0,tg.offsetLeft-r.clientWidth/2+tg.offsetWidth/2);if(h)h.focus({preventScroll:true})});TEXF=null};
+document.addEventListener('input',function(e){if(!e.target.matches||!e.target.matches('[data-txq]'))return;var q=e.target.value.trim().toLowerCase();$$('#tex .tx-c').forEach(function(c){c.hidden=!!q&&c.dataset.txs.indexOf(q)<0});$$('#tex .tx-g').forEach(function(g){g.hidden=!g.querySelector('.tx-c:not([hidden])')})});
+document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('#tex'))return;var b;if(e.target.closest('[data-txpt]')){pmSet('band','where');toast('Cliquez un objet : AIME vous montre où il se trouve. Échap pour arrêter.');return}if(b=e.target.closest('.tx-c[data-ti]')){tlPop(b.dataset.ti,b)}});
+/* la fiche d'un point : Dossier et Où ? */
+var _tlPop22=tlPop;tlPop=function(id,anchor){_tlPop22(id,anchor);var p=$('.tl-pop'),it=tlFind(id);if(!p||!it)return;var row=p.querySelector('.row');if(!row){row=document.createElement('div');row.className='row';p.appendChild(row)}row.insertAdjacentHTML('beforeend','<button class="pill" data-tfold="'+esc(id)+'" title="Voir dans le temps ce qui s\'y rattache">'+svgI('folder')+' Dossier</button><button class="pill" data-twhere="'+esc(id)+'">Où ?</button>');var r=anchor.getBoundingClientRect();p.style.top=Math.max(40,r.top-p.offsetHeight-8)+'px'};
+document.addEventListener('click',function(e){var b;if(!e.target.closest)return;if(b=e.target.closest('[data-tfold]')){var p=$('.tl-pop');if(p)p.remove();TEXF=b.dataset.tfold;TL.ex=true;TL.mo=false;TB.dr=true;tlRender();return}if(b=e.target.closest('[data-twhere]')){var it=tlFind(b.dataset.twhere),p2=$('.tl-pop');if(p2)p2.remove();if(it)whereGo(it.ti)}});
+/* « Où ? » ouvre et ferme son tiroir sans changer le reste */
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tband [data-tex],#tex [data-tex]');if(!b)return;e.stopImmediatePropagation();TL.ex=!TL.ex;TL.mo=false;TL.open=false;var x=$('#tlx');if(x)x.remove();if(TL.ex)TB.dr=true;tlRender();dockRender()},true);
+ZONEX.forEach(function(z){if(z[0]==='#tband')z[2]='À gauche, le pointeur et « Où ? », vos dossiers et fichiers alignés sur le temps. Au centre, le temps : cliquez « Aujourd\'hui » pour choisir le jour, l\'échelle, la lecture ou le Jour J. À droite, toutes les fenêtres, le zoom de l\'app et le tiroir.'});
+bandRender();dockRender();
+
 dockRender();
 var h=(location.hash||'').slice(1);
 if(h&&APP[h]&&!APP[h].ext)open(h);
