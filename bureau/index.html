@@ -1509,6 +1509,94 @@ body.expose #cw,body.expose #rpd,body.wp-scene #cw,body.wp-scene #rpd{display:no
 .rn-w{border-color:rgba(224,64,251,.35)!important;background:rgba(224,64,251,.07)!important}
 .rn-g h5{font-family:var(--ui)!important;font-weight:600!important;font-size:15px!important;text-transform:capitalize}
 #tools .vb-sc{display:flex;flex-direction:column;gap:3px;margin-top:4px;padding:3px;border-radius:10px;background:rgba(255,255,255,.06)}#tools .vb-sc button{width:30px!important;height:24px!important;border-radius:7px;font:700 14px var(--ui);color:#C9C9D2}#tools .vb-sc button[aria-pressed=true]{background:#fff;color:#0B0B0D}#mpal #tools .vb-sc{flex-direction:row}
+/* v29 Design system */
+.ds .ds-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px}
+.ds .ds-bar .sp{flex:1}
+.ds-prog{display:grid;gap:6px;min-width:180px;font:500 12px var(--ui);color:var(--soft)}
+.ds-prog b{color:var(--ink);font-weight:600}
+.ds-prog i{display:block;height:4px;border-radius:999px;background:var(--raise);overflow:hidden}
+.ds-prog em{display:block;height:100%;background:var(--grad);border-radius:999px}
+.ds-g{display:grid;grid-template-columns:180px minmax(0,1fr);gap:32px;align-items:start}
+.ds-nav{position:sticky;top:64px;display:grid;gap:2px}
+.ds-nav button{display:flex;justify-content:space-between;gap:8px;text-align:left;border:0;background:none;color:var(--soft);font:500 13px var(--ui);padding:8px 10px;border-radius:10px;cursor:pointer}
+.ds-nav button:hover{background:var(--raise);color:var(--ink)}
+.ds-nav small{font:500 10.5px var(--mono);color:var(--soft)}
+.ds-main{display:grid;gap:48px;min-width:0}
+.ds-sec{display:grid;gap:12px;scroll-margin-top:64px}
+.ds-sec h3{margin:0;font:400 22px/1.1 var(--display);letter-spacing:-.02em}
+.ds-p{margin:0;color:var(--soft);max-width:68ch;font:400 14px/1.5 var(--ui)}
+.ds-list{display:grid;gap:8px}
+.ds-i{display:grid;grid-template-columns:240px minmax(0,1fr) auto;align-items:center;gap:16px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+.ds-i.ok{border-color:rgba(34,197,94,.45)}
+.ds-i.rev{border-color:rgba(245,165,36,.55)}
+.ds-spec{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-height:32px;min-width:0}
+.ds-txt{display:grid;gap:3px;min-width:0}
+.ds-txt b{font:600 13px var(--ui)}
+.ds-txt span{color:var(--soft);font:400 13px/1.45 var(--ui)}
+.ds-txt code{font:500 11px var(--mono);color:var(--soft);overflow-wrap:anywhere}
+.ds-ctl{display:flex;gap:4px;flex:none}
+.ds-ctl button{border:1px solid var(--line);background:none;color:var(--soft);font:500 12px var(--ui);padding:6px 10px;border-radius:999px;cursor:pointer;min-height:30px}
+.ds-ctl button:hover{color:var(--ink);background:var(--raise)}
+.ds-ctl button[data-s="ok"][aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#06210F}
+.ds-ctl button[data-s="rev"][aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:#2A1A00}
+.ds-note{grid-column:1/-1;background:var(--raise);border:1px solid var(--line);border-radius:10px;color:var(--ink);font:400 13px var(--ui);padding:8px 11px}
+.ds-sw{width:44px;height:32px;border-radius:10px;border:1px solid rgba(255,255,255,.14)}
+.ds-ty{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ds-rd{width:56px;height:36px;background:var(--raise);border:1px solid var(--soft)}
+.ds-spc{display:block;height:20px;background:var(--acc);border-radius:2px}
+.ds-sh{width:64px;height:36px;border-radius:10px;background:var(--raise)}
+.ds-lay{position:relative;width:72px;height:32px}
+.ds-lay::before{content:"";position:absolute;inset:calc(12px - var(--i)*2px) auto auto calc(var(--i)*7px);width:28px;height:18px;border-radius:5px;background:var(--acc);opacity:calc(.25 + var(--i)*.11)}
+.ds-mv{width:72px;height:8px;border-radius:999px;background:var(--raise);position:relative;overflow:hidden}
+.ds-mv::after{content:"";position:absolute;left:0;top:0;bottom:0;width:20px;border-radius:999px;background:var(--acc);animation:dsmv calc(var(--d)*6) ease-in-out infinite alternate}
+@keyframes dsmv{to{left:52px}}
+.ds-ics{display:flex;flex-wrap:wrap;gap:6px}
+.ds-ic{width:30px;height:30px;display:grid;place-items:center}
+.ds-ic svg{width:30px;height:30px}
+.ds-ic>*{max-width:30px;max-height:30px}
+.ds-m4{width:26px;height:26px;display:grid;place-items:center;color:var(--ink)}
+.ds-m4 svg{width:20px;height:20px}
+.ds-inl{position:static!important;padding:0!important;background:none!important;border:0!important;backdrop-filter:none!important;flex-wrap:wrap}
+.ds-inl input{width:160px}
+.ds-cardw{display:block;width:180px}
+.ds-cardw .ucard{width:100%;pointer-events:none}
+.ds-tadd{width:30px;height:30px;border-radius:50%;border:2px solid transparent;background:linear-gradient(var(--desk),var(--desk)) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;color:#fff;display:grid;place-items:center;font:500 16px/1 var(--ui)}
+.ds-mk{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#7C5CFF;color:#fff;font:700 12px/20px var(--ui)}
+.ds-mk.x{background:#E040FB}
+.ds-fold{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px 0 6px;border-radius:999px;border:1.5px solid transparent;background:linear-gradient(#141418,#141418) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;color:#fff;font:600 11.5px var(--ui);white-space:nowrap}
+.ds-fold svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8}
+.ds-say{display:block;font:400 12.5px/1.4 var(--ui);color:var(--ink)}
+.ds-say b{font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ok);margin-right:6px}
+.ds-say.no{color:var(--soft)}
+.ds-say.no b{color:var(--hot)}
+.ds-focus{outline:2px solid var(--ink);outline-offset:2px}
+.ds-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ds-i.nosp{grid-template-columns:minmax(0,1fr) auto}
+.ds-chips button{border:1px solid var(--line);background:none;color:var(--soft);font:500 12px var(--ui);padding:6px 11px;border-radius:999px;cursor:pointer}
+.ds-chips button[aria-pressed="true"]{background:var(--ink);color:var(--desk);border-color:var(--ink)}
+.ds-tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.ds-t{display:grid;gap:8px;padding:8px 8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--paper);align-content:start}
+.ds-t.ok{border-color:rgba(34,197,94,.45)}
+.ds-t.rev{border-color:rgba(245,165,36,.55)}
+.ds-t .pv{display:block;aspect-ratio:4/3;max-width:100%;border:0;border-radius:10px;background:var(--bgc,#222);padding:10px;cursor:zoom-in}
+.ds-t .pv img{width:100%;height:100%;object-fit:contain}
+.ds-tm{display:grid;gap:2px;padding:0 4px}
+.ds-tm b{font:600 13px var(--ui)}
+.ds-tm small{font:500 11.5px var(--ui);color:var(--soft)}
+.ds-t .ds-ctl{padding:0 4px}
+@media(max-width:900px){
+ .ds-g{grid-template-columns:minmax(0,1fr);gap:16px}
+ .ds-nav{position:sticky;top:52px;z-index:2;display:flex;overflow-x:auto;gap:4px;padding:6px 0;background:#0E0E10;scrollbar-width:none}
+ .ds-nav::-webkit-scrollbar{display:none}
+ .ds-nav button{flex:none;border:1px solid var(--line);border-radius:999px;padding:6px 11px;min-height:36px}
+ .ds-i{grid-template-columns:minmax(0,1fr);gap:10px}
+ .ds-ctl button{min-height:40px;padding:8px 14px}
+ .ds-tg{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+ .ds-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+ .ds-chips button{flex:none;min-height:36px}
+ .ds-i.nosp{grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){.ds-mv::after{animation:none}}
 </style>
 
 <div id="desk" aria-hidden="true"><canvas id="px"></canvas></div>
@@ -2362,7 +2450,7 @@ document.addEventListener('click',function(e){var b;if(!e.target.closest('#ov'))
 /* ---------- la bibliothèque de modèles ---------- */
 var METL={mariage:'Mariage',fiancailles:'Fiançailles',anniv:'Anniversaire',naissance:'Naissance',religieux:'Religieux',retraite:'Retraite',hommage:'Hommage',demenag:'Déménagement',enfance:'Enfance',artisan:'Artisan',avocat:'Avocat',comptable:'Comptable',notaire:'Notaire',detective:'Détective',immo:'Immobilier',traiteur:'Traiteur',photo:'Photographe',resto:'Restaurant',commerce:'Commerce',heberg:'Hébergement',intermittent:'Intermittent',asso:'Association',formation:'Formation',entreprise:'Entreprise',organisme:'Organisme public',projet:'Projet',musee:'Musée',etudiant:'Étudiant',concert:'Concert',sport:'Sport',base:'Essentiels'};
 var LFAM=[['Fêtes & vie',['mariage','fiancailles','anniv','naissance','religieux','retraite','hommage','demenag','enfance']],['Métiers',['artisan','traiteur','photo','resto','commerce','heberg','intermittent']],['Conseil & droit',['avocat','notaire','comptable','detective','immo']],['Organisations',['asso','formation','entreprise','organisme','projet','musee','etudiant']],['Culture & sport',['concert','sport']],['Essentiels',['base']]];
-var PROMET=['avocat','notaire','comptable','detective','immo','concert'];
+var PROMET=[];
 var BGL={admin:'#E9E4DA',fetes:'#F3D9DE',web:'#D7E7F3',affiches:'#F3E2C9',cartes:'#DDEFE2'};
 var LIBI=SUPS.map(function(id,i){var p=id.split('-'),f=p.pop(),met=p.join('-')||'base',lb=supLabel(id);return{id:id,f:f,met:met,n:lb.n,cat:supCat(id),pro:PROMET.indexOf(met)>-1,i:i}});
 var LIB={met:null,sort:'trend',price:'all',q:'',sel:null};
@@ -2370,9 +2458,9 @@ function libOpen(){LIB.sel=null;ovOpen('');libRender()}
 function libRender(){var o=$('#ov');if(!o)return;if(LIB.sel)return libDetail();var q=nrm(LIB.q),R=seeded(9),L=LIBI.filter(function(x){return(!LIB.met||x.met===LIB.met)&&(LIB.price==='all'||(LIB.price==='pro')===x.pro)&&(!q||nrm(x.n+' '+(METL[x.met]||'')).indexOf(q)>-1)});
  if(LIB.sort==='trend')L=L.map(function(x){return[R(),x]}).sort(function(a,b){return a[0]-b[0]}).map(function(a){return a[1]});else if(LIB.sort==='recent')L=L.slice().reverse();else L=L.slice().sort(function(a,b){return(b.pro-a.pro)||a.n.localeCompare(b.n)});
  o.innerHTML=ovTop('lib')+'<div class="in"><div class="ov-h"><h2>Modèles</h2><p>Des supports prêts à l\'emploi, rangés par moment de vie et par métier. Choisissez-en un : il s\'ouvre dans votre projet, avec vos textes et vos couleurs.</p></div><div class="lib-cols">'+LFAM.map(function(f){return'<div><b>'+f[0]+'</b>'+f[1].filter(function(m){return LIBI.some(function(x){return x.met===m})}).map(function(m){return'<button data-lmet="'+m+'" aria-pressed="'+(LIB.met===m)+'">'+esc(METL[m])+'</button>'}).join('')+'</div>'}).join('')+'</div>'+
- '<div class="lib-bar"><div class="seg" role="group" aria-label="Tri"><button data-lsort="trend" aria-pressed="'+(LIB.sort==='trend')+'">Tendance</button><button data-lsort="best" aria-pressed="'+(LIB.sort==='best')+'">Les meilleurs</button><button data-lsort="recent" aria-pressed="'+(LIB.sort==='recent')+'">Récents</button></div>'+(LIB.met?'<button class="pill" data-lmet="">'+esc(METL[LIB.met])+' ×</button>':'')+'<span class="sp"></span><div class="seg" role="group" aria-label="Prix"><button data-lprice="all" aria-pressed="'+(LIB.price==='all')+'">Tous</button><button data-lprice="free" aria-pressed="'+(LIB.price==='free')+'">Gratuits</button><button data-lprice="pro" aria-pressed="'+(LIB.price==='pro')+'">Pro</button></div><span class="note">'+L.length+' modèles</span></div>'+
- '<div class="lib-g">'+L.map(function(x){return'<button class="lt" data-lsel="'+x.i+'"><div class="pv" style="--bgc:'+BGL[x.cat]+'"><img src="'+ROOT+'sup/aime-studio-'+x.id+'.webp" alt="" loading="lazy"></div><div class="meta"><span><b>'+esc(x.n)+'</b><small>'+esc(METL[x.met]||'')+' · AIME Studio</small></span><span class="price'+(x.pro?' pro':'')+'">'+(x.pro?'Pro':'Gratuit')+'</span></div></button>'}).join('')+'</div></div>'}
-function libDetail(){var x=LIBI[LIB.sel],o=$('#ov');o.innerHTML=ovTop('lib')+'<div class="in"><button class="pill" data-lback style="justify-self:start">← Tous les modèles</button><div class="lib-d"><div class="big" style="--bgc:'+BGL[x.cat]+'"><img src="'+ROOT+'sup/aime-studio-'+x.id+'.webp" alt="'+esc(x.n)+'"></div><div style="display:grid;gap:14px"><span class="k" style="font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)">'+esc(METL[x.met]||'')+' · '+T(SUPCATS.filter(function(c){return c[0]===x.cat})[0][1])+'</span><h3>'+esc(x.n)+'</h3><span class="price'+(x.pro?' pro':'')+'" style="justify-self:start">'+(x.pro?'Modèle Pro':'Gratuit')+'</span><p>Ce support reprend le contenu de votre projet : noms, dates, lieu, couleurs et typographie de votre identité. Tout se modifie ensuite dans le studio, et s\'exporte en PDF d\'impression ou en image.</p>'+(x.pro?'<p class="note">Les modèles Pro seront réservés aux comptes AIME Pro quand le paiement sera en place. Vous pouvez déjà l\'essayer.</p>':'')+'<div class="rowb" style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill dark" data-luse="'+x.i+'">Utiliser ce modèle</button><button class="pill" data-lwall="'+x.i+'">Voir en fond d\'écran</button></div></div></div></div>'}
+ '<div class="lib-bar"><div class="seg" role="group" aria-label="Tri"><button data-lsort="trend" aria-pressed="'+(LIB.sort==='trend')+'">Tendance</button><button data-lsort="best" aria-pressed="'+(LIB.sort==='best')+'">Les meilleurs</button><button data-lsort="recent" aria-pressed="'+(LIB.sort==='recent')+'">Récents</button></div>'+(LIB.met?'<button class="pill" data-lmet="">'+esc(METL[LIB.met])+' ×</button>':'')+'<span class="sp"></span><div class="seg" role="group" aria-label="Prix"><button data-lprice="all" aria-pressed="'+(LIB.price==='all')+'">Tous</button><button data-lprice="free" aria-pressed="'+(LIB.price==='free')+'">Gratuits</button><button data-lprice="pro" aria-pressed="'+(LIB.price==='pro')+'">Payants</button></div><span class="note">'+L.length+' modèles</span></div>'+
+ '<div class="lib-g">'+L.map(function(x){return'<button class="lt" data-lsel="'+x.i+'"><div class="pv" style="--bgc:'+BGL[x.cat]+'"><img src="'+ROOT+'sup/aime-studio-'+x.id+'.webp" alt="" loading="lazy"></div><div class="meta"><span><b>'+esc(x.n)+'</b><small>'+esc(METL[x.met]||'')+' · AIME Studio</small></span><span class="price'+(x.pro?' pro':'')+'">'+(x.pro?'Payant':'Gratuit')+'</span></div></button>'}).join('')+'</div></div>'}
+function libDetail(){var x=LIBI[LIB.sel],o=$('#ov');o.innerHTML=ovTop('lib')+'<div class="in"><button class="pill" data-lback style="justify-self:start">← Tous les modèles</button><div class="lib-d"><div class="big" style="--bgc:'+BGL[x.cat]+'"><img src="'+ROOT+'sup/aime-studio-'+x.id+'.webp" alt="'+esc(x.n)+'"></div><div style="display:grid;gap:14px"><span class="k" style="font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)">'+esc(METL[x.met]||'')+' · '+T(SUPCATS.filter(function(c){return c[0]===x.cat})[0][1])+'</span><h3>'+esc(x.n)+'</h3><span class="price'+(x.pro?' pro':'')+'" style="justify-self:start">'+(x.pro?'Modèle payant':'Gratuit')+'</span><p>Ce support reprend le contenu de votre projet : noms, dates, lieu, couleurs et typographie de votre identité. Tout se modifie ensuite dans le studio, et s\'exporte en PDF d\'impression ou en image.</p>'+'<div class="rowb" style="display:flex;gap:8px;flex-wrap:wrap"><button class="pill dark" data-luse="'+x.i+'">Reprendre ce modèle</button><button class="pill" data-lwall="'+x.i+'">Voir en fond d\'écran</button></div></div></div></div>'}
 document.addEventListener('click',function(e){if(!e.target.closest('#ov'))return;var b;
  if(b=e.target.closest('[data-lmet]')){LIB.met=b.dataset.lmet||null;libRender();return}if(b=e.target.closest('[data-lsort]')){LIB.sort=b.dataset.lsort;libRender();return}if(b=e.target.closest('[data-lprice]')){LIB.price=b.dataset.lprice;libRender();return}
  if(b=e.target.closest('[data-lsel]')){LIB.sel=+b.dataset.lsel;libRender();$('#ov').scrollTop=0;return}if(e.target.closest('[data-lback]')){LIB.sel=null;libRender();return}
@@ -3875,6 +3963,77 @@ var _vbR28=vbRender;vbRender=function(){_vbR28();var el=$('#tools .vb');if(!el)r
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tools [data-vbsc]');if(!b)return;e.stopPropagation();VB.scope=b.dataset.vbsc;vbSend(false);vbRender();toast(VB.scope==='all'?'Partout : vous verrez l\'aperçu avant que rien ne change':'Ici seulement')},true);
 var _vbStop28=vbStop;vbStop=function(){VB.scope='one';_vbStop28()};
 vbRender();
+
+/* ---------- v29 : Design system AIME, page complète à valider ; modèles à valider ; plus de niveau Pro (Gratuit / Payant) ---------- */
+OVT.ds='Design system';
+var DS={f:'all',met:null};
+OS.dsv=OS.dsv||{};
+function dsCss(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+function dsRgb(c){var d=document.createElement('i');d.style.color=c;document.body.appendChild(d);var m=getComputedStyle(d).color.match(/[\d.]+/g)||[0,0,0];d.remove();return m.slice(0,3).map(Number)}
+function dsLum(c){return dsRgb(c).map(function(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)}).reduce(function(a,v,i){return a+v*[.2126,.7152,.0722][i]},0)}
+function dsCon(a,b){var x=dsLum(a),y=dsLum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+/* mesures réelles : ce que le Bureau utilise aujourd'hui */
+function dsMeasure(){var fs={},fw={},rad={},z={};try{[].forEach.call(document.styleSheets,function(s){var R;try{R=s.cssRules}catch(_){return}[].forEach.call(R||[],function r(x){if(x.cssRules)[].forEach.call(x.cssRules,r);var st=x.style;if(!st)return;if(st.fontSize&&/px$/.test(st.fontSize))fs[st.fontSize]=1;if(st.fontWeight)fw[st.fontWeight]=1;if(st.borderRadius&&/^[\d.]+px$/.test(st.borderRadius))rad[st.borderRadius]=1;if(st.zIndex&&+st.zIndex>0)z[st.zIndex]=1})})}catch(_){}return{fs:Object.keys(fs).length,fw:Object.keys(fw).length,rad:Object.keys(rad).length,z:Object.keys(z).length}}
+var DSST={bg:'#F7F7F6',panel:'#FFFFFF',raised:'#F0F0F2',wall:'#E6E6E9',ink:'#141416',muted:'#5E6068',line:'#DCDCE1',accent:'#2E2F34',warn:'#A86200',hot:'#D7303F',ok:'#1E8E55'};
+function dsSections(){var M=dsMeasure(),bg=dsCss('--desk')||'#0B0B0D',pa=dsCss('--paper')||'#18181B';
+ function sw(name,v,ground,role){var c=v.indexOf('gradient')>-1?null:dsCon(v,ground);return{k:'col:'+name,n:name,d:role,v:v+(c?(/desk|paper|win|raise|line|bg|panel|wall/.test(name)?' · texte posé dessus ':' · lisibilité sur le fond ')+c.toFixed(1)+' : 1'+(c>=4.5?' ✓':c>=3?' (grands textes)':' ✕'):''),sp:'<span class="ds-sw" style="background:'+v+'"></span>'}}
+ var BT=[['--desk','Fond du Bureau'],['--paper','Surfaces'],['--win','Fenêtres'],['--raise','Surélevé : champs, survols'],['--line','Filets'],['--ink','Texte'],['--soft','Texte secondaire'],['--acc','Accent (suit la carte active)'],['--acc2','Accent 2'],['--grad','Dégradé de la carte'],['--ok','Réussi'],['--warn','Attention'],['--hot','Alerte, notification']].map(function(t){return sw(t[0],dsCss(t[0]),/--(desk|paper|win|raise|line)/.test(t[0])?'#ECECEF':bg,t[1])});
+ var ST=Object.keys(DSST).map(function(k){var v=DSST[k];return sw('studio '+k,v,/bg|panel|raised|wall|line/.test(k)?DSST.ink:DSST.bg,'Studios (thème clair)')});
+ var TY=[['Affiche',44,400,'display','Titres de page et de scène'],['Titre',36,400,'display','En-tête d\'un panneau'],['Sous-titre',22,600,'ui','Titre de section'],['Intertitre',16,600,'ui','Titre de carte, de fenêtre'],['Corps',14,400,'ui','Texte courant (taille de base)'],['Petit',13,500,'ui','Boutons, listes'],['Légende',12,500,'ui','Aides, métadonnées'],['Étiquette',10.5,500,'mono','Repères en capitales, espacés de 0,12 em']].map(function(t){return{k:'typo:'+t[0],n:t[0]+' · '+t[1]+' px · '+t[2],d:t[4],v:'var(--'+t[3]+')',sp:'<span class="ds-ty" style="font:'+t[2]+' '+t[1]+'px/1.1 var(--'+t[3]+')'+(t[3]==='mono'?';letter-spacing:.12em;text-transform:uppercase':'')+'">'+(t[1]>30?'Aa':'Le monde AIME')+'</span>'}});
+ var RD=[['Pastille','50 %','pastilles, orbe, avatars'],['Pilule','999 px','boutons, puces, sélecteurs'],['Panneau','18 px','panneaux, fenêtres, cartes universelles'],['Carte','14 px','cartes, aperçus de modèles'],['Contrôle','10 px','champs, menus'],['Petit','6 px','repères, petites étiquettes']].map(function(t){return{k:'rad:'+t[0],n:t[0]+' · '+t[1],d:t[2],v:'',sp:'<span class="ds-rd" style="border-radius:'+(t[1]==='50 %'?'50%':t[1].replace(' ',''))+'"></span>'}});
+ var SP=[4,8,12,16,24,32,48].map(function(v){return{k:'esp:'+v,n:'Espace '+v+' px',d:v<=8?'à l\'intérieur d\'un contrôle':v<=16?'entre éléments voisins':'entre sections',v:'',sp:'<span class="ds-spc" style="width:'+v+'px"></span>'}});
+ var OM=[['Posé','aucune ombre','surfaces dans une fenêtre','none'],['Fenêtre','0 20px 60px −10px','fenêtres du Bureau','0 20px 60px -10px rgba(0,0,0,.7)'],['Panneau','0 40px 120px −30px','panneaux et grands calques','0 40px 120px -30px rgba(0,0,0,.95)']].map(function(t){return{k:'ombre:'+t[0],n:t[0],d:t[2],v:t[1],sp:'<span class="ds-sh" style="box-shadow:'+t[3]+'"></span>'}});
+ var CO=[['Bureau','fond, scène, fond d\'écran'],['Fenêtres','studios et apps'],['Bande du temps','frise, lecteur, sélecteur'],['Capsules','outils à gauche, ressources à droite'],['Panneaux','Modèles, Cartes, Design system, réglages'],['Menus et Orbe','actions de l\'objet, menus'],['Messages','toasts, alertes']].map(function(t,i){return{k:'couche:'+t[0],n:(i+1)+'. '+t[0],d:t[1],v:'',sp:'<span class="ds-lay" style="--i:'+i+'"></span>'}});
+ var MV=[['Survol','150 ms','changement de couleur, d\'opacité'],['Ouverture','200 ms','menus, panneaux, sélecteurs'],['Déplacement','350 ms','fenêtres, frise, scène'],['Mouvement réduit','0 ms','si le système le demande : aucune animation de déplacement, la rotation du globe s\'arrête']].map(function(t){return{k:'mvt:'+t[0],n:t[0]+' · '+t[1],d:t[2],v:'',sp:'<span class="ds-mv" style="--d:'+(parseInt(t[1])||1)+'ms"></span>'}});
+ var PR=[['La capsule gauche agit','Les outils d\'action : on choisit un outil, on agit sur l\'objet.'],['La capsule droite garde','Les ressources et réglages qui durent : couleurs, calques, fichiers.'],['L\'Orbe propose','Un clic sur un objet : l\'Orbe montre ce qu\'on peut en faire, là où l\'on a cliqué.'],['La fenêtre montre','Le contenu, et rien d\'autre.'],['La bande du bas raconte le temps','La frise, le lecteur, le moment choisi ; pas de commandes ajoutées.'],['Un seul éditeur par format','Un modèle repris s\'ouvre dans le studio qui sait l\'éditer.'],['On ne cherche pas, on ne devine pas','Chaque chose dit où elle est rangée et y mène.'],['Rien de faux','Une fonction pas encore construite dit « bientôt » ou n\'apparaît pas.']].map(function(t){return{k:'pr:'+t[0],n:t[0],d:t[1],v:'',sp:''}});
+ var RE=[['Des mots d\'enfant','« Quel moment bouge ? »','« Sélectionnez le nœud source »'],['Dire où c\'est rangé','« Rangé dans Mariage Léa et Tom »','« Fichier enregistré »'],['Vouvoyer dans l\'interface','« Vous pouvez le modifier »','« Tu peux le modifier »'],['AIME parle en je, l\'équipe en nous','« Je prépare le devis »','« Le système génère le devis »'],['Un bouton = un verbe','« Reprendre ce modèle »','« OK »'],['Un message dit quoi faire','« Importez d\'abord une photo »','« Erreur 412 »']].map(function(t){return{k:'mot:'+t[0],n:t[0],d:'',v:'',sp:'<span class="ds-say"><b>Oui</b> '+esc(t[1])+'</span><span class="ds-say no"><b>Non</b> '+esc(t[2])+'</span>'}});
+ var AC=[['Focus visible','Contour de 2 px couleur du texte, décalé de 2 px.','<button class="pill ds-focus">Exemple</button>'],['Cibles tactiles','44 px au moins au téléphone.',''],['Contraste','4,5 : 1 pour le texte, 3 : 1 pour les grands titres et les icônes.',''],['Clavier','Tout se fait au clavier ; Échap ferme ; l\'ordre suit la lecture.',''],['Noms lisibles','Chaque bouton-icône a un nom pour les lecteurs d\'écran.',''],['Mouvement réduit','Respecté partout, y compris le globe et la frise.','']].map(function(t){return{k:'a11y:'+t[0],n:t[0],d:t[1],v:'',sp:t[2]}});
+ var dock=$$('#dock [data-app]').slice(0,12).map(function(b){return'<span class="ds-ic" title="'+esc(b.getAttribute('aria-label')||b.dataset.app)+'">'+b.innerHTML+'</span>'}).join('');
+ var m4=$$('#menubar [data-m4],.scn [data-m4]').slice(0,4).map(function(b){return'<span class="ds-m4">'+b.innerHTML+'</span>'}).join('');
+ var PI=[{k:'pic:apps',n:'Icônes d\'apps',d:'Tuile dégradée, trait blanc 2,2 px, coins arrondis.',v:'',sp:'<span class="ds-ics">'+dock+'</span>'},{k:'pic:modes',n:'Les quatre modes',d:'ME (Qui ?), Infini (Quand ?), Ripple (Et après ?), Carte (Où ?).',v:'',sp:'<span class="ds-ics">'+m4+'</span>'}];
+ var t1=CARDT.filter(function(c){return!c.lock})[0];
+ var CP=[{k:'cmp:boutons',n:'Boutons',d:'Pilule claire pour les actions secondaires, sombre pour l\'action principale ; une seule action principale par vue.',sp:'<button class="pill" tabindex="-1">Fermer</button> <button class="pill dark" tabindex="-1">Reprendre ce modèle</button>'},{k:'cmp:selecteur',n:'Sélecteur et onglets',d:'Un choix parmi quelques-uns ; l\'état choisi est plein.',sp:'<div class="ov-top ds-inl"><div class="tabs" role="group"><button aria-pressed="true" tabindex="-1">Modèles</button><button aria-pressed="false" tabindex="-1">Cartes universelles</button></div><input type="search" placeholder="Chercher un modèle…" tabindex="-1" aria-label="Exemple de recherche"></div>'},{k:'cmp:prix',n:'Niveaux de modèle',d:'Gratuit : les modèles AIME prêts à l\'emploi. Payant : les modèles avancés.',sp:'<span class="price">Gratuit</span> <span class="price pro">Payant</span>'},{k:'cmp:carte',n:'Carte universelle',d:'Puce, nom, métier, code ; la couleur suit la carte.',sp:t1?'<span class="ds-cardw">'+cardHTML(t1,false,'tabindex="-1"')+'</span>':''},{k:'cmp:plus',n:'Le « + » arc-en-ciel',d:'Ajouter : un moment, une app, un support. Toujours ce dessin.',sp:'<span class="ds-tadd">+</span>'},{k:'cmp:reperes',n:'Repères dans les supports',d:'« + » : des options ici. « × 3 » : partagé sur 3 supports. Dossier arc-en-ciel : où c\'est rangé, et y aller.',sp:'<span class="ds-mk">+</span> <span class="ds-mk x">× 3</span> <span class="ds-fold"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z"/></svg>Rangé dans « Léa et Tom »</span>'}];
+ return[
+  {id:'principes',t:'Principes',p:'Huit règles qui décident où va chaque chose.',it:PR},
+  {id:'couleurs',t:'Couleurs',p:'Lues en direct dans le Bureau, avec leur contraste mesuré. Le Bureau est sombre, les studios sont clairs.',it:BT.concat(ST).concat([{k:'col:deux-themes',n:'Deux thèmes : Bureau sombre, studios clairs',d:'À confirmer : ou bien les studios passent en sombre dans le Bureau.',v:'',sp:'<span class="ds-sw" style="background:'+bg+'"></span><span class="ds-sw" style="background:'+DSST.bg+'"></span>'}])},
+  {id:'typo',t:'Typographie',p:'Aujourd\'hui le Bureau utilise '+M.fs+' tailles et '+M.fw+' graisses différentes. Proposition : 8 niveaux, 3 graisses (400, 500, 600). Inter pour lire, Cal Sans pour les titres, JetBrains Mono pour les repères.',it:TY},
+  {id:'formes',t:'Formes et espaces',p:'Aujourd\'hui : '+M.rad+' arrondis différents. Proposition : 6 arrondis, 7 espaces sur une grille de 4 px, 3 ombres.',it:RD.concat(SP).concat(OM)},
+  {id:'couches',t:'Couches',p:'Aujourd\'hui : '+M.z+' niveaux de superposition. Proposition : 7 couches nommées, du fond vers l\'avant.',it:CO},
+  {id:'mouvement',t:'Mouvement',p:'Trois durées, et le mouvement réduit respecté partout.',it:MV},
+  {id:'pictos',t:'Pictos',p:'Les icônes réellement affichées dans le Dock et la barre du haut.',it:PI},
+  {id:'composants',t:'Composants',p:'Les vrais composants du Bureau, rendus ici avec leurs styles.',it:CP},
+  {id:'mots',t:'Rédaction',p:'Simple, compréhensible par un enfant, honnête.',it:RE},
+  {id:'a11y',t:'Accessibilité',p:'Le minimum, partout.',it:AC}]}
+function dsState(k){return(OS.dsv[k]||{}).s||null}
+function dsCount(keys){var o=0,r=0;keys.forEach(function(k){var s=dsState(k);if(s==='ok')o++;else if(s==='rev')r++});return{o:o,r:r,n:keys.length}}
+function dsShow(k){var s=dsState(k);return DS.f==='all'||(DS.f==='todo'&&!s)||DS.f===s}
+function dsCtl(k){var s=dsState(k),n=(OS.dsv[k]||{}).n||'';return'<div class="ds-ctl"><button data-dsv="'+esc(k)+'" data-s="ok" aria-pressed="'+(s==='ok')+'">Validé</button><button data-dsv="'+esc(k)+'" data-s="rev" aria-pressed="'+(s==='rev')+'">À revoir</button></div>'+(s==='rev'?'<input class="ds-note" data-dsn="'+esc(k)+'" value="'+esc(n)+'" placeholder="Ce qu\'il faut changer…" aria-label="Ce qu\'il faut changer">':'')}
+function dsTplKeys(){return LIBI.map(function(x){return'tpl:'+x.id})}
+function dsOpen(){var S=dsSections(),sk=[];S.forEach(function(s){s.it.forEach(function(i){sk.push(i.k)})});var cs=dsCount(sk),ct=dsCount(dsTplKeys());
+ var nav='<nav class="ds-nav" aria-label="Sections">'+S.map(function(s){var c=dsCount(s.it.map(function(i){return i.k}));return'<button data-dsgo="'+s.id+'">'+s.t+'<small>'+c.o+'/'+c.n+'</small></button>'}).join('')+'<button data-dsgo="modeles">Modèles<small>'+ct.o+'/'+ct.n+'</small></button></nav>';
+ var head='<div class="ov-h"><span class="k">Design system</span><h2>Le langage d\'AIME</h2><p>Chaque élément se valide une fois. Ce qui est validé ne bouge plus ; ce qui est « à revoir » garde votre remarque.</p></div>'+
+  '<div class="ds-bar"><div class="ds-prog"><span>Système <b>'+cs.o+'</b>/'+cs.n+(cs.r?' · '+cs.r+' à revoir':'')+'</span><i><em style="width:'+(100*cs.o/cs.n)+'%"></em></i></div><div class="ds-prog"><span>Modèles <b>'+ct.o+'</b>/'+ct.n+(ct.r?' · '+ct.r+' à revoir':'')+'</span><i><em style="width:'+(100*ct.o/ct.n)+'%"></em></i></div>'+
+  '<div class="seg" role="group" aria-label="Afficher">'+[['all','Tout'],['todo','À valider'],['ok','Validés'],['rev','À revoir']].map(function(f){return'<button data-dsf="'+f[0]+'" aria-pressed="'+(DS.f===f[0])+'">'+f[1]+'</button>'}).join('')+'</div><span class="sp"></span><button class="pill" data-dsid>Vos identités de marque</button><button class="pill" data-dsexp>Exporter les validations</button></div>';
+ var body=S.map(function(s){var it=s.it.filter(function(i){return dsShow(i.k)});return'<section class="ds-sec" id="ds-'+s.id+'"><h3>'+s.t+'</h3><p class="ds-p">'+s.p+'</p>'+(it.length?'<div class="ds-list">'+it.map(function(i){return'<div class="ds-i'+(dsState(i.k)?' '+dsState(i.k):'')+(i.sp?'':' nosp')+'">'+(i.sp?'<div class="ds-spec">'+i.sp+'</div>':'')+'<div class="ds-txt"><b>'+esc(i.n)+'</b>'+(i.d?'<span>'+esc(i.d)+'</span>':'')+(i.v?'<code>'+esc(i.v)+'</code>':'')+'</div>'+dsCtl(i.k)+'</div>'}).join('')+'</div>':'<p class="ds-p">Rien à afficher avec ce filtre.</p>')+'</section>'}).join('');
+ var L=LIBI.filter(function(x){return(!DS.met||x.met===DS.met)&&dsShow('tpl:'+x.id)});
+ var fam='<div class="ds-chips"><button data-dsmet="" aria-pressed="'+(!DS.met)+'">Tous</button>'+LFAM.map(function(f){return f[1].filter(function(m){return LIBI.some(function(x){return x.met===m})}).map(function(m){return'<button data-dsmet="'+m+'" aria-pressed="'+(DS.met===m)+'">'+esc(METL[m])+'</button>'}).join('')}).join('')+'</div>';
+ var mod='<section class="ds-sec" id="ds-modeles"><h3>Modèles</h3><p class="ds-p">Les modèles AIME sont gratuits et prêts à l\'emploi. Les modèles avancés, plus travaillés, seront payants. Il n\'y a plus de niveau Pro : AIME s\'adresse déjà aux professionnels. Les documents de Studio Docs et les patrons de Stitchlab rejoindront cette liste.</p>'+fam+'<div class="ds-tg">'+L.map(function(x){var k='tpl:'+x.id,s=dsState(k);return'<div class="ds-t'+(s?' '+s:'')+'"><button class="pv" data-lpv="'+x.i+'" style="--bgc:'+BGL[x.cat]+'" aria-label="Voir '+esc(x.n)+'"><img src="'+ROOT+'sup/aime-studio-'+x.id+'.webp" alt="" loading="lazy"></button><div class="ds-tm"><b>'+esc(x.n)+'</b><small>'+esc(METL[x.met]||'')+' · Gratuit</small></div>'+dsCtl(k)+'</div>'}).join('')+'</div>'+(L.length?'':'<p class="ds-p">Rien à afficher avec ce filtre.</p>')+'</section>';
+ var o=$('#ov'),y=o?o.scrollTop:0;ovOpen(ovTop('ds')+'<div class="in ds">'+head+'<div class="ds-g">'+nav+'<div class="ds-main">'+body+mod+'</div></div></div>');if(o&&o.querySelector('.ds'))o.scrollTop=y}
+function dsSet(k,s){var cur=OS.dsv[k]||{};if(cur.s===s){delete OS.dsv[k]}else{OS.dsv[k]={s:s,n:cur.n||'',t:Date.now()}}saveOS()}
+function dsExport(){var S=dsSections(),tok={};['--desk','--paper','--win','--raise','--line','--ink','--soft','--acc','--acc2','--ok','--warn','--hot','--ui','--display','--mono'].forEach(function(n){tok[n]=dsCss(n)});var out={aime:'design-system',date:new Date().toISOString(),mesures:dsMeasure(),jetons:tok,elements:S.map(function(s){return{section:s.t,items:s.it.map(function(i){var v=OS.dsv[i.k]||{};return{cle:i.k,nom:i.n,etat:v.s||'a-valider',remarque:v.n||''}})}}),modeles:LIBI.map(function(x){var v=OS.dsv['tpl:'+x.id]||{};return{id:x.id,nom:x.n,metier:METL[x.met]||x.met,niveau:'gratuit',etat:v.s||'a-valider',remarque:v.n||''}})};
+ var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(out,null,1)],{type:'application/json'}));a.download='aime-design-system-validations.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);toast('Validations exportées')}
+document.addEventListener('click',function(e){var b;if(!e.target.closest||!e.target.closest('#ov'))return;
+ if((b=e.target.closest('[data-ovt]'))&&b.dataset.ovt==='ds'){e.stopImmediatePropagation();dsOpen();return}
+ if(!e.target.closest('.ds'))return;
+ if(b=e.target.closest('[data-dsv]')){dsSet(b.dataset.dsv,b.dataset.s);dsOpen();if(b.dataset.s==='rev'&&dsState(b.dataset.dsv)==='rev'){var n=$('#ov [data-dsn="'+CSS.escape(b.dataset.dsv)+'"]');n&&n.focus()}return}
+ if(b=e.target.closest('[data-dsf]')){DS.f=b.dataset.dsf;dsOpen();return}
+ if(b=e.target.closest('[data-dsmet]')){DS.met=b.dataset.dsmet||null;dsOpen();return}
+ if(b=e.target.closest('[data-dsgo]')){var t=$('#ds-'+b.dataset.dsgo);t&&t.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});return}
+ if(e.target.closest('[data-dsexp]')){dsExport();return}
+ if(e.target.closest('[data-dsid]')){ovClose();open('identite');return}
+ if(b=e.target.closest('[data-lpv]')){LIB.sel=+b.dataset.lpv;ovOpen('');libRender();return}},true);
+document.addEventListener('input',function(e){var k=e.target&&e.target.dataset&&e.target.dataset.dsn;if(!k)return;var v=OS.dsv[k];if(v){v.n=e.target.value;v.t=Date.now();clearTimeout(window.__dsn);window.__dsn=setTimeout(saveOS,300)}});
+MENUS.aime=(function(f){return function(){var A=f();var i=-1;A.forEach(function(x,j){if(x&&x[0]==='Bibliothèque de modèles')i=j});A.splice(i+1,0,['Design system',function(){dsOpen()}]);return A}})(MENUS.aime);
 
 dockRender();
 var h=(location.hash||'').slice(1);
