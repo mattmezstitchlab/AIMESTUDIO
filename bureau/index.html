@@ -1187,6 +1187,28 @@ body.tlmo #tl{bottom:calc(var(--tbh,40px) + env(safe-area-inset-bottom,0px));bor
 .rn-r{display:grid;gap:4px}.rn-r button{display:flex;justify-content:space-between;gap:10px;text-align:left;border:1px solid var(--line);background:none;color:var(--ink);border-radius:9px;padding:8px 10px;cursor:pointer;font:500 13px var(--ui)}.rn-r small{color:var(--soft)}
 .rn-g section form{display:grid;gap:6px}.rn-g input{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;color:var(--ink);font:500 14px var(--mono);padding:7px 9px;text-transform:uppercase}
 @media(max-width:900px){.rx-b.rx-2,.rx-ed,.rx-ab{grid-template-columns:minmax(0,1fr)}.rx-side,.rx-prev{position:static}}
+/* v18 : colonne d'atelier, Jour J */
+#aprail{display:flex;flex-direction:column;align-items:center;gap:4px;overflow-y:auto;scrollbar-width:none;padding:2px 0 8px;min-height:0}
+#aprail[hidden]{display:none}
+#aprail hr{width:28px;border:0;border-top:1px solid rgba(255,255,255,.12);margin:4px 0}
+#aprail .ar-k{font:500 9px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.ar-b{width:50px;min-height:46px;border:0;border-radius:12px;background:none;color:var(--ink);display:grid;justify-items:center;gap:2px;padding:6px 2px;cursor:pointer}
+.ar-b:hover,.ar-b[aria-pressed=true]{background:rgba(255,255,255,.1)}
+.ar-b svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ar-b small{font:500 9.5px/1.1 var(--ui);color:var(--soft);max-width:48px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ar-th{width:46px;border:0;background:none;padding:2px;border-radius:9px;cursor:pointer;display:grid;justify-items:center;gap:1px}
+.ar-th svg{width:34px;height:34px}.ar-th small{font:500 9px var(--mono);color:var(--soft)}
+.ar-th.on{background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 2px #fff}
+.ar-col{position:relative;width:44px;height:44px;cursor:pointer;margin:4px 0}
+.ar-col input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.ar-col span{display:block;width:100%;height:100%;border-radius:12px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.3)}
+.jj{display:flex;flex-direction:column;height:100%;text-align:left}
+.jj-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:14px 16px 8px}
+.jj-h .k{font:500 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#FBBF24}
+.jj-h h2{margin:4px 0 2px;font:400 30px/1 var(--display)}.jj-h p{margin:0;color:var(--soft);font:400 13px var(--ui)}
+.jj-t{display:flex;gap:4px;flex-wrap:wrap;padding:6px 14px 10px;border-bottom:1px solid var(--line)}
+.jj-t button{border:0;background:rgba(255,255,255,.05);color:var(--soft);font:600 13px var(--ui);padding:7px 12px;border-radius:999px;cursor:pointer}
+.jj-t button[aria-selected=true]{background:#FBBF24;color:#0B0B0D}
 #uv h1,.un-h h2,.un-s h3,.or-l h2,.ny-h h2,.gl-l h2,.ps-h h2,#cardwp h2,.tc header b,#sp h3,#wpk h3,.tx-e h3,.gu-s h3,.uc b,.ucard .b h4,.ov-h h2,.lib-d h3,.cdt h3,.board .bwm,.or-clock,.mo-d h3,.cd,.wg-clock,#who h2,.mt b,.uni b{font-family:var(--display)!important;font-weight:400!important;text-transform:none!important;letter-spacing:-.025em!important;font-stretch:100%!important}
 #uv h1{font-size:clamp(60px,7.4vw,118px)!important;line-height:.95!important}
 .or-clock{letter-spacing:-.035em!important}
@@ -3117,6 +3139,41 @@ async function sha(t){var b=await crypto.subtle.digest('SHA-256',new TextEncoder
 document.addEventListener('submit',async function(e){var f=e.target;if(f.id==='rng'){e.preventDefault();var G=OS.garde,o=G.obj[+f.o.value],A='ABCDEFGHJKMNPQRSTUVWXYZ23456789',c='';var r=crypto.getRandomValues(new Uint8Array(6));for(var i=0;i<6;i++)c+=A[r[i]%A.length];o.pend={to:f.to.value.trim(),h:await sha(c),exp:Date.now()+36e5};G.log.push({t:Date.now(),txt:'Code créé pour remettre « '+o.n+' » à '+o.pend.to+' (valable 1 h)'});saveOS();REAL.garde.run();rnOut($('#rno').innerHTML+'<div class="rx-cvg"><b>Code à donner à '+esc(o.pend.to)+' : '+c+'</b><p>Il ne sera plus affiché. AIME n\'en garde que l\'empreinte.</p></div>');return}
  if(f.classList&&f.classList.contains('rng2')){e.preventDefault();var G2=OS.garde,ob=G2.obj[+f.dataset.i],h=await sha(f.c.value.trim().toUpperCase());if(!ob.pend)return;if(Date.now()>ob.pend.exp){G2.log.push({t:Date.now(),txt:'Code expiré pour « '+ob.n+' »'});ob.pend=null}else if(h===ob.pend.h){G2.log.push({t:Date.now(),txt:'« '+ob.n+' » : '+ob.h+' → '+ob.pend.to});ob.h=ob.pend.to;ob.pend=null;toast('Remise validée')}else{toast('Code incorrect');return}saveOS();REAL.garde.run()}});
 dockRender();
+/* ---------- v18 : la colonne droite prend les outils de l'atelier ; Jour J natif ; plus de sites d'autres dépôts ---------- */
+var SIDE={};window.AIMESIDE=SIDE;RAIL.allDmc=false;
+var RI={sections:'<path d="M5 6h14M5 12h14M5 18h9"/>',plus:'<path d="M12 5v14M5 12h14"/>',a11y:'<circle cx="12" cy="5" r="1.8"/><path d="M5 9l7 1.5L19 9M12 10.5V15l-3 5M12 15l3 5"/>',thread:'<circle cx="12" cy="12" r="7"/><path d="M8 9c3 1 5 3 8 6M7 13c3 0 5 2 6 5"/>',sparkle:'<path d="M12 4l1.8 5.2L19 11l-5.2 1.8L12 18l-1.8-5.2L5 11l5.2-1.8z"/>',sliders:'<path d="M5 7h9M18 7h1M5 17h3M12 17h7"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',crop:'<path d="M7 3v14h14M3 7h14v14"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',palette:'<path d="M12 3a9 9 0 100 18c1 0 1.5-.8 1.2-1.7-.4-1 .2-2.3 1.5-2.3H17a4 4 0 004-4c0-5-4-10-9-10z"/><circle cx="8" cy="11" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="16" cy="11" r="1.2"/>',ruler:'<path d="M4 16L16 4l4 4L8 20z"/><path d="M8 12l2 2M11 9l2 2M14 6l2 2"/>',page:'<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/>',dot:'<circle cx="12" cy="12" r="3"/>',code:'<path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/>',image:'<rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/>',link:'<path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/>',insp:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M14 4v16"/>',content:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M10 4v16"/>'};
+function rI(k){return'<svg viewBox="0 0 24 24" aria-hidden="true">'+(RI[k]||RI.dot)+'</svg>'}
+$('#rail').insertAdjacentHTML('beforeend','<div id="aprail" hidden aria-label="Outils de l\'atelier"></div>');
+window.addEventListener('message',function(e){var d=e.data||{};if(d.aime!=='side')return;var id=Object.keys(WIN).filter(function(k){return WIN[k].frame&&WIN[k].frame.contentWindow===e.source})[0];if(!id)return;SIDE[id]=d;if(id===activeApp())modeRender()});
+function sideAct(k,v){var a=activeApp();if(a)toFrame(a,{aime:'sideact',k:k,v:v})}
+function aprailRender(){var a=activeApp(),S=a&&SIDE[a],el=$('#aprail');if(!S||!el)return false;var h='';
+ if(S.mode==='brod'){h+='<span class="ar-k">Fils</span>'+S.pal.map(function(p){return'<button class="ar-th'+(p.on?' on':'')+'" data-ar="col:'+p.s+'" title="DMC '+esc(p.code)+' · '+esc(p.name)+'" aria-label="DMC '+esc(p.code)+'" aria-pressed="'+p.on+'"><svg viewBox="0 0 28 28"><rect x="1" y="1" width="26" height="26" rx="5" fill="'+p.hex+'"/>'+p.sym+'</svg><small>'+esc(p.code)+'</small></button>'}).join('')+'<button class="ar-b" data-ar="addthread" title="Ajouter un fil DMC" aria-label="Ajouter un fil DMC">'+rI('plus')+'</button><button class="ar-b" data-arall title="Tous les fils DMC" aria-label="Tous les fils DMC" aria-pressed="'+RAIL.allDmc+'">'+rI('thread')+'</button><hr>'}
+ else{h+='<label class="ar-col" title="Couleur principale"><input type="color" value="'+esc(S.brand||'#7C5CFF')+'" data-arbrand aria-label="Couleur principale"><span style="background:'+esc(S.brand||'#7C5CFF')+'"></span></label><hr>'}
+ (S.quick||[]).forEach(function(q){h+='<button class="ar-b" data-ar="add:'+q[0]+'" title="Ajouter : '+esc(q[1])+'" aria-label="Ajouter : '+esc(q[1])+'">'+rI(q[2])+'<small>'+esc(q[1])+'</small></button>'});
+ if((S.quick||[]).length)h+='<hr>';
+ (S.secs||[]).forEach(function(c){if(S.mode==='brod'&&/fils/i.test(c[1]))return;h+='<button class="ar-b" data-ar="sec:'+c[0]+'" title="'+esc(c[1])+'" aria-label="'+esc(c[1])+'">'+rI(c[2])+'<small>'+esc(c[1].split(' ')[0])+'</small></button>'});
+ if(!S.mode)h+='<button class="ar-b" data-ar="panelR" title="Inspecteur" aria-label="Inspecteur">'+rI('insp')+'<small>Inspecteur</small></button>';
+ el.innerHTML=h;return true}
+var _mr18=modeRender;modeRender=function(){_mr18();var a=activeApp(),has=a&&SIDE[a]&&!RAIL.showApps,el=$('#aprail');if(!el)return;var ok=has&&aprailRender();el.hidden=!ok||(RAIL.allDmc&&SIDE[a].mode==='brod');if(ok){$('#dock').hidden=true;$('#rmedia').hidden=true;$('#rtools').hidden=true;var b=$('#rapps');if(b&&innerWidth>760)b.hidden=false;if(SIDE[a].mode==='brod'&&RAIL.allDmc){$('#sw').hidden=false;swRender('dmc')}else $('#sw').hidden=true}};
+document.addEventListener('click',function(e){var b;if(!e.target.closest)return;if(b=e.target.closest('#aprail [data-ar]')){sideAct(b.dataset.ar);return}if(e.target.closest('#aprail [data-arall]')){RAIL.allDmc=!RAIL.allDmc;modeRender();return}if(RAIL.allDmc&&e.target.closest('#rapps')){RAIL.allDmc=false}});
+document.addEventListener('input',function(e){if(e.target.matches&&e.target.matches('[data-arbrand]')){var v=e.target.value;e.target.nextElementSibling.style.background=v;clearTimeout(SIDE.bt);SIDE.bt=setTimeout(function(){sideAct('brand',v)},200)}});
+/* la capsule de gauche : le panneau Contenu s'ouvre en tiroir */
+var _tr18=toolsRender;toolsRender=function(m){_tr18(m);$$('#tools [data-pan="#tglR"]').forEach(function(x){x.remove()});var c=$('#tools [data-pan="#tglL"]');if(c){c.setAttribute('aria-label','Contenu : vos textes, écrits une fois');c.title='Contenu : vos textes, écrits une fois';c.innerHTML=rI('content')}};
+/* le Jour J : une app du Bureau, faite des moteurs réels */
+var JJT=[['deroule','Déroulé','Une phrase devient le déroulé en 5 étapes'],['retro','Rétroplanning','De J-365 au jour J'],['ripple','L\'onde','Un retard, et chacun prévenu'],['rsvp','Invités','Réponses, plats, allergies'],['tables','Plan de table','Groupes, régimes, mobilité réduite'],['budget','Budget','Enveloppes, acomptes, soldes'],['garde','Objets précieux','Alliances, robe, gâteau : de main en main'],['guso','Démarches','GUSO, Sacem']];
+var JJ={t:'deroule'};
+APP.jourj.native=true;delete APP.jourj.url;APP.jourj.n='Jour J';APP.jourj.d='Le mariage, de J-365 au lendemain : déroulé, rétroplanning, onde, invités, tables, budget';
+NAPP.jourj=function(h){var m=/#?(?:tab\.)?([a-z]+)/.exec(h||'');if(m&&JJT.some(function(t){return t[0]===m[1]}))JJ.t=m[1];jjRender()};
+function jjRender(){var el=naEl('jourj');if(!el)return;if(WIN.moteur&&MW.x&&MREAL[MW.x.k])closeWin('moteur');var E=evData(),T=JJT.filter(function(t){return t[0]===JJ.t})[0],N=bandNext();
+ el.innerHTML='<div class="jj"><header class="jj-h"><div><span class="k">Jour J'+(E.demo?' · exemple':'')+'</span><h2>'+esc(E.names||'Votre événement')+'</h2><p>'+esc([E.venue,E.city].filter(Boolean).join(' · '))+(N.t?' · '+esc(N.s):'')+'</p></div><button class="pill" data-jjorch>Orchestrateur plein écran</button></header><nav class="jj-t" role="tablist">'+JJT.map(function(t){return'<button role="tab" data-jjt="'+t[0]+'" aria-selected="'+(t[0]===JJ.t)+'" title="'+esc(t[2])+'">'+esc(t[1])+'</button>'}).join('')+'</nav><div class="rn" id="rn">'+REAL[JJ.t].ui({k:'jj',m:{}})+'</div></div>';if(REAL[JJ.t].init)REAL[JJ.t].init({k:'jj',m:{}})}
+document.addEventListener('click',function(e){var b;if(!e.target.closest||!e.target.closest('#na-jourj'))return;if(b=e.target.closest('[data-jjt]')){JJ.t=b.dataset.jjt;jjRender();return}if(e.target.closest('[data-jjorch]')){AIMESC('orch')}});
+var _subm18=null;document.addEventListener('submit',function(e){if(e.target.id!=='rnf'||!e.target.closest('#na-jourj'))return;e.preventDefault();e.stopImmediatePropagation();var R=REAL[JJ.t];if(R&&R.run)R.run()},true);
+['Mariage','Planning','Événement','Invités','Plan de table'].forEach(function(f){MRUN[f]=['jourj','']});MRUN['Budget']=['jourj','#tab.budget'];
+/* les moteurs ne renvoient plus vers les sites d'autres dépôts : tout se passe dans AIME */
+var _mzRun18=mzRun;mzRun=function(x){var r=_mzRun18(x);if(r&&r.k==='url'){var s=MRUN[x.m.famille];return s&&APP[s[0]]?{k:'app',a:s[0],h:s[1]}:null}return r};
+mzDesc=(function(o){return function(x,n,runN){o(x,n,runN);if(!x){var d=$('#mzd p');if(d&&MZ.f==='tout'&&!MZ.q)d.innerHTML='<b>'+TMO.length+' moteurs</b> · '+(MZ.realN||0)+' réels dans AIME, '+((runN||0)-(MZ.realN||0))+' ouvrent leur atelier, le reste à reconstruire. Survolez un carré pour le voir travailler.'}}})(mzDesc);
+if(WIN.jourj&&WIN.jourj.frame){closeWin('jourj')}
+dockRender();modeRender();
 var h=(location.hash||'').slice(1);
 if(h&&APP[h]&&!APP[h].ext)open(h);
 else{var reopen=Object.keys(saved).filter(function(k){return saved[k].open&&APP[k]&&!APP[k].ext});if(reopen.length)reopen.forEach(function(k){open(k);if(saved[k].min)minWin(k)})}
