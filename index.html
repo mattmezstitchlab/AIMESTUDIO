@@ -758,6 +758,7 @@ function iris(k,u){irisEl=irisEl||$('#niris');coreEl=coreEl||$('#ncore');var rc=
  if(last||u<=0){i=k;r=1e5;co=0;cs=.4}
  else if(u<.5){var v=sm(u/.5);i=k;r=Math.max(rc,REACH[k]+(rc-REACH[k])*v);if(REACH[k]<rc)r=1e5;co=v;cs=.4+.6*v}
  else{var v2=sm((u-.5)/.5);i=k+1;r=rc+(REACH[k+1]-rc)*v2;if(REACH[k+1]<rc)r=1e5;co=1-v2;cs=1+.08*v2}
+ if(CH[k][0]==='terre'||(CH[k+1]&&CH[k+1][0]==='terre')){co=0}
  var d=SHP[i];if(d!==lastD){lastD=d;envC.setAttribute('d',d);envG.setAttribute('d',d)}
  irisEl.style.clipPath=r>=1e5?'none':'circle('+r.toFixed(1)+'px at '+C[0]+'px '+C[1]+'px)';
  coreEl.style.width=coreEl.style.height=(rc*2)+'px';coreEl.style.opacity=co.toFixed(3);coreEl.style.transform='translate('+(C[0]-rc)+'px,'+(C[1]-rc)+'px) scale('+cs.toFixed(3)+')'}
