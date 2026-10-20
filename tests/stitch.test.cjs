@@ -1,0 +1,97 @@
+// AIME STITCH (phase 0-1) : patron canonique, conversion déterministe, références DMC intactes, versions séparées.
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('fs'), path = require('path');
+const ROOT = path.join(__dirname, '..');
+const C = require('../stitch/js/couleur.js');
+const K = require('../stitch/js/conversion.js');
+const P = require('../stitch/js/patron.js');
+const M = require('../stitch/js/mesures.js');
+const S = require('../stitch/js/symboles.js');
+const DMC = require('../stitch/data/dmc.json');
+const CAT = require('../stitch/data/catalogue.json');
+const patron = id => P.charger(JSON.parse(fs.readFileSync(path.join(ROOT, 'stitch/data/patrons', id + '.json'), 'utf8')));
+
+function image(W, H) { const d = new Uint8ClampedArray(W * H * 4); for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4, dx = x - W / 2, dy = y - H / 2; let c = [238, 228, 210]; if (dx * dx + dy * dy < (W / 3) ** 2) c = [190 - dy, 70 + dx / 4, 90]; if (Math.abs(dx + 20) < 6 && Math.abs(dy) < 20) c = [40, 110, 60]; if ((x * 7 + y * 13) % 89 === 0) c = [20, 20, 200]; d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2]; d[i + 3] = 255; } return { l: W, h: H, data: d }; }
+
+test('CIEDE2000 conforme aux paires de référence (Sharma, Wu, Dalal)', () => {
+  assert.equal(C.de2000([50, 2.6772, -79.7751], [50, 0, -82.7485]).toFixed(4), '2.0425');
+  assert.equal(C.de2000([50, -1.3802, -84.2814], [50, 0, -82.7485]).toFixed(4), '1.0000');
+  assert.equal(C.de2000([2.0776, 0.0795, -1.135], [0.9033, -0.0636, -0.5514]).toFixed(4), '0.9082');
+});
+
+test('table DMC : 489 références uniques, attribution présente, jamais modifiée par la conversion', () => {
+  assert.equal(DMC.fils.length, 489); assert.equal(new Set(DMC.fils.map(f => f.code)).size, 489);
+  assert.match(DMC.source.attribution, /CC BY 4\.0/);
+  const avant = JSON.stringify(DMC.fils), codes = new Set(DMC.fils.map(f => f.code));
+  const r = K.convertir(image(160, 120), { mode: 'precis', largeur: 60, dmc: DMC.fils });
+  assert.equal(JSON.stringify(DMC.fils), avant);
+  for (const p of r.palette) assert.ok(codes.has(p.dmc), 'référence inventée : ' + p.dmc);
+});
+
+test('conversion déterministe, trois modes aux paramètres explicites, pixels ≠ points', () => {
+  const img = image(200, 150);
+  const a = K.convertir(img, { mode: 'equilibre', largeur: 50, dmc: DMC.fils }), b = K.convertir(img, { mode: 'equilibre', largeur: 50, dmc: DMC.fils });
+  assert.deepEqual([...a.points], [...b.points]); assert.deepEqual(a.palette, b.palette);
+  assert.equal(a.l, 50); assert.equal(a.h, 38, 'les dimensions sont en points, pas en pixels');
+  const s = K.convertir(img, { mode: 'simple', largeur: 50, dmc: DMC.fils }), pr = K.convertir(img, { mode: 'precis', largeur: 50, dmc: DMC.fils });
+  assert.ok(s.palette.length <= K.MODES.simple.couleurs && pr.palette.length <= K.MODES.precis.couleurs);
+  assert.ok(s.palette.length <= a.palette.length && a.palette.length <= pr.palette.length);
+  assert.equal(s.rapport.confettisRestants, 0, 'Simple ne laisse aucun confetti');
+  for (const m of Object.values(K.MODES)) for (const k of ['couleurs', 'region', 'detail', 'lissage', 'usageMin']) assert.ok(k in m);
+});
+
+test('patron canonique : sérialisation fidèle, validation, migration', () => {
+  for (const pr of CAT.produits) {
+    const p = patron(pr.patron); assert.deepEqual(P.valider(p, DMC.fils), [], pr.patron);
+    const q = P.charger(P.serialiser(p)); assert.deepEqual([...P.matrice(q)], [...P.matrice(p)]); assert.equal(P.empreinte(q), P.empreinte(p));
+  }
+  const p = patron('pat-papillon'); const faux = P.charger(P.serialiser(p)); faux.palette[1].dmc = '99999'; faux.palette[2].symbole = faux.palette[3].symbole;
+  const e = P.valider(faux, DMC.fils); assert.ok(e.some(x => /DMC inconnue/.test(x))); assert.ok(e.some(x => /symbole en double/.test(x)));
+  const ancien = JSON.parse(P.serialiser(p)); delete ancien.schema; delete ancien.demi; assert.equal(P.charger(ancien).schema, 1);
+});
+
+test('publier fige une version : corriger le brouillon ne touche pas la version achetée', () => {
+  const brouillon = patron('pat-lavande'), publiee = P.publier(brouillon, 'Première publication', '2026-10-20'), empreinte = P.empreinte(publiee);
+  assert.equal(publiee.statut, 'publie'); assert.equal(brouillon.version, publiee.version + 1);
+  const m = P.matrice(brouillon); for (let i = 0; i < m.length; i++) if (m[i]) m[i] = 1;
+  assert.equal(P.empreinte(publiee), empreinte, 'la version publiée est indépendante');
+  assert.notDeepEqual([...P.matrice(publiee)], [...m]);
+});
+
+test('représentations calculées : quantités, dimensions physiques, fournitures, effort réel expliqué', () => {
+  const p = patron('pat-mesange'), q = P.quantites(p), N = q.reduce((a, b) => a + b.points, 0);
+  assert.equal(N, [...P.matrice(p)].filter(Boolean).length);
+  const d14 = P.dimensions(p, 14), d18 = P.dimensions(p, 18); assert.ok(d18.cm.l < d14.cm.l);
+  assert.equal(d14.cm.l, +(d14.points.l / 14 * 2.54).toFixed(1));
+  for (const f of P.fournitures(p, 14)) assert.ok(f.echeveaux >= 1);
+  const me = M.mesurer(p); assert.equal(me.points, N);
+  assert.equal(Math.round(Object.values(me.parts).reduce((a, b) => a + b, 0)), me.effort, 'l\'indice se décompose exactement');
+  assert.ok(me.heures.min <= me.heures.max);
+  const lav = M.mesurer(patron('pat-lavande')), mono = M.mesurer(patron('pat-monogramme')); assert.ok(lav.indice < mono.indice, 'confettis et changements de fil pèsent');
+});
+
+test('symboles : 48 formes distinctes ; chaque patron a des symboles uniques', () => {
+  const l = S.liste(); assert.equal(l.length, 48); assert.equal(new Set(l.map(s => s.nom + ':' + s.plein)).size, 48);
+  for (const pr of CAT.produits) { const p = patron(pr.patron); assert.equal(new Set(p.palette.map(c => c.symbole)).size, p.palette.length); }
+});
+
+test('catalogue : chaque produit pointe vers un patron et ne recopie aucune donnée technique', () => {
+  for (const pr of CAT.produits) {
+    assert.ok(fs.existsSync(path.join(ROOT, 'stitch/data/patrons', pr.patron + '.json')));
+    for (const k of ['l', 'h', 'palette', 'points', 'couleurs', 'dimensions', 'niveau', 'temps', 'fils']) assert.equal(pr[k], undefined, pr.id + ' recopie ' + k);
+  }
+  for (const b of CAT.boutiques) assert.equal(b.fictif, true);
+});
+
+test('la progression de la brodeuse n\'est jamais écrite dans le patron', () => {
+  for (const pr of CAT.produits) { const brut = fs.readFileSync(path.join(ROOT, 'stitch/data/patrons', pr.patron + '.json'), 'utf8'); assert.ok(!/fait|progression|done/.test(brut)); }
+  const lecteur = fs.readFileSync(path.join(ROOT, 'stitch/broder/index.html'), 'utf8');
+  assert.match(lecteur, /stitch-progression:'\+p\.id\+'@'\+pr\.version/);
+});
+
+test('STITCH est isolé : aucun fichier des autres studios n\'est chargé', () => {
+  const all = []; const walk = d => fs.readdirSync(d, { withFileTypes: true }).forEach(f => { const p = path.join(d, f.name); if (f.isDirectory()) walk(p); else if (/\.(html|js)$/.test(f.name)) all.push(fs.readFileSync(p, 'utf8')); });
+  walk(path.join(ROOT, 'stitch')); const src = all.join('\n');
+  assert.ok(!/src="\/(studio|stitchlab|synchroview|vitrine|infinity)\//.test(src));
+});

@@ -1,0 +1,47 @@
+@font-face{font-family:"Fraunces";font-weight:100 900;font-style:normal;font-display:swap;src:url("/fonts/Fraunces-latin-wght.woff2") format("woff2")}
+@font-face{font-family:"Fraunces";font-weight:100 900;font-style:italic;font-display:swap;src:url("/fonts/Fraunces-latin-wght-italic.woff2") format("woff2")}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}
+/* AIME STITCH : un atelier éditorial. Lin écru, encre, fil garance. Une seule ambiance claire, choisie. */
+:root{--lin:#F3EEE4;--papier:#FBF8F2;--blanc:#FFFFFF;--encre:#1F1B16;--doux:#6B6257;--trait:rgba(31,27,22,.13);--trait2:rgba(31,27,22,.22);--fil:#A8322D;--fil2:#7E2420;--sauge:#4F6B4A;--or:#B07D35;
+ --ft:"Fraunces","Playfair Display",Georgia,serif;--fb:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;background:var(--lin);color:var(--encre);font:400 16px/1.55 var(--fb);-webkit-font-smoothing:antialiased}
+body{background-image:linear-gradient(90deg,rgba(120,100,70,.035) 1px,transparent 1px),linear-gradient(rgba(120,100,70,.035) 1px,transparent 1px);background-size:6px 6px}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+.k{font:600 11px var(--fb);letter-spacing:.2em;text-transform:uppercase;color:var(--doux)}
+.mono{font:500 12.5px var(--mono);letter-spacing:.02em}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+/* en-tête commun */
+.tete{position:sticky;top:0;z-index:20;background:rgba(243,238,228,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--trait);padding-top:env(safe-area-inset-top,0px)}
+.tete .wrap{display:flex;align-items:center;gap:20px;min-height:60px}
+.marque{display:flex;align-items:baseline;gap:8px;text-decoration:none}
+.marque b{font:600 19px var(--ft);letter-spacing:.01em}.marque i{font-style:normal;font:600 10.5px var(--fb);letter-spacing:.28em;color:var(--fil)}
+.nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.nav a{text-decoration:none;font:500 14px var(--fb);padding:8px 12px;border-radius:999px;color:var(--doux)}
+.nav a[aria-current=page],.nav a:hover{color:var(--encre);background:rgba(31,27,22,.06)}
+.demo{background:var(--encre);color:var(--papier);font:500 12.5px var(--fb);text-align:center;padding:7px 16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--encre);background:var(--encre);color:var(--papier);border-radius:999px;padding:12px 20px;font:600 14.5px var(--fb);text-decoration:none;cursor:pointer;transition:background .2s,border-color .2s}
+.btn:hover{background:var(--fil);border-color:var(--fil)}
+.btn.sec{background:transparent;color:var(--encre);border-color:var(--trait2)}.btn.sec:hover{border-color:var(--encre);background:rgba(31,27,22,.04)}
+.btn.petit{padding:8px 14px;font-size:13px}
+.btn:focus-visible,.nav a:focus-visible,.puce:focus-visible,.outil:focus-visible{outline:2px solid var(--fil);outline-offset:2px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.puce{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--trait2);background:var(--papier);border-radius:999px;padding:7px 13px;font:500 13.5px var(--fb);cursor:pointer}
+.puce[aria-pressed=true]{background:var(--encre);color:var(--papier);border-color:var(--encre)}
+h1,h2,h3{font-family:var(--ft);font-weight:400;letter-spacing:-.015em;margin:0;text-wrap:balance}
+.pied{border-top:1px solid var(--trait);margin-top:80px;padding:28px 0 calc(28px + env(safe-area-inset-bottom,0px));color:var(--doux);font-size:13.5px}
+.pied .wrap{display:flex;flex-wrap:wrap;gap:10px 30px;justify-content:space-between}
+.carte{background:var(--papier);border:1px solid var(--trait);border-radius:4px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--encre);color:var(--papier);padding:11px 18px;border-radius:12px;font:500 14px var(--fb);opacity:0;transition:opacity .3s;pointer-events:none;z-index:60;max-width:calc(100vw - 32px)}
+.toast.on{opacity:1}
+.pastilles{display:flex;flex-wrap:wrap;gap:3px}
+.pastilles i{width:14px;height:14px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.legende{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.legende li{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 8px;border-radius:6px;font-size:14px}
+.legende li canvas{border-radius:3px}
+.legende li .code{font:600 13px var(--mono)}
+.legende li .nom{color:var(--doux);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.legende li .n{font:500 12.5px var(--mono);color:var(--doux)}
+.etiq{display:inline-block;font:600 10.5px var(--fb);letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--trait2);border-radius:999px;padding:3px 9px}
+.etiq.ok{border-color:rgba(79,107,74,.5);color:var(--sauge)}.etiq.manque{border-color:rgba(168,50,45,.45);color:var(--fil)}

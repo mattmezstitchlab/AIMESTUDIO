@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>AIME STITCH · générer le catalogue</title></head>
+<body style="font-family:system-ui;padding:20px">
+<h1>Générer les patrons de démonstration</h1>
+<p>Outil de développement : dessine les illustrations originales, les convertit et produit les patrons canoniques (JSON). Les fichiers générés sont versionnés dans <code>stitch/data/patrons/</code> : toutes les vues lisent ces fichiers, jamais une conversion refaite à la volée.</p>
+<pre id="out">…</pre>
+<script src="/stitch/js/couleur.js"></script><script src="/stitch/js/conversion.js"></script><script src="/stitch/js/patron.js"></script><script src="/stitch/js/motifs.js"></script>
+<script>
+var CAT=[['mesange','equilibre',90,'pat-mesange'],['lavande','simple',46,'pat-lavande'],['monogramme','equilibre',64,'pat-monogramme'],['colline','precis',100,'pat-colline'],['papillon','equilibre',72,'pat-papillon']];
+fetch('/stitch/data/dmc.json').then(function(r){return r.json()}).then(function(D){var out={};
+ CAT.forEach(function(c){var img=StitchMotifs.image(c[0],c[2]*6),r=StitchConversion.convertir(img,{mode:c[1],largeur:c[2],dmc:D.fils});
+  var p=StitchPatron.depuisConversion(r,{id:c[3],titre:StitchMotifs.MOTIFS[c[0]].titre,provenance:{source:'illustration-generative',auteur:'AIME (création originale)',note:'Illustration dessinée en code pour la démonstration'},licence:{type:'originale',usage:'demonstration'},date:'2026-10-20'});
+  out[c[3]]=JSON.parse(StitchPatron.serialiser(p))});
+ window.__patrons=out;document.getElementById('out').textContent=Object.keys(out).map(function(k){return k+' '+out[k].l+'×'+out[k].h+' '+out[k].palette.length+' couleurs'}).join('\n')});
+</script></body></html>

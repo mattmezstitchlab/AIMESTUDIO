@@ -1,0 +1,97 @@
+# AIME STITCH · le patron vivant
+
+Phase 0 (audit et stratégie) et phase 1 (prototype visuel) sur la branche `stitch`, créée depuis `main`. Rien n'est modifié dans `main`, AIME WORLD, SynchroView, le Studio, Stitchlab ni les autres dépôts. Aucun paiement, aucune donnée réelle, aucun contenu sous droits.
+
+Pages : `/stitch/` (découvrir), `/stitch/patron/?id=…` (fiche), `/stitch/atelier/` (créer et corriger), `/stitch/broder/?id=…` (lecteur).
+
+## 1. Audit des projets existants
+
+| Projet | Ce qui existe vraiment | Verdict |
+|---|---|---|
+| **POINTZERO** (React 19, TS, Vite, ~474 tests) | Le plus abouti : modèle de patron complet (croix, demi-points, quarts, backstitch, nœuds, calques, provenance, licence), table DMC (craft-color-codes, 489 fils), CIEDE2000, symboles « un dessin, trois rendus », éditeur (~20 outils), mode broderie avec progression, export PDF jsPDF (couverture, légende, grilles paginées), OXS/SVG, import PDF vectoriel avec reconnaissance de symboles. Boutique = démo, aucun compte. | **Base technique à reprendre** (bibliothèque `src/lib/`), en l'extrayant du reste du dépôt (musique, mariage, budget…). Faiblesse : réduction des couleurs « les N plus fréquentes », qui perd les petites couleurs saillantes. |
+| **Stitchlab** (dans ce dépôt) | Copie du moteur Point Zéro dans un fichier de 5 500 lignes, lui-même dupliqué dans 7 fichiers (studio, image, docs, web, buro…). Grille RLE, outils, PDF jsPDF par CDN. Aucun lecteur, aucun import PDF. Fortement couplé au Bureau. | Ne pas toucher (autre session). Seule reprise : la table DMC, en lecture, avec son attribution. |
+| **UNIVERSALBRODERIE** (JS sans dépendance) | Très bon modèle (`project.mjs`), progression séparée de la grille (`progress.mjs`), historique, validation, échange versionné V1→V2, fiche imprimable. | Reprendre les **principes** (progression séparée, validation, migrations). Le dépôt a une régression : 29 tests sur 38 échouent depuis le passage à 456 couleurs pour 8 symboles. |
+| **BRODIA** (Base44) | PDF de patron correct mais rastérisé, nettoyage des confettis, aide à l'achat de fils. Cellules stockées une par une (14 000 objets), couleurs en RGB. | Idées seulement. |
+| **BRODEZ** | Maquette (génération par formules, 24 couleurs), aperçu 3D illustratif. **Contient une clé `service_role` Supabase en clair** (`agon-agent_1-01cb1f1d 2/vercel.json`), exposée par une API sans authentification. | À abandonner. **Clé à révoquer, historique à purger.** |
+| Aime-coloria, ColorCard, stitch3D, aimeatelier, BRODEZVOTREMARIAGE | Coloriage par numéros, carte interactive, dépôts vides ou quasi vides. | Rien à reprendre (au mieux le schéma Stripe de Coloria, plus tard). |
+| SynchroView, permissions AIME | Matrice explicite, vérification serveur, distinction carte d'usage / perspective / rôle. | Principes réutilisés (ci-dessous), code non modifié. |
+
+**Licences.**
+- Code POINTZERO : MIT.
+- Table DMC : craft-color-codes, licence « MIT AND CC-BY-4.0 », avec attribution obligatoire dans chaque export.
+- DMC est une marque. Ses couleurs d'écran ne sont pas officielles. Les références ne servent qu'à identifier un fil.
+- Deux images de démonstration de POINTZERO sont sans provenance (`grille-roses.png`, `papillon.png`) : elles ne doivent pas être publiées.
+
+## 2. Structure produit proposée
+
+Un objet, cinq expériences.
+
+```
+            ┌──────────── patron canonique (versionné) ────────────┐
+ Créer ─▶ conversion ─▶ brouillon ─▶ Corriger ─▶ publier (version figée) ─▶ fiche boutique, PDF
+                                                        │
+                    variante personnelle (mes fils) ◀───┤
+                    progression de la brodeuse ◀────────┘  (séparée, liée à la version)
+```
+
+| Couche | Rôle | État en phase 1 |
+|---|---|---|
+| 1. Modèle canonique | `stitch/js/patron.js` : format `aime-stitch` schéma 1, matrice RLE, palette = références DMC seules (nom et couleur viennent de la table), symboles, demi-points, backstitch vectoriel, calques, provenance, licence, historique ; validation, migration, empreinte, publication figée | Fait |
+| 2. Importateur | Images JPEG, PNG, WebP | Fait. PDF : phase 2 (reprise de l'import vectoriel POINTZERO, avec calibrage et validation humaine pour les scans) |
+| 3. Moteur de conversion | `stitch/js/conversion.js` : redimensionnement par surface en lumière linéaire, segmentation (Sobel), k-moyennes en CIELAB avec départ fixe, DMC le plus proche (CIEDE2000), toile auto, points isolés, petites régions, protection des détails, vérification | Fait, quatre modes paramétrés |
+| 4. Moteur d'édition | Crayon, pipette, remplir, remplacer partout, gomme, points isolés, fusion de couleur, annuler / rétablir | Fait (phase 1). Sélection, symétrie, backstitch, demi-points : phase 2 |
+| 5. Rendu | `stitch/js/rendu.js` : aperçu brodé sur toile tissée, grille symboles / couleurs / mixte, repères 10 × 10 | Fait |
+| 6. Lecteur | Zoom, déplacement, pincement, couleur suivie, points faits, restants par couleur, masquer les terminées, grande lisibilité, clavier, reprise | Fait. Hors connexion : phase 3 |
+| 7. PDF | Couverture, légende, grilles couleur et noir et blanc, pages, repères, version, attribution | Phase 2 (jsPDF installé, pas de CDN) |
+| 8. Catalogue / publication | Fiches calculées depuis le patron, filtres propres au point de croix, « réalisables avec mes fils » | Découverte et fiche faites ; publication : phase 4 |
+| 9. Permissions | Matrice explicite (voir un patron public, prévisualiser un extrait, modifier le sien, publier, accéder à un achat, télécharger un PDF autorisé, voir ses ventes, modérer), vérifiée par le serveur | Démonstration côté navigateur ; matrice et serveur : phase 4 |
+| 10. Stockage et versions | Brouillon, versions publiées figées, variantes personnelles, progression par (patron, version) | Brouillon et progression locaux ; serveur : phases 3-4 |
+
+**Rôles.** On garde la règle AIME : une perspective (créatrice, brodeuse, visiteuse, gestionnaire de boutique, modératrice) n'est ni un rôle ni un droit. Une même personne peut être créatrice et acheteuse, et les droits portent sur des objets précis.
+
+## 3. Ce que la phase 1 démontre
+
+- **Une donnée, plusieurs représentations** : l'aperçu brodé, la grille, la légende, les quantités, la fiche et le lecteur lisent le même fichier `stitch/data/patrons/*.json`. Le catalogue ne recopie aucune donnée technique (testé).
+- **Trois conversions comparées** avant de choisir (Simple, Équilibré, Précis), avec leurs chiffres : couleurs, isolés supprimés, régions fondues, détails protégés, fidélité (CIEDE2000 moyen), effort, niveau, temps de calcul (environ 0,15 à 0,25 s chacune).
+- **Effort réel** : un indice expliqué en « équivalents points » (points, changements de fil par bloc de 10 × 10, régions, isolés, backstitch, demi-points), avec ses poids visibles et réglables. Aucune durée n'est promise.
+- **Ma boîte à fils** : la fiche dit ce que la brodeuse possède, ce qui lui manque et le fil le plus proche qu'elle a (avec l'écart). La boutique filtre « réalisables avec mes fils ».
+- **Versions** : la publication fige une version. Corriger le brouillon ne touche pas la version achetée (testé). La progression est enregistrée par (patron, version), en dehors du patron.
+- **Accès** : un patron payant ne s'ouvre dans le lecteur qu'après une acquisition simulée. Un extrait de 20 × 20 points reste visible sur la fiche.
+
+Les patrons de démonstration viennent d'illustrations originales dessinées en code (`stitch/js/motifs.js`), converties une fois par `stitch/outils/generer.html`. Les boutiques et les créatrices sont fictives.
+
+## 4. Tests (phase 1)
+
+`tests/stitch.test.cjs` : 10 tests.
+- CIEDE2000 sur les paires de référence de Sharma.
+- Table DMC intacte : 489 références, aucune inventée.
+- Conversion déterministe, dimensions en points.
+- Sérialisation, validation et migration.
+- Publication figée.
+- Quantités, dimensions, fournitures et effort décomposable.
+- 48 symboles distincts.
+- Catalogue sans copie de données.
+- Progression hors du patron.
+- Isolement des autres studios.
+
+Vérifications dans le navigateur (Playwright, ordinateur et 390 px, sans erreur) :
+- trois conversions en moins d'une seconde ;
+- correction (77 points isolés supprimés, une couleur fondue, crayon, annuler, rétablir) ;
+- validation et enregistrement du brouillon ;
+- acquisition simulée, lecteur, couleur suivie, 20 points cochés, page fermée puis rouverte : les 20 points sont retrouvés.
+
+## 5. Décisions à prendre avant la phase 2
+
+1. **Où vit AIME STITCH.**
+   - (a) Dans ce dépôt, en JavaScript sans dépendance, comme aujourd'hui (preview immédiate sur le même site).
+   - (b) Dans un dépôt dédié en TypeScript, en reprenant la bibliothèque POINTZERO et ses tests. C'est ma recommandation pour la suite : la plus grande part du travail difficile (PDF, import PDF, éditeur complet, lecteur) y existe déjà et est testée.
+   - Le prototype actuel servirait alors de maquette et de référence d'expérience.
+2. **La conversion.** Je propose de garder le moteur de cette phase : k-moyennes en Lab, protection des détails, régions. Il pourra remplacer le « top N » de POINTZERO une fois comparé sur un jeu d'images réelles.
+3. **Les données DMC.** Garder craft-color-codes avec attribution, ou obtenir une source sous licence plus simple avant toute commercialisation.
+
+## 6. Limites connues
+
+- Prototype sans serveur : brouillons, acquisitions et progression vivent dans le navigateur.
+- Les poids de l'effort réel, la cadence (100 à 200 points par heure) et les quantités de fil (environ 1 800 points par écheveau en 14 ct, deux brins) sont des **hypothèses affichées**, à mesurer avec de vraies brodeuses.
+- Les illustrations de démonstration sont simples. Il faut tester la conversion sur de vraies photographies : oiseau, fleurs, portraits.
+- Les variantes personnelles, la composition florale par calques et le hors connexion sont prévus et non commencés.

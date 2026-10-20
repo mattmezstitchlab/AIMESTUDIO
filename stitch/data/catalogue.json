@@ -1,0 +1,163 @@
+{
+ "_": "Catalogue de démonstration AIME STITCH. Boutiques et créatrices FICTIVES ; patrons issus d'illustrations originales générées en code. Le produit ne recopie aucune donnée technique : dimensions, couleurs, fils, difficulté et temps se calculent depuis le patron canonique.",
+ "boutiques": [
+  {
+   "id": "b-linette",
+   "nom": "Atelier Linette",
+   "fictif": true,
+   "ville": "Lyon"
+  },
+  {
+   "id": "b-filune",
+   "nom": "Fil & Lune",
+   "fictif": true,
+   "ville": "Nantes"
+  }
+ ],
+ "categories": [
+  [
+   "botanique",
+   "Botanique"
+  ],
+  [
+   "oiseaux",
+   "Oiseaux"
+  ],
+  [
+   "animaux",
+   "Animaux"
+  ],
+  [
+   "paysages",
+   "Paysages"
+  ],
+  [
+   "monogrammes",
+   "Monogrammes"
+  ],
+  [
+   "naissance",
+   "Naissance"
+  ],
+  [
+   "mariage",
+   "Mariage"
+  ],
+  [
+   "saisons",
+   "Saisons"
+  ],
+  [
+   "rapides",
+   "Petits projets rapides"
+  ]
+ ],
+ "produits": [
+  {
+   "id": "prod-mesange",
+   "patron": "pat-mesange",
+   "version": 1,
+   "boutique": "b-linette",
+   "categories": [
+    "oiseaux",
+    "botanique",
+    "saisons"
+   ],
+   "collection": "Jardin de mai",
+   "prix": 9,
+   "devise": "EUR",
+   "statut": "publie",
+   "accroche": "Une mésange bleue sur une branche d'églantier, au petit matin.",
+   "description": "Un motif doux pour un cadre ou un coussin. Les dégradés du plumage sont réduits à quelques nuances franches, faciles à suivre.",
+   "formats": [
+    "Lecteur AIME (progression enregistrée)",
+    "PDF imprimable (phase 2)"
+   ],
+   "licence": "Usage personnel. Revente des pièces brodées autorisée en petite série, pas du patron."
+  },
+  {
+   "id": "prod-lavande",
+   "patron": "pat-lavande",
+   "version": 1,
+   "boutique": "b-filune",
+   "categories": [
+    "botanique",
+    "rapides"
+   ],
+   "collection": "Herbier",
+   "prix": 5,
+   "devise": "EUR",
+   "statut": "publie",
+   "accroche": "Trois épis de lavande noués d'un ruban.",
+   "description": "Un petit projet du week-end, idéal pour une première broderie ou un marque-page.",
+   "formats": [
+    "Lecteur AIME (progression enregistrée)",
+    "PDF imprimable (phase 2)"
+   ],
+   "licence": "Usage personnel."
+  },
+  {
+   "id": "prod-monogramme",
+   "patron": "pat-monogramme",
+   "version": 1,
+   "boutique": "b-linette",
+   "categories": [
+    "monogrammes",
+    "mariage",
+    "naissance"
+   ],
+   "collection": "Initiales",
+   "prix": 7,
+   "devise": "EUR",
+   "statut": "publie",
+   "accroche": "Une initiale couronnée de feuillages et d'églantines.",
+   "description": "Pour un faire-part brodé, un coussin de mariage ou une naissance. D'autres lettres viendront avec les variantes.",
+   "formats": [
+    "Lecteur AIME (progression enregistrée)",
+    "PDF imprimable (phase 2)"
+   ],
+   "licence": "Usage personnel."
+  },
+  {
+   "id": "prod-colline",
+   "patron": "pat-colline",
+   "version": 1,
+   "boutique": "b-filune",
+   "categories": [
+    "paysages",
+    "saisons"
+   ],
+   "collection": "Lumières",
+   "prix": 12,
+   "devise": "EUR",
+   "statut": "publie",
+   "accroche": "Des collines superposées sous un soleil couchant.",
+   "description": "Un paysage entièrement couvert : beaucoup de points, peu de confettis, un travail régulier et méditatif.",
+   "formats": [
+    "Lecteur AIME (progression enregistrée)",
+    "PDF imprimable (phase 2)"
+   ],
+   "licence": "Usage personnel."
+  },
+  {
+   "id": "prod-papillon",
+   "patron": "pat-papillon",
+   "version": 1,
+   "boutique": "b-linette",
+   "categories": [
+    "animaux",
+    "saisons"
+   ],
+   "collection": "Jardin de mai",
+   "prix": 0,
+   "devise": "EUR",
+   "statut": "publie",
+   "accroche": "Un papillon orangé aux ailes ocellées.",
+   "description": "Offert pour découvrir le lecteur AIME.",
+   "formats": [
+    "Lecteur AIME (progression enregistrée)"
+   ],
+   "licence": "Usage personnel."
+  }
+ ]
+}
