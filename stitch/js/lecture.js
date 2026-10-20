@@ -51,13 +51,19 @@ function ecart(G,lu){return hamming(G.sig,lu.sig)+(Math.abs(G.taille[0]-lu.taill
 /* regroupement en trois temps : 1 · chaque case rejoint le groupe le plus proche (ou en ouvre un) ; 2 · les groupes voisins
    fusionnent tant que leurs moyennes se ressemblent ; 3 · chaque case est réaffectée au groupe moyen le plus proche.
    Mieux vaut deux groupes de trop (la personne valide le même fil deux fois) qu'un groupe qui mélange deux fils. */
-function analyser(img,z,cols,lignes,o){o=o||{};var tolS=o.tolSymbole==null?.13:o.tolSymbole,tolC=o.tolCouleur==null?14:o.tolCouleur,w=z.l/cols,h=z.h/lignes,cases=new Int16Array(cols*lignes).fill(-1),lus=[],G=[],t0=Date.now(),N=SIG*SIG;
+function analyser(img,z,cols,lignes,o){return analyserPages([{img:img,z:z,cols:cols,lignes:lignes,x:0,y:0}],o)}
+/* plusieurs pages d'un même patron : chaque page est lue à sa place dans la grille d'ensemble (x, y en cases), et les symboles
+   sont regroupés sur TOUTES les pages à la fois : un même fil garde un seul groupe, quelle que soit sa page. */
+function analyserPages(pages,o){o=o||{};var tolS=o.tolSymbole==null?.13:o.tolSymbole,tolC=o.tolCouleur==null?14:o.tolCouleur,x0=Infinity,y0=Infinity,W=0,H=0,lus=[],G=[],t0=Date.now(),N=SIG*SIG,recouvre=0;
+ pages.forEach(function(p){x0=Math.min(x0,p.x||0);y0=Math.min(y0,p.y||0)});pages.forEach(function(p){W=Math.max(W,(p.x||0)-x0+p.cols);H=Math.max(H,(p.y||0)-y0+p.lignes)});
+ if(W*H>4e6)throw new Error('Grille d\'ensemble trop grande.');var cols=W,lignes=H,cases=new Int16Array(W*H).fill(-1),pris=new Uint8Array(W*H);
  var nouveau=function(lu){return{sig:Float32Array.from(lu.sig),taille:lu.taille.slice(),lab:lu.lab,fond:lu.fond,somme:{s:Float64Array.from(lu.sig),t:lu.taille.slice(),f:lu.fond.slice(),n:1}}};
  var ajouter=function(g,lu){var S=g.somme;for(var i=0;i<N;i++)S.s[i]+=lu.sig[i];S.t[0]+=lu.taille[0];S.t[1]+=lu.taille[1];S.f[0]+=lu.fond[0];S.f[1]+=lu.fond[1];S.f[2]+=lu.fond[2];S.n++};
  var moyenne=function(g){var S=g.somme;for(var i=0;i<N;i++)g.sig[i]=S.s[i]/S.n;g.taille=[S.t[0]/S.n,S.t[1]/S.n];g.fond=[S.f[0]/S.n,S.f[1]/S.n,S.f[2]/S.n];g.lab=C.lab(g.fond[0],g.fond[1],g.fond[2])};
  var proche=function(lu,tol){var bon=-1,bd=Infinity;for(var g=0;g<G.length;g++){if(!G[g])continue;var ds=ecart(G[g],lu),dc=C.de76(G[g].lab,lu.lab);if(ds<=tol&&dc<=tolC){var sc=ds*100+dc;if(sc<bd){bd=sc;bon=g}}}return bon};
- for(var r=0;r<lignes;r++)for(var c=0;c<cols;c++){var lu=lireCase(img,z.x+c*w,z.y+r*h,w,h);if(!lu||lu.vide)continue;lu.lab=C.lab(lu.fond[0],lu.fond[1],lu.fond[2]);lu.k=r*cols+c;lus.push(lu);
-  var bon=proche(lu,tolS);if(bon<0){G.push(nouveau(lu));bon=G.length-1}else{ajouter(G[bon],lu);if(G[bon].somme.n<=8||G[bon].somme.n%16===0)moyenne(G[bon])}lu.g=bon}
+ pages.forEach(function(P,ip){var z=P.z,w=z.l/P.cols,h=z.h/P.lignes,ox=(P.x||0)-x0,oy=(P.y||0)-y0;
+  for(var r=0;r<P.lignes;r++)for(var c=0;c<P.cols;c++){var k=(oy+r)*W+ox+c;if(pris[k]){recouvre++;continue}pris[k]=1;var lu=lireCase(P.img,z.x+c*w,z.y+r*h,w,h);if(!lu||lu.vide)continue;lu.lab=C.lab(lu.fond[0],lu.fond[1],lu.fond[2]);lu.k=k;lu.src={page:ip,c:c,r:r};lus.push(lu);
+   var bon=proche(lu,tolS);if(bon<0){G.push(nouveau(lu));bon=G.length-1}else{ajouter(G[bon],lu);if(G[bon].somme.n<=8||G[bon].somme.n%16===0)moyenne(G[bon])}lu.g=bon}});
  G.forEach(moyenne);
  for(;;){var bi=-1,bj=-1,bd=Infinity;for(var i=0;i<G.length;i++)for(var j=i+1;j<G.length;j++){var d1=ecart(G[i],G[j]);if(d1<=tolS&&C.de76(G[i].lab,G[j].lab)<=tolC&&d1<bd){bd=d1;bi=i;bj=j}}
   if(bi<0)break;var A=G[bi].somme,B=G[bj].somme;for(var q=0;q<N;q++)A.s[q]+=B.s[q];A.t[0]+=B.t[0];A.t[1]+=B.t[1];A.f[0]+=B.f[0];A.f[1]+=B.f[1];A.f[2]+=B.f[2];A.n+=B.n;moyenne(G[bi]);G.splice(bj,1)}
@@ -65,11 +71,18 @@ function analyser(img,z,cols,lignes,o){o=o||{};var tolS=o.tolSymbole==null?.13:o
  var groupes=G.map(function(g,i){return{id:i,sig:Uint8Array.from(g.sig,function(v){return Math.round(v)}),taille:g.taille,lab:g.lab,fond:g.fond,n:0,exemple:-1,couleur:false}});
  lus.forEach(function(lu){var bon=0,bd=Infinity;groupes.forEach(function(g,i){var sc=ecart(g,lu)*100+C.de76(g.lab,lu.lab);if(sc<bd){bd=sc;bon=i}});var g=groupes[bon];g.n++;cases[lu.k]=bon;
   /* l'exemple montré à la personne : la case la plus typique du groupe */
-  if(g.exemple<0||bd<g._bd){g.exemple=lu.k;g._bd=bd}lu.couleur&&(g.couleur=true)});
+  if(g.exemple<0||bd<g._bd){g.exemple=lu.k;g.source=lu.src;g._bd=bd}lu.couleur&&(g.couleur=true)});
  groupes=groupes.filter(function(g){return g.n>0});groupes.sort(function(a,b){return b.n-a.n});
  /* page en couleur : au moins un groupe significatif est coloré ; alors toutes les cases colorées (même pâles) reçoivent une suggestion */
  var enCouleur=groupes.some(function(g){return g.couleur&&g.n>=3});groupes.forEach(function(g){g.couleur=enCouleur&&!(g.fond[0]>246&&g.fond[1]>246&&g.fond[2]>246);delete g._bd});var re={};groupes.forEach(function(g,i){re[g.id]=i;g.id=i});for(var q2=0;q2<cases.length;q2++)if(cases[q2]>=0)cases[q2]=re[cases[q2]];
- return{cols:cols,lignes:lignes,cases:cases,groupes:groupes,couleur:enCouleur,ms:Date.now()-t0,pasX:w,pasY:h}}
+ var P0=pages[0];return{cols:cols,lignes:lignes,cases:cases,groupes:groupes,couleur:enCouleur,ms:Date.now()-t0,pasX:P0.z.l/P0.cols,pasY:P0.z.h/P0.lignes,pages:pages.length,recouvrement:recouvre}}
+/* placement des pages en puzzle, porté de POINTZERO (PdfPrep.positionsPuzzle, licence MIT, même auteur) :
+   les blocs se posent de gauche à droite, « colonnes » blocs par rangée ; une rangée a la hauteur de son plus grand bloc. */
+function positionsPuzzle(blocs,colonnes,uniforme,taille){var pos={},n=Math.max(1,colonnes),x=0,y=0,hr=0;
+ blocs.forEach(function(b,i){if(i>0&&i%n===0){y+=hr;x=0;hr=0}pos[b.id]={x:x,y:y};x+=uniforme?taille.cols:b.cols;hr=Math.max(hr,uniforme?taille.rows:b.rows)});return pos}
+/* une page qui dit où elle se trouve (« Colonnes 56 à 80 · lignes 1 à 75 ») se place d'elle-même ; sinon, rien n'est deviné */
+function lirePosition(texte){var t=String(texte||'').replace(/\s+/g,' '),m=t.match(/colonnes?\s+(\d+)\s*(?:à|a|-|–)\s*(\d+).{0,12}?lignes?\s+(\d+)\s*(?:à|a|-|–)\s*(\d+)/i)||t.match(/columns?\s+(\d+)\s*(?:to|-|–)\s*(\d+).{0,12}?rows?\s+(\d+)\s*(?:to|-|–)\s*(\d+)/i);
+ if(!m)return null;var c0=+m[1],c1=+m[2],r0=+m[3],r1=+m[4];if(c1<c0||r1<r0)return null;return{x:c0-1,y:r0-1,cols:c1-c0+1,lignes:r1-r0+1}}
 /* 4 · suggestion DMC pour un groupe coloré (le plus proche en CIEDE2000) ; un patron en noir et blanc n'en a pas */
 function suggerer(groupe,dmc){if(!groupe.couleur)return null;var b=null,bd=Infinity;dmc.forEach(function(d){var x=C.hex(d.hex),dd=C.de2000(groupe.lab,C.lab(x[0],x[1],x[2]));if(dd<bd){bd=dd;b=d}});return b?{code:b.code,ecart:+bd.toFixed(1)}:null}
 /* de l'analyse validée au contenu d'un patron : choix[g] = code DMC, ou null pour « toile » */
@@ -77,5 +90,5 @@ function construire(a,choix){var codes=[],idx={},points=new Uint16Array(a.cases.
  for(var k=0;k<a.cases.length;k++){var g=a.cases[k];points[k]=g>=0&&choix[g]?idx[choix[g]]:0}
  var usage=codes.map(function(c){var n=0;for(var k=0;k<points.length;k++)if(points[k]===idx[c])n++;return n});
  return{l:a.cols,h:a.lignes,points:points,palette:codes.map(function(c,i){return{dmc:c,points:usage[i]}}),mode:'import',reglages:{},rapport:{groupes:a.groupes.length}}}
-return{detecterGrille:detecterGrille,lireCase:lireCase,analyser:analyser,suggerer:suggerer,construire:construire,hamming:hamming,distSymbole:distSymbole};
+return{detecterGrille:detecterGrille,lireCase:lireCase,analyser:analyser,analyserPages:analyserPages,positionsPuzzle:positionsPuzzle,lirePosition:lirePosition,suggerer:suggerer,construire:construire,hamming:hamming,distSymbole:distSymbole};
 });

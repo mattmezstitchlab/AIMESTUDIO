@@ -159,3 +159,36 @@ test('lecture d\'une grille existante : pas détecté, cases regroupées sans er
   assert.equal(justes, s.l * s.h, 'reconstruction case pour case');
   for (const G of a.groupes) { const sg = Lc.suggerer(G, DMC.fils); assert.ok(sg && DMC.fils.some(f => f.code === sg.code)); }
 });
+
+test('assemblage de pages (porté de POINTZERO) : puzzle sans chevauchement, deux pages relues comme un seul patron', () => {
+  const Lc = require('../stitch/js/lecture.js');
+  const bl = (id, cols, rows) => ({ id, cols, rows });
+  const pos = Lc.positionsPuzzle([bl('a', 50, 40), bl('b', 35, 80), bl('c', 25, 20), bl('d', 20, 20)], 2, false, { cols: 40, rows: 50 });
+  assert.deepEqual(pos, { a: { x: 0, y: 0 }, b: { x: 50, y: 0 }, c: { x: 0, y: 80 }, d: { x: 25, y: 80 } });
+  assert.equal(Lc.positionsPuzzle([bl('b', 25, 25), bl('a', 50, 40)], 2, false, { cols: 30, rows: 30 }).a.x, 25, 'réordonnable');
+  assert.deepEqual(Lc.lirePosition('Colonnes 56 à 80 · lignes 1 à 75 · suite à gauche'), { x: 55, y: 0, cols: 25, lignes: 75 });
+  assert.equal(Lc.lirePosition('Page 3'), null, 'rien n\'est deviné sans indication');
+
+  const p = patron('pat-papillon'), m = P.matrice(p), s = P.surface(p), cs = 14, marge = 20, coupe = Math.floor(s.l / 2);
+  const hex = code => C.hex(DMC.fils.find(f => f.code === code).hex);
+  const page = (x0, nc) => {
+    const W = nc * cs + 2 * marge, H = s.h * cs + 2 * marge, d = new Uint8ClampedArray(W * H * 4).fill(255);
+    const px = (x, y, c) => { const i = (y * W + x) * 4; d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2]; };
+    for (let y = 0; y < s.h; y++) for (let x = 0; x < nc; x++) {
+      const v = m[(s.y + y) * p.l + s.x + x0 + x]; if (!v) continue;
+      const col = hex(p.palette[v - 1].dmc), bits = (v * 37) % 511 || 1, X0 = marge + x * cs, Y0 = marge + y * cs;
+      for (let yy = 0; yy < cs; yy++) for (let xx = 0; xx < cs; xx++) { const bx = Math.floor((xx - 3) / 3), by = Math.floor((yy - 3) / 3), dans = xx >= 3 && yy >= 3 && bx < 3 && by < 3; px(X0 + xx, Y0 + yy, dans && (bits >> (by * 3 + bx)) & 1 ? [20, 20, 20] : col); }
+    }
+    for (let x = 0; x <= nc; x++) for (let y = marge; y <= marge + s.h * cs; y++) px(marge + x * cs, y, [150, 150, 150]);
+    for (let y = 0; y <= s.h; y++) for (let x = marge; x <= marge + nc * cs; x++) px(x, marge + y * cs, [150, 150, 150]);
+    return { img: { l: W, h: H, data: d }, z: { x: marge, y: marge, l: nc * cs, h: s.h * cs }, cols: nc, lignes: s.h };
+  };
+  const A = Object.assign(page(0, coupe), { x: 0, y: 0 }), B = Object.assign(page(coupe, s.l - coupe), { x: coupe, y: 0 });
+  const a = Lc.analyserPages([B, A]);
+  assert.equal(a.cols, s.l); assert.equal(a.lignes, s.h); assert.equal(a.pages, 2);
+  assert.equal(a.groupes.length, p.palette.length, 'un fil = un groupe, sur les deux pages');
+  const choix = a.groupes.map(G => { const k = G.exemple, v = m[(s.y + Math.floor(k / s.l)) * p.l + s.x + k % s.l]; return p.palette[v - 1].dmc; });
+  const r = Lc.construire(a, choix); let justes = 0;
+  for (let y = 0; y < s.h; y++) for (let x = 0; x < s.l; x++) { const v = m[(s.y + y) * p.l + s.x + x], w = r.points[y * s.l + x]; if ((v ? p.palette[v - 1].dmc : null) === (w ? r.palette[w - 1].dmc : null)) justes++; }
+  assert.equal(justes, s.l * s.h, 'assemblage case pour case');
+});

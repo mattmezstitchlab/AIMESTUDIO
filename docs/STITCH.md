@@ -122,4 +122,13 @@ Vérifications dans le navigateur (Playwright, ordinateur et 390 px, sans erreur
 | **Brouillons** | `/stitch/atelier/?brouillon=<id>` rouvre un brouillon enregistré dans ce navigateur. |
 | **Tests** | 15 tests STITCH, dont une grille synthétique relue case pour case et les opérations d'édition. |
 
-Restent hors phase 2 : patrons scannés de mauvaise qualité (redressement de perspective), lecture des demi-points et backstitchs d'un PDF existant, plusieurs pages d'un même patron assemblées automatiquement.
+### Assemblage de plusieurs pages (moteur de POINTZERO)
+
+| Élément | État |
+|---|---|
+| **Origine** | Placement en puzzle porté de POINTZERO (`src/components/PdfPrep.tsx`, `positionsPuzzle` ; licence MIT, même auteur), réécrit en JS sans dépendance dans `stitch/js/lecture.js`. Ses deux tests d'origine (sans chevauchement, réordonnable) sont repris dans `tests/stitch.test.cjs`. |
+| **Ce qui s'ajoute** | `analyserPages` lit chaque page à sa place dans une grille d'ensemble et regroupe les symboles sur toutes les pages à la fois : un fil garde un seul groupe, quelle que soit sa page. `lirePosition` place une page qui indique ses colonnes et ses lignes (« Colonnes 56 à 80 · lignes 1 à 75 ») ; sinon rien n'est deviné. |
+| **Parcours** | « Ajouter cette page au patron » ; la page suivante reprend le cadre et le pas de la précédente ; liste des pages avec position corrigible, plan d'assemblage, signalement des recouvrements ; « Lire les N pages ». |
+| **Mesure** | Notre PDF Mésange, pages 4 et 5 : grille d'ensemble 86 × 52, 27 groupes, 1 652 croix sur 1 652, 100 % des cases. |
+
+Restent : patrons scannés de mauvaise qualité (redressement de perspective) ; lecture des demi-points et backstitchs d'un PDF existant ; recouvrements entre pages gérés par « la première page lue compte » (pas de recalage automatique).
