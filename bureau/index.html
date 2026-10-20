@@ -1369,6 +1369,22 @@ body.tlex #tl{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1f
 .tl-pop [data-tfold] svg{width:14px;height:14px;vertical-align:-2px}
 #dock [data-app="moteurs"].on{box-shadow:0 0 0 2px #fff}
 @media(max-width:760px){#tband{grid-template-columns:auto minmax(0,1fr) auto!important}#tband .bc{justify-content:center}#tband .bwhere{display:grid!important;margin-left:2px}#tband .ptr .pm-times{display:none}#tex .tx-h>span,#tex .tx-h .pill{display:none}#tex .tx-g{width:170px}}
+/* v23 : la question en grand, le lecteur */
+#uv .ey2{display:flex;align-items:center;gap:10px}
+#uv .ey2 b{font:700 clamp(22px,2.2vw,30px)/1 var(--ui);letter-spacing:-.01em;color:var(--uc1,#A78BFA)}
+#uv .ey2 span{font:600 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:3px 8px}
+#uv .m4why{display:inline-flex;align-items:center;gap:8px}
+#uv .m4why .orbdot{width:14px;height:14px;border-radius:50%;background:conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185);box-shadow:0 0 10px rgba(124,92,255,.7)}
+#tband .bpill{flex:none;display:flex;align-items:center;gap:0;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);border-radius:999px;padding:2px;min-width:0}
+#tband .bpill .bplay{margin:0;width:28px;height:28px}
+#tband .bpill .bwhen{border:0;background:none;padding:3px 10px 3px 10px}
+#tband .bpill .bwhen b{max-width:200px;overflow:hidden;text-overflow:ellipsis}
+#tband .bpill:hover,#tband .bpill:has([aria-expanded=true]){background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3)}
+#tband .bpill .bwhen:hover,#tband .bpill .bwhen[aria-expanded=true]{background:none}
+#tband .bskip svg{fill:currentColor;stroke-width:1.6}
+#tband .bc{gap:6px}
+#tl .tl-it.trk{outline:2px solid #fff;outline-offset:2px;z-index:5}
+@media(max-width:760px){#tband .bpill .bwhen small{display:none}#tband .bpill .bwhen b{max-width:120px}}
 </style>
 
 <div id="desk" aria-hidden="true"><canvas id="px"></canvas></div>
@@ -2469,7 +2485,7 @@ function orchRender(){var el=$('#scene');if(!el||!ORCH.on)return;var E=evData(),
  var left=nxt?nxt.m2-N.m:0,aff=M.filter(function(x){return x.sh}),roles={};aff.forEach(function(x){x.who.forEach(function(w){roles[w]=1})});var hit=E.V.filter(function(v){return roles[v.role]});
  el.innerHTML='<div class="or-l"><span class="k">'+(N.live?'En direct':'Simulation')+' · '+esc(E.names)+(E.demo?' · exemple':'')+'</span><div class="or-clock">'+hm2(N.m)+'</div><div class="or-cd">'+(nxt?'Prochain moment dans <b>'+Math.floor(left/60)+' h '+String(Math.floor(left%60)).padStart(2,'0')+'</b>':'La journée est terminée')+'</div><h2>'+esc(cur?cur.ti:'Avant la cérémonie')+'</h2><p>'+esc(cur?cur.d:'Les invités arrivent.')+'</p>'+(cur&&cur.who.length?'<div class="or-who">'+cur.who.map(function(w){return'<span>'+esc(w)+'</span>'}).join('')+'</div>':'')+'<div class="or-meta"><span>📍 '+esc([E.venue,E.city].filter(Boolean).join(' · ')||'Lieu à préciser')+'</span><span>'+E.guests+' invités</span><span>'+E.V.length+' prestataires</span></div>'+
  '<div class="or-ctl">'+(N.live?'':'<button class="pill" data-orp>'+(ORCH.play?'❚❚ Pause':'▶ Lecture')+'</button><button class="pill" data-orsp>× '+ORCH.speed+'</button>')+'<span class="sp2"></span><b>Et si…</b><button class="pill" data-ord="15">+15 min de retard</button><button class="pill" data-ord="30">+30 min</button><button class="pill" data-ord="0">Annuler</button></div>'+
- (ORCH.delay?'<div class="or-cz"><b>Onde causale · '+ORCH.delay+' min</b><p>'+aff.length+' moments décalés, '+hit.length+' prestataires à prévenir'+(M[M.length-1].m2>1560?' · ⚠ la fin dépasse 02:00 : vérifier l\'horaire du lieu':'')+'.</p><div class="or-who">'+hit.map(function(v){return'<span class="hit">'+esc(v.n)+'</span>'}).join('')+'</div><button class="pill dark" data-ornotify>Prévenir tout le monde</button></div>':'')+'</div>'+
+ (ORCH.delay?'<div class="or-cz"><b>Ripple · '+ORCH.delay+' min</b><p>'+aff.length+' moments décalés, '+hit.length+' prestataires à prévenir'+(M[M.length-1].m2>1560?' · ⚠ la fin dépasse 02:00 : vérifier l\'horaire du lieu':'')+'.</p><div class="or-who">'+hit.map(function(v){return'<span class="hit">'+esc(v.n)+'</span>'}).join('')+'</div><button class="pill dark" data-ornotify>Prévenir tout le monde</button></div>':'')+'</div>'+
  '<ol class="or-s">'+M.map(function(x){var st=x===cur?'cur':x.m2<N.m?'done':'';return'<li class="'+st+(x.sh?' sh':'')+'"><time>'+(x.sh?'<s>'+hm2(x.m)+'</s>':'')+hm2(x.m2)+'</time><span><b>'+esc(x.ti)+'</b><small>'+esc(x.who.join(' · '))+'</small></span></li>'}).join('')+'</ol><div class="or-v"><span class="k">Prestataires</span>'+E.V.map(function(v){return'<div class="'+(roles[v.role]?'hit':'')+'"><i class="s'+v.st+'"></i><b>'+esc(v.n)+'</b><small>'+esc(v.role)+'</small></div>'}).join('')+'</div>';ORCH.cur=cur}
 document.addEventListener('click',function(e){if(!e.target.closest('#scene.sc-orch'))return;var b;if(e.target.closest('[data-orp]')){ORCH.play=!ORCH.play;orchRender();return}if(e.target.closest('[data-orsp]')){ORCH.speed=ORCH.speed===60?240:ORCH.speed===240?10:60;orchRender();return}
  if(b=e.target.closest('[data-ord]')){var d=+b.dataset.ord,E=evData(),N=orchNow(E);ORCH.delay=d;ORCH.from=d?N.m:null;ORCH.wave=performance.now();orchRender();if(d)setTimeout(function(){$$('#scene .or-s li.sh,#scene .or-v .hit').forEach(function(x,i){setTimeout(function(){x.classList.add('pulse')},i*90)})},30);pxKick();return}
@@ -2687,7 +2703,7 @@ var M4I={cube:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M1
 scRender=function(){SC.list=scenes();var r=$('#menubar .scn');if(!r)return;var inScene=WP.k==='scene',lab=inScene?(SC.list[SC.i]||{}).n:WP.k==='aime'?M4V[M4.v].n+' · '+M4V[M4.v].q:WPS[WP.k]||'Bureau';
  r.innerHTML='<div class="m4s" role="tablist" aria-label="Vues du monde AIME">'+M4V.map(function(V,i){var on=WP.k==='aime'&&M4.v===i;return(i?'<span class="m4t'+(M4.auto&&WP.k==='aime'&&M4.v===i-1?' run':'')+(WP.k==='aime'&&M4.v>=i?' on':'')+'"></span>':'')+'<button role="tab" data-m4="'+i+'" aria-selected="'+on+'" style="--c:'+V.c+'" title="'+esc(V.n+' · '+V.q)+'" aria-label="'+esc(V.n+' · '+V.q)+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+M4I[V.k]+'</svg></button>'}).join('')+'</div><span>'+esc(lab||'')+'</span>';};
 document.addEventListener('click',function(e){var b=e.target.closest('#menubar [data-m4]');if(!b)return;if(WP.k==='scene'){sceneShow(null);document.body.classList.remove('wp-scene')}m4Go(+b.dataset.m4,true)});
-var _mv9=MENUS.view;MENUS.view=function(){return[['Le monde AIME · Noyau',function(){m4Go(0,true)}],['Le monde AIME · Infini',function(){m4Go(1,true)}],['Le monde AIME · Onde',function(){m4Go(2,true)}],['Le monde AIME · Carte',function(){m4Go(3,true)}],0,['Scènes : Noyau',function(){m4Scene('noyau')}],['Scènes : Grille',function(){m4Scene('grid')}]].concat(_mv9().filter(function(x){return!x||!/Cercle|Grille$/.test(x[0])}))};
+var _mv9=MENUS.view;MENUS.view=function(){return[['Qui ? · ME',function(){m4Go(0,true)}],['Quand ? · Infini',function(){m4Go(1,true)}],['Et après ? · Ripple',function(){m4Go(2,true)}],['Où ? · Carte',function(){m4Go(3,true)}],0,['Scènes : Noyau',function(){m4Scene('noyau')}],['Scènes : Grille',function(){m4Scene('grid')}]].concat(_mv9().filter(function(x){return!x||!/Cercle|Grille$/.test(x[0])}))};
 /* timeline du bas : Ligne ou Partition ; seulement Dossier et Mosaïque */
 TL.part=false;try{TL.part=localStorage.getItem('aime-tlp')==='1'}catch(_){}
 var PT={cols:0,cs:0,start:0,end:0,B:null,play:0,col:-1,ac:null};
@@ -2857,7 +2873,7 @@ document.addEventListener('click',function(e){var b;if(!e.target.closest)return;
 var RECIPES={
  vues:{n:'Changer de vue',d:'Les quatre vues du fond',steps:[
   {go:'#tools .orbslot2',say:'Le fond du Bureau a quatre vues. Elles sont en haut de la capsule de gauche, sous moi.',after:1800},
-  {pre:function(run){var v=M4.v;run.undo.push(function(){m4Go(v,true)});if(WP.k!=='aime')setWp('aime')},click:'#tools [data-m4v="2"]',say:'Je choisis l\'Onde : les mêmes carrés, rangés par conséquences.',learn:'Cliquez sur le troisième picto : l\'Onde.',after:2400},
+  {pre:function(run){var v=M4.v;run.undo.push(function(){m4Go(v,true)});if(WP.k!=='aime')setWp('aime')},click:'#tools [data-m4v="2"]',say:'Je choisis Ripple : quand une chose bouge, les autres bougent aussi.',learn:'Cliquez sur le troisième picto : Ripple.',after:2400},
   {click:'#tools [data-m4v="3"]',say:'Puis la Carte : qui est où.',learn:'Puis le quatrième : la Carte.',after:2400},
   {say:'Voilà. Les mêmes carrés passent d\'une vue à l\'autre.',after:1600}]},
  devis:{n:'Faire un devis',d:'Studio Docs, une ligne, le numéro',steps:[
@@ -3516,6 +3532,52 @@ document.addEventListener('click',function(e){var b;if(!e.target.closest)return;
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tband [data-tex],#tex [data-tex]');if(!b)return;e.stopImmediatePropagation();TL.ex=!TL.ex;TL.mo=false;TL.open=false;var x=$('#tlx');if(x)x.remove();if(TL.ex)TB.dr=true;tlRender();dockRender()},true);
 ZONEX.forEach(function(z){if(z[0]==='#tband')z[2]='À gauche, le pointeur et « Où ? », vos dossiers et fichiers alignés sur le temps. Au centre, le temps : cliquez « Aujourd\'hui » pour choisir le jour, l\'échelle, la lecture ou le Jour J. À droite, toutes les fenêtres, le zoom de l\'app et le tiroir.'});
 bandRender();dockRender();
+
+/* ---------- v23 : un lecteur au centre de la bande ; des mots simples pour tous les âges ; l'orbe explique ---------- */
+/* les 4 vues : une question, un nom, une phrase */
+M4V[0].n='ME';M4V[0].q='Qui ?';M4V[0].p='Les gens, les moments, les choses à faire, les papiers et les projets de votre vie. Un carré pour chacun.';M4V[0].b=[['Ouvrir ME','me']];
+M4V[0].x='Au milieu, c\'est vous. Autour, chaque petit carré est quelque chose qui compte : une personne, un rendez-vous, une chose à faire, un papier, un projet. La couleur dit ce que c\'est. Tournez le cube avec la souris.';
+M4V[1].q='Quand ?';M4V[1].p='Hier à gauche, demain à droite. Aujourd\'hui, c\'est au milieu.';M4V[1].b=[['Écouter le temps','part']];
+M4V[1].x='Les mêmes carrés, rangés dans le temps. Ce qui est passé est à gauche, ce qui va venir est à droite. Le croisement, c\'est maintenant : le seul moment où l\'on peut agir.';
+M4V[2].n='Ripple';M4V[2].q='Et après ?';M4V[2].p='Quand une chose bouge, d\'autres bougent avec elle.';M4V[2].b=[['Essayer : un retard','wave'],['Le Jour J','orch']];
+M4V[2].x='Comme un caillou dans l\'eau. Si le fleuriste a du retard, la photo a du retard, puis le repas. Plus le cercle est loin du centre, plus l\'effet arrive tard. Essayez : je vous montre.';
+M4V[3].q='Où ?';M4V[3].p='Chaque chose à sa place sur la Terre.';M4V[3].b=[['Ouvrir le globe','monde']];
+M4V[3].x='Les mêmes carrés posés sur la carte : chaque personne, chaque lieu, chaque moment là où il se passe. Les fils relient ceux qui travaillent ensemble.';
+ET.tache[0]='À faire';ET.document[0]='Papiers';
+m4Info=function(){if(WP.k!=='aime')return;var V=M4V[M4.v];m4Ents();document.documentElement.style.setProperty('--uc1',V.c);document.documentElement.style.setProperty('--uc2','#7C5CFF');
+ $('#uv').innerHTML='<div class="ey2"><b>'+esc(V.q)+'</b>'+(M4.demo?'<span>exemple</span>':'')+'</div><h1>'+esc(V.n)+'</h1><p>'+esc(V.p)+'</p><div class="m4l">'+ETK.map(function(k){return'<span style="--c:'+ET[k][1]+'"><i></i>'+esc(ET[k][0])+'</span>'}).join('')+'</div><div class="acts">'+V.b.map(function(b,j){return'<button class="'+(j?'ghost':'go')+'" data-m4a="'+b[1]+'">'+esc(b[0])+'</button>'}).join('')+'<button class="ghost m4why" data-m4why title="L\'orbe AIME vous explique cette vue"><i class="orbdot"></i>AIME m\'explique</button></div>'};
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-m4a="me"]');if(b){e.stopImmediatePropagation();open('me')}},true);
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-m4why]');if(!b)return;var V=M4V[M4.v];tourAt($('#uv h1'),V.q+' · '+V.n,V.x);if(M4.v===2)setTimeout(function(){M4.wave=performance.now();UV.ta=M4.wave;pxKick()},900)});
+(function(){var s=scenes;scenes=function(){return s().map(function(x){if(x.k==='noyau')x.n='ME · votre coffre';return x})}})();
+if(WP.k==='aime')m4Info();if(typeof scRender==='function')scRender();
+/* le lecteur : ⏮ [ ▶ | moment ▾ ] ⏭ */
+TB.trk=null;
+tbWhen=function(){var z=T(ZOOM[TL.zoom].lab),c=TL.navC,k=TB.trk&&c===TB.trk.t;if(k)return'<b>'+esc(TB.trk.ti)+'</b><small>'+esc(fmtD(c,{weekday:'short',day:'numeric',month:'short'}))+' · '+esc(fmtH(c))+'</small>';if(!c||Math.abs(c-Date.now())<DAY/2)return'<b>Aujourd\'hui</b><small>par '+esc(z.toLowerCase())+'</small>';return'<b>'+esc(fmtD(c,{weekday:'short',day:'numeric',month:'short',year:Math.abs(c-Date.now())>300*DAY?'numeric':undefined}))+'</b><small>par '+esc(z.toLowerCase())+'</small>'};
+bandRender=function(){var mob=innerWidth<=760,mins=Object.keys(WIN).filter(function(k){return WIN[k].min&&!WIN[k].closed});
+ tb.innerHTML='<div class="bl">'+pmTrio(PM.band==='where'?'arrow':PM.band,'band',false)+'<button class="bb bwhere" data-tex aria-pressed="'+!!TL.ex+'" title="Tout retrouver : vos dossiers, fichiers et moments, d\'hier à demain" aria-label="Tout retrouver">'+bI('dossier')+'</button>'+(mob?'':mins.map(function(k){return'<button class="bmin" data-bmin="'+k+'" title="'+esc(APP[k].n)+' · en attente" aria-label="Rouvrir '+esc(APP[k].n)+'">'+esc(APP[k].n)+'</button>'}).join(''))+'</div>'+
+ '<div class="bc">'+(mob?'':'<button class="bb bskip" data-tnav="-1" title="Moment d\'avant · gardez appuyé pour reculer vite" aria-label="Moment d\'avant">'+bI('skipb')+'</button>')+'<div class="bpill"><button class="bplay" data-tplay aria-pressed="'+!!PT.play+'" title="'+(PT.play?'Arrêter':'Écouter le temps')+'" aria-label="'+(PT.play?'Arrêter':'Écouter le temps')+'">'+bI(PT.play?'stop':'play')+'</button><button class="bwhen" data-tpick aria-haspopup="menu" aria-expanded="'+TB.pick+'" title="Choisir le moment" aria-label="Choisir le moment">'+tbWhen()+bI('down')+'</button></div>'+(mob?'':'<button class="bb bskip" data-tnav="1" title="Moment suivant · gardez appuyé pour avancer vite" aria-label="Moment suivant">'+bI('skipf')+'</button>')+'</div>'+
+ '<div class="br">'+(mob?'':'<button class="bb" data-expose aria-pressed="'+document.body.classList.contains('expose')+'" title="Voir toutes les fenêtres" aria-label="Voir toutes les fenêtres">'+bI('tout')+'</button><i class="bs"></i><button class="bb" data-zoom="-1" title="Plus petit" aria-label="Plus petit">'+bI('zout')+'</button><button class="bb" data-zoom="0" title="Taille normale" aria-label="Taille normale">'+bI('fit')+'</button><button class="bb" data-zoom="1" title="Plus grand" aria-label="Plus grand">'+bI('zin')+'</button><i class="bs"></i>')+'<button class="bb" data-tdr aria-expanded="'+TB.dr+'" title="'+(TB.dr?'Ranger la frise':'Sortir la frise')+'" aria-label="'+(TB.dr?'Ranger la frise':'Sortir la frise')+'">'+bI(TB.dr?'down':'up')+'</button></div>';
+ if(TB.pick)tpickRender()};
+BI.skipb='<path d="M6 6v12"/><path d="M18 6l-9 6 9 6z"/>';BI.skipf='<path d="M18 6v12"/><path d="M6 6l9 6-9 6z"/>';
+function tbStep(d){if(PT.play&&PT.B){var c=PT.col;for(var i=c+d;i>=0&&i<PT.cols;i+=d){if(PT.B[i].some(function(L){return L.length})){PT.col=i-1;return}}return}var cur=TL.navC||Date.now(),L=tlCollect().filter(function(x){return x.ty!=='phase'&&(d>0?x.t>cur+60000:x.t<cur-60000)}).sort(function(a,b){return d>0?a.t-b.t:b.t-a.t}),x=L[0];if(!x){toast(d>0?'Plus rien après':'Rien avant');return}TB.trk=x;TL.navC=x.t;if(!TB.dr)TB.dr=true;tlRender();var it=$('#tl .tl-it[data-ti="'+x.id+'"]');if(it){it.classList.add('trk');setTimeout(function(){it.classList.remove('trk')},1400)}}
+(function(){var H=null;
+ window.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#tband [data-tnav]');if(!b||e.button)return;var d=+b.dataset.tnav;H={d:d,held:false,v:1,t:setTimeout(function(){H.held=true;TB.trk=null;H.i=setInterval(function(){if(PT.play&&PT.B){PT.col=Math.max(-1,Math.min(PT.cols-2,PT.col+d*2));return}H.v=Math.min(8,H.v*1.12);TL.navC=(TL.navC||Date.now())+d*ZOOM[TL.zoom].span*.012*H.v;tlRender()},70)},350)}},true);
+ var end=function(){if(!H)return;clearTimeout(H.t);clearInterval(H.i);var was=H;setTimeout(function(){if(H===was)H=null},0)};
+ window.addEventListener('pointerup',end,true);window.addEventListener('pointercancel',end,true);
+ window.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tband [data-tnav]');if(!b)return;e.stopImmediatePropagation();e.preventDefault();if(H&&H.held){H=null;return}H=null;tbStep(+b.dataset.tnav)},true);
+ window.addEventListener('keydown',function(e){var t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;if(e.altKey&&(e.key==='ArrowRight'||e.key==='ArrowLeft')){e.preventDefault();tbStep(e.key==='ArrowRight'?1:-1)}})})();
+/* tout geste qui change le moment efface le « morceau » en cours */
+window.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-tpk],[data-tpkd],[data-tgo]'))TB.trk=null},true);
+/* le menu du temps, en mots simples, avec le Jour J et le prochain moment */
+var _tpr23=tpickRender;tpickRender=function(){_tpr23();var m=$('#tpick');if(!m)return;var k=m.querySelectorAll('.tk-k');if(k[0])k[0].textContent='Voir par';if(k[1])k[1].textContent='Affichage';if(k[2])k[2].textContent='Aller à une date';
+ var now=Date.now(),n=tlCollect().filter(function(x){return x.ty!=='phase'&&x.ty!=='jourj'&&x.t>now}).sort(function(a,b){return a.t-b.t})[0];if(n&&!m.querySelector('[data-tpk="next"]')){var jj=m.querySelector('[data-tpk="jj"]')||m.querySelector('[data-tpk="today"]');jj.insertAdjacentHTML('afterend','<button role="menuitem" data-tpk="next" data-tnx="'+esc(n.id)+'" class="tk-big"><b>Prochain moment</b><small>'+esc(n.ti)+' · '+esc(fmtD(n.t,{weekday:'short',day:'numeric',month:'short'}))+' '+esc(fmtH(n.t))+'</small></button>')}
+ var b=$('#tband [data-tpick]');if(b){var r=b.closest('.bpill').getBoundingClientRect(),w=m.offsetWidth;m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2))+'px';m.style.bottom=(innerHeight-r.top+8)+'px'}};
+window.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tpick [data-tpk="next"]');if(!b)return;e.stopImmediatePropagation();var x=tlFind(b.dataset.tnx);tpickClose();if(!x)return;TB.trk=x;TL.navC=x.t;TB.dr=true;tlRender()},true);
+/* « Tout retrouver » : moins de chiffres, des mots simples */
+var _tex23=texRender;texRender=function(){_tex23();var h=$('#tex .tx-h');if(!h)return;h.querySelector('b').textContent='Tout retrouver';var s=h.querySelector('span');if(s)s.remove();var q=h.querySelector('[data-txq]');if(q){q.placeholder='Chercher…';q.setAttribute('aria-label','Chercher')}var x=$('#tex .tx-e');if(x)x.textContent='Rien pour l\'instant. Vos dossiers, fichiers et moments viendront se ranger ici.'};
+var _tlPop23=tlPop;tlPop=function(id,a){_tlPop23(id,a);var f=$('.tl-pop [data-tfold]'),w=$('.tl-pop [data-twhere]');if(f)f.innerHTML=svgI('folder')+' Retrouver';if(w)w.textContent='Chercher partout'};
+ZONEX.forEach(function(z){if(z[0]==='#tband')z[2]='À gauche, le pointeur et le dossier arc-en-ciel pour tout retrouver. Au milieu, un lecteur : ▶ pour écouter le temps, les flèches pour passer au moment d\'avant ou d\'après (gardez appuyé pour aller vite), et le bouton du milieu pour choisir le jour. À droite, les fenêtres, la taille et la frise.'});
+bandRender();
 
 dockRender();
 var h=(location.hash||'').slice(1);
