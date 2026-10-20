@@ -18,7 +18,17 @@
       "permanent": false
     },
     {
+      "source": "/monde/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/monde/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/monde/:path*/",
       "destination": "/",
       "permanent": false
     },
@@ -28,7 +38,17 @@
       "permanent": false
     },
     {
+      "source": "/lab/site/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/lab/site/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/site/:path*/",
       "destination": "/",
       "permanent": false
     },
@@ -38,7 +58,17 @@
       "permanent": false
     },
     {
+      "source": "/lab/socle/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/lab/socle/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/socle/:path*/",
       "destination": "/",
       "permanent": false
     },
@@ -48,7 +78,17 @@
       "permanent": false
     },
     {
+      "source": "/lab/orb/naissance/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/lab/orb/naissance/:path*",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/orb/naissance/:path*/",
       "destination": "/",
       "permanent": false
     }
