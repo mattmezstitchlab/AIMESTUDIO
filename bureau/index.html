@@ -1420,6 +1420,11 @@ body.tlex #tl{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1f
 #tband .bpill .bplay svg{width:17px;height:17px}
 #tband .tadd{width:30px;height:30px;margin-left:4px;border-radius:50%;border:2px solid transparent;background:linear-gradient(#000,#000) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box}#tband .tadd svg{stroke-width:2.4}
 @media(max-width:760px){#menubar .m4s{gap:2px}#menubar .m4s button{width:32px}#menubar .logo{margin-right:auto}}
+/* v25 */
+#menubar [data-sp=notif],#menubar #clock,#menubar .sep2{display:none!important}
+#menubar .m4s button{position:relative}
+#menubar .m4s button.dotn::after{content:"";position:absolute;top:4px;right:5px;width:7px;height:7px;border-radius:50%;background:#FB7185;box-shadow:0 0 0 2px #000}
+#sp{top:calc(50px + env(safe-area-inset-top,0px))}
 </style>
 
 <div id="desk" aria-hidden="true"><canvas id="px"></canvas></div>
@@ -3634,6 +3639,15 @@ var _tr24=toolsRender;toolsRender=function(m){_tr24(m);var t=$('#tools');if(!t)r
 toolsRender(curMode());menubarRender();
 var _band24=bandRender;bandRender=function(){_band24();if(innerWidth<=760){var bl=tb.querySelector('.bl');if(bl&&!bl.querySelector('[data-addm]'))bl.insertAdjacentHTML('beforeend','<button class="tadd bb" data-addm aria-label="Ajouter un moment" title="Ajouter un moment"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></button>')}};bandRender();
 
+
+/* ---------- v25 : plus de cloche ni d'heure en haut ; l'heure, le calendrier et les horloges vivent dans la Carte, les notifications dans Ripple ---------- */
+M4V[3].b=[['Heures et calendrier','widgets'],['Ouvrir le globe','monde']];
+M4V[2].b=[['Essayer : un retard','wave'],['Ce qui vous attend','notif'],['Le Jour J','orch']];
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-m4a="widgets"],[data-m4a="notif"]');if(!b)return;e.stopImmediatePropagation();var k=b.dataset.m4a;if(SP!==k)spToggle(k);else spClose()},true);
+window.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#menubar [data-m4="3"]');if(!b)return;setTimeout(function(){if(SP!=='widgets')spToggle('widgets')},250)},true);
+var _sc25=scRender;scRender=function(){_sc25();var n=0;try{n=notifs().length}catch(_){}var r=$('#menubar [data-m4="2"]');if(r){r.classList.toggle('dotn',n>0);if(n)r.setAttribute('aria-label',r.getAttribute('aria-label').replace(/ · \d+ .*$/,'')+' · '+n+' à voir')}};
+var _br25=badgeRender;badgeRender=function(){_br25();scRender()};
+if(WP.k==='aime')m4Info();menubarRender();
 
 dockRender();
 var h=(location.hash||'').slice(1);
