@@ -202,3 +202,79 @@ Dans SynchroView (Inspecter), chaque cas affiche **Interface** (Visible / Masqu�
 - Les identités sont des **identités de test fictives** choisies par le profil de la vue ; il n'y a pas encore de connexion. Le serveur ne fait confiance qu'à son propre tableau d'appartenance, mais n'importe qui peut demander « en tant que » une identité de test : c'est acceptable pour des données fictives sur une preview, **pas pour de vraies données** → étape 3 (vrais comptes de test, sessions).
 - Autorisation de transaction : signée avec `SV_DEMO_SECRET` s'il existe, sinon avec une valeur de démonstration ; pas de mémoire d'usage unique (fonctions sans état). L'étape 3 ajoutera un vrai secret et un usage unique en base.
 - Les fonctions répondent 404 en production : rien de cela n'est exposé sur lemondeaime.com.
+
+## 11. Vérifications avant l'étape 3 (20 octobre 2026)
+
+### Tests réellement exécutés
+`npm test` (= `node --test tests/*.test.cjs`) sur la branche `synchroview` : **165 tests, 165 réussis, 0 échec, 0 ignoré.**
+
+| Fichier | Tests |
+|---|---|
+| `tests/permissions.test.cjs` | 147 (27 situations × 5 rôles = 135, + 12 cas de paiement et de rôle) |
+| `tests/sv-api.test.cjs` | 17 (fonctions serveur) |
+| `tests/health.test.cjs` | 1 (sonde existante, antérieure à SynchroView) |
+| **Total** | **165** |
+
+Correction : le message du commit de l'étape 2 disait « 164 tests » : c'est le total SynchroView (147 + 17) ; 165 inclut la sonde `health`.
+
+### Preview Vercel (vérifiée dans le navigateur, session Vercel du propriétaire)
+En-têtes : `Content-Security-Policy: frame-ancestors 'self' https://www.lemondeaime.com https://lemondeaime.com https://ai-x-me.com https://www.ai-x-me.com` présent sur `/`, `/tout/`, `/synchroview/`, `/synchroview/demo/`, `/synchroview/bridge.js`. Pas de `X-Frame-Options` (inutile avec `frame-ancestors`). Réponses des fonctions : `Cache-Control: no-store`.
+
+| Vérification sur la preview | Attendu | Obtenu |
+|---|---|---|
+| Rôle envoyé par le navigateur (`role: owner` pour Lucie) | ignoré | 200, rôle `guest`, supprimer l'espace refusé |
+| Identité de test inconnue | 403 | 403 |
+| Méthode GET | 405 | 405 |
+| Coordination ouvre le contrat | 403 sans contenu | 403, aucun contenu |
+| Propriétaire ouvre le contrat | 200 avec contenu | 200, contenu |
+| Lucie lit la réponse de Nina | 403 | 403 |
+| Payer sans autorisation de transaction | 403 + autorisation requise | 403, `needsTx` |
+| Autorisation de transaction demandée par le propriétaire | 200 | 200 |
+| Même autorisation réutilisée par la coordination | 403 | 403 |
+| Autorisation falsifiée | 403 | 403 |
+| Paiement du propriétaire avec autorisation | 200 simulé | 200, « simulé : rien n'est enregistré » |
+| Autorisation demandée par la coordination | 403 | 403 |
+| Coordination supprime l'espace | 403 | 403 |
+| Studio Lumen modifie la séance attribuée / Paul la modifie | 200 / 403 | 200 / 403 |
+| SynchroView sur la démo : 4 vues, rôles reçus du serveur | owner, contributor, guest, editor | idem, 16 décisions par vue |
+
+Non vérifié sur la preview : le refus d'encadrement par un site tiers (il faudrait un autre domaine) ; vérifié en local, et l'en-tête est bien servi.
+
+### Cloisonnement
+- Identités, ressources et permissions fictives : uniquement dans `api/_sv/`, `api/sv/`, `synchroview/demo/`, `synchroview/permissions.js`, `synchroview/profiles.js` et les tests. Aucune référence dans le site (`index.html`) ni dans `/tout/` (vérifié par recherche).
+- Les fonctions `api/sv/*` répondent 404 en production.
+- **Cartes d'usage** (Moi, Pro, Participant, Coordinateur, Lecture seule) ≠ **rôles techniques** (owner, editor, contributor, viewer, guest) : une carte ne désigne qu'une identité ; le rôle est attribué côté serveur. Dans le site, les cartes ne changent que le contenu ; aucun rôle technique n'y apparaît.
+- Aucun paiement réel : le seul « paiement » est un effet simulé de la démonstration, sans prestataire de paiement ni donnée bancaire.
+
+## 12. Bilan : ce qu'un utilisateur extérieur peut utiliser aujourd'hui, ce qui manque pour un produit autonome
+
+### Utilisable aujourd'hui par quelqu'un d'extérieur
+| Quoi | Où | Limites |
+|---|---|---|
+| **Tout voir** : la page AIME en 4 cartes côte à côte, défilement synchronisé, ordinateur / mobile, index des sections, « copier la position » | `lemondeaime.com/tout/` (public) | Une seule page (le site AIME), 4 cartes fixes, synchronisation au pourcentage, pas de lien partageable |
+
+C'est tout : **SynchroView n'est pas encore accessible de l'extérieur**, la preview demande une connexion Vercel au compte du propriétaire.
+
+### Disponible dans SynchroView (branche, accès propriétaire)
+Synchronisation par sections · vues liées ou libres · 4 cartes ou 4 formats (iPhone, iPad, ordinateur, écran large) · focus et miniatures figées · compositions enregistrées et lien partageable · inspection (interface observée / règles vérifiées par le serveur) · démonstration des droits.
+
+### Ce qui manque pour un produit autonome
+| # | Manque | Pourquoi c'est bloquant |
+|---|---|---|
+| 1 | **Vues libres** : composer n'importe quelle grille (adresse × carte × format × version), pas seulement « 4 cartes » ou « 4 formats » | C'est la promesse de base : comparer librement |
+| 2 | **Comparer des versions** : production contre preview d'une branche, avant contre après | Il faut autoriser l'hôte SynchroView dans le pont et dans `frame-ancestors` de chaque version |
+| 3 | **Ouvrir à d'autres applications** : pont installable en une ligne, avec la liste d'origines choisie par l'application (aujourd'hui figée sur les domaines AIME) | Sans pont, aucune synchronisation par sections ni inspection |
+| 4 | **Sites sans pont** (externes) : rendu par un navigateur automatisé (captures, sections détectées), jamais en contournant leurs protections | La plupart des sites interdisent l'encadrement |
+| 5 | **Parcours** : rejouer une même suite d'actions dans toutes les vues, puis l'agent (plus tard) | Annoncé dans le brief, pas commencé |
+| 6 | **Vraies identités de test** (étape 3) : comptes, sessions, une session par vue | Aujourd'hui, identités fictives choisies par la carte |
+| 7 | **Accès et partage** : domaine propre, comptes, projets, liens partagés, compositions côté serveur | Aujourd'hui, compositions dans un seul navigateur, accès réservé au propriétaire |
+| 8 | **Inspection robuste pour toute application** : retrouver un élément sans `data-sv-id` (rôle, nom, structure), comparaison visuelle en image | Aujourd'hui fiable surtout sur les pages AIME balisées |
+| 9 | **Au-delà de 4 vues et sur téléphone** : miniatures en image, index des sections sur mobile | Fluidité et lisibilité |
+| 10 | **Cadre produit** : accueil, aide, conditions d'utilisation, données personnelles | Pour un utilisateur qui ne connaît pas AIME |
+
+### Ordre proposé pour revenir à la valeur principale (comparer librement)
+1. Vues libres et grille mixte (n° 1), sur les pages AIME.
+2. Comparer des versions d'AIME : production et preview (n° 2).
+3. Parcours rejoués en même temps dans toutes les vues, sans agent (n° 5).
+4. Ouverture à d'autres applications avec le pont configurable (n° 3), puis accès extérieur (n° 7).
+L'étape 3 (vraies identités) peut avancer en parallèle, elle ne bloque pas 1 à 3.

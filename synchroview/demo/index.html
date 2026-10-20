@@ -99,7 +99,7 @@ var DEC={},TESTED={},ROLE=null,OK=false;
 function key(r,a){return r+'|'+a}
 function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function api(path,body){return fetch('/api/sv/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({identity:PF.identity},body)),credentials:'same-origin'}).then(function(r){return r.json().then(function(j){return{code:r.status,body:j}},function(){return{code:r.status,body:{}}})})}
-$('#wn').textContent='…';$('#wp').textContent='profil : '+PF.label;
+$('#wn').textContent='…';$('#wp').textContent='carte : '+PF.label;
 /* 1 · le serveur décide pour chaque bouton ; l'interface ne fait que suivre */
 var pairs=[];$$('[data-res][data-act]').forEach(function(b){var k=key(b.dataset.res,b.dataset.act);if(!pairs.some(function(p){return key(p.res,p.action)===k}))pairs.push({res:b.dataset.res,action:b.dataset.act})});
 api('check',{checks:pairs}).then(function(r){if(r.code!==200)throw new Error(r.body&&r.body.error||('réponse '+r.code));OK=true;ROLE=r.body.role;$('#wn').textContent=r.body.identity.name;$('#wr').textContent='rôle : '+ROLE;
