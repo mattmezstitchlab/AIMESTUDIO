@@ -2093,7 +2093,7 @@ MENUS.help=function(){return[[T('Parler à AIME'),function(){spToggle('aime')}],
 var SP=null;
 function spToggle(k){if(SP===k){spClose();return}SP=k;var el=$('#sp');if(!el){el=document.createElement('aside');el.id='sp';el.setAttribute('role','dialog');document.body.appendChild(el)}el.setAttribute('aria-label',k);el.innerHTML=(SPR[k]||SPR.about)();var f=el.querySelector('input:not([type=checkbox]),textarea');if(f&&k!=='notif')setTimeout(function(){f.focus()},30);if(k==='widgets')wgTick();ripAt(el,innerWidth-60,20)}
 function spClose(){SP=null;var el=$('#sp');if(el)el.remove()}
-document.addEventListener('click',function(e){if(SP&&!e.target.closest('#sp')&&!e.target.closest('[data-sp]')&&!e.target.closest('#orbf'))spClose()});
+document.addEventListener('click',function(e){if(SP&&e.target.isConnected&&!e.target.closest('#sp')&&!e.target.closest('[data-sp]')&&!e.target.closest('#orbf')&&!e.target.closest('.menu'))spClose()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&SP)spClose();if((e.metaKey||e.ctrlKey)&&e.code==='Space'){e.preventDefault();spToggle('aime')}});
 function notifs(){var now=Date.now(),L=tlCollect().filter(function(x){return!x.done&&x.ty!=='projet'&&x.ty!=='phase'});return L.filter(function(x){return x.t<now&&x.t>now-30*DAY&&['tache','paiement','rappel','apres'].indexOf(x.ty)>-1}).map(function(x){x.late=1;return x}).concat(L.filter(function(x){return x.t>=now&&x.t<now+2*DAY}))}
 var SPR={
@@ -2921,7 +2921,7 @@ var RECIPES={
   {frame:['docs',{aime:'field',k:'lines',op:'append',v:'Saxophone · cérémonie et cocktail ; 1 ; 450',done:'Ligne ajoutée'}],say:'J\'ajoute une ligne : saxophone, cérémonie et cocktail, 450 €.',after:2000},
   {frame:['docs',{aime:'field',k:'docno',op:'inc',done:'Numéro suivant'}],say:'Je passe au numéro de devis suivant.',after:1800},
   {go:function(){return $$('.win .tb [data-wt="present"]').filter(function(x){return x.offsetParent})[0]},say:'Pour le montrer au client : Présenter, en haut de la fenêtre.',after:2000},
-  {go:'#menubar [data-sp="export"]',say:'Et le PDF se télécharge depuis le picto partage, en haut.',after:1800}]},
+  {go:'#menubar [data-menu="file"]',say:'Et le PDF s\'exporte depuis le menu Fichier, en haut.',after:1800}]},
  fairepart:{n:'Créer un faire-part',d:'Supports, le titre, les couleurs',steps:[
   {open:['supports','#add.card'],say:'J\'ouvre Supports avec une carte de faire-part.',learn:'Ouvrez Supports dans le Dock.',after:3200},
   {go:function(){return $$('.win .tb .tt').filter(function(x){return x.offsetParent}).pop()},say:'Le nom du projet est en haut de la fenêtre : un double-clic le renomme.',after:2200},
@@ -3620,7 +3620,7 @@ ZONEX.forEach(function(z){if(z[0]==='#tband')z[2]='À gauche, le pointeur et le 
 bandRender();
 
 /* ---------- v24 : la barre du haut épurée (les 4 vues au centre, l'orbe au centre sur mobile) ; « + » pour ajouter un moment ---------- */
-var _mb24=menubarRender;menubarRender=function(){_mb24();var m=$('#menubar');if(!m)return;['export','invite','wp','a11y','lang'].forEach(function(k){var b=m.querySelector('[data-sp="'+k+'"]');if(b)b.remove()});var c=$('#curApp');if(c&&!activeApp())c.hidden=true;scRender()};
+var _mb24=menubarRender;menubarRender=function(){_mb24();var m=$('#menubar');if(!m)return;['export','invite','wp','a11y','lang'].forEach(function(k){var b=m.querySelector('[data-sp="'+k+'"]');if(b)b.remove()});var c=$('#curApp');if(c)c.hidden=!activeApp();scRender()};
 var _sc24=scRender;scRender=function(){_sc24();var r=$('#menubar .scn');if(!r)return;var sp=r.querySelector(':scope>span');if(sp)sp.remove();
  var mob=innerWidth<=760,st=$('#menubar .st .orbslot'),ms=r.querySelector('.m4s');if(mob&&ms){if(st)st.remove();if(!ms.querySelector('.orbslot')){var bs=ms.querySelectorAll('button');if(bs[1])bs[1].insertAdjacentHTML('afterend','<span class="orbslot" aria-hidden="true"></span>')}}
  if(ORB.el&&ORB.home){var h=orbHome();orbPlace(h.x,h.y)}};
@@ -3648,6 +3648,9 @@ window.addEventListener('click',function(e){var b=e.target.closest&&e.target.clo
 var _sc25=scRender;scRender=function(){_sc25();var n=0;try{n=notifs().length}catch(_){}var r=$('#menubar [data-m4="2"]');if(r){r.classList.toggle('dotn',n>0);if(n)r.setAttribute('aria-label',r.getAttribute('aria-label').replace(/ · \d+ .*$/,'')+' · '+n+' à voir')}};
 var _br25=badgeRender;badgeRender=function(){_br25();scRender()};
 if(WP.k==='aime')m4Info();menubarRender();
+
+/* v25b : Exporter reste accessible (menu Fichier), le menu de l'app revient quand une app a le focus */
+var _fc25=focus;focus=function(id){_fc25(id);var c=$('#curApp');if(c){c.hidden=!activeApp();if(activeApp())c.textContent=APP[activeApp()].n}};
 
 dockRender();
 var h=(location.hash||'').slice(1);
