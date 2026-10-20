@@ -19,8 +19,9 @@ html,body{margin:0;background:var(--desk);color:var(--ink);font:400 16px/1.5 var
 .top nav{display:flex;gap:8px}
 .top nav a{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:rgba(10,10,12,.6);backdrop-filter:blur(10px)}
 .stage{position:fixed;inset:0;overflow:hidden;background:radial-gradient(60% 60% at 62% 45%,rgba(124,92,255,.14),transparent 70%),radial-gradient(circle at 1px 1px,rgba(255,255,255,.045) 1px,transparent 0) 0 0/22px 22px,var(--desk)}
-#skin,#skin .cone,#sv,#fx,#ov{position:absolute;inset:0;width:100%;height:100%}
+#skin,#skin .cone,#iris,#sv,#fx,#ov{position:absolute;inset:0;width:100%;height:100%}
 #skin{filter:drop-shadow(0 0 22px rgba(124,92,255,.6));pointer-events:none}
+#core{position:absolute;left:0;top:0;border-radius:50%;opacity:0;background:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);animation:hue 6s linear infinite;will-change:transform,opacity}
 #skin .cone{background:conic-gradient(from 0deg at var(--cx,50%) var(--cy,50%),#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);clip-path:url(#clipP);animation:hue 6s linear infinite}
 @keyframes hue{to{filter:hue-rotate(360deg)}}
 #sv,#fx,#ov{pointer-events:none}
@@ -48,13 +49,13 @@ html,body{margin:0;background:var(--desk);color:var(--ink);font:400 16px/1.5 var
  .t{font-size:clamp(32px,9vw,44px)}
  .prog{display:none}
 }
-@media(prefers-reduced-motion:reduce){#skin .cone,.t em{animation:none}}
+@media(prefers-reduced-motion:reduce){#core,#skin .cone,.t em{animation:none}}
 </style>
 </head>
 <body>
 <header class="top"><a class="mk" href="/">AIME<sup>®</sup></a><nav><a href="/lab/orb/">Lab</a><a href="/bureau/">Bureau</a></nav></header>
 <div class="stage" aria-hidden="true">
-  <div id="skin"><div class="cone"></div></div>
+  <div id="skin"><div id="iris"><div class="cone"></div></div><div id="core"></div></div>
   <svg id="sv"><defs><clipPath id="clipP" clipPathUnits="userSpaceOnUse"><path id="envC"/></clipPath></defs><path id="envG" fill="#000" fill-opacity="0"/><g id="segs" style="display:none"></g></svg>
   <canvas id="fx"></canvas>
   <div id="ov"></div>
@@ -124,14 +125,23 @@ var CH=[
  ['formulaire','Demander','Elle devient un formulaire.','Les bonnes questions, une à une, et rien n\'est envoyé sans vous.'],
  ['site','Construire','Elle construit votre site sous vos yeux.','Une information saisie une fois devient une page, un PDF, un lien à partager.'],
  ['fin','AIME','Le bon outil, <em>au bon moment</em>.','Un seul objet vivant qui traverse tous vos outils.']];
-var SHP,tl=null,SEG=[],cur=-1,typed={};
+var REACH=[],SHP,tl=null,SEG=[],cur=-1,typed={};
 function build(){geo();var s=S();SHP=CH.map(function(c){return norm(s[c[0]]())});envC.setAttribute('d',SHP[0]);envG.setAttribute('d',SHP[0]);if(tl)tl.kill();
  SEG.forEach(function(x){x.tw.kill()});SEG=[];var hs=$('#segs');hs.innerHTML='';
- if(G&&!RM){for(var i=1;i<SHP.length;i++){var el=document.createElementNS('http://www.w3.org/2000/svg','path');el.setAttribute('d',SHP[i-1]);hs.appendChild(el);var tw=G.to(el,{morphSVG:{shape:SHP[i],type:'rotational'},duration:1,ease:'power2.inOut',paused:true});tw.progress(1).progress(0);SEG.push({el:el,tw:tw})}}
+ REACH=SHP.map(function(d){envG.setAttribute('d',d);try{var b=envG.getBBox();return Math.max.apply(null,[[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]].map(function(q){return Math.hypot(q[0]-C[0],q[1]-C[1])}))+6}catch(_){return Math.hypot(W,H)}});envG.setAttribute('d',SHP[0]);
  $('#scroll').innerHTML=CH.map(function(){return'<section></section>'}).join('');$('#prog').innerHTML=CH.map(function(){return'<i></i>'}).join('');onScroll(true)}
+/* transition : la forme se condense dans l'orbe, puis l'orbe éclot dans la forme suivante (pas de morphing vectoriel) */
+var irisEl=null,coreEl=null,lastD='';
+function iris(k,u){irisEl=irisEl||$('#iris');coreEl=coreEl||$('#core');var rc=R*.5,last=k>=SHP.length-1,i,r,co,cs;
+ if(last||u<=0){i=k;r=1e5;co=0;cs=.4}
+ else if(u<.5){var v=sm(u/.5);i=k;r=Math.max(rc,REACH[k]+(rc-REACH[k])*v);if(REACH[k]<rc)r=1e5;co=v;cs=.4+.6*v}
+ else{var v2=sm((u-.5)/.5);i=k+1;r=rc+(REACH[k+1]-rc)*v2;if(REACH[k+1]<rc)r=1e5;co=1-v2;cs=1+.08*v2}
+ var d=SHP[i];if(d!==lastD){lastD=d;envC.setAttribute('d',d);envG.setAttribute('d',d)}
+ irisEl.style.clipPath=r>=1e5?'none':'circle('+r.toFixed(1)+'px at '+C[0]+'px '+C[1]+'px)';
+ coreEl.style.width=coreEl.style.height=(rc*2)+'px';coreEl.style.opacity=co.toFixed(3);coreEl.style.transform='translate('+(C[0]-rc)+'px,'+(C[1]-rc)+'px) scale('+cs.toFixed(3)+')'}
 function sm(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)}
 function onScroll(force){var max=document.documentElement.scrollHeight-innerHeight,p=max>0?scrollY/max:0,pos=p*(CH.length-1),k=Math.floor(pos),f=pos-k;if(k>=CH.length-1){k=CH.length-1;f=0}
- var u=sm((f-.5)/.45),d;if(SEG.length&&k<SEG.length&&u>0){var sg=SEG[k];sg.tw.progress(u);d=u>=1?SHP[k+1]:sg.el.getAttribute('d')}else d=SHP[Math.min(SHP.length-1,u>=1?k+1:k)];envC.setAttribute('d',d);envG.setAttribute('d',d)
+ var u=(f-.5)/.45;u=Math.max(0,Math.min(1,u));iris(k,u)
  var show=f<.55?k:(f>.95?k+1:-1);if(show!==cur||force){cur=show;setText(show)}
  $('#hint').style.opacity=scrollY>40?0:1;var I=$('#prog').children;for(var i=0;i<I.length;i++)I[i].className=i===Math.round(pos)?'on':''}
 var TT=0;function typeIn(el,txt,sp){var id=++TT;el.textContent='';el.classList.add('caret');return new Promise(function(ok){var i=0;(function st(){if(id!==TT)return;if(i>=txt.length){el.classList.remove('caret');ok();return}el.textContent+=txt[i++];setTimeout(st,RM?0:(sp||16))})()})}
