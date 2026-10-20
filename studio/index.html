@@ -892,6 +892,10 @@ html.embedded .ws-side .sec.hl{outline:2px solid #7C5CFF;outline-offset:6px;bord
 html.embedded body .mid{grid-template-columns:0 minmax(0,1fr) 0!important;position:relative}
 html.embedded .side{position:absolute;z-index:6;top:0;bottom:0;width:min(360px,92%);box-shadow:0 0 60px -10px rgba(0,0,0,.6)}
 html.embedded #pl{left:0}html.embedded #pr{right:0}
+html.embedded #aimeMk{position:fixed;z-index:60;pointer-events:none;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#7C5CFF;color:#fff;font:700 12px/20px Inter,system-ui,sans-serif;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.35);opacity:0;transform:scale(.8);transition:opacity .15s,transform .15s}html.embedded #aimeMk.on{opacity:1;transform:none}html.embedded #aimeMk.x{background:#E040FB}
+html.embedded .fw [data-field]{cursor:pointer}html.embedded .fw [data-field]:hover{outline:1.5px dashed rgba(124,92,255,.7);outline-offset:2px}
+html.embedded #aimeFold{position:fixed;z-index:60;display:flex;align-items:center;gap:6px;height:24px;padding:0 10px 0 6px;border-radius:999px;border:1.5px solid transparent;background:linear-gradient(#141418,#141418) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;color:#fff;font:600 11.5px Inter,system-ui,sans-serif;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .15s}html.embedded #aimeFold.on{opacity:1;pointer-events:auto}html.embedded #aimeFold svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8}@media(prefers-reduced-motion:reduce){html.embedded #aimeMk{transition:none}}
+
 @media(max-width:760px){html.embedded body.brfull .app:not(.noR) #pr,html.embedded body.brfull .app:not(.noL) #pl{visibility:visible!important;width:min(360px,92%)!important;min-width:0!important;overflow:hidden!important;border:0!important}html.embedded body.brfull .app:not(.noR) #pr>.in{width:100%}}
 html.embedded #stage{grid-column:2!important;min-width:0}
 html.embedded .app.noL #pl,html.embedded .app.noR #pr{display:none}
@@ -4219,10 +4223,10 @@ if(EMBED){
  let tt=0;new MutationObserver(()=>{if(tuning)return;clearTimeout(tt);tt=setTimeout(applyTune,40)}).observe(document.getElementById('wall')||document.body,{subtree:true,childList:true});
  const snapDoc=()=>({d:JSON.stringify(V().d),tune:JSON.stringify(P.tune||{})});
  const restDoc=s=>{V().d=JSON.parse(s.d);P.tune=JSON.parse(s.tune);save();try{fillAll()}catch(_){}last={};render('Annulé')};
- document.addEventListener('click',e=>{if(PMODE==='arrow')return;const n=e.target.closest&&e.target.closest('.fw [data-field]');if(!n)return;e.preventDefault();e.stopPropagation();
+ document.addEventListener('click',e=>{if(PMODE==='arrow'&&!(window.AIME_CLICKSEL&&!(typeof VM!=='undefined'&&VM.v)))return;const n=e.target.closest&&e.target.closest('.fw [data-field]');if(!n)return;e.preventDefault();e.stopPropagation();
   const fr=n.closest('[id^="fr-"]'),fid=fr?fr.id.slice(3):'',k=n.dataset.field,r=n.getBoundingClientRect(),img=k==='photo'||k==='motif'||k==='logo'||n.tagName==='IMG'||/url\(/.test(getComputedStyle(n).backgroundImage||'');selHi(n);
   const U=usedBy(k);post({aime:'sel',type:img?'image':'text',k:k,label:img?(k==='logo'?'Logo':'Photo du projet'):(typeof flabel==='function'?flabel(k):k),txt:img?'':n.textContent.trim().slice(0,400),fid:fid,fname:fname2(fid),n:U.length,where:U.map(fname2).slice(0,12),ta:getComputedStyle(n).textAlign,r:{x:r.left,y:r.top,w:r.width,h:r.height},scope:PMODE==='times'?'all':'one'})},true);
- document.addEventListener('pointerdown',e=>{if(PMODE==='arrow')return;const cv=e.target.closest&&e.target.closest('#brCv');if(!cv||!BRP)return;e.preventDefault();e.stopImmediatePropagation();
+ document.addEventListener('pointerdown',e=>{if(PMODE==='arrow'&&!(window.AIME_CLICKSEL&&typeof BR!=='undefined'&&BR.tool==='hand'))return;const cv=e.target.closest&&e.target.closest('#brCv');if(!cv||!BRP)return;e.preventDefault();e.stopImmediatePropagation();
   const[gx,gy]=brPos(e),x=Math.floor(gx),y=Math.floor(gy),b=BRP;if(x<0||y<0||x>=b.w||y>=b.h)return;const i=y*b.w+x,s=b.cross[i],D=dmcAll(),pal=b.pal.map((d,j)=>({s:j,hex:D[d].hex,code:D[d].code}));let cnt=0;if(s>=0)for(let j=0;j<b.cross.length;j++)if(b.cross[j]===s)cnt++;
   post({aime:'sel',type:'stitch',x:x,y:y,s:s,code:s>=0?D[b.pal[s]].code:'',name:s>=0?D[b.pal[s]].name:'',hex:s>=0?D[b.pal[s]].hex:'',n:cnt,pal:pal,label:s>=0?'Point DMC '+D[b.pal[s]].code:'Case vide',r:{x:e.clientX-6,y:e.clientY-6,w:12,h:12},scope:PMODE==='times'?'all':'one'})},true);
  window.addEventListener('message',e=>{const d=e.data||{};
@@ -4280,6 +4284,18 @@ window.addEventListener('message',e=>{const d=e.data||{};if(!EMBED)return;
  if(d.aime==='act'&&typeof d.sel==='string'&&!document.querySelector(d.sel)){const w=cmdWhy();if(w){e.stopImmediatePropagation();toast(w)}}
  if(d.aime==='export'&&P&&d.kind&&d.kind!=='all'){try{toast('Export '+String(d.kind).toUpperCase()+' en préparation : '+fname(sel||P.formats[0]))}catch(_){}}
  if(d.aime==='cmdlist'){try{window.parent.postMessage({aime:'cmdlist',ids:Object.keys(CMDS)},'*')}catch(_){}}},true);
+
+/* ===== v92 : on clique l'objet, l'Orbe répond ; repères discrets : + options, × partagé, dossier = où c'est rangé ===== */
+window.AIME_CLICKSEL=true;
+(function(){if(!EMBED)return;const mk=document.createElement('div');mk.id='aimeMk';mk.setAttribute('aria-hidden','true');document.body.appendChild(mk);
+ const fk=document.createElement('button');fk.id='aimeFold';fk.type='button';document.body.appendChild(fk);
+ let hov=null,fr=null;
+ const place=(el,n)=>{const r=n.getBoundingClientRect();el.style.left=Math.max(4,Math.min(innerWidth-el.offsetWidth-4,r.right-el.offsetWidth+6))+'px';el.style.top=Math.max(4,r.top-10)+'px'};
+ document.addEventListener('mouseover',e=>{const n=e.target.closest&&e.target.closest('.fw [data-field]');if(n!==hov){hov=n;if(!n){mk.classList.remove('on')}else{const k=n.dataset.field,fr2=new Set([...document.querySelectorAll('.fw [data-field="'+CSS.escape(k)+'"]')].map(x=>x.closest('[id^="fr-"]'))),c=fr2.size;mk.textContent=c>1?'× '+c:'+';mk.title=c>1?'Cliquez : options, ici ou sur les '+c+' supports':'Cliquez : options ici';mk.classList.toggle('x',c>1);mk.classList.add('on');place(mk,n)}}
+  const f=e.target.closest&&e.target.closest('.fw[id^="fr-"],[id^="fr-"]');if(f!==fr){fr=f;if(f&&P){fk.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z"/></svg><span>Rangé dans « '+(P.name||'ce projet').replace(/</g,'&lt;')+' »</span>';fk.setAttribute('aria-label','Rangé dans '+(P.name||'ce projet')+' : voir dans le temps');fk.classList.add('on');const r=f.getBoundingClientRect();fk.style.left=Math.max(4,r.left)+'px';fk.style.top=Math.max(4,r.top-30)+'px'}else if(!f&&!(e.target.closest&&e.target.closest('#aimeFold')))fk.classList.remove('on')}},true);
+ addEventListener('scroll',()=>{mk.classList.remove('on');fk.classList.remove('on');hov=null;fr=null},true);
+ fk.addEventListener('click',()=>{try{window.parent.postMessage({aime:'reveal',pid:P&&P.id,name:P&&P.name},'*')}catch(_){}});
+})();
 
 if(EMBED){let nar=null;const chk=()=>{const n=true;if(n===nar)return;const first=nar===null;nar=n;const app=$('#app');if(n){if(!first){app.dataset.wasL=app.classList.contains('noL')?'0':'1';app.dataset.wasR=app.classList.contains('noR')?'0':'1'}togglePanel('L',false);togglePanel('R',false)}else if(!first){if(app.dataset.wasL==='1')togglePanel('L',true);if(app.dataset.wasR==='1')togglePanel('R',true)}};addEventListener('resize',chk);setTimeout(chk,0)}
 $('#tglL').onclick=()=>togglePanel('L');$('#tglR').onclick=()=>togglePanel('R');$('#tglB').onclick=()=>togglePanel('B',false);$('#showB').onclick=()=>togglePanel('B',true);

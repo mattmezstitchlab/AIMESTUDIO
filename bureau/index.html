@@ -1480,6 +1480,35 @@ body.expose #mpal-h{display:none}
 #na-me .mem-l{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px}#na-me .mem-l li{border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;display:grid;gap:4px}#na-me .mem-l p{margin:0}#na-me .mem-l small{color:var(--soft)}#na-me .mem-l .pill{justify-self:start;font-size:12px}
 @media(max-width:760px){#cw,#rpd{left:12px;right:12px;width:auto;top:calc(54px + env(safe-area-inset-top,0px));bottom:auto;max-height:30vh;overflow:auto}#rpd .rp-n{display:none}#cw .cw-c:nth-child(2){display:none}}
 body.expose #cw,body.expose #rpd,body.wp-scene #cw,body.wp-scene #rpd{display:none}
+/* v28 */
+.win .tb .ptr,#tband .ptr{display:none!important}
+#tex .tx-r{scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%)}
+#tex .tx-r::-webkit-scrollbar,#tex .tx-g::-webkit-scrollbar{display:none}
+#tex .tx-g{scrollbar-width:none}
+#tex .tx-h{border-bottom:0;padding-bottom:2px}
+#tex .tx-now{width:1px;background:linear-gradient(transparent,rgba(255,255,255,.7) 18%,rgba(255,255,255,.7) 82%,transparent)}
+.jj-t button[aria-selected=true]{background:#fff;color:#0B0B0D}
+.jj-h .k{color:var(--soft)}
+.rn-i2{gap:16px}
+.rn-i2 .rw-q{display:grid;gap:8px}
+.rn-i2 .rw-q>b{font:600 13px var(--ui);color:var(--ink)}
+.rn-i2 .rw-m{display:grid;gap:4px}
+.rn-i2 .rw-m button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);border-radius:10px;padding:8px 10px;font:500 13px var(--ui);cursor:pointer}
+.rn-i2 .rw-m button time{font:500 12px var(--ui);color:var(--soft);min-width:40px}
+.rn-i2 .rw-m button[aria-checked=true]{border-color:#E040FB;background:rgba(224,64,251,.12)}
+.rn-i2 .rw-d{display:flex;flex-wrap:wrap;gap:6px}
+.rn-i2 .rw-d button{border:1px solid var(--line);background:none;color:var(--ink);border-radius:999px;padding:6px 12px;font:600 12.5px var(--ui);cursor:pointer}
+.rn-i2 .rw-d button[aria-checked=true]{background:#fff;color:#0B0B0D;border-color:#fff}
+.rn-i2 .rw-x summary{cursor:pointer;color:var(--soft);font:500 12.5px var(--ui)}
+.rn-i2 .rw-x[open]{display:grid;gap:10px}
+.rn-i2 .rw-x label{margin-top:8px}
+.rn-i2 textarea{font-family:var(--ui)!important;font-size:13px!important}
+.rn-k span{font-family:var(--ui)!important;font-weight:600!important}
+.rn-l time{font-family:var(--ui)!important;color:var(--soft)}
+.rn-l li.late time{color:#F0ABFC}.rn-l li.late{background:rgba(224,64,251,.08)}
+.rn-w{border-color:rgba(224,64,251,.35)!important;background:rgba(224,64,251,.07)!important}
+.rn-g h5{font-family:var(--ui)!important;font-weight:600!important;font-size:15px!important;text-transform:capitalize}
+#tools .vb-sc{display:flex;flex-direction:column;gap:3px;margin-top:4px;padding:3px;border-radius:10px;background:rgba(255,255,255,.06)}#tools .vb-sc button{width:30px!important;height:24px!important;border-radius:7px;font:700 14px var(--ui);color:#C9C9D2}#tools .vb-sc button[aria-pressed=true]{background:#fff;color:#0B0B0D}#mpal #tools .vb-sc{flex-direction:row}
 </style>
 
 <div id="desk" aria-hidden="true"><canvas id="px"></canvas></div>
@@ -3815,6 +3844,37 @@ function wtAll(w){if(!w||w.el.querySelector('[data-wexp]'))return;var p=w.el.que
 var _open27=open;open=function(id,h){_open27(id,h);wtAll(WIN[id])};Object.keys(WIN).forEach(function(k){wtAll(WIN[k])});
 document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.win [data-wexp]')){e.stopPropagation();exposeToggle()}},true);
 if(WP.k==='aime'){m4Info()}cwRender();rpRender();
+
+/* ---------- v28 : plus de pointeurs ↖ + × : on clique l'objet, l'Orbe répond (portée « ici / partout » dans son menu) ; Tout retrouver montre où les choses sont rangées ; L'onde du Jour J dans le design system ---------- */
+/* 1. les pointeurs disparaissent ; la portée se choisit dans le menu de l'Orbe */
+var _pmSet28=pmSet;pmSet=function(ctx,m){_pmSet28(ctx,'arrow')};
+Object.keys(WIN).forEach(function(k){if(WIN[k].frame)toFrame(k,{aime:'pm',m:'arrow'})});
+/* 2. le studio montre où le support est rangé : on y va directement */
+window.addEventListener('message',function(e){var d=e.data||{};if(d.aime!=='reveal')return;TEXF=d.pid?'p:'+d.pid:null;TL.ex=true;TL.mo=false;TB.dr=true;tlRender();dockRender()});
+/* 3. Tout retrouver : la mémoire rangée, sans chercher ni deviner */
+var _tex28=texRender;texRender=function(){var want=TEXF;_tex28();var el=$('#tex');if(!el)return;var x=el.querySelector('[data-txpt]');if(x)x.remove();
+ var F=OS.folders||[],P=projects();
+ $$('#tex .tx-c[data-tp]').forEach(function(c){var p=P.filter(function(q){return q.id===c.dataset.tp})[0];if(!p)return;var fo=F.filter(function(f){return(f.items||[]).indexOf(p.id)>-1||f.id===p.folder})[0],ap=APP[appOfProject(p)];c.querySelector('small').textContent='Rangé dans '+(fo?fo.n+' › ':'')+(ap?ap.n:'Projets')+' · '+(p.formats||[]).length+' supports';if(want==='p:'+p.id){c.classList.add('hit');requestAnimationFrame(function(){var r=el.querySelector('.tx-r');r.scrollLeft=Math.max(0,c.closest('.tx-g').offsetLeft-r.clientWidth/2);c.focus({preventScroll:true})})}});
+ $$('#tex .tx-c[data-ti]').forEach(function(c){var it=tlFind(c.dataset.ti);if(!it)return;var a=it.src&&APP[it.src];var s=c.querySelector('small');if(a&&s.textContent.indexOf('·')>-1&&!/Rangé/.test(s.textContent))s.textContent=s.textContent+' · dans '+a.n});
+ if(want&&/^p:/.test(want))TEXF=null};
+/* 4. L'onde du Jour J : choisir un moment et un décalage, sans texte à taper */
+var _rpUi28=REAL.ripple.ui;
+REAL.ripple.ui=function(){var h=_rpUi28();return h.replace('<form class="rn-i" id="rnf">','<form class="rn-i rn-i2" id="rnf"><div class="rw-q"><b>Quel moment bouge ?</b><div class="rw-m" id="rwm" role="radiogroup" aria-label="Moment"></div></div><div class="rw-q"><b>De combien ?</b><div class="rw-d" role="radiogroup" aria-label="Décalage">'+[-15,15,30,45,60].map(function(v){return'<button type="button" role="radio" aria-checked="'+(v===30)+'" data-rwd="'+v+'">'+(v>0?'+':'−')+Math.abs(v)+' min</button>'}).join('')+'</div></div><details class="rw-x"><summary>Modifier le plan et l\'heure de fermeture</summary>').replace('<button class="pill dark">Propager</button></form>','</details><button class="pill dark">Voir l\'onde</button></form>')};
+var _rpInit28=REAL.ripple.init;REAL.ripple.init=function(){rwChips();_rpInit28&&_rpInit28()};
+function rwChips(){var f=$('#rnf'),box=$('#rwm');if(!f||!box)return;var L=rnLines(f.t.value).filter(function(r){return hmP(r[0])!=null}),cur=nrm((f.sig.value.split(/\s*;\s*/)[0])||'');box.innerHTML=L.map(function(r){var on=nrm(r[1]||'').indexOf(cur)>-1&&cur;return'<button type="button" role="radio" aria-checked="'+!!on+'" data-rwm="'+esc(r[1]||'')+'"><time>'+esc(r[0])+'</time>'+esc(r[1]||'')+'</button>'}).join('')}
+document.addEventListener('click',function(e){var b,f=$('#rnf');if(!f||!e.target.closest)return;
+ if(b=e.target.closest('[data-rwm]')){var d=(f.sig.value.split(/\s*;\s*/)[1])||'+30';f.sig.value=b.dataset.rwm+' ; '+d;$$('#rwm [data-rwm]').forEach(function(x){x.setAttribute('aria-checked',String(x===b))});REAL.ripple.run();return}
+ if(b=e.target.closest('[data-rwd]')){var v=+b.dataset.rwd,m=(f.sig.value.split(/\s*;\s*/)[0])||'';f.sig.value=m+' ; '+(v>0?'+':'')+v;$$('[data-rwd]').forEach(function(x){x.setAttribute('aria-checked',String(x===b))});REAL.ripple.run();return}});
+document.addEventListener('input',function(e){if(e.target&&e.target.closest&&e.target.closest('#rnf')&&e.target.name==='t'){clearTimeout(window.__rwt);window.__rwt=setTimeout(function(){rwChips();REAL.ripple.run()},400)}});
+if(WIN.jourj&&JJ.t==='ripple')jjRender();
+
+/* la portée des verbes (ici / partout) se choisit à côté des verbes, plus par un pointeur */
+VB.scope='one';
+var _pmFor28=pmFor;pmFor=function(id){return VB.cur&&VB.scope==='all'?'times':'arrow'};
+var _vbR28=vbRender;vbRender=function(){_vbR28();var el=$('#tools .vb');if(!el)return;var o=el.querySelector('.vb-sc');if(o)o.remove();if(!VB.cur)return;el.insertAdjacentHTML('beforeend','<div class="vb-sc" role="group" aria-label="Portée du verbe"><button data-vbsc="one" aria-pressed="'+(VB.scope==='one')+'" title="Ici seulement" aria-label="Ici seulement">+</button><button data-vbsc="all" aria-pressed="'+(VB.scope==='all')+'" title="Partout : aperçu avant de tout changer" aria-label="Partout">×</button></div>')};
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#tools [data-vbsc]');if(!b)return;e.stopPropagation();VB.scope=b.dataset.vbsc;vbSend(false);vbRender();toast(VB.scope==='all'?'Partout : vous verrez l\'aperçu avant que rien ne change':'Ici seulement')},true);
+var _vbStop28=vbStop;vbStop=function(){VB.scope='one';_vbStop28()};
+vbRender();
 
 dockRender();
 var h=(location.hash||'').slice(1);
