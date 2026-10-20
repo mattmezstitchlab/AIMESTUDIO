@@ -411,6 +411,20 @@ var SH={
  sphere:function(cx,cy,R){return P.circle(cx,cy,R*.62)}
 };
 var EVEN={ondes:1,halo:1,alliance:1,objectif:1,arche:1,sceau:1};
+/* ---------- formes sans cassure : chaque contour est aplati en polygone, les trous sont tournés à l'envers (règle « nonzero » partout) ---------- */
+function flatten(d){var T=d.match(/[MLCQHVZ]|-?\d*\.?\d+(?:e-?\d+)?/gi)||[],i=0,cur=[0,0],st=[0,0],sub=[],out=[];function num(){return parseFloat(T[i++])}
+ while(i<T.length){var c=T[i++];if(c==='M'){if(sub.length)out.push(sub);cur=[num(),num()];st=cur;sub=[cur]}else if(c==='L'){cur=[num(),num()];sub.push(cur)}else if(c==='H'){cur=[num(),cur[1]];sub.push(cur)}else if(c==='V'){cur=[cur[0],num()];sub.push(cur)}
+  else if(c==='C'){var a=[num(),num()],b=[num(),num()],e=[num(),num()],p=cur;for(var k=1;k<=10;k++){var t=k/10,m=1-t;sub.push([m*m*m*p[0]+3*m*m*t*a[0]+3*m*t*t*b[0]+t*t*t*e[0],m*m*m*p[1]+3*m*m*t*a[1]+3*m*t*t*b[1]+t*t*t*e[1]])}cur=e}
+  else if(c==='Q'){var q=[num(),num()],f=[num(),num()],p2=cur;for(var k2=1;k2<=6;k2++){var u=k2/6,w=1-u;sub.push([w*w*p2[0]+2*w*u*q[0]+u*u*f[0],w*w*p2[1]+2*w*u*q[1]+u*u*f[1]])}cur=f}
+  else if(c==='Z'||c==='z'){if(sub.length)out.push(sub);sub=[];cur=st}else{i++}}
+ if(sub.length)out.push(sub);return out.filter(function(s){return s.length>2})}
+function area(s){var a=0;for(var i=0;i<s.length;i++){var p=s[i],q=s[(i+1)%s.length];a+=p[0]*q[1]-q[0]*p[1]}return a/2}
+function inside(pt,s){var c=false;for(var i=0,j=s.length-1;i<s.length;j=i++){var a=s[i],b=s[j];if(((a[1]>pt[1])!==(b[1]>pt[1]))&&(pt[0]<(b[0]-a[0])*(pt[1]-a[1])/(b[1]-a[1])+a[0]))c=!c}return c}
+function contained(a,b){var n=Math.min(8,a.length);for(var k=0;k<n;k++){if(!inside(a[Math.floor(k*a.length/n)],b))return false}return true}
+function normD(d){var S=flatten(d);return S.map(function(s,i){var depth=0;S.forEach(function(o,j){if(j!==i&&Math.abs(area(o))>Math.abs(area(s))&&contained(s,o))depth++});var want=depth%2?-1:1;if(Math.sign(area(s))!==want)s=s.slice().reverse();return'M'+s.map(function(p){return n(p[0])+','+n(p[1])}).join('L')+'Z'}).join('')}
+Object.keys(SH).forEach(function(k){var f=SH[k];SH[k]=function(cx,cy,R){return normD(f(cx,cy,R))}});
+EVEN={};
+
 var REG=[
  ['Commandes','play','Lecture','focaliser','Lecteur, frise, Jour J','Lancer la lecture'],['Commandes','pause','Pause','focaliser','Lecteur','Mettre en pause'],['Commandes','prev','Précédent','focaliser','Lecteur, frise','Moment précédent'],['Commandes','next','Suivant','focaliser','Lecteur, frise','Moment suivant'],['Commandes','close','Fermer','focaliser','Partout','Fermer, revenir'],['Commandes','stop','Stop','focaliser','Lecteur, enregistrement','Arrêter'],['Commandes','check','Valider','pulser','Document, décision','Valider après confirmation'],['Commandes','micro','Micro','vibrer','Dictée, écoute','Écouter (avec accord)'],
  ['Symboles','cube','Cube','pivoter','ME, structure','Montrer qui et quoi'],['Symboles','infini','Infini','orbiter','Temps, Jour J','Ouvrir le temps'],['Symboles','ondes','Ondes','pulser','Ripple, causalité','Montrer ce qui bouge'],['Symboles','planete','Planète','pivoter','Carte, monde','Montrer où'],['Symboles','spirale','Spirale','tourbillonner','Recherche, chargement','Chercher'],['Symboles','tourbillon','Tourbillon','tourbillonner','Passé, archives','Remonter le temps'],['Symboles','halo','Halo','respirer','Présence','Signaler'],['Symboles','particules','Particules','eclore','Énergie, création','Disperser des options'],['Symboles','flash','Flash','flash','Événement, réussite','Célébrer'],
