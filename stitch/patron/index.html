@@ -58,8 +58,8 @@ details{font-size:14px;color:var(--doux)}details summary{cursor:pointer;color:va
 (function(){"use strict";var S=window.Stitch,P=StitchPatron,R=StitchRendu,esc=S.esc,$=function(s){return document.getElementById(s)};
 var Q=new URLSearchParams(location.search),id=Q.get('id')||'prod-mesange',D,pr,p,count=14;
 S.donnees().then(function(d){D=d;$('attrib').textContent=d.dmc.source.attribution+' · DMC est une marque de DMC ; couleurs d\'écran approximatives.';pr=d.catalogue.produits.filter(function(x){return x.id===id})[0];if(!pr)throw new Error('produit inconnu');return S.patron(pr.patron)})
- .then(function(x){p=x;rendre()}).catch(function(e){$('app').innerHTML='<p>'+esc(e.message)+'</p>'});
-function rendre(){var b=D.catalogue.boutiques.filter(function(x){return x.id===pr.boutique})[0],f=S.fiche(p,count),m=f.mesures,d=f.dimensions,mes=S.mesFils()||D.boiteDemo,dsp=S.disponibilite(p,mes),acq=!pr.prix||S.acquis(pr.id);
+ .then(function(x){p=x;afficherFiche()}).catch(function(e){$('app').innerHTML='<p>'+esc(e.message)+'</p>'});
+function afficherFiche(){var b=D.catalogue.boutiques.filter(function(x){return x.id===pr.boutique})[0],f=S.fiche(p,count),m=f.mesures,d=f.dimensions,mes=S.mesFils()||D.boiteDemo,dsp=S.disponibilite(p,mes),acq=!pr.prix||S.acquis(pr.id);
  document.title=p.titre+' · AIME STITCH';
  var parts=[['Points brodés',m.parts.points],['Changements de fil',m.parts.changements],['Régions dispersées',m.parts.regions],['Points isolés',m.parts.isoles],['Backstitch',m.parts.contours],['Demi-points',m.parts.demi]],mx=Math.max.apply(null,parts.map(function(x){return x[1]}))||1;
  $('app').innerHTML='<div class="vis"><div class="cadre"><canvas id="ap" aria-label="Aperçu brodé"></canvas></div>'+
@@ -85,8 +85,8 @@ function rendre(){var b=D.catalogue.boutiques.filter(function(x){return x.id===p
  var set={};mes.forEach(function(c){set[c]=1});var man={};dsp.manquants.forEach(function(x){man[x.dmc]=x});
  f.fournitures.forEach(function(q){var fl=S.fil(q.dmc),li=document.createElement('li'),c=document.createElement('canvas'),mq=man[q.dmc];R.pastille(c,q.dmc,q.symbole,24);li.appendChild(c);
   li.insertAdjacentHTML('beforeend','<span class="code">'+esc(q.dmc)+'</span><span class="nom">'+esc(fl?fl.nom:'')+(mq&&mq.alternative?'<br><span class="alt">Vous avez '+esc(mq.alternative)+' · écart '+String(mq.ecart).replace('.',',')+(mq.ecart<3?' (à peine visible)':mq.ecart<6?' (léger)':' (visible)')+'</span>':'')+'</span><span class="n">'+q.points+' pts · '+q.echeveaux+' éch.</span><span class="etiq '+(set[q.dmc]?'ok':'manque')+'">'+(set[q.dmc]?'Possédé':'Manquant')+'</span>');$('fils').appendChild(li)});
- document.querySelector('.toiles').addEventListener('click',function(e){var t=e.target.closest('[data-c]');if(!t)return;count=+t.dataset.c;window.__toile=t.dataset.t;rendre()});
- var a=$('acq');if(a)a.addEventListener('click',function(){S.acquerir(pr.id);S.toast('Acquisition simulée : le patron est dans votre bibliothèque.');rendre()});
+ document.querySelector('.toiles').addEventListener('click',function(e){var t=e.target.closest('[data-c]');if(!t)return;count=+t.dataset.c;window.__toile=t.dataset.t;afficherFiche()});
+ var a=$('acq');if(a)a.addEventListener('click',function(){S.acquerir(pr.id);S.toast('Acquisition simulée : le patron est dans votre bibliothèque.');afficherFiche()});
  var pd=$('pdf');if(pd)pd.addEventListener('click',function(){S.telechargerPDF(p,pr,count,b.nom+(b.fictif?' (boutique fictive)':''))})}
 })();
 </script>
