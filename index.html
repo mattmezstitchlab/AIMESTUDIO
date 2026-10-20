@@ -655,6 +655,37 @@ body.cal #calx{display:block}
 #nlc .row input[type=url]{width:min(260px,60vw);background:rgba(12,12,16,.9);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:7px 10px;color:#fff;font:500 13px var(--ui)}
 #nlc .now{font:500 13px var(--ui);color:#C9C9D2;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.8)}
 #nlc .now b{color:#fff}
+
+.nint-w.full{left:0;top:0;width:100%;height:100%}
+#ncd.on,#nfo.on,#nst.on{pointer-events:none}
+#ncd.on .ndz,#nfo.on .nfi,#nfo.on .nfb,#nst.on .nsb{pointer-events:auto}
+.ndz{position:absolute;border:2px dashed rgba(255,255,255,.55);border-radius:10px;background:rgba(10,10,12,.25);color:#fff;font:600 14px var(--ui);cursor:pointer;overflow:hidden;padding:0;display:grid;place-items:center}
+.ndz img,.ndz video,.nsb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ndz:focus-visible,.nfb:focus-visible,.nsb button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.ncn{position:absolute;font:600 15px/1.2 var(--ui);color:#0A0A0C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ncb{position:absolute;display:grid;place-items:center;height:40px;font:600 14px var(--ui);color:#0A0A0C}
+.nfi{position:absolute;display:block}
+.nfi input{width:100%;height:100%;border:0;border-radius:8px;background:#141419;color:#fff;font:500 14px var(--ui);padding:0 10px;color-scheme:dark}
+.nfi input:focus{outline:2px solid #7C5CFF}
+.nfb{position:absolute;border:0;border-radius:12px;background:#0A0A0C;color:#fff;font:600 14px var(--ui);cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.nsu{position:absolute;font:500 11px var(--mono);color:#0A0A0C}
+.nsh{position:absolute;font:400 clamp(18px,2vw,26px)/1.1 var(--display);color:#0A0A0C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nsb{position:absolute;border-radius:8px;background:#0E0E12;overflow:hidden;display:grid;align-content:center;justify-items:center;gap:6px;padding:6px}
+.nsa{border:1px dashed rgba(255,255,255,.4);background:none;color:#fff;border-radius:8px;padding:5px 8px;font:600 11.5px var(--ui);cursor:pointer}
+.nsb input{width:100%;min-width:0;background:#17171C;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:4px 6px;color:#fff;font:500 11px var(--ui)}
+.nsd{display:grid;gap:2px;text-align:center;padding:4px}
+.nsd small{font:500 9.5px var(--mono);letter-spacing:.12em;color:#9C9CA8}.nsd b{font:600 12px var(--ui);color:#fff;word-break:break-word}.nsd span{font-size:11px;color:#9C9CA8}
+.nsx{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(10,10,12,.75);color:#fff;cursor:pointer;z-index:1}
+/* ---------- le cube de vos informations, et le cube pratique ---------- */
+.ed5{display:grid;gap:4px;font-size:.95em}
+.ed5 .ln{display:flex;gap:4px}
+.ed5 input{width:0;min-width:0;flex:1;background:#0C0C10;border:1px solid var(--line);border-radius:6px;padding:3px 5px;color:var(--ink);font:500 .9em var(--ui)}
+.ed5 input.pr{flex:0 0 32%;text-align:right}
+.ed5 .tot{display:flex;justify-content:space-between;font-weight:600;color:#fff;border-top:1px solid #2A2A32;padding-top:4px}
+.ed5 .ad{justify-self:start;border:1px dashed rgba(255,255,255,.3);background:none;color:#C9C9D2;border-radius:6px;padding:2px 8px;font:600 .85em var(--ui);cursor:pointer}
+.ck5{display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid #22222A;cursor:pointer}
+.ck5 input{accent-color:#34D399;width:1.05em;height:1.05em}
 @media(max-width:760px){
  .tx{left:max(20px,env(safe-area-inset-left,0px));right:max(20px,env(safe-area-inset-right,0px));width:auto;top:auto;bottom:calc(var(--tlh) + 12px + env(safe-area-inset-bottom,0px));transform:none;gap:10px}
  .tx .t{font-size:clamp(30px,8.4vw,40px)}
@@ -808,7 +839,7 @@ var CH=[
  ['carte','Présenter','Elle devient votre carte.','Votre activité, vos photos, un bouton pour vous contacter.'],
  ['formulaire','Demander','Elle devient un formulaire.','Les bonnes questions, une à une, et rien n\'est envoyé sans vous.'],
  ['site','Construire','Elle construit votre site sous vos yeux.','Une information saisie une fois devient une page, un PDF, un lien à partager.'],
- ['fin','AIME','Le bon outil, <em>au bon moment</em>.','Un seul objet vivant qui traverse tous vos outils.']];
+ ['fin','AIME','Le bon outil, <em>au bon moment</em>.','Tout ce que vous venez de poser devient votre cube. Descendez.']];
 var REACH=[],SHP,tl=null,SEG=[],cur=-1,typed={};
 
 /* ---------- on remplit en touchant les formes : frise, partition ---------- */
@@ -879,9 +910,35 @@ function buildPlayer(){var old=document.getElementById('nlc');if(old)old.remove(
  el.addEventListener('click',function(e){var b=e.target.closest('.pz');if(!b)return;var T=AIMEM.tracks||[];if(!T.length){document.getElementById('nnow').textContent='Ajoutez d\'abord un morceau ou un lien.';return}var d=+b.dataset.p;if(d){TRK=(TRK+d+T.length)%T.length;AU.pause()}
   var t=T[TRK%T.length];if(d===0){if(t.url&&!t.id){window.open(t.url,'_blank','noopener');return}var src=URLS[t.id];if(!src){document.getElementById('nnow').textContent='Ce morceau était sur l\'appareil : ajoutez-le à nouveau pour l\'écouter.';return}if(AU.src!==src)AU.src=src;AU.paused?AU.play().catch(function(){}):AU.pause()}now()});
  AU.onplay=AU.onpause=function(){if(document.getElementById('nnow'))now()}}
-var curK=null;function vis(){if(curK==='reseau')buildNet();[['nfr','frise'],['npt','partition'],['nrs','reseau'],['nsr','recherche'],['nlc','lecteur']].forEach(function(q){var e=document.getElementById(q[0]);if(e)e.classList.toggle('on',curK===q[1])});var gk=document.getElementById('gkinds');if(gk)gk.classList.toggle('on',curK==='terre');if(curK!=='partition'){var ed=document.getElementById('npe');if(ed)ed.remove()}}
-window.aimeRole=function(){buildFrise();buildPart();buildNet();buildSearch();buildPlayer();vis();if(window.aimeGlobeKinds)aimeGlobeKinds()};
-function build(){geo();buildFrise();buildPart();buildNet();buildSearch();buildPlayer();var s=S();SHP=CH.map(function(c){return norm(s[c[0]]())});envC.setAttribute('d',SHP[0]);envG.setAttribute('d',SHP[0]);if(tl)tl.kill();
+
+/* ---------- la carte : votre visuel ---------- */
+function slug2(n){return String(n||'vous').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'vous'}
+function shrink(src,cb){var im=new Image();im.onload=function(){var k=Math.min(1,700/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.82))};im.src=src}
+var VID=null;
+function buildCard(){var old=document.getElementById('ncd');if(old)old.remove();var w=Math.min(R*1.5,280),hh=w*1.3,x=C[0]-w/2,y=C[1]-hh/2,el=document.createElement('div');el.id='ncd';el.className='nint-w full';
+ var M=AIMEM,bt=role()==='pro'?'Me contacter':role()==='proche'?'Écrire':'Nous écrire';
+ el.innerHTML='<button type="button" class="ndz" id="ndz" style="left:'+(x+14)+'px;top:'+(y+14)+'px;width:'+(w-28)+'px;height:'+(hh*.46)+'px" aria-label="Ajouter une photo ou une vidéo">'+(VID?'<video src="'+VID+'" muted loop autoplay playsinline></video>':M.visual?'<img src="'+M.visual+'" alt="">':'<span>+ Photo ou vidéo</span>')+'</button><input type="file" id="ndf" accept="image/*,video/*" hidden>'
+  +'<b class="ncn" style="left:'+(x+14)+'px;top:'+(y+hh*.56-6)+'px;width:'+(w-28)+'px">'+esc2(M.name||window.__aimeName||'Votre nom')+'</b><span class="ncb" style="left:'+(x+14)+'px;top:'+(y+hh-54)+'px;width:'+(w-28)+'px">'+bt+'</span>';
+ NI.appendChild(el);document.getElementById('ndz').addEventListener('click',function(){document.getElementById('ndf').click()});
+ document.getElementById('ndf').addEventListener('change',function(){var f=this.files[0];if(!f)return;if(/^video\//.test(f.type)){VID=URL.createObjectURL(f);if(window.aimeB){aimeB.P().video=VID;aimeB.redraw()}buildCard();vis();wave2();return}var rd=new FileReader();rd.onload=function(){shrink(rd.result,function(u){AIMEM.visual=u;AIMEM.save();if(window.aimeB){var P=aimeB.P();P.photos.unshift(u);aimeB.redraw()}buildCard();vis();wave2()})};rd.readAsDataURL(f)})}
+function wave2(){if(window.aimeRuler)aimeRuler.wave()}
+/* ---------- le formulaire : date et lieu de l'événement ---------- */
+function buildForm(){var old=document.getElementById('nfo');if(old)old.remove();var w=Math.min(R*1.9,340),h=w*1.05,x=C[0]-w/2,y=C[1]-h/2,E=AIMEM.event||{},el=document.createElement('div');el.id='nfo';el.className='nint-w full';
+ var third=role()==='pro'?['Votre tarif de départ (€)','number','prix']:role()==='proche'?['Votre lien avec la personne','text','lien']:['Nombre d\'invités','number','invites'],F=[['Date','date','date'],['Lieu','text','lieu'],third];
+ el.innerHTML=F.map(function(f,i){var fy=y+28+i*(h*.2);return'<label class="nfi" style="left:'+(x+22)+'px;top:'+(fy+2)+'px;width:'+(w-44)+'px;height:34px"><span class="sr">'+f[0]+'</span><input type="'+f[1]+'" data-k="'+f[2]+'" placeholder="'+f[0]+'" value="'+esc2(E[f[2]]||'')+'"'+(f[1]==='number'?' min="0" inputmode="numeric"':'')+'></label>'}).join('')+'<button type="button" class="nfb" id="nfb" style="left:'+(x+20)+'px;top:'+(y+h-60)+'px;width:'+(w-40)+'px;height:40px">Garder</button>';
+ NI.appendChild(el);document.getElementById('nfb').addEventListener('click',function(){var E2={};[].forEach.call(el.querySelectorAll('input'),function(i){E2[i.dataset.k]=i.value.trim()});AIMEM.event=E2;AIMEM.save();
+  if(window.aimeB){var P=aimeB.P();if(E2.date){P.iso=E2.date;P.date=aimeB.fmt(E2.date)}if(E2.lieu)P.place=E2.lieu;aimeB.redraw()}this.textContent='Gardé · partout à jour';var t=this;setTimeout(function(){t.textContent='Garder'},2200);wave2()})}
+/* ---------- le site : chaque bloc noir accepte une photo, un PDF ou un lien ---------- */
+function buildSite(){var old=document.getElementById('nst');if(old)old.remove();var w=Math.min(R*2.6,MW()),h=w*.66,x=C[0]-w/2,y=C[1]-h/2,cw=(w-32-24)/3,Y=y+40+h*.36+14,bh=h-(Y-y)-16,el=document.createElement('div');el.id='nst';el.className='nint-w full';var S2=AIMEM.site||[],nm=AIMEM.name||window.__aimeName||'Votre nom';
+ el.innerHTML='<span class="nsu" style="left:'+(x+56)+'px;top:'+(y+6)+'px">lemondeaime.com/@'+slug2(nm)+'</span><b class="nsh" style="left:'+(x+32)+'px;top:'+(y+54)+'px;width:'+(w*.6)+'px">'+esc2(nm)+'</b>'
+  +[0,1,2].map(function(i){var d=S2[i],X=x+16+i*(cw+12);return'<div class="nsb" data-i="'+i+'" style="left:'+(X+2)+'px;top:'+(Y+2)+'px;width:'+(cw-4)+'px;height:'+(bh-4)+'px">'+(d?(d.t==='img'?'<img src="'+d.src+'" alt=""><button type="button" class="nsx" data-x aria-label="Retirer">×</button>':'<div class="nsd"><small>'+(d.t==='pdf'?'PDF':'Lien')+'</small><b>'+esc2(d.n)+'</b><span>'+esc2(d.s||'')+'</span></div><button type="button" class="nsx" data-x aria-label="Retirer">×</button>'):'<button type="button" class="nsa" data-f>Photo ou PDF</button><input type="url" placeholder="ou un lien" aria-label="Lien pour ce bloc">')+'</div>'}).join('')+'<input type="file" id="nsf" accept="image/*,application/pdf" hidden>';
+ NI.appendChild(el);var cur2=0;
+ el.addEventListener('click',function(e){var b=e.target.closest('.nsb');if(!b)return;var i=+b.dataset.i;if(e.target.closest('[data-x]')){S2[i]=null;AIMEM.site=S2;AIMEM.save();buildSite();vis();return}if(e.target.closest('[data-f]')){cur2=i;document.getElementById('nsf').click()}});
+ el.addEventListener('keydown',function(e){if(e.key!=='Enter'||!e.target.matches('.nsb input[type=url]'))return;var v=e.target.value.trim();if(!/^https?:\/\//.test(v))v='https://'+v;var hst;try{hst=new URL(v).hostname.replace('www.','')}catch(_){return}S2[+e.target.closest('.nsb').dataset.i]={t:'url',n:hst,s:'Lien vers votre site'};AIMEM.site=S2;AIMEM.save();buildSite();vis();wave2()});
+ document.getElementById('nsf').addEventListener('change',function(){var f=this.files[0];if(!f)return;if(f.type==='application/pdf'){S2[cur2]={t:'pdf',n:f.name.replace(/\.pdf$/i,''),s:Math.max(1,Math.round(f.size/1024))+' Ko'};AIMEM.site=S2;AIMEM.save();buildSite();vis();wave2();return}var rd=new FileReader();rd.onload=function(){shrink(rd.result,function(u){S2[cur2]={t:'img',src:u};AIMEM.site=S2;AIMEM.save();buildSite();vis();wave2()})};rd.readAsDataURL(f)})}
+var curK=null;function vis(){if(curK==='reseau')buildNet();if(curK==='carte')buildCard();if(curK==='site')buildSite();[['nfr','frise'],['npt','partition'],['nrs','reseau'],['nsr','recherche'],['nlc','lecteur'],['ncd','carte'],['nfo','formulaire'],['nst','site']].forEach(function(q){var e=document.getElementById(q[0]);if(e)e.classList.toggle('on',curK===q[1])});var gk=document.getElementById('gkinds');if(gk)gk.classList.toggle('on',curK==='terre');if(curK!=='partition'){var ed=document.getElementById('npe');if(ed)ed.remove()}}
+window.aimeRole=function(){buildFrise();buildPart();buildNet();buildSearch();buildPlayer();buildCard();buildForm();buildSite();vis();if(window.aimeGlobeKinds)aimeGlobeKinds()};
+function build(){geo();buildFrise();buildPart();buildNet();buildSearch();buildPlayer();buildCard();buildForm();buildSite();var s=S();SHP=CH.map(function(c){return norm(s[c[0]]())});envC.setAttribute('d',SHP[0]);envG.setAttribute('d',SHP[0]);if(tl)tl.kill();
  SEG.forEach(function(x){x.tw.kill()});SEG=[];var hs=$('#nsegs');hs.innerHTML='';
  REACH=SHP.map(function(d){envG.setAttribute('d',d);try{var b=envG.getBBox();return Math.max.apply(null,[[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]].map(function(q){return Math.hypot(q[0]-C[0],q[1]-C[1])}))+6}catch(_){return Math.hypot(W,H)}});envG.setAttribute('d',SHP[0]);
  SEC.style.height=(CH.length*110)+'vh';onScroll(true)}
@@ -909,9 +966,9 @@ function labels(k){var cx=C[0],cy=C[1],h='';
  if(k==='globe')PEOPLE.forEach(function(p){h+=lab(cx+p[0]*R+10,cy+p[1]*R-8,p[2])});
 
 
- if(k==='carte'){var w3=Math.min(R*1.5,280),hh=w3*1.3,x3=cx-w3/2,y3=cy-hh/2;h+=lab(x3+14,y3+hh*.56-22,'<b>Studio Lumen</b>')+lab(x3+14,y3+hh-46,'Contacter','dk')}
- if(k==='formulaire'){var w4=Math.min(R*1.9,340),h4=w4*1.05,x4=cx-w4/2,y4=cy-h4/2;['Votre nom','Date de l\'événement','Lieu'].forEach(function(t,i){h+=lab(x4+34,y4+38+i*(h4*.2),'<span style="color:#9C9CA8">'+t+'</span>')});h+=lab(x4+w4/2-32,y4+h4-50,'Envoyer','dk')}
- if(k==='site'){var w5=Math.min(R*2.6,MW()),h5=w5*.66,x5=cx-w5/2,y5=cy-h5/2;h+=lab(x5+56,y5+8,'lemondeaime.com/@studio-lumen')}
+
+
+
  ov.innerHTML=h;requestAnimationFrame(function(){Array.prototype.forEach.call(ov.children,function(x,i){setTimeout(function(){x.classList.add('on')},120+i*90)})});
 }
 function draw(){var vr=SEC.getBoundingClientRect();if(vr.bottom<0||vr.top>innerHeight){requestAnimationFrame(draw);return}var c=fx.getContext('2d'),now=performance.now(),t=(now-FXT)/1000,cx=C[0],cy=C[1];c.clearRect(0,0,W,H);
@@ -985,7 +1042,10 @@ var TX=[null,
  ['Qui ?','Tout commence par un <em>cube</em>.','Au centre, vous. Chaque face est une façon de voir ce qui compte : les gens, les moments, les liens, les lieux.'],
  ['Il s\'ouvre','Six faces, <em>six outils</em>.','Le cube pivote vers l\'extérieur. Chaque face devient un outil, sans jamais perdre le fil.'],
  ['Quand ? Pourquoi ? Où ?','Six façons de voir <em>la même chose</em>.','La frise, la partition, les ondes, le réseau, le monde et vos documents parlent des mêmes carrés.']];
-var curTx=-1;function setTx(i){if(i===curTx)return;curTx=i;var tx=$('#tx');if(!TX[i]){tx.style.opacity=0;return}tx.style.opacity=0;setTimeout(function(){if(curTx!==i)return;$('#k').textContent=TX[i][0];$('#t').innerHTML=TX[i][1];$('#l').textContent=TX[i][2];tx.style.opacity=1},RM?0:180)}
+function myCube(){var M=window.AIMEM;if(!M)return false;var nm=M.name||window.__aimeName,any=M.pins.length||Object.keys(M.frise).length||M.tags&&M.tags.length;if(!any&&!nm)return false;
+ var nk=(M.role||'moi')+'.'+(M.projet||'mariage'),nn=Object.keys(M.notes[nk]||{}).length,cap=[Object.keys(M.frise).length?'Vos horaires sont posés.':'Votre temps, sur une ligne.',nn?nn+' moment'+(nn>1?'s':'')+' noté'+(nn>1?'s':'')+'.':'Vos moments, case par case.',(M.tags&&M.tags.length?'Mots-clés : '+M.tags.slice(0,3).join(', ')+'.':'Ce qui bouge, et ce qui suit.'),(nm?nm+' au centre de ses liens.':'Vous, au centre.'),(M.pins.length?M.pins.length+' lieu'+(M.pins.length>1?'x':'')+' : '+M.pins.slice(0,2).map(function(p){return p.n}).join(', ')+'.':'Vos lieux sur la Terre.'),((M.site||[]).filter(Boolean).length?(M.site||[]).filter(Boolean).length+' élément'+((M.site||[]).filter(Boolean).length>1?'s':'')+' importé'+((M.site||[]).filter(Boolean).length>1?'s':'')+'.':'Vos documents.')];
+ document.querySelectorAll('#cube .face .tl span').forEach(function(s,i){if(cap[i])s.textContent=cap[i]});return nm||true}
+var curTx=-1;function setTx(i){if(i===curTx)return;curTx=i;var tx=$('#tx');if(!TX[i]){tx.style.opacity=0;return}tx.style.opacity=0;setTimeout(function(){if(curTx!==i)return;var mc=myCube(),T1=TX[i][1],T2=TX[i][2];if(mc&&i===1){T1=typeof mc==='string'?'Votre cube, <em>'+mc.replace(/[<&]/g,'')+'</em>.':'Votre <em>cube</em>.';T2='Tout ce que vous venez de poser : vos lieux, votre temps, vos moments, vos liens. Une face par sujet.'}$('#k').textContent=TX[i][0];$('#t').innerHTML=T1;$('#l').textContent=T2;tx.style.opacity=1},RM?0:180)}
 
 /* ---------- le défilement pilote tout ---------- */
 var story=$('#story'),orb=$('#orb'),glow=$('#glow'),hero=$('#hero'),hint=$('#hint'),modes=$('#modes'),T0=performance.now(),E=[0,0,0,0,0,0],P=0;
@@ -1506,6 +1566,7 @@ function calStart(){calOn=true;CALH.textContent=FINE?'Visez le centre du O avec 
 document.addEventListener('pointermove',function(e){if(!calOn||!FINE)return;var c=oc(),x=e.clientX,y=e.clientY,d=Math.hypot(x-c[0],y-c[1]),near=d<26;if(near){x=c[0];y=c[1]}CALX.style.transform='translate('+x+'px,'+y+'px)';CALX.classList.toggle('near',near);CALG.style.setProperty('--mx',x+'px');CALG.style.setProperty('--my',y+'px')});
 document.addEventListener('click',function(e){if(!calOn||e.target.closest('.calskip'))return;var c=oc(),d=Math.hypot(e.clientX-c[0],e.clientY-c[1]);if(d<(FINE?26:46)){e.preventDefault();e.stopPropagation();calHit(c)}else if(e.target.closest('#hero0')){CALH.textContent='Un peu plus près du centre du O…';var w=document.createElement('i');w.className='calw';w.style.left=e.clientX+'px';w.style.top=e.clientY+'px';document.body.appendChild(w);setTimeout(function(){w.remove()},1400)}},true);
 document.addEventListener('keydown',function(e){if(calOn&&e.key==='Escape')calEnd(false)});
+addEventListener('scroll',function(){if(calOn&&scrollY>innerHeight*.7)calEnd(false)},{passive:true});
 function calHit(c){calOn=false;CALG.style.setProperty('--mx',c[0]+'px');CALG.style.setProperty('--my',c[1]+'px');CALG.classList.add('lock');document.body.classList.remove('cal');if(skip)skip.remove();
  [0,220,440].forEach(function(t){setTimeout(function(){var w=document.createElement('i');w.className='calw';w.style.left=c[0]+'px';w.style.top=c[1]+'px';document.body.appendChild(w);setTimeout(function(){w.remove()},1400)},t)});
  CALH.textContent='Grille activée · Orbe disponible';CALH.classList.add('ok');setTimeout(function(){CALG.classList.remove('lock');keepGrid()},1300);AIMEM.grid=true;AIMEM.save();
@@ -1524,7 +1585,7 @@ function go(st){Q.st=st;$$('.apps .qhl').forEach(function(b){b.classList.remove(
  if(st==='app'){var id=STEPS[Q.step],b=appBtn(id);if(innerWidth<760){AP.classList.add('on');$('#appsT').setAttribute('aria-expanded','true')}b.classList.add('qhl');Q.tgt=b;
   bub('<small>Étape '+(Q.step+1)+' / '+STEPS.length+'</small>'+['Commencez ici : dites-moi qui vous êtes.','Où et quand ? Touchez la Timeline.','Votre visuel : une photo, une vidéo, ou un visuel au choix.','Votre mot d\'accueil et les réponses.','Tout est prêt. Découvrons votre site.'][Q.step])}
  if(st==='look'){bub(LOOK[Q.step],Q.step<STEPS.length-1?'Continuer':'',function(){Q.step++;go('app')})}}
-var HINTS={reseau:['rcs',{moi:'<small>Les liens</small>Vous êtes au centre. Touchez un lien pour voir ce qui en dépend.'}],recherche:['ntg',{moi:'<small>Les mots</small>Écrivez ce que vous cherchez, puis Entrée.',pro:'<small>Les mots</small>Vos mots-clés pour qu\'on vous trouve : métier, ville, style.'}],lecteur:['npan',{moi:'<small>La musique</small>Ajoutez un morceau ou collez un lien : il rejoint la playlist.',pro:'<small>La musique</small>Vos morceaux iront sur la face Audio de votre cube.'}],terre:['gkinds',{moi:'<small>Lieux</small>Choisissez un repère, puis touchez la Terre : votre naissance, votre ville, vos voyages, vos rêves.',pro:'<small>Lieux</small>Choisissez un repère, puis touchez la Terre : votre ville, là où vous intervenez, vos voyages.',proche:'<small>Lieux</small>Votre ville, vos voyages, vos rêves : touchez la Terre.'}],frise:['nfr',{moi:'<small>Le temps</small>Glissez les repères sur les horaires de votre grand jour. Votre parcours est juste à côté.',pro:'<small>Le temps</small>Glissez les repères sur vos horaires habituels, puis votre parcours.',proche:'<small>Le temps</small>Votre arrivée, votre départ : glissez les repères.'}],partition:['npt',{moi:'<small>Les moments</small>Touchez une case pour noter un détail de votre journée.',pro:'<small>Les moments</small>Touchez une case : vos phases, vos passages, vos timings.',proche:'<small>Les moments</small>Touchez une case pour noter un souvenir.'}]};
+var HINTS={carte:['ndz',{moi:'<small>Votre visuel</small>Touchez la carte : une photo ou une vidéo.'}],formulaire:['nfb',{moi:'<small>Votre événement</small>La date, le lieu, le nombre d\'invités : touchez Garder.',pro:'<small>Votre activité</small>Une date, un lieu, votre tarif de départ.',proche:'<small>Votre venue</small>La date, le lieu, votre lien avec la personne.'}],site:['nst',{moi:'<small>Votre site</small>Chaque bloc noir accepte une photo, un PDF ou un lien.'}],reseau:['rcs',{moi:'<small>Les liens</small>Vous êtes au centre. Touchez un lien pour voir ce qui en dépend.'}],recherche:['ntg',{moi:'<small>Les mots</small>Écrivez ce que vous cherchez, puis Entrée.',pro:'<small>Les mots</small>Vos mots-clés pour qu\'on vous trouve : métier, ville, style.'}],lecteur:['npan',{moi:'<small>La musique</small>Ajoutez un morceau ou collez un lien : il rejoint la playlist.',pro:'<small>La musique</small>Vos morceaux iront sur la face Audio de votre cube.'}],terre:['gkinds',{moi:'<small>Lieux</small>Choisissez un repère, puis touchez la Terre : votre naissance, votre ville, vos voyages, vos rêves.',pro:'<small>Lieux</small>Choisissez un repère, puis touchez la Terre : votre ville, là où vous intervenez, vos voyages.',proche:'<small>Lieux</small>Votre ville, vos voyages, vos rêves : touchez la Terre.'}],frise:['nfr',{moi:'<small>Le temps</small>Glissez les repères sur les horaires de votre grand jour. Votre parcours est juste à côté.',pro:'<small>Le temps</small>Glissez les repères sur vos horaires habituels, puis votre parcours.',proche:'<small>Le temps</small>Votre arrivée, votre départ : glissez les repères.'}],partition:['npt',{moi:'<small>Les moments</small>Touchez une case pour noter un détail de votre journée.',pro:'<small>Les moments</small>Touchez une case : vos phases, vos passages, vos timings.',proche:'<small>Les moments</small>Touchez une case pour noter un souvenir.'}]};
 var LOOK=['<small>Bravo</small>Votre nom est sur votre page. Essayez la capsule au-dessus du bloc : Serif, A+…','<small>Bien</small>Agrandissez la date ou le lieu par le coin : sa forme change.','<small>Superbe</small>Votre visuel est en place. Glissez-le, agrandissez-le.','<small>Presque fini</small>Votre mot d\'accueil et les réponses sont là.',''];
 (function track(){if(Q.st==='chap'&&Q.ch&&HINTS[Q.ch])Q.tgt=document.getElementById(HINTS[Q.ch][0])||Q.tgt;if(window.__aimeQuest&&Q.tgt){var r=Q.tgt.getBoundingClientRect();if(Q.st==='chap'&&Q.ch==='terre')place(r.left-14,r.top+r.height/2);else if(Q.st==='chap')place(r.left+r.width/2,Math.min(innerHeight-90,r.bottom+(Q.ch==='frise'?-30:14)),true);else if(Q.st==='app'||Q.st==='role')place(r.left-14,r.top+r.height/2);else place(r.left+28,r.top+24)}
  if(window.__aimeQuest&&(Q.st==='scroll'||Q.st==='chap')){var ch=window.__aimeChap,H2=HINTS[ch];if(H2){if(Q.st!=='chap'||Q.ch!==ch){Q.st='chap';Q.ch=ch;GORB.classList.remove('bob');Q.tgt=document.getElementById(H2[0]);bub(H2[1][AIMEM.role]||H2[1].moi)}}else if(Q.st==='chap'){Q.ch=null;go('scroll')}
@@ -1717,6 +1778,30 @@ cv.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-d
 function end(e){if(drag&&e&&e.type==='pointerup'&&Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)<6&&performance.now()-drag.t<500)tap(e);drag=null;idle=performance.now()}cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
 cv.addEventListener('keydown',function(e){var k={ArrowLeft:[-.12,0],ArrowRight:[.12,0],ArrowUp:[0,-.1],ArrowDown:[0,.1]}[e.key];if(!k)return;e.preventDefault();yaw+=k[0];pitch=Math.max(-1.2,Math.min(1.2,pitch+k[1]));idle=performance.now()});
 var rz;addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(size,120)});size();requestAnimationFrame(frame);
+})();
+</script>
+<script>
+/* =========================================================
+   Le cube pratique (la carte-cube) : tarifs ou budget, documents utiles.
+   ========================================================= */
+(function(){"use strict";
+var M=window.AIMEM;if(!M)return;var faces=document.querySelectorAll('#cube2 .f2');if(faces.length<5)return;
+function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function ic(p){return'<svg viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg>'}
+var PAY='<rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18M7 14.5h4"/>',DOC='<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9.5 12h6M9.5 15h6"/>';
+function money(){var r=M.role||'moi';return r==='pro'?['Vos tarifs',[['Prestation de base',800],['Option',250]]]:r==='proche'?['Votre participation',[['Cadeau',80],['Trajet',40]]]:['Votre budget',[['Lieu',3000],['Traiteur',4500],['Musique',900]]]}
+function docsL(){var r=M.role||'moi';return r==='pro'?['Devis','Contrat','Fiche technique','Assurance','Facture d\'acompte']:r==='proche'?['Invitation','Plan d\'accès','Programme']:['Devis','Contrats','Plan de table','Liste des invités','Assurance']}
+function payFace(){var mm=money(),L=M.money&&M.money.r===M.role?M.money.l:mm[1],tot=0;L.forEach(function(l){tot+=(+l[1]||0)});
+ faces[2].querySelector('.n').innerHTML='<div class="nh">'+mm[0]+ic(PAY)+'</div><div class="ed5">'+L.map(function(l,i){return'<div class="ln"><input data-i="'+i+'" data-c="0" value="'+esc(l[0])+'" aria-label="Poste"><input class="pr" data-i="'+i+'" data-c="1" inputmode="numeric" value="'+esc(l[1])+'" aria-label="Montant en euros"></div>'}).join('')+'<button type="button" class="ad" data-add>+ une ligne</button><div class="tot"><span>Total</span><span>'+tot.toLocaleString('fr-FR')+' €</span></div></div>';
+ M.money={r:M.role,l:L}}
+function docFace(){var L=docsL(),D=(M.docs&&M.docs.r===M.role)?M.docs.v:{};faces[4].querySelector('.n').innerHTML='<div class="nh">Documents utiles'+ic(DOC)+'</div>'+L.map(function(d){return'<label class="ck5"><input type="checkbox" data-d="'+esc(d)+'"'+(D[d]?' checked':'')+'>'+esc(d)+'</label>'}).join('')+'<small style="color:var(--soft)">Cochez ce dont vous avez besoin : je vous le prépare.</small>'}
+payFace();docFace();
+faces[2].addEventListener('change',function(e){var i=e.target.dataset.i;if(i==null)return;M.money.l[+i][+e.target.dataset.c]=e.target.dataset.c==='1'?(parseFloat(e.target.value.replace(',','.'))||0):e.target.value;M.save();payFace()});
+faces[2].addEventListener('click',function(e){if(!e.target.closest('[data-add]'))return;M.money.l.push(['Nouveau poste',0]);M.save();payFace();var ins=faces[2].querySelectorAll('input');if(ins.length)ins[ins.length-2].focus()});
+faces[4].addEventListener('change',function(e){var d=e.target.dataset.d;if(!d)return;if(!M.docs||M.docs.r!==M.role)M.docs={r:M.role,v:{}};M.docs.v[d]=e.target.checked;M.save()});
+var lastRole=M.role;setInterval(function(){if(M.role!==lastRole){lastRole=M.role;payFace();docFace()}},1000);
+/* le profil prend votre nom */
+setInterval(function(){var n=M.name;if(!n)return;var b=faces[0].querySelector('.pf b');if(b&&b.textContent!==n){b.textContent=n;var a=faces[0].querySelector('.av2 span');if(a)a.textContent=n[0].toUpperCase();var sm=faces[0].querySelector('.pf small');if(sm)sm.textContent={moi:'Mon projet',pro:'Professionnel',proche:'Proche'}[M.role]||''}},1200);
 })();
 </script>
 </body>
