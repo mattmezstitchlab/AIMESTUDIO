@@ -2,6 +2,8 @@
 
 Phase 0 (audit et stratégie) et phase 1 (prototype visuel) sur la branche `stitch`, créée depuis `main`. Rien n'est modifié dans `main`, AIME WORLD, SynchroView, le Studio, Stitchlab ni les autres dépôts. Aucun paiement, aucune donnée réelle, aucun contenu sous droits.
 
+Phase 2 (moteur réel) en cours : export PDF vectoriel, outils d'édition avancés, et refonte visuelle épurée (style « Apple » : blanc, gris très clair, typographie système, une seule couleur d'action).
+
 Pages : `/stitch/` (découvrir), `/stitch/patron/?id=…` (fiche), `/stitch/atelier/` (créer et corriger), `/stitch/broder/?id=…` (lecteur).
 
 ## 1. Audit des projets existants
@@ -95,3 +97,15 @@ Vérifications dans le navigateur (Playwright, ordinateur et 390 px, sans erreur
 - Les poids de l'effort réel, la cadence (100 à 200 points par heure) et les quantités de fil (environ 1 800 points par écheveau en 14 ct, deux brins) sont des **hypothèses affichées**, à mesurer avec de vraies brodeuses.
 - Les illustrations de démonstration sont simples. Il faut tester la conversion sur de vraies photographies : oiseau, fleurs, portraits.
 - Les variantes personnelles, la composition florale par calques et le hors connexion sont prévus et non commencés.
+
+## 7. Phase 2 · avancement
+
+| Élément | État |
+|---|---|
+| **Refonte visuelle** | Typographie système (SF sur Apple, Inter ailleurs), grands titres serrés, sections blanches, grises et noires, surfaces arrondies, barres translucides, une seule couleur d'action (bleu), le motif brodé comme seule couleur forte. Les quatre pages, ordinateur et téléphone. |
+| **Export PDF** | `stitch/js/pdf.js` + jsPDF 4.2.1 (MIT), servi depuis `stitch/vendor/` et non depuis un CDN. Le document est entièrement vectoriel : couverture avec aperçu en cases, chiffres et autres toiles ; légende avec symboles dessinés, couleurs, références, points, écheveaux ; consignes ; plan d'assemblage ; grilles en couleur puis en noir et blanc (55 × 75 points par page) ; lignes tous les 10 points numérotées depuis le début du motif ; flèches du centre ; pages voisines indiquées ; version et empreinte sur chaque page ; attribution des couleurs DMC. Dans l'atelier : PDF du brouillon. Sur la fiche : PDF seulement si le patron est offert ou acquis. |
+| **Édition** | Sélection rectangulaire et déplacement, retournement horizontal et vertical, symétrie gauche → droite (sur la sélection ou le motif), backstitch vectoriel sur les intersections, effacement des backstitchs, annuler / rétablir (grille, palette et backstitchs). |
+| **Correction d'un défaut** | L'empreinte d'un patron ne suivait pas les corrections faites en mémoire. Elle est maintenant recalculée sur la grille courante (testé). |
+| **Tests** | 12 tests STITCH. S'ajoutent : le PDF comporte le bon nombre de pages, chaque référence DMC dans la légende, les symboles et l'empreinte du patron dans ses métadonnées, les dimensions, l'attribution et la version ; toute correction change l'empreinte. |
+
+Restent pour la phase 2 : import de PDF de patrons existants (avec calibrage et validation humaine), demi-points, renforcement automatique des contours, sélection de régions.

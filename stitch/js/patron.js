@@ -54,7 +54,8 @@ function fournitures(p,count){var c=count||p.toile.count,par=Math.round(POINTS_P
 /* publier : une version figée, indépendante du brouillon qui continue d'évoluer */
 function publier(p,note,date){fixer(p);var v=JSON.parse(JSON.stringify(p));v.statut='publie';v.historique=(v.historique||[]).concat([{version:v.version,date:date||null,note:note||'Publication'}]);
  p.version=v.version+1;p.statut='brouillon';return normaliser(v)}
-function empreinte(p){var s=serialiser(Object.assign({},p,{historique:[]})),h=2166136261>>>0;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h.toString(16)}
+/* empreinte du contenu (hors historique) : deux exports d'une même version ont la même empreinte */
+function empreinte(p){fixer(p);var c=JSON.parse(JSON.stringify(p));c.historique=[];var s=JSON.stringify(c),h=2166136261>>>0;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h.toString(16)}
 
 return{SCHEMA:SCHEMA,rle:rle,derle:derle,depuisConversion:depuisConversion,charger:charger,serialiser:serialiser,matrice:matrice,fixer:fixer,valider:valider,
  quantites:quantites,surface:surface,dimensions:dimensions,fournitures:fournitures,publier:publier,empreinte:empreinte,POINTS_PAR_ECHEVEAU_14:POINTS_PAR_ECHEVEAU_14};

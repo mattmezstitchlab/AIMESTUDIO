@@ -95,3 +95,25 @@ test('STITCH est isolé : aucun fichier des autres studios n\'est chargé', () =
   walk(path.join(ROOT, 'stitch')); const src = all.join('\n');
   assert.ok(!/src="\/(studio|stitchlab|synchroview|vitrine|infinity)\//.test(src));
 });
+
+test('PDF : export fidèle d\'une version (légende, symboles, dimensions, pages, attribution)', () => {
+  const { jsPDF } = require('../stitch/vendor/jspdf-4.2.1.umd.min.js');
+  const X = require('../stitch/js/pdf.js');
+  for (const id of ['pat-mesange', 'pat-colline']) {
+    const p = patron(id), r = X.exporter(jsPDF, p, DMC.fils, { count: 14, attribution: DMC.source.attribution, compresser: false });
+    const dec = X.decoupage(p), out = r.doc.output();
+    assert.equal(r.doc.getNumberOfPages(), 3 + 2 * dec.blocs.length, 'couverture, légende, plan, grilles couleur et noir et blanc');
+    const sujet = JSON.parse((out.match(/\/Subject \((.*?)\)\n/) || [])[1].replace(/\\([()\\])/g, '$1'));
+    assert.equal(sujet.id, p.id); assert.equal(sujet.version, p.version); assert.equal(sujet.empreinte, P.empreinte(p));
+    assert.deepEqual(sujet.palette, p.palette.map(c => c.dmc + ':' + c.symbole), 'symboles du PDF = symboles du patron');
+    for (const c of p.palette) assert.ok(out.includes('(' + c.dmc + ')'), 'DMC ' + c.dmc + ' dans la légende');
+    const d = P.dimensions(p, 14); assert.ok(new RegExp('\\(' + d.points.l + ' (\\\\327|×) ' + d.points.h + ' points\\)').test(out), 'dimensions en points');
+    assert.ok(out.includes('CC BY 4.0'), 'attribution des couleurs');
+    assert.ok(out.includes('version ' + p.version));
+  }
+});
+
+test('empreinte : toute correction de la grille change l\'empreinte (l\'export suit la version exacte)', () => {
+  const p = patron('pat-papillon'), a = P.empreinte(p), m = P.matrice(p); const i = m.findIndex(v => v > 0); m[i] = m[i] === 1 ? 2 : 1;
+  assert.notEqual(P.empreinte(p), a);
+});

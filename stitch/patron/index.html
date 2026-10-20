@@ -8,46 +8,52 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="/stitch/stitch.css">
 <style>
-.fiche{padding:clamp(28px,4vw,56px) 0}
-.fiche>.wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,4vw,64px);align-items:start}
-.vis{position:sticky;top:84px;display:grid;gap:18px;min-width:0}
-.cadre{background:var(--papier);padding:clamp(14px,2vw,26px);border:1px solid var(--trait);box-shadow:0 24px 70px rgba(60,40,20,.10);display:grid;place-items:center;min-width:0}
-.cadre canvas{max-width:100%;height:auto}
-.extrait{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;background:var(--papier);border:1px solid var(--trait);padding:14px;min-width:0}
-.extrait canvas{border:1px solid var(--trait);display:block;max-width:100%}
+.fiche{padding:clamp(28px,4vw,56px) 0 clamp(60px,8vw,100px)}
+.fiche>.wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(28px,5vw,72px);align-items:start;max-width:1200px}
+.vis{position:sticky;top:76px;display:grid;gap:16px;min-width:0}
+.cadre{background:var(--gris);border-radius:var(--rr);padding:clamp(22px,4vw,56px);display:grid;place-items:center;min-width:0}
+.cadre canvas{max-width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.12))}
+.extrait{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:center;background:var(--gris);border-radius:var(--rr);padding:18px;min-width:0}
+.extrait canvas{border-radius:12px;display:block;max-width:100%}
 .extrait p{margin:0;font-size:14px;color:var(--doux)}
-.extrait b{display:block;font:500 17px var(--ft);color:var(--encre);margin-bottom:4px}
-h1{font-size:clamp(34px,4vw,54px);line-height:1.02;margin:10px 0 12px}
-.accroche{font:italic 300 21px/1.4 var(--ft);color:#3E372F;margin:0 0 22px}
-.achat{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:18px 0;border-top:1px solid var(--trait);border-bottom:1px solid var(--trait)}
-.achat .px{font:400 30px var(--ft)}
-.achat small{flex-basis:100%;color:var(--doux);font-size:13px}
-section.bloc{padding:24px 0;border-bottom:1px solid var(--trait)}
-section.bloc h2{font-size:24px;margin-bottom:14px}
-.tech{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 22px;margin:0;font-size:15px}
-.tech dt{font:600 11px var(--fb);letter-spacing:.16em;text-transform:uppercase;color:var(--doux);padding-top:3px}
+.extrait b{display:block;font:600 17px var(--sf);color:var(--encre);margin-bottom:4px}
+.nouveau{font:600 14px var(--sf);color:var(--fil)}
+h1{font-size:clamp(36px,4.4vw,56px);line-height:1.05;letter-spacing:-.03em;margin:6px 0 10px}
+.accroche{font:400 21px/1.38 var(--sf);color:var(--doux);margin:0 0 22px;letter-spacing:-.02em}
+.achat{display:grid;gap:14px;padding:20px 0 26px;border-bottom:1px solid var(--trait)}
+.achat .px{font:600 21px var(--sf)}
+.achat .ligne{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.achat small{color:var(--doux);font-size:12px}
+section.bloc{padding:30px 0;border-bottom:1px solid var(--trait)}
+section.bloc h2{font-size:24px;letter-spacing:-.02em;margin-bottom:16px}
+section.bloc h2 span{color:var(--doux)}
+.toiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 20px}
+.toiles .puce{display:flex;justify-content:space-between;background:#fff;border-radius:12px;box-shadow:inset 0 0 0 1px var(--trait);padding:14px 16px;font-size:15px}
+.toiles .puce small{color:var(--doux);font-size:13px}
+.toiles .puce[aria-pressed=true]{background:#fff;color:var(--encre);box-shadow:inset 0 0 0 2px var(--bleu)}
+.tech{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 24px;margin:0;font-size:15px}
+.tech dt{font:400 15px var(--sf);color:var(--doux)}
 .tech dd{margin:0}
-.toiles{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
-.barres{display:grid;gap:7px;margin:12px 0}
-.barre{display:grid;grid-template-columns:150px minmax(0,1fr) 70px;gap:10px;align-items:center;font-size:13.5px}
-.barre i{display:block;height:8px;background:var(--fil);border-radius:4px;min-width:2px}
-.barre span:last-child{font:500 12.5px var(--mono);color:var(--doux);text-align:right}
-.indice{display:flex;align-items:baseline;gap:12px}.indice b{font:400 44px var(--ft)}
+.barres{display:grid;gap:10px;margin:16px 0}
+.barre{display:grid;grid-template-columns:150px minmax(0,1fr) 64px;gap:12px;align-items:center;font-size:14px}
+.barre i{display:block;height:6px;background:linear-gradient(90deg,#FF6A00,#E3306C);border-radius:3px;min-width:3px}
+.barre span:last-child{font:400 13px var(--sf);color:var(--doux);text-align:right;font-variant-numeric:tabular-nums}
+.indice{display:flex;align-items:baseline;gap:14px}.indice b{font:600 48px var(--sf);letter-spacing:-.03em}.indice span{color:var(--doux);font-size:15px}
 .fils li{grid-template-columns:auto auto minmax(0,1fr) auto auto}.fils .nom{white-space:normal}
-.alt{font-size:12.5px;color:var(--doux)}
-details{font-size:14px;color:var(--doux)}details summary{cursor:pointer;color:var(--encre);font-weight:500}
+.alt{font-size:13px;color:var(--doux)}
+details{font-size:14px;color:var(--doux)}details summary{cursor:pointer;color:var(--lien)}
 @media (max-width:900px){.fiche>.wrap{grid-template-columns:1fr}.vis{position:static}}
-@media (max-width:520px){.barre{grid-template-columns:110px minmax(0,1fr) 54px}.extrait{grid-template-columns:1fr}}
+@media (max-width:520px){.barre{grid-template-columns:110px minmax(0,1fr) 54px}.extrait{grid-template-columns:1fr}.toiles{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="demo">Démonstration : boutiques, créatrices et achats fictifs. Aucun paiement.</div>
-<header class="tete"><div class="wrap"><a class="marque" href="/stitch/"><b>AIME</b><i>STITCH</i></a>
- <nav class="nav" aria-label="AIME STITCH"><a href="/stitch/#boutique" aria-current="page">Découvrir</a><a href="/stitch/atelier/">Atelier</a><a href="/stitch/broder/">Broder</a></nav></div></header>
+<header class="tete"><div class="wrap"><a class="marque" href="/stitch/"><b>AIME</b><i>Stitch</i></a>
+ <nav class="nav" aria-label="AIME Stitch"><a href="/stitch/#boutique" aria-current="page">Découvrir</a><a href="/stitch/atelier/">Atelier</a><a href="/stitch/broder/">Broder</a></nav></div></header>
 <main class="fiche"><div class="wrap" id="app"><p>Chargement…</p></div></main>
-<footer class="pied"><div class="wrap"><span><b>AIME STITCH</b> · démonstration fictive</span><span id="attrib"></span></div></footer>
+<footer class="pied"><div class="wrap"><span>AIME Stitch · démonstration fictive</span><span id="attrib"></span></div></footer>
 <div class="toast" id="toast" role="status"></div>
-<script src="/stitch/js/couleur.js"></script><script src="/stitch/js/patron.js"></script><script src="/stitch/js/symboles.js"></script><script src="/stitch/js/mesures.js"></script><script src="/stitch/js/rendu.js"></script><script src="/stitch/js/commun.js"></script>
+<script src="/stitch/js/couleur.js"></script><script src="/stitch/js/patron.js"></script><script src="/stitch/js/symboles.js"></script><script src="/stitch/js/mesures.js"></script><script src="/stitch/js/rendu.js"></script><script src="/stitch/js/pdf.js"></script><script src="/stitch/js/commun.js"></script>
 <script>
 (function(){"use strict";var S=window.Stitch,P=StitchPatron,R=StitchRendu,esc=S.esc,$=function(s){return document.getElementById(s)};
 var Q=new URLSearchParams(location.search),id=Q.get('id')||'prod-mesange',D,pr,p,count=14;
@@ -58,28 +64,30 @@ function rendre(){var b=D.catalogue.boutiques.filter(function(x){return x.id===p
  var parts=[['Points brodés',m.parts.points],['Changements de fil',m.parts.changements],['Régions dispersées',m.parts.regions],['Points isolés',m.parts.isoles],['Backstitch',m.parts.contours],['Demi-points',m.parts.demi]],mx=Math.max.apply(null,parts.map(function(x){return x[1]}))||1;
  $('app').innerHTML='<div class="vis"><div class="cadre"><canvas id="ap" aria-label="Aperçu brodé"></canvas></div>'+
   '<div class="extrait"><canvas id="ex" aria-label="Extrait de la grille"></canvas><p><b>Aperçu de la grille</b>Un extrait de 20 × 20 points, avec ses symboles. Le patron complet s\'ouvre dans le lecteur après acquisition.</p></div></div>'+
-  '<div><span class="k">'+esc(b.nom)+(b.fictif?' · boutique fictive':'')+' · '+esc(pr.collection)+'</span><h1>'+esc(p.titre)+'</h1><p class="accroche">'+esc(pr.accroche)+'</p>'+
-  '<div class="achat"><span class="px">'+S.prix(pr)+'</span>'+(acq?'<a class="btn" href="/stitch/broder/?id='+encodeURIComponent(pr.id)+'">Ouvrir dans le lecteur</a>':'<button class="btn" type="button" id="acq">Acquérir (simulé)</button>')+'<span class="etiq '+(dsp.manquants.length?'manque':'ok')+'">'+(dsp.manquants.length?'Il vous manque '+dsp.manquants.length+' fil'+(dsp.manquants.length>1?'s':''):'Réalisable avec vos fils')+'</span>'+
-   '<small>'+(pr.prix?'Démonstration : l\'acquisition est simulée, aucune donnée de paiement n\'est demandée.':'Patron offert : il s\'ouvre directement.')+'</small></div>'+
-  '<section class="bloc"><h2>Fiche technique</h2><div class="toiles" role="group" aria-label="Toile">'+S.TOILES.map(function(t){return'<button class="puce" type="button" data-c="'+t[2]+'" data-t="'+t[0]+'" aria-pressed="'+(t[2]===count&&t[0]===(window.__toile||'aida-14'))+'">'+esc(t[1])+'</button>'}).join('')+'</div>'+
-   '<dl class="tech"><dt>Motif</dt><dd>'+d.points.l+' × '+d.points.h+' points</dd><dt>Taille brodée</dt><dd id="cm">'+d.cm.l+' × '+d.cm.h+' cm sur cette toile</dd><dt>Couleurs</dt><dd>'+p.palette.length+' fils DMC</dd>'+
+  '<div><span class="nouveau">'+esc(b.nom)+(b.fictif?' · boutique fictive':'')+' · collection '+esc(pr.collection)+'</span><h1>'+esc(p.titre)+'</h1><p class="accroche">'+esc(pr.accroche)+'</p>'+
+  '<div class="achat"><span class="px">'+S.prix(pr)+'</span><span class="etiq '+(dsp.manquants.length?'manque':'ok')+'" style="justify-self:start">'+(dsp.manquants.length?'Il vous manque '+dsp.manquants.length+' fil'+(dsp.manquants.length>1?'s':''):'Réalisable avec vos fils')+'</span>'+
+   '<div class="ligne">'+(acq?'<a class="btn" href="/stitch/broder/?id='+encodeURIComponent(pr.id)+'">Ouvrir dans le lecteur</a><button class="btn gris" type="button" id="pdf">Télécharger le PDF</button>':'<button class="btn" type="button" id="acq">Acquérir (simulé)</button>')+'</div>'+
+   '<small>'+(pr.prix?'Démonstration : l\'acquisition est simulée, aucune donnée de paiement n\'est demandée. Le PDF et le lecteur s\'ouvrent après acquisition.':'Patron offert : lecteur et PDF disponibles.')+'</small></div>'+
+  '<section class="bloc"><h2>Choisissez votre toile. <span>La taille brodée suit.</span></h2><div class="toiles" role="group" aria-label="Toile">'+S.TOILES.map(function(t){var d3=P.dimensions(p,t[2]);return'<button class="puce" type="button" data-c="'+t[2]+'" data-t="'+t[0]+'" aria-pressed="'+(t[2]===count&&t[0]===(window.__toile||'aida-14'))+'"><span>'+esc(t[1])+'</span><small>'+String(d3.cm.l).replace('.',',')+' × '+String(d3.cm.h).replace('.',',')+' cm</small></button>'}).join('')+'</div><h2 style="margin-top:10px">Caractéristiques</h2>'+
+   '<dl class="tech"><dt>Motif</dt><dd>'+d.points.l+' × '+d.points.h+' points</dd><dt>Taille brodée</dt><dd id="cm">'+String(d.cm.l).replace('.',',')+' × '+String(d.cm.h).replace('.',',')+' cm sur cette toile</dd><dt>Couleurs</dt><dd>'+p.palette.length+' fils DMC</dd>'+
    '<dt>Points</dt><dd>'+m.points.toLocaleString('fr-FR')+' croix entières'+(m.demi?' · '+m.demi+' demi-points':'')+(m.contours?' · backstitch':'')+'</dd><dt>Niveau</dt><dd>'+esc(m.niveau)+'</dd>'+
    '<dt>Temps</dt><dd>≈ '+m.heures.min+' à '+m.heures.max+' h <span class="alt">(indicatif : '+m.cadence.lente+' à '+m.cadence.rapide+' points par heure)</span></dd>'+
    '<dt>Formats</dt><dd>'+pr.formats.map(esc).join('<br>')+'</dd><dt>Licence</dt><dd>'+esc(pr.licence)+'</dd><dt>Création</dt><dd>'+esc(p.provenance.auteur||'')+' · '+esc(p.provenance.note||'')+'</dd><dt>Version</dt><dd>'+p.version+(p.statut==='publie'?' · publiée':'')+'</dd></dl></section>'+
-  '<section class="bloc"><h2>Effort réel</h2><div class="indice"><b>'+String(m.indice).replace('.',',')+'</b><span>équivalent points par point posé. 1 = un motif sans confettis ni changements.</span></div>'+
+  '<section class="bloc"><h2>Effort réel. <span>Pas seulement le nombre de points.</span></h2><div class="indice"><b>'+String(m.indice).replace('.',',')+'</b><span>équivalent points par point posé. 1 = un motif sans confettis ni changements.</span></div>'+
    '<div class="barres">'+parts.filter(function(x){return x[1]>0}).map(function(x){return'<div class="barre"><span>'+x[0]+'</span><i style="width:'+(x[1]/mx*100).toFixed(1)+'%"></i><span>'+Math.round(x[1]).toLocaleString('fr-FR')+'</span></div>'}).join('')+'</div>'+
    '<details><summary>Comment c\'est calculé</summary><p>Chaque élément est converti en « équivalents points » : un point posé = '+m.poids.point+', un point isolé = +'+m.poids.isole+', un fil à enfiler dans un bloc de 10 × 10 = +'+m.poids.changement+', une région de couleur = +'+m.poids.region+'. Ces poids sont une hypothèse de départ, à ajuster avec de vraies brodeuses. Aucune durée n\'est promise.</p></details></section>'+
-  '<section class="bloc"><h2>Fils nécessaires</h2><ul class="legende fils" id="fils"></ul><p class="alt" style="margin-top:10px">Quantités indicatives : environ '+Math.round(P.POINTS_PAR_ECHEVEAU_14*count/14)+' points par écheveau sur cette toile, à deux brins.</p>'+
+  '<section class="bloc"><h2>Fils nécessaires. <span>Comparés à votre boîte.</span></h2><ul class="legende fils" id="fils"></ul><p class="alt" style="margin-top:10px">Quantités indicatives : environ '+Math.round(P.POINTS_PAR_ECHEVEAU_14*count/14)+' points par écheveau sur cette toile, à deux brins.</p>'+
    (dsp.manquants.length?'<p style="margin:12px 0 0"><button class="btn sec petit" type="button" disabled title="Phase 3">Créer une variante avec mes fils</button> <span class="alt">Une copie personnelle, avec aperçu avant / après : phase 3.</span></p>':'')+'</section>'+
   '<section class="bloc"><h2>À propos</h2><p style="margin:0">'+esc(pr.description)+'</p></section></div>';
- var apw=$('ap').parentNode.clientWidth-40;R.apercu($('ap'),p,{case:Math.max(3,Math.floor(Math.min(apw,560)/Math.max(p.l,p.h*0.9)))});
+ var apw=$('ap').parentNode.clientWidth-40;R.apercu($('ap'),p,{case:Math.max(3,Math.floor(Math.min(apw,620)/Math.max(p.l,p.h*0.9))),toile:'#F7F3EA'});
  var su=P.surface(p),ex=$('ex'),dpr=Math.min(2,devicePixelRatio||1),s=12,W=20*s,H=20*s;ex.width=W*dpr;ex.height=H*dpr;ex.style.width=W+'px';ex.style.height=H+'px';var g=ex.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
- R.grille(g,p,{x:su.x+Math.max(0,su.l/2-10),y:su.y+Math.max(0,su.h/2-10),s:s},W,H,{mode:'mixte'});
+ R.grille(g,p,{x:su.x+Math.max(0,su.l/2-10),y:su.y+Math.max(0,su.h/2-10),s:s},W,H,{mode:'mixte',fond:'#FFFFFF'});
  var set={};mes.forEach(function(c){set[c]=1});var man={};dsp.manquants.forEach(function(x){man[x.dmc]=x});
  f.fournitures.forEach(function(q){var fl=S.fil(q.dmc),li=document.createElement('li'),c=document.createElement('canvas'),mq=man[q.dmc];R.pastille(c,q.dmc,q.symbole,24);li.appendChild(c);
   li.insertAdjacentHTML('beforeend','<span class="code">'+esc(q.dmc)+'</span><span class="nom">'+esc(fl?fl.nom:'')+(mq&&mq.alternative?'<br><span class="alt">Vous avez '+esc(mq.alternative)+' · écart '+String(mq.ecart).replace('.',',')+(mq.ecart<3?' (à peine visible)':mq.ecart<6?' (léger)':' (visible)')+'</span>':'')+'</span><span class="n">'+q.points+' pts · '+q.echeveaux+' éch.</span><span class="etiq '+(set[q.dmc]?'ok':'manque')+'">'+(set[q.dmc]?'Possédé':'Manquant')+'</span>');$('fils').appendChild(li)});
  document.querySelector('.toiles').addEventListener('click',function(e){var t=e.target.closest('[data-c]');if(!t)return;count=+t.dataset.c;window.__toile=t.dataset.t;rendre()});
- var a=$('acq');if(a)a.addEventListener('click',function(){S.acquerir(pr.id);S.toast('Acquisition simulée : le patron est dans votre bibliothèque.');rendre()})}
+ var a=$('acq');if(a)a.addEventListener('click',function(){S.acquerir(pr.id);S.toast('Acquisition simulée : le patron est dans votre bibliothèque.');rendre()});
+ var pd=$('pdf');if(pd)pd.addEventListener('click',function(){S.telechargerPDF(p,pr,count,b.nom+(b.fictif?' (boutique fictive)':''))})}
 })();
 </script>
 </body>

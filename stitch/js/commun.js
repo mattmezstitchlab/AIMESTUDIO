@@ -22,10 +22,15 @@ var S=window.Stitch={
  acquerir:function(prod){var a=lire('stitch-acquisitions',[]);if(a.indexOf(prod)<0)a.push(prod);ecrire('stitch-acquisitions',a)},
  /* fiche technique calculée depuis le patron */
  fiche:function(p,count){var d=P.dimensions(p,count),m=M.mesurer(p);return{dimensions:d,mesures:m,fournitures:P.fournitures(p,count)}},
- TOILES:[['aida-11','Aida 11',11],['aida-14','Aida 14',14],['aida-16','Aida 16',16],['aida-18','Aida 18',18],['lin-28','Lin 28 (sur 2 fils)',14],['lin-32','Lin 32 (sur 2 fils)',16]],
+ TOILES:[['aida-11','Aida 11',11],['aida-14','Aida 14',14],['aida-16','Aida 16',16],['aida-18','Aida 18',18],['lin-28','Lin 28, sur 2 fils',14],['lin-32','Lin 32, sur 2 fils',16]],
  prix:function(p){return p.prix?(p.prix.toFixed(2).replace('.',',')+' €'):'Offert'},
  toast:function(t,ms){var e=document.getElementById('toast');if(!e)return;e.textContent=t;e.classList.add('on');clearTimeout(S._t);S._t=setTimeout(function(){e.classList.remove('on')},ms||2600)},
  esc:function(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})},
+ /* PDF d'une version précise ; payant : seulement après acquisition (vérifié par le serveur en production) */
+ telechargerPDF:function(p,pr,count,createur){if(pr&&pr.prix&&!S.acquis(pr.id)){S.toast('Le PDF se télécharge après acquisition.');return}
+  S.toast('Préparation du PDF…',1500);var go=function(){S.donnees().then(function(d){var r=StitchPDF.exporter(window.jspdf.jsPDF,p,d.dmc.fils,{count:count,createur:createur,attribution:d.dmc.source.attribution+'. DMC est une marque de DMC ; couleurs d\'écran approximatives.'});
+   r.doc.save((p.titre||'patron').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-')+'-v'+p.version+'.pdf');S.toast('PDF prêt : '+r.pages+' pages, version '+p.version+'.')})};
+  if(window.jspdf)return go();var sc=document.createElement('script');sc.src='/stitch/vendor/jspdf-4.2.1.umd.min.js';sc.onload=go;sc.onerror=function(){S.toast('Impossible de charger le générateur PDF.')};document.head.appendChild(sc)},
  lire:lire,ecrire:ecrire
 };
 })();

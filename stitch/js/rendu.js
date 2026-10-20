@@ -22,7 +22,7 @@ function apercu(cv,p,o){o=o||{};var l=p.l,h=p.h,s=o.case||Math.max(2,Math.floor(
 /* la grille de travail. vue = {x, y (premier point visible), s (taille d'une case en px)} ; o = {mode, surbrillance (index palette), fait (Uint8Array), grand, limite} */
 function grille(g,p,vue,W,H,o){o=o||{};var l=p.l,h=p.h,s=vue.s,m=P.matrice(p),x0=Math.max(0,Math.floor(vue.x)),y0=Math.max(0,Math.floor(vue.y)),x1=Math.min(l,Math.ceil(vue.x+W/s)),y1=Math.min(h,Math.ceil(vue.y+H/s));
  var ox=-vue.x*s,oy=-vue.y*s,mode=o.mode||'mixte',hl=o.surbrillance||0,cols=p.palette.map(function(c){return couleur(c.dmc)});
- g.fillStyle=o.fond||'#FBF8F2';g.fillRect(0,0,W,H);g.fillStyle='#FFFFFF';g.fillRect(ox,oy,l*s,h*s);
+ g.fillStyle=o.fond||'#F5F5F7';g.fillRect(0,0,W,H);g.fillStyle='#FFFFFF';g.fillRect(ox,oy,l*s,h*s);
  for(var y=y0;y<y1;y++)for(var x=x0;x<x1;x++){var v=m[y*l+x];if(!v)continue;if(o.limite&&!o.limite(x,y))continue;var X=ox+x*s,Y=oy+y*s,col=cols[v-1],fait=o.fait&&o.fait[y*l+x],eteint=hl&&v!==hl;
   if(mode!=='symboles'){g.globalAlpha=eteint?.12:fait?.35:mode==='couleurs'?1:.55;g.fillStyle=col;g.fillRect(X,Y,s,s);g.globalAlpha=1}
   if(mode!=='couleurs'&&s>=8&&!eteint){var ink=mode==='symboles'?'#1F1B16':clair(col)?'#1F1B16':'#FFFFFF';S.dessiner(g,p.palette[v-1].symbole,X+s*.08,Y+s*.08,s*.84,fait?'rgba(31,27,22,.35)':ink)}

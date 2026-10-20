@@ -9,37 +9,45 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="/stitch/stitch.css">
 <style>
-html,body{height:100%;overflow:hidden}
+html,body{height:100%;height:100dvh;overflow:hidden}
 body{display:grid;grid-template-rows:auto auto minmax(0,1fr)}
-.barre{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px max(14px,env(safe-area-inset-right,0px)) 8px max(14px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--trait);background:var(--papier)}
-.barre h1{font-size:19px;margin-right:auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.prog{display:flex;align-items:center;gap:10px;font:500 13px var(--fb);color:var(--doux)}
-.prog .jauge{width:120px;height:6px;background:rgba(31,27,22,.1);border-radius:3px;overflow:hidden}.prog .jauge i{display:block;height:100%;background:var(--sauge);width:0}
-.zone{display:grid;grid-template-columns:minmax(0,1fr) 300px;min-height:0}
-.toile{position:relative;min-width:0;min-height:0;background:#FBF8F2;touch-action:none}
+#app{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr)}
+.barre{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--trait2);background:rgba(255,255,255,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
+.barre h1{font-size:17px;letter-spacing:-.02em;margin-right:auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barre h1 span{color:var(--doux);font-weight:400}
+.prog{display:flex;align-items:center;gap:10px;font:400 13px var(--sf);color:var(--doux);font-variant-numeric:tabular-nums}
+.prog .jauge{width:140px;height:6px;background:var(--gris2);border-radius:3px;overflow:hidden}.prog .jauge i{display:block;height:100%;background:var(--vert);width:0;transition:width .3s}
+.zone{display:grid;grid-template-columns:minmax(0,1fr) 320px;min-height:0}
+.toile{position:relative;min-width:0;min-height:0;background:#fff;touch-action:none;overflow:hidden}
 .toile canvas{position:absolute;inset:0;display:block;outline:none}
-.outils{position:absolute;left:30px;top:30px;display:flex;flex-direction:column;gap:6px;z-index:2}
-.outil{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--trait2);background:rgba(251,248,242,.94);border-radius:12px;cursor:pointer;font:600 13px var(--fb)}
-.outil[aria-pressed=true]{background:var(--encre);color:var(--papier);border-color:var(--encre)}
+.outils{position:absolute;left:34px;top:34px;display:flex;flex-direction:column;gap:2px;z-index:2;padding:5px;border-radius:16px;background:rgba(255,255,255,.78);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);box-shadow:0 2px 14px rgba(0,0,0,.12)}
+.outil{width:40px;height:40px;display:grid;place-items:center;border:0;background:transparent;border-radius:11px;cursor:pointer;font:600 15px var(--sf);color:var(--encre)}
+.outil:hover{background:rgba(0,0,0,.05)}
+.outil[aria-pressed=true]{background:var(--bleu);color:#fff}
 .outil svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.cote{border-left:1px solid var(--trait);background:var(--papier);display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0}
-.cote .h{padding:14px 14px 8px;display:grid;gap:8px}
+.cote{background:var(--gris);display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0}
+.cote .h{padding:18px 16px 10px;display:grid;gap:10px}
+.cote .h b{font:600 17px var(--sf)}
+.cote .h label{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--doux)}
 .cote .liste{overflow:auto;padding:0 8px 8px}
-.legende li{cursor:pointer;border:1px solid transparent}
-.legende li[aria-selected=true]{border-color:var(--encre);background:#fff}
-.legende li.fini{opacity:.5}
-.legende li .p{font:500 12px var(--mono);color:var(--doux);text-align:right}
-.cote .b{padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--trait);font-size:12.5px;color:var(--doux)}
-.verrou,.biblio{padding:48px max(18px,env(safe-area-inset-left,0px));max-width:760px;margin:0 auto;overflow:auto}
+.legende li{cursor:pointer}.legende li:hover{background:rgba(0,0,0,.04)}
+.legende li[aria-selected=true]{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.1)}
+.legende li.fini{opacity:.45}
+.legende li .p{font:400 12.5px var(--sf);color:var(--doux);text-align:right;font-variant-numeric:tabular-nums}
+.cote .b{padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--trait);font-size:13px;color:var(--doux)}
+.verrou,.biblio{padding:64px max(22px,env(safe-area-inset-left,0px));max-width:760px;margin:0 auto;overflow:auto;text-align:center}
+.biblio{text-align:left}
 .biblio ul{list-style:none;padding:0;display:grid;gap:10px}
-.biblio a{display:flex;justify-content:space-between;gap:10px;padding:16px;border:1px solid var(--trait);background:var(--papier);text-decoration:none}
-.pos{position:absolute;right:12px;bottom:12px;background:rgba(251,248,242,.94);border:1px solid var(--trait);border-radius:10px;padding:6px 10px;font:500 12px var(--mono);z-index:2}
-@media (max-width:820px){.zone{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.cote{border-left:0;border-top:1px solid var(--trait);grid-template-rows:auto auto auto}.cote .h{padding:8px 12px 4px;grid-template-columns:1fr auto;align-items:center}.cote .liste{display:flex;overflow-x:auto;gap:6px;padding:4px 10px 8px;scroll-snap-type:x proximity}.cote .liste li{flex:none;grid-template-columns:auto auto;gap:6px;scroll-snap-align:start;border:1px solid var(--trait);background:#fff}.cote .liste li .nom{display:none}.cote .liste li .p{grid-column:1/-1;text-align:left}.cote .b{display:none}.prog .jauge{width:70px}.outils{left:28px;top:28px}.outil{width:38px;height:38px}}
+.biblio a{display:flex;justify-content:space-between;gap:10px;padding:18px 20px;border-radius:var(--r);background:var(--gris);color:var(--encre)}
+.biblio a:hover{text-decoration:none;background:var(--gris2)}
+.pos{position:absolute;right:14px;bottom:14px;background:rgba(255,255,255,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 6px rgba(0,0,0,.1);border-radius:10px;padding:6px 11px;font:400 12.5px var(--sf);z-index:2}
+.pos:empty{display:none}
+@media (max-width:820px){.zone{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.cote{grid-template-rows:auto auto}.cote .h{padding:10px 12px 4px;grid-template-columns:1fr auto;align-items:center}.cote .h b{display:none}.cote .liste{display:flex;overflow-x:auto;gap:6px;padding:4px 10px calc(10px + env(safe-area-inset-bottom,0px));scroll-snap-type:x proximity}.cote .liste li{flex:none;grid-template-columns:auto auto auto;gap:8px;scroll-snap-align:start;background:#fff;padding:8px 12px}.cote .liste li .nom{display:none}.cote .liste li .p{text-align:left}.cote .b{display:none}.prog .jauge{width:70px}.outils{left:30px;top:30px}.outil{width:36px;height:36px}}
 </style>
 </head>
 <body>
 <div class="demo">Démonstration : votre progression reste dans ce navigateur. Elle vous appartient, pas au fichier de la créatrice.</div>
-<header class="barre"><a class="marque" href="/stitch/" aria-label="AIME STITCH"><b>AIME</b><i>STITCH</i></a><h1 id="titre">Broder</h1><div class="prog" id="prog" hidden><span class="jauge"><i id="jauge"></i></span><span id="pct"></span></div></header>
+<header class="barre"><a class="marque" href="/stitch/" aria-label="AIME Stitch"><b>AIME</b><i>Stitch</i></a><h1 id="titre">Broder</h1><div class="prog" id="prog" hidden><span class="jauge"><i id="jauge"></i></span><span id="pct"></span></div></header>
 <div id="app" style="min-height:0;display:grid"></div>
 <div class="toast" id="toast" role="status"></div>
 <script src="/stitch/js/couleur.js"></script><script src="/stitch/js/patron.js"></script><script src="/stitch/js/symboles.js"></script><script src="/stitch/js/mesures.js"></script><script src="/stitch/js/rendu.js"></script><script src="/stitch/js/commun.js"></script>
@@ -49,8 +57,8 @@ var Q=new URLSearchParams(location.search),id=Q.get('id'),D,pr,p,m,fait,cle,vue,
 S.donnees().then(function(d){D=d;if(!id)return biblio();pr=d.catalogue.produits.filter(function(x){return x.id===id})[0];if(!pr)throw new Error('patron inconnu');
  /* l'accès : un patron payant ne s'ouvre qu'après acquisition (simulée ici ; vérifiée par le serveur en production) */
  if(pr.prix&&!S.acquis(pr.id))return verrou();return S.patron(pr.patron).then(ouvrir)}).catch(function(e){$('app').innerHTML='<div class="verrou"><p>'+esc(e.message)+'</p></div>'});
-function biblio(){var l=D.catalogue.produits.filter(function(x){return!x.prix||S.acquis(x.id)});$('app').innerHTML='<div class="biblio"><span class="k">Ma bibliothèque</span><h2 style="font-size:34px;margin:8px 0 18px">Reprendre une broderie</h2><ul>'+l.map(function(x){var pg=S.lire('stitch-progression:'+x.patron+'@'+x.version,null);return'<li><a href="?id='+encodeURIComponent(x.id)+'"><span>'+esc(x.accroche)+'</span><span class="mono">'+(pg&&pg.n?pg.n+' points faits':'Pas commencé')+'</span></a></li>'}).join('')+'</ul><p style="color:var(--doux)">Les patrons payants apparaissent ici après leur acquisition (simulée) depuis la boutique.</p></div>'}
-function verrou(){$('app').innerHTML='<div class="verrou"><span class="k">Patron non acquis</span><h2 style="font-size:34px;margin:8px 0 12px">Ce patron s\'ouvre après son acquisition.</h2><p style="color:var(--doux)">L\'aperçu et un extrait de la grille restent visibles sur sa fiche.</p><a class="btn" href="/stitch/patron/?id='+encodeURIComponent(id)+'">Voir la fiche</a></div>'}
+function biblio(){var l=D.catalogue.produits.filter(function(x){return!x.prix||S.acquis(x.id)});$('app').innerHTML='<div class="biblio"><span class="k">Ma bibliothèque</span><h2 class="titre-l" style="margin:6px 0 22px">Reprendre une broderie.</h2><ul>'+l.map(function(x){var pg=S.lire('stitch-progression:'+x.patron+'@'+x.version,null);return'<li><a href="?id='+encodeURIComponent(x.id)+'"><span>'+esc(x.accroche)+'</span><span class="mono">'+(pg&&pg.n?pg.n+' points faits':'Pas commencé')+'</span></a></li>'}).join('')+'</ul><p style="color:var(--doux)">Les patrons payants apparaissent ici après leur acquisition (simulée) depuis la boutique.</p></div>'}
+function verrou(){$('app').innerHTML='<div class="verrou"><span class="k">Patron non acquis</span><h2 class="titre-m" style="margin:6px 0 12px">Ce patron s\'ouvre après son acquisition.</h2><p style="color:var(--doux)">L\'aperçu et un extrait de la grille restent visibles sur sa fiche.</p><a class="btn" href="/stitch/patron/?id='+encodeURIComponent(id)+'">Voir la fiche</a></div>'}
 
 /* ---------- la progression : séparée du patron, liée à sa version ---------- */
 function charger(){var x=S.lire(cle,null);fait=new Uint8Array(p.l*p.h);if(x&&x.f){var b=atob(x.f);for(var i=0;i<fait.length;i++)fait[i]=(b.charCodeAt(i>>3)>>(i&7))&1;if(x.vue)vue=x.vue}}
@@ -58,19 +66,20 @@ var T=0;function sauver(){clearTimeout(T);T=setTimeout(ecrireNow,300)}
 function ecrireNow(){var n=Math.ceil(fait.length/8),a=new Uint8Array(n),c=0;for(var i=0;i<fait.length;i++)if(fait[i]){a[i>>3]|=1<<(i&7);c++}var s='';for(var k=0;k<n;k++)s+=String.fromCharCode(a[k]);S.ecrire(cle,{f:btoa(s),n:c,vue:vue,maj:Date.now(),patron:p.id,version:pr.version})}
 addEventListener('pagehide',function(){if(fait)ecrireNow()});
 
-function ouvrir(x){p=x;m=P.matrice(p);cle='stitch-progression:'+p.id+'@'+pr.version;document.title=p.titre+' · Broder';$('titre').textContent=p.titre+' · version '+pr.version;$('prog').hidden=false;
+function ouvrir(x){p=x;m=P.matrice(p);cle='stitch-progression:'+p.id+'@'+pr.version;document.title=p.titre+' · Broder';$('titre').innerHTML=S.esc(p.titre)+' <span>· version '+pr.version+'</span>';$('prog').hidden=false;
  $('app').innerHTML='<div class="zone"><div class="toile" id="toile"><canvas id="cv" tabindex="0" aria-label="Grille du patron. Touchez un point pour le marquer, glissez pour vous déplacer."></canvas>'+
   '<div class="outils"><button class="outil" id="oMode" type="button" title="Affichage : symboles, couleurs ou les deux" aria-label="Changer d\'affichage"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 4l16 16"/><path d="M12 4v16" stroke-dasharray="2 2"/></svg></button><button class="outil" id="oGrand" type="button" aria-pressed="false" title="Grande lisibilité" aria-label="Grande lisibilité">A</button>'+
   '<button class="outil" id="oGlisser" type="button" aria-pressed="false" title="Marquer en glissant" aria-label="Marquer en glissant"><svg viewBox="0 0 24 24"><path d="M4 20l5-5M9 15l9-9 2 2-9 9-3 1z"/></svg></button><button class="outil" id="oPlus" type="button" aria-label="Zoomer">+</button><button class="outil" id="oMoins" type="button" aria-label="Dézoomer">−</button><button class="outil" id="oCentre" type="button" aria-label="Recentrer"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button></div><span class="pos" id="pos"></span></div>'+
-  '<aside class="cote" aria-label="Fils"><div class="h"><span class="k">Fils · touchez pour suivre une couleur</span><label style="display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" id="cacher"> Masquer les couleurs terminées</label></div><ul class="legende liste" id="leg" role="listbox" aria-label="Couleurs"></ul><div class="b" id="info">Reprise automatique : chaque point coché est enregistré.</div></aside></div>';
- charger();cv=$('cv');g=cv.getContext('2d');taille();if(!vue)centrer();legende();dessiner();evenements();
+  '<aside class="cote" aria-label="Fils"><div class="h"><b>Fils</b><label><input type="checkbox" id="cacher"> Masquer les couleurs terminées</label></div><ul class="legende liste" id="leg" role="listbox" aria-label="Couleurs"></ul><div class="b" id="info">Reprise automatique : chaque point coché est enregistré.</div></aside></div>';
+ charger();cv=$('cv');g=cv.getContext('2d');legende();taille();if(!vue)centrer();dessiner();evenements();
+ if(window.ResizeObserver)new ResizeObserver(function(){taille();dessiner()}).observe($('toile'));
  addEventListener('resize',function(){taille();dessiner()})}
 function taille(){var r=$('toile').getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;cv.style.width=W+'px';cv.style.height=H+'px';g.setTransform(d,0,0,d,0,0)}
 function centrer(){var su=P.surface(p),s=Math.max(10,Math.min(26,Math.floor(Math.min(W/su.l,H/su.h))));vue={s:s,x:su.x+su.l/2-W/s/2,y:su.y+su.h/2-H/s/2}}
 var RG=22;/* règles : repères numérotés tous les 10 points */
-function dessiner(){if(!g)return;R.grille(g,p,vue,W,H,{mode:mode,surbrillance:hl,fait:fait,grand:grand,limite:cacher?function(x,y){var v=m[y*p.l+x];return!estFini(v)}:null});
- if(curseur!=null){var X=(curseur%p.l-vue.x)*vue.s,Y=(((curseur/p.l)|0)-vue.y)*vue.s;g.strokeStyle='#A8322D';g.lineWidth=3;g.strokeRect(X+1.5,Y+1.5,vue.s-3,vue.s-3)}
- g.fillStyle='rgba(251,248,242,.94)';g.fillRect(0,0,W,RG);g.fillRect(0,0,RG,H);g.fillStyle='#6B6257';g.font='500 10px ui-monospace,Menlo,monospace';g.textAlign='center';g.textBaseline='middle';
+function dessiner(){if(!g)return;R.grille(g,p,vue,W,H,{fond:'#FFFFFF',mode:mode,surbrillance:hl,fait:fait,grand:grand,limite:cacher?function(x,y){var v=m[y*p.l+x];return!estFini(v)}:null});
+ if(curseur!=null){var X=(curseur%p.l-vue.x)*vue.s,Y=(((curseur/p.l)|0)-vue.y)*vue.s;g.strokeStyle='#0071E3';g.lineWidth=3;g.strokeRect(X+1.5,Y+1.5,vue.s-3,vue.s-3)}
+ g.fillStyle='rgba(245,245,247,.96)';g.fillRect(0,0,W,RG);g.fillRect(0,0,RG,H);g.fillStyle='#6E6E73';g.font='500 10px -apple-system,BlinkMacSystemFont,"Inter Variable",sans-serif';g.textAlign='center';g.textBaseline='middle';
  for(var c=Math.ceil(vue.x/10)*10;c<vue.x+W/vue.s;c+=10){var X2=(c-vue.x)*vue.s;if(X2>RG)g.fillText(c,X2,RG/2)}for(var d=Math.ceil(vue.y/10)*10;d<vue.y+H/vue.s;d+=10){var Y2=(d-vue.y)*vue.s;if(Y2>RG)g.fillText(d,RG/2,Y2)}
  progression()}
 var parCouleur=[];function estFini(v){var q=parCouleur[v];return q&&q.f>=q.t}
