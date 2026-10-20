@@ -21,3 +21,7 @@ Aucune photographie n'est utilisée aujourd'hui. Toute photographie ajoutée doi
 | Inter, Cal Sans | déjà présents | — | SIL Open Font License 1.1 |
 
 Repli si une police ne charge pas : Fraunces → Playfair Display → Georgia → Times New Roman → serif ; texte : Inter → système.
+
+## AIME WORLD
+
+Natures `toits` (Paris) et `gratte-ciel` (New York) : formes génératives originales créées par AIME dans `vitrine/rendu.js`, sans photo ni image tierce. Remplaçables par des photos sous licence via `evenement.visuels.hero.photo`.

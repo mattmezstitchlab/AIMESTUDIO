@@ -1,0 +1,109 @@
+{
+ "_": "Les six angles du même projet AIME WORLD. Brouillon de phase 2 : libellés, regards et intentions, utilisés par la landing. Les sections opérationnelles arrivent en phase 3, avec le même moteur.",
+ "univers": "world",
+ "libelles": {},
+ "angles": [
+  {
+   "id": "couple",
+   "label": "Le couple",
+   "regard": "p-ines",
+   "visuel": {
+    "style": "toits",
+    "graine": 31
+   },
+   "kicker": "Votre projet",
+   "intro": "Où en est tout, sans tout porter : budget, invités, programme, missions confiées.",
+   "exemples": [
+    "Suivre l'état de préparation",
+    "Déléguer des invitations à un proche",
+    "Valider une mission"
+   ],
+   "sections": []
+  },
+  {
+   "id": "agence",
+   "label": "L'agence",
+   "regard": "p-clara",
+   "visuel": {
+    "style": "architecture",
+    "graine": 52
+   },
+   "kicker": "Pilotage",
+   "intro": "Les missions, les affectations, les dépendances et les décisions, d'un seul regard.",
+   "exemples": [
+    "Affecter une mission",
+    "Voir ce qui dépend d'un vol",
+    "Arbitrer un imprévu"
+   ],
+   "sections": []
+  },
+  {
+   "id": "prestataire",
+   "label": "Le prestataire",
+   "regard": "p-petal",
+   "visuel": {
+    "style": "gratte-ciel",
+    "graine": 73
+   },
+   "kicker": "Vos missions",
+   "intro": "Ce qu'on attend de vous, où, quand, et à quelles conditions. Rien d'autre.",
+   "exemples": [
+    "Accepter une mission",
+    "Consulter ses consignes",
+    "Déposer un livrable"
+   ],
+   "sections": []
+  },
+  {
+   "id": "invite",
+   "label": "L'invité",
+   "regard": "p-alice",
+   "visuel": {
+    "style": "toits",
+    "graine": 94
+   },
+   "kicker": "Votre invitation",
+   "intro": "Répondre, voyager, dormir, retrouver le programme : un seul fil jusqu'au jour J.",
+   "exemples": [
+    "Répondre à l'invitation",
+    "Voir son vol et sa navette",
+    "Préparer ses formalités"
+   ],
+   "sections": []
+  },
+  {
+   "id": "contributeur",
+   "label": "Le contributeur",
+   "regard": "p-sophie",
+   "visuel": {
+    "style": "gratte-ciel",
+    "graine": 115
+   },
+   "kicker": "Participer autrement",
+   "intro": "Proposer une aide qui compte, bénévole et clairement distinguée des prestations rémunérées.",
+   "exemples": [
+    "Parcourir les missions ouvertes",
+    "Proposer sa candidature",
+    "Suivre sa contribution"
+   ],
+   "sections": []
+  },
+  {
+   "id": "coordinateur",
+   "label": "Le coordinateur local",
+   "regard": "p-maya",
+   "visuel": {
+    "style": "architecture",
+    "graine": 136
+   },
+   "kicker": "Sur place",
+   "intro": "Le programme opérationnel, les navettes, les équipes, les incidents et les plans de secours.",
+   "exemples": [
+    "Suivre les navettes",
+    "Signaler un incident",
+    "Activer un plan de secours"
+   ],
+   "sections": []
+  }
+ ]
+}

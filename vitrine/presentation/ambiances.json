@@ -48,6 +48,22 @@
       "paper": "#F1EEE8",
       "ink": "#15191C",
       "source": "AIME (original), pour les univers d'entreprise"
+    },
+    "crepuscule": {
+      "nom": "Crépuscule",
+      "c1": "#7A4A3A",
+      "c2": "#E9B98A",
+      "paper": "#F6E7D2",
+      "ink": "#2A1C18",
+      "source": "AIME (original), lumière de fin de journée"
+    },
+    "heure-bleue": {
+      "nom": "Heure bleue",
+      "c1": "#2C4A6E",
+      "c2": "#7FA7D9",
+      "paper": "#DCE7F3",
+      "ink": "#0B1220",
+      "source": "AIME (original), heure bleue"
     }
   },
   "polices": {
@@ -72,6 +88,7 @@
   },
   "parUnivers": {
     "mariage": "botanique",
-    "seminaire": "pierre"
+    "seminaire": "pierre",
+    "world": "crepuscule"
   }
 }

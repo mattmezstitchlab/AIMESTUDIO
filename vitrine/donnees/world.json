@@ -1,0 +1,1244 @@
+{
+ "_": "AIME WORLD · Paris / New York. Donnée commune unique et entièrement fictive : chaque personne, lieu, moment, trajet, mission et document a un identifiant de référence et n'est écrit qu'une fois.",
+ "revision": 1,
+ "evenement": {
+  "id": "world-paris-ny",
+  "univers": "world",
+  "nom": "Inès & Théo",
+  "accroche": "Paris / New York",
+  "sousTitre": "Un mariage parisien célébré à New York",
+  "date": "2027-09-18",
+  "debut": "2027-09-16",
+  "fin": "2027-09-20",
+  "ville": "New York",
+  "lieu": {
+   "nom": "Jardin des Quais, Brooklyn (lieu fictif)",
+   "adresse": "Brooklyn, New York",
+   "acces": "Navettes depuis l'hôtel à 15 h 10",
+   "planB": "Verrière du Pier 9 (fictif), 120 places"
+  },
+  "visuels": {
+   "hero": {
+    "source": "generatif",
+    "style": "toits",
+    "graine": 918,
+    "credit": "Création générative AIME (originale)",
+    "photo": null
+   }
+  }
+ },
+ "personnes": [
+  {
+   "id": "p-ines",
+   "nom": "Inès Duval",
+   "fonction": "Mariée",
+   "groupe": "couple",
+   "ville": "Paris"
+  },
+  {
+   "id": "p-theo",
+   "nom": "Théo Martin",
+   "fonction": "Marié",
+   "groupe": "couple",
+   "ville": "Paris"
+  },
+  {
+   "id": "p-clara",
+   "nom": "Clara Benoît",
+   "fonction": "Directrice de projet",
+   "groupe": "agence",
+   "ville": "Paris",
+   "structure": "Atlas Célébrations (agence fictive)",
+   "contact": "+33 6 •• •• •• 21"
+  },
+  {
+   "id": "p-maya",
+   "nom": "Maya Johnson",
+   "fonction": "Coordination locale",
+   "groupe": "coordination",
+   "ville": "New York",
+   "structure": "Atlas Célébrations · New York",
+   "contact": "+1 212 ••• ••47"
+  },
+  {
+   "id": "p-petal",
+   "nom": "Petal & Stem",
+   "fonction": "Fleuriste",
+   "groupe": "prestataires",
+   "ville": "New York",
+   "contact": "+1 718 ••• ••12",
+   "profil": "Atelier floral, compositions de saison, 12 ans d'événements"
+  },
+  {
+   "id": "p-shuttle",
+   "nom": "Hudson Shuttle",
+   "fonction": "Transport de passagers",
+   "groupe": "prestataires",
+   "ville": "New York",
+   "contact": "+1 646 ••• ••90",
+   "profil": "Navettes de 8 à 32 places",
+   "qualifications": [
+    "licence-transport"
+   ]
+  },
+  {
+   "id": "p-linden",
+   "nom": "The Linden House",
+   "fonction": "Hôtel partenaire",
+   "groupe": "prestataires",
+   "ville": "New York",
+   "contact": "+1 212 ••• ••03"
+  },
+  {
+   "id": "p-lens",
+   "nom": "Lens & Light",
+   "fonction": "Photographie",
+   "groupe": "prestataires",
+   "ville": "New York",
+   "contact": "+1 917 ••• ••55",
+   "profil": "Reportage et portraits, livraison en 4 semaines"
+  },
+  {
+   "id": "p-sound",
+   "nom": "Brooklyn Sound",
+   "fonction": "Musique et technique",
+   "groupe": "prestataires",
+   "ville": "New York",
+   "contact": "+1 718 ••• ••28"
+  },
+  {
+   "id": "p-table",
+   "nom": "Table Atelier",
+   "fonction": "Traiteur",
+   "groupe": "prestataires",
+   "ville": "New York",
+   "contact": "+1 347 ••• ••64",
+   "qualifications": [
+    "hygiene-alimentaire",
+    "licence-alcool"
+   ]
+  },
+  {
+   "id": "p-setup",
+   "nom": "Setup Crew NYC",
+   "fonction": "Installation et mobilier",
+   "groupe": "prestataires",
+   "ville": "New York",
+   "contact": "+1 929 ••• ••71"
+  },
+  {
+   "id": "p-odyssee",
+   "nom": "Odyssée Voyages",
+   "fonction": "Agence de voyage partenaire",
+   "groupe": "prestataires",
+   "ville": "Lyon",
+   "contact": "+33 4 •• •• •• 88",
+   "qualifications": [
+    "operateur-voyage"
+   ],
+   "profil": "Opérateur de voyage immatriculé (fictif)"
+  },
+  {
+   "id": "p-karim",
+   "nom": "Karim Duval",
+   "fonction": "Cousin de la mariée",
+   "groupe": "invites",
+   "ville": "Marseille",
+   "responsabilites": [
+    "invite",
+    "delegue-invitations",
+    "contributeur"
+   ],
+   "competences": [
+    "traduction anglais",
+    "accueil"
+   ]
+  },
+  {
+   "id": "p-sophie",
+   "nom": "Sophie Laurent",
+   "fonction": "Amie du couple",
+   "groupe": "invites",
+   "ville": "Paris",
+   "responsabilites": [
+    "invite",
+    "contributeur"
+   ],
+   "competences": [
+    "accueil",
+    "photographie amateur"
+   ]
+  },
+  {
+   "id": "p-alice",
+   "nom": "Alice Morel",
+   "fonction": "Invitée, amie de la mariée",
+   "groupe": "invites",
+   "ville": "Lyon",
+   "responsabilites": [
+    "invite"
+   ]
+  },
+  {
+   "id": "p-lucas",
+   "nom": "Lucas Moreau",
+   "fonction": "Voyageur, croisière seulement",
+   "groupe": "voyageurs",
+   "ville": "Bordeaux",
+   "responsabilites": [
+    "voyageur-activite"
+   ]
+  }
+ ],
+ "invites": [
+  {
+   "id": "g-01",
+   "personne": "p-alice",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-02",
+   "nom": "Arthur P.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-03",
+   "nom": "Bastien R.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-04",
+   "nom": "Camille F.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-05",
+   "nom": "Chloé G.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-06",
+   "nom": "Damien B.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-07",
+   "nom": "Élise D.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-08",
+   "nom": "Émile L.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-09",
+   "nom": "Fanny F.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-10",
+   "nom": "Gabriel R.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-11",
+   "nom": "Hélène V.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-12",
+   "nom": "Hugo M.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-13",
+   "nom": "Irène L.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-14",
+   "nom": "Jules F.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-15",
+   "nom": "Julia A.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-16",
+   "nom": "Léon M.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-17",
+   "nom": "Léna B.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-18",
+   "nom": "Louis G.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-19",
+   "nom": "Lou B.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-20",
+   "nom": "Manon G.",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-21",
+   "nom": "Marius C.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-22",
+   "nom": "Mila F.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-23",
+   "nom": "Nathan L.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-24",
+   "nom": "Noé G.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-25",
+   "nom": "Olivia G.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-26",
+   "nom": "Oscar P.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-27",
+   "nom": "Pauline R.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-28",
+   "nom": "Paul C.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-29",
+   "nom": "Rose M.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-30",
+   "nom": "Raphaël N.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-31",
+   "nom": "Salomé H.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-32",
+   "nom": "Simon R.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-33",
+   "nom": "Tess M.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-34",
+   "nom": "Tom G.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-35",
+   "nom": "Valentin M.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-36",
+   "nom": "Victoire M.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-37",
+   "nom": "William D.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-38",
+   "nom": "Yasmine D.",
+   "statut": "confirme",
+   "vol": "vol-2"
+  },
+  {
+   "id": "g-39",
+   "nom": "Zoé D.",
+   "statut": "en-attente",
+   "vol": null
+  },
+  {
+   "id": "g-40",
+   "nom": "Adèle M.",
+   "statut": "en-attente",
+   "vol": null
+  },
+  {
+   "id": "g-41",
+   "nom": "Basile L.",
+   "statut": "en-attente",
+   "vol": null
+  },
+  {
+   "id": "g-42",
+   "nom": "Clémence N.",
+   "statut": "en-attente",
+   "vol": null
+  },
+  {
+   "id": "g-43",
+   "nom": "Eden M.",
+   "statut": "en-attente",
+   "vol": null
+  },
+  {
+   "id": "g-44",
+   "nom": "Félix D.",
+   "statut": "en-attente",
+   "vol": null
+  },
+  {
+   "id": "g-45",
+   "nom": "Iris M.",
+   "statut": "en-attente",
+   "vol": null
+  },
+  {
+   "id": "g-46",
+   "nom": "Jeanne B.",
+   "statut": "decline",
+   "vol": null
+  },
+  {
+   "id": "g-47",
+   "nom": "Axel B.",
+   "statut": "decline",
+   "vol": null
+  },
+  {
+   "id": "g-48",
+   "nom": "Inaya G.",
+   "statut": "decline",
+   "vol": null
+  },
+  {
+   "id": "g-49",
+   "personne": "p-karim",
+   "statut": "confirme",
+   "vol": "vol-1"
+  },
+  {
+   "id": "g-50",
+   "personne": "p-sophie",
+   "statut": "confirme",
+   "vol": "vol-1"
+  }
+ ],
+ "lieux": [
+  {
+   "id": "l-cdg",
+   "nom": "Paris-Charles-de-Gaulle",
+   "ville": "Paris",
+   "type": "aéroport"
+  },
+  {
+   "id": "l-jfk",
+   "nom": "New York JFK",
+   "ville": "New York",
+   "type": "aéroport"
+  },
+  {
+   "id": "l-hotel",
+   "nom": "The Linden House (hôtel fictif)",
+   "ville": "Manhattan",
+   "type": "hôtel"
+  },
+  {
+   "id": "l-jardin",
+   "nom": "Jardin des Quais (fictif)",
+   "ville": "Brooklyn",
+   "type": "cérémonie"
+  },
+  {
+   "id": "l-rooftop",
+   "nom": "Rooftop Hudson Line (fictif)",
+   "ville": "Manhattan",
+   "type": "dîner"
+  },
+  {
+   "id": "l-pier",
+   "nom": "Pier 9 (fictif)",
+   "ville": "Manhattan",
+   "type": "embarcadère"
+  }
+ ],
+ "trajets": [
+  {
+   "id": "vol-1",
+   "type": "vol",
+   "code": "AW 101 (vol fictif)",
+   "de": "l-cdg",
+   "vers": "l-jfk",
+   "date": "2027-09-16",
+   "depart": "10:30",
+   "arrivee": "12:55"
+  },
+  {
+   "id": "vol-2",
+   "type": "vol",
+   "code": "AW 105 (vol fictif)",
+   "de": "l-cdg",
+   "vers": "l-jfk",
+   "date": "2027-09-17",
+   "depart": "09:45",
+   "arrivee": "12:10"
+  },
+  {
+   "id": "navette-1",
+   "type": "transfert",
+   "titre": "Navette JFK → hôtel",
+   "de": "l-jfk",
+   "vers": "l-hotel",
+   "date": "2027-09-16",
+   "depart": "14:15",
+   "duree": 75,
+   "apres": {
+    "ref": "vol-1",
+    "delai": 80
+   },
+   "mission": "m-01"
+  },
+  {
+   "id": "navette-2",
+   "type": "transfert",
+   "titre": "Navette JFK → hôtel",
+   "de": "l-jfk",
+   "vers": "l-hotel",
+   "date": "2027-09-17",
+   "depart": "13:30",
+   "duree": 75,
+   "apres": {
+    "ref": "vol-2",
+    "delai": 80
+   },
+   "mission": "m-01"
+  },
+  {
+   "id": "navette-3",
+   "type": "transfert",
+   "titre": "Navette hôtel → Brooklyn",
+   "de": "l-hotel",
+   "vers": "l-jardin",
+   "date": "2027-09-18",
+   "depart": "15:10",
+   "duree": 40,
+   "mission": "m-01"
+  },
+  {
+   "id": "navette-4",
+   "type": "transfert",
+   "titre": "Navette hôtel → JFK",
+   "de": "l-hotel",
+   "vers": "l-jfk",
+   "date": "2027-09-20",
+   "depart": "11:00",
+   "duree": 75,
+   "mission": "m-01"
+  }
+ ],
+ "moments": [
+  {
+   "id": "mo-arrivee",
+   "date": "2027-09-16",
+   "debut": "15:30",
+   "fin": "17:00",
+   "titre": "Accueil des voyageurs à l'hôtel",
+   "espace": "l-hotel",
+   "public": true,
+   "apres": {
+    "ref": "navette-1",
+    "delai": 75
+   }
+  },
+  {
+   "id": "mo-bienvenue",
+   "date": "2027-09-17",
+   "debut": "19:30",
+   "fin": "22:30",
+   "titre": "Dîner de bienvenue",
+   "espace": "l-rooftop",
+   "public": true
+  },
+  {
+   "id": "mo-installation",
+   "date": "2027-09-18",
+   "debut": "09:00",
+   "fin": "13:00",
+   "titre": "Installation du jardin",
+   "espace": "l-jardin",
+   "public": false
+  },
+  {
+   "id": "mo-ceremonie",
+   "date": "2027-09-18",
+   "debut": "16:00",
+   "fin": "16:45",
+   "titre": "Cérémonie",
+   "espace": "l-jardin",
+   "public": true,
+   "apres": {
+    "ref": "navette-3",
+    "delai": 50
+   }
+  },
+  {
+   "id": "mo-cocktail",
+   "date": "2027-09-18",
+   "debut": "17:00",
+   "fin": "19:00",
+   "titre": "Cocktail au bord de l'eau",
+   "espace": "l-jardin",
+   "public": true
+  },
+  {
+   "id": "mo-diner",
+   "date": "2027-09-18",
+   "debut": "19:30",
+   "fin": "23:30",
+   "titre": "Dîner et soirée",
+   "espace": "l-rooftop",
+   "public": true
+  },
+  {
+   "id": "mo-brunch",
+   "date": "2027-09-19",
+   "debut": "11:00",
+   "fin": "13:30",
+   "titre": "Brunch du lendemain",
+   "espace": "l-hotel",
+   "public": true
+  },
+  {
+   "id": "mo-croisiere",
+   "date": "2027-09-19",
+   "debut": "15:00",
+   "fin": "17:00",
+   "titre": "Croisière sur l'Hudson",
+   "espace": "l-pier",
+   "public": true,
+   "activite": "act-croisiere"
+  }
+ ],
+ "missions": [
+  {
+   "id": "m-01",
+   "titre": "Navettes aéroport et cérémonie",
+   "description": "Trois rotations JFK → hôtel et hôtel → Brooklyn pour les voyageurs.",
+   "categorie": "transport",
+   "lieu": "l-jfk",
+   "date": "2027-09-16",
+   "duree": "3 jours",
+   "postes": 2,
+   "competences": [
+    "conduite de navette"
+   ],
+   "responsable": "p-maya",
+   "affectes": [
+    "p-shuttle"
+   ],
+   "nature": "prestation",
+   "reglementee": true,
+   "qualification": "licence-transport",
+   "conditions": "Transport de passagers par un professionnel titulaire des autorisations requises.",
+   "remuneration": "4 800 $ indicatifs",
+   "statut": "attribuee",
+   "dependances": [
+    "vol-1",
+    "vol-2",
+    "navette-1",
+    "navette-2",
+    "navette-3",
+    "navette-4"
+   ],
+   "documents": [
+    "d-transport"
+   ]
+  },
+  {
+   "id": "m-02",
+   "titre": "Accueil et orientation des voyageurs",
+   "description": "Remise des enveloppes de bienvenue et orientation.",
+   "categorie": "accueil",
+   "lieu": "l-hotel",
+   "date": "2027-09-16",
+   "duree": "2 h 30",
+   "postes": 3,
+   "competences": [
+    "accueil",
+    "français et anglais"
+   ],
+   "responsable": "p-maya",
+   "affectes": [
+    "p-sophie",
+    "p-karim"
+   ],
+   "nature": "contribution",
+   "reglementee": false,
+   "conditions": "Contribution bénévole, sans contrepartie financière ; repas offert.",
+   "remuneration": null,
+   "statut": "attribuee",
+   "dependances": [
+    "navette-1",
+    "mo-arrivee"
+   ],
+   "documents": [
+    "d-livret"
+   ]
+  },
+  {
+   "id": "m-03",
+   "titre": "Compositions florales",
+   "description": "Arche, douze centres de table, boutonnières.",
+   "categorie": "fleurs",
+   "lieu": "l-jardin",
+   "date": "2027-09-18",
+   "duree": "1 journée",
+   "postes": 1,
+   "competences": [
+    "art floral"
+   ],
+   "responsable": "p-clara",
+   "affectes": [
+    "p-petal"
+   ],
+   "nature": "prestation",
+   "reglementee": false,
+   "conditions": "Livraison avant 11 h.",
+   "remuneration": "6 200 $ indicatifs",
+   "statut": "en-cours",
+   "dependances": [
+    "mo-installation"
+   ],
+   "documents": [
+    "d-brief-deco"
+   ]
+  },
+  {
+   "id": "m-04",
+   "titre": "Installation du mobilier",
+   "description": "Chaises, tables, arche et signalétique.",
+   "categorie": "decoration",
+   "lieu": "l-jardin",
+   "date": "2027-09-18",
+   "duree": "4 h",
+   "postes": 4,
+   "competences": [
+    "installation"
+   ],
+   "responsable": "p-maya",
+   "affectes": [
+    "p-setup"
+   ],
+   "nature": "prestation",
+   "reglementee": false,
+   "conditions": "Accès au jardin dès 9 h.",
+   "remuneration": "2 900 $ indicatifs",
+   "statut": "attribuee",
+   "dependances": [
+    "mo-installation"
+   ],
+   "documents": [
+    "d-plan-jardin"
+   ]
+  },
+  {
+   "id": "m-05",
+   "titre": "Photographie de la cérémonie",
+   "description": "Préparatifs, cérémonie, portraits au coucher du soleil.",
+   "categorie": "photographie",
+   "lieu": "l-jardin",
+   "date": "2027-09-18",
+   "duree": "8 h",
+   "postes": 1,
+   "competences": [
+    "reportage"
+   ],
+   "responsable": "p-clara",
+   "affectes": [
+    "p-lens"
+   ],
+   "nature": "prestation",
+   "reglementee": false,
+   "conditions": "Livraison des images sous quatre semaines.",
+   "remuneration": "5 500 $ indicatifs",
+   "statut": "attribuee",
+   "dependances": [
+    "mo-ceremonie"
+   ],
+   "documents": [
+    "d-contrat-lens"
+   ]
+  },
+  {
+   "id": "m-06",
+   "titre": "Musique de la soirée",
+   "description": "Duo jazz au cocktail, DJ au dîner.",
+   "categorie": "musique",
+   "lieu": "l-rooftop",
+   "date": "2027-09-18",
+   "duree": "6 h",
+   "postes": 2,
+   "competences": [
+    "musique live",
+    "sonorisation"
+   ],
+   "responsable": "p-clara",
+   "affectes": [
+    "p-sound"
+   ],
+   "nature": "prestation",
+   "reglementee": false,
+   "conditions": "Fin du son à 23 h 30.",
+   "remuneration": "3 800 $ indicatifs",
+   "statut": "attribuee",
+   "dependances": [
+    "mo-cocktail",
+    "mo-diner"
+   ],
+   "documents": []
+  },
+  {
+   "id": "m-07",
+   "titre": "Restauration du dîner",
+   "description": "Dîner assis de 52 couverts, service du vin.",
+   "categorie": "restauration",
+   "lieu": "l-rooftop",
+   "date": "2027-09-18",
+   "duree": "5 h",
+   "postes": 6,
+   "competences": [
+    "service"
+   ],
+   "responsable": "p-clara",
+   "affectes": [
+    "p-table"
+   ],
+   "nature": "prestation",
+   "reglementee": true,
+   "qualification": "licence-alcool",
+   "conditions": "Service d'alcool réservé à un professionnel autorisé.",
+   "remuneration": "11 400 $ indicatifs",
+   "statut": "attribuee",
+   "dependances": [
+    "mo-diner"
+   ],
+   "documents": [
+    "d-menu"
+   ]
+  },
+  {
+   "id": "m-08",
+   "titre": "Coordination du jour J",
+   "description": "Supervision des équipes, du timing et des imprévus.",
+   "categorie": "coordination",
+   "lieu": "l-jardin",
+   "date": "2027-09-18",
+   "duree": "14 h",
+   "postes": 1,
+   "competences": [
+    "coordination"
+   ],
+   "responsable": "p-clara",
+   "affectes": [
+    "p-maya"
+   ],
+   "nature": "prestation",
+   "reglementee": false,
+   "conditions": "Présence de 9 h à 23 h 30.",
+   "remuneration": "inclus dans l'offre de l'agence",
+   "statut": "en-cours",
+   "dependances": [
+    "m-01",
+    "m-03",
+    "m-04",
+    "m-05",
+    "m-06",
+    "m-07"
+   ],
+   "documents": [
+    "d-planning"
+   ]
+  },
+  {
+   "id": "m-09",
+   "titre": "Propositions de vols groupés",
+   "description": "Deux options de vols depuis Paris, sans réservation.",
+   "categorie": "voyage",
+   "lieu": "l-cdg",
+   "date": "2027-04-15",
+   "duree": "2 semaines",
+   "postes": 1,
+   "competences": [
+    "billetterie"
+   ],
+   "responsable": "p-clara",
+   "affectes": [
+    "p-odyssee"
+   ],
+   "nature": "prestation",
+   "reglementee": true,
+   "qualification": "operateur-voyage",
+   "conditions": "Réservée à un opérateur de voyage immatriculé. Aucune réservation dans la démonstration.",
+   "remuneration": "commission indicative",
+   "statut": "terminee",
+   "dependances": [],
+   "documents": [
+    "d-propositions-vols"
+   ]
+  },
+  {
+   "id": "m-10",
+   "titre": "Chambres et répartition",
+   "description": "Bloc de 28 chambres et liste des chambres.",
+   "categorie": "hebergement",
+   "lieu": "l-hotel",
+   "date": "2027-09-16",
+   "duree": "4 nuits",
+   "postes": 1,
+   "competences": [
+    "hôtellerie"
+   ],
+   "responsable": "p-clara",
+   "affectes": [
+    "p-linden"
+   ],
+   "nature": "prestation",
+   "reglementee": false,
+   "conditions": "Liste nominative transmise à J-10.",
+   "remuneration": "selon contrat hôtelier",
+   "statut": "en-cours",
+   "dependances": [
+    "vol-1",
+    "vol-2"
+   ],
+   "documents": [
+    "d-rooming"
+   ]
+  },
+  {
+   "id": "m-11",
+   "titre": "Assistance linguistique",
+   "description": "Aider les invités non anglophones à l'arrivée et pendant la croisière.",
+   "categorie": "assistance",
+   "lieu": "l-hotel",
+   "date": "2027-09-16",
+   "duree": "2 demi-journées",
+   "postes": 2,
+   "competences": [
+    "anglais courant"
+   ],
+   "responsable": "p-maya",
+   "affectes": [],
+   "nature": "contribution",
+   "reglementee": false,
+   "conditions": "Contribution bénévole ; désistement possible à tout moment.",
+   "remuneration": null,
+   "statut": "ouverte",
+   "dependances": [
+    "mo-arrivee"
+   ],
+   "documents": []
+  },
+  {
+   "id": "m-12",
+   "titre": "Technique son de la cérémonie",
+   "description": "Deux micros, enceintes discrètes, enregistrement des vœux.",
+   "categorie": "technique",
+   "lieu": "l-jardin",
+   "date": "2027-09-18",
+   "duree": "3 h",
+   "postes": 1,
+   "competences": [
+    "sonorisation"
+   ],
+   "responsable": "p-maya",
+   "affectes": [],
+   "nature": "prestation",
+   "reglementee": false,
+   "conditions": "Installation avant 14 h.",
+   "remuneration": "900 $ indicatifs",
+   "statut": "ouverte",
+   "dependances": [
+    "mo-installation",
+    "mo-ceremonie"
+   ],
+   "documents": [
+    "d-plan-jardin"
+   ]
+  }
+ ],
+ "documents": [
+  {
+   "id": "d-budget",
+   "titre": "Budget prévisionnel",
+   "nature": "Finances",
+   "taille": "4 pages"
+  },
+  {
+   "id": "d-planning",
+   "titre": "Planning opérationnel",
+   "nature": "Planning",
+   "taille": "9 pages"
+  },
+  {
+   "id": "d-transport",
+   "titre": "Contrat de transport",
+   "nature": "Contrat",
+   "taille": "3 pages",
+   "personne": "p-shuttle"
+  },
+  {
+   "id": "d-contrat-lens",
+   "titre": "Contrat photographie",
+   "nature": "Contrat",
+   "taille": "3 pages",
+   "personne": "p-lens"
+  },
+  {
+   "id": "d-rooming",
+   "titre": "Liste des chambres",
+   "nature": "Hôtel",
+   "taille": "2 pages"
+  },
+  {
+   "id": "d-livret",
+   "titre": "Livret du voyageur",
+   "nature": "Livret",
+   "taille": "12 pages"
+  },
+  {
+   "id": "d-brief-deco",
+   "titre": "Brief décoration",
+   "nature": "Brief",
+   "taille": "5 pages"
+  },
+  {
+   "id": "d-plan-jardin",
+   "titre": "Plan du jardin",
+   "nature": "Plan",
+   "taille": "1 page"
+  },
+  {
+   "id": "d-menu",
+   "titre": "Menu et allergènes",
+   "nature": "Menu",
+   "taille": "2 pages"
+  },
+  {
+   "id": "d-propositions-vols",
+   "titre": "Propositions de vols groupés",
+   "nature": "Voyage",
+   "taille": "3 pages"
+  }
+ ],
+ "delegations": [
+  {
+   "id": "del-karim",
+   "personne": "p-karim",
+   "accordePar": "p-ines",
+   "quota": 10,
+   "note": "Côté famille de la mariée",
+   "propositions": [
+    {
+     "nom": "Nadia D.",
+     "statut": "confirmee"
+    },
+    {
+     "nom": "Yanis D.",
+     "statut": "confirmee"
+    },
+    {
+     "nom": "Rania B.",
+     "statut": "proposee"
+    },
+    {
+     "nom": "Malik D.",
+     "statut": "proposee"
+    },
+    {
+     "nom": "Selma K.",
+     "statut": "refusee"
+    }
+   ]
+  }
+ ],
+ "activites": [
+  {
+   "id": "act-croisiere",
+   "titre": "Croisière sur l'Hudson",
+   "date": "2027-09-19",
+   "capacite": 30,
+   "inscrits": 24,
+   "attente": 3,
+   "ouverte": "voyageurs et invités",
+   "acces": "activite"
+  },
+  {
+   "id": "act-musees",
+   "titre": "Matinée musées à Manhattan",
+   "date": "2027-09-17",
+   "capacite": 20,
+   "inscrits": 20,
+   "attente": 5,
+   "ouverte": "voyageurs et invités",
+   "acces": "activite"
+  }
+ ],
+ "formalites": [
+  {
+   "titre": "Autorisation de voyage",
+   "texte": "Selon la nationalité, une autorisation électronique de voyage ou un visa peut être exigé. À vérifier auprès des autorités américaines compétentes, sur leur site officiel. AIME ne délivre aucune autorisation."
+  },
+  {
+   "titre": "Passeport",
+   "texte": "Vérifiez sa validité pour toute la durée du séjour. AIME ne demande ni numéro ni copie."
+  },
+  {
+   "titre": "Assurance",
+   "texte": "Une assurance voyage couvrant les frais médicaux est fortement recommandée."
+  },
+  {
+   "titre": "Travail sur place",
+   "texte": "Une mission rémunérée aux États-Unis peut exiger une autorisation de travail : elle relève du professionnel concerné et des autorités, pas d'AIME."
+  }
+ ],
+ "echeances": [
+  {
+   "date": "2027-04-30",
+   "titre": "Choix du vol"
+  },
+  {
+   "date": "2027-06-15",
+   "titre": "Réponse à l'invitation"
+  },
+  {
+   "date": "2027-08-01",
+   "titre": "Vérification des formalités de voyage"
+  },
+  {
+   "date": "2027-09-06",
+   "titre": "Liste des chambres transmise à l'hôtel"
+  }
+ ],
+ "budget": [
+  {
+   "id": "b-transport",
+   "titre": "Transport local",
+   "montant": 4800,
+   "devise": "USD",
+   "mission": "m-01"
+  },
+  {
+   "id": "b-fleurs",
+   "titre": "Fleurs",
+   "montant": 6200,
+   "devise": "USD",
+   "mission": "m-03"
+  },
+  {
+   "id": "b-photo",
+   "titre": "Photographie",
+   "montant": 5500,
+   "devise": "USD",
+   "mission": "m-05"
+  },
+  {
+   "id": "b-diner",
+   "titre": "Restauration",
+   "montant": 11400,
+   "devise": "USD",
+   "mission": "m-07"
+  },
+  {
+   "id": "b-musique",
+   "titre": "Musique",
+   "montant": 3800,
+   "devise": "USD",
+   "mission": "m-06"
+  },
+  {
+   "id": "b-mobilier",
+   "titre": "Mobilier",
+   "montant": 2900,
+   "devise": "USD",
+   "mission": "m-04"
+  }
+ ],
+ "imprevus": [
+  {
+   "id": "i-retard-vol1",
+   "titre": "Le vol AW 101 a 90 minutes de retard",
+   "ref": "vol-1",
+   "decalage": 90,
+   "etat": "simulation"
+  }
+ ]
+}

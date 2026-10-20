@@ -52,7 +52,7 @@ function politique(contenu,acces,perspective,regles){
 
 /* ---------- 2 · visuels génératifs AIME (originaux, déterministes, remplaçables par une photographie) ---------- */
 function alea(g){var s=(g>>>0)||1;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
-function visuel(graine,amb,ratio,style){if(style==='architecture')return archi(graine,amb,ratio);var r=alea(graine),w=1600,h=Math.round(w/(ratio||1.6)),id='g'+graine,cs=[amb.c1,amb.c2,amb.paper,amb.ink];
+function visuel(graine,amb,ratio,style){if(style==='architecture')return archi(graine,amb,ratio);if(style==='toits')return toits(graine,amb,ratio);if(style==='gratte-ciel')return gratteCiel(graine,amb,ratio);var r=alea(graine),w=1600,h=Math.round(w/(ratio||1.6)),id='g'+graine,cs=[amb.c1,amb.c2,amb.paper,amb.ink];
  var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Visuel génératif"><defs><filter id="'+id+'b"><feGaussianBlur stdDeviation="'+Math.round(40+r()*50)+'"/></filter><linearGradient id="'+id+'l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+cs[0]+'"/><stop offset="1" stop-color="'+cs[1]+'"/></linearGradient></defs>';
  s+='<rect width="'+w+'" height="'+h+'" fill="url(#'+id+'l)"/><g filter="url(#'+id+'b)" opacity=".85">';
  for(var i=0;i<6;i++){var c=cs[i%3];s+='<circle cx="'+Math.round(r()*w)+'" cy="'+Math.round(r()*h)+'" r="'+Math.round(h*(.18+r()*.4))+'" fill="'+c+'" opacity="'+(.35+r()*.5).toFixed(2)+'"/>'}
@@ -69,6 +69,30 @@ function archi(graine,amb,ratio){var r=alea(graine),w=1600,h=Math.round(w/(ratio
   for(var k=0;k<5;k++){var wy=top+hh*(.12+k*.17);s+='<rect x="'+Math.round(x0+bw*.18)+'" y="'+Math.round(wy)+'" width="'+Math.round(bw*.64)+'" height="'+Math.round(hh*.07)+'" fill="'+amb.c2+'" opacity="'+(.18+r()*.35).toFixed(2)+'"/>'}}
  s+='<polygon points="0,0 '+Math.round(w*.62)+',0 '+Math.round(w*.18)+','+h+' 0,'+h+'" fill="url(#'+id+'l)"/>';
  s+='<g stroke="'+amb.paper+'" stroke-opacity=".22" stroke-width="1">';for(var g=1;g<12;g++){s+='<line x1="'+Math.round(g*w/12)+'" y1="0" x2="'+Math.round(g*w/12)+'" y2="'+h+'"/>'}s+='</g></svg>';return s}
+/* nature « toits » : ciel de fin de journée, toits mansardés, cheminées, tour en treillis au loin */
+function toits(graine,amb,ratio){var r=alea(graine),w=1600,h=Math.round(w/(ratio||1.6)),id='t'+graine;
+ var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Visuel génératif"><defs><linearGradient id="'+id+'s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+amb.c1+'"/><stop offset=".55" stop-color="'+amb.c2+'"/><stop offset="1" stop-color="'+amb.paper+'"/></linearGradient><radialGradient id="'+id+'g"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>';
+ s+='<rect width="'+w+'" height="'+h+'" fill="url(#'+id+'s)"/><circle cx="'+Math.round(w*(.62+r()*.2))+'" cy="'+Math.round(h*.52)+'" r="'+Math.round(h*.3)+'" fill="url(#'+id+'g)" opacity=".55"/>';
+ var tx=w*(.66+r()*.14),tb=h*.66,th=h*.5;s+='<g stroke="'+amb.ink+'" stroke-opacity=".55" fill="none" stroke-width="2"><path d="M'+(tx-th*.16)+' '+tb+' L'+tx+' '+(tb-th)+' L'+(tx+th*.16)+' '+tb+'"/>';
+ for(var k=1;k<9;k++){var yy=tb-th*k/9,hw=th*.16*(1-k/9);s+='<line x1="'+(tx-hw).toFixed(1)+'" y1="'+yy.toFixed(1)+'" x2="'+(tx+hw).toFixed(1)+'" y2="'+yy.toFixed(1)+'"/>'}s+='</g>';
+ for(var row=0;row<3;row++){var base=h*(.66+row*.12),col=row===2?amb.ink:amb.c1,op=[.55,.75,.95][row],x=-40;
+  while(x<w){var bw=90+r()*170,mh=h*(.07+r()*.08),top=base-mh;
+   s+='<polygon points="'+Math.round(x)+','+h+' '+Math.round(x)+','+Math.round(base)+' '+Math.round(x+bw*.12)+','+Math.round(top)+' '+Math.round(x+bw*.88)+','+Math.round(top)+' '+Math.round(x+bw)+','+Math.round(base)+' '+Math.round(x+bw)+','+h+'" fill="'+col+'" opacity="'+op+'"/>';
+   var nc=1+Math.floor(r()*3);for(var c=0;c<nc;c++){var cx=x+bw*(.2+r()*.6);s+='<rect x="'+Math.round(cx)+'" y="'+Math.round(top-h*.035)+'" width="'+Math.round(10+r()*12)+'" height="'+Math.round(h*.035)+'" fill="'+col+'" opacity="'+op+'"/>'}
+   if(row<2)for(var f=0;f<3;f++){s+='<rect x="'+Math.round(x+bw*(.22+f*.22))+'" y="'+Math.round(top+mh*.35)+'" width="'+Math.round(bw*.08)+'" height="'+Math.round(mh*.3)+'" fill="'+amb.c2+'" opacity=".55"/>'}
+   x+=bw+2}}
+ return s+'</svg>'}
+/* nature « gratte-ciel » : heure bleue, tours, fenêtres allumées, reflet sur l'eau */
+function gratteCiel(graine,amb,ratio){var r=alea(graine),w=1600,h=Math.round(w/(ratio||1.6)),id='n'+graine;
+ var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Visuel génératif"><defs><linearGradient id="'+id+'s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+amb.ink+'"/><stop offset=".7" stop-color="'+amb.c1+'"/><stop offset="1" stop-color="'+amb.c2+'"/></linearGradient></defs>';
+ s+='<rect width="'+w+'" height="'+h+'" fill="url(#'+id+'s)"/>';var water=h*.8,x=-20,lit=[];
+ while(x<w){var bw=50+r()*120,bh=h*(.2+Math.pow(r(),1.6)*.62),top=water-bh;s+='<rect x="'+Math.round(x)+'" y="'+Math.round(top)+'" width="'+Math.round(bw)+'" height="'+Math.round(bh)+'" fill="'+amb.ink+'" opacity="'+(.78+r()*.2).toFixed(2)+'"/>';
+  if(r()>.6)s+='<rect x="'+Math.round(x+bw*.42)+'" y="'+Math.round(top-h*.05)+'" width="'+Math.round(bw*.16)+'" height="'+Math.round(h*.05)+'" fill="'+amb.ink+'"/>';
+  for(var yy=top+10;yy<water-12;yy+=14)for(var xx=x+8;xx<x+bw-10;xx+=12)if(r()>.78)lit.push('<rect x="'+Math.round(xx)+'" y="'+Math.round(yy)+'" width="5" height="7" fill="'+amb.paper+'" opacity="'+(.35+r()*.6).toFixed(2)+'"/>');
+  x+=bw+3+r()*14}
+ s+=lit.join('')+'<rect y="'+Math.round(water)+'" width="'+w+'" height="'+(h-Math.round(water))+'" fill="'+amb.ink+'" opacity=".85"/>';
+ for(var k=0;k<40;k++){var ry=water+6+r()*(h-water-10);s+='<rect x="'+Math.round(r()*w)+'" y="'+Math.round(ry)+'" width="'+Math.round(20+r()*90)+'" height="2" fill="'+amb.paper+'" opacity="'+(.08+r()*.22).toFixed(2)+'"/>'}
+ return s+'</svg>'}
 function image(v,amb,ratio,style){if(v&&v.photo)return'<img src="'+esc(v.photo)+'" alt="" loading="lazy">';return visuel(v&&v.graine||7,amb,ratio,(v&&v.style)||style)}
 
 /* ---------- 3 · composants : chacun reçoit la vue filtrée ; le modèle choisit la variante ---------- */
