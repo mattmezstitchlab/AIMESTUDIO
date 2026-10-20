@@ -100,3 +100,62 @@ img,svg{display:block;max-width:100%}
 .v-editorial .v-champs dt{font:600 11px var(--fb);letter-spacing:.14em;text-transform:uppercase;color:var(--c1);align-self:center}
 .v-editorial .v-champs dd{margin:0;font:400 22px/1.3 var(--ft)}
 .v-editorial .v-form p{margin:0 0 14px}
+
+/* ---------- missions (démonstration AIME WORLD, composants génériques) ---------- */
+.v-btn-p{background:var(--c1)}
+.v-btn-p:hover{background:var(--ink)}
+.v-btn[disabled]{opacity:.5;cursor:wait}
+.v-mi{display:grid;gap:22px;min-width:0}
+.v-mi-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px}
+.v-mi-h h3{margin:0;font:400 30px/1.15 var(--ft);flex:1 1 220px}
+.v-k{font:600 11px var(--fb);letter-spacing:.2em;text-transform:uppercase;opacity:.7;flex-basis:100%}
+.v-mi .v-etat,.v-mis .v-etat{font:600 11px var(--fb);letter-spacing:.14em;text-transform:uppercase;font-style:normal;color:var(--c1);white-space:nowrap}
+.v-mi-f{margin:0}
+.v-rail{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;counter-reset:e}
+.v-rail li{counter-increment:e;font:500 12.5px/1.3 var(--fb);padding:10px 0 0;border-top:3px solid color-mix(in srgb,var(--ink) 14%,transparent);opacity:.55;min-width:0;overflow-wrap:anywhere}
+.v-rail li::before{content:counter(e)" ";font-weight:700}
+.v-rail li.fait{border-color:var(--c1);opacity:.85}
+.v-rail li.ici{border-color:var(--ink);opacity:1;font-weight:700}
+.v-rail li.ferme{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--ink) 30%,transparent)}
+.v-mi-e{padding:18px 20px;border:1px solid color-mix(in srgb,var(--ink) 14%,transparent);border-radius:4px;display:grid;gap:12px;min-width:0}
+.v-mi-e.ici{border-color:var(--c1);background:color-mix(in srgb,var(--c1) 7%,transparent)}
+.v-mi-e h4,.v-mi-ed h4{margin:0;font:600 11.5px var(--fb);letter-spacing:.18em;text-transform:uppercase}
+.v-mi-e p,.v-mi-e dl{margin:0}
+.v-cand,.v-taches,.v-mis{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.v-cand li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;padding:12px 0;border-bottom:1px solid color-mix(in srgb,var(--ink) 10%,transparent)}
+.v-cand li span,.v-cand li .v-btns{grid-column:1/-1;font-size:14.5px;opacity:.85}
+.v-coche{display:flex;align-items:center;gap:12px;background:none;border:0;padding:6px 0;font:inherit;color:inherit;cursor:pointer;text-align:left}
+.v-coche span,.v-coche-l{width:20px;height:20px;border:1.5px solid var(--ink);border-radius:4px;flex:none;display:inline-block}
+.v-coche[aria-checked=true] span,.v-taches li.fait .v-coche-l{background:var(--c1);border-color:var(--c1);box-shadow:inset 0 0 0 3px var(--paper)}
+.v-taches li{display:flex;align-items:center;gap:12px}
+.v-taches li.fait{opacity:.7}
+.v-mi-ed{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:end;padding:16px 20px;background:color-mix(in srgb,var(--ink) 5%,transparent);border-radius:4px}
+.v-mi-ed h4{flex-basis:100%}
+.v-mi-ed label{display:grid;gap:6px;font:500 13px var(--fb);min-width:0;flex:1 1 180px}
+.v-mi-ed select{width:100%;font:400 15px var(--fb);padding:10px 12px;border-radius:8px;border:1px solid color-mix(in srgb,var(--ink) 25%,transparent);background:var(--paper);color:var(--ink);max-width:100%}
+.v-mis li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--ink) 12%,transparent)}
+.v-mis li .v-k{flex-basis:auto}
+.v-mis li b{grid-column:1/-1;font:400 22px/1.25 var(--ft)}
+.v-mis li>span,.v-mis li .v-btns{grid-column:1/-1;font-size:14.5px;opacity:.85}
+.v-tags{display:flex;flex-wrap:wrap;gap:6px}
+.v-tags i{font:600 10.5px var(--fb);letter-spacing:.12em;text-transform:uppercase;font-style:normal;border:1px solid color-mix(in srgb,var(--ink) 25%,transparent);border-radius:999px;padding:3px 9px}
+.v-tags i.reg{border-color:var(--c1);color:var(--c1)}
+.v-tags i.moi{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.v-maj{animation:vmaj 2.4s ease-out}
+@keyframes vmaj{0%,30%{background:color-mix(in srgb,var(--c1) 30%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--c1) 30%,transparent)}100%{background:transparent;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){.v-maj{animation:none;outline:2px solid var(--c1)}}
+.v-sim{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:8;display:flex;gap:10px;align-items:center;background:var(--paper);color:var(--ink);border:1px solid color-mix(in srgb,var(--ink) 18%,transparent);border-radius:999px;padding:6px 6px 6px 14px;font:500 12.5px var(--fb);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.v-sim button{font:600 12px var(--fb);border:0;border-radius:999px;padding:6px 12px;background:var(--ink);color:var(--paper);cursor:pointer}
+.v-orbe{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:8;display:flex;align-items:center;gap:10px;max-width:min(320px,calc(100vw - 210px));border:0;border-radius:999px;padding:8px 16px 8px 8px;background:var(--ink);color:var(--paper);font:500 13.5px/1.25 var(--fb);cursor:pointer;box-shadow:0 8px 26px rgba(0,0,0,.18);text-align:left}
+.v-orbe i{width:26px;height:26px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 35%,var(--paper),var(--c2) 45%,var(--c1))}
+.v-orbe span{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.v-orbe[hidden]{display:none}
+@media (max-width:620px){.v-rail{grid-template-columns:repeat(3,minmax(0,1fr))}.v-sim span{display:none}.v-orbe{max-width:calc(100vw - 150px)}}
+details.v-mi-e{padding:12px 20px}
+details.v-mi-e summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none}
+details.v-mi-e summary::-webkit-details-marker{display:none}
+details.v-mi-e summary span{font:500 12px var(--fb);opacity:.6}
+details.v-mi-e summary span::after{content:" +"}
+details.v-mi-e[open] summary span::after{content:" −"}
+details.v-mi-e[open]>summary{margin-bottom:6px}
+@media (max-width:620px){.v-mi .v-champs{grid-template-columns:1fr;gap:2px}.v-mi .v-champs dd{margin:0 0 10px}.v-mi-e{padding:14px}}

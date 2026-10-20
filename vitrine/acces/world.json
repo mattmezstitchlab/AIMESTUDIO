@@ -1,0 +1,23 @@
+{
+  "_": "Couche d'accès d'AIME WORLD : rôles techniques des membres de l'espace et droits explicites sur les documents. Les règles sont dans synchroview/permissions.js. Le voyageur d'activité n'est pas membre de l'espace : son inscription à une activité ne lui ouvre ni la cérémonie, ni les documents.",
+  "membres": {
+    "p-ines": "owner", "p-theo": "owner",
+    "p-clara": "editor", "p-maya": "editor",
+    "p-petal": "contributor", "p-bloom": "contributor", "p-shuttle": "contributor", "p-linden": "contributor", "p-lens": "contributor",
+    "p-sound": "contributor", "p-table": "contributor", "p-setup": "contributor", "p-odyssee": "contributor",
+    "p-karim": "contributor", "p-sophie": "contributor",
+    "p-alice": "guest"
+  },
+  "documents": {
+    "d-budget": { "authorId": "p-clara", "grants": ["p-ines", "p-theo"] },
+    "d-planning": { "authorId": "p-clara", "grants": ["p-ines", "p-theo", "p-maya", "p-petal", "p-setup", "p-sound", "p-lens", "p-table", "p-shuttle"] },
+    "d-transport": { "authorId": "p-shuttle", "grants": ["p-clara", "p-maya"] },
+    "d-contrat-lens": { "authorId": "p-lens", "grants": ["p-clara", "p-ines", "p-theo"] },
+    "d-rooming": { "authorId": "p-maya", "grants": ["p-clara", "p-linden", "p-ines", "p-theo"] },
+    "d-livret": { "authorId": "p-clara", "grants": ["p-ines", "p-theo", "p-maya", "p-alice", "p-karim", "p-sophie"] },
+    "d-brief-deco": { "authorId": "p-clara", "grants": ["p-ines", "p-theo", "p-maya", "p-petal", "p-bloom", "p-setup"] },
+    "d-plan-jardin": { "authorId": "p-maya", "grants": ["p-clara", "p-ines", "p-theo", "p-petal", "p-setup", "p-sound", "p-lens"] },
+    "d-menu": { "authorId": "p-table", "grants": ["p-clara", "p-maya", "p-ines", "p-theo"] },
+    "d-propositions-vols": { "authorId": "p-odyssee", "grants": ["p-clara", "p-ines", "p-theo"] }
+  }
+}

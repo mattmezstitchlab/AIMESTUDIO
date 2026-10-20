@@ -7,7 +7,7 @@ const W = JSON.parse(fs.readFileSync(path.join(ROOT, 'vitrine/donnees/world.json
 const PS = require('../vitrine/perspectives/world.json');
 const V = require('../vitrine/rendu.js');
 
-const ids = [].concat(...['personnes', 'invites', 'lieux', 'trajets', 'moments', 'missions', 'documents', 'delegations', 'activites', 'imprevus'].map(k => (W[k] || []).map(x => x.id)));
+const ids = [].concat(...['personnes', 'invites', 'lieux', 'trajets', 'moments', 'missions', 'documents', 'delegations', 'activites', 'imprevus', 'candidatures', 'taches'].map(k => (W[k] || []).map(x => x.id)));
 const existe = id => ids.includes(id);
 
 test('chaque entité a un identifiant stable et unique', () => {
@@ -15,9 +15,12 @@ test('chaque entité a un identifiant stable et unique', () => {
   assert.equal(new Set(ids).size, ids.length);
 });
 
-test('50 invités, 12 missions, 6 perspectives', () => {
+test('50 invités, 12 missions, 6 perspectives (lieu de l\'événement par référence)', () => {
   assert.equal(W.invites.length, 50);
   assert.equal(W.missions.length, 12);
+  assert.equal(typeof W.evenement.lieu, 'string'); assert.ok(existe(W.evenement.lieu));
+  for (const c of W.candidatures) assert.ok(existe(c.mission) && existe(c.personne), c.id);
+  for (const t of W.taches) assert.ok(existe(t.mission), t.id);
   assert.deepEqual(PS.angles.map(a => a.id), ['couple', 'agence', 'prestataire', 'invite', 'contributeur', 'coordinateur']);
 });
 
@@ -28,8 +31,10 @@ test('toutes les références pointent vers une entité existante (aucune copie 
   for (const m of W.missions) {
     assert.ok(existe(m.lieu) && existe(m.responsable), m.id);
     m.affectes.concat(m.dependances || []).forEach(r => assert.ok(existe(r), m.id + ' → ' + r));
-    for (const k of ['id', 'titre', 'description', 'categorie', 'date', 'duree', 'postes', 'competences', 'conditions', 'remuneration', 'statut']) assert.ok(m[k] !== undefined, m.id + ' : ' + k);
-    assert.ok(['ouverte', 'attribuee', 'en-cours', 'terminee'].includes(m.statut));
+    for (const k of ['id', 'titre', 'description', 'categorie', 'date', 'duree', 'postes', 'competences', 'conditions', 'remuneration', 'etape']) assert.ok(m[k] !== undefined, m.id + ' : ' + k);
+    assert.ok(['decouvrir', 'candidater', 'valider', 'organiser', 'realiser', 'cloturer', 'close'].includes(m.etape), m.id);
+    assert.equal(m.statut, undefined, m.id + ' : le statut se déduit de l\'étape, il n\'est pas recopié');
+    if (m.coordinateur) assert.ok(existe(m.coordinateur));
     if (m.reglementee) assert.ok(m.qualification, m.id + ' réglementée sans qualification');
   }
   for (const a of PS.angles) assert.ok(existe(a.regard), a.id);

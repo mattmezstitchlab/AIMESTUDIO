@@ -11,12 +11,7 @@
   "debut": "2027-09-16",
   "fin": "2027-09-20",
   "ville": "New York",
-  "lieu": {
-   "nom": "Jardin des Quais, Brooklyn (lieu fictif)",
-   "adresse": "Brooklyn, New York",
-   "acces": "Navettes depuis l'hôtel à 15 h 10",
-   "planB": "Verrière du Pier 9 (fictif), 120 places"
-  },
+  "lieu": "l-jardin",
   "visuels": {
    "hero": {
     "source": "generatif",
@@ -68,6 +63,15 @@
    "ville": "New York",
    "contact": "+1 718 ••• ••12",
    "profil": "Atelier floral, compositions de saison, 12 ans d'événements"
+  },
+  {
+   "id": "p-bloom",
+   "nom": "Bloom Bureau",
+   "fonction": "Fleuriste",
+   "groupe": "prestataires",
+   "ville": "New York",
+   "contact": "+1 646 ••• ••37",
+   "profil": "Studio floral, fleurs séchées et installations"
   },
   {
    "id": "p-shuttle",
@@ -515,7 +519,10 @@
    "id": "l-jardin",
    "nom": "Jardin des Quais (fictif)",
    "ville": "Brooklyn",
-   "type": "cérémonie"
+   "type": "cérémonie",
+   "adresse": "Brooklyn, New York",
+   "acces": "Navettes depuis l'hôtel à 15 h 10",
+   "planB": "Verrière du Pier 9 (fictif), 120 places"
   },
   {
    "id": "l-rooftop",
@@ -709,7 +716,6 @@
    "qualification": "licence-transport",
    "conditions": "Transport de passagers par un professionnel titulaire des autorisations requises.",
    "remuneration": "4 800 $ indicatifs",
-   "statut": "attribuee",
    "dependances": [
     "vol-1",
     "vol-2",
@@ -720,7 +726,8 @@
    ],
    "documents": [
     "d-transport"
-   ]
+   ],
+   "etape": "organiser"
   },
   {
    "id": "m-02",
@@ -744,42 +751,50 @@
    "reglementee": false,
    "conditions": "Contribution bénévole, sans contrepartie financière ; repas offert.",
    "remuneration": null,
-   "statut": "attribuee",
    "dependances": [
     "navette-1",
     "mo-arrivee"
    ],
    "documents": [
     "d-livret"
-   ]
+   ],
+   "etape": "organiser"
   },
   {
    "id": "m-03",
-   "titre": "Compositions florales",
-   "description": "Arche, douze centres de table, boutonnières.",
+   "titre": "Installation florale",
+   "description": "Arche de cérémonie, douze centres de table et boutonnières, installés au jardin le matin du jour J.",
    "categorie": "fleurs",
    "lieu": "l-jardin",
    "date": "2027-09-18",
-   "duree": "1 journée",
-   "postes": 1,
+   "duree": "4 h",
+   "postes": 2,
    "competences": [
-    "art floral"
+    "art floral",
+    "installation"
    ],
    "responsable": "p-clara",
-   "affectes": [
-    "p-petal"
-   ],
+   "affectes": [],
    "nature": "prestation",
    "reglementee": false,
-   "conditions": "Livraison avant 11 h.",
-   "remuneration": "6 200 $ indicatifs",
-   "statut": "en-cours",
+   "conditions": "Fleurs de saison, fournies et installées par le prestataire. Démontage le soir, après le dîner.",
+   "remuneration": "3 200 $ indicatifs",
    "dependances": [
-    "mo-installation"
+    "m-04",
+    "mo-ceremonie"
    ],
    "documents": [
-    "d-brief-deco"
-   ]
+    "d-brief-deco",
+    "d-plan-jardin"
+   ],
+   "etape": "candidater",
+   "debut": "08:30",
+   "coordinateur": "p-maya",
+   "organisation": {
+    "acces": "Entrée des livraisons, quai 2",
+    "consignes": "Arche terminée avant 12 h ; centres de table livrés au rooftop avant 18 h."
+   },
+   "confirme": false
   },
   {
    "id": "m-04",
@@ -801,13 +816,13 @@
    "reglementee": false,
    "conditions": "Accès au jardin dès 9 h.",
    "remuneration": "2 900 $ indicatifs",
-   "statut": "attribuee",
    "dependances": [
     "mo-installation"
    ],
    "documents": [
     "d-plan-jardin"
-   ]
+   ],
+   "etape": "organiser"
   },
   {
    "id": "m-05",
@@ -829,13 +844,13 @@
    "reglementee": false,
    "conditions": "Livraison des images sous quatre semaines.",
    "remuneration": "5 500 $ indicatifs",
-   "statut": "attribuee",
    "dependances": [
     "mo-ceremonie"
    ],
    "documents": [
     "d-contrat-lens"
-   ]
+   ],
+   "etape": "organiser"
   },
   {
    "id": "m-06",
@@ -858,12 +873,12 @@
    "reglementee": false,
    "conditions": "Fin du son à 23 h 30.",
    "remuneration": "3 800 $ indicatifs",
-   "statut": "attribuee",
    "dependances": [
     "mo-cocktail",
     "mo-diner"
    ],
-   "documents": []
+   "documents": [],
+   "etape": "organiser"
   },
   {
    "id": "m-07",
@@ -886,13 +901,13 @@
    "qualification": "licence-alcool",
    "conditions": "Service d'alcool réservé à un professionnel autorisé.",
    "remuneration": "11 400 $ indicatifs",
-   "statut": "attribuee",
    "dependances": [
     "mo-diner"
    ],
    "documents": [
     "d-menu"
-   ]
+   ],
+   "etape": "organiser"
   },
   {
    "id": "m-08",
@@ -914,7 +929,6 @@
    "reglementee": false,
    "conditions": "Présence de 9 h à 23 h 30.",
    "remuneration": "inclus dans l'offre de l'agence",
-   "statut": "en-cours",
    "dependances": [
     "m-01",
     "m-03",
@@ -925,7 +939,8 @@
    ],
    "documents": [
     "d-planning"
-   ]
+   ],
+   "etape": "realiser"
   },
   {
    "id": "m-09",
@@ -948,11 +963,11 @@
    "qualification": "operateur-voyage",
    "conditions": "Réservée à un opérateur de voyage immatriculé. Aucune réservation dans la démonstration.",
    "remuneration": "commission indicative",
-   "statut": "terminee",
    "dependances": [],
    "documents": [
     "d-propositions-vols"
-   ]
+   ],
+   "etape": "close"
   },
   {
    "id": "m-10",
@@ -974,14 +989,14 @@
    "reglementee": false,
    "conditions": "Liste nominative transmise à J-10.",
    "remuneration": "selon contrat hôtelier",
-   "statut": "en-cours",
    "dependances": [
     "vol-1",
     "vol-2"
    ],
    "documents": [
     "d-rooming"
-   ]
+   ],
+   "etape": "realiser"
   },
   {
    "id": "m-11",
@@ -1001,11 +1016,11 @@
    "reglementee": false,
    "conditions": "Contribution bénévole ; désistement possible à tout moment.",
    "remuneration": null,
-   "statut": "ouverte",
    "dependances": [
     "mo-arrivee"
    ],
-   "documents": []
+   "documents": [],
+   "etape": "candidater"
   },
   {
    "id": "m-12",
@@ -1025,14 +1040,14 @@
    "reglementee": false,
    "conditions": "Installation avant 14 h.",
    "remuneration": "900 $ indicatifs",
-   "statut": "ouverte",
    "dependances": [
     "mo-installation",
     "mo-ceremonie"
    ],
    "documents": [
     "d-plan-jardin"
-   ]
+   ],
+   "etape": "decouvrir"
   }
  ],
  "documents": [
@@ -1194,42 +1209,48 @@
    "titre": "Transport local",
    "montant": 4800,
    "devise": "USD",
-   "mission": "m-01"
+   "mission": "m-01",
+   "audience": "organisation"
   },
   {
    "id": "b-fleurs",
    "titre": "Fleurs",
    "montant": 6200,
    "devise": "USD",
-   "mission": "m-03"
+   "mission": "m-03",
+   "audience": "organisation"
   },
   {
    "id": "b-photo",
    "titre": "Photographie",
    "montant": 5500,
    "devise": "USD",
-   "mission": "m-05"
+   "mission": "m-05",
+   "audience": "organisation"
   },
   {
    "id": "b-diner",
    "titre": "Restauration",
    "montant": 11400,
    "devise": "USD",
-   "mission": "m-07"
+   "mission": "m-07",
+   "audience": "organisation"
   },
   {
    "id": "b-musique",
    "titre": "Musique",
    "montant": 3800,
    "devise": "USD",
-   "mission": "m-06"
+   "mission": "m-06",
+   "audience": "organisation"
   },
   {
    "id": "b-mobilier",
    "titre": "Mobilier",
    "montant": 2900,
    "devise": "USD",
-   "mission": "m-04"
+   "mission": "m-04",
+   "audience": "organisation"
   }
  ],
  "imprevus": [
@@ -1239,6 +1260,44 @@
    "ref": "vol-1",
    "decalage": 90,
    "etat": "simulation"
+  }
+ ],
+ "candidatures": [
+  {
+   "id": "c-01",
+   "mission": "m-03",
+   "personne": "p-bloom",
+   "statut": "deposee",
+   "message": "Studio floral de Manhattan, arche en fleurs séchées possible.",
+   "proposition": "3 400 $"
+  },
+  {
+   "id": "c-02",
+   "mission": "m-11",
+   "personne": "p-karim",
+   "statut": "deposee",
+   "message": "Je parle anglais et arabe, disponible les 16 et 19.",
+   "proposition": "bénévole"
+  }
+ ],
+ "taches": [
+  {
+   "id": "t-01",
+   "mission": "m-03",
+   "titre": "Arche de cérémonie montée",
+   "fait": false
+  },
+  {
+   "id": "t-02",
+   "mission": "m-03",
+   "titre": "Centres de table livrés au rooftop",
+   "fait": false
+  },
+  {
+   "id": "t-03",
+   "mission": "m-03",
+   "titre": "Boutonnières remises au couple",
+   "fait": false
   }
  ]
 }

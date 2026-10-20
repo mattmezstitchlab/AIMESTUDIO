@@ -13,24 +13,78 @@
 <div id="app" aria-live="polite"><p style="padding:40px;font-family:system-ui">Chargement…</p></div>
 <div class="v-toast" id="toast" role="status"></div>
 <script src="/synchroview/permissions.js"></script>
+<script src="/synchroview/flux.js"></script>
 <script src="/vitrine/rendu.js"></script>
 <script>
 (function(){"use strict";
-/* Le mini-site public : ?u=univers &mode=perspective &m=modèle &amb=ambiance. Il ne fait qu'assembler les couches. */
+/* Le mini-site public : ?u=univers &mode=perspective &m=modèle &amb=ambiance. Il ne fait qu'assembler les couches.
+   Démonstration des missions : chaque action est un JOURNAL d'actions (jamais une copie de données), rejoué et revérifié
+   par les règles ; le serveur de démonstration revérifie aussi quand il est joignable. Toutes les vues ouvertes
+   (SynchroView, autres onglets) relisent le même journal : une information écrite une fois apparaît partout. */
 var Q=new URLSearchParams(location.search),U=(Q.get('u')||'mariage').replace(/[^a-z]/g,''),M=(Q.get('m')||'editorial').replace(/[^a-z]/g,'');
+var $=function(s){return document.querySelector(s)},app=$('#app');
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function j(p){return fetch(p,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(p+' '+r.status);return r.json()})}
+var T=0;function toast(t,ms){var e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(T);T=setTimeout(function(){e.classList.remove('on')},ms||2600)}
+/* le journal voyage avec le message : une vue ne relit jamais une copie en retard du stockage */
+var KEY='aime-sim-'+U,JR=[],BC=null;try{BC=new BroadcastChannel('aime-sim')}catch(_){}
+try{JR=JSON.parse(localStorage.getItem(KEY)||'[]')||[]}catch(_){JR=[]}
+function journal(){return JR}
+function ecrire(jr){JR=jr;try{localStorage.setItem(KEY,JSON.stringify(jr))}catch(_){}if(BC)try{BC.postMessage({u:U,j:jr})}catch(_){}}
+var S=null;
 Promise.all([j('/vitrine/donnees/'+U+'.json'),j('/vitrine/acces/'+U+'.json'),j('/vitrine/perspectives/'+U+'.json'),j('/vitrine/modeles/'+M+'.json'),j('/vitrine/presentation/ambiances.json')]).then(function(r){
- var contenu=r[0],acces=r[1],ps=r[2],modele=r[3],pr=r[4];
+ var base=r[0],acces=r[1],ps=r[2],modele=r[3],pr=r[4];
  var angle=ps.angles.filter(function(a){return a.id===Q.get('mode')})[0]||ps.angles[0];
  var amb=pr.ambiances[Q.get('amb')]||pr.ambiances[(pr.parUnivers||{})[U]]||pr.ambiances[modele.ambiance]||pr.ambiances[Object.keys(pr.ambiances)[0]];
  var pol={titre:(pr.polices[modele.polices.titre]||{}).famille,texte:(pr.polices[modele.polices.texte]||{}).famille};
- var out=AIMEVitrine.rendre({contenu:contenu,acces:acces,perspective:angle,libelles:ps.libelles||{},modele:modele,presentation:{ambiance:amb,polices:pol},regles:AIMEPerms});
- document.getElementById('vars').textContent=out.css;document.title=out.titre;document.getElementById('app').innerHTML=out.html;
- window.__vitrine={univers:U,angle:angle.id,modele:modele.id,bilan:out.bilan};
+ S={base:base,acces:acces,ps:ps,angle:angle,modele:modele,amb:amb,pol:pol,sim:!!(base.missions&&window.AIMEFlux)};
+ rendu(false);
+}).catch(function(e){app.innerHTML='<p style="padding:40px;font-family:system-ui">Impossible de charger cette vitrine : '+String(e.message).replace(/</g,'&lt;')+'</p>'});
+
+function etat(){return S.sim?AIMEFlux.rejouer(S.base,S.acces,AIMEPerms,journal()).contenu:S.base}
+var SUIVI='[data-sv-id$=":lieu"],[data-sv-id$=":horaire"],[data-sv-id$=":responsable"],[data-sv-id$=":arrivee"],[data-sv-id$=":confirmation"],[data-sv-id$=":carte"] .v-etat,[data-sv-id^="candidature:"] .v-etat';
+function rendu(signaler){var avant={};if(signaler)[].forEach.call(document.querySelectorAll(SUIVI),function(e,i){avant[(e.closest('[data-sv-id]')||e).getAttribute('data-sv-id')+'#'+i]=e.textContent});
+ var y=scrollY,contenu=etat();
+ var out=AIMEVitrine.rendre({contenu:contenu,acces:S.acces,perspective:S.angle,libelles:S.ps.libelles||{},modele:S.modele,presentation:{ambiance:S.amb,polices:S.pol},regles:AIMEPerms,flux:S.sim?AIMEFlux:null});
+ document.getElementById('vars').textContent=out.css;document.title=out.titre;app.innerHTML=out.html;
+ if(S.sim)app.insertAdjacentHTML('beforeend','<div class="v-sim" data-sv-skip><span>Démonstration · révision '+(contenu.revision||1)+'</span><button type="button" id="sim-raz">Réinitialiser</button></div>');
+ if(signaler){scrollTo(0,y);var n=0;[].forEach.call(document.querySelectorAll(SUIVI),function(e,i){var k=(e.closest('[data-sv-id]')||e).getAttribute('data-sv-id')+'#'+i;if(k in avant&&avant[k]!==e.textContent){e.classList.add('v-maj');n++}});if(n&&signaler==='autre')toast('Mis à jour depuis une autre vue · '+n+' information'+(n>1?'s':''))}
+ window.__vitrine={univers:U,angle:S.angle.id,modele:S.modele.id,bilan:out.bilan,revision:contenu.revision||1};
+ orbe();
  /* les sections existent maintenant : SynchroView reçoit les repères à jour */
- setTimeout(function(){dispatchEvent(new Event('resize'))},60);
-}).catch(function(e){document.getElementById('app').innerHTML='<p style="padding:40px;font-family:system-ui">Impossible de charger cette vitrine : '+String(e.message).replace(/</g,'&lt;')+'</p>'});
-var T=0;document.addEventListener('click',function(e){if(!e.target.closest('[data-demo]'))return;var t=document.getElementById('toast');t.textContent='Démonstration : aucune action réelle n\'est effectuée.';t.classList.add('on');clearTimeout(T);T=setTimeout(function(){t.classList.remove('on')},2200)});
+ setTimeout(function(){dispatchEvent(new Event('resize'))},60)}
+
+/* une action : décidée par les règles (serveur de démonstration si joignable, sinon le même code dans la page) */
+function decider(qui,action,p){var jr=journal();
+ var local=function(){var t=AIMEFlux.transition(etat(),S.acces,AIMEPerms,qui,action,p);t.proof='code';return t};
+ if(U!=='world')return Promise.resolve(local());
+ var ctl='AbortController' in window?new AbortController():null,to=setTimeout(function(){if(ctl)ctl.abort()},4000);
+ return fetch('/api/sv/world',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({journal:jr,qui:qui,action:action,p:p}),signal:ctl?ctl.signal:undefined})
+  .then(function(r){clearTimeout(to);if(r.status===200||r.status===403)return r.json();throw new Error('indisponible')}).catch(function(){clearTimeout(to);return local()})}
+function executer(action,p,el){if(!S||!S.sim)return;var qui=S.angle.regard;if(el)el.disabled=true;
+ decider(qui,action,p).then(function(d){if(!d.allow){toast('Refusé ('+(d.proof||'code')+') : '+d.reason,3600);rendu(false);return}
+  var jr=journal().concat([{qui:qui,action:action,p:p}]);ecrire(jr);rendu(true);
+  var c=d.courriel,nom=c&&(S.base.personnes||[]).filter(function(x){return x.id===c.a})[0];
+  toast(d.message+(nom?' · Courriel simulé à '+nom.nom+' : « '+c.objet+' » (non envoyé)':'')+' · vérifié : '+(d.proof||'code'),4200)})}
+document.addEventListener('click',function(e){var a=e.target.closest('[data-act]');if(a&&a.tagName==='BUTTON'&&!a.disabled){e.preventDefault();var p={};try{p=JSON.parse(a.getAttribute('data-p')||'{}')}catch(_){}executer(a.getAttribute('data-act'),p,a);return}
+ if(e.target.closest('#sim-raz')){ecrire([]);rendu(true);toast('Démonstration réinitialisée dans toutes les vues.');return}
+ if(e.target.closest('#orbe')){var c=document.querySelector('[data-orb]');if(c){c.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){c.focus()},350)}return}
+ if(!e.target.closest('[data-demo]'))return;toast('Démonstration : aucune action réelle n\'est effectuée.')});
+document.addEventListener('change',function(e){var a=e.target.closest('select[data-act]');if(!a)return;var p={};try{p=JSON.parse(a.getAttribute('data-p')||'{}')}catch(_){}p[a.getAttribute('data-k')]=a.value;executer(a.getAttribute('data-act'),p,a)});
+/* une autre vue a écrit : on relit le même journal */
+function ailleurs(){if(S&&S.sim)rendu('autre')}
+if(BC)BC.onmessage=function(m){if(m.data&&m.data.u===U&&Array.isArray(m.data.j)){JR=m.data.j;ailleurs()}};
+addEventListener('storage',function(e){if(e.key!==KEY||BC)return;try{JR=JSON.parse(e.newValue||'[]')||[]}catch(_){JR=[]}ailleurs()});
+
+/* AIME ORB · point d'intégration : la page propose l'action utile, l'orbe (plus tard) la présente.
+   Sans orbe, tout reste faisable avec les boutons de la page. */
+function orbe(){var c=document.querySelector('[data-orb]:not([hidden])'),sug=c?{label:c.getAttribute('data-orb'),action:c.getAttribute('data-act'),regle:c.getAttribute('data-regle'),cle:c.getAttribute('data-sv-id')}:null;
+ window.AIMEOrb={suggestion:sug,montrer:function(){var b=document.getElementById('orbe');if(b)b.click()}};
+ try{dispatchEvent(new CustomEvent('aime:orb',{detail:sug}))}catch(_){}
+ var b=document.getElementById('orbe');if(!S.sim){if(b)b.remove();return}if(!b){b=document.createElement('button');b.type='button';b.id='orbe';b.className='v-orbe';b.setAttribute('data-sv-skip','');document.body.appendChild(b)}
+ b.hidden=!sug;if(sug)b.innerHTML='<i aria-hidden="true"></i><span>'+esc(sug.label)+'</span>';b.setAttribute('aria-label',sug?'Action proposée : '+sug.label:'')}
+/* SynchroView · ce que la règle décide pour une action affichée ou masquée (preuve : code de la page) */
+window.svPerm=function(k,el){var a=el&&el.closest&&el.closest('[data-act]');if(!a)return null;return{allow:!a.hasAttribute('data-refus'),rule:a.getAttribute('data-regle')||'',reason:a.getAttribute('data-refus')||'',proof:'code'}};
 })();
 </script>
 <script src="/synchroview/bridge.js" defer></script>

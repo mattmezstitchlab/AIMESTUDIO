@@ -1,5 +1,6 @@
 /* AIME Vitrine · moteur de rendu universel.
-   rendre({ contenu, acces, perspective, modele, presentation, regles }) → { html, css, titre, bilan }
+   rendre({ contenu, acces, perspective, modele, presentation, regles, flux? }) → { html, css, titre, bilan }
+   flux (synchroview/flux.js, facultatif) : étapes et actions des missions, décidées par les mêmes règles.
 
    Cinq couches, jamais mélangées :
      contenu       vitrine/donnees/<univers>.json      les faits de l'événement, écrits une fois
@@ -14,11 +15,12 @@
 function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 var MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 function dateLongue(iso){var d=new Date(iso+'T12:00:00');return isNaN(d)?iso:d.getDate()+' '+MOIS[d.getMonth()]+' '+d.getFullYear()}
+function avant(h,min){var p=String(h||'').split(':');if(p.length<2)return h;var v=(+p[0])*60+(+p[1])-min;v=(v+1440)%1440;return('0'+Math.floor(v/60)).slice(-2)+':'+('0'+v%60).slice(-2)}
 function heure(h){return String(h||'').replace(/^0(\d)/,'$1').replace(':',' h ').replace(/ h 00$/,' h')}
 
 /* ---------- 1 · la politique : contenu + accès + règles → vue filtrée, indépendante de tout modèle ---------- */
-function politique(contenu,acces,perspective,regles){
- var sujet={id:perspective.regard,role:(acces.membres||{})[perspective.regard]||null};
+function politique(contenu,acces,perspective,regles,flux){
+ var sujet=flux?flux.sujet(contenu,acces,perspective.regard):{id:perspective.regard,role:(acces.membres||{})[perspective.regard]||null};
  var can=function(action,res,ctx){return regles.can(sujet,action,res,ctx)};
  var canStart=function(action,res){return regles.canStart?regles.canStart(sujet,action,res):regles.can(sujet,action,res)};
  var resMoment=function(m){return{type:'event',id:m.id,public:!!m.public,assigneeId:m.assigneeId||null,authorId:m.authorId||null}};
@@ -27,6 +29,7 @@ function politique(contenu,acces,perspective,regles){
  var resPay=function(p){return{type:'payment',id:p.id,amount:p.montant,payer:p.payer,payeeId:p.payeeId,payerId:p.payerId||null}};
  var personne=function(id){return(contenu.personnes||[]).filter(function(p){return p.id===id})[0]||null};
  var trace=[];
+ var lienMission=function(r){return r.responsableId===sujet.id?'responsable':r.coordinateurId===sujet.id?'coordinateur':(r.assigneeIds||[]).indexOf(sujet.id)>=0?'affecte':(r.candidateIds||[]).indexOf(sujet.id)>=0?'candidat':''};
  var resItem=function(it){return{type:'item',id:it.id||it.nom,audience:it.audience||'public',assigneeId:it.assigneeId||null}};
  var vue={sujet:sujet,personne:personne(sujet.id),evenement:contenu.evenement,
   moments:function(filtre){var all=(contenu.moments||[]).filter(function(m){var ok=can('read',resMoment(m)).allow;if(!ok)trace.push('moment masqué par la règle : '+m.id);return ok});
@@ -46,6 +49,19 @@ function politique(contenu,acces,perspective,regles){
    var d=a.action==='pay'?canStart('pay',res):can(a.action,res);if(d.allow)oui.push({label:a.label,regle:d.rule,confirmation:!!d.needsTx});else{non++;trace.push('action refusée : '+a.label+' ('+d.reason+')')}});return{autorisees:oui,refusees:non}},
   nom:function(id){var p=personne(id);return p?p.nom:''},
   personneComplete:function(id){return personne(id)},
+  /* un lieu peut être écrit une fois (référence) ou décrit sur place : la vue rend toujours son nom à jour */
+  lieu:function(v){if(v&&typeof v==='object')return v;return(contenu.lieux||[]).filter(function(l){return l.id===v})[0]||(v?{nom:v}:null)},
+  lieuNom:function(v){var l=vue.lieu(v);return l?l.nom:''},
+  /* missions : un seul objet, lu à travers les règles ; chaque étape n'apparaît qu'aux personnes concernées */
+  mission:function(id){var m=(contenu.missions||[]).filter(function(x){return x.id===id})[0];if(!m||!flux)return null;var res=flux.ressource(contenu,m);
+   if(!can('read',res).allow){trace.push('mission masquée par la règle : '+id);return null}
+   var et={};flux.ETAPES.forEach(function(e){et[e]=can('step',flux.ressource(contenu,m,e)).allow});
+   var cands=[],cach=0;(contenu.candidatures||[]).filter(function(c){return c.mission===id}).forEach(function(c){if(can('read',flux.resCandidature(c)).allow)cands.push(c);else cach++});
+   return{m:m,statut:flux.statut(m),rang:m.etape==='close'?flux.ETAPES.length:flux.ETAPES.indexOf(m.etape),etapes:et,actions:flux.possibles(contenu,acces,regles,sujet.id,m),
+    candidatures:cands,cachees:cach,logistique:can('read_logistics',res).allow,taches:(contenu.taches||[]).filter(function(t){return t.mission===id}),lien:lienMission(res)}},
+  missions:function(filtre){var out=[];(contenu.missions||[]).forEach(function(m){var res=flux?flux.ressource(contenu,m):null;if(!res||!can('read',res).allow)return;var l=lienMission(res),ouverte=m.etape==='decouvrir'||m.etape==='candidater';
+    if(filtre==='ouvertes'&&!(ouverte&&!l))return;if(filtre==='miennes'&&!l)return;out.push({m:m,statut:flux.statut(m),lien:l,candidater:can('apply',res)})});return out},
+  membresOrganisation:function(){return(contenu.personnes||[]).filter(function(p){var r=(acces.membres||{})[p.id];return r==='owner'||r==='editor'})},
   collection:function(cle){var vis=[],caches=0;(contenu[cle]||[]).forEach(function(it){if(can('read',resItem(it)).allow)vis.push(it);else caches++});return{visibles:vis,caches:caches}},
   trace:trace};
  return vue}
@@ -99,11 +115,11 @@ function image(v,amb,ratio,style){if(v&&v.photo)return'<img src="'+esc(v.photo)+
 function L(x,k,d){var a=x.angle.libelles||{},u=x.libelles||{};return a[k]!=null?a[k]:u[k]!=null?u[k]:d}
 var C={
  hero:{
-  'pleine-page':function(x){var e=x.vue.evenement;return'<header class="v-hero hero-plein" data-sv="hero" data-sv-label="Accueil"><div class="v-img">'+image(e.visuels&&e.visuels.hero,x.amb,1.5)+'</div><div class="v-hero-t"><span class="v-k">'+esc(x.angle.kicker)+'</span><h1>'+esc(e.nom)+'</h1><p class="v-date">'+esc(dateLongue(e.date))+' · '+esc(e.lieu.nom)+'</p></div></header><section class="v-intro" data-sv="intro" data-sv-label="Introduction"><p>'+esc(x.angle.intro)+'</p></section>'}
+  'pleine-page':function(x){var e=x.vue.evenement;return'<header class="v-hero hero-plein" data-sv="hero" data-sv-label="Accueil"><div class="v-img">'+image(x.angle.visuel&&!(e.visuels&&e.visuels.hero&&e.visuels.hero.photo)?x.angle.visuel:e.visuels&&e.visuels.hero,x.amb,1.5)+'</div><div class="v-hero-t"><span class="v-k">'+esc(x.angle.kicker)+'</span><h1>'+esc(e.nom)+'</h1><p class="v-date">'+esc(dateLongue(e.date))+' · '+esc(x.vue.lieuNom(e.lieu))+'</p></div></header><section class="v-intro" data-sv="intro" data-sv-label="Introduction"><p>'+esc(x.angle.intro)+'</p></section>'}
  },
  compte:{defaut:function(x){var j=Math.max(0,Math.round((new Date(x.vue.evenement.date+'T12:00:00')-new Date())/864e5));return'<div class="v-compte"><b>'+j+'</b><span>'+esc(L(x,'compte','jours avant le'))+' '+esc(dateLongue(x.vue.evenement.date))+'</span></div>'}},
- programme:{liste:function(x,s){var ms=x.vue.moments(s.filtre);if(!ms.length)return'';return'<ol class="v-prog">'+ms.map(function(m){var notes=s.notes&&m.equipe&&x.vue.notesVisibles(m);return'<li'+(m.public?'':' class="interne"')+'><time>'+esc(heure(m.debut))+'</time><div><b>'+esc(m.titre)+'</b><span>'+esc(m.espace)+(m.planB&&s.filtre!=='public'?' · '+esc(L(x,'planB','plan B'))+' : '+esc(m.planB):'')+(m.personne?' · '+esc(x.vue.nom(m.personne)):'')+'</span>'+(notes?'<p class="v-note">'+esc(m.equipe)+(m.materiel?' · '+esc(L(x,'materiel','Matériel'))+' : '+esc(m.materiel):'')+'</p>':'')+(m.public?'':'<em>'+esc(L(x,'interne','équipe'))+'</em>')+'</div></li>'}).join('')+'</ol>'}},
- lieu:{defaut:function(x,s){var l=x.vue.evenement.lieu;return'<div class="v-lieu"><div><h3>'+esc(l.nom)+'</h3><p>'+esc(l.adresse)+'</p><p>'+esc(l.acces)+'</p>'+(s.planB&&l.planB?'<p class="v-note">'+esc(L(x,'planBLieu','Plan B'))+' : '+esc(l.planB)+'</p>':'')+'</div><div class="v-img v-img-s">'+image({graine:(x.vue.evenement.visuels.hero.graine||7)+5,style:x.vue.evenement.visuels.hero.style},x.amb,1.3)+'</div></div>'}},
+ programme:{liste:function(x,s){var ms=x.vue.moments(s.filtre);if(!ms.length)return'';return'<ol class="v-prog">'+ms.map(function(m){var notes=s.notes&&m.equipe&&x.vue.notesVisibles(m);return'<li'+(m.public?'':' class="interne"')+'><time>'+esc(heure(m.debut))+'</time><div><b>'+esc(m.titre)+'</b><span>'+esc(x.vue.lieuNom(m.espace))+(m.planB&&s.filtre!=='public'?' · '+esc(L(x,'planB','plan B'))+' : '+esc(m.planB):'')+(m.personne?' · '+esc(x.vue.nom(m.personne)):'')+'</span>'+(notes?'<p class="v-note">'+esc(m.equipe)+(m.materiel?' · '+esc(L(x,'materiel','Matériel'))+' : '+esc(m.materiel):'')+'</p>':'')+(m.public?'':'<em>'+esc(L(x,'interne','équipe'))+'</em>')+'</div></li>'}).join('')+'</ol>'}},
+ lieu:{defaut:function(x,s){var l=x.vue.lieu(x.vue.evenement.lieu)||{};return'<div class="v-lieu"><div><h3>'+esc(l.nom)+'</h3><p>'+esc(l.adresse)+'</p><p>'+esc(l.acces)+'</p>'+(s.planB&&l.planB?'<p class="v-note">'+esc(L(x,'planBLieu','Plan B'))+' : '+esc(l.planB)+'</p>':'')+'</div><div class="v-img v-img-s">'+image({graine:(x.vue.evenement.visuels.hero.graine||7)+5,style:x.vue.evenement.visuels.hero.style},x.amb,1.3)+'</div></div>'}},
  personnes:{colonnes:function(x,s){var ps=x.vue.personnes(s.groupes||[]);if(!ps.length)return'';return'<ul class="v-pers">'+ps.map(function(p){return'<li><b>'+esc(p.nom)+'</b><span>'+esc(p.fonction)+'</span>'+(s.contacts&&x.vue.contactsVisibles&&p.contact?'<span class="v-tel">'+esc(p.contact)+'</span>':'')+'</li>'}).join('')+'</ul>'}},
  documents:{liste:function(x){var d=x.vue.documents();if(!d.visibles.length&&!d.caches)return'';return'<ul class="v-docs">'+d.visibles.map(function(o){return'<li><span class="v-dn">'+esc(o.doc.nature)+'</span><b>'+esc(o.doc.titre+(o.doc.personne?' · '+x.vue.nom(o.doc.personne):''))+'</b><span>'+esc(o.doc.taille)+'</span><span class="v-da">'+(o.modifier?'modifiable':'lecture')+(o.partager?' · partage':'')+'</span></li>'}).join('')+'</ul>'+(d.caches?'<p class="v-masque">'+d.caches+' document'+(d.caches>1?'s':'')+' réservé'+(d.caches>1?'s':'')+' à d\'autres personnes.</p>':'')}},
  reponses:{defaut:function(x,s){var r=x.vue.reponses();if(!r.nominatives.length&&!r.resume)return'';var h='',lab=L(x,'valeurs',{});
@@ -120,7 +136,37 @@ var C={
  paiements:{defaut:function(x){var ps=x.vue.paiements();if(!ps.length)return'';return'<ul class="v-docs">'+ps.map(function(o){return'<li><span class="v-dn">'+esc(o.p.echeance)+'</span><b>'+esc(o.p.titre+(o.p.payeeId&&x.vue.nom(o.p.payeeId)?' · '+x.vue.nom(o.p.payeeId):''))+'</b><span>'+esc(o.p.montant)+' €</span><span class="v-da">'+esc(o.p.statut)+(o.payer?' · vous pouvez régler'+(o.confirmation?' (après confirmation)':''):'')+'</span></li>'}).join('')+'</ul>'}},
  urgences:{defaut:function(x){return'<ul class="v-pers">'+(x.contenu.urgences||[]).map(function(u){var pp=u.personne?x.vue.personneComplete(u.personne):null;return'<li><b>'+esc(u.qui+(pp?' · '+pp.nom:''))+'</b><span class="v-tel">'+esc(pp?pp.contact:u.tel)+'</span></li>'}).join('')+'</ul>'}},
  liste:{defaut:function(x,s){var it=x.vue.collection(s.source);if(!it.visibles.length)return'';var ch=s.champs||[];
-  return'<ul class="v-liste">'+it.visibles.map(function(o){return'<li><b>'+esc(o[s.champTitre||'nom'])+'</b>'+(s.etat&&o[s.etat]?'<em class="v-etat">'+esc(o[s.etat])+'</em>':'')+ch.map(function(c){return o[c[0]]==null?'':'<span><i>'+esc(c[1])+'</i> '+esc(c[2]==='personne'?x.vue.nom(o[c[0]]):o[c[0]])+'</span>'}).join('')+'</li>'}).join('')+'</ul>'+(it.caches?'<p class="v-masque">'+it.caches+' '+esc(L(x,'elementsReserves','élément(s) réservé(s) à d\'autres rôles.'))+'</p>':'')}},
+  return'<ul class="v-liste">'+it.visibles.map(function(o){return'<li><b>'+esc(o[s.champTitre||'nom']||o.nom||o.titre||o.code)+'</b>'+(s.etat&&o[s.etat]?'<em class="v-etat">'+esc(o[s.etat])+'</em>':'')+ch.map(function(c){return o[c[0]]==null?'':'<span><i>'+esc(c[1])+'</i> '+esc(c[2]==='personne'?x.vue.nom(o[c[0]]):c[2]==='lieu'?x.vue.lieuNom(o[c[0]]):c[2]==='heure'?heure(o[c[0]]):c[2]==='date'?dateLongue(o[c[0]]):o[c[0]])+'</span>'}).join('')+'</li>'}).join('')+'</ul>'+(it.caches?'<p class="v-masque">'+it.caches+' '+esc(L(x,'elementsReserves','élément(s) réservé(s) à d\'autres rôles.'))+'</p>':'')}},
+ mission:{dossier:function(x,s){var M=x.vue.mission(s.ref);if(!M)return'';var m=M.m,id=m.id,A=M.actions,E=x.flux.ETAPES,lab=L(x,'etapes',{}),st=L(x,'statuts',{});
+  var EL={decouvrir:'Découvrir',candidater:'Candidater',valider:'Valider',organiser:'Organiser',realiser:'Réaliser',cloturer:'Clôturer'};
+  var h='<div class="v-mi" data-sv-id="mission:'+esc(id)+'"><div class="v-mi-h"><span class="v-k">'+esc(m.categorie)+'</span><h3>'+esc(m.titre)+'</h3><em class="v-etat e-'+esc(M.statut)+'">'+esc(st[M.statut]||M.statut)+'</em></div>';
+  h+='<dl class="v-champs v-mi-f"><dt>'+esc(L(x,'lieu','Lieu'))+'</dt><dd data-sv-id="mission:'+esc(id)+':lieu">'+esc(x.vue.lieuNom(m.lieu))+'</dd><dt>'+esc(L(x,'horaire','Horaire'))+'</dt><dd data-sv-id="mission:'+esc(id)+':horaire">'+esc(dateLongue(m.date))+(m.debut?' · '+esc(heure(m.debut)):'')+(m.duree?' · '+esc(m.duree):'')+'</dd><dt>'+esc(L(x,'responsable','Responsable'))+'</dt><dd data-sv-id="mission:'+esc(id)+':responsable">'+esc(x.vue.nom(m.responsable))+'</dd>'+(m.coordinateur?'<dt>'+esc(L(x,'coordination','Sur place'))+'</dt><dd>'+esc(x.vue.nom(m.coordinateur))+'</dd>':'')+((m.affectes||[]).length&&M.etapes.organiser?'<dt>'+esc(L(x,'affectes','Réalisé par'))+'</dt><dd>'+esc(m.affectes.map(x.vue.nom).join(', '))+'</dd>':'')+'</dl>';
+  h+='<ol class="v-rail" aria-label="'+esc(L(x,'parcours','Étapes de la mission'))+'">'+E.map(function(e,i){return'<li class="'+(i<M.rang?'fait':i===M.rang?'ici':'')+(M.etapes[e]?'':' ferme')+'"'+(i===M.rang?' aria-current="step"':'')+'>'+esc(lab[e]||EL[e])+'</li>'}).join('')+'</ol>';
+  var B=function(act,p,label,primaire){var d=act==='edit'?A.edit:A[act]||{allow:false,rule:'mission.'+act,reason:'non évaluée'};p.mission=id;var k='act:'+id+':'+act+(p.tache?':'+p.tache:p.candidature?':'+p.candidature:'');
+   if(!d.allow)return'<button type="button" class="v-btn" hidden disabled data-act="'+act+'" data-sv-id="'+esc(k)+'" data-regle="'+esc(d.rule)+'" data-refus="'+esc(d.reason)+'">'+esc(label)+'</button>';
+   return'<button type="button" class="v-btn'+(primaire?' v-btn-p':'')+'" data-act="'+act+'" data-p="'+esc(JSON.stringify(p))+'" data-sv-id="'+esc(k)+'" data-regle="'+esc(d.rule)+'"'+(primaire?' data-orb="'+esc(label)+'"':'')+'>'+esc(label)+'</button>'};
+  /* l'étape ouverte : l'étape en cours si la personne la voit, sinon la dernière étape qui la concerne */
+  var ouv=-1;E.forEach(function(e,i){if(M.etapes[e]&&i<=M.rang)ouv=i});
+  var blocs=E.map(function(e,i){if(!M.etapes[e]||i>M.rang)return'';var c='',ici=i===M.rang,ouvert=i===ouv&&M.rang<E.length;
+   if(e==='decouvrir')c='<p>'+esc(m.description)+'</p><dl class="v-champs"><dt>'+esc(L(x,'competences','Compétences'))+'</dt><dd>'+esc((m.competences||[]).join(', '))+'</dd><dt>'+esc(L(x,'conditions','Conditions'))+'</dt><dd>'+esc(m.conditions)+'</dd><dt>'+esc(L(x,'remuneration','Rémunération'))+'</dt><dd>'+esc(m.remuneration)+'</dd><dt>'+esc(L(x,'postes','Postes'))+'</dt><dd>'+esc(m.postes)+'</dd></dl>'+(ici||m.etape==='candidater'?'<div class="v-btns">'+B('apply',{},L(x,'candidater','Candidater'),true)+'</div>':'');
+   if(e==='candidater'){var cs=M.candidatures;c=cs.length?'<ul class="v-cand">'+cs.map(function(k){return'<li data-sv-id="candidature:'+esc(k.id)+'"><b>'+esc(x.vue.nom(k.personne))+'</b><em class="v-etat">'+esc((L(x,'candidatures',{}))[k.statut]||k.statut)+'</em><span>'+esc(k.message)+(k.proposition?' · '+esc(k.proposition):'')+'</span>'+(ici&&k.statut==='deposee'?'<div class="v-btns">'+B('shortlist',{candidature:k.id},L(x,'proposer','Proposer pour validation'),true)+'</div>':'')+'</li>'}).join('')+'</ul>':'<p class="v-masque">'+esc(L(x,'aucuneCandidature','Aucune candidature visible pour vous.'))+'</p>';
+    if(M.cachees)c+='<p class="v-masque">'+M.cachees+' '+esc(L(x,'candidaturesPrivees','candidature(s) d\'autres personnes, privée(s).'))+'</p>'}
+   if(e==='valider'){var pr=M.candidatures.filter(function(k){return k.statut==='proposee'||k.statut==='retenue'})[0];c=pr?'<p><b>'+esc(x.vue.nom(pr.personne))+'</b> · '+esc((L(x,'candidatures',{}))[pr.statut]||pr.statut)+'</p>':'<p class="v-masque">'+esc(L(x,'enValidation','Une candidature est en cours de validation.'))+'</p>';if(ici)c+='<div class="v-btns">'+B('validate',{},L(x,'valider','Valider'),true)+B('reject',{},L(x,'refuser','Renvoyer'))+'</div>'}
+   if(e==='organiser'){if(M.logistique){var o=m.organisation||{};c='<dl class="v-champs"><dt>'+esc(L(x,'arrivee','Arrivée'))+'</dt><dd data-sv-id="mission:'+esc(id)+':arrivee">'+esc(heure(avant(m.debut,30)))+' · '+esc(x.vue.lieuNom(m.lieu))+'</dd><dt>'+esc(L(x,'acces','Accès'))+'</dt><dd>'+esc(o.acces)+'</dd><dt>'+esc(L(x,'consignes','Consignes'))+'</dt><dd>'+esc(o.consignes)+'</dd><dt>'+esc(L(x,'contact','Contact sur place'))+'</dt><dd>'+esc(x.vue.nom(m.coordinateur))+(x.vue.contactsVisibles&&x.vue.personneComplete(m.coordinateur)?' · '+esc(x.vue.personneComplete(m.coordinateur).contact):'')+'</dd><dt>'+esc(L(x,'confirmation','Confirmation'))+'</dt><dd data-sv-id="mission:'+esc(id)+':confirmation">'+esc(m.confirme?L(x,'confirme','confirmée par le prestataire'):L(x,'aConfirmer','à confirmer par le prestataire'))+'</dd></dl>'}
+    if(ici)c+='<div class="v-btns">'+B('confirm',{},L(x,'confirmer','Confirmer horaire et accès'),true)+B('start',{},L(x,'demarrer','Démarrer la mission'),true)+'</div>'}
+   if(e==='realiser'){c='<ul class="v-taches">'+M.taches.map(function(t){var d=A.task;return'<li data-sv-id="tache:'+esc(t.id)+'" class="'+(t.fait?'fait':'')+'">'+(ici&&d.allow?'<button type="button" class="v-coche" role="checkbox" aria-checked="'+!!t.fait+'" data-act="task" data-p="'+esc(JSON.stringify({mission:id,tache:t.id}))+'" data-sv-id="act:'+esc(id)+':task:'+esc(t.id)+'" data-regle="'+esc(d.rule)+'"'+(t.fait?'':' data-orb="'+esc(t.titre)+'"')+'><span aria-hidden="true"></span>'+esc(t.titre)+'</button>':'<span class="v-coche-l" aria-hidden="true"></span><span>'+esc(t.titre)+'</span>')+'</li>'}).join('')+'</ul>';if(ici)c+='<div class="v-btns">'+B('finish',{},L(x,'terminer','Déclarer terminé'),true)+'</div>'}
+   if(e==='cloturer'){c='<p>'+esc(m.etape==='close'?L(x,'cloturee','Mission clôturée.'):L(x,'aCloturer','Réalisation terminée, en attente de clôture.'))+'</p>';if(ici)c+='<div class="v-btns">'+B('close',{},L(x,'cloturer','Clôturer la mission'),true)+'</div>'}
+   /* l'étape en cours est ouverte ; les étapes passées se replient pour garder une lecture simple */
+   if(ouvert)return'<div class="v-mi-e ici" data-sv-id="mission:'+esc(id)+':etape:'+e+'"><h4>'+esc(lab[e]||EL[e])+'</h4>'+c+'</div>';
+   return'<details class="v-mi-e" data-sv-id="mission:'+esc(id)+':etape:'+e+'"><summary><h4>'+esc(lab[e]||EL[e])+'</h4><span>'+esc(L(x,'fait','fait'))+'</span></summary>'+c+'</details>'}).join('');
+  h+=blocs;
+  /* modifier une fois : le lieu, l'horaire, le responsable ; toutes les vues relisent le même objet */
+  if(A.edit.allow||A.reassign.allow){var hs=[];for(var t=6*60;t<=20*60;t+=30)hs.push(('0'+Math.floor(t/60)).slice(-2)+':'+('0'+t%60).slice(-2));
+   h+='<div class="v-mi-ed" data-sv-id="mission:'+esc(id)+':modifier"><h4>'+esc(L(x,'modifier','Modifier une fois, partout'))+'</h4>'+(A.edit.allow?'<label>'+esc(L(x,'lieu','Lieu'))+' <select data-act="move" data-k="lieu" data-p="'+esc(JSON.stringify({mission:id}))+'" data-regle="'+esc(A.edit.rule)+'">'+(x.contenu.lieux||[]).map(function(l){return'<option value="'+esc(l.id)+'"'+(l.id===m.lieu?' selected':'')+'>'+esc(l.nom)+'</option>'}).join('')+'</select></label><label>'+esc(L(x,'horaire','Horaire'))+' <select data-act="reschedule" data-k="debut" data-p="'+esc(JSON.stringify({mission:id}))+'" data-regle="'+esc(A.edit.rule)+'">'+hs.map(function(v){return'<option value="'+v+'"'+(v===m.debut?' selected':'')+'>'+esc(heure(v))+'</option>'}).join('')+'</select></label>':'')+
+    (A.reassign.allow?'<label>'+esc(L(x,'responsable','Responsable'))+' <select data-act="reassign" data-k="responsable" data-p="'+esc(JSON.stringify({mission:id}))+'" data-regle="'+esc(A.reassign.rule)+'">'+x.vue.membresOrganisation().map(function(p){return'<option value="'+esc(p.id)+'"'+(p.id===m.responsable?' selected':'')+'>'+esc(p.nom)+'</option>'}).join('')+'</select></label>':'')+'</div>'}
+  return h+'</div>'}},
+ missions:{cartes:function(x,s){var ls=x.vue.missions(s.filtre||'toutes').filter(function(o){return(x.dossiers||[]).indexOf(o.m.id)<0});if(!ls.length)return s.vide?'<p class="v-masque">'+esc(s.vide)+'</p>':'';var st=L(x,'statuts',{}),li=L(x,'liens',{});
+  return'<ul class="v-mis">'+ls.map(function(o){var m=o.m,d=o.candidater;return'<li data-sv-id="mission:'+esc(m.id)+':carte"><span class="v-k">'+esc(m.categorie)+'</span><em class="v-etat e-'+esc(o.statut)+'">'+esc(st[o.statut]||o.statut)+'</em><b>'+esc(m.titre)+'</b><span>'+esc(x.vue.lieuNom(m.lieu))+' · '+esc(dateLongue(m.date))+(m.debut?' · '+esc(heure(m.debut)):'')+'</span><span class="v-tags"><i>'+esc(m.nature==='contribution'?L(x,'benevole','Bénévole'):L(x,'remuneree','Rémunérée'))+'</i>'+(m.reglementee?'<i class="reg">'+esc(L(x,'reglementee','Réglementée'))+'</i>':'')+(o.lien?'<i class="moi">'+esc(li[o.lien]||o.lien)+'</i>':'')+'</span>'+(s.candidater&&d.allow?'<div class="v-btns"><button type="button" class="v-btn" data-act="apply" data-p="'+esc(JSON.stringify({mission:m.id}))+'" data-sv-id="act:'+esc(m.id)+':apply" data-regle="'+esc(d.rule)+'">'+esc(L(x,'candidater','Candidater'))+'</button></div>':'')+'</li>'}).join('')+'</ul>'}},
  actions:{boutons:function(x,s){var a=x.vue.actions(s.liste);if(!a.autorisees.length)return'';return'<div class="v-btns">'+a.autorisees.map(function(b){return'<button type="button" class="v-btn" data-demo title="'+esc(b.regle)+'">'+esc(b.label)+(b.confirmation?' · confirmation requise':'')+'</button>'}).join('')+'</div>'+(a.refusees?'<p class="v-masque">'+a.refusees+' action'+(a.refusees>1?'s':'')+' réservée'+(a.refusees>1?'s':'')+' à d\'autres rôles.</p>':'')}}
 };
 
@@ -128,8 +174,10 @@ var C={
 var LIB={compte:'Compte à rebours',hero:'Accueil'};
 function rendre(o){var contenu=o.contenu,modele=o.modele,pres=o.presentation||{},angle=o.perspective;
  var amb=pres.ambiance||{c1:'#2F4A36',c2:'#C7D9B7',paper:'#F3F1E8',ink:'#1F2E23'};
- var vue=politique(contenu,o.acces||{},angle,o.regles);
- var x={contenu:contenu,vue:vue,angle:angle,amb:amb,modele:modele,libelles:o.libelles||{}};
+ var vue=politique(contenu,o.acces||{},angle,o.regles,o.flux||null);
+ var x={contenu:contenu,vue:vue,angle:angle,amb:amb,modele:modele,libelles:o.libelles||{},flux:o.flux||null,
+  /* une mission déjà présentée en détail n'est pas répétée dans les listes de la même perspective */
+  dossiers:(angle.sections||[]).filter(function(s){return s.type==='mission'&&s.ref}).map(function(s){return s.ref})};
  var comp=modele.composition||{},vari=comp.variantes||{};
  var pick=function(type){var v=C[type];if(!v)return null;return v[vari[type]]||v.defaut||v[Object.keys(v)[0]]};
  var corps='',n=0;

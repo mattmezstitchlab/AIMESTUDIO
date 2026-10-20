@@ -1,7 +1,33 @@
 {
  "_": "Les six angles du même projet AIME WORLD. Brouillon de phase 2 : libellés, regards et intentions, utilisés par la landing. Les sections opérationnelles arrivent en phase 3, avec le même moteur.",
  "univers": "world",
- "libelles": {},
+ "libelles": {
+  "compte": "jours avant le",
+  "statuts": {
+   "ouverte": "Ouverte",
+   "attribuee": "Attribuée",
+   "en-cours": "En cours",
+   "terminee": "Terminée"
+  },
+  "candidatures": {
+   "deposee": "Reçue",
+   "proposee": "Proposée",
+   "retenue": "Retenue",
+   "non-retenue": "Non retenue"
+  },
+  "liens": {
+   "responsable": "Vous pilotez",
+   "coordinateur": "Vous coordonnez",
+   "affecte": "Votre mission",
+   "candidat": "Votre candidature"
+  },
+  "proposer": "Proposer au couple",
+  "refuser": "Renvoyer à l'agence",
+  "valider": "Valider ce prestataire",
+  "coordination": "Coordination sur place",
+  "contact": "Contact sur place",
+  "privees": "Les réponses nominatives restent privées."
+ },
  "angles": [
   {
    "id": "couple",
@@ -12,13 +38,52 @@
     "graine": 31
    },
    "kicker": "Votre projet",
-   "intro": "Où en est tout, sans tout porter : budget, invités, programme, missions confiées.",
+   "intro": "Où en est tout, sans tout porter : missions confiées, programme, budget.",
    "exemples": [
     "Suivre l'état de préparation",
     "Déléguer des invitations à un proche",
     "Valider une mission"
    ],
-   "sections": []
+   "sections": [
+    {
+     "type": "compte"
+    },
+    {
+     "type": "mission",
+     "titre": "La mission à suivre",
+     "ref": "m-03"
+    },
+    {
+     "type": "missions",
+     "titre": "Toutes les missions",
+     "filtre": "toutes"
+    },
+    {
+     "type": "programme",
+     "titre": "Le programme",
+     "filtre": "tout"
+    },
+    {
+     "type": "liste",
+     "titre": "Le budget prévu",
+     "source": "budget",
+     "champTitre": "titre",
+     "champs": [
+      [
+       "montant",
+       "Montant"
+      ],
+      [
+       "devise",
+       "Devise"
+      ]
+     ]
+    },
+    {
+     "type": "documents",
+     "titre": "Vos documents"
+    }
+   ]
   },
   {
    "id": "agence",
@@ -35,7 +100,77 @@
     "Voir ce qui dépend d'un vol",
     "Arbitrer un imprévu"
    ],
-   "sections": []
+   "sections": [
+    {
+     "type": "mission",
+     "titre": "Mission en cours de pilotage",
+     "ref": "m-03"
+    },
+    {
+     "type": "missions",
+     "titre": "Les missions que vous pilotez",
+     "filtre": "miennes"
+    },
+    {
+     "type": "missions",
+     "titre": "Tout le projet",
+     "filtre": "toutes"
+    },
+    {
+     "type": "programme",
+     "titre": "Le programme",
+     "filtre": "tout",
+     "notes": true
+    },
+    {
+     "type": "liste",
+     "titre": "Vols et navettes",
+     "source": "trajets",
+     "champTitre": "titre",
+     "champs": [
+      [
+       "date",
+       "Le",
+       "date"
+      ],
+      [
+       "depart",
+       "Départ",
+       "heure"
+      ],
+      [
+       "de",
+       "De",
+       "lieu"
+      ],
+      [
+       "vers",
+       "Vers",
+       "lieu"
+      ]
+     ]
+    },
+    {
+     "type": "liste",
+     "titre": "Le budget prévu",
+     "source": "budget",
+     "champTitre": "titre",
+     "champs": [
+      [
+       "montant",
+       "Montant"
+      ],
+      [
+       "devise",
+       "Devise"
+      ]
+     ]
+    },
+    {
+     "type": "documents",
+     "titre": "Documents"
+    }
+   ]
   },
   {
    "id": "prestataire",
@@ -52,7 +187,28 @@
     "Consulter ses consignes",
     "Déposer un livrable"
    ],
-   "sections": []
+   "sections": [
+    {
+     "type": "mission",
+     "titre": "Votre mission",
+     "ref": "m-03"
+    },
+    {
+     "type": "missions",
+     "titre": "Missions ouvertes pour vous",
+     "filtre": "ouvertes",
+     "candidater": true,
+     "vide": "Aucune autre mission ouverte ne correspond à votre profil."
+    },
+    {
+     "type": "lieu",
+     "titre": "Le lieu"
+    },
+    {
+     "type": "documents",
+     "titre": "Vos documents"
+    }
+   ]
   },
   {
    "id": "invite",
@@ -69,7 +225,89 @@
     "Voir son vol et sa navette",
     "Préparer ses formalités"
    ],
-   "sections": []
+   "sections": [
+    {
+     "type": "compte"
+    },
+    {
+     "type": "programme",
+     "titre": "Le programme",
+     "filtre": "public"
+    },
+    {
+     "type": "lieu",
+     "titre": "Le lieu"
+    },
+    {
+     "type": "liste",
+     "titre": "Vols et navettes",
+     "source": "trajets",
+     "champTitre": "titre",
+     "champs": [
+      [
+       "date",
+       "Le",
+       "date"
+      ],
+      [
+       "depart",
+       "Départ",
+       "heure"
+      ],
+      [
+       "de",
+       "De",
+       "lieu"
+      ],
+      [
+       "vers",
+       "Vers",
+       "lieu"
+      ]
+     ]
+    },
+    {
+     "type": "liste",
+     "titre": "Activités à New York",
+     "source": "activites",
+     "champTitre": "titre",
+     "champs": [
+      [
+       "date",
+       "Le",
+       "date"
+      ],
+      [
+       "capacite",
+       "Places"
+      ],
+      [
+       "inscrits",
+       "Inscrits"
+      ],
+      [
+       "ouverte",
+       "Ouverte à"
+      ]
+     ]
+    },
+    {
+     "type": "liste",
+     "titre": "Avant de partir",
+     "source": "formalites",
+     "champTitre": "titre",
+     "champs": [
+      [
+       "texte",
+       ""
+      ]
+     ]
+    },
+    {
+     "type": "documents",
+     "titre": "À télécharger"
+    }
+   ]
   },
   {
    "id": "contributeur",
@@ -86,7 +324,30 @@
     "Proposer sa candidature",
     "Suivre sa contribution"
    ],
-   "sections": []
+   "sections": [
+    {
+     "type": "missions",
+     "titre": "Vos missions",
+     "filtre": "miennes",
+     "vide": "Aucune mission pour l'instant."
+    },
+    {
+     "type": "missions",
+     "titre": "Missions ouvertes aux proches",
+     "filtre": "ouvertes",
+     "candidater": true,
+     "vide": "Aucune mission ouverte pour vous."
+    },
+    {
+     "type": "programme",
+     "titre": "Le programme",
+     "filtre": "public"
+    },
+    {
+     "type": "documents",
+     "titre": "À télécharger"
+    }
+   ]
   },
   {
    "id": "coordinateur",
@@ -103,7 +364,56 @@
     "Signaler un incident",
     "Activer un plan de secours"
    ],
-   "sections": []
+   "sections": [
+    {
+     "type": "mission",
+     "titre": "Sur place",
+     "ref": "m-03"
+    },
+    {
+     "type": "missions",
+     "titre": "Vos missions",
+     "filtre": "miennes"
+    },
+    {
+     "type": "programme",
+     "titre": "Le déroulé",
+     "filtre": "tout",
+     "notes": true
+    },
+    {
+     "type": "liste",
+     "titre": "Vols et navettes",
+     "source": "trajets",
+     "champTitre": "titre",
+     "champs": [
+      [
+       "date",
+       "Le",
+       "date"
+      ],
+      [
+       "depart",
+       "Départ",
+       "heure"
+      ],
+      [
+       "de",
+       "De",
+       "lieu"
+      ],
+      [
+       "vers",
+       "Vers",
+       "lieu"
+      ]
+     ]
+    },
+    {
+     "type": "documents",
+     "titre": "Documents"
+    }
+   ]
   }
  ]
 }

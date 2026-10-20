@@ -164,7 +164,9 @@ h2{margin:0;font:300 clamp(36px,5vw,76px)/1.02 var(--ft);letter-spacing:-.025em;
 .s8 h2{margin:0 auto}
 .s8 .lead{margin-left:auto;margin-right:auto}
 .s8 .acts{margin-top:40px;display:flex;justify-content:center;flex-wrap:wrap;gap:12px}
-.s8 .etape{margin-top:16px;font-size:14px;color:var(--soft)}
+.s8 .etape{margin:22px auto 0;font-size:14px;color:#6E6A66;max-width:60ch}
+.compos{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 22px;font-size:15px}
+.compos a{color:var(--encre);text-underline-offset:4px}
 
 /* 09 · signature */
 .s9{position:relative;overflow:hidden;min-height:90vh;display:grid;align-items:center;isolation:isolate}
@@ -271,8 +273,13 @@ h2{margin:0;font:300 clamp(36px,5vw,76px)/1.02 var(--ft);letter-spacing:-.025em;
    <div class="num" style="justify-content:center"><span class="k">08</span><span class="k">Voir toutes les expériences</span></div>
    <h2 id="t8">Toutes les perspectives, côte à côte.</h2>
    <p class="lead">SynchroView ouvre le même événement sous quatre ou six angles, synchronisés section par section.</p>
-   <div class="acts"><a class="btn p" id="ouvrir-sv" aria-disabled="true" role="link" tabindex="0">Ouvrir dans SynchroView</a></div>
-   <p class="etape" id="sv-etat">Disponible dès que les six perspectives opérationnelles seront construites (phase 3).</p>
+   <div class="acts"><a class="btn p" id="ouvrir-sv" href="/synchroview/?v=world.couple.pc.ici,world.agence.pc.ici,world.prestataire.pc.ici,world.coordinateur.pc.ici">Ouvrir dans SynchroView</a><a class="btn" href="/synchroview/?v=world.couple.pc.ici,world.agence.pc.ici,world.prestataire.pc.ici,world.invite.pc.ici,world.contributeur.pc.ici,world.coordinateur.pc.ici">Les six perspectives</a></div>
+   <ul class="compos" aria-label="Autres compositions">
+    <li><a href="/synchroview/?v=world.agence.pc.ici,world.coordinateur.pc.ici">Agence et coordination locale</a></li>
+    <li><a href="/synchroview/?v=world.invite.iphone.ici,world.prestataire.iphone.ici">Invitée et prestataire, sur téléphone</a></li>
+    <li><a href="/vitrine/site/?u=world&amp;mode=prestataire">Une perspective seule : le prestataire</a></li>
+   </ul>
+   <p class="etape">Faites avancer la mission florale dans une vue : les autres se mettent à jour d'elles-mêmes. Démonstration fictive : aucun courriel, aucun paiement, aucune réservation.</p>
   </div>
  </section>
 
@@ -287,6 +294,8 @@ h2{margin:0;font:300 clamp(36px,5vw,76px)/1.02 var(--ft);letter-spacing:-.025em;
 </main>
 <footer class="pied"><div class="wrap"><span><b>AIME WORLD</b> · Le monde peut participer. AIME garde le lien.</span><span id="credit">Données et visuels entièrement fictifs et originaux.</span></div></footer>
 
+<script src="/synchroview/permissions.js"></script>
+<script src="/synchroview/flux.js"></script>
 <script src="/vitrine/rendu.js"></script>
 <script>
 (function(){"use strict";
@@ -301,7 +310,10 @@ function addMin(t,m){var p=t.split(':'),v=(+p[0])*60+(+p[1])+m;v=((v%1440)+1440)
 function j(p){return fetch(p,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(p);return r.json()})}
 var STATUTS=[['ouverte','Ouvertes'],['attribuee','Attribuées'],['en-cours','En cours'],['terminee','Terminées']];
 var LIB_ETAT={ouverte:'Ouverte',attribuee:'Attribuée','en-cours':'En cours',terminee:'Terminée'};
-Promise.all([j('/vitrine/donnees/world.json'),j('/vitrine/perspectives/world.json'),j('/vitrine/presentation/ambiances.json')]).then(function(r){var W=r[0],PS=r[1],AM=r[2].ambiances,V=window.AIMEVitrine;
+Promise.all([j('/vitrine/donnees/world.json'),j('/vitrine/perspectives/world.json'),j('/vitrine/presentation/ambiances.json'),j('/vitrine/acces/world.json')]).then(function(r){var PS=r[1],AM=r[2].ambiances,V=window.AIMEVitrine;
+ /* la landing lit la même donnée que les perspectives, y compris les actions de la démonstration en cours */
+ var JR=[];try{JR=JSON.parse(localStorage.getItem('aime-sim-world')||'[]')||[]}catch(_){}
+ var W=window.AIMEFlux?AIMEFlux.rejouer(r[0],r[3],AIMEPerms,JR).contenu:r[0];W.missions.forEach(function(m){m.statut=AIMEFlux?AIMEFlux.statut(m):'ouverte'});
  var P={};W.personnes.forEach(function(p){P[p.id]=p});var L={};W.lieux.forEach(function(l){L[l.id]=l});var T={};W.trajets.forEach(function(t){T[t.id]=t});var MO={};W.moments.forEach(function(m){MO[m.id]=m});var MI={};W.missions.forEach(function(m){MI[m.id]=m});
  var nomRef=function(id){return P[id]?P[id].nom:L[id]?L[id].nom:T[id]?(T[id].titre||T[id].code):MO[id]?MO[id].titre:MI[id]?MI[id].titre:id};
  var chaud=AM.crepuscule,froid=AM['heure-bleue'];
@@ -374,7 +386,6 @@ Promise.all([j('/vitrine/donnees/world.json'),j('/vitrine/perspectives/world.jso
 
  /* 07 · les six perspectives (lues dans leur fichier) */
  $('#persp').innerHTML=PS.angles.map(function(a,i){var amb=a.visuel.style==='gratte-ciel'||(a.visuel.style==='architecture'&&i%2)?froid:chaud;return'<article class="r"><div class="img">'+V.visuel(a.visuel.graine,amb,.8,a.visuel.style)+'</div><div class="txt"><span class="k" style="color:var(--chaud)">'+esc(a.kicker)+'</span><h3>'+esc(a.label)+'</h3><p>'+esc(a.intro)+'</p><ul>'+a.exemples.map(function(x){return'<li>'+esc(x)+'</li>'}).join('')+'</ul></div></article>'}).join('');
- $('#ouvrir-sv').addEventListener('click',function(e){if(this.getAttribute('aria-disabled')==='true')e.preventDefault()});
 
  /* apparition douce, et légère profondeur au défilement */
  var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('vu');io.unobserve(en.target);if(en.target.closest('#projet')){var bi=$('#prog .barre i');if(bi)bi.style.transform='scaleX('+pr.toFixed(3)+')'}}})},{threshold:.12}):null;
