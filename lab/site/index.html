@@ -170,6 +170,104 @@ body.docked .top{background:rgba(12,11,20,.72);backdrop-filter:blur(14px);-webki
 .tx3 .row3{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .tx3 .t,.tx3 .l{text-shadow:0 2px 18px rgba(10,10,12,.9)}
 @media(max-width:760px){.cq{font-size:11.5px;padding:5px 8px 5px 6px}.cq span{display:none}}
+
+/* ---------- chapitre 5 : votre site, trois cubes et la grille ---------- */
+.build{position:relative;padding:120px max(20px,env(safe-area-inset-right,0px)) 120px max(20px,env(safe-area-inset-left,0px));background:radial-gradient(50% 40% at 60% 30%,rgba(124,92,255,.12),transparent 70%),var(--desk)}
+.bh{max-width:1240px;margin:0 auto 28px;display:grid;gap:14px}
+.bh .t{font-size:clamp(34px,4.6vw,64px)}
+.bh p{margin:0;color:#C9C9D2;max-width:60ch;font-size:clamp(15px,1.3vw,18px)}
+.btools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.seg5{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
+.seg5 button,.bt5{border:0;background:none;color:#C9C9D2;font:600 14px var(--ui);padding:8px 13px;border-radius:10px;cursor:pointer}
+.seg5 button[aria-pressed=true]{background:var(--ink);color:var(--desk)}
+.bt5{border:1px solid rgba(255,255,255,.14)}
+.bt5[aria-pressed=true]{background:rgba(124,92,255,.25);color:#fff;border-color:#7C5CFF}
+.bt5.p{background:var(--ink);color:var(--desk);border-color:var(--ink)}
+.seg5 button:focus-visible,.bt5:focus-visible,.tile5:focus-visible,.cube5:focus-visible,.blk:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.bwk{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:330px 1fr;gap:28px;align-items:start}
+.kit{position:sticky;top:84px;display:grid;gap:18px}
+.cubes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cube5{display:grid;justify-items:center;gap:10px;background:none;border:0;padding:10px 0;cursor:pointer;color:var(--ink);border-radius:14px;font:600 13px var(--ui)}
+.cube5[aria-pressed=true]{background:rgba(255,255,255,.06)}
+.cube5 small{display:block;font:500 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin-top:2px}
+.c3w{display:block;width:72px;height:72px;margin-bottom:10px;perspective:400px}
+.c3{display:block;position:relative;width:72px;height:72px;transform-style:preserve-3d;animation:c3spin 14s linear infinite;transition:transform .5s}
+.cube5:nth-child(2) .c3{animation-delay:-4.6s}.cube5:nth-child(3) .c3{animation-delay:-9.2s}
+@keyframes c3spin{from{transform:rotateX(-22deg) rotateY(0)}to{transform:rotateX(-22deg) rotateY(360deg)}}
+.c3 i{position:absolute;inset:0;border-radius:12px;background:var(--conic);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35);display:grid;place-items:center;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.c3 i svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.c3 i:nth-child(1){transform:translateZ(36px)}.c3 i:nth-child(2){transform:rotateY(90deg) translateZ(36px)}.c3 i:nth-child(3){transform:rotateY(180deg) translateZ(36px)}.c3 i:nth-child(4){transform:rotateY(-90deg) translateZ(36px)}.c3 i:nth-child(5){transform:rotateX(90deg) translateZ(36px)}.c3 i:nth-child(6){transform:rotateX(-90deg) translateZ(36px)}
+.cube5[aria-pressed=true] .c3 i:nth-child(1){transform:translateZ(60px);opacity:.25}.cube5[aria-pressed=true] .c3 i:nth-child(2){transform:rotateY(90deg) translateZ(60px);opacity:.25}.cube5[aria-pressed=true] .c3 i:nth-child(3){transform:rotateY(180deg) translateZ(60px);opacity:.25}.cube5[aria-pressed=true] .c3 i:nth-child(4){transform:rotateY(-90deg) translateZ(60px);opacity:.25}.cube5[aria-pressed=true] .c3 i:nth-child(5){transform:rotateX(90deg) translateZ(60px);opacity:.25}.cube5[aria-pressed=true] .c3 i:nth-child(6){transform:rotateX(-90deg) translateZ(60px);opacity:.25}
+.tray{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;min-height:212px}
+.tile5{aspect-ratio:1;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:#141419;color:var(--ink);display:grid;place-items:center;align-content:center;gap:8px;cursor:grab;touch-action:none;font:600 12px var(--ui);padding:6px;text-align:center;user-select:none;-webkit-user-select:none}
+.tile5:hover{border-color:rgba(255,255,255,.3)}
+.tile5 svg{width:24px;height:24px;fill:none;stroke:var(--acc5,#A78BFA);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.kit .hint5{margin:0;color:var(--soft);font-size:13px;line-height:1.45}
+.pg{border-radius:18px;border:1px solid rgba(255,255,255,.1);background:#0E0E12;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.pgbar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08);font:500 13px var(--mono);color:var(--soft)}
+.pgbar i{width:10px;height:10px;border-radius:50%;background:#2A2A33}
+.pgbar span{margin-left:6px;background:#17171C;border-radius:8px;padding:4px 10px;color:#C9C9D2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cnv{user-select:none;-webkit-user-select:none;position:relative;margin:14px;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:var(--cell) var(--cell);border-radius:8px;min-height:200px;touch-action:none}
+.cnv.over{box-shadow:0 0 0 2px rgba(124,92,255,.5) inset}
+.gl{position:absolute;pointer-events:none;background:rgba(124,92,255,.75);z-index:30}
+.gl.v{width:1px;top:0;bottom:0}.gl.h{height:1px;left:0;right:0}
+.gl.al{background:#FB7185;box-shadow:0 0 6px #FB7185}
+.dim{position:absolute;z-index:31;pointer-events:none;background:#7C5CFF;color:#fff;font:600 11px var(--mono);padding:3px 7px;border-radius:7px;white-space:nowrap}
+.phd{position:absolute;border:2px dashed rgba(124,92,255,.9);border-radius:12px;background:rgba(124,92,255,.12);pointer-events:none;z-index:5}
+.ghost{position:fixed;z-index:80;pointer-events:none;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:14px;background:#1B1B22;border:1px solid rgba(255,255,255,.3);display:grid;place-items:center;align-content:center;gap:6px;color:#fff;font:600 11px var(--ui);box-shadow:0 20px 40px rgba(0,0,0,.5);transform:rotate(-4deg)}
+.ghost svg{width:22px;height:22px;fill:none;stroke:#A78BFA;stroke-width:1.6}
+.blk{position:absolute;padding:4px;cursor:move;touch-action:none;perspective:1200px;outline:none}
+.blk .in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.blk.code .in{transform:rotateY(180deg)}
+.blk .fr,.blk .bk{position:absolute;inset:0;border-radius:12px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.blk .fr{background:#16161B;border:1px solid rgba(255,255,255,.1)}
+.blk .bk{transform:rotateY(180deg);background:#0B0B10;border:1px solid rgba(124,92,255,.5);padding:8px 10px;overflow:auto}
+.blk .bk pre{margin:0;font:500 calc(min(var(--w),520px)*.026 + 6px)/1.45 var(--mono);color:#C4B5FD;white-space:pre-wrap;word-break:break-word}
+.blk .bk pre em{font-style:normal;color:#FB7185}.blk .bk pre b{font-weight:500;color:#22D3EE}
+.blk.sel .fr,.blk.sel .bk{box-shadow:0 0 0 2px #7C5CFF}
+.blk .hd5{position:absolute;width:14px;height:14px;border-radius:4px;background:#fff;border:2px solid #7C5CFF;z-index:6;opacity:0;transition:opacity .2s;touch-action:none}
+.blk.sel .hd5,.blk:hover .hd5{opacity:1}
+.hd5.nw{left:-3px;top:-3px;cursor:nwse-resize}.hd5.ne{right:-3px;top:-3px;cursor:nesw-resize}.hd5.sw{left:-3px;bottom:-3px;cursor:nesw-resize}.hd5.se{right:-3px;bottom:-3px;cursor:nwse-resize}
+.blk .tb{position:absolute;top:10px;right:10px;display:flex;gap:4px;z-index:7;opacity:0;transition:opacity .2s}
+.blk.sel .tb,.blk:hover .tb{opacity:1}
+.blk .tb button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(10,10,12,.75);color:#fff;font:700 11px var(--mono);cursor:pointer;padding:0}
+/* les modules, à l'échelle de leur bloc */
+.m{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:calc(var(--w)*.02);padding:calc(var(--w)*.035 + 8px);color:var(--ink);font-size:calc(var(--w)*.016 + 8.5px);line-height:1.3}
+.m b{font:400 calc(var(--w)*.04 + 9px)/1.08 var(--display)}
+.m small{font:500 calc(var(--w)*.008 + 8px) var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.m p{margin:0;color:#C9C9D2}
+.m .bt{align-self:flex-start;border:0;border-radius:10px;padding:.45em .9em;background:var(--ink);color:var(--desk);font:600 1em var(--ui);cursor:pointer}
+.m-hero{background:radial-gradient(70% 90% at 80% 10%,rgba(251,113,133,.5),transparent 60%),radial-gradient(60% 80% at 10% 100%,rgba(34,211,238,.35),transparent 60%),linear-gradient(135deg,#2E1065,#7C5CFF);align-items:flex-start}
+.m-hero b{font-size:calc(var(--w)*.065 + 10px)}
+.m-hero span{color:rgba(255,255,255,.85)}
+.m-media{background:radial-gradient(circle at 72% 30%,rgba(255,255,255,.85) 0 7%,transparent 8%),linear-gradient(160deg,#FDBA74,#FB7185 55%,#4C1D95);align-items:center}
+.m-media .pl{width:calc(var(--w)*.12 + 14px);height:calc(var(--w)*.12 + 14px);border-radius:50%;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);position:relative}
+.m-media .pl::after{content:"";position:absolute;left:38%;top:28%;border-left:calc(var(--w)*.04 + 5px) solid #fff;border-top:calc(var(--w)*.026 + 3px) solid transparent;border-bottom:calc(var(--w)*.026 + 3px) solid transparent}
+.m-gal{display:grid;grid-template-columns:1fr 1fr;padding:6px;gap:6px}
+.m-gal i{border-radius:8px}
+.m-q b{font-style:italic}
+.m-q b::before{content:"« "}.m-q b::after{content:" »"}
+.m-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.m-cal i{aspect-ratio:1;border-radius:3px;background:#22222A}
+.m-cal i.f{background:rgba(52,211,153,.5)}.m-cal i.e{background:#7C5CFF}
+.m-ls{display:grid;gap:.3em}
+.m-ls div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #24242B;padding-bottom:.2em}
+.m-ls em{font-style:normal;color:var(--soft)}
+.m-map{background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(135deg,#0F2A2E,#1E1B4B);background-size:18px 18px,18px 18px,auto;align-items:flex-start;justify-content:flex-end}
+.m-map .pin{position:absolute;left:58%;top:30%;width:calc(var(--w)*.05 + 10px);height:calc(var(--w)*.05 + 10px);border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#FB7185;box-shadow:0 0 18px #FB7185}
+.m-cd b{font-size:calc(var(--w)*.08 + 10px);background:linear-gradient(90deg,#FB7185,#F59E0B,#7C5CFF,#22D3EE);-webkit-background-clip:text;background-clip:text;color:transparent}
+.m-row{display:flex;gap:.5em;flex-wrap:wrap}
+.m .bt.gh{background:transparent;color:var(--ink);border:1px solid #3A3A45}
+.m .bt[aria-pressed=true]{background:#34D399;color:#0A0A0C}
+.m-bar{height:.5em;border-radius:1em;background:#24242B;overflow:hidden}.m-bar i{display:block;height:100%;width:64%;background:linear-gradient(90deg,#FB7185,#7C5CFF)}
+.m-soc{flex-direction:row;align-items:center;justify-content:center;gap:calc(var(--w)*.04)}
+.m-soc i{width:calc(var(--w)*.1 + 12px);height:calc(var(--w)*.1 + 12px);border-radius:50%;background:var(--conic)}
+.m-msg span{background:#24242B;border-radius:.8em;padding:.3em .6em;align-self:flex-start}
+.m-msg span.me{background:#2E2650;align-self:flex-end}
+.m-btn{align-items:center}
+.m-btn .bt{align-self:center;font-size:1.1em;background:linear-gradient(90deg,#FB7185,#7C5CFF);color:#fff}
+@media(max-width:900px){.bwk{grid-template-columns:1fr}.kit{position:static}.tray{grid-template-columns:repeat(6,1fr);min-height:0}.tile5{font-size:10px}.tile5 svg{width:18px;height:18px}}
+@media(max-width:520px){.tray{grid-template-columns:repeat(3,1fr)}.cnv{margin:8px}}
 @media(max-width:760px){
  .tx{left:max(20px,env(safe-area-inset-left,0px));right:max(20px,env(safe-area-inset-right,0px));width:auto;top:auto;bottom:calc(66px + env(safe-area-inset-bottom,0px));transform:none;gap:10px}
  .tx .t{font-size:clamp(30px,8.4vw,40px)}
@@ -211,6 +309,14 @@ body.docked .top{background:rgba(12,11,20,.72);backdrop-filter:blur(14px);-webki
   <div id="ov3" aria-hidden="true"></div>
   <div class="tx tx3" id="tx3" aria-live="polite" style="opacity:0"><span class="k" id="k3"></span><h2 class="t" id="t3"></h2><p class="l" id="l3"></p>
    <div class="row3" id="pb3" hidden><div class="seg" role="group" aria-label="La météo du Jour J"><button type="button" data-w="sol" aria-pressed="false">Soleil</button><button type="button" data-w="pluie" aria-pressed="true">Pluie</button></div><button class="cta2" type="button" id="ok3">Confirmer le plan B</button></div></div>
+ </div>
+</section>
+<section class="build" id="build" aria-label="Construire votre site">
+ <div class="bh"><span class="k">Votre site</span><h2 class="t">Trois cubes, <em>votre site</em>.</h2><p>Ouvrez un cube, glissez ses faces sur la grille, agrandissez-les par les coins : les proportions restent justes. Derrière chaque face, son code. Pour un mariage, un pro, ou juste vous.</p>
+  <div class="btools"><div class="seg5" role="group" aria-label="Modèle de départ"><button type="button" data-pre="maries" aria-pressed="true">Mariés</button><button type="button" data-pre="pro" aria-pressed="false">Pro</button><button type="button" data-pre="perso" aria-pressed="false">Particulier</button></div><button class="bt5" type="button" id="code5" aria-pressed="false">&lt;/&gt; Voir le code</button><button class="bt5" type="button" id="clear5">Vider</button><button class="bt5 p" type="button" id="pub5">Publier</button></div></div>
+ <div class="bwk">
+  <aside class="kit" aria-label="Les cubes de modules"><div class="cubes" id="cubes5"></div><div class="tray" id="tray5" role="list"></div><p class="hint5">Glissez une face sur la page, ou touchez-la pour l'ajouter. Flèches pour déplacer, + et − pour agrandir, Suppr pour retirer.</p></aside>
+  <div class="pg"><div class="pgbar"><i></i><i></i><i></i><span id="url5">lemondeaime.com/@lea-et-marc</span></div><div class="cnv" id="cnv5" aria-label="La page, sur la grille universelle"></div></div>
  </div>
 </section>
 <section class="next" id="next" aria-label="La suite">
@@ -423,7 +529,7 @@ cube.addEventListener('click',function(e){var b;
 cube.addEventListener('submit',function(e){e.preventDefault();var f=e.target.closest('[data-mi]');if(!f)return;var inp=f.querySelector('input'),v=inp.value.trim();if(!v)return;var d=document.createElement('div');d.className='me';d.innerHTML='<i style="background:#7C5CFF">M</i><span></span>';d.querySelector('span').textContent=v;var box=$('.msg',cube);box.appendChild(d);if(box.children.length>3)box.removeChild(box.firstElementChild);inp.value=''});
 
 /* ---------- la timeline horizontale : où vous êtes dans la page ---------- */
-var MK=[['Naissance','#story',0],['Le cube',"#story",.22],['Six outils','#story',.82],['Votre carte','#story2',.08],['Elle s\'ouvre','#story2',.86],['Le nuage','#story3',.2],['Plan B','#story3',.8],['La suite','#next',-1]],MKY=[];
+var MK=[['Naissance','#story',0],['Le cube',"#story",.22],['Six outils','#story',.82],['Votre carte','#story2',.08],['Elle s\'ouvre','#story2',.86],['Le nuage','#story3',.2],['Plan B','#story3',.8],['Votre site','#build',0],['La suite','#next',-1]],MKY=[];
 $('#tln').insertAdjacentHTML('beforeend',MK.map(function(m,i){return'<button class="mk2" type="button" data-k="'+i+'" aria-label="Aller à : '+m[0]+'"><span>'+m[0]+'</span></button>'}).join(''));
 function marks(){var max=document.documentElement.scrollHeight-H;MKY=MK.map(function(m){var el=$(m[1]),y=m[2]<0?Math.min(max,el.offsetTop):el.offsetTop+(el.offsetHeight-H)*m[2];return Math.max(0,Math.min(max,y))});
  $$('.mk2').forEach(function(b,i){b.style.left=(MKY[i]/max*100)+'%'})}
@@ -498,6 +604,130 @@ function frame(now){var t=RM?1:(now-T0)/1000,p=prog(),r=story.getBoundingClientR
 $('#pb3').addEventListener('click',function(e){var b=e.target.closest('[data-w]');if(b){weather=b.dataset.w;$$('[data-w]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});chips();pulse=performance.now();$('#ok3').hidden=weather!=='pluie';return}
  if(e.target.closest('#ok3')){var tt=$('#toast2');tt.textContent='Plan B confirmé (démonstration) : traiteur, DJ et photographe prévenus.';tt.classList.add('on');setTimeout(function(){tt.classList.remove('on')},3000)}});
 geo();var rz;addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(geo,150)});requestAnimationFrame(frame);
+})();
+</script>
+<script>
+/* =========================================================
+   Chapitre 5 : trois cubes, chaque face un module ; on compose sa page
+   sur la grille universelle. Derrière chaque face, son code.
+   ========================================================= */
+(function(){"use strict";
+var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var IC={hero:'<path d="M4 6h16M4 11h10M4 16h7"/>',media:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M10 9.5v5l4-2.5z"/>',texte:'<path d="M5 7h14M5 11h14M5 15h9"/>',galerie:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',citation:'<path d="M7 10h3v5H6v-3c0-2 1-3.5 3-4M15 10h3v5h-4v-3c0-2 1-3.5 3-4"/>',bouton:'<rect x="3" y="8" width="18" height="8" rx="4"/><path d="M9 12h6"/>',
+ agenda:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',programme:'<circle cx="6" cy="7" r="1.4"/><circle cx="6" cy="12" r="1.4"/><circle cx="6" cy="17" r="1.4"/><path d="M10 7h9M10 12h9M10 17h6"/>',lieu:'<path d="M12 21s-6-5.3-6-10a6 6 0 0 1 12 0c0 4.7-6 10-6 10z"/><circle cx="12" cy="11" r="2"/>',compte:'<circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 2M10 3h4"/>',rsvp:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',faq:'<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.4M12 17h.01"/>',
+ contact:'<path d="M4 6h16v11H8l-4 3z"/>',paiement:'<rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18M7 14.5h4"/>',documents:'<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9.5 12h6M9.5 15h6"/>',cadeaux:'<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M4 13h16M12 9v11M12 9c-1.5-3-5-3-5-1s5 1 5 1zm0 0c1.5-3 5-3 5-1s-5 1-5 1z"/>',reseaux:'<circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M8 11l8-4M8 13l8 4"/>',livre:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>'};
+function ic(k){return'<svg viewBox="0 0 24 24" aria-hidden="true">'+IC[k]+'</svg>'}
+var CUBES=[['Présenter','6 faces',['hero','media','texte','galerie','citation','bouton']],['Organiser','6 faces',['agenda','programme','lieu','compte','rsvp','faq']],['Relier','6 faces',['contact','paiement','documents','cadeaux','reseaux','livre']]];
+/* chaque module : nom, proportion largeur/hauteur, largeur par défaut (sur 12 colonnes) */
+var M={hero:['Titre héro',3,12],media:['Vidéo',1.5,6],texte:['Paragraphe',2,6],galerie:['Galerie',1.5,6],citation:['Citation',3,6],bouton:['Bouton',4,4],agenda:['Agenda',1,4],programme:['Programme',1.5,6],lieu:['Lieu',1.5,6],compte:['Compte à rebours',2,6],rsvp:['Réponse',2,6],faq:['Questions',1.5,6],contact:['Contact',4/3,4],paiement:['Paiement',4/3,4],documents:['Documents',4/3,4],cadeaux:['Liste de cadeaux',4/3,4],reseaux:['Réseaux',3,6],livre:['Livre d\'or',1.5,6]};
+var PRE={maries:{title:'Léa & Marc',sub:'Nous nous marions',date:'14 juin 2027',iso:'2027-06-14',place:'Château de la Frémoire',who:'Léa & Marc',text:'Nous serions si heureux de vous compter parmi nous ce jour-là.',quote:'Le plus beau jour, c\'est avec vous.',cta:'Je confirme ma venue',url:'@lea-et-marc',prog:[['15:00','Cérémonie'],['16:30','Vin d\'honneur'],['19:30','Dîner'],['22:30','Soirée']],
+  lay:[['hero',0,0,12],['compte',0,4,6],['rsvp',6,4,6],['programme',0,7,6],['lieu',6,7,6],['galerie',0,11,6],['livre',6,11,6]]},
+ pro:{title:'Studio Lumen',sub:'Photographe de mariage',date:'Disponible en 2027',iso:'2027-01-01',place:'Nantes et alentours',who:'Studio Lumen',text:'Reportage complet, des préparatifs à la première danse. Galerie livrée en six semaines.',quote:'Des images qui racontent la journée telle qu\'elle a été.',cta:'Demander un devis',url:'@studio-lumen',prog:[['Matin','Préparatifs'],['Après-midi','Cérémonie, couple'],['Soir','Dîner, soirée'],['6 semaines','Galerie livrée']],
+  lay:[['hero',0,0,12],['galerie',0,4,6],['texte',6,4,6],['bouton',6,7,4],['agenda',0,8,4],['contact',4,8,4],['paiement',8,8,4]]},
+ perso:{title:'Les 30 ans de Lou',sub:'On fête ça',date:'22 novembre 2026',iso:'2026-11-22',place:'La Cantine du Voyage, Nantes',who:'Lou',text:'Venez comme vous êtes, on s\'occupe du reste. Musique, gâteau et surprises.',quote:'Trente ans, et toujours aussi bien entourée.',cta:'Je viens',url:'@lou-30-ans',prog:[['19:00','Apéro'],['20:30','Dîner'],['22:00','Gâteau'],['23:00','On danse']],
+  lay:[['hero',0,0,12],['media',0,4,6],['compte',6,4,6],['rsvp',6,7,6],['lieu',0,8,6],['cadeaux',6,10,4]]}};
+var cur='maries',P=PRE.maries;
+function days(){var d=Math.ceil((Date.parse(P.iso)-Date.now())/864e5);return d>0?d:0}
+function ph(a,b,c){return'linear-gradient(160deg,'+a+','+b+' 55%,'+c+')'}
+function front(k){var x=P;switch(k){
+ case'hero':return'<div class="m m-hero"><small>'+esc(x.sub)+'</small><b>'+esc(x.title)+'</b><span>'+esc(x.date)+' · '+esc(x.place)+'</span></div>';
+ case'media':return'<div class="m m-media"><i class="pl"></i></div>';
+ case'texte':return'<div class="m"><small>Le mot</small><p>'+esc(x.text)+'</p></div>';
+ case'galerie':return'<div class="m m-gal"><i style="background:'+ph('#FDBA74','#FB7185','#4C1D95')+'"></i><i style="background:'+ph('#34D399','#0EA5E9','#1E1B4B')+'"></i><i style="background:'+ph('#F5D0FE','#A78BFA','#312E81')+'"></i><i style="background:'+ph('#FBCFE8','#C026D3','#1E1B4B')+'"></i></div>';
+ case'citation':return'<div class="m m-q"><b>'+esc(x.quote)+'</b></div>';
+ case'bouton':return'<div class="m m-btn"><button class="bt" type="button" data-act="cta">'+esc(x.cta)+'</button></div>';
+ case'agenda':var h='';for(var i=0;i<28;i++)h+='<i class="'+(i===17?'e':(i*7)%5?'f':'')+'"></i>';return'<div class="m"><small>Disponibilités</small><div class="m-cal">'+h+'</div></div>';
+ case'programme':return'<div class="m"><small>Programme</small><div class="m-ls">'+x.prog.map(function(r){return'<div><span>'+esc(r[1])+'</span><em>'+esc(r[0])+'</em></div>'}).join('')+'</div></div>';
+ case'lieu':return'<div class="m m-map"><i class="pin"></i><small>Le lieu</small><b>'+esc(x.place)+'</b></div>';
+ case'compte':return'<div class="m m-cd"><small>Plus que</small><b>'+days()+' jours</b><span>'+esc(x.date)+'</span></div>';
+ case'rsvp':return'<div class="m"><b>Serez-vous là ?</b><div class="m-row"><button class="bt" type="button" data-act="oui" aria-pressed="false">Oui</button><button class="bt gh" type="button" data-act="non">Non</button></div></div>';
+ case'faq':return'<div class="m"><small>Questions</small><p><b style="font:600 1em var(--ui)">Dress code ?</b><br>Chic et confortable.</p><p><b style="font:600 1em var(--ui)">Parking ?</b><br>Sur place, gratuit.</p></div>';
+ case'contact':return'<div class="m"><small>Contact</small><b>'+esc(x.who)+'</b><button class="bt" type="button" data-act="msg">Écrire</button></div>';
+ case'paiement':return'<div class="m"><small>Acompte</small><b>360 €</b><button class="bt" type="button" data-act="pay">Payer</button></div>';
+ case'documents':return'<div class="m"><small>Documents</small><div class="m-ls"><div><span>Devis</span><em>PDF</em></div><div><span>Contrat</span><em>PDF</em></div><div><span>Plan d\'accès</span><em>PDF</em></div></div></div>';
+ case'cadeaux':return'<div class="m"><small>Liste de cadeaux</small><b>64 %</b><div class="m-bar"><i></i></div></div>';
+ case'reseaux':return'<div class="m m-soc"><i></i><i></i><i></i></div>';
+ case'livre':return'<div class="m m-msg"><small>Livre d\'or</small><span>Une journée magique !</span><span class="me">Merci à vous ♥</span></div>'}}
+function code(k){var x=P,c={hero:'<section class="hero">\n  <p>'+x.sub+'</p>\n  <h1>'+x.title+'</h1>\n  <p>'+x.date+' · '+x.place+'</p>\n</section>',media:'<figure class="media">\n  <video src="film.mp4" controls></video>\n</figure>',texte:'<section class="texte">\n  <p>'+x.text+'</p>\n</section>',galerie:'<div class="galerie">\n  <img src="1.jpg" alt="">\n  <img src="2.jpg" alt="">\n  <img src="3.jpg" alt="">\n  <img src="4.jpg" alt="">\n</div>',citation:'<blockquote>\n  '+x.quote+'\n</blockquote>',bouton:'<a class="bouton" href="#reponse">\n  '+x.cta+'\n</a>',agenda:'<aime-agenda\n  personne="'+x.url+'"\n  vue="mois">\n</aime-agenda>',programme:'<ol class="programme">\n'+x.prog.map(function(r){return'  <li><time>'+r[0]+'</time> '+r[1]+'</li>'}).join('\n')+'\n</ol>',lieu:'<aime-lieu\n  adresse="'+x.place+'">\n</aime-lieu>',compte:'<aime-compte\n  date="'+x.iso+'">\n</aime-compte>',rsvp:'<form class="reponse">\n  <p>Serez-vous là ?</p>\n  <button name="r" value="oui">Oui</button>\n  <button name="r" value="non">Non</button>\n</form>',faq:'<details>\n  <summary>Dress code ?</summary>\n  Chic et confortable.\n</details>',contact:'<aime-contact\n  vers="'+x.url+'">\n</aime-contact>',paiement:'<aime-paiement\n  montant="360"\n  devise="EUR">\n</aime-paiement>',documents:'<ul class="documents">\n  <li><a href="devis.pdf">Devis</a></li>\n  <li><a href="contrat.pdf">Contrat</a></li>\n</ul>',cadeaux:'<aime-cadeaux\n  liste="'+x.url+'">\n</aime-cadeaux>',reseaux:'<nav class="reseaux">\n  <a href="#">Instagram</a>\n  <a href="#">Facebook</a>\n</nav>',livre:'<aime-livre-or\n  page="'+x.url+'">\n</aime-livre-or>'}[k];
+ return esc(c).replace(/&lt;(\/?)([a-z0-9-]+)/g,'&lt;$1<em>$2</em>').replace(/([a-z-]+)=&quot;/g,'<b>$1</b>=&quot;')}
+
+/* ---------- les cubes et leurs faces ---------- */
+var CB=$('#cubes5'),TR=$('#tray5'),open5=0;
+CB.innerHTML=CUBES.map(function(c,i){return'<button class="cube5" type="button" data-c="'+i+'" aria-pressed="'+(i===0)+'"><span class="c3w"><span class="c3">'+c[2].map(function(k){return'<i>'+ic(k)+'</i>'}).join('')+'</span></span><span>'+c[0]+'<small>'+c[1]+'</small></span></button>'}).join('');
+function tray(i,from){open5=i;$$('.cube5',CB).forEach(function(b,j){b.setAttribute('aria-pressed',j===i?'true':'false')});
+ TR.innerHTML=CUBES[i][2].map(function(k){return'<button class="tile5" type="button" role="listitem" data-k="'+k+'" aria-label="Ajouter : '+M[k][0]+'">'+ic(k)+'<span>'+M[k][0]+'</span></button>'}).join('');
+ if(from&&!matchMedia('(prefers-reduced-motion: reduce)').matches){var o=from.getBoundingClientRect();$$('.tile5',TR).forEach(function(t,j){var r=t.getBoundingClientRect();t.animate([{transform:'translate('+(o.left+o.width/2-r.left-r.width/2)+'px,'+(o.top+36-r.top-r.height/2)+'px) scale(.3) rotate('+(j%2?-90:90)+'deg)',opacity:0},{transform:'none',opacity:1}],{duration:520,delay:j*45,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'})})}}
+CB.addEventListener('click',function(e){var b=e.target.closest('.cube5');if(b)tray(+b.dataset.c,b)});
+
+/* ---------- la page : grille de 12 colonnes ---------- */
+var CN=$('#cnv5'),COLS=12,cell=40,B=[],sel=null,uid=0,showCode=false;
+function geo(){cell=CN.clientWidth/COLS;CN.style.setProperty('--cell',cell+'px');layout()}
+function rows(){var m=0;B.forEach(function(b){m=Math.max(m,b.y+b.h)});return Math.max(10,m+2)}
+function hOf(k,w){return Math.max(1,Math.round(w/M[k][1]))}
+function place(b){var el=b.el;el.style.left=b.x*cell+'px';el.style.top=b.y*cell+'px';el.style.width=b.w*cell+'px';el.style.height=b.h*cell+'px';el.style.setProperty('--w',(b.w*cell)+'px')}
+function layout(){B.forEach(place);CN.style.height=rows()*cell+'px'}
+function render(b){b.el.querySelector('.fr').innerHTML=front(b.k);b.el.querySelector('.bk').innerHTML='<pre>'+code(b.k)+'</pre>'}
+function add(k,x,y,w){w=Math.min(COLS,w||M[k][2]);var h=hOf(k,w);if(x==null){var sp=free(w,h);x=sp[0];y=sp[1]}x=Math.max(0,Math.min(COLS-w,x));
+ var el=document.createElement('div');el.className='blk'+(showCode?' code':'');el.tabIndex=0;el.setAttribute('role','group');el.setAttribute('aria-label',M[k][0]);
+ el.innerHTML='<div class="in"><div class="fr"></div><div class="bk"></div></div><span class="hd5 nw" data-h="nw"></span><span class="hd5 ne" data-h="ne"></span><span class="hd5 sw" data-h="sw"></span><span class="hd5 se" data-h="se"></span><div class="tb"><button type="button" data-t="flip" aria-label="Retourner : voir le code">&lt;/&gt;</button><button type="button" data-t="del" aria-label="Retirer">×</button></div>';
+ var b={id:++uid,k:k,x:x,y:y,w:w,h:h,el:el};B.push(b);CN.appendChild(el);render(b);place(b);CN.style.height=rows()*cell+'px';return b}
+function hit(a,b){return a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h}
+function free(w,h){for(var y=0;y<60;y++)for(var x=0;x<=COLS-w;x++){var t={x:x,y:y,w:w,h:h};if(!B.some(function(b){return hit(t,b)}))return[x,y]}return[0,rows()]}
+function select(b){sel=b;B.forEach(function(o){o.el.classList.toggle('sel',o===b)})}
+function remove(b){b.el.remove();B=B.filter(function(o){return o!==b});if(sel===b)sel=null;layout()}
+function preset(k){cur=k;P=PRE[k];$('#url5').textContent='lemondeaime.com/'+P.url;B.forEach(function(b){b.el.remove()});B=[];sel=null;P.lay.forEach(function(l){add(l[0],l[1],l[2],l[3])});layout()}
+
+/* ---------- repères : colonnes du bloc, alignements avec les autres, dimensions ---------- */
+var GL=[];function guides(b){clearG();if(!b)return;var xs=[b.x,b.x+b.w/2,b.x+b.w],ys=[b.y,b.y+b.h];
+ xs.forEach(function(v,i){var al=B.some(function(o){return o!==b&&(o.x===v||o.x+o.w===v||(i===1&&o.x+o.w/2===v))});gl('v',v*cell,al)});
+ ys.forEach(function(v){var al=B.some(function(o){return o!==b&&(o.y===v||o.y+o.h===v)});gl('h',v*cell,al)});
+ var d=document.createElement('span');d.className='dim';d.textContent=b.w+' × '+b.h+(b.w===COLS?' · pleine largeur':'');d.style.left=(b.x*cell+6)+'px';d.style.top=Math.max(0,b.y*cell-24)+'px';CN.appendChild(d);GL.push(d)}
+function gl(t,v,al){var e=document.createElement('i');e.className='gl '+t+(al?' al':'');e.style[t==='v'?'left':'top']=v+'px';CN.appendChild(e);GL.push(e)}
+function clearG(){GL.forEach(function(e){e.remove()});GL=[]}
+
+/* ---------- glisser une face depuis un cube ---------- */
+var gh=null,phd=null,dragK=null,moved5=false,sx0=0,sy0=0;
+TR.addEventListener('pointerdown',function(e){var t=e.target.closest('.tile5');if(!t)return;dragK=t.dataset.k;moved5=false;sx0=e.clientX;sy0=e.clientY;try{t.setPointerCapture(e.pointerId)}catch(_){}});
+TR.addEventListener('pointermove',function(e){if(!dragK)return;if(!moved5&&Math.hypot(e.clientX-sx0,e.clientY-sy0)<6)return;
+ if(!moved5){moved5=true;gh=document.createElement('div');gh.className='ghost';gh.innerHTML=ic(dragK)+'<span>'+M[dragK][0]+'</span>';document.body.appendChild(gh)}
+ gh.style.left=e.clientX+'px';gh.style.top=e.clientY+'px';var r=CN.getBoundingClientRect(),inside=e.clientX>r.left&&e.clientX<r.right&&e.clientY>r.top&&e.clientY<r.bottom+cell*3;CN.classList.toggle('over',inside);
+ if(inside){var w=Math.min(COLS,M[dragK][2]),h=hOf(dragK,w),x=Math.max(0,Math.min(COLS-w,Math.round((e.clientX-r.left)/cell-w/2))),y=Math.max(0,Math.round((e.clientY-r.top)/cell-h/2));
+  if(!phd){phd=document.createElement('div');phd.className='phd';CN.appendChild(phd)}phd.style.left=x*cell+'px';phd.style.top=y*cell+'px';phd.style.width=w*cell+'px';phd.style.height=h*cell+'px';phd._p=[x,y,w];if((y+h)*cell>CN.clientHeight)CN.style.height=(y+h+2)*cell+'px';guides({x:x,y:y,w:w,h:h})}
+ else{if(phd){phd.remove();phd=null}clearG()}});
+function endTile(e){if(!dragK)return;var k=dragK;dragK=null;if(gh){gh.remove();gh=null}CN.classList.remove('over');clearG();
+ if(!moved5){var b=add(k);select(b);b.el.scrollIntoView({block:'nearest',behavior:'smooth'});return}
+ if(phd){var p=phd._p;phd.remove();phd=null;select(add(k,p[0],p[1],p[2]))}layout()}
+TR.addEventListener('pointerup',endTile);TR.addEventListener('pointercancel',function(){dragK=null;if(gh){gh.remove();gh=null}if(phd){phd.remove();phd=null}clearG();CN.classList.remove('over')});
+
+/* ---------- déplacer, agrandir par les coins (proportions gardées) ---------- */
+var act=null;
+CN.addEventListener('pointerdown',function(e){var el=e.target.closest('.blk');if(!el){select(null);clearG();return}var b=B.find(function(o){return o.el===el});select(b);
+ if(e.target.closest('.tb')||e.target.closest('[data-act]'))return;var hd=e.target.closest('.hd5');act={b:b,mode:hd?hd.dataset.h:'move',x0:e.clientX,y0:e.clientY,o:{x:b.x,y:b.y,w:b.w,h:b.h}};try{el.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault()});
+CN.addEventListener('pointermove',function(e){if(!act)return;var b=act.b,o=act.o,dx=(e.clientX-act.x0)/cell,dy=(e.clientY-act.y0)/cell;
+ if(act.mode==='move'){b.x=Math.max(0,Math.min(COLS-b.w,Math.round(o.x+dx)));b.y=Math.max(0,Math.round(o.y+dy))}
+ else{var sxg=act.mode.indexOf('e')>=0?1:-1,syg=act.mode.indexOf('s')>=0?1:-1,r=M[b.k][1],wd=o.w+sxg*dx,hd2=(o.h+syg*dy)*r,nw=Math.round(Math.max(wd,hd2));nw=Math.max(2,Math.min(COLS,nw));var nh=hOf(b.k,nw);
+  var ax=sxg>0?o.x:o.x+o.w,ay=syg>0?o.y:o.y+o.h;b.w=nw;b.h=nh;b.x=sxg>0?ax:ax-nw;b.y=syg>0?ay:ay-nh;if(b.x<0){b.x=0}if(b.x+b.w>COLS){b.x=COLS-b.w}if(b.y<0)b.y=0}
+ place(b);if((b.y+b.h+2)*cell>CN.clientHeight)CN.style.height=(b.y+b.h+2)*cell+'px';guides(b)});
+function endAct(){if(!act)return;act=null;clearG();layout()}
+CN.addEventListener('pointerup',endAct);CN.addEventListener('pointercancel',endAct);
+CN.addEventListener('click',function(e){var t=e.target.closest('[data-t]'),el=e.target.closest('.blk');if(!el)return;var b=B.find(function(o){return o.el===el});
+ if(t&&t.dataset.t==='flip'){el.classList.toggle('code');return}if(t&&t.dataset.t==='del'){remove(b);return}
+ var a=e.target.closest('[data-act]');if(a){var m={cta:'Bouton de démonstration : la réponse arrivera dans le Point Zéro.',oui:'Réponse notée (démonstration).',msg:'Le message partira vers le Point Zéro (démonstration).',pay:'Paiement de démonstration, aucun débit.'}[a.dataset.act];if(a.dataset.act==='oui')a.setAttribute('aria-pressed',a.getAttribute('aria-pressed')==='true'?'false':'true');if(m)toast(m)}});
+CN.addEventListener('keydown',function(e){var el=e.target.closest('.blk');if(!el||e.target!==el)return;var b=B.find(function(o){return o.el===el});select(b);var k=e.key,h=true;
+ if(k==='ArrowLeft')b.x=Math.max(0,b.x-1);else if(k==='ArrowRight')b.x=Math.min(COLS-b.w,b.x+1);else if(k==='ArrowUp')b.y=Math.max(0,b.y-1);else if(k==='ArrowDown')b.y++;
+ else if(k==='+'||k==='='){b.w=Math.min(COLS,b.w+1);b.h=hOf(b.k,b.w);b.x=Math.min(b.x,COLS-b.w)}else if(k==='-'){b.w=Math.max(2,b.w-1);b.h=hOf(b.k,b.w)}
+ else if(k==='Delete'||k==='Backspace'){remove(b);e.preventDefault();return}else if(k==='Enter'){el.classList.toggle('code')}else h=false;
+ if(h){e.preventDefault();place(b);guides(b);layout()}});
+CN.addEventListener('focusout',function(){if(!act)clearG()});
+function toast(t){var e=$('#toast2');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('on')},2800)}
+
+/* ---------- outils ---------- */
+$('.seg5').addEventListener('click',function(e){var b=e.target.closest('[data-pre]');if(!b)return;$$('[data-pre]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});preset(b.dataset.pre)});
+$('#code5').addEventListener('click',function(){showCode=!showCode;this.setAttribute('aria-pressed',showCode);B.forEach(function(b){b.el.classList.toggle('code',showCode)})});
+$('#clear5').addEventListener('click',function(){B.forEach(function(b){b.el.remove()});B=[];sel=null;layout()});
+$('#pub5').addEventListener('click',function(){toast('Votre page sera publiée sur lemondeaime.com/'+P.url+' quand les comptes seront ouverts.')});
+tray(0);preset('maries');geo();var rz;addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(geo,120)});addEventListener('load',geo);
 })();
 </script>
 </body>
