@@ -869,6 +869,14 @@ body:not(.soul) #orb{opacity:0;pointer-events:none}
 @media (max-width:759px){.hcube{--hs:104px}.hf b{font-size:12.5px}}
 @media (max-height:820px) and (min-width:760px){.hcube{--hs:110px}.h0t{font-size:clamp(64px,11vw,150px)}}
 @media (prefers-reduced-motion:reduce){.hc3{animation:none;transform:rotateX(-22deg) rotateY(35deg)}}
+
+/* le cube est le O de « monde » */
+.h0t .hcube{display:inline-block;position:relative;--hs:.6em;width:var(--hs);height:var(--hs);margin:0 .05em;vertical-align:-.05em;perspective:4.5em;cursor:pointer}
+.h0t .hf{border-radius:.1em;gap:.04em}
+.h0t .hf b{font:400 calc(var(--hs)*.15)/1.05 var(--display);letter-spacing:-.01em}
+.h0t .hcore{width:.2em;height:.2em;margin:-.1em}
+.h0t .hcube.open .hcore{transform:scale(1.8)}
+@media (max-width:759px){.h0t .hf b{display:none}}
 #gps{position:fixed;z-index:98;left:0;top:0;width:0;height:0;pointer-events:none;opacity:0;transition:opacity .3s}
 #gps.on{opacity:1}
 #gps b{position:absolute;left:-19px;top:-19px;width:38px;height:38px;border-radius:50%;border:1px dashed rgba(255,255,255,.28)}
@@ -876,7 +884,6 @@ body:not(.soul) #orb{opacity:0;pointer-events:none}
 #gps.near i{animation:gpsn .8s ease-in-out infinite}
 @keyframes gpsn{50%{margin-left:25px}}
 @media (pointer:coarse){#gps b{left:-30px;top:-30px;width:60px;height:60px}#gps i{margin-left:31px}@keyframes gpsn{50%{margin-left:35px}}}
-@media (prefers-reduced-motion:reduce){#ocube .oc3{animation:none;transform:rotateX(-22deg) rotateY(35deg)}.o0.ask::after{animation:none;opacity:.6}}
 #ocur.press{transform-origin:center}
 #ocur.press::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid #fff;animation:prs .45s linear forwards}
 @keyframes prs{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
@@ -900,9 +907,8 @@ body.acur #gorb{opacity:0!important;pointer-events:none!important}
 <main>
 <section class="h0" id="hero0" aria-labelledby="h0t">
   <div class="h0in">
-  <h1 class="h0t" id="h0t" aria-label="Le monde AIME"><span aria-hidden="true">Le m<i class="o0"></i>nde</span><em aria-hidden="true">AIME</em></h1>
+  <h1 class="h0t" id="h0t" aria-label="Le monde AIME"><span aria-hidden="true">Le m<span class="hcube" id="hcube"><span class="hc3" id="hc3"></span></span>nde</span><em aria-hidden="true">AIME</em></h1>
   <div class="acr0"><span><b>A</b>rchitecture</span><span><b>I</b>ntelligente</span><span>de la <b>M</b>émoire</span><span><b>E</b>nsemble</span></div>
-  <div class="hcube" id="hcube" role="img" aria-label="Votre cube"><div class="hc3" id="hc3"></div></div>
   <p id="calh" aria-live="polite"></p>
   <div class="role0" id="role0" role="group" aria-label="Vous êtes"><button type="button" data-r="moi">Moi</button><button type="button" data-r="pro">Pro</button><button type="button" data-r="proche">Participant</button><button type="button" data-r="coord">Coordinateur</button></div>
   <div class="role0" id="proj0" role="group" aria-label="Votre projet" hidden><button type="button" data-p="mariage">Mariage</button><button type="button" data-p="anniv">Anniversaire</button><button type="button" data-p="event">Événement pro</button><button type="button" data-p="voyage">Voyage</button><button type="button" data-p="autre">Autre</button></div>
@@ -1188,10 +1194,39 @@ function labels(k){var cx=C[0],cy=C[1],h='';
 
  ov.innerHTML=h;requestAnimationFrame(function(){Array.prototype.forEach.call(ov.children,function(x,i){setTimeout(function(){x.classList.add('on')},120+i*90)})});
 }
+
+/* ---------- le cadran de l'onde : l'heure tourne, un retard part du centre et décale tout ce qui suit ---------- */
+var EVT=[['Cérémonie',15,0,.54,0],['Cocktail',17,0,.54,1],['Dîner',20,0,.9,0],['Soirée',22,30,.9,1]];
+function ang(min){return((min/60)%12)/12*6.2832-1.5708}
+function pill(c,x,y,txt,col,al){c.font='600 12px "Inter Variable",Inter,sans-serif';var w=c.measureText(txt).width+14;x=al==='r'?x-w:al==='c'?x-w/2:x;x=Math.max(8,Math.min(W-w-8,x));c.fillStyle='rgba(10,10,12,.82)';c.beginPath();c.roundRect?c.roundRect(x,y-11,w,22,8):c.rect(x,y-11,w,22);c.fill();c.fillStyle=col;c.textAlign='left';c.textBaseline='middle';c.fillText(txt,x+7,y+.5)}
+function hhmm(m){m=Math.round(m);var h=Math.floor(m/60)%24,mm=m%60;return h+':'+(mm<10?'0':'')+mm}
+function dial(c,cx,cy,t){var cyc=11,u=t%cyc,RD=R*1.1,mob=W<760;
+ /* l'heure simulée : 14:30 → 15:00 en 3 s, puis elle continue doucement */
+ var now=870+Math.min(u,3)/3*30+Math.max(0,u-3)*4;
+ /* le cadran : 60 graduations, les heures autour */
+ c.save();c.lineCap='round';for(var k=0;k<60;k++){var a=k/60*6.2832-1.5708,big=k%5===0,r0=RD-(big?R*.07:R*.035);c.strokeStyle=big?'rgba(255,255,255,.75)':'rgba(255,255,255,.28)';c.lineWidth=big?2:1;c.beginPath();c.moveTo(cx+Math.cos(a)*r0,cy+Math.sin(a)*r0);c.lineTo(cx+Math.cos(a)*RD,cy+Math.sin(a)*RD);c.stroke()}
+ c.fillStyle='rgba(255,255,255,.9)';c.font='500 '+(mob?12:15)+'px "Inter Variable",Inter,sans-serif';c.textAlign='center';c.textBaseline='middle';
+ for(var h=1;h<=12;h++){var a2=h/12*6.2832-1.5708,rn=RD+(mob?14:22);c.fillText(String(h),cx+Math.cos(a2)*rn,cy+Math.sin(a2)*rn)}
+ /* le retard : une onde ambre part du centre à 3 s */
+ var wv=u>=3?Math.min(1.05,(u-3)/2.6):-1,wr=R*.22+wv*R*.85;
+ if(wv>=0&&wv<1.05){c.strokeStyle='rgba(251,191,36,'+(.85-.6*wv)+')';c.lineWidth=3;c.beginPath();c.arc(cx,cy,wr,0,6.283);c.stroke()}
+ /* les moments posés sur les anneaux : quand l'onde passe, ils glissent de 20 minutes */
+ EVT.forEach(function(e,i){var base=e[1]*60+e[2],r=R*e[3],hit=wv>=0&&wr>=r?Math.min(1,(wr-r)/(R*.12)):0,sm=hit*hit*(3-2*hit),m=base+20*sm,a=ang(m),x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;
+  if(sm>0){c.strokeStyle='rgba(251,191,36,.9)';c.lineWidth=3;c.beginPath();c.arc(cx,cy,r,ang(base),a);c.stroke()}
+  c.fillStyle=sm>0?'#FBBF24':'#fff';c.beginPath();c.arc(x,y,6,0,6.283);c.fill();c.strokeStyle='#0A0A0C';c.lineWidth=2;c.stroke();
+  if(!mob||i%2===0){var right=Math.cos(a)>=0,lx=x+(right?12:-12);pill(c,lx,y,e[0]+' '+hhmm(m)+(sm>.98?'  +20':''),sm>0?'#FBBF24':'#fff',right?'l':'r')}});
+ /* les aiguilles */
+ var am=(now%60)/60*6.2832-1.5708,ah=ang(now);c.shadowColor='rgba(124,92,255,.8)';c.shadowBlur=10;
+ c.strokeStyle='#fff';c.lineWidth=5;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(ah)*R*.42,cy+Math.sin(ah)*R*.42);c.stroke();
+ c.lineWidth=3;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(am)*R*.8,cy+Math.sin(am)*R*.8);c.stroke();
+ c.shadowBlur=0;c.fillStyle='#fff';c.beginPath();c.arc(cx,cy,7,0,6.283);c.fill();
+ /* au centre : l'heure, et le retard quand il arrive */
+ pill(c,cx,cy+R*.13,hhmm(now),'#fff','c');if(u>=3&&u<9)pill(c,cx,cy-R*.13,'Retard +20 min','#FBBF24','c');
+ c.restore()}
 function draw(){var vr=SEC.getBoundingClientRect();if(vr.bottom<0||vr.top>innerHeight){requestAnimationFrame(draw);return}var c=fx.getContext('2d'),now=performance.now(),t=(now-FXT)/1000,cx=C[0],cy=C[1];c.clearRect(0,0,W,H);
  try{var b=envG.getBBox();if(b.width){cone.style.setProperty('--cx',(b.x+b.width/2)+'px');cone.style.setProperty('--cy',(b.y+b.height/2)+'px')}}catch(_){}
  if(!RM&&FXK){
-  if(FXK==='ondes'||FXK==='sphere'){for(var i=0;i<3;i++){var u=((t*.45+i/3)%1);c.strokeStyle='rgba(196,181,253,'+(1-u)*.5+')';c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,R*(FXK==='sphere'?.5:1)+u*R*.9,0,6.283);c.stroke()}}
+  if(FXK==='ondes')dial(c,cx,cy,t);if(FXK==='ondes'||FXK==='sphere'){for(var i=0;i<3;i++){var u=((t*.45+i/3)%1);c.strokeStyle='rgba(196,181,253,'+(1-u)*.5+')';c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,R*(FXK==='sphere'?.5:1)+u*R*.9,0,6.283);c.stroke()}}
   if(FXK==='partition'){var cols=W<760?12:18,g=R*2.4/cols,x0=cx-g*cols/2,ph=(t*3)%cols;c.fillStyle='rgba(255,255,255,.9)';c.fillRect(x0+ph*g,cy-g*2.5-6,2,g*5+12)}
   if(FXK==='globe'){var pts=PEOPLE.map(function(p){return[cx+p[0]*R,cy+p[1]*R]});for(var j=0;j<pts.length;j++){var a=pts[j],bq=pts[(j+1)%pts.length],mx=(a[0]+bq[0])/2,my=(a[1]+bq[1])/2-R*.35,pr=Math.max(0,Math.min(1,t*.6-j*.35));if(pr<=0)continue;c.strokeStyle='rgba(255,255,255,.55)';c.lineWidth=1.4;c.beginPath();c.moveTo(a[0],a[1]);for(var s2=1;s2<=24*pr;s2++){var q=s2/24,m=1-q;c.lineTo(m*m*a[0]+2*m*q*mx+q*q*bq[0],m*m*a[1]+2*m*q*my+q*q*bq[1])}c.stroke()}
    pts.forEach(function(p){c.fillStyle='#fff';c.beginPath();c.arc(p[0],p[1],4,0,6.283);c.fill()});var seg=Math.floor(t*.6)%pts.length,fr=(t*.6)%1,A=pts[seg],B=pts[(seg+1)%pts.length],MX=(A[0]+B[0])/2,MY=(A[1]+B[1])/2-R*.35,mm=1-fr;dot(c,mm*mm*A[0]+2*mm*fr*MX+fr*fr*B[0],mm*mm*A[1]+2*mm*fr*MY+fr*fr*B[1],9,t)}
@@ -1657,7 +1692,7 @@ var BUILD=$('#build');addEventListener('scroll',function(){if(window.__aimeQuest
 
 
 /* ---------- 4. le parcours : calibrer, puis l'orbe guide d'app en app jusqu'au site terminé ---------- */
-var O=$('.o0'),CALG=$('#calg'),CALX=$('#calx'),CALH=$('#calh'),GORB=$('#gorb'),GBUB=$('#gbub'),FINE=matchMedia('(pointer:fine)').matches,calOn=false,skip=null;
+var O=$('#hcube'),CALG=$('#calg'),CALX=$('#calx'),CALH=$('#calh'),GORB=$('#gorb'),GBUB=$('#gbub'),FINE=matchMedia('(pointer:fine)').matches,calOn=false,skip=null;
 function oc(){return window.aimeNai?aimeNai.cen():[innerWidth/2,innerHeight/2]}
 function keepGrid(){CALG.classList.add('on','keep');gridTick()}
 function gridTick(){if(!CALG.classList.contains('keep'))return;var cn=document.getElementById('cnv5'),c=window.__aimeCell||40,r=cn?cn.getBoundingClientRect():{left:0,top:0};CALG.style.setProperty('--c',c+'px');CALG.style.setProperty('--gx',(((r.left%c)+c)%c)+'px');CALG.style.setProperty('--gy',(((r.top%c)+c)%c)+'px')}
@@ -1684,7 +1719,7 @@ var HCI={vous:'<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.6 3.8-5.5 
 var RLAB={moi:'Moi',pro:'Pro',proche:'Participant',coord:'Coordinateur'},PLAB={mariage:'Mariage',anniv:'Anniversaire',event:'Événement',voyage:'Voyage',autre:'Projet'},SOUL=!!AIMEM.soul;
 var HC=$('#hc3');HC.innerHTML=HCF.map(function(f,i){return'<i class="hf" style="--a:'+f[2]+';--b:'+f[3]+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+HCI[f[0]]+'</svg><b></b></i>'}).join('')+'<span class="hcore" id="hcore"></span>';
 function hcVal(i){var M=AIMEM,E=M.event||{};return[M.roleSet&&RLAB[M.role],M.projetSet&&PLAB[M.projet],E.date?new Date(E.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'',E.lieu||(M.pins&&M.pins.length?M.pins.length+' lieu'+(M.pins.length>1?'x':''):''),(M.visuals||M.visual)?'Votre visuel':'',M.tracks&&M.tracks.length?M.tracks.length+' morceau'+(M.tracks.length>1?'x':''):''][i]}
-function hcSkin(flash){if(flash===1)AIMEM.projetSet=true,AIMEM.save();var n=0;$$('.hf',HC).forEach(function(f,i){var v=hcVal(i)||'';f.classList.toggle('on',!!v);f.querySelector('b').textContent=v;if(v)n++;if(flash===i&&!RM)f.animate([{filter:'brightness(2.2)'},{filter:'none'}],{duration:700})});$('#hcube').setAttribute('aria-label','Votre cube : '+n+' face'+(n>1?'s':'')+' sur 6 habillée'+(n>1?'s':''))}
+function hcSkin(flash){if(flash===1)AIMEM.projetSet=true,AIMEM.save();var n=0;$$('.hf',HC).forEach(function(f,i){var v=hcVal(i)||'';f.classList.toggle('on',!!v);f.querySelector('b').textContent=v;if(v)n++;if(flash===i&&!RM)f.animate([{filter:'brightness(2.2)'},{filter:'none'}],{duration:700})});$('#h0t').setAttribute('aria-label','Le monde AIME · votre cube : '+n+' face'+(n>1?'s':'')+' sur 6 habillée'+(n>1?'s':''))}
 function soulOut(){if(SOUL)return;SOUL=true;AIMEM.soul=true;AIMEM.save();var cb=$('#hcube');cb.classList.add('open');var c=$('#hcore').getBoundingClientRect(),x0=c.left+c.width/2,y0=c.top+c.height/2;
  CALH.textContent='L\'âme sort du cube : suivez sa flèche.';CALH.classList.add('ok');
  setTimeout(function(){var f=document.createElement('i');f.className='orbfly';f.style.left=x0+'px';f.style.top=y0+'px';document.body.appendChild(f);$('#hcore').style.opacity=0;
