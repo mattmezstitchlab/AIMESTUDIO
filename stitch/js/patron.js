@@ -39,17 +39,22 @@ function valider(p,dmc){var e=[],index={};(dmc||[]).forEach(function(d){index[d.
  var m=matrice(p);if(m.length!==p.l*p.h)e.push('matrice de taille incorrecte');
  var vus={},syms={};p.palette.forEach(function(c,i){if(dmc&&!index[c.dmc])e.push('référence DMC inconnue : '+c.dmc);if(vus[c.dmc])e.push('référence en double : '+c.dmc);vus[c.dmc]=1;if(syms[c.symbole])e.push('symbole en double : '+c.symbole);syms[c.symbole]=1});
  for(var i=0;i<m.length;i++)if(m[i]>p.palette.length){e.push('point '+i+' : couleur hors palette');break}
+ var ids={};p.palette.forEach(function(c){ids[c.id]=1});
+ (p.demi||[]).forEach(function(d){if(!ids[d.c])e.push('demi-point de couleur inconnue');if(!(d.x>=0&&d.y>=0&&d.x<p.l&&d.y<p.h))e.push('demi-point hors grille');else if(m[d.y*p.l+d.x])e.push('demi-point et croix sur la même case ('+(d.x+1)+', '+(d.y+1)+')');if(d.s!=='/'&&d.s!=='\\')e.push('demi-point sans sens')});
+ (p.contours||[]).forEach(function(c){if(!ids[c.c])e.push('backstitch de couleur inconnue');if(!(c.pts&&c.pts.length>1))e.push('backstitch vide')});
  if(p.licence&&LICENCES.indexOf(p.licence.type)<0)e.push('licence inconnue');
  return e}
 
 /* ce qui se calcule, jamais ne se stocke */
-function quantites(p){var m=matrice(p),q=new Array(p.palette.length+1).fill(0);for(var i=0;i<m.length;i++)q[m[i]]++;return p.palette.map(function(c,i){return{id:c.id,dmc:c.dmc,symbole:c.symbole,points:q[i+1]}})}
+function quantites(p){var m=matrice(p),q=new Array(p.palette.length+1).fill(0),dm={},ct={};for(var i=0;i<m.length;i++)q[m[i]]++;(p.demi||[]).forEach(function(d){dm[d.c]=(dm[d.c]||0)+1});(p.contours||[]).forEach(function(c){var L=0;for(var k=1;k<c.pts.length;k++)L+=Math.hypot(c.pts[k][0]-c.pts[k-1][0],c.pts[k][1]-c.pts[k-1][1]);ct[c.c]=(ct[c.c]||0)+L});
+ return p.palette.map(function(c,i){return{id:c.id,dmc:c.dmc,symbole:c.symbole,points:q[i+1],demi:dm[c.id]||0,backstitch:+(ct[c.id]||0).toFixed(1)}})}
 function surface(p){var m=matrice(p),x0=p.l,y0=p.h,x1=-1,y1=-1;for(var i=0;i<m.length;i++)if(m[i]){var x=i%p.l,y=(i/p.l)|0;if(x<x0)x0=x;if(y<y0)y0=y;if(x>x1)x1=x;if(y>y1)y1=y}return x1<0?{l:0,h:0}:{l:x1-x0+1,h:y1-y0+1,x:x0,y:y0}}
 /* dimensions physiques du motif brodé, selon la toile (count = points par pouce) */
 function dimensions(p,count){var s=surface(p),c=count||p.toile.count;return{points:s,cm:{l:+(s.l/c*2.54).toFixed(1),h:+(s.h/c*2.54).toFixed(1)}}}
 /* fournitures : hypothèse affichée (≈ 1 800 points complets par écheveau de 8 m en 14 ct, 2 brins), proportionnelle à la toile */
 var POINTS_PAR_ECHEVEAU_14=1800;
-function fournitures(p,count){var c=count||p.toile.count,par=Math.round(POINTS_PAR_ECHEVEAU_14*c/14);return quantites(p).map(function(q){return Object.assign(q,{echeveaux:Math.max(1,Math.ceil(q.points/par))})})}
+/* un demi-point compte pour moitié, un point de backstitch (une case) pour un quart */
+function fournitures(p,count){var c=count||p.toile.count,par=Math.round(POINTS_PAR_ECHEVEAU_14*c/14);return quantites(p).map(function(q){return Object.assign(q,{echeveaux:Math.max(1,Math.ceil((q.points+q.demi/2+q.backstitch/4)/par))})})}
 
 /* publier : une version figée, indépendante du brouillon qui continue d'évoluer */
 function publier(p,note,date){fixer(p);var v=JSON.parse(JSON.stringify(p));v.statut='publie';v.historique=(v.historique||[]).concat([{version:v.version,date:date||null,note:note||'Publication'}]);

@@ -35,10 +35,10 @@ function exporter(jsPDF,p,dmc,o){o=o||{};P.fixer(p);var idx={};dmc.forEach(funct
  /* 2 · consignes, légende et fournitures */
  nouvelle();doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text('Légende et fournitures',MARGE,MARGE+24);doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(70);
  doc.text(doc.splitTextToSize(txt('Brodez à 2 brins sur Aida '+count+'. Commencez au centre, repéré par les flèches sur les grilles. Une case = un point de croix. Les lignes épaisses marquent les blocs de 10 points. Quantités indicatives : environ '+Math.round(P.POINTS_PAR_ECHEVEAU_14*count/14)+' points par écheveau de 8 m.'),A4.l-2*MARGE),MARGE,MARGE+44);doc.setTextColor(0);
- var y0=MARGE+86,rh=19;doc.setFontSize(8);doc.setTextColor(110);['Symbole','Couleur','DMC','Nom','Points','Écheveaux'].forEach(function(t,i){doc.text(txt(t),MARGE+[0,40,84,130,400,460][i],y0)});doc.setTextColor(0);doc.setFontSize(10);
+ var y0=MARGE+86,rh=19;doc.setFontSize(8);doc.setTextColor(110);['Symbole','Couleur','DMC','Nom','Croix','Demi','Contour','Échev.'].forEach(function(t,i){doc.text(txt(t),MARGE+[0,40,84,130,330,375,415,470][i],y0)});doc.setTextColor(0);doc.setFontSize(10);
  var par=Math.floor((A4.h-70-y0-10)/rh),base=y0;q.forEach(function(r,i){if(i&&i%par===0){pied();nouvelle();base=MARGE}var yy=base+10+(i%par)*rh;var hex=(idx[r.dmc]||{}).hex||'#999999',c=rgb(hex);
   doc.setDrawColor(180);doc.setLineWidth(.5);doc.rect(MARGE,yy,14,14,'S');S.dessiner(g,r.symbole,MARGE+1,yy+1,12,'#000000');
-  doc.setFillColor(c[0],c[1],c[2]);doc.rect(MARGE+40,yy,30,14,'F');doc.text(txt(r.dmc),MARGE+84,yy+10.5);doc.text(txt((idx[r.dmc]||{}).nom||''),MARGE+130,yy+10.5);doc.text(String(r.points),MARGE+400,yy+10.5);doc.text(String(r.echeveaux),MARGE+460,yy+10.5)});
+  doc.setFillColor(c[0],c[1],c[2]);doc.rect(MARGE+40,yy,30,14,'F');doc.text(txt(r.dmc),MARGE+84,yy+10.5);doc.text(txt(((idx[r.dmc]||{}).nom||'').slice(0,34)),MARGE+130,yy+10.5);doc.text(String(r.points),MARGE+330,yy+10.5);doc.text(String(r.demi||'–'),MARGE+375,yy+10.5);doc.text(r.backstitch?String(r.backstitch).replace('.',',')+' c.':'–',MARGE+415,yy+10.5);doc.text(String(r.echeveaux),MARGE+470,yy+10.5)});
  pied();
 
  /* 3 · plan d'assemblage */
@@ -64,6 +64,9 @@ function exporter(jsPDF,p,dmc,o){o=o||{};P.fixer(p);var idx={};dmc.forEach(funct
   /* les flèches du centre */
   doc.setFillColor(168,50,45);if(cx>=b.x&&cx<b.x+b.l){var ax=gx+(cx-b.x)*cell;doc.triangle(ax-4,gy-9,ax+4,gy-9,ax,gy-2,'F');doc.triangle(ax-4,gy+b.h*cell+9,ax+4,gy+b.h*cell+9,ax,gy+b.h*cell+2,'F')}
   if(cy>=b.y&&cy<b.y+b.h){var ay=gy+(cy-b.y)*cell;doc.triangle(gx-12,ay-4,gx-12,ay+4,gx-5,ay,'F');doc.triangle(gx+b.l*cell+12,ay-4,gx+b.l*cell+12,ay+4,gx+b.l*cell+5,ay,'F')}
+  /* demi-points : une diagonale */
+  (p.demi||[]).forEach(function(dd){if(dd.x<b.x||dd.x>=b.x+b.l||dd.y<b.y||dd.y>=b.y+b.h)return;var pal=p.palette.filter(function(z){return z.id===dd.c})[0],c7=rgb(pal?((idx[pal.dmc]||{}).hex||'#000000'):'#000000'),X=gx+(dd.x-b.x)*cell,Y=gy+(dd.y-b.y)*cell;
+   doc.setDrawColor(mode==='nb'?0:c7[0],mode==='nb'?0:c7[1],mode==='nb'?0:c7[2]);doc.setLineWidth(1.6);if(dd.s==='/')doc.line(X+cell*.12,Y+cell*.88,X+cell*.88,Y+cell*.12);else doc.line(X+cell*.12,Y+cell*.12,X+cell*.88,Y+cell*.88)});
   /* backstitch par-dessus, en vectoriel */
   (p.contours||[]).forEach(function(k){var pal=p.palette.filter(function(z){return z.id===k.c})[0],c6=rgb(pal?((idx[pal.dmc]||{}).hex||'#000000'):'#000000');doc.setDrawColor(mode==='nb'?0:c6[0],mode==='nb'?0:c6[1],mode==='nb'?0:c6[2]);doc.setLineWidth(1.4);
    for(var t=1;t<k.pts.length;t++){var p0=k.pts[t-1],p1=k.pts[t],dans=function(q2){return q2[0]>=b.x&&q2[0]<=b.x+b.l&&q2[1]>=b.y&&q2[1]<=b.y+b.h};if(!dans(p0)||!dans(p1))continue;doc.line(gx+(p0[0]-b.x)*cell,gy+(p0[1]-b.y)*cell,gx+(p1[0]-b.x)*cell,gy+(p1[1]-b.y)*cell)}});

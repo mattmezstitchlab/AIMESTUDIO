@@ -108,4 +108,18 @@ Vérifications dans le navigateur (Playwright, ordinateur et 390 px, sans erreur
 | **Correction d'un défaut** | L'empreinte d'un patron ne suivait pas les corrections faites en mémoire. Elle est maintenant recalculée sur la grille courante (testé). |
 | **Tests** | 12 tests STITCH. S'ajoutent : le PDF comporte le bon nombre de pages, chaque référence DMC dans la légende, les symboles et l'empreinte du patron dans ses métadonnées, les dimensions, l'attribution et la version ; toute correction change l'empreinte. |
 
-Restent pour la phase 2 : import de PDF de patrons existants (avec calibrage et validation humaine), demi-points, renforcement automatique des contours, sélection de régions.
+### Phase 2 · suite (import, demi-points, contours, régions)
+
+| Élément | État |
+|---|---|
+| **Import d'un patron existant** (`/stitch/importer/`) | PDF (pdf.js 4.10.38, Apache-2.0, servi depuis `stitch/vendor/`) ou image. Déclaration d'usage personnel obligatoire avant toute lecture ; le fichier ne quitte pas le navigateur. Étapes : choix de la page (vignettes) → cadre tracé sur la grille (bords ajustables) → pas détecté et lignes superposées pour contrôle → lecture des cases → un groupe par symbole avec la case la plus typique, le nombre de cases, une suggestion DMC (CIEDE2000) seulement si la page est en couleur → **chaque groupe doit recevoir une référence DMC existante, ou être rendu à la toile** → brouillon privé (`licence: import-prive`, `provenance.source: import`) ouvert dans l'atelier. |
+| **Lecture** (`stitch/js/lecture.js`) | Pas de grille : profil de « finesse » (médiane de l'écart à ±2 px), autocorrélation, puis choix du nombre de cases dont toutes les lignes tombent juste (gère les cases de taille non entière). Symboles : signature 16 × 16 prise sur le cadre de l'encre (insensible au décalage d'un pixel), regroupement en trois temps (affectation, fusion des groupes moyens, réaffectation). Réglage « fin / standard / large ». |
+| **Mesures sur notre propre PDF** (7 pages, 13 fils) | Grille couleur : pas détecté 55 × 52, 27 groupes, 100 % des 2 860 cases reconstruites après validation. Grille noir et blanc : 55 × 52, 24 groupes, 99,97 % (une case). Un patron imprimé, scanné ou photographié sera moins net : l'atelier reste l'étape de vérification. |
+| **Garde-fous** | Un import reste privé : l'atelier verrouille la licence d'un brouillon importé, même si l'on change le menu. Aucune référence DMC n'est créée : toute saisie hors table est refusée. |
+| **Demi-points** | Outil « Demi » (pose `/`, tourne en `\`, retire) ; jamais sur une case déjà brodée en croix ; rendus dans l'atelier, le lecteur et le PDF ; comptés pour moitié dans les fournitures ; validés. |
+| **Contours automatiques** | « Renforcer les contours » : backstitch qui suit le bord du motif, en polylignes simplifiées, dans la couleur la plus sombre de la palette. Annulable. |
+| **Sélection de régions** | Baguette (points connectés de même couleur) → recolorer, fondre dans la couleur voisine dominante (une couleur brodée avant la toile), effacer. |
+| **Brouillons** | `/stitch/atelier/?brouillon=<id>` rouvre un brouillon enregistré dans ce navigateur. |
+| **Tests** | 15 tests STITCH, dont une grille synthétique relue case pour case et les opérations d'édition. |
+
+Restent hors phase 2 : patrons scannés de mauvaise qualité (redressement de perspective), lecture des demi-points et backstitchs d'un PDF existant, plusieurs pages d'un même patron assemblées automatiquement.

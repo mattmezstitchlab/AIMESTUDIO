@@ -43,6 +43,8 @@ main{padding:clamp(40px,6vw,80px) 0 clamp(60px,8vw,100px)}
 .barreO hr{border:0;height:1px;background:var(--trait);margin:4px 6px;flex:none}
 .edit .centre{position:relative;min-width:0;touch-action:none}
 .edit canvas#ed{position:absolute;inset:0}
+.regionBar{position:absolute;left:50%;top:12px;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 2px 14px rgba(0,0,0,.14);border-radius:16px;padding:8px 10px;font-size:13px;max-width:calc(100% - 24px);z-index:2}
+.regionBar span{padding:0 6px;color:var(--doux)}
 .edit .info{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 6px rgba(0,0,0,.1);border-radius:10px;padding:7px 12px;font:400 12.5px var(--sf);max-width:calc(100% - 24px)}
 .edit aside{background:var(--gris);display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0}
 .edit aside .h{padding:16px 16px 8px;display:grid;gap:4px}
@@ -63,7 +65,7 @@ main{padding:clamp(40px,6vw,80px) 0 clamp(60px,8vw,100px)}
 <body>
 <div class="demo">Démonstration : l'atelier fonctionne dans ce navigateur, rien n'est envoyé.</div>
 <header class="tete"><div class="wrap"><a class="marque" href="/stitch/"><b>AIME</b><i>Stitch</i></a>
- <nav class="nav" aria-label="AIME Stitch"><a href="/stitch/">Découvrir</a><a href="/stitch/atelier/" aria-current="page">Atelier</a><a href="/stitch/broder/">Broder</a></nav></div></header>
+ <nav class="nav" aria-label="AIME Stitch"><a href="/stitch/">Découvrir</a><a href="/stitch/atelier/" aria-current="page">Atelier</a><a href="/stitch/importer/">Importer</a><a href="/stitch/broder/">Broder</a></nav></div></header>
 <main><div class="wrap large">
  <div class="entete"><span class="k">Atelier</span><h1 class="titre-l" style="margin-top:6px">De l'image au patron.</h1><p class="sous">Trois propositions à comparer, une grille à corriger, un PDF prêt à imprimer.</p></div>
  <ol class="etapes" id="etapes"><li class="on">Image</li><li>Comparer</li><li>Corriger</li><li>Prévisualiser</li></ol>
@@ -71,7 +73,7 @@ main{padding:clamp(40px,6vw,80px) 0 clamp(60px,8vw,100px)}
  <section class="source" aria-label="Image source">
   <div class="img" id="srcImg"></div>
   <div class="reg">
-   <div class="ligne"><button class="btn gris petit" type="button" id="demo">Illustration de démonstration</button><label class="btn petit" style="cursor:pointer">Importer une image<input type="file" id="fichier" accept="image/jpeg,image/png,image/webp" hidden></label></div>
+   <div class="ligne"><button class="btn gris petit" type="button" id="demo">Illustration de démonstration</button><label class="btn petit" style="cursor:pointer">Importer une image<input type="file" id="fichier" accept="image/jpeg,image/png,image/webp,application/pdf" hidden></label><a class="lien" href="/stitch/importer/">Lire un patron PDF existant</a></div>
    <small id="srcInfo">JPEG, PNG ou WebP. L'image reste dans votre navigateur.</small>
    <label>Droits sur l'image
     <select id="droits" style="border:1px solid var(--trait2);border-radius:10px;padding:9px 12px;background:#fff">
@@ -94,6 +96,8 @@ main{padding:clamp(40px,6vw,80px) 0 clamp(60px,8vw,100px)}
     <button class="outil" data-o="remplacer" aria-pressed="false" title="Remplacer une couleur partout" aria-label="Remplacer une couleur"><svg viewBox="0 0 24 24"><path d="M4 7h12l-3-3M20 17H8l3 3"/></svg></button>
     <button class="outil" data-o="gomme" aria-pressed="false" title="Gomme : laisser la toile" aria-label="Gomme"><svg viewBox="0 0 24 24"><path d="M4 16l9-9 6 6-6 6H8z"/><path d="M10 19h10"/></svg></button>
     <button class="outil" data-o="selection" aria-pressed="false" title="Sélection rectangulaire, puis glisser pour déplacer" aria-label="Sélection"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1" stroke-dasharray="3 3"/></svg></button>
+    <button class="outil" data-o="demi" aria-pressed="false" title="Demi-point : touchez une case (/ puis \\ puis retirer)" aria-label="Demi-point"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" stroke-opacity=".35"/><path d="M6 18L18 6"/></svg></button>
+    <button class="outil" data-o="baguette" aria-pressed="false" title="Sélection de région : touchez une zone d'une couleur" aria-label="Sélection de région"><svg viewBox="0 0 24 24"><path d="M4 20L14 10"/><path d="M15 3v3M15 12v3M11 7h-1M20 7h-1M18 4l-1 1M18 10l-1-1"/></svg></button>
     <button class="outil" data-o="contour" aria-pressed="false" title="Backstitch : touchez les intersections, double-touchez pour finir" aria-label="Backstitch"><svg viewBox="0 0 24 24"><path d="M4 18l6-8 4 5 6-9"/><circle cx="4" cy="18" r="1.4"/><circle cx="10" cy="10" r="1.4"/><circle cx="14" cy="15" r="1.4"/><circle cx="20" cy="6" r="1.4"/></svg></button>
     <hr>
     <button class="outil" id="miroirH" title="Retourner horizontalement (sélection ou motif)" aria-label="Retourner horizontalement"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M9 7L4 12l5 5z"/><path d="M15 7l5 5-5 5z"/></svg></button>
@@ -103,11 +107,12 @@ main{padding:clamp(40px,6vw,80px) 0 clamp(60px,8vw,100px)}
     <button class="outil" id="annuler" title="Annuler" aria-label="Annuler" disabled><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
     <button class="outil" id="retablir" title="Rétablir" aria-label="Rétablir" disabled><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
    </div>
-   <div class="centre" id="centre"><canvas id="ed" tabindex="0" aria-label="Grille à corriger"></canvas><span class="info" id="edInfo"></span></div>
+   <div class="centre" id="centre"><canvas id="ed" tabindex="0" aria-label="Grille à corriger"></canvas><span class="info" id="edInfo"></span>
+    <div class="regionBar" id="regionBar" hidden><span id="regionN"></span><button class="btn petit" type="button" data-r="recolorer">Recolorer</button><button class="btn gris petit" type="button" data-r="fondre">Fondre dans la voisine</button><button class="btn gris petit" type="button" data-r="effacer">Effacer</button><button class="btn gris petit" type="button" data-r="fermer" aria-label="Fermer">✕</button></div></div>
    <aside aria-label="Couleurs et mesures"><div class="h"><b>Couleur active</b><span id="active" class="note"></span></div><ul class="legende liste" id="pal" role="listbox" aria-label="Palette"></ul>
     <div class="m"><div class="chiffres"><div><b id="mC">0</b><span>couleurs</span></div><div><b id="mI">0</b><span>points isolés</span></div><div><b id="mE">0</b><span>effort / point</span></div></div><span id="mN" class="note"></span></div></aside>
   </div>
-  <div class="actions"><button class="btn gris" type="button" id="isoles">Supprimer les points isolés</button><button class="btn gris" type="button" id="fusion">Fusionner la couleur la moins utilisée</button><button class="btn gris" type="button" id="effContours">Effacer les backstitchs</button><button class="btn" type="button" id="voir">Prévisualiser</button></div>
+  <div class="actions"><button class="btn gris" type="button" id="isoles">Supprimer les points isolés</button><button class="btn gris" type="button" id="fusion">Fusionner la couleur la moins utilisée</button><button class="btn gris" type="button" id="contourner">Renforcer les contours</button><button class="btn gris" type="button" id="effContours">Effacer les backstitchs</button><button class="btn" type="button" id="voir">Prévisualiser</button></div>
  </section>
 
  <section id="final" hidden aria-label="Prévisualiser"><div class="final"><div class="cadre"><canvas id="ap"></canvas></div>
@@ -117,17 +122,23 @@ main{padding:clamp(40px,6vw,80px) 0 clamp(60px,8vw,100px)}
 </div></main>
 <footer class="pied"><div class="wrap"><span>AIME Stitch · démonstration</span><span id="attrib"></span></div></footer>
 <div class="toast" id="toast" role="status"></div>
-<script src="/stitch/js/couleur.js"></script><script src="/stitch/js/conversion.js"></script><script src="/stitch/js/patron.js"></script><script src="/stitch/js/symboles.js"></script><script src="/stitch/js/mesures.js"></script><script src="/stitch/js/rendu.js"></script><script src="/stitch/js/pdf.js"></script><script src="/stitch/js/motifs.js"></script><script src="/stitch/js/commun.js"></script>
+<script src="/stitch/js/couleur.js"></script><script src="/stitch/js/conversion.js"></script><script src="/stitch/js/patron.js"></script><script src="/stitch/js/symboles.js"></script><script src="/stitch/js/mesures.js"></script><script src="/stitch/js/rendu.js"></script><script src="/stitch/js/pdf.js"></script><script src="/stitch/js/outils.js"></script><script src="/stitch/js/motifs.js"></script><script src="/stitch/js/commun.js"></script>
 <script>
 (function(){"use strict";var S=window.Stitch,K=StitchConversion,P=StitchPatron,M=StitchMesures,R=StitchRendu,esc=S.esc,$=function(s){return document.getElementById(s)};
 var D,img=null,nomImg='Mésange et églantines',props={},choix=null,p=null,hist=[],redo=[],outil='main',active=1,remplacerDe=0,vue=null,cv,g,W,H;
-S.donnees().then(function(d){D=d;$('attrib').textContent=d.dmc.source.attribution;demo()});
+S.donnees().then(function(d){D=d;D.idx={};d.dmc.fils.forEach(function(f){D.idx[f.code]=f});$('attrib').textContent=d.dmc.source.attribution;var q=new URLSearchParams(location.search).get('brouillon');if(q&&ouvrirBrouillon(q))return;demo()});
+/* un brouillon enregistré (atelier ou import) se rouvre tel quel ; un import reste privé, quoi qu'on choisisse ensuite */
+function ouvrirBrouillon(id){var b=S.lire('stitch-brouillons',{})[id];if(!b){S.toast('Brouillon introuvable dans ce navigateur.');return false}p=P.charger(b);var imp=p.provenance&&p.provenance.source==='import';
+ $('droits').value=imp?'import-prive':(p.licence&&p.licence.type)||'originale';$('droits').disabled=!!imp;$('srcInfo').textContent='Brouillon « '+p.titre+' » · '+p.l+' × '+p.h+' points'+(imp?' · import privé, non publiable':'');
+ var c=document.createElement('canvas');R.apercu(c,p,{case:Math.max(2,Math.floor(420/Math.max(p.l,p.h)))});montrer(c);$('comparer').innerHTML='<p class="note">Brouillon rouvert : la conversion est déjà faite. Choisissez une image pour repartir de zéro.</p>';
+ hist=[];redo=[];active=1;$('edition').hidden=false;$('final').hidden=true;etape(2);ouvrirEditeur();return true}
 function etape(n){[].forEach.call($('etapes').children,function(li,i){li.classList.toggle('on',i<=n)})}
 /* 1 · l'image */
 function montrer(c){$('srcImg').innerHTML='';$('srcImg').appendChild(c)}
-function demo(){var r=StitchMotifs.image('mesange',600);img={l:r.l,h:r.h,data:r.data};nomImg='Mésange et églantines';$('droits').value='originale';montrer(r.canvas);$('srcInfo').textContent='Illustration originale dessinée en code (démonstration) · '+r.l+' × '+r.h+' px';convertirTout()}
+function demo(){var r=StitchMotifs.image('mesange',600);img={l:r.l,h:r.h,data:r.data};nomImg='Mésange et églantines';$('droits').value='originale';$('droits').disabled=false;montrer(r.canvas);$('srcInfo').textContent='Illustration originale dessinée en code (démonstration) · '+r.l+' × '+r.h+' px';convertirTout()}
 $('demo').addEventListener('click',demo);
-$('fichier').addEventListener('change',function(){var f=this.files[0];if(!f)return;if(!/^image\/(jpeg|png|webp)$/.test(f.type)){S.toast('Format non pris en charge ici. Le PDF arrive en phase 2.');return}
+$('fichier').addEventListener('change',function(){var f=this.files[0];if(!f)return;if(!/^image\/(jpeg|png|webp)$/.test(f.type)){if(f.type==='application/pdf'){location.href='/stitch/importer/';return}S.toast('Format non pris en charge ici.');return}
+ $('droits').disabled=false;
  var u=URL.createObjectURL(f),im=new Image();im.onload=function(){var mx=900,k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);var gg=c.getContext('2d');gg.drawImage(im,0,0,c.width,c.height);
   img={l:c.width,h:c.height,data:gg.getImageData(0,0,c.width,c.height).data};nomImg=f.name.replace(/\.[a-z]+$/i,'');$('droits').value='import-prive';montrer(c);$('srcInfo').textContent=f.name+' · '+im.width+' × '+im.height+' px · usage privé par défaut';URL.revokeObjectURL(u);convertirTout()};im.src=u});
 $('larg').addEventListener('input',function(){$('largV').textContent=this.value+' points'});$('larg').addEventListener('change',convertirTout);$('fond').addEventListener('change',convertirTout);
@@ -140,17 +151,19 @@ function convertirTout(){if(!img)return;etape(1);var modes=['simple','equilibre'
 $('comparer').addEventListener('click',function(e){var b=e.target.closest('[data-choisir]');if(!b)return;choix=b.dataset.choisir;[].forEach.call(document.querySelectorAll('.prop'),function(x){x.classList.toggle('choisi',x.id==='p-'+choix)});
  p=P.charger(JSON.parse(P.serialiser(props[choix].p)));hist=[];redo=[];active=1;$('edition').hidden=false;$('final').hidden=true;etape(2);ouvrirEditeur();$('edition').scrollIntoView({behavior:'smooth',block:'start'})});
 /* 3 · corriger : chaque modification est réversible */
-function instant(){return{m:Uint16Array.from(P.matrice(p)),pal:JSON.stringify(p.palette),ct:JSON.stringify(p.contours||[])}}
+function instant(){return{m:Uint16Array.from(P.matrice(p)),pal:JSON.stringify(p.palette),ct:JSON.stringify(p.contours||[]),dm:JSON.stringify(p.demi||[])}}
 function memo(){hist.push(instant());if(hist.length>80)hist.shift();redo=[];boutons()}
-function restaurer(e){p._m=Uint16Array.from(e.m);p.palette=JSON.parse(e.pal);p.contours=JSON.parse(e.ct)}
+function restaurer(e){p._m=Uint16Array.from(e.m);p.palette=JSON.parse(e.pal);p.contours=JSON.parse(e.ct);p.demi=JSON.parse(e.dm||'[]')}
 function boutons(){$('annuler').disabled=!hist.length;$('retablir').disabled=!redo.length}
 $('annuler').addEventListener('click',function(){if(!hist.length)return;redo.push(instant());restaurer(hist.pop());boutons();maj()});
 $('retablir').addEventListener('click',function(){if(!redo.length)return;hist.push(instant());restaurer(redo.pop());boutons();maj()});
 function ouvrirEditeur(){cv=$('ed');g=cv.getContext('2d');taille();var s=Math.max(6,Math.floor(Math.min(W/p.l,H/p.h)));vue={s:s,x:(p.l-W/s)/2,y:(p.h-H/s)/2};palette();maj();boutons()}
 function taille(){var r=$('centre').getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;cv.style.width=W+'px';cv.style.height=H+'px';g.setTransform(d,0,0,d,0,0)}
 addEventListener('resize',function(){if(p&&!$('edition').hidden){taille();dessiner()}});
-var sel=null,trait=null;
+var sel=null,trait=null,regionSel=null;
+function fermerRegion(){regionSel=null;$('regionBar').hidden=true}
 function dessiner(){R.grille(g,p,vue,W,H,{mode:'mixte',surbrillance:outil==='remplacer'&&remplacerDe?remplacerDe:0,fond:'#FFFFFF'});
+ if(regionSel){g.save();g.fillStyle='rgba(0,113,227,.28)';regionSel.forEach(function(i){g.fillRect((i%p.l-vue.x)*vue.s,(((i/p.l)|0)-vue.y)*vue.s,vue.s,vue.s)});g.restore()}
  if(sel){var a=Math.min(sel.x0,sel.x1),b=Math.min(sel.y0,sel.y1),c2=Math.abs(sel.x1-sel.x0)+1,d=Math.abs(sel.y1-sel.y0)+1;g.save();g.setLineDash([6,4]);g.strokeStyle='#0071E3';g.lineWidth=2;g.strokeRect((a-vue.x)*vue.s,(b-vue.y)*vue.s,c2*vue.s,d*vue.s);g.fillStyle='rgba(0,113,227,.06)';g.fillRect((a-vue.x)*vue.s,(b-vue.y)*vue.s,c2*vue.s,d*vue.s);g.restore()}
  if(trait&&trait.pts.length){var col=R.couleur(p.palette[active-1].dmc);g.save();g.strokeStyle=col;g.lineWidth=Math.max(2,vue.s*.16);g.lineCap='round';g.beginPath();trait.pts.forEach(function(q,i){var X=(q[0]-vue.x)*vue.s,Y=(q[1]-vue.y)*vue.s;i?g.lineTo(X,Y):g.moveTo(X,Y)});if(trait.survol)g.lineTo((trait.survol[0]-vue.x)*vue.s,(trait.survol[1]-vue.y)*vue.s);g.stroke();g.fillStyle=col;trait.pts.forEach(function(q){g.beginPath();g.arc((q[0]-vue.x)*vue.s,(q[1]-vue.y)*vue.s,3,0,6.283);g.fill()});g.restore()}}
 function intersection(x,y){return[Math.max(0,Math.min(p.l,Math.round(vue.x+x/vue.s))),Math.max(0,Math.min(p.h,Math.round(vue.y+y/vue.s)))]}
@@ -166,13 +179,13 @@ function maj(){dessiner();palette();var me=M.mesurer(p);$('mC').textContent=p.pa
 $('pal').addEventListener('click',function(e){var li=e.target.closest('li');if(!li)return;var v=+li.dataset.v;
  if(outil==='remplacer'){if(!remplacerDe){remplacerDe=v;S.toast('Touchez maintenant la couleur qui la remplacera.');dessiner();return}if(v!==remplacerDe){memo();remplacerCouleur(remplacerDe,v);S.toast('Couleur remplacée partout.')}remplacerDe=0;maj();return}active=v;palette()});
 [].forEach.call(document.querySelectorAll('[data-o]'),function(b){b.addEventListener('click',function(){outil=b.dataset.o;remplacerDe=0;[].forEach.call(document.querySelectorAll('[data-o]'),function(x){x.setAttribute('aria-pressed',String(x===b))});
- $('edInfo').textContent={main:'Glissez pour déplacer, molette pour zoomer',crayon:'Touchez ou glissez pour poser la couleur active',pipette:'Touchez un point pour reprendre sa couleur',remplir:'Touchez une région pour la remplir',remplacer:'Touchez une couleur de la palette, puis sa remplaçante',gomme:'Touchez ou glissez pour laisser la toile',selection:'Glissez pour sélectionner ; glissez dans la sélection pour la déplacer',contour:'Touchez les intersections ; double-touchez ou Échap pour finir'}[outil];if(outil!=='contour'&&trait)finirTrait();if(outil!=='selection'&&outil!=='main'){sel=null}dessiner()})});
+ $('edInfo').textContent={main:'Glissez pour déplacer, molette pour zoomer',crayon:'Touchez ou glissez pour poser la couleur active',pipette:'Touchez un point pour reprendre sa couleur',remplir:'Touchez une région pour la remplir',remplacer:'Touchez une couleur de la palette, puis sa remplaçante',gomme:'Touchez ou glissez pour laisser la toile',selection:'Glissez pour sélectionner ; glissez dans la sélection pour la déplacer',demi:'Touchez une case : demi-point /, puis \\, puis retiré',baguette:'Touchez une zone : toute la région de cette couleur est sélectionnée',contour:'Touchez les intersections ; double-touchez ou Échap pour finir'}[outil];if(outil!=='contour'&&trait)finirTrait();if(outil!=='selection'&&outil!=='main'){sel=null}if(outil!=='baguette')fermerRegion();dessiner()})});
 function caseA(x,y){var u=Math.floor(vue.x+x/vue.s),v=Math.floor(vue.y+y/vue.s);return u>=0&&v>=0&&u<p.l&&v<p.h?v*p.l+u:-1}
 /* retire une couleur de la palette et renumérote la matrice */
 function retirer(v){var m=P.matrice(p);for(var i=0;i<m.length;i++){if(m[i]===v)m[i]=0;else if(m[i]>v)m[i]--}p.palette.splice(v-1,1);if(active>=v)active=Math.max(1,active-1)}
 function remplacerCouleur(de,vers){var m=P.matrice(p);for(var i=0;i<m.length;i++)if(m[i]===de)m[i]=vers;retirer(de)}
 function remplir(i,v){var m=P.matrice(p),c=m[i];if(c===v)return;var pile=[i];m[i]=v;while(pile.length){var u=pile.pop(),x=u%p.l,y=(u/p.l)|0;[[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){var X=x+d[0],Y=y+d[1];if(X<0||Y<0||X>=p.l||Y>=p.h)return;var w=Y*p.l+X;if(m[w]===c){m[w]=v;pile.push(w)}})}}
-function nettoyerPalette(){var q=P.quantites(p),ct={};(p.contours||[]).forEach(function(c){ct[c.c]=1});for(var k=q.length-1;k>=0;k--)if(!q[k].points&&!ct[p.palette[k].id])retirer(k+1)}
+function nettoyerPalette(){var q=P.quantites(p),ct={};(p.contours||[]).forEach(function(c){ct[c.c]=1});(p.demi||[]).forEach(function(d){ct[d.c]=1});for(var k=q.length-1;k>=0;k--)if(!q[k].points&&!ct[p.palette[k].id])retirer(k+1)}
 (function(){var dep=null,pts={},pinch=null,trace=false;var c=$('ed');
  c.addEventListener('pointerdown',function(e){c.setPointerCapture(e.pointerId);pts[e.pointerId]=[e.offsetX,e.offsetY];var k=Object.keys(pts);if(k.length===2){var a=pts[k[0]],b=pts[k[1]];pinch={d:Math.hypot(a[0]-b[0],a[1]-b[1]),s:vue.s};dep=null;return}
   dep={x:e.offsetX,y:e.offsetY,vx:vue.x,vy:vue.y};
@@ -181,6 +194,8 @@ function nettoyerPalette(){var q=P.quantites(p),ct={};(p.contours||[]).forEach(f
    if(sel&&u>=z.x&&u<z.x+z.l&&v>=z.y&&v<z.y+z.h){memo();var M0=Uint16Array.from(P.matrice(p)),buf=[];for(var yy=0;yy<z.h;yy++)for(var xx=0;xx<z.l;xx++)buf.push(M0[(z.y+yy)*p.l+z.x+xx]);dep.deplace={u:u,v:v,z:z,M0:M0,buf:buf}}
    else sel={x0:Math.max(0,Math.min(p.l-1,u)),y0:Math.max(0,Math.min(p.h-1,v)),x1:Math.max(0,Math.min(p.l-1,u)),y1:Math.max(0,Math.min(p.h-1,v))};dessiner();return}
   var i=caseA(e.offsetX,e.offsetY);if(i<0)return;var m=P.matrice(p);
+  if(outil==='demi'){memo();var r0=StitchOutils.demi(p,i%p.l,(i/p.l)|0,p.palette[active-1].id);nettoyerPalette();maj();S.toast(r0?'Demi-point '+r0:'Demi-point retiré');return}
+  if(outil==='baguette'){if(!m[i]){fermerRegion();S.toast('Touchez une zone brodée.');dessiner();return}regionSel=StitchOutils.region(p,i);$('regionN').textContent=regionSel.length+' points · DMC '+p.palette[m[i]-1].dmc;$('regionBar').hidden=false;dessiner();return}
   if(outil==='crayon'||outil==='gomme'){memo();trace=true;m[i]=outil==='gomme'?0:active;dessiner()}
   else if(outil==='pipette'){if(m[i]){active=m[i];palette();S.toast('Couleur active : DMC '+p.palette[active-1].dmc)}}
   else if(outil==='remplir'){memo();remplir(i,active);nettoyerPalette();maj()}});
@@ -210,12 +225,19 @@ $('fusion').addEventListener('click',function(){var q=P.quantites(p);if(q.length
 $('miroirH').addEventListener('click',function(){retourner('h');S.toast(sel?'Sélection retournée.':'Motif retourné.')});
 $('miroirV').addEventListener('click',function(){retourner('v');S.toast(sel?'Sélection retournée.':'Motif retourné.')});
 $('symetrie').addEventListener('click',function(){symetriser();S.toast('La moitié gauche se reflète à droite'+(sel?' dans la sélection.':'.'))});
+$('regionBar').addEventListener('click',function(e){var b=e.target.closest('[data-r]');if(!b||!regionSel)return;var a=b.dataset.r,m=P.matrice(p);
+ if(a==='fermer'){fermerRegion();dessiner();return}memo();
+ if(a==='recolorer'){regionSel.forEach(function(i){m[i]=active});S.toast(regionSel.length+' points recolorés en DMC '+p.palette[active-1].dmc+'.')}
+ if(a==='effacer'){regionSel.forEach(function(i){m[i]=0});S.toast(regionSel.length+' points effacés.')}
+ if(a==='fondre'){var v=StitchOutils.fondre(p,regionSel);S.toast(v>0?'Région fondue dans DMC '+p.palette[v-1].dmc+'.':v===0?'Région rendue à la toile.':'Aucune voisine.')}
+ fermerRegion();nettoyerPalette();maj()});
+$('contourner').addEventListener('click',function(){var c=StitchOutils.plusSombre(p,D.idx);if(!c){S.toast('Aucune couleur.');return}var L=StitchOutils.contourMotif(p);if(!L.length){S.toast('Rien à contourner.');return}memo();p.contours=(p.contours||[]).concat(L.map(function(pts){return{c:c.id,pts:pts}}));maj();S.toast(L.length+' contours ajoutés en DMC '+c.dmc+', la couleur la plus sombre. Annulable.')});
 $('effContours').addEventListener('click',function(){if(!(p.contours||[]).length){S.toast('Aucun backstitch.');return}memo();p.contours=[];maj()});
 $('exportPdf').addEventListener('click',function(){P.fixer(p);var err=P.valider(p,D.dmc.fils);if(err.length){S.toast('Patron invalide : '+err[0],4000);return}S.telechargerPDF(p,null,14,'Brouillon de l\'atelier')});
 /* 4 · prévisualiser, valider, enregistrer */
 $('voir').addEventListener('click',function(){$('final').hidden=false;etape(3);var c=$('ap'),w=Math.min(720,c.parentNode.clientWidth-36);R.apercu(c,p,{case:Math.max(3,Math.floor(w/p.l))});var me=M.mesurer(p),d=P.dimensions(p,14);
  $('finInfo').textContent=d.points.l+' × '+d.points.h+' points · '+String(d.cm.l).replace('.',',')+' × '+String(d.cm.h).replace('.',',')+' cm sur Aida 14 · '+p.palette.length+' fils DMC · '+me.niveau+' · ≈ '+me.heures.min+' à '+me.heures.max+' h';$('final').scrollIntoView({behavior:'smooth',block:'start'})});
-$('enregistrer').addEventListener('click',function(){p.licence={type:$('droits').value,usage:$('droits').value==='import-prive'?'prive':'publiable'};P.fixer(p);var err=P.valider(p,D.dmc.fils);if(err.length){S.toast('Patron invalide : '+err[0],4000);return}
+$('enregistrer').addEventListener('click',function(){if(p.provenance&&p.provenance.source==='import')$('droits').value='import-prive';p.licence={type:$('droits').value,usage:$('droits').value==='import-prive'?'prive':'publiable'};P.fixer(p);var err=P.valider(p,D.dmc.fils);if(err.length){S.toast('Patron invalide : '+err[0],4000);return}
  var b=S.lire('stitch-brouillons',{});b[p.id]=JSON.parse(P.serialiser(p));if(S.ecrire('stitch-brouillons',b))S.toast('Brouillon enregistré (version '+p.version+', '+p.palette.length+' couleurs) dans ce navigateur.');else S.toast('Enregistrement impossible dans ce navigateur.')});
 window.__atelier={patron:function(){return p},props:function(){return props}};
 })();

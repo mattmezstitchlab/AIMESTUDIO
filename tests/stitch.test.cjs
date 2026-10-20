@@ -117,3 +117,45 @@ test('empreinte : toute correction de la grille change l\'empreinte (l\'export s
   const p = patron('pat-papillon'), a = P.empreinte(p), m = P.matrice(p); const i = m.findIndex(v => v > 0); m[i] = m[i] === 1 ? 2 : 1;
   assert.notEqual(P.empreinte(p), a);
 });
+
+test('outils : région, fusion de zone, contours du motif, demi-points exclusifs', () => {
+  const O = require('../stitch/js/outils.js');
+  const p = patron('pat-lavande'), m = P.matrice(p), i = m.findIndex(v => v > 0), reg = O.region(p, i);
+  assert.ok(reg.length >= 1 && reg.every(j => m[j] === m[i]));
+  const avant = m[i], v = O.fondre(p, reg); assert.ok(v !== avant); assert.ok(reg.every(j => P.matrice(p)[j] === v));
+  // contour d'un carré 3 × 3 : une seule polyligne fermée de 4 côtés
+  const q = P.charger(JSON.parse(P.serialiser(patron('pat-lavande')))); const mm = P.matrice(q); mm.fill(0); for (let y = 2; y < 5; y++) for (let x = 2; x < 5; x++) mm[y * q.l + x] = 1;
+  const L = O.contourMotif(q); assert.equal(L.length, 1); assert.equal(L[0].length, 5); assert.deepEqual(L[0][0], L[0][4]);
+  // demi-point : remplace la croix de la case, tourne, puis se retire ; la validation refuse une croix sous un demi-point
+  assert.equal(O.demi(q, 3, 3, q.palette[0].id), '/'); assert.equal(mm[3 * q.l + 3], 0); assert.equal(O.demi(q, 3, 3, q.palette[0].id), '\\'); assert.deepEqual(P.valider(q, DMC.fils), []);
+  mm[3 * q.l + 3] = 1; assert.ok(P.valider(q, DMC.fils).some(e => /même case/.test(e))); mm[3 * q.l + 3] = 0;
+  assert.equal(O.demi(q, 3, 3, q.palette[0].id), null); assert.equal(q.demi.length, 0);
+  // les fournitures comptent demi-points et backstitch
+  O.demi(q, 3, 3, q.palette[0].id); q.contours = [{ c: q.palette[0].id, pts: [[0, 0], [10, 0]] }];
+  const f = P.fournitures(q, 14)[0]; assert.equal(f.demi, 1); assert.equal(f.backstitch, 10);
+});
+
+test('lecture d\'une grille existante : pas détecté, cases regroupées sans erreur, reconstruction fidèle après validation', () => {
+  const Lc = require('../stitch/js/lecture.js');
+  const p = patron('pat-papillon'), m = P.matrice(p), s = P.surface(p), cs = 14, marge = 20;
+  const W = s.l * cs + 2 * marge, H = s.h * cs + 2 * marge, d = new Uint8ClampedArray(W * H * 4).fill(255);
+  const px = (x, y, c) => { const i = (y * W + x) * 4; d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2]; d[i + 3] = 255; };
+  const hex = code => C.hex(DMC.fils.find(f => f.code === code).hex);
+  // une grille « imprimée » : fond coloré, symbole sombre propre à chaque fil (motif de 3 × 3 blocs), lignes de grille
+  for (let y = 0; y < s.h; y++) for (let x = 0; x < s.l; x++) {
+    const v = m[(s.y + y) * p.l + s.x + x], X0 = marge + x * cs, Y0 = marge + y * cs; if (!v) continue;
+    const col = hex(p.palette[v - 1].dmc), bits = (v * 37) % 511 || 1;
+    for (let yy = 0; yy < cs; yy++) for (let xx = 0; xx < cs; xx++) { const bx = Math.floor((xx - 3) / 3), by = Math.floor((yy - 3) / 3), dans = xx >= 3 && yy >= 3 && bx < 3 && by < 3; px(X0 + xx, Y0 + yy, dans && (bits >> (by * 3 + bx)) & 1 ? [20, 20, 20] : col); }
+  }
+  for (let x = 0; x <= s.l; x++) for (let y = marge; y <= marge + s.h * cs; y++) px(marge + x * cs, y, [150, 150, 150]);
+  for (let y = 0; y <= s.h; y++) for (let x = marge; x <= marge + s.l * cs; x++) px(x, marge + y * cs, [150, 150, 150]);
+  const img = { l: W, h: H, data: d }, z = { x: marge, y: marge, l: s.l * cs, h: s.h * cs };
+  const g = Lc.detecterGrille(img, z); assert.equal(g.colonnes, s.l); assert.equal(g.lignes, s.h);
+  const a = Lc.analyser(img, z, s.l, s.h); assert.equal(a.groupes.length, p.palette.length, 'un groupe par fil');
+  // validation humaine simulée : chaque groupe reçoit la référence que la personne reconnaît
+  const choix = a.groupes.map(G => { const k = a.cases.indexOf(G.id), v = m[(s.y + Math.floor(k / s.l)) * p.l + s.x + k % s.l]; return p.palette[v - 1].dmc; });
+  const r = Lc.construire(a, choix); let justes = 0;
+  for (let y = 0; y < s.h; y++) for (let x = 0; x < s.l; x++) { const v = m[(s.y + y) * p.l + s.x + x], w = r.points[y * s.l + x]; if ((v ? p.palette[v - 1].dmc : null) === (w ? r.palette[w - 1].dmc : null)) justes++; }
+  assert.equal(justes, s.l * s.h, 'reconstruction case pour case');
+  for (const G of a.groupes) { const sg = Lc.suggerer(G, DMC.fils); assert.ok(sg && DMC.fils.some(f => f.code === sg.code)); }
+});
