@@ -42,7 +42,13 @@ body{overflow-x:hidden}
 .k{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
 .t{margin:0;font:400 clamp(38px,5.4vw,80px)/.95 var(--display);letter-spacing:-.025em;text-wrap:balance}
 .t em{font-style:normal;background:linear-gradient(90deg,#FB7185,#F59E0B,#7C5CFF,#22D3EE);-webkit-background-clip:text;background-clip:text;color:transparent;animation:hue 6s linear infinite}
-.orb{position:absolute;left:0;top:0;border-radius:50%;background:var(--conic);animation:hue 6s linear infinite,breathe 5s ease-in-out infinite;box-shadow:0 0 70px rgba(124,92,255,.55),0 0 160px rgba(34,211,238,.18);transform:translate(-50%,-50%);z-index:2}
+.orb{position:fixed;left:0;top:0;cursor:pointer;border:0;padding:0;border-radius:50%;background:var(--conic);animation:hue 6s linear infinite,breathe 5s ease-in-out infinite;box-shadow:0 0 70px rgba(124,92,255,.55),0 0 160px rgba(34,211,238,.18);transform:translate(-50%,-50%);z-index:23}
+.orb:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.slot{display:block;width:0;height:44px;flex:none;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.modes.dock .slot{width:56px}
+.top{transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+body.docked .top{background:rgba(12,11,20,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:rgba(255,255,255,.06)}
+.say{position:absolute;left:0;right:0;bottom:22vh;text-align:center;font:500 clamp(22px,2.6vw,38px)/1.2 var(--ui);letter-spacing:-.01em;color:var(--ink);opacity:0;z-index:3;padding:0 20px;pointer-events:none}
 .glow{position:absolute;left:0;top:0;border-radius:50%;background:radial-gradient(closest-side,rgba(124,92,255,.32),rgba(124,92,255,0));transform:translate(-50%,-50%);pointer-events:none}
 .scene{position:absolute;inset:0;perspective:1500px;z-index:2}
 .cube{position:absolute;inset:0;transform-style:preserve-3d}
@@ -144,8 +150,8 @@ body{overflow-x:hidden}
 .tlp .mk2 span{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font:500 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);white-space:nowrap;transition:color .3s}
 .tlp .mk2.on span{color:#fff}
 .tlp .mk2:focus-visible{outline:2px solid #fff;border-radius:6px}
-.tlp .mk2:first-child span{left:4px;transform:none}.tlp .mk2:last-of-type span{left:auto;right:4px;transform:none}
-@media(max-width:760px){.tlp .mk2 span{display:none}.tlp .mk2.cur span{display:block;color:#fff}.tlp .mk2:first-child.cur span{left:0;transform:none}.tlp .mk2:last-of-type.cur span{left:auto;right:0;transform:none}}
+.tlp .mk2:first-of-type span{left:4px;transform:none}.tlp .mk2:last-of-type span{left:auto;right:4px;transform:none}
+@media(max-width:760px){.tlp .mk2 span{display:none}.tlp .mk2.cur span{display:block;color:#fff}.tlp .mk2:first-of-type.cur span{left:0;transform:none}.tlp .mk2:last-of-type.cur span{left:auto;right:0;transform:none}}
 @media(max-width:760px){
  .tx{left:max(20px,env(safe-area-inset-left,0px));right:max(20px,env(safe-area-inset-right,0px));width:auto;top:auto;bottom:calc(66px + env(safe-area-inset-bottom,0px));transform:none;gap:10px}
  .tx .t{font-size:clamp(30px,8.4vw,40px)}
@@ -161,12 +167,13 @@ body{overflow-x:hidden}
 <body>
 <header class="top"><a class="mk" href="/">AIME<sup>®</sup></a><nav><a href="/lab/orb/">Lab</a><a href="/bureau/">Bureau</a></nav></header>
 <div class="modes" id="modes" role="group" aria-label="Les quatre vues d'AIME"></div>
+<button class="orb" id="orb" type="button" aria-label="AIME, revenir au début"></button>
 <main>
 <section class="story" id="story" aria-label="Naissance et cube">
  <div class="stage" id="stage">
   <div class="glow" id="glow"></div>
   <div class="hero" id="hero"><span class="k">AIME</span><h1 class="t">Le bon outil, <em>au bon moment</em>.</h1></div>
-  <div class="orb" id="orb" aria-hidden="true"></div>
+  <p class="say" id="say">Je me place là où vous en avez besoin.</p>
   <div class="scene" id="scene"><div class="cube" id="cube"></div></div>
   <div class="tx" id="tx" aria-live="polite" style="opacity:0"><span class="k" id="k"></span><h2 class="t" id="t"></h2><p class="l" id="l"></p></div>
   <div class="hint" id="hint">Faites défiler</div>
@@ -195,6 +202,7 @@ function cl(x){return Math.max(0,Math.min(1,x))}function sm(x){x=cl(x);return x*
 var MI={cube:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',infini:'<path d="M12 12c-2-2.6-3.6-4-5.5-4a4 4 0 0 0 0 8c1.9 0 3.5-1.4 5.5-4zm0 0c2 2.6 3.6 4 5.5 4a4 4 0 0 0 0-8c-1.9 0-3.5 1.4-5.5 4z"/>',onde:'<circle cx="12" cy="12" r="1.6"/><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8"/>',carte:'<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5s1.2-6.1 3.8-8.5z"/>'};
 var MODES=[['cube','Qui ?','Noyau'],['infini','Quand ?','Infini'],['onde','Pourquoi ?','Onde'],['carte','Où ?','Carte']];
 $('#modes').innerHTML=MODES.map(function(m,i){return'<button type="button" data-m="'+i+'" aria-pressed="false" aria-label="'+m[2]+' · '+m[1]+'"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">'+MI[m[0]]+'</svg></span><span class="lb">'+m[1]+'</span></button>'}).join('');
+$('#modes').children[1].insertAdjacentHTML('afterend','<span class="slot" id="slot" aria-hidden="true"></span>');
 
 /* ---------- les six faces : chacune devient un outil vivant ---------- */
 var FI={frise:'<path d="M3 12h18"/><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/>',partition:'<rect x="4" y="5" width="3" height="3" rx=".6"/><rect x="10.5" y="5" width="3" height="3" rx=".6"/><rect x="17" y="5" width="3" height="3" rx=".6"/><rect x="4" y="10.5" width="3" height="3" rx=".6"/><rect x="10.5" y="10.5" width="3" height="3" rx=".6"/><rect x="4" y="16" width="3" height="3" rx=".6"/><rect x="17" y="16" width="3" height="3" rx=".6"/>',ondes:MI.onde,reseau:'<circle cx="6" cy="7" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="17" r="2"/><path d="M7.8 7.6l2.8 7.8M16.4 7.3l-3.2 8.2M8 7h8"/>',monde:MI.carte,docs:'<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9.5 12h6M9.5 15h6M9.5 18h4"/>'};
@@ -235,22 +243,26 @@ var story=$('#story'),orb=$('#orb'),glow=$('#glow'),hero=$('#hero'),hint=$('#hin
 function prog(){var r=story.getBoundingClientRect(),len=r.height-H;return len>0?cl(-r.top/len):0}
 function frame(now){var t=RM?2:(now-T0)/1000,p=prog();P=p;
  /* étapes : 0–.10 naissance · .10–.22 l'orbe devient cube · .22–.46 le cube tourne · .46–.74 il s'ouvre · .74–1 six outils */
- var a=sm((p-.08)/.14),cx=lr(W/2,MOB?W/2:W*.655,a),cy=lr(H*.5,MOB?H*.38:H*.5,a);
- hero.style.opacity=1-sm((p-.02)/.08);hero.style.transform='translateY('+(-40*sm(p/.1))+'px)';hint.style.opacity=p>.01?0:1;
- var condense=sm((p-.1)/.1);orb.style.left=cx+'px';orb.style.top=cy+'px';var oR=lr(orR,s*.42,condense);orb.style.width=orb.style.height=(oR*2)+'px';orb.style.opacity=1-sm((p-.14)/.07);
- glow.style.left=cx+'px';glow.style.top=cy+'px';glow.style.width=glow.style.height=(Math.max(oR,s)*4.2)+'px';glow.style.opacity=1-.6*sm((p-.5)/.2);
+ /* étapes : 0–.03 naissance · .025–.10 l'orbe monte dans la barre · .10–.20 elle fait naître le cube · .20–.46 il tourne · .46–.74 il s'ouvre */
+ var sl=$('#slot').getBoundingClientRect(),dx=sl.left+sl.width/2,dy=sl.top+sl.height/2;
+ var rise=sm((p-.025)/.075),ox=lr(W/2,dx,rise),oy=lr(H*.5,dy,rise)-Math.sin(Math.PI*rise)*H*.04,oR=lr(orR,20,rise);
+ orb.style.left=ox+'px';orb.style.top=oy+'px';orb.style.width=orb.style.height=(oR*2)+'px';orb.style.boxShadow='0 0 '+(oR*1.4)+'px rgba(124,92,255,.6),0 0 '+(oR*3)+'px rgba(34,211,238,.16)';
+ document.body.classList.toggle('docked',rise>.9);modes.classList.toggle('dock',p>.02);
+ hero.style.opacity=1-sm((p-.01)/.05);hero.style.transform='translateY('+(-40*sm(p/.06))+'px)';hint.style.opacity=p>.01?0:1;
+ $('#say').style.opacity=(sm((p-.045)/.03)*(1-sm((p-.11)/.03))).toFixed(3);
+ var grow=sm((p-.11)/.09),spin=sm((p-.2)/.28),open=cl((p-.46)/.28);
+ var tx0=MOB?W/2:W*.655,ty0=MOB?H*.38:H*.5,cx=lr(dx,tx0,grow),cy=lr(dy,ty0,grow);
+ glow.style.left=cx+'px';glow.style.top=cy+'px';glow.style.width=glow.style.height=(s*4.2)+'px';glow.style.opacity=grow*(1-.6*sm((p-.5)/.2));
  $('#stage').style.setProperty('--gx',(cx/W*100)+'%');$('#scene').style.perspectiveOrigin=cx+'px '+cy+'px';
- modes.classList.toggle('dock',p>.05);
- var grow=sm((p-.12)/.08),spin=sm((p-.2)/.28),open=cl((p-.46)/.28);
  var RX=-24+4*Math.sin(t*.6),RY=35+180*spin+(RM?0:6*Math.sin(t*.4));RY=((RY+180)%360+360)%360-180;
- var se=s*lr(.35,1,grow);
+ var se=s*lr(.06,1,grow);
  FACES.forEach(function(f,i){var e=sm((open-i*.055)/.72);E[i]=e;var k=1-e,fy=F[i][5],fx=F[i][6],g=GRID[i];
   var z=se/2*k+(RM?0:s*.75*Math.sin(Math.PI*e)),sc=lr(se/c,1,e);
   f.el.style.opacity=grow;f.el.style.transform='translate3d('+(cx-c/2+g[0]*e)+'px,'+(cy-c/2+g[1]*e)+'px,0) rotateX('+(RX*k)+'deg) rotateY('+(RY*k)+'deg) rotateY('+(fy*k)+'deg) rotateX('+(fx*k)+'deg) translateZ('+z+'px) scale('+sc+')';
   var n=rx(ry(ry(rx([0,0,1],fx*k*D2R),fy*k*D2R),RY*k*D2R),RX*k*D2R),lit=Math.max(0,n[0]*LIGHT[0]+n[1]*LIGHT[1]+n[2]*LIGHT[2]);
   f.sh.style.opacity=(.55-.55*lit)*(1-e);f.sk.style.opacity=1-sm((e-.35)/.3);f.cd.style.opacity=sm((e-.4)/.35);f.el.style.zIndex=Math.round(n[2]*10);
   if(e>.38)DRAW[F[i][0]](f.cv.getContext('2d'),f.w,f.h,t,i)});
- setTx(p<.12?0:p<.44?1:p<.72?2:3);
+ setTx(p<.16?0:p<.44?1:p<.72?2:3);
  requestAnimationFrame(frame)}
 
 /* ---------- les moteurs : chaque carte est vivante ---------- */
@@ -295,6 +307,7 @@ var DRAW={
   c2.globalAlpha=1;c2.fillStyle='rgba(255,255,255,.08)';rr(c2,w*.2,h*.86,w*.6,h*.08,6);c2.fill();if(out>0)spark(c2,xx+dw,y+dh/2,4*out,t)}};
 
 /* ---------- les pictos des modes ---------- */
+orb.addEventListener('click',function(){scrollTo({top:0,behavior:RM?'auto':'smooth'})});
 modes.addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;var m=+b.dataset.m,len=story.offsetHeight-H,target=story.offsetTop+len*(m===0?.34:.9);
  scrollTo({top:target,behavior:RM?'auto':'smooth'});[].forEach.call(modes.children,function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
  if(m>0)setTimeout(function(){FACES.forEach(function(f,i){f.el.classList.toggle('hl',F[i][4]===m)});setTimeout(function(){FACES.forEach(function(f){f.el.classList.remove('hl')})},2200)},700)});
