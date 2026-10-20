@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Importer un patron · AIME Stitch</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/stitch/stitch.css">
+<style>
+main{padding:clamp(40px,6vw,80px) 0 clamp(60px,8vw,100px)}
+.entete{text-align:center;max-width:760px;margin:0 auto 34px}.entete .sous{margin:12px auto 0}
+.etape{background:var(--gris);border-radius:var(--rr);padding:clamp(20px,3vw,32px);margin-top:20px}
+.etape h2{font-size:24px;letter-spacing:-.02em;margin-bottom:6px}.etape h2 span{color:var(--doux);font-weight:400}
+.etape>p{margin:0 0 16px;color:var(--doux);font-size:15px}
+.depot{display:grid;place-items:center;gap:10px;border:2px dashed var(--trait);border-radius:20px;padding:36px 20px;text-align:center;background:#fff;cursor:pointer;transition:border-color .2s,background .2s}
+.depot.survol{border-color:var(--bleu);background:#F0F7FF}
+.depot b{font-size:19px}.depot span{color:var(--doux);font-size:14px}
+.droits{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14.5px}.droits input{margin-top:3px;accent-color:var(--bleu);width:18px;height:18px;flex:none}
+.pages{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;margin-bottom:14px}
+.pages button{flex:none;border:0;background:#fff;border-radius:12px;padding:6px;cursor:pointer;display:grid;gap:4px;justify-items:center;font-size:12px;color:var(--doux);box-shadow:inset 0 0 0 1px var(--trait)}
+.pages button[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--bleu);color:var(--encre)}
+.pages canvas{display:block;border-radius:6px;background:#fff}
+.vue{position:relative;background:#fff;border-radius:16px;overflow:auto;max-height:72vh;touch-action:none}
+.vue canvas{display:block}
+.vue #calque{position:absolute;left:0;top:0;cursor:crosshair}
+.reglages{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-top:16px}
+.reglages label{display:grid;gap:6px;font:600 14px var(--sf)}
+.reglages input[type=number]{width:96px;border:0;border-radius:10px;padding:10px 12px;background:#fff;box-shadow:inset 0 0 0 1px var(--trait);font:400 15px var(--sf)}
+.groupes{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.groupes li{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:14px;align-items:center;background:#fff;border-radius:14px;padding:10px 14px}
+.groupes canvas{border-radius:6px;box-shadow:inset 0 0 0 1px var(--trait);image-rendering:pixelated}
+.groupes .n{font:600 15px var(--sf);font-variant-numeric:tabular-nums;min-width:56px}
+.groupes .n small{display:block;font-weight:400;color:var(--doux);font-size:12px}
+.groupes .choix{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0}
+.groupes input[type=text]{width:120px;border:0;border-radius:10px;padding:9px 12px;background:var(--gris);font:600 15px var(--sf)}
+.groupes input[type=text].ok{box-shadow:inset 0 0 0 2px var(--vert)}.groupes input[type=text].ko{box-shadow:inset 0 0 0 2px var(--rouge)}
+.groupes .sw{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);flex:none}
+.groupes .sug{font-size:13px;color:var(--doux)}
+.groupes label.t{display:flex;gap:6px;align-items:center;font-size:13.5px;color:var(--doux)}
+.resultat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:28px;align-items:center}
+.resultat .cadre{background:#fff;border-radius:20px;padding:24px;display:grid;place-items:center}
+.resultat canvas{max-width:100%}
+.mesure{font-size:14px;color:var(--doux)}
+@media (max-width:820px){.resultat{grid-template-columns:1fr}.groupes li{grid-template-columns:auto auto minmax(0,1fr)}.groupes .t{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="demo">Import privé : le fichier reste dans votre navigateur. Un patron importé ne peut pas être publié ni revendu.</div>
+<header class="tete"><div class="wrap"><a class="marque" href="/stitch/"><b>AIME</b><i>Stitch</i></a>
+ <nav class="nav" aria-label="AIME Stitch"><a href="/stitch/">Découvrir</a><a href="/stitch/atelier/">Atelier</a><a href="/stitch/importer/" aria-current="page">Importer</a><a href="/stitch/broder/">Broder</a></nav></div></header>
+<main><div class="wrap large">
+ <div class="entete"><span class="k">Importer</span><h1 class="titre-l" style="margin-top:6px">Un patron que vous avez déjà.</h1><p class="sous">Un PDF ou une photo de grille devient un patron vivant. Vous calibrez, AIME regroupe les symboles, vous validez chaque fil.</p></div>
+
+ <section class="etape" id="e1"><h2>1. Le fichier. <span>PDF, PNG, JPEG ou WebP.</span></h2><p>Les grilles scannées ou photographiées demandent un calibrage plus soigneux. Rien n'est envoyé.</p>
+  <label class="depot" id="depot"><input type="file" id="fichier" accept="application/pdf,image/png,image/jpeg,image/webp" hidden><b>Déposez un fichier ici</b><span>ou touchez pour le choisir</span></label>
+  <label class="droits"><input type="checkbox" id="droits"><span>Je détiens légitimement ce patron et je l'importe pour mon usage personnel. Je comprends qu'il ne pourra être ni publié ni revendu depuis AIME.</span></label>
+  <p class="mesure" id="fInfo" style="margin:12px 0 0"></p></section>
+
+ <section class="etape" id="e2" hidden><h2>2. La grille. <span>Encadrez-la, du premier coin au dernier.</span></h2><p>Glissez pour tracer le cadre ; glissez un bord pour l'ajuster. Les lignes bleues doivent tomber sur les lignes de la grille.</p>
+  <div class="pages" id="pages" aria-label="Pages"></div>
+  <div class="vue" id="vue"><canvas id="page"></canvas><canvas id="calque" aria-label="Zone de la grille"></canvas></div>
+  <div class="reglages"><label>Colonnes<input type="number" id="cols" min="2" max="400" value="50"></label><label>Lignes<input type="number" id="lignes" min="2" max="400" value="50"></label>
+   <button class="btn gris" type="button" id="detecter">Détecter le pas</button><button class="btn" type="button" id="lire" disabled>Lire la grille</button><span class="mesure" id="cInfo"></span></div></section>
+
+ <section class="etape" id="e3" hidden><h2>3. Les fils. <span>Un groupe par symbole, à valider.</span></h2><p id="gInfo"></p>
+  <div class="reglages" style="margin:0 0 14px"><label>Regroupement<select id="tol" style="border:0;border-radius:10px;padding:10px 12px;background:#fff;box-shadow:inset 0 0 0 1px var(--trait);font:400 15px var(--sf)"><option value=".1">Fin : plus de groupes, aucun mélange</option><option value=".13" selected>Standard</option><option value=".17">Large : moins de groupes, à vérifier</option></select></label></div>
+  <datalist id="dmcListe"></datalist><ul class="groupes" id="groupes"></ul>
+  <div class="reglages"><button class="btn" type="button" id="creer" disabled>Créer le patron privé</button><span class="mesure" id="vInfo"></span></div></section>
+
+ <section class="etape" id="e4" hidden><h2>4. Votre patron.</h2><div class="resultat"><div class="cadre"><canvas id="apercu"></canvas></div>
+  <div><p class="mesure" id="rInfo"></p><div class="ligne-actions" style="margin-top:14px"><a class="btn" id="ouvrir" href="#">Ouvrir dans l'atelier</a><button class="btn gris" type="button" id="pdf">Exporter le PDF</button></div></div></div></section>
+</div></main>
+<footer class="pied"><div class="wrap"><span>AIME Stitch · démonstration</span><span id="attrib"></span></div></footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="/stitch/js/couleur.js"></script><script src="/stitch/js/patron.js"></script><script src="/stitch/js/symboles.js"></script><script src="/stitch/js/mesures.js"></script><script src="/stitch/js/rendu.js"></script><script src="/stitch/js/pdf.js"></script><script src="/stitch/js/lecture.js"></script><script src="/stitch/js/commun.js"></script>
+<script type="module">
+import * as pdfjs from '/stitch/vendor/pdfjs-4.10.38.min.mjs';
+pdfjs.GlobalWorkerOptions.workerSrc='/stitch/vendor/pdfjs-4.10.38.worker.min.mjs';
+const S=window.Stitch,P=StitchPatron,R=StitchRendu,Lc=StitchLecture,esc=S.esc,$=s=>document.getElementById(s);
+let D,doc=null,nomFichier='',img=null,zone=null,analyse=null,patron=null,echelle=1;
+S.donnees().then(d=>{D=d;$('attrib').textContent=d.dmc.source.attribution;$('dmcListe').innerHTML=d.dmc.fils.map(f=>'<option value="'+esc(f.code)+'">'+esc(f.nom)+'</option>').join('')});
+const RENDU=2;/* rendu de la page à 2× pour une lecture fine */
+/* ---- 1 · le fichier ---- */
+$('depot').addEventListener('dragover',e=>{e.preventDefault();$('depot').classList.add('survol')});$('depot').addEventListener('dragleave',()=>$('depot').classList.remove('survol'));
+$('depot').addEventListener('drop',e=>{e.preventDefault();$('depot').classList.remove('survol');if(e.dataTransfer.files[0])charger(e.dataTransfer.files[0])});
+$('fichier').addEventListener('change',function(){if(this.files[0])charger(this.files[0])});
+async function charger(f){if(!$('droits').checked){S.toast('Cochez d\'abord la déclaration d\'usage personnel.',3200);return}nomFichier=f.name;
+ try{if(f.type==='application/pdf'){doc=await pdfjs.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;$('fInfo').textContent=f.name+' · PDF de '+doc.numPages+' page'+(doc.numPages>1?'s':'');await vignettes();await page(Math.min(doc.numPages,choisirPage()))}
+  else{doc=null;const u=URL.createObjectURL(f),im=new Image();im.src=u;await im.decode();const c=$('page');const k=Math.min(1,2400/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);$('pages').innerHTML='';$('fInfo').textContent=f.name+' · image '+im.width+' × '+im.height+' px';pret()}}
+ catch(e){S.toast('Lecture impossible : '+e.message,4000)}}
+function choisirPage(){return 1}
+async function vignettes(){$('pages').innerHTML='';for(let i=1;i<=Math.min(doc.numPages,30);i++){const pg=await doc.getPage(i),v=pg.getViewport({scale:.18}),c=document.createElement('canvas');c.width=v.width;c.height=v.height;await pg.render({canvasContext:c.getContext('2d'),viewport:v}).promise;
+  const b=document.createElement('button');b.type='button';b.dataset.p=i;b.setAttribute('aria-pressed','false');b.appendChild(c);b.insertAdjacentHTML('beforeend','Page '+i);b.onclick=()=>page(i);$('pages').appendChild(b)}}
+async function page(i){[...$('pages').children].forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.p===i)));const pg=await doc.getPage(i),v=pg.getViewport({scale:RENDU}),c=$('page');c.width=v.width;c.height=v.height;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:g,viewport:v}).promise;pret()}
+function pret(){const c=$('page');img={l:c.width,h:c.height,data:c.getContext('2d').getImageData(0,0,c.width,c.height).data};$('e2').hidden=false;$('e3').hidden=true;$('e4').hidden=true;zone=null;
+ echelle=Math.min(1,($('vue').clientWidth||c.width)/c.width);c.style.width=c.width*echelle+'px';const k=$('calque');k.width=c.width*echelle;k.height=c.height*echelle;dessinerCalque();$('lire').disabled=true;$('cInfo').textContent='Tracez le cadre de la grille.';$('e2').scrollIntoView({behavior:'smooth',block:'start'})}
+/* ---- 2 · calibrage : le cadre et les lignes ---- */
+function dessinerCalque(){const k=$('calque'),g=k.getContext('2d');g.clearRect(0,0,k.width,k.height);if(!zone)return;const z={x:zone.x*echelle,y:zone.y*echelle,l:zone.l*echelle,h:zone.h*echelle},C=+$('cols').value,L=+$('lignes').value;
+ g.fillStyle='rgba(0,113,227,.06)';g.fillRect(z.x,z.y,z.l,z.h);g.strokeStyle='rgba(0,113,227,.55)';g.lineWidth=1;g.beginPath();for(let a=0;a<=C;a++){const x=z.x+a*z.l/C;g.moveTo(x,z.y);g.lineTo(x,z.y+z.h)}for(let b=0;b<=L;b++){const y=z.y+b*z.h/L;g.moveTo(z.x,y);g.lineTo(z.x+z.l,y)}g.stroke();g.strokeStyle='#0071E3';g.lineWidth=2.5;g.strokeRect(z.x,z.y,z.l,z.h)}
+(function(){const k=$('calque');let dep=null;
+ k.addEventListener('pointerdown',e=>{k.setPointerCapture(e.pointerId);const x=e.offsetX/echelle,y=e.offsetY/echelle,t=10/echelle;let bord=null;
+  if(zone){if(Math.abs(x-zone.x)<t&&y>zone.y-t&&y<zone.y+zone.h+t)bord='g';else if(Math.abs(x-zone.x-zone.l)<t&&y>zone.y-t&&y<zone.y+zone.h+t)bord='d';else if(Math.abs(y-zone.y)<t&&x>zone.x-t&&x<zone.x+zone.l+t)bord='h';else if(Math.abs(y-zone.y-zone.h)<t&&x>zone.x-t&&x<zone.x+zone.l+t)bord='b'}
+  dep={x:x,y:y,bord:bord,z:zone?Object.assign({},zone):null}});
+ k.addEventListener('pointermove',e=>{if(!dep)return;const x=e.offsetX/echelle,y=e.offsetY/echelle;
+  if(dep.bord){const z=Object.assign({},dep.z);if(dep.bord==='g'){z.l+=z.x-x;z.x=x}if(dep.bord==='d')z.l=x-z.x;if(dep.bord==='h'){z.h+=z.y-y;z.y=y}if(dep.bord==='b')z.h=y-z.y;if(z.l>8&&z.h>8)zone=z}
+  else zone={x:Math.min(dep.x,x),y:Math.min(dep.y,y),l:Math.abs(x-dep.x),h:Math.abs(y-dep.y)};dessinerCalque()});
+ k.addEventListener('pointerup',()=>{if(!dep)return;const neuf=!dep.bord;dep=null;if(zone&&zone.l>20&&zone.h>20){zone={x:Math.round(zone.x),y:Math.round(zone.y),l:Math.round(zone.l),h:Math.round(zone.h)};if(neuf)detecter();$('lire').disabled=false}dessinerCalque()})})();
+function detecter(){if(!zone)return;const g=Lc.detecterGrille(img,zone);if(g.colonnes>1)$('cols').value=g.colonnes;if(g.lignes>1)$('lignes').value=g.lignes;$('cInfo').textContent='Pas détecté : '+(g.pasX/RENDU).toFixed(1).replace('.',',')+' × '+(g.pasY/RENDU).toFixed(1).replace('.',',')+' px. Vérifiez que les lignes bleues tombent juste.';dessinerCalque()}
+$('detecter').addEventListener('click',detecter);['cols','lignes'].forEach(id=>$(id).addEventListener('input',dessinerCalque));
+/* ---- 3 · lecture, regroupement, validation ---- */
+function lire(){const C=+$('cols').value,L=+$('lignes').value;if(!zone||C<2||L<2)return;analyse=Lc.analyser(img,zone,C,L,{tolSymbole:+$('tol').value});
+ const nb=[...analyse.cases].filter(v=>v>=0).length;$('gInfo').textContent=analyse.groupes.length+' symboles distincts sur '+nb.toLocaleString('fr-FR')+' cases brodées ('+C+' × '+L+'), lus en '+analyse.ms+' ms. Indiquez le fil DMC de chaque groupe, ou rendez-le à la toile s\'il s\'agit d\'un repère.';
+ $('groupes').innerHTML='';analyse.groupes.forEach((G,i)=>{const li=document.createElement('li'),c=document.createElement('canvas'),k=G.exemple,cx=zone.x+(k%C)*analyse.pasX,cy=zone.y+Math.floor(k/C)*analyse.pasY,s=44;c.width=s;c.height=s;c.getContext('2d').drawImage($('page'),cx,cy,analyse.pasX,analyse.pasY,0,0,s,s);
+  const sg=Lc.suggerer(G,D.dmc.fils),fond='rgb('+G.fond.map(Math.round).join(',')+')';li.appendChild(c);
+  li.insertAdjacentHTML('beforeend','<span class="n">'+G.n+'<small>cases</small></span><span class="choix"><span class="sw" style="background:'+fond+'"></span><input type="text" list="dmcListe" data-g="'+i+'" placeholder="DMC" aria-label="Fil DMC du groupe '+(i+1)+'" value="'+(sg?esc(sg.code):'')+'"><span class="sug">'+(sg?'suggéré d\'après la couleur, écart '+String(sg.ecart).replace('.',','):'grille en noir et blanc : à indiquer')+'</span></span><label class="t"><input type="checkbox" data-toile="'+i+'"> Toile</label>');$('groupes').appendChild(li)});
+ $('e3').hidden=false;valider()}
+$('lire').addEventListener('click',()=>{lire();$('e3').scrollIntoView({behavior:'smooth',block:'start'})});$('tol').addEventListener('change',lire);
+function choix(){const out=[];analyse.groupes.forEach((G,i)=>{const t=document.querySelector('[data-toile="'+i+'"]').checked,v=document.querySelector('[data-g="'+i+'"]').value.trim();out[i]=t?null:v});return out}
+function valider(){const codes=new Set(D.dmc.fils.map(f=>f.code));let ok=0,tot=analyse.groupes.length;analyse.groupes.forEach((G,i)=>{const inp=document.querySelector('[data-g="'+i+'"]'),t=document.querySelector('[data-toile="'+i+'"]').checked,v=inp.value.trim(),bon=t||codes.has(v);inp.disabled=t;inp.classList.toggle('ok',!t&&codes.has(v));inp.classList.toggle('ko',!t&&!!v&&!codes.has(v));if(bon)ok++});
+ $('creer').disabled=ok<tot;$('vInfo').textContent=ok+' / '+tot+' groupes validés'+(ok<tot?' : chaque groupe doit recevoir une référence DMC existante.':'.')}
+$('groupes').addEventListener('input',valider);$('groupes').addEventListener('change',valider);
+$('creer').addEventListener('click',()=>{const r=Lc.construire(analyse,choix());patron=P.depuisConversion(r,{titre:nomFichier.replace(/\.[a-z]+$/i,''),licence:{type:'import-prive',usage:'prive'},provenance:{source:'import',fichier:nomFichier,note:'Importé et validé par la brodeuse'},date:new Date().toISOString().slice(0,10)});
+ const err=P.valider(patron,D.dmc.fils);if(err.length){S.toast('Patron invalide : '+err[0],4000);return}
+ const b=S.lire('stitch-brouillons',{});b[patron.id]=JSON.parse(P.serialiser(patron));S.ecrire('stitch-brouillons',b);
+ $('e4').hidden=false;R.apercu($('apercu'),patron,{case:Math.max(2,Math.floor(Math.min(620,$('apercu').parentNode.clientWidth-48)/patron.l)),toile:'#F7F3EA'});const m=StitchMesures.mesurer(patron);
+ $('rInfo').innerHTML=patron.l+' × '+patron.h+' points · '+patron.palette.length+' fils DMC · '+m.points.toLocaleString('fr-FR')+' croix<br>Licence : import privé (non publiable). Enregistré comme brouillon dans ce navigateur.';
+ $('ouvrir').href='/stitch/atelier/?brouillon='+encodeURIComponent(patron.id);$('e4').hidden=false;$('e4').scrollIntoView({behavior:'smooth',block:'start'})});
+$('pdf').addEventListener('click',()=>{if(patron)S.telechargerPDF(patron,null,14,'Import privé')});
+window.__import={analyse:()=>analyse,zone:z=>{if(z){zone=z;dessinerCalque();$('lire').disabled=false}return zone},patron:()=>patron,detecter};
+</script>
+</body>
+</html>
