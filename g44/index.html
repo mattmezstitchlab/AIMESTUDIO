@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIME G44 LAB · Le laboratoire des dépendances administratives</title>
+<meta name="description" content="Démonstrateur indépendant : une date erronée, des opérations à reprendre, une chaîne à comprendre. Graphe de dépendances, simulation isolée, six laboratoires. Données fictives.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F6F4EF">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/g44/g44.css">
+</head>
+<body>
+<a class="evite" href="#contenu">Aller au contenu</a>
+<header class="tete"><div class="wrap">
+ <a class="marque" href="#haut"><b>AIME<sup>®</sup></b><span>G44 LAB</span></a>
+ <nav aria-label="Sections"><a href="#scenario">Scénario</a><a href="#graphe">Graphe</a><a href="#labos">Laboratoires</a><a href="#mesurer">Mesurer</a><a href="#verite">Méthode</a><a href="#moteurs">Moteurs</a></nav>
+ <span class="fictif">Données fictives</span>
+</div></header>
+
+<main id="contenu">
+<!-- 01 · HERO -->
+<section class="hero" id="haut" aria-labelledby="h1"><div class="wrap">
+ <span class="k">Laboratoire des systèmes et des relations</span>
+ <h1 class="t-xxl" id="h1"><span>Une date erronée.</span><span>Des opérations à reprendre.</span><span>Une chaîne à comprendre.</span></h1>
+ <p class="sous">AIME rend visibles les dépendances administratives avant toute correction.</p>
+ <div class="actions"><a class="btn" href="#scenario">Explorer le scénario</a><a class="btn sec" href="#moteurs">Voir les moteurs</a></div>
+ <div class="ligne" id="ligne">
+  <div class="onde" id="onde" aria-hidden="true"></div>
+  <ol>
+   <li data-st="date"><button class="st" type="button" id="toucher" aria-describedby="toucherAide">Date</button><b>DATE</b><ul aria-live="polite"><li class="vu" id="toucherAide">Touchez la date : elle signale ce qui en dépend.</li></ul></li>
+   <li data-st="liens"><span class="st" aria-hidden="true">2</span><b>LIENS</b><ul aria-live="polite"></ul></li>
+   <li data-st="operations"><span class="st" aria-hidden="true">3</span><b>OPÉRATIONS</b><ul aria-live="polite"></ul></li>
+   <li data-st="controles"><span class="st" aria-hidden="true">4</span><b>CONTRÔLES</b><ul aria-live="polite"></ul></li>
+  </ol>
+  <div class="ligne-leg leg"><span>Calculé par le moteur sur le dossier fictif, pour une année corrigée de 2015 à 2016.</span><span>En italique : un lien hypothétique, signalé mais jamais appliqué.</span></div>
+ </div>
+ <div class="chiffres" role="list" aria-label="Chiffres de structure">
+  <div role="listitem"><b>1</b><span>information de référence par objet</span></div>
+  <div role="listitem"><b>2</b><span>états comparables : initial et simulé</span></div>
+  <div role="listitem"><b>5</b><span>états de connaissance, du constaté au non vérifié</span></div>
+  <div role="listitem"><b>0</b><span>action réelle déclenchée par le laboratoire</span></div>
+  <div role="listitem"><b>6</b><span>laboratoires reliés au même dossier</span></div>
+ </div>
+ <p class="leg" style="margin-top:18px">Ces chiffres décrivent la structure proposée. Ce ne sont pas des résultats de performance.</p>
+</div></section>
+
+<!-- 02 · SCÉNARIO -->
+<section class="section fond" id="scenario" aria-labelledby="t-scen"><div class="wrap">
+ <div class="section-tete"><span class="k">02 · Une seule erreur</span><h2 class="t-xl" id="t-scen">Une année de mariage mal enregistrée. Un enfant déjà rattaché.</h2>
+  <p class="sous">Dans la simulation, une règle expérimentale empêche de corriger directement la date : il faut d'abord comprendre ce qui en dépend.</p></div>
+ <div class="famille">
+  <div class="carte">
+   <span class="k" style="color:var(--doux)">Dossier DOS-FICTIF-0001</span>
+   <div class="membres" id="membres"></div>
+   <div class="annee"><label id="lblAn">Année du mariage, corrigée</label>
+    <div class="compteur" role="group" aria-labelledby="lblAn"><button type="button" id="anMoins" aria-label="Année précédente">−</button><output id="an" aria-live="polite">2016</output><button type="button" id="anPlus" aria-label="Année suivante">+</button></div></div>
+   <p class="leg" style="margin-top:12px">Enregistrée : <b>2015</b>. L'acte de mariage fictif indique <b>2016</b>. Essayez aussi 2018 : la simulation relève alors deux incohérences.</p>
+   <div class="actions" style="margin-top:20px"><button class="btn saumon" type="button" id="simulerScen">Simuler</button><a class="btn sec petit" href="#lab02">Rapport complet</a></div>
+  </div>
+  <div class="frises">
+   <div class="frise"><h3>État initial <span class="niv documente">Documenté</span></h3><svg id="friseA" viewBox="0 0 720 210" role="img" aria-labelledby="friseAt"><title id="friseAt">Frise de l'état initial</title></svg></div>
+   <div class="frise"><h3>État corrigé envisagé <span class="niv simule">Simulé</span></h3><svg id="friseB" viewBox="0 0 720 210" role="img" aria-labelledby="friseBt"><title id="friseBt">Frise de l'état simulé</title></svg></div>
+   <p class="leg frise-lecture" id="friseTxt" aria-live="polite"></p>
+  </div>
+ </div>
+</div></section>
+
+<!-- 03 · GRAPHE -->
+<section class="section" id="graphe" aria-labelledby="t-gr"><div class="wrap">
+ <div class="section-tete"><span class="k">03 · Ce qui dépend de quoi</span><h2 class="t-xl" id="t-gr">Un graphe calculé, pas un dessin.</h2>
+  <p class="sous">Chaque relation porte un type, une justification et une date. Seuls les types qui propagent transmettent une modification. Touchez une relation pour savoir pourquoi elle existe.</p></div>
+ <div class="graphe-zone">
+  <div><div class="graphe" id="grapheBox"></div><div class="types" id="types" aria-label="Types de relation"></div></div>
+  <aside class="panneau" id="panneau" aria-live="polite"><span class="k">Inspecteur</span><h3>Sélectionnez une relation ou un objet.</h3><p class="leg">Clavier : Tab pour parcourir, Entrée pour ouvrir. Une lecture textuelle complète figure sous le graphe.</p></aside>
+ </div>
+ <details class="lecture"><summary>Lecture textuelle du graphe : toutes les relations</summary><div class="tablo" id="grapheTexte"></div></details>
+</div></section>
+
+<!-- LABORATOIRES -->
+<section class="section fond" id="labos" aria-labelledby="t-labos"><div class="wrap">
+ <div class="section-tete"><span class="k">Six laboratoires · un seul dossier</span><h2 class="t-xl" id="t-labos">Chaque instrument dit ce qu'il fait réellement.</h2>
+  <p class="sous">Opérationnel : la fonction marche ici, sur le dossier fictif. Prototype : elle marche, avec des limites écrites. Prévu : elle n'existe pas encore.</p></div>
+ <div class="labos" id="labosListe"></div>
+</div></section>
+
+<section class="labo" id="lab01" aria-labelledby="t-l1"><div class="wrap">
+ <div class="labo-tete"><small>LAB 01</small><span class="statut proto">Prototype</span></div>
+ <h2 class="t-l" id="t-l1">G44 historique. Comprendre l'existant.</h2>
+ <p class="sous">Un écran à formulaires reconstitué pour la pédagogie. Il ne reproduit aucun logiciel réel : les codes et les libellés sont fictifs, et chacun le dit.</p>
+ <div class="bascule" role="group" aria-label="Mode de lecture"><button type="button" aria-pressed="true" data-mode="hist">Grille historique</button><button type="button" aria-pressed="false" data-mode="aug">Lecture augmentée</button></div>
+ <div id="l1"></div>
+ <p class="note">La grille G44 documentée, dans l'exemple dont nous disposons, sert à corriger un <b>coefficient d'emploi</b>. C'est une situation distincte du mariage : rien n'indique qu'elle suive la même procédure. Elle n'est pas reconstituée ici tant que le document source n'a pas été versé et autorisé (voir LAB 04).</p>
+</div></section>
+
+<section class="labo" id="lab02" aria-labelledby="t-l2"><div class="wrap">
+ <div class="labo-tete"><small>LAB 02</small><span class="statut op">Opérationnel</span></div>
+ <h2 class="t-l" id="t-l2">G44 Rewind. Comprendre avant de corriger.</h2>
+ <p class="sous">Simuler, comparer les états, abandonner. La simulation est déterministe, reproductible et annulable. Aucune action réelle.</p>
+ <div class="commandes"><button class="btn saumon" type="button" id="simuler">Simuler</button><button class="btn sec" type="button" id="comparer" disabled>Comparer les états</button><button class="btn sec" type="button" id="abandonner" disabled>Abandonner la simulation</button><span class="leg" id="simInfo">Année envisagée : 2016.</span></div>
+ <div id="l2"><p class="vide">Aucune simulation en cours. L'état du dossier est l'état enregistré.</p></div>
+</div></section>
+
+<section class="labo" id="lab03" aria-labelledby="t-l3"><div class="wrap">
+ <div class="labo-tete"><small>LAB 03</small><span class="statut op">Opérationnel</span></div>
+ <h2 class="t-l" id="t-l3">Family Graph. Trois natures de relation.</h2>
+ <p class="sous">Un lien familial, un rattachement administratif et un droit social ne sont pas interchangeables. Activez chaque couche ; touchez l'enfant.</p>
+ <div class="fam"><div><div class="couches" id="couches"></div><div class="graphe" id="famBox"></div></div><aside class="panneau" id="famPanneau" aria-live="polite"><span class="k">Lecture</span><h3>Touchez une personne.</h3></aside></div>
+</div></section>
+
+<section class="labo" id="lab04" aria-labelledby="t-l4"><div class="wrap">
+ <div class="labo-tete"><small>LAB 04</small><span class="statut proto">Prototype</span></div>
+ <h2 class="t-l" id="t-l4">Document Intelligence. Une procédure devient une connaissance.</h2>
+ <p class="sous">Le texte d'un PDF est lu dans votre navigateur ; rien n'est envoyé. Chaque élément repéré est une proposition, marquée comme telle et corrigible. Rien n'est jamais écrit dans un dossier.</p>
+ <div class="docs">
+  <div><label class="depot" id="depot"><input type="file" id="fichier" accept="application/pdf,image/png,image/jpeg" hidden><b>Déposer un PDF ou une image</b><span class="leg">PDF avec texte : lecture réelle. Image : affichée, sans reconnaissance de caractères dans ce prototype.</span></label>
+   <div class="actions" style="margin-top:14px"><button class="btn sec petit" type="button" id="exemple">Utiliser la fiche d'exemple fictive</button></div>
+   <p class="leg" style="margin-top:12px">N'importez aucun document réel nominatif ou confidentiel : la démonstration est publique.</p>
+   <div class="apercu-doc" id="docVue" hidden></div></div>
+  <div class="bloc"><h3>Propositions d'extraction <span id="docInfo"></span></h3><div id="docExtraits"><p class="vide">Aucun document lu.</p></div></div>
+ </div>
+</div></section>
+
+<section class="labo" id="lab05" aria-labelledby="t-l5"><div class="wrap">
+ <div class="labo-tete"><small>LAB 05</small><span class="statut op">Opérationnel</span></div>
+ <h2 class="t-l" id="t-l5">SynchroView. Une même situation, quatre responsabilités.</h2>
+ <p class="sous">La perspective choisit ce qui s'affiche. Elle n'accorde aucun droit : l'autorisation se calcule à part, à partir de l'identité, de la mission et des habilitations fictives.</p>
+ <div class="axes"><div><b>Axe 1 · Présentation</b><span class="etat visible">Visible</span> <span class="etat masque">Masqué</span><p>Décidé par la perspective.</p></div><div><b>Axe 2 · Autorisation</b><span class="etat autorise">Autorisé</span> <span class="etat refuse">Refusé</span> <span class="etat nonverifie">Non vérifié</span><p>Décidé par une règle explicite. En production, côté serveur.</p></div></div>
+ <div class="persp" id="persp"></div>
+</div></section>
+
+<section class="labo" id="lab06" aria-labelledby="t-l6"><div class="wrap">
+ <div class="labo-tete"><small>LAB 06</small><span class="statut op">Opérationnel</span></div>
+ <h2 class="t-l" id="t-l6">Formation. Transmettre sans multiplier les erreurs.</h2>
+ <p class="sous">« Une année de mariage est erronée. Un enfant est déjà rattaché. Que faut-il examiner avant de préparer une correction ? » Choisissez des étapes, dans l'ordre. Pas de note : des explications.</p>
+ <div class="form"><div class="bloc"><h3>Étapes possibles</h3><div class="puces" id="puces"></div></div>
+  <div class="bloc"><h3>Votre suite <button class="btn sec petit" type="button" id="effacer">Recommencer</button></h3><ol class="suite" id="suite"></ol><div class="actions" style="margin-top:16px"><button class="btn" type="button" id="expliquer" disabled>Expliquer mes choix</button></div><div id="bilan" aria-live="polite"></div></div></div>
+</div></section>
+
+<!-- 04 · MESURER -->
+<section class="section fond" id="mesurer" aria-labelledby="t-mes"><div class="wrap">
+ <div class="section-tete"><span class="k">04 · Mesurer au lieu de promettre</span><h2 class="t-xl" id="t-mes">Aucun gain n'est annoncé. Un protocole permet de le mesurer.</h2>
+  <p class="sous">Même dossier fictif, même objectif, même population de volontaires : un parcours de référence et un parcours augmenté, en ordre alterné.</p></div>
+ <div class="actions" style="margin:0 0 18px"><button class="btn sec petit" type="button" id="synthBtn" aria-pressed="false">Afficher un exemple de données synthétiques</button></div>
+ <div class="tablo"><table class="mesures" id="mesuresT"></table></div>
+ <p class="synth" id="synthAvis">Données synthétiques de démonstration : inventées pour montrer la forme du tableau. Ce ne sont pas des résultats.</p>
+ <div class="vis-grille">
+  <figure class="bloc"><h3>Opérations nécessaires, scénario 2016</h3><svg id="visOps" viewBox="0 0 560 260" role="img" aria-labelledby="visOpsT"><title id="visOpsT">Comparaison des opérations</title></svg><figcaption class="leg">Les opérations réelles restent les mêmes : suspendre, corriger, recalculer, recréer, contrôler. Le laboratoire n'en supprime aucune. Il les rend visibles, ordonnées et justifiées <i>avant</i> l'intervention. Source : moteur, scénario fictif.</figcaption></figure>
+  <figure class="bloc"><h3>Parcours de l'agent</h3><svg id="visParcours" viewBox="0 0 560 260" role="img" aria-labelledby="visParT"><title id="visParT">Diagramme du parcours agent</title></svg><figcaption class="leg">En haut, le parcours rapporté (observé, à confirmer). En bas, le parcours augmenté. Les durées ne sont pas représentées : elles restent à mesurer.</figcaption></figure>
+ </div>
+</div></section>
+
+<!-- 05 · VÉRITÉ -->
+<section class="section" id="verite" aria-labelledby="t-ver"><div class="wrap">
+ <div class="section-tete"><span class="k">05 · Ce que nous savons. Ce que nous testons.</span><h2 class="t-xl" id="t-ver">Une animation n'est pas une preuve.</h2>
+  <p class="sous">Chaque élément du laboratoire appartient à une catégorie, et chacun peut ouvrir sa source.</p></div>
+ <div class="verite" id="veriteBox"></div>
+</div></section>
+
+<!-- MOTEURS -->
+<section class="section fond" id="moteurs" aria-labelledby="t-mot"><div class="wrap">
+ <div class="section-tete"><span class="k">Audit · moteurs AIME existants</span><h2 class="t-xl" id="t-mot">Ce qui existe, ce qui sert, ce qui manque.</h2>
+  <p class="sous">L'inventaire déclare 130 dépôts et 1 191 modules. C'est un inventaire, pas une preuve : chaque capacité utile à G44 a été rouverte dans le code et classée.</p></div>
+ <div class="types" style="margin:0 0 18px"><span><i class="classe c1">1</i> Fonctionnelle et vérifiée</span><span><i class="classe c2">2</i> Prototype exploitable</span><span><i class="classe c3">3</i> Maquette</span><span><i class="classe c4">4</i> Déclarée, non vérifiée</span><span><i class="classe c5">5</i> À développer</span></div>
+ <div class="tablo"><table id="moteursT"></table></div>
+ <p class="leg" style="margin-top:14px">Le laboratoire n'importe aucun moteur tel quel dans cette première version : il réécrit, sans dépendance, les mécanismes nécessaires (parcours typé, simulation isolée, accès séparés), en suivant les structures vérifiées ci-dessus. Les dépôts sources restent intacts.</p>
+</div></section>
+
+<!-- 14 · INSTITUTIONNEL -->
+<section class="section" aria-labelledby="t-inst"><div class="wrap">
+ <div class="section-tete"><span class="k">Pour une direction</span><h2 class="t-xl" id="t-inst">La connaissance existe.<br>Rendons ses relations visibles.</h2></div>
+ <div class="six">
+  <div><b>PRÉSERVER</b><p>Respecter les procédures et les connaissances métier existantes.</p></div>
+  <div><b>COMPRENDRE</b><p>Rendre les dépendances identifiables.</p></div>
+  <div><b>ANTICIPER</b><p>Examiner les conséquences avant l'intervention.</p></div>
+  <div><b>SÉCURISER</b><p>Distinguer les propositions des décisions autorisées.</p></div>
+  <div><b>TRANSMETTRE</b><p>Transformer l'expérience professionnelle en parcours pédagogiques documentés.</p></div>
+  <div><b>MESURER</b><p>Évaluer objectivement les gains et les limites.</p></div>
+ </div>
+ <p class="note" style="margin-top:48px">Le laboratoire assiste les professionnels : il ne supprime pas leur travail et ne disqualifie pas leurs compétences.</p>
+</div></section>
+
+<!-- 15 · FINAL -->
+<section class="final" aria-labelledby="t-fin"><div class="wrap">
+ <svg class="fil" id="fil" viewBox="0 0 1100 200" aria-hidden="true"></svg>
+ <div class="marque-xl">AIME<sup>®</sup></div>
+ <h2 class="t-l" id="t-fin">L'information ne suffit pas.<br>Il faut comprendre ce qui la relie.</h2>
+ <p class="sous">Un laboratoire pour comprendre les procédures, simuler leurs dépendances et préparer des interventions mieux documentées.</p>
+ <div class="actions"><a class="btn" href="#scenario">Explorer le scénario G44</a><a class="btn sec" href="#labos">Examiner les six laboratoires</a><a class="btn sec" href="#verite">Consulter la méthode</a><button class="btn saumon" type="button" id="dossierPdf">Télécharger le dossier de présentation</button></div>
+ <p class="leg" style="margin-top:26px">Comprendre avant d'agir. Relier avant de reconstruire. Prouver avant de promettre.</p>
+</div></section>
+</main>
+<footer class="pied"><div class="wrap"><span><b>AIME G44 LAB</b> — Démonstrateur indépendant, sans affiliation officielle à la MSA. Données fictives. Aucune opération administrative réelle.</span><span>AIME — Rendre visible ce qui relie.</span></div></footer>
+<div class="toast" id="toast" role="status"></div>
+<script src="/g44/js/dossier.js"></script><script src="/g44/js/moteur.js"></script><script src="/g44/js/acces.js"></script><script src="/g44/js/formation.js"></script><script src="/g44/js/page.js"></script>
+</body>
+</html>
