@@ -152,6 +152,24 @@ body.docked .top{background:rgba(12,11,20,.72);backdrop-filter:blur(14px);-webki
 .tlp .mk2:focus-visible{outline:2px solid #fff;border-radius:6px}
 .tlp .mk2:first-of-type span{left:4px;transform:none}.tlp .mk2:last-of-type span{left:auto;right:4px;transform:none}
 @media(max-width:760px){.tlp .mk2 span{display:none}.tlp .mk2.cur span{display:block;color:#fff}.tlp .mk2:first-of-type.cur span{left:0;transform:none}.tlp .mk2:last-of-type.cur span{left:auto;right:0;transform:none}}
+
+/* ---------- chapitre 4 : nuage, goutte, onde ---------- */
+.story3{position:relative;height:560vh}
+#cv3{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+#ov3{position:absolute;inset:0;z-index:2;pointer-events:none}
+.cq{position:absolute;display:flex;gap:8px;align-items:center;padding:7px 11px 7px 8px;border-radius:12px;background:rgba(14,14,18,.82);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(8px);font:500 13px/1.25 var(--ui);color:var(--ink);white-space:nowrap;opacity:0;transform:translate(-50%,-50%) scale(.85);transition:opacity .45s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.cq.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.cq i{width:12px;height:12px;border-radius:3px;flex:none}
+.cq b{font-weight:600}
+.cq span{color:#BDBDC7}
+.cq.ch span{color:#fff}
+.tx3 .seg{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);justify-self:start}
+.tx3 .seg button{border:0;background:none;color:#C9C9D2;font:600 14px var(--ui);padding:8px 14px;border-radius:10px;cursor:pointer}
+.tx3 .seg button[aria-pressed=true]{background:var(--ink);color:var(--desk)}
+.tx3 .seg button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.tx3 .row3{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tx3 .t,.tx3 .l{text-shadow:0 2px 18px rgba(10,10,12,.9)}
+@media(max-width:760px){.cq{font-size:11.5px;padding:5px 8px 5px 6px}.cq span{display:none}}
 @media(max-width:760px){
  .tx{left:max(20px,env(safe-area-inset-left,0px));right:max(20px,env(safe-area-inset-right,0px));width:auto;top:auto;bottom:calc(66px + env(safe-area-inset-bottom,0px));transform:none;gap:10px}
  .tx .t{font-size:clamp(30px,8.4vw,40px)}
@@ -185,6 +203,14 @@ body.docked .top{background:rgba(12,11,20,.72);backdrop-filter:blur(14px);-webki
   <div class="scene2" id="scene2"><div class="cube2" id="cube2"></div></div>
   <div class="tx tx2" id="tx2" aria-live="polite"><span class="k" id="k2"></span><h2 class="t" id="t2"></h2><p class="l" id="l2"></p><button class="cta2" id="open2" type="button">Ouvrir la carte</button></div>
   <div class="drag2" id="drag2">← Glissez pour la faire tourner →</div>
+ </div>
+</section>
+<section class="story story3" id="story3" aria-label="La causalité et le plan B">
+ <div class="stage" id="stage3">
+  <canvas id="cv3" aria-hidden="true"></canvas>
+  <div id="ov3" aria-hidden="true"></div>
+  <div class="tx tx3" id="tx3" aria-live="polite" style="opacity:0"><span class="k" id="k3"></span><h2 class="t" id="t3"></h2><p class="l" id="l3"></p>
+   <div class="row3" id="pb3" hidden><div class="seg" role="group" aria-label="La météo du Jour J"><button type="button" data-w="sol" aria-pressed="false">Soleil</button><button type="button" data-w="pluie" aria-pressed="true">Pluie</button></div><button class="cta2" type="button" id="ok3">Confirmer le plan B</button></div></div>
  </div>
 </section>
 <section class="next" id="next" aria-label="La suite">
@@ -397,7 +423,7 @@ cube.addEventListener('click',function(e){var b;
 cube.addEventListener('submit',function(e){e.preventDefault();var f=e.target.closest('[data-mi]');if(!f)return;var inp=f.querySelector('input'),v=inp.value.trim();if(!v)return;var d=document.createElement('div');d.className='me';d.innerHTML='<i style="background:#7C5CFF">M</i><span></span>';d.querySelector('span').textContent=v;var box=$('.msg',cube);box.appendChild(d);if(box.children.length>3)box.removeChild(box.firstElementChild);inp.value=''});
 
 /* ---------- la timeline horizontale : où vous êtes dans la page ---------- */
-var MK=[['Naissance','#story',0],['Le cube',"#story",.22],['Six outils','#story',.82],['Votre carte','#story2',.08],['Elle s\'ouvre','#story2',.86],['La suite','#next',-1]],MKY=[];
+var MK=[['Naissance','#story',0],['Le cube',"#story",.22],['Six outils','#story',.82],['Votre carte','#story2',.08],['Elle s\'ouvre','#story2',.86],['Le nuage','#story3',.2],['Plan B','#story3',.8],['La suite','#next',-1]],MKY=[];
 $('#tln').insertAdjacentHTML('beforeend',MK.map(function(m,i){return'<button class="mk2" type="button" data-k="'+i+'" aria-label="Aller à : '+m[0]+'"><span>'+m[0]+'</span></button>'}).join(''));
 function marks(){var max=document.documentElement.scrollHeight-H;MKY=MK.map(function(m){var el=$(m[1]),y=m[2]<0?Math.min(max,el.offsetTop):el.offsetTop+(el.offsetHeight-H)*m[2];return Math.max(0,Math.min(max,y))});
  $$('.mk2').forEach(function(b,i){b.style.left=(MKY[i]/max*100)+'%'})}
@@ -407,6 +433,71 @@ $('#tln').addEventListener('click',function(e){var b=e.target.closest('.mk2');if
 
 geo();marks();var rz;addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(function(){geo();marks()},150)});addEventListener('load',marks);
 requestAnimationFrame(frame);
+})();
+</script>
+<script>
+/* =========================================================
+   Chapitre 4 : l'orbe redescend, devient nuage, une goutte en sort,
+   tombe, et éclate en centaines de points : l'onde des conséquences.
+   ========================================================= */
+(function(){"use strict";
+var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))},RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function cl(x){return Math.max(0,Math.min(1,x))}function sm(x){x=cl(x);return x*x*(3-2*x)}function lr(a,b,t){return a+(b-a)*t}function eo(x){x=cl(x);return 1-Math.pow(1-x,3)}
+var story=$('#story3'),cv=$('#cv3'),ctx=cv.getContext('2d'),orb=$('#orb'),ov=$('#ov3');
+var PAL=[[251,113,133],[245,158,11],[124,92,255],[34,211,238]];
+function pal(f){f=((f%1)+1)%1*4;var i=Math.floor(f),u=f-i,a=PAL[i%4],b=PAL[(i+1)%4];return[a[0]+(b[0]-a[0])*u|0,a[1]+(b[1]-a[1])*u|0,a[2]+(b[2]-a[2])*u|0]}
+var W,H,MOB,DPR,C,R0,IMP,DOTS=[],GAP,PART=[],CQ=[];
+/* conséquences : [qui, plan A (soleil), plan B (pluie), angle, distance relative] */
+var CONS=[['Vin d\'honneur','dans le parc','sous la halle',-0.3,.42,'#FB923C'],['Photos de groupe','16:30 au jardin','15:45, dans le grand salon',-1.15,.62,'#A78BFA'],['Traiteur','service en extérieur','service à l\'intérieur, prévenu',.5,.55,'#34D399'],['DJ','installation à 18:00','installation avancée de 30 min',-2.45,.5,'#22D3EE'],['Invités','rien à envoyer','SMS prêt, à envoyer',2.4,.66,'#FB7185']];
+var weather='pluie',pulse=-1e9;
+function geo(){W=innerWidth;H=innerHeight;MOB=W<760;DPR=Math.min(2,devicePixelRatio||1);cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+ C=[W/2,MOB?H*.3:H*.4];R0=Math.min(W,H)*(MOB?.13:.1);IMP=[W/2,MOB?H*.42:H*.66];GAP=MOB?15:18;DOTS=[];
+ for(var y=GAP/2;y<H;y+=GAP)for(var x=GAP/2;x<W;x+=GAP){var dx=x-IMP[0],dy=y-IMP[1],d=Math.hypot(dx,dy),c=pal(Math.atan2(dy,dx)/6.283+.5);DOTS.push([x,y,d,'rgb('+c[0]+','+c[1]+','+c[2]+')'])}
+ PART=[];for(var i=0;i<320;i++){var a=i*2.39996,ring=1+(i%7),c2=pal(i/320);PART.push([Math.cos(a),Math.sin(a),ring*GAP*1.6+((i*37)%11),'rgb('+c2[0]+','+c2[1]+','+c2[2]+')'])}
+ var MR=Math.min(W,H)*(MOB?.9:.75);ov.innerHTML=CONS.map(function(c,i){return'<div class="cq" data-i="'+i+'"><i style="background:'+c[5]+'"></i><b>'+c[0]+'</b><span></span></div>'}).join('');
+ CQ=CONS.map(function(c,i){var el=ov.children[i],r=c[4]*MR,x=IMP[0]+Math.cos(c[3])*r*(MOB?.62:1.15),y=IMP[1]+Math.sin(c[3])*r*(MOB?1.05:.62);if(!MOB&&x<W*.47)x=W*.47+(W*.47-x)*.9+(i%2)*40;x=Math.max(70,Math.min(W-150,x));y=Math.max(90,Math.min(H-120,y));el.style.left=x+'px';el.style.top=y+'px';return{el:el,r:Math.hypot(x-IMP[0],y-IMP[1])}});chips()}
+function chips(){CQ.forEach(function(q,i){var c=CONS[i];q.el.querySelector('span').textContent=weather==='pluie'?c[2]:c[1];q.el.classList.toggle('ch',weather==='pluie')})}
+function cone(x,y,a){if(ctx.createConicGradient){var g=ctx.createConicGradient(a,x,y);g.addColorStop(0,'#FB7185');g.addColorStop(.25,'#F59E0B');g.addColorStop(.5,'#7C5CFF');g.addColorStop(.75,'#22D3EE');g.addColorStop(1,'#FB7185');return g}var l=ctx.createLinearGradient(x-80,y,x+80,y);l.addColorStop(0,'#FB7185');l.addColorStop(.5,'#7C5CFF');l.addColorStop(1,'#22D3EE');return l}
+function glow(x,y,r,a){var g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba(124,92,255,'+(.35*a)+')');g.addColorStop(1,'rgba(124,92,255,0)');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2)}
+/* le nuage : des bulles qui sortent toutes du même cercle */
+var PUFF=[[-1.3,.28,.72],[-.6,-.32,.95],[.32,-.52,1.08],[1.12,-.08,.88],[1.7,.34,.6],[-1.95,.42,.5],[0,.32,1.0],[.95,.38,.75],[-.95,.4,.7]];
+function cloud(cx,cy,u,a,t){ctx.save();ctx.globalAlpha=a;glow(cx,cy,R0*4,u);ctx.beginPath();PUFF.forEach(function(q){var x=cx+q[0]*R0*u,y=cy+q[1]*R0*u,r=lr(R0,q[2]*R0*.95,u);ctx.moveTo(x+r,y);ctx.arc(x,y,r,0,6.283)});ctx.fillStyle=cone(cx,cy,t*.6);ctx.fill();ctx.restore()}
+function drop(x,y,r,sy,t){ctx.beginPath();ctx.moveTo(x,y-2.1*r*sy);ctx.bezierCurveTo(x+r*.25,y-1.4*r*sy,x+r,y-.7*r*sy,x+r,y);ctx.arc(x,y,r,0,Math.PI);ctx.bezierCurveTo(x-r,y-.7*r*sy,x-r*.25,y-1.4*r*sy,x,y-2.1*r*sy);ctx.fillStyle=cone(x,y-r*.4,t*.6);ctx.fill()}
+function ball(x,y,r,t){glow(x,y,r*3.2,1);ctx.beginPath();ctx.arc(x,y,r,0,6.283);ctx.fillStyle=cone(x,y,t*.6);ctx.fill()}
+var TX=[['Et ensuite ?','L\'orbe <em>redescend</em>.','Elle vous suit partout, même quand le ciel change.'],
+ ['Le nuage','Tout est gardé, <em>tout est relié</em>.','Vos projets, vos documents, vos photos : une seule version sur tous vos appareils. La synchronisation arrive avec les comptes.'],
+ ['La cause','Il pleut. <em>Une goutte suffit</em>.','Le matin du Jour J, une seule information change.'],
+ ['Les conséquences','Tout ce qui suit <em>le sait</em>.','L\'onde part de la cause et prévient chaque moment, chaque personne, dans l\'ordre.'],
+ ['Le plan B','Le plan B est <em>déjà prêt</em>.','Vous voyez ce qui change, où, et vous confirmez. Rien ne part sans vous.']];
+var cur=-1;function setTx(i){if(i===cur)return;cur=i;var tx=$('#tx3');tx.style.opacity=0;setTimeout(function(){if(cur!==i)return;$('#k3').textContent=TX[i][0];$('#t3').innerHTML=TX[i][1];$('#l3').textContent=TX[i][2];$('#pb3').hidden=i!==4;tx.style.opacity=1},RM?0:180)}
+function prog(){var r=story.getBoundingClientRect(),len=r.height-H;return len>0?cl(-r.top/len):0}
+var T0=performance.now();
+function frame(now){var t=RM?1:(now-T0)/1000,p=prog(),r=story.getBoundingClientRect(),inView=r.bottom>0&&r.top<H;
+ if(inView){ctx.clearRect(0,0,W,H);var sl=$('#slot').getBoundingClientRect(),sx=sl.left+sl.width/2,sy=sl.top+sl.height/2,active=p>.001&&p<.995&&r.top<=1;
+  orb.style.visibility=active?'hidden':'';
+  if(active){
+   /* A · l'orbe redescend (0–.10) */
+   if(p<.1){var u=sm(p/.1);ball(lr(sx,C[0],u),lr(sy,C[1],u),lr(20,R0,u),t)}
+   /* B · elle devient nuage (.10–.26), puis le nuage s'efface en montant (.26–.50) */
+   else if(p<.5){var ub=sm((p-.1)/.14),up=sm((p-.26)/.2);
+    if(p>.26){var ud=sm((p-.26)/.14),uf=sm((p-.4)/.1),dy0=C[1]+R0*.25,dy1=lr(dy0,C[1]+R0*2.4,ud),dy2=lr(dy1,IMP[1],uf*uf);drop(C[0],dy2,R0*.42,1+uf*.5,t);if(uf>0&&!RM){ctx.strokeStyle='rgba(255,255,255,'+(.25*uf)+')';ctx.lineWidth=1.5;for(var k=0;k<3;k++){var lx=C[0]+(k-1)*R0*.22;ctx.beginPath();ctx.moveTo(lx,dy2-R0*(1.4+k*.3));ctx.lineTo(lx,dy2-R0*(2.6+k*.3));ctx.stroke()}}}
+    cloud(C[0],C[1]-up*H*.12,ub,1-up*.75,t);
+    /* les données montent au nuage */
+    if(p<.3&&!RM)for(var q=0;q<14;q++){var ph=((t*.25+q/14)%1),qx=C[0]+((q*97)%11-5)*R0*.45,qy=lr(H*.95,C[1]+R0*.3,ph),pc=pal(q/14);ctx.globalAlpha=sm(ph*4)*(1-ph)*ub;ctx.fillStyle='rgb('+pc+')';ctx.fillRect(qx-3,qy-3,6,6)}ctx.globalAlpha=1}
+   /* C · l'impact : la goutte éclate en centaines de points, l'onde part (.50–.88) */
+   else{var ui=eo((p-.5)/.08),Rw=lr(0,Math.hypot(W,H)*.75,sm((p-.5)/.3)),fade=1-sm((p-.86)/.06),pa=pulse>0?(now-pulse)/1000:99,Rp=pa*420;
+    for(var i=0;i<DOTS.length;i++){var D2=DOTS[i],d=D2[2],I=Math.exp(-Math.pow(d-Rw,2)/2400)*(Rw>4?1:0);if(d<Rw)I=Math.max(I,.3+.28*Math.sin(d*.045-t*3));if(pa<3)I=Math.max(I,Math.exp(-Math.pow(d-Rp,2)/1800)*(1-pa/3));I*=fade;if(I<.04)continue;var z=1+2.4*I;ctx.globalAlpha=Math.min(1,.15+.85*I);ctx.fillStyle=D2[3];ctx.fillRect(D2[0]-z/2,D2[1]-z/2,z,z)}
+    var pf=1-sm((p-.56)/.06);if(pf>0)for(var j=0;j<PART.length;j++){var P=PART[j],rr=P[2]*ui;ctx.globalAlpha=pf;ctx.fillStyle=P[3];ctx.fillRect(IMP[0]+P[0]*rr-2,IMP[1]+P[1]*rr*.8-2,4,4)}ctx.globalAlpha=1;
+    if(p<.53)ball(IMP[0],IMP[1],R0*.42*(1-sm((p-.5)/.03)),t);
+    /* D · l'orbe se reforme et remonte dans la barre (.88–1) */
+    if(p>.88){var ur=sm((p-.88)/.11);ball(lr(IMP[0],sx,ur),lr(IMP[1],sy,ur),lr(R0*.5,20,ur)*sm((p-.88)/.03),t)}
+    CQ.forEach(function(c){c.el.classList.toggle('on',Rw>c.r-20&&p<.9)})}
+   if(p<.5)CQ.forEach(function(c){c.el.classList.remove('on')})}
+  $('#tx3').style.opacity=active&&p<.94?'':0;setTx(p<.1?0:p<.27?1:p<.5?2:p<.68?3:4)}
+ requestAnimationFrame(frame)}
+$('#pb3').addEventListener('click',function(e){var b=e.target.closest('[data-w]');if(b){weather=b.dataset.w;$$('[data-w]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});chips();pulse=performance.now();$('#ok3').hidden=weather!=='pluie';return}
+ if(e.target.closest('#ok3')){var tt=$('#toast2');tt.textContent='Plan B confirmé (démonstration) : traiteur, DJ et photographe prévenus.';tt.classList.add('on');setTimeout(function(){tt.classList.remove('on')},3000)}});
+geo();var rz;addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(geo,150)});requestAnimationFrame(frame);
 })();
 </script>
 </body>
