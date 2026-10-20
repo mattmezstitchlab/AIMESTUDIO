@@ -1259,6 +1259,29 @@ body[data-pmband=where],body[data-pmband=where] *{cursor:url("data:image/svg+xml
 .rx-more{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#fff;font:600 16px/1 var(--ui);cursor:pointer;opacity:.5}.rx-c2:hover .rx-more,.rx-more:focus-visible{opacity:1}
 #tl .tl-it.pulse{animation:chring 1s ease-in-out 3}
 @media(max-width:760px){#tband .ptr .pm-times,#tband .ptr .pm-where,#tband .ptr+.bs,#tband [data-tex]{display:none}#tband .bl{min-width:0;overflow:hidden}#tband .ptr button{width:24px}}
+/* v20 : verbes AIME */
+#tools .vb{display:flex;flex-direction:column;align-items:center;gap:2px}
+#tools .vb>button{width:40px;height:40px;border-radius:12px;border:0;background:none;color:#FBBF24;display:grid;place-items:center;cursor:pointer}
+#tools .vb>button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#tools .vb>button:hover{background:rgba(251,191,36,.12)}
+#tools .vb>button[aria-pressed=true]{background:#FBBF24;color:#0B0B0D}
+#tools .vb>button[aria-disabled=true]{color:var(--soft);opacity:.35}
+#tools .vb-lv{display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:3px;background:rgba(255,255,255,.06);border-radius:10px;margin:2px 0}
+#tools .vb-lv button{width:18px;height:18px;border:0;border-radius:5px;background:none;color:#C9C9D2;font:600 10px var(--mono);cursor:pointer;padding:0}
+#tools .vb-lv button[aria-pressed=true]{background:#fff;color:#0B0B0D}#tools .vb-lv .lv3[aria-pressed=true]{background:#FB7185;color:#fff}
+#tools .vb-lv button[aria-disabled=true]{opacity:.25}
+.vb-sw{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:middle;margin:0 4px;box-shadow:0 0 0 1px rgba(255,255,255,.4)}
+#vprev{position:fixed;inset:0;z-index:9880;display:grid;place-items:center;padding:20px;background:rgba(5,5,8,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#vprev[hidden]{display:none}
+.vp-c{width:min(620px,100%);max-height:86vh;overflow:auto;background:#0E0E12;border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:20px;color:#fff;display:grid;gap:10px;box-shadow:0 40px 120px -20px rgba(0,0,0,.9);text-align:left}
+.vp-c .k{font:500 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#F0ABFC}
+.vp-c h3{margin:0;font:400 24px/1.15 var(--display)}.vp-c p{margin:0;color:#C9C9D2;font:400 13.5px/1.5 var(--ui)}
+.vp-sw{display:flex;gap:10px;align-items:center;font:600 18px var(--ui)}.vp-sw i{width:44px;height:44px;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.vp-t{overflow:auto;max-height:44vh;border:1px solid rgba(255,255,255,.1);border-radius:12px}
+.vp-t table{width:100%;border-collapse:collapse;font:400 13px var(--ui)}.vp-t th{position:sticky;top:0;background:#16161B;text-align:left;font:500 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);padding:8px 10px}
+.vp-t td{padding:7px 10px;border-top:1px solid rgba(255,255,255,.06)}.vp-t .b4{color:#A1A1AA;text-decoration:line-through}.vp-t .af{color:#34D399;font-weight:600}
+.vp-cf{display:grid;gap:6px;font:400 13px var(--ui);color:#FDA4AF;padding:10px;border:1px solid rgba(251,113,133,.45);border-radius:10px;background:rgba(251,113,133,.07)}.vp-cf input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font:500 14px var(--ui);padding:8px 10px}
+.vp-a{display:flex;justify-content:flex-end;gap:8px}.vp-a .danger{background:#E11D48!important;border-color:#E11D48!important}.vp-a [disabled]{opacity:.4;cursor:not-allowed}
 #uv h1,.un-h h2,.un-s h3,.or-l h2,.ny-h h2,.gl-l h2,.ps-h h2,#cardwp h2,.tc header b,#sp h3,#wpk h3,.tx-e h3,.gu-s h3,.uc b,.ucard .b h4,.ov-h h2,.lib-d h3,.cdt h3,.board .bwm,.or-clock,.mo-d h3,.cd,.wg-clock,#who h2,.mt b,.uni b{font-family:var(--display)!important;font-weight:400!important;text-transform:none!important;letter-spacing:-.025em!important;font-stretch:100%!important}
 #uv h1{font-size:clamp(60px,7.4vw,118px)!important;line-height:.95!important}
 .or-clock{letter-spacing:-.035em!important}
@@ -3288,6 +3311,42 @@ document.addEventListener('change',function(e){if(!e.target.matches||!e.target.m
 var _dock19=dockRender;dockRender=function(){_dock19();(OS.dockHide||[]).forEach(function(id){var b=$('#dock [data-app="'+id+'"]');if(b)b.hidden=true})};
 function meTour(){var L=$$('#rail #aprail button, #rail #dock [data-app], #rail #sw .swc').filter(function(b){return b.offsetParent&&!b.hidden}).slice(0,8);if(!L.length)return;var o=$('#rapps .me-o'),i=-1;o.classList.add('tour');(function step(){i++;$$('.tour-on').forEach(function(x){x.classList.remove('tour-on')});if(i>=L.length){o.classList.remove('tour');o.style.transform='';var c=$('#cho');if(c)c.hidden=true;return}var el=L[i],r=el.getBoundingClientRect(),r0=$('#rapps').getBoundingClientRect();el.classList.add('tour-on');o.style.transform='translate('+(r.left-r0.left-30)+'px,'+(r.top-r0.top)+'px)';var x=chUI();x.innerHTML='<div class="ch-t"><span class="ch-n">ME · '+(i+1)+' / '+L.length+'</span><b>'+esc(el.getAttribute('aria-label')||el.title||el.textContent.trim())+'</b></div><div class="ch-c"><button data-chx>Arrêter</button></div>';setTimeout(step,1500)})()}
 meRender();bandRender();
+/* ---------- v20 : verbes universels AIME (registre commun, palette, aperçu avant propagation) ---------- */
+var VERBS=[
+ {id:'pipette',l:'Pipette',intent:'Reprendre ce que je touche, puis l\'appliquer ailleurs',accepts:['point brodé','style de texte','couleur de photo'],params:['échantillon'],destructive:false,undo:true,perm:'modifier',ic:'<path d="M14.5 4.5l5 5M4 20l1-4 9-9 3 3-9 9z"/><path d="M13 6l5 5"/>'},
+ {id:'remplir',l:'Remplir',intent:'Appliquer à une zone entière',accepts:['zone de points','élément de support','photo'],params:['couleur active'],destructive:false,undo:true,perm:'modifier',ic:'<path d="M5 12l7-7 7 7-7 7z"/><path d="M19 15c0 1.5 1 2.5 1 3.5a1.5 1.5 0 01-3 0c0-1 1-2 2-3.5z"/>'},
+ {id:'gomme',l:'Gomme',intent:'Retirer, du plus doux au définitif',accepts:['point brodé','élément de support','retouches de photo'],params:['niveau'],destructive:'supprimer',undo:true,perm:'modifier ; supprimer pour le niveau définitif',ic:'<path d="M8 20h12M4.5 15.5l9-9 6 6-7 7H8z"/><path d="M10 10l6 6"/>'},
+ {id:'texte',l:'Texte',intent:'Écrire ou modifier les mots',accepts:['texte de support','grille (texte brodé)'],params:['texte'],destructive:false,undo:true,perm:'modifier',ic:'<path d="M5 6V4h14v2M12 4v16M9 20h6"/>'}];
+var GLV=[['effacer','Effacer','Vide le contenu ; réversible'],['masquer','Masquer','Cache sans rien perdre'],['retirer','Retirer une propriété','Enlève un réglage, garde le contenu'],['supprimer','Supprimer définitivement','Toujours avec confirmation']];
+window.AIMEVERBS=VERBS;var VB={cur:null,level:'effacer',caps:{},sample:null};
+window.addEventListener('message',function(e){var d=e.data||{};var id=Object.keys(WIN).filter(function(k){return WIN[k].frame&&WIN[k].frame.contentWindow===e.source})[0];if(!id)return;
+ if(d.aime==='verbs'){VB.caps[id]=d.caps;if(id===activeApp())vbRender();return}
+ if(d.aime==='vinfo'){var x=chUI();x.innerHTML='<div class="ch-t"><span class="ch-n">'+esc(vbName(d.v||VB.cur))+(VB.sample?' · <i class="vb-sw" style="background:'+esc(VB.sample.hex||'#fff')+'"></i>'+esc(VB.sample.t):'')+'</span><b>'+esc(d.t)+'</b></div><div class="ch-c"><button data-vbx>Arrêter</button></div>';return}
+ if(d.aime==='vsample'){VB.sample={t:d.t,hex:d.hex};return}
+ if(d.aime==='vprev'){vpOpen(d,id);return}
+ if(d.aime==='vdone'){SEL.scope=d.scope;var app=id;selDone(d.msg,d.undo?function(){toFrame(app,{aime:'selundo'})}:null);return}});
+function vbName(v){var o=VERBS.filter(function(x){return x.id===v})[0];return o?o.l:'Verbe'}
+function vbCaps(){var a=activeApp();if(!a)return null;return VB.caps[a]||null}
+function vbRender(){var t=$('#tools');if(!t)return;var el=t.querySelector('.vb');if(!el){var tv=t.querySelector('.tvw');if(!tv)return;tv.insertAdjacentHTML('afterend','<div class="vb" role="toolbar" aria-label="Verbes AIME"></div><hr>');el=t.querySelector('.vb')}var C=vbCaps(),a=activeApp();
+ el.innerHTML=VERBS.map(function(v){var c=C?C[v.id]:null,ok=c===1,why=ok?'':(typeof c==='string'?c:a?'Ce studio ne déclare pas encore ce verbe':'Ouvrez un studio : Broderie, Image ou les supports');return'<button data-vb="'+v.id+'" aria-pressed="'+(VB.cur===v.id)+'"'+(ok?'':' aria-disabled="true"')+' title="'+esc(v.l+' : '+(ok?v.intent:why))+'" aria-label="'+esc(v.l+(ok?'':' (indisponible : '+why+')'))+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+v.ic+'</svg></button>'+(v.id==='gomme'&&VB.cur==='gomme'?'<div class="vb-lv" role="group" aria-label="Niveau de gomme">'+GLV.map(function(L,i){var lc=C&&C.lv?C.lv[L[0]]:null,lok=lc===1;return'<button data-vbl="'+L[0]+'" aria-pressed="'+(VB.level===L[0])+'"'+(lok?'':' aria-disabled="true"')+' title="'+esc(L[1]+' : '+(lok?L[2]:(lc||'indisponible')))+'" aria-label="'+esc(L[1])+'" class="lv'+i+'">'+(i+1)+'</button>'}).join('')+'</div>':'')}).join('')}
+var _tr20=toolsRender;toolsRender=function(m){_tr20(m);vbRender()};
+function vbSend(reset){var a=activeApp();if(!a)return;toFrame(a,{aime:'verb',v:VB.cur,level:VB.level,scope:pmFor(a)==='times'?'all':'one',reset:reset!==false})}
+function vbStop(){if(!VB.cur)return;VB.cur=null;VB.sample=null;vbSend();vbRender();var c=$('#cho');if(c)c.hidden=true}
+document.addEventListener('click',function(e){var b;if(!e.target.closest)return;
+ if(b=e.target.closest('#tools [data-vb]')){var v=b.dataset.vb,C=vbCaps();if(b.getAttribute('aria-disabled')==='true'){toast(b.title);return}VB.cur=VB.cur===v?null:v;VB.sample=null;if(VB.cur==='gomme'&&C&&C.lv&&C.lv[VB.level]!==1){var f=GLV.filter(function(L){return C.lv[L[0]]===1})[0];if(f)VB.level=f[0]}vbSend();vbRender();if(!VB.cur){var c=$('#cho');if(c)c.hidden=true}return}
+ if(b=e.target.closest('#tools [data-vbl]')){if(b.getAttribute('aria-disabled')==='true'){toast(b.title);return}VB.level=b.dataset.vbl;vbSend();vbRender();return}
+ if(e.target.closest('[data-vbx]')){vbStop();return}});
+var _focus20=focus;focus=function(id){var was=FOCUS;_focus20(id);if(was&&was!==id&&VB.cur){var keep=VB.cur;VB.cur=null;toFrame(was,{aime:'verb',v:null});VB.cur=keep;var C=VB.caps[id];if(!C||C[keep]!==1){VB.cur=null;var c=$('#cho');if(c)c.hidden=true}else vbSend()}vbRender()};
+var _pmSet20=pmSet;pmSet=function(ctx,m){_pmSet20(ctx,m);if(VB.cur&&ctx===activeApp())vbSend(false)};
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&VB.cur&&!($('#vprev')&&!$('#vprev').hidden))vbStop()});
+/* aperçu avant propagation */
+function vpOpen(d,app){var m=$('#vprev');if(!m){m=document.createElement('div');m.id='vprev';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-labelledby','vph');document.body.appendChild(m)}VB.pend={id:d.id,app:app,confirm:d.confirm||null};
+ m.innerHTML='<div class="vp-c"><span class="k">'+esc(vbName(d.v))+' · '+(d.destructive?'action définitive':d.scope==='all'?'× propagation':'aperçu')+'</span><h3 id="vph">'+esc(d.title)+'</h3><p>'+(d.n>1?'<b>'+d.n+'</b> éléments concernés. ':'')+'Voici ce qui changera, avant que rien ne change.</p>'+(d.swatch?'<div class="vp-sw"><i style="background:'+esc(d.swatch[0])+'"></i>→<i style="background:'+esc(d.swatch[1])+'"></i></div>':'')+'<div class="vp-t"><table><thead><tr><th>Où</th><th>Propriété</th><th>Avant</th><th>Après</th></tr></thead><tbody>'+(d.rows||[]).slice(0,60).map(function(r){return'<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td class="b4">'+esc(r[2])+'</td><td class="af">'+esc(r[3])+'</td></tr>'}).join('')+'</tbody></table>'+((d.rows||[]).length>60?'<p>… et '+(d.rows.length-60)+' de plus</p>':'')+'</div>'+(d.confirm?'<label class="vp-cf">Cette action est définitive. Pour confirmer, écrivez <b>'+esc(d.confirm)+'</b><input data-vpcf autocomplete="off"></label>':'')+'<div class="vp-a"><button class="pill" data-vpno>Annuler</button><button class="pill dark'+(d.destructive?' danger':'')+'" data-vpok'+(d.confirm?' disabled':'')+'>'+(d.destructive?'Supprimer définitivement':'Valider')+'</button></div></div>';m.hidden=false;setTimeout(function(){var f=m.querySelector('[data-vpcf]')||m.querySelector('[data-vpok]');if(f)f.focus()},50)}
+function vpClose(send){var m=$('#vprev');if(m)m.hidden=true;if(send&&VB.pend)toFrame(VB.pend.app,{aime:'vcancel'});VB.pend=null}
+document.addEventListener('input',function(e){if(e.target.matches&&e.target.matches('[data-vpcf]')){var ok=VB.pend&&e.target.value.trim()===VB.pend.confirm;$('#vprev [data-vpok]').disabled=!ok}});
+document.addEventListener('click',function(e){if(!e.target.closest)return;if(e.target.closest('[data-vpno]')||e.target.id==='vprev'){vpClose(true);return}if(e.target.closest('[data-vpok]')&&VB.pend){var p=VB.pend;vpClose(false);toFrame(p.app,{aime:'vdo',id:p.id})}});
+document.addEventListener('keydown',function(e){var m=$('#vprev');if(!m||m.hidden)return;if(e.key==='Escape'){e.stopPropagation();vpClose(true)}},true);
+vbRender();
 var h=(location.hash||'').slice(1);
 if(h&&APP[h]&&!APP[h].ext)open(h);
 else{var reopen=Object.keys(saved).filter(function(k){return saved[k].open&&APP[k]&&!APP[k].ext});if(reopen.length)reopen.forEach(function(k){open(k);if(saved[k].min)minWin(k)})}
