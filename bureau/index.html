@@ -1597,6 +1597,18 @@ body.expose #cw,body.expose #rpd,body.wp-scene #cw,body.wp-scene #rpd{display:no
  .ds-i.nosp{grid-template-columns:minmax(0,1fr)}
 }
 @media(prefers-reduced-motion:reduce){.ds-mv::after{animation:none}}
+/* v30 Compte */
+#ov .acc{max-width:620px}
+.acc-c{display:flex;align-items:center;gap:16px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+.acc-c>div{display:grid;gap:4px;flex:1;min-width:0}
+.acc-c b{font:600 14px var(--ui)}
+.acc-c span{font:400 13px/1.45 var(--ui);color:var(--soft)}
+.acc-f{display:grid;gap:8px}
+.acc-f label{font:500 13px var(--ui);color:var(--soft)}
+.acc-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.acc-row input{flex:1;min-width:200px;background:var(--raise);border:1px solid var(--line);border-radius:10px;color:var(--ink);font:400 15px var(--ui);padding:11px 13px}
+.acc-m{margin:0;padding:12px 14px;border-radius:10px;background:var(--raise);font:400 13.5px/1.45 var(--ui)}
+@media(max-width:900px){.acc-c{flex-direction:column;align-items:stretch}.acc-row .pill{min-height:44px}}
 </style>
 
 <div id="desk" aria-hidden="true"><canvas id="px"></canvas></div>
@@ -4034,6 +4046,34 @@ document.addEventListener('click',function(e){var b;if(!e.target.closest||!e.tar
  if(b=e.target.closest('[data-lpv]')){LIB.sel=+b.dataset.lpv;ovOpen('');libRender();return}},true);
 document.addEventListener('input',function(e){var k=e.target&&e.target.dataset&&e.target.dataset.dsn;if(!k)return;var v=OS.dsv[k];if(v){v.n=e.target.value;v.t=Date.now();clearTimeout(window.__dsn);window.__dsn=setTimeout(saveOS,300)}});
 MENUS.aime=(function(f){return function(){var A=f();var i=-1;A.forEach(function(x,j){if(x&&x[0]==='Bibliothèque de modèles')i=j});A.splice(i+1,0,['Design system',function(){dsOpen()}]);return A}})(MENUS.aime);
+
+/* ---------- v30 : Compte AIME : lien par e-mail et passkey (Better Auth) ; les données restent sur l'appareil tant que la synchronisation n'est pas branchée ---------- */
+var ACC={s:null,ready:false,msg:'',mail:''};
+function accApi(p,o){o=o||{};return fetch(ROOT+'api/auth/'+p,{method:o.method||'GET',credentials:'same-origin',headers:o.body?{'content-type':'application/json'}:{},body:o.body?JSON.stringify(o.body):undefined}).then(function(r){return r.text().then(function(t){var j=null;try{j=t?JSON.parse(t):null}catch(_){}return{ok:r.ok,status:r.status,data:j}})})}
+function accLoad(){return accApi('get-session').then(function(r){ACC.ready=r.status!==404&&r.status!==503&&r.status!==501&&(r.ok||r.status===401);ACC.s=r.ok?r.data:null;return ACC}).catch(function(){ACC.ready=false;ACC.s=null;return ACC})}
+function accWA(){return window.SimpleWebAuthnBrowser?Promise.resolve(window.SimpleWebAuthnBrowser):new Promise(function(ok,ko){var s=document.createElement('script');s.src=ROOT+'vendor/simplewebauthn-browser-13.3.0.umd.min.js';s.onload=function(){ok(window.SimpleWebAuthnBrowser)};s.onerror=ko;document.head.appendChild(s)})}
+function accOpen(){ovOpen('<div class="ov-top"><button class="pill" data-ovx>'+T('Fermer')+'</button></div><div class="in acc"><p class="ds-p">Un instant…</p></div>');accLoad().then(accRender)}
+function accRender(){var o=$('#ov .acc');if(!o)return;var s=ACC.s,u=s&&s.user;
+ if(!ACC.ready){o.innerHTML='<div class="ov-h"><span class="k">Compte</span><h2>Bientôt</h2><p>La connexion n\'est pas encore disponible à cette adresse. Votre Bureau fonctionne normalement : tout reste sur cet appareil.</p></div>';return}
+ if(u){o.innerHTML='<div class="ov-h"><span class="k">Compte</span><h2>Bonjour</h2><p>Vous êtes connecté avec <b>'+esc(u.email)+'</b>.</p></div>'+
+  '<div class="acc-c"><div><b>Passkey</b><span>Se connecter avec Face ID, l\'empreinte ou le code de cet appareil, sans e-mail.</span></div><button class="pill dark" data-accpk>Ajouter une passkey ici</button></div>'+
+  '<div class="acc-c"><div><b>Vos données</b><span>Pour l\'instant, vos projets restent sur cet appareil. La synchronisation entre vos appareils arrive ensuite, avec votre accord.</span></div></div>'+
+  (ACC.msg?'<p class="acc-m" role="status">'+esc(ACC.msg)+'</p>':'')+
+  '<div class="acc-row"><button class="pill" data-accout>Se déconnecter</button></div>';return}
+ o.innerHTML='<div class="ov-h"><span class="k">Compte</span><h2>Se connecter</h2><p>Recevez un lien par e-mail, ou utilisez votre passkey si vous en avez une. Pas de mot de passe.</p></div>'+
+  '<form class="acc-f" data-accf><label for="accmail">Votre e-mail</label><div class="acc-row"><input id="accmail" type="email" autocomplete="email webauthn" required placeholder="vous@exemple.fr" value="'+esc(ACC.mail)+'"><button class="pill dark">Recevoir le lien</button></div></form>'+
+  '<div class="acc-row"><button class="pill" data-accpkin>Avec une passkey</button></div>'+
+  (ACC.msg?'<p class="acc-m" role="status">'+esc(ACC.msg)+'</p>':'')+
+  '<p class="ds-p">Vos projets restent sur cet appareil, connecté ou non.</p>'}
+function accMsg(m){ACC.msg=m;accRender()}
+document.addEventListener('submit',function(e){var f=e.target.closest&&e.target.closest('[data-accf]');if(!f)return;e.preventDefault();var m=$('#accmail').value.trim();ACC.mail=m;if(!m)return;var b=f.querySelector('button');b.disabled=true;
+ accApi('sign-in/magic-link',{method:'POST',body:{email:m,callbackURL:'/bureau/?connexion=ok',errorCallbackURL:'/bureau/?connexion=erreur'}}).then(function(r){b.disabled=false;accMsg(r.ok?'C\'est envoyé. Ouvrez le lien reçu à '+m+' : il est valable 10 minutes et ne sert qu\'une fois.':r.status===429?'Trop de demandes. Réessayez dans une minute.':'L\'envoi n\'a pas marché. Réessayez dans un instant.')}).catch(function(){b.disabled=false;accMsg('Pas de connexion internet ?')})},true);
+document.addEventListener('click',function(e){var b;if(!e.target.closest||!e.target.closest('#ov .acc'))return;
+ if(e.target.closest('[data-accout]')){accApi('sign-out',{method:'POST',body:{}}).then(function(){ACC.s=null;ACC.msg='';accRender();toast('Vous êtes déconnecté')});return}
+ if(e.target.closest('[data-accpk]')){accWA().then(function(W){return accApi('passkey/generate-register-options').then(function(r){if(!r.ok)throw 0;return W.startRegistration({optionsJSON:r.data})}).then(function(res){var x=Object.assign({},res);delete x.clientExtensionResults;return accApi('passkey/verify-registration',{method:'POST',body:{response:x,name:(navigator.platform||'Cet appareil')}})}).then(function(r){accMsg(r.ok?'Passkey ajoutée sur cet appareil.':'La passkey n\'a pas pu être ajoutée.')})}).catch(function(){accMsg('Ajout annulé.')});return}
+ if(e.target.closest('[data-accpkin]')){accWA().then(function(W){return accApi('passkey/generate-authenticate-options').then(function(r){if(!r.ok)throw 0;return W.startAuthentication({optionsJSON:r.data})}).then(function(res){var x=Object.assign({},res);delete x.clientExtensionResults;return accApi('passkey/verify-authentication',{method:'POST',body:{response:x}})}).then(function(r){if(!r.ok)throw 0;ACC.msg='';return accLoad().then(function(){accRender();toast('Vous êtes connecté')})})}).catch(function(){accMsg('Connexion par passkey annulée, ou aucune passkey sur cet appareil.')});return}},true);
+MENUS.aime=(function(f){return function(){var A=f();var i=-1;A.forEach(function(x,j){if(x&&x[0]==='Changer de carte…')i=j});A.splice(i,0,[ACC.s&&ACC.s.user?'Mon compte':'Se connecter…',accOpen]);return A}})(MENUS.aime);
+(function(){var q=new URLSearchParams(location.search),c=q.get('connexion');if(c){q.delete('connexion');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash);if(c==='ok')toast('Vous êtes connecté');else{toast('Ce lien n\'est plus valable. Demandez-en un nouveau.');setTimeout(accOpen,600)}}accLoad()})();
 
 dockRender();
 var h=(location.hash||'').slice(1);
