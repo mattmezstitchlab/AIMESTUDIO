@@ -283,7 +283,10 @@ body.docked .top{background:rgba(12,11,20,.72);backdrop-filter:blur(14px);-webki
 .plus5[aria-expanded=true] svg{transform:rotate(45deg)}
 .plus5:focus-visible,.dc:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .dock5 .cubes{display:flex;gap:2px}
-.dc{flex:none;width:46px;height:46px;border:0;border-radius:12px;background:none;cursor:pointer;display:grid;place-items:center;padding:0}
+.dc{flex:none;height:44px;border:0;border-radius:12px;background:none;cursor:pointer;display:flex;align-items:center;gap:7px;padding:0 11px;color:#C9C9D2;font:600 13px var(--ui);white-space:nowrap}
+.dc svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.dc[aria-pressed=true]{color:#fff}
+@media(max-width:1100px){.dc span{display:none}.dc{padding:0 12px}}
 .dc:hover,.dc[aria-pressed=true]{background:rgba(255,255,255,.1)}
 .dc .c3w{width:26px;height:26px;margin:0;perspective:200px}
 .dc .c3{width:26px;height:26px;--hz:13px;--hz2:17px}
@@ -533,7 +536,7 @@ body.docked .top{background:rgba(12,11,20,.72);backdrop-filter:blur(14px);-webki
  </div>
 </section>
 <section class="build" id="build" aria-label="Construire votre site">
- <div class="bh"><span class="k">Votre site</span><h2 class="t">Des cubes, <em>votre site</em>.</h2><p>Touchez le « + » ou un cube du dock, glissez ses faces sur la grille, agrandissez-les par les coins : les proportions restent justes. Derrière chaque face, son code. Pour un mariage, un pro, ou juste vous.</p></div>
+ <div class="bh"><span class="k">Votre site</span><h2 class="t">Quelques gestes, <em>votre site</em>.</h2><p>Touchez le « + » ou une famille du dock, glissez ses modules sur la grille, agrandissez-les par les coins : les proportions restent justes. Derrière chaque face, son code. Pour un mariage, un pro, ou juste vous.</p></div>
  <div class="pg"><div class="pgbar"><i></i><i></i><i></i><span id="url5">lemondeaime.com/@lea-et-marc</span></div><div class="cnv" id="cnv5" aria-label="La page, sur la grille universelle"></div></div>
  <div class="dockw">
   <div class="pop5" id="pop5" hidden><div class="ptabs" id="ptabs" role="group" aria-label="Les cubes"></div><div class="tray" id="tray5" role="list"></div></div>
@@ -1007,7 +1010,8 @@ function code(k){var x=P,c={hero:'<section class="hero">\n  <p>'+x.sub+'</p>\n  
 /* ---------- les cubes et leurs faces ---------- */
 var CB=$('#cubes5'),TR=$('#tray5'),open5=0;
 var POP=$('#pop5'),PL=$('#plus5');
-CB.innerHTML=CUBES.map(function(c,i){return'<button class="dc" type="button" data-c="'+i+'" aria-pressed="false" title="'+c[0]+'" aria-label="Cube '+c[0]+'"><span class="c3w"><span class="c3">'+c[2].map(function(k){return'<i>'+ic(k)+'</i>'}).join('')+'</span></span></button>'}).join('');
+var CSY=['<path d="M4 6h16M4 11h11M4 16h7"/>','<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>','<circle cx="6" cy="7" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="17" r="2"/><path d="M7.8 7.6l2.8 7.8M16.4 7.3l-3.2 8.2M8 7h8"/>','<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/><path d="M7 15h10"/>','<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>'];
+CB.innerHTML=CUBES.map(function(c,i){return'<button class="dc" type="button" data-c="'+i+'" aria-pressed="false" title="'+c[0]+'" aria-label="'+c[0]+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+CSY[i]+'</svg><span>'+c[0]+'</span></button>'}).join('');
 $('#ptabs').innerHTML=CUBES.map(function(c,i){return'<button class="chip5 bt5" type="button" data-tc="'+i+'" aria-pressed="false">'+c[0]+'</button>'}).join('')+'<button class="x5" type="button" aria-label="Fermer">×</button>';
 function popOpen(on){POP.hidden=!on;PL.setAttribute('aria-expanded',on);if(!on)$$('.dc',CB).forEach(function(b){b.setAttribute('aria-pressed','false')})}
 function tray(i,from){open5=i;popOpen(true);$$('.dc',CB).forEach(function(b,j){b.setAttribute('aria-pressed',j===i?'true':'false')});$$('[data-tc]').forEach(function(b,j){b.setAttribute('aria-pressed',j===i?'true':'false')});
