@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIME INFINITY · Laboratoire</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<style>
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin.woff2") format("woff2")}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}
+:root{--desk:#0A0A0C;--ink:#EDEDF0;--soft:#9C9CA8;--line:#2B2B33;--card:#121216;--ui:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--display:"Cal Sans","Inter Variable",Inter,-apple-system,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(60% 40% at 50% 0%,rgba(124,92,255,.14),transparent 70%),radial-gradient(circle at 1px 1px,rgba(255,255,255,.045) 1px,transparent 0) 0 0/22px 22px,var(--desk);color:var(--ink);font:400 16px/1.55 var(--ui);-webkit-font-smoothing:antialiased}
+main{max-width:1180px;margin:0 auto;padding:calc(32px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px))}
+.k{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+h1{margin:10px 0 8px;font:400 clamp(34px,5vw,60px)/1 var(--display);letter-spacing:-.025em}
+h2{margin:0;font:400 26px/1.1 var(--display)}
+p{max-width:68ch;color:#C9C9D2}
+a{color:var(--ink)}
+.protos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:32px 0}
+.proto{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:10px;min-width:0}
+.proto canvas{width:100%;aspect-ratio:1/1.18;display:block;touch-action:none;border-radius:12px;background:#0C0C10}
+.proto p{margin:0;font-size:14.5px}
+.etat{display:flex;justify-content:space-between;align-items:center;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.etat button{font:600 12px var(--ui);background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer}
+.choix{border-color:#7C5CFF;box-shadow:0 0 0 1px #7C5CFF,0 20px 60px rgba(124,92,255,.18)}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14.5px}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left}
+th{font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+td.n{font-variant-numeric:tabular-nums;text-align:center}
+tr.tot td{font-weight:700}
+.go{display:inline-flex;margin-top:18px;border-radius:999px;padding:14px 22px;background:#fff;color:#0A0A0C;font:600 15px var(--ui);text-decoration:none}
+@media (max-width:860px){.protos{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+ <span class="k">AIME INFINITY · laboratoire</span>
+ <h1>Trois mécaniques, une seule règle</h1>
+ <p>Les trois prototypes partagent la même grille 8 × 8 et la même règle de propagation : une case qui explose envoie une onde jusqu'à sa portée (anneaux) ou le long de sa ligne (trait). Seule change la façon de déclencher la première explosion. Jouez-les, puis comparez.</p>
+ <section class="protos">
+  <article class="proto" id="pA"><span class="k">A · Tir</span><h2>Lancer l'orbe</h2><canvas></canvas><div class="etat"><span class="s"></span><button type="button">Recommencer</button></div><p>Glissez depuis le bas pour viser, relâchez : l'orbe rebondit sur les parois et la première case touchée explose.</p></article>
+  <article class="proto choix" id="pB"><span class="k">B · Toucher · retenue</span><h2>Toucher une case</h2><canvas></canvas><div class="etat"><span class="s"></span><button type="button">Recommencer</button></div><p>Touchez une case : elle explose, son onde fait le reste.</p></article>
+  <article class="proto" id="pC"><span class="k">C · Fusion</span><h2>Réunir deux cases</h2><canvas></canvas><div class="etat"><span class="s"></span><button type="button">Recommencer</button></div><p>Glissez une case sur sa voisine de même puissance : elles fusionnent (puissance + 1) et la case fusionnée explose.</p></article>
+ </section>
+ <h2>Comparaison</h2>
+ <p>Notes de 1 à 5, après essais sur les mêmes grilles en simulation iPhone (390 px) et sur ordinateur. Ce sont des jugements de conception : à confirmer par de vrais joueurs.</p>
+ <div class="wrap"><table>
+  <thead><tr><th>Critère</th><th>A · Tir</th><th>B · Toucher</th><th>C · Fusion</th></tr></thead>
+  <tbody>
+   <tr><td>Plaisir immédiat</td><td class="n">4</td><td class="n">5</td><td class="n">3</td></tr>
+   <tr><td>Compréhension sans tutoriel</td><td class="n">3</td><td class="n">5</td><td class="n">2</td></tr>
+   <tr><td>Précision sur téléphone</td><td class="n">2</td><td class="n">4</td><td class="n">4</td></tr>
+   <tr><td>Profondeur stratégique</td><td class="n">3</td><td class="n">4</td><td class="n">4</td></tr>
+   <tr><td>Rejouabilité</td><td class="n">3</td><td class="n">4</td><td class="n">3</td></tr>
+   <tr><td>Fluidité</td><td class="n">4</td><td class="n">5</td><td class="n">4</td></tr>
+   <tr><td>Simplicité technique</td><td class="n">3</td><td class="n">5</td><td class="n">3</td></tr>
+   <tr><td>Défi partageable</td><td class="n">3</td><td class="n">5</td><td class="n">4</td></tr>
+   <tr class="tot"><td>Total</td><td class="n">25</td><td class="n">37</td><td class="n">27</td></tr>
+  </tbody></table></div>
+ <p><b>Choix : B, Toucher.</b> C'est la seule mécanique où le joueur relie immédiatement son geste à ce qui arrive (« j'ai provoqué ça »). Le tir ajoute une incertitude de geste qui brouille la causalité et pénalise le téléphone dès 16 × 16 ; la fusion demande d'apprendre deux règles avant le premier plaisir et rappelle trop les jeux de fusion existants. La profondeur de B vient du plateau lui-même : trouver les cases dont l'onde remonte le plus loin. Pour la précision sur les grandes grilles, le jeu final vise en glissant (loupe sous le doigt) et tire au relâcher : l'idée du tir est gardée pour le geste, pas pour la physique.</p>
+ <a class="go" href="/infinity/">Jouer à AIME INFINITY</a>
+</main>
+<script src="/infinity/js/regles.js"></script>
+<script src="/infinity/js/niveaux.js"></script>
+<script>
+(function(){"use strict";var R=AIMEInfinityRegles,NV=AIMEInfinityNiveaux;
+var PAL=[[251,113,133],[245,158,11],[124,92,255],[34,211,238]];function teinte(u){u=Math.max(0,Math.min(.999,u))*3;var i=Math.floor(u),f=u-i,a=PAL[i],b=PAL[i+1];return'rgb('+[0,1,2].map(function(k){return a[k]+(b[k]-a[k])*f|0}).join(',')+')'}
+/* un mini-moteur commun : grille 8 × 8, la même pour les trois, budget = optimum + 2 */
+function proto(el,mode){var cv=el.querySelector('canvas'),g=cv.getContext('2d'),base=NV.niveau(3,'labo'),n=8,k,viv,act,bud,anim=[],W,H,c,ox,oy,vise=null,orbe=null,glisse=null;
+ function init(){k=Int8Array.from(base.cases);viv=new Uint8Array(n*n).fill(1);act=0;bud=base.optimum+2;anim=[];orbe=null;etat();dessiner()}
+ function taille(){var r=cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);cv.width=r.width*d;cv.height=r.height*d;g.setTransform(d,0,0,d,0,0);W=r.width;H=r.height;c=Math.floor((W-16)/n);ox=(W-c*n)/2;oy=8;dessiner()}
+ function reste(){var s=0;for(var i=0;i<n*n;i++)s+=viv[i];return s}
+ function etat(){var r=reste();el.querySelector('.s').textContent=(r?r+' cases · ':'Vidée · ')+(bud-act)+' action'+(bud-act>1?'s':'')}
+ function exploser(i){if(!viv[i])return;var r=R.cascade(n,k,viv,i),t0=performance.now();r.ordre.forEach(function(j){viv[j]=0;anim.push({i:j,t:t0+r.t[j]*45})});act++;etat();boucle()}
+ function dessiner(){if(!W)return;var now=performance.now();g.clearRect(0,0,W,H);
+  for(var i=0;i<n*n;i++){var x=ox+(i%n)*c,y=oy+((i/n)|0)*c,a=anim.filter(function(e){return e.i===i})[0],vis=viv[i]||(a&&now<a.t);if(!vis&&!(a&&now-a.t<250))continue;
+   var col=teinte(((i%n)+((i/n)|0))/14*.85),t=k[i];g.globalAlpha=vis?1:1-(now-a.t)/250;g.fillStyle=col;g.globalAlpha*=t===0?.15:t>=4?.3:[0,.25,.38,.55][t];g.fillRect(x+3,y+3,c-6,c-6);g.globalAlpha=vis?1:1-(now-a.t)/250;
+   g.strokeStyle=col;g.lineWidth=2;if(t>=1&&t<=3)for(var q=0;q<t;q++){var s=c*(.36-q*.12);g.strokeRect(x+s,y+s,c-2*s,c-2*s)}else if(t===0){g.fillStyle=col;g.fillRect(x+c/2-2,y+c/2-2,4,4)}else{g.strokeStyle='#fff';g.beginPath();if(t===4){g.moveTo(x+c*.2,y+c/2);g.lineTo(x+c*.8,y+c/2)}else{g.moveTo(x+c/2,y+c*.2);g.lineTo(x+c/2,y+c*.8)}g.stroke()}
+   if(vise===i){g.strokeStyle='#fff';g.strokeRect(x+1,y+1,c-2,c-2)}g.globalAlpha=1}
+  if(mode==='A'){var lx=W/2,ly=oy+n*c+(H-oy-n*c)/2;g.fillStyle='#fff';g.beginPath();g.arc(lx,ly,7,0,6.283);g.fill();
+   if(glisse){g.setLineDash([4,5]);g.strokeStyle='rgba(255,255,255,.6)';g.beginPath();g.moveTo(lx,ly);g.lineTo(lx+glisse.dx*80,ly+glisse.dy*80);g.stroke();g.setLineDash([])}
+   if(orbe){var gr=g.createRadialGradient(orbe.x,orbe.y,1,orbe.x,orbe.y,9);gr.addColorStop(0,'#fff');gr.addColorStop(.5,'#FB7185');gr.addColorStop(1,'rgba(124,92,255,0)');g.fillStyle=gr;g.beginPath();g.arc(orbe.x,orbe.y,9,0,6.283);g.fill()}}
+  return anim.some(function(e){return now-e.t<250})||!!orbe}
+ var on=false;function boucle(){if(on)return;on=true;requestAnimationFrame(function f(){var plus=dessiner();if(orbe)avancer();if(plus||orbe)requestAnimationFrame(f);else{on=false;anim=[]}})}
+ function caseA(e){var r=cv.getBoundingClientRect(),x=e.clientX-r.left-ox,y=e.clientY-r.top-oy,u=Math.floor(x/c),v=Math.floor(y/c);return u>=0&&v>=0&&u<n&&v<n?v*n+u:-1}
+ /* A · l'orbe : trajectoire droite, rebonds sur les parois, la première case vivante touchée explose */
+ function avancer(){for(var s=0;s<4;s++){orbe.x+=orbe.vx;orbe.y+=orbe.vy;if(orbe.x<ox+6||orbe.x>ox+n*c-6)orbe.vx*=-1;if(orbe.y<oy+6)orbe.vy*=-1;
+   var u=Math.floor((orbe.x-ox)/c),v=Math.floor((orbe.y-oy)/c);if(u>=0&&v>=0&&u<n&&v<n&&viv[v*n+u]){orbe=null;exploser(v*n+u);return}
+   if(orbe.y>H){orbe=null;act++;etat();return}}}
+ cv.addEventListener('pointerdown',function(e){if(act>=bud)return;try{cv.setPointerCapture(e.pointerId)}catch(_){}
+  if(mode==='A'){if(orbe)return;glisse={dx:0,dy:-1};return}var i=caseA(e);if(i<0||!viv[i])return;vise=i;glisse={i:i};dessiner()});
+ cv.addEventListener('pointermove',function(e){if(!glisse)return;if(mode==='A'){var r=cv.getBoundingClientRect(),lx=W/2,ly=oy+n*c+(H-oy-n*c)/2,dx=e.clientX-r.left-lx,dy=Math.min(-8,e.clientY-r.top-ly),L=Math.hypot(dx,dy);glisse={dx:dx/L,dy:dy/L};dessiner();return}var i=caseA(e);vise=i>=0&&viv[i]?i:null;dessiner()});
+ cv.addEventListener('pointerup',function(e){if(!glisse)return;var gs=glisse;glisse=null;
+  if(mode==='A'){var lx=W/2,ly=oy+n*c+(H-oy-n*c)/2;orbe={x:lx,y:ly,vx:gs.dx*2.2,vy:gs.dy*2.2};boucle();return}
+  var i=caseA(e);vise=null;if(mode==='B'){if(i===gs.i)exploser(i);dessiner();return}
+  /* C · fusion : la case glissée rejoint une voisine directe de même puissance */
+  var a=gs.i,b=i;if(b<0||b===a||!viv[b]){dessiner();return}var ax=a%n,ay=(a/n)|0,bx=b%n,by=(b/n)|0;if(Math.abs(ax-bx)+Math.abs(ay-by)!==1||k[a]!==k[b]||k[a]>=4){dessiner();return}
+  k[b]=k[a]>=3?(ay===by?R.RAYON_H:R.RAYON_V):k[a]+1;viv[a]=0;anim.push({i:a,t:performance.now()});exploser(b)});
+ el.querySelector('button').addEventListener('click',init);addEventListener('resize',taille);init();taille()}
+proto(document.getElementById('pA'),'A');proto(document.getElementById('pB'),'B');proto(document.getElementById('pC'),'C');
+})();
+</script>
+</body>
+</html>
