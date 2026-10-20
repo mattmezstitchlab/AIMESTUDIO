@@ -161,3 +161,44 @@ Rien n'ira sur `main` sans votre validation explicite de l'étape correspondante
 | Focus | Transition animée (View Transitions quand le navigateur la propose, sinon instantané ; rien si « réduire les animations »). « Miniatures suivent / figées » : figées = plus de défilement ni d'animation (pause de `requestAnimationFrame`, des animations CSS et des vidéos), reprise exacte à la sortie. | Miniature figée : 0 image calculée en 0,5 s [mesuré] ; Échap → grille, liens d'origine rétablis |
 | Fluidité | `/tout/` et `/synchroview/` au même rythme dans le même navigateur de test. | 4 et 4 images/s (navigateur sans carte graphique : valeurs relatives) [mesuré] |
 | Non-régression | `/tout/` : aucune ligne modifiée (`git diff main -- tout/` vide). | [mesuré] |
+
+## 10. Étape 2 · règles d'accès vérifiées côté serveur (branche `synchroview`)
+
+Validé par vous : Moi = owner, Coordinateur = editor, Pro = contributor, Participant = guest ; Lecture seule = viewer, cinquième profil disponible dans le sélecteur de chaque vue (aucune fenêtre ajoutée).
+
+### Ce qui est en place
+| Fichier | Rôle |
+|---|---|
+| `synchroview/permissions.js` | Les règles, une seule source, utilisée par le serveur et par l'interface. Refus par défaut (action inconnue, rôle inconnu, erreur). |
+| `synchroview/profiles.js` | Les profils : un nom + une identité de test. **Aucun rôle** : profils et rôles sont configurables séparément. |
+| `api/_sv/core.js` | Identités de test et ressources **fictives**, gardées côté serveur. Le rôle vient de l'appartenance à l'espace, jamais de la requête. Désactivé en production (404). |
+| `api/sv/check` | Évalue, côté serveur, ce qu'une identité peut faire sur chaque élément. |
+| `api/sv/act` | Revérifie l'action au moment du clic : 403 si refusée, sinon effet simulé (rien n'est enregistré) et seulement les données que la règle permet. |
+| `api/sv/tx` | Autorisation propre à **une** transaction (paiement), signée, liée à la personne, au paiement et au montant, valable 60 s. |
+| `synchroview/demo/` | La page de démonstration : un même document, un même événement, une même action, des données personnelles, les membres et l'espace. Les boutons suivent la réponse du serveur ; « Montrer aussi les boutons masqués » permet de vérifier que le serveur refuse quand même. |
+| `tests/permissions.test.cjs` | 147 tests : chaque case de la matrice pour les 5 rôles, et les cas de paiement. |
+| `tests/sv-api.test.cjs` | 17 tests côté serveur : rôle envoyé par le navigateur ignoré, identité inconnue, production fermée, document non autorisé sans contenu, données d'un autre participant, paiement sans autorisation, autorisation réutilisée par une autre personne, autorisation falsifiée, suppression de l'espace. |
+
+### Les six corrections, et où elles sont appliquées
+1. **Documents** : lecture seulement pour l'auteur et les personnes **explicitement** autorisées sur ce document — même le propriétaire et la coordination n'y accèdent pas sans autorisation. Partage : l'auteur, ou le propriétaire s'il est lui-même autorisé.
+2. **Contributeurs** : modifient seulement les moments qui leur sont attribués ou qu'ils ont créés ; suppriment seulement les leurs ; documents : les leurs.
+3. **Données personnelles** : chacun voit et modifie les siennes ; seule l'organisation (propriétaire, coordination) lit celles des autres ; prestataires et lecteurs n'ont qu'un résumé sans noms ; un invité ne voit que ses propres réponses.
+4. **Paiements** : il faut le bon rôle **et** une autorisation propre à la transaction (demandée, confirmée, signée par le serveur, 60 s, liée à la personne, au paiement et au montant).
+5. **Membres et invitations** : le propriétaire invite tout rôle sauf propriétaire et change les rôles ; la coordination n'invite que des lecteurs ou des invités ; les autres, rien.
+6. **Supprimer l'espace** : propriétaire seul.
+
+### Résultat de la démonstration (mesuré, navigateur automatisé, serveur local identique aux fonctions Vercel)
+| | Moi (owner) | Pro (contributor) | Participant (guest) | Coordinateur (editor) | Lecture seule (viewer) |
+|---|---|---|---|---|---|
+| **Document** « Contrat » · ouvrir | Autorisé (autorisation explicite) | Autorisé (auteur) | Refusé | Refusé (pas d'autorisation explicite) | Refusé |
+| **Événement** « Séance photo » · modifier | Autorisé | Autorisé (attribué) | Refusé | Autorisé | Refusé |
+| **Action** « Payer 360 € » | Autorisé après confirmation de la transaction → 200, effet simulé | Refusé | Refusé (403 même bouton forcé) | Refusé | Refusé |
+| Réponse de Nina | Autorisé | Refusé | Refusé (403) | Autorisé | Refusé |
+| Supprimer l'espace | Autorisé (simulé) | Refusé | Refusé (403 même bouton forcé) | Refusé | Refusé |
+
+Dans SynchroView (Inspecter), chaque cas affiche **Interface** (Visible / Masqué, preuve « observation ») et **Règles** (Autorisé / Refusé, preuve « serveur », ou « test » une fois le clic exécuté), et signale seulement les vraies incohérences : un bouton affiché alors que le serveur refuse, ou masqué alors qu'il autorise.
+
+### Limites assumées de cette étape
+- Les identités sont des **identités de test fictives** choisies par le profil de la vue ; il n'y a pas encore de connexion. Le serveur ne fait confiance qu'à son propre tableau d'appartenance, mais n'importe qui peut demander « en tant que » une identité de test : c'est acceptable pour des données fictives sur une preview, **pas pour de vraies données** → étape 3 (vrais comptes de test, sessions).
+- Autorisation de transaction : signée avec `SV_DEMO_SECRET` s'il existe, sinon avec une valeur de démonstration ; pas de mémoire d'usage unique (fonctions sans état). L'étape 3 ajoutera un vrai secret et un usage unique en base.
+- Les fonctions répondent 404 en production : rien de cela n'est exposé sur lemondeaime.com.
