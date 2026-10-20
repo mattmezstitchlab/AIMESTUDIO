@@ -78,7 +78,7 @@ function win(i){try{return FR[i].contentWindow}catch(_){return null}}
 function inner(i){var w=win(i);if(!w||!w.document||!w.document.documentElement)return 1;return Math.max(1,w.document.documentElement.scrollHeight-w.innerHeight)}
 function marks(){var w=win(0);if(!w||!w.document.getElementById('naiss'))return;var D=w.document,M=inner(0),n=D.getElementById('naiss'),ih=w.innerHeight;
  MARKS=[['','Accueil',0]];CHN.forEach(function(c,i){MARKS.push([i===0?'I':'',c,(n.offsetTop+(n.offsetHeight-ih)*(i+.3)/12)/M])});
- [['II','Le cube','story'],['III','Votre carte','story2'],['IV','La causalité','story3'],['V','Votre site','build']].forEach(function(s){var e=D.getElementById(s[2]);if(e)MARKS.push([s[0],s[1],Math.min(1,e.offsetTop/M)])});
+ [['II','Votre cube','story2'],['III','La causalité','story3'],['IV','Votre site','build']].forEach(function(s){var e=D.getElementById(s[2]);if(e)MARKS.push([s[0],s[1],Math.min(1,e.offsetTop/M)])});
  idx.innerHTML='<h2>La page</h2>'+MARKS.map(function(m,i){return'<button type="button" data-k="'+i+'"><span>'+m[0]+'</span>'+m[1]+'</button>'}).join('')+'<h2>Ailleurs</h2><a href="/lab/orb/">Le Lab</a>';
  spacer.style.setProperty('--sh',Math.round(M*.6+innerHeight)+'px')}
 function T(){var m=document.documentElement.scrollHeight-innerHeight;return m>0?Math.min(1,scrollY/m):0}
