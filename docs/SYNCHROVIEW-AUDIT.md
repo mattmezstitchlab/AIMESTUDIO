@@ -278,3 +278,39 @@ Synchronisation par sections · vues liées ou libres · 4 cartes ou 4 formats (
 3. Parcours rejoués en même temps dans toutes les vues, sans agent (n° 5).
 4. Ouverture à d'autres applications avec le pont configurable (n° 3), puis accès extérieur (n° 7).
 L'étape 3 (vraies identités) peut avancer en parallèle, elle ne bloque pas 1 à 3.
+
+## 13. Vues libres (branche `synchroview`)
+
+### Le moteur supportait-il un nombre variable de vues ?
+Oui pour l'essentiel : la grille (choix automatique du nombre de colonnes), la mise à l'échelle, la ligne de temps par sections, le focus, l'inspection et les vues liées/libres travaillaient déjà sur une liste de vues de longueur quelconque. Seuls trois points étaient figés et ont été adaptés : la fabrication des vues (deux axes fixes « 4 modes » / « 4 formats »), l'adresse (paramètres par axe) et l'origine des messages (une seule origine pour toutes les vues).
+
+### Ce qui change
+- Chaque vue choisit **indépendamment** : page (le site, la démo des droits), carte d'usage, format (iPhone, iPad, ordinateur, écran large) et version.
+- **Dispositions 1, 2, 4, 6** (boutons), **+** pour ajouter une vue (jusqu'à 6), **×** pour en retirer une, **← →** pour réordonner. Le réordonnancement change l'ordre d'affichage sans déplacer les cadres : rien n'est rechargé (vérifié).
+- **Modèles** « 4 cartes » et « 4 formats » : reconstruisent les deux configurations d'avant à partir de la première vue.
+- Par défaut : les quatre cartes en ordinateur, comme avant.
+- **Versions** : seule « Cette version » est active. « Production » apparaît désactivée avec sa raison : elle n'a pas encore le pont et n'autorise pas l'encadrement par SynchroView. Chaque vue a sa propre origine ; les messages ne sont acceptés que de l'origine de la vue qui les envoie, et envoyés vers elle seule.
+- **Vues identiques** : chaque vue est reconnue par son propre cadre, pas par sa configuration ; les noms se distinguent automatiquement (« Moi · Ordinateur », « Moi · Ordinateur (2) »).
+- **Adresse** : `v=page.carte.format.version,…`. Les anciennes adresses (`axis`, `format`, `mode`, `pf`, `src`, `lk`, `fx`, `fz`, `at`, `act`) restent lues et donnent les mêmes vues ; les compositions déjà enregistrées s'ouvrent comme avant.
+
+### Tests (navigateur automatisé, serveur local identique aux fonctions Vercel)
+| Test | Résultat |
+|---|---|
+| Défaut | 4 vues Moi, Pro, Participant, Coordinateur, 2 × 2, adresse sans `v` |
+| Anciennes adresses : `axis=formats&mode=pro` · `pf=moi,pro&format=ipad` · `src=/synchroview/demo/&pf=moi,viewer` · `lk=1000&fx=0&fz=1` | 4 formats en Pro · 2 vues iPad · démo Moi + Lecture seule · focus sur Moi, 3 miniatures figées : identique à avant |
+| Dispositions 1, 2, 4, 6 | 1 × 1, 2 × 1, 2 × 2, 3 × 2 ; aucun débordement horizontal |
+| Réglages par vue (page, carte, format) | appliqués à la seule vue modifiée ; Lecture seule proposée seulement sur la démo |
+| Trois vues identiques (Moi, Ordinateur) + une autre | noms distincts ; même section « Votre cube » : haut de section à −4 px dans les 4 vues ; l'inspecteur retrouve l'élément dans les 4 |
+| Réordonner | ordre changé, cadre non rechargé, synchronisation intacte (−4 px partout) |
+| Retirer / ajouter | 4 → 3 → 4 vues |
+| Focus à 6 vues | 1 grande + 5 miniatures, figées ; Échap → grille 3 × 2, aucune vue restée figée ni libre |
+| Composition « Six vues mixtes » enregistrée puis rouverte | identique |
+| Fluidité (même défilement scripté) | `/tout/` 4 · SynchroView 1 vue 6 · 4 vues 4 · 6 vues 4 images/s (navigateur sans carte graphique : valeurs relatives ; 6 vues ne ralentissent pas plus que 4) |
+| Responsive, 6 vues mixtes | 390 px : pas de débordement, vues de 173 px · 820 px : 388 px · 1280 px : 333 px |
+| `/tout/` | inchangé (`git diff main -- tout/` vide) |
+
+### Limites
+- Une seule version comparable aujourd'hui (celle de la preview). Comparer la production ou une autre branche demandera le pont et une autorisation d'encadrement de ces versions (étape suivante possible, à valider).
+- Sur téléphone, 6 vues sont minuscules et les réglages de chaque vue sont serrés : l'usage visé reste l'ordinateur ou la tablette.
+- Les pages disponibles sont la landing AIME et la démo des droits ; d'autres pages s'ajoutent par la liste `PAGES` à condition d'avoir le pont.
+- Les valeurs de fluidité viennent d'un navigateur sans carte graphique : elles servent à comparer, pas à mesurer.
