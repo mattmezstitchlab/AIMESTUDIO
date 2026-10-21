@@ -73,5 +73,5 @@ test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
  const v=JSON.parse(fs.readFileSync(R('vercel.json'))),rw=v.rewrites||[],A=['accessibilite','buro','docs','image','stitchlab','web'];
  const st=fs.readFileSync(R('studio/index.html'),'utf8');assert.match(st,/location\.pathname\.match\(\/\^\\\/\(accessibilite\|buro\|docs\|image\|stitchlab\|web\)/,'l\'atelier se lit dans l\'adresse');
  const ATS=st.match(/const ATELIERS=\{([^\n]*?)\};/);for(const a of A){assert.ok(ATS&&new RegExp('\\b'+a+':\\{').test(ATS[1]),a+' est un atelier connu du Studio');
-  assert.ok(!fs.existsSync(R(a+'/index.html')),a+'/index.html : copie revenue');for(const s of ['/'+a,'/'+a+'/'])assert.ok(rw.some(r=>r.source===s&&r.destination==='/studio/index.html'),s+' réécrit vers le Studio')}
+  assert.ok(!fs.existsSync(R(a+'/index.html')),a+'/index.html : copie revenue');for(const s of ['/'+a,'/'+a+'/'])assert.ok(rw.some(r=>r.source===s&&r.destination==='/studio/'),s+' réécrit vers le Studio')}
  assert.ok(fs.existsSync(R('docs/BUREAU.md')),'les documents de /docs/ restent servis')});

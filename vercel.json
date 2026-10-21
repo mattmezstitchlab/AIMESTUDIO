@@ -23,51 +23,51 @@
   "rewrites": [
     {
       "source": "/accessibilite",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/accessibilite/",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/buro",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/buro/",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/docs",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/docs/",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/image",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/image/",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/stitchlab",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/stitchlab/",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/web",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     },
     {
       "source": "/web/",
-      "destination": "/studio/index.html"
+      "destination": "/studio/"
     }
   ],
   "redirects": [
