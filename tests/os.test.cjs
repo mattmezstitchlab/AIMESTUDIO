@@ -49,3 +49,11 @@ test('OS · en tapant « devis », l\'action passe avant l\'app qui en parle', (
   const app = A.chercher(q, c)[0], act = A.chercher(q, A.ACTIONS)[0];
   assert.ok(A.pertinence(q, act) > A.pertinence(q, app));
 });
+
+test('OS · autonomie de l\'orbe : le visiteur l\'emporte, à la demande par défaut', () => {
+  assert.equal(A.autonomie('active', 'discrete'), 'discrete');
+  assert.equal(A.autonomie('attentive', null), 'attentive');
+  assert.equal(A.autonomie(undefined, undefined), 'discrete');
+  assert.equal(A.etat({ orbe: 'active' }).orbe, 'active'); assert.equal(A.etat({ orbe: 'tout' }).orbe, null);
+  const h = fs.readFileSync('bureau/index.html', 'utf8'); assert.match(h, /id="orbePref"/); assert.match(h, /id="orbeBulle"/);
+});

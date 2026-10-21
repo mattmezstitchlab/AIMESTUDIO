@@ -53,7 +53,7 @@ function charge(w){w.charge.classList.add('fini');var cw=w.frame.contentWindow,p
  if(/^\/bureau\/?(index\.html)?([?#]|$)/.test(p)){w.frame.src='/bureau/espace/';return}
  if(p){w.href=A.adresseApp(p);enregistrer()}
  w.el.querySelector('.fen-sous').textContent=t&&t.indexOf(w.app.nom)<0?t.replace(/\s*[·|–-]\s*AIME.*$/,''):'';
- try{cw.addEventListener('keydown',raccourcis);cw.addEventListener('pointerdown',function(){focaliser(w)})}catch(e){}
+ try{cw.addEventListener('keydown',raccourcis);cw.addEventListener('pointerdown',function(){focaliser(w)});['pointermove','keydown','scroll'].forEach(function(ev){cw.addEventListener(ev,activite,{passive:true})})}catch(e){}
  if(w.id===focusId)majContexte()}
 function focaliser(w){if(!w)return;focusId=w.id;w.el.style.zIndex=++z;fen.forEach(function(x){x.el.classList.toggle('focus',x===w)});$('appCourante').textContent=w.app.nom;majDock();majContexte()}
 function fenDe(el){var id=el&&el.closest&&el.closest('.fen');id=id&&id.dataset.id;return fen.filter(function(w){return w.id===id})[0]}
@@ -121,19 +121,31 @@ $('tout').addEventListener('click',function(e){if(e.target.closest('[data-fermer
 /* ---------- l'orbe système ---------- */
 function courante(){return fen.filter(function(w){return w.id===focusId})[0]||null}
 function majContexte(){if(!$('orbePan').hidden)remplirOrbe()}
-function remplirOrbe(){var w=courante(),a=w&&w.app,o=a&&cfg&&R?R.orbeDe(cfg,a.id):null,L=[];
+function suggestions(){var w=courante(),a=w&&w.app,o=a&&cfg&&R?R.orbeDe(cfg,a.id):null,L=[];
+ if(o&&o.presence!=='aucune')o.suggestions.forEach(function(s){L.push({nom:s.libelle,aide:'Pour '+a.nom,cible:s.cible,pourquoi:s.pourquoi||'Choisie par le propriétaire de '+a.nom+' dans la Régie.',site:true})});
+ if(B){try{var r=B.reprendre(B.inventaire(localStorage),1)[0];if(r)L.push({nom:'Reprendre : '+r.titre,aide:r.detail,cible:r.lien,pourquoi:'C\'est le projet modifié le plus récemment dans ce navigateur.'})}catch(e){}}
+ if(a&&a.id!=='regie')L.push({nom:'Régler l\'orbe de '+a.nom,aide:'Présence, autonomie, suggestions',cible:'/regie/#orbe',pourquoi:'Vous décidez de ce que l\'orbe dit et fait sur chaque site.'});
+ L.push({nom:'Rechercher une app, un projet, une action',aide:'Ctrl K',cible:'palette',pourquoi:'Toujours disponible, partout dans l\'OS.'});return{w:w,a:a,o:o,L:L.slice(0,7)}}
+function agir(s,w){fermerTout();if(s.cible==='palette')return ouvrirPalette();if(/^https:/.test(s.cible))return window.open(s.cible,'_blank','noopener');
+ if(s.cible.charAt(0)==='#'&&w){try{w.frame.contentWindow.location.hash=s.cible}catch(_){}return}ouvrir(appDe(s.cible).id,s.cible)}
+function remplirOrbe(){var S=suggestions(),a=S.a,o=S.o,L=S.L;
  $('orbeDit').textContent=a?(o&&o.accueil?o.accueil:'Vous êtes dans '+a.nom+'. Voici ce que je peux vous proposer.'):'Que voulez-vous faire ?';
- if(o&&o.presence!=='aucune')o.suggestions.forEach(function(s){L.push({nom:s.libelle,aide:'Suggestion réglée pour '+a.nom+' dans la Régie',cible:s.cible})});
- if(B){try{var r=B.reprendre(B.inventaire(localStorage),1)[0];if(r)L.push({nom:'Reprendre : '+r.titre,aide:r.detail,cible:r.lien})}catch(e){}}
- if(a&&a.id!=='regie')L.push({nom:'Régler l\'orbe de '+a.nom,aide:'Présence, suggestions, compagnon',cible:'/regie/#orbe'});
- L.push({nom:'Rechercher une app, un projet, une action',aide:'Ctrl K',cible:'palette'});
- $('orbeSugg').innerHTML=L.slice(0,7).map(function(s,i){return'<button type="button" data-s="'+i+'">'+esc(s.nom)+(s.aide?'<small>'+esc(s.aide)+'</small>':'')+'</button>'}).join('');
- $('orbeSugg').onclick=function(e){var b=e.target.closest('[data-s]');if(!b)return;var s=L[+b.dataset.s];fermerTout();
-  if(s.cible==='palette')return ouvrirPalette();if(/^https:/.test(s.cible))return window.open(s.cible,'_blank','noopener');
-  if(s.cible.charAt(0)==='#'&&w){try{w.frame.contentWindow.location.hash=s.cible}catch(_){}return}ouvrir(appDe(s.cible).id,s.cible)}}
+ $('orbeSugg').innerHTML=L.map(function(s,i){return'<div class="rg-l"><button type="button" data-s="'+i+'">'+esc(s.nom)+(s.aide?'<small>'+esc(s.aide)+'</small>':'')+'</button><button type="button" class="q" data-q="'+i+'" aria-expanded="false" aria-controls="pq-'+i+'" aria-label="Pourquoi : '+esc(s.nom)+'">?</button><p class="pq" id="pq-'+i+'" hidden>'+esc(s.pourquoi)+'</p></div>'}).join('');
+ $('orbeSugg').onclick=function(e){var q=e.target.closest('[data-q]');if(q){var p=$('pq-'+q.dataset.q);p.hidden=!p.hidden;q.setAttribute('aria-expanded',String(!p.hidden));return}var b=e.target.closest('[data-s]');if(b)agir(L[+b.dataset.s],S.w)};
+ $('orbePref').value=etat.orbe||''}
+$('orbePref').onchange=function(){etat.orbe=this.value||null;ecrire(CLE,A.etat(Object.assign({},etat,{fenetres:etat.fenetres})));annoncer(this.value?'Réglage de l\'orbe enregistré.':'L\'orbe suit le réglage de chaque site.')};
+/* autonomie : à la première vraie pause dans une app, l'orbe propose (bulle) ou s'ouvre, selon le site et le choix du visiteur ; une fois par app et par visite */
+var dejaPropose={},tPause=0;
+function activite(){clearTimeout(tPause);tPause=setTimeout(pauseOrbe,8000)}
+function pauseOrbe(){var S=suggestions();if(!S.a||dejaPropose[S.a.id]||document.hidden)return;var site=S.o&&S.o.presence!=='aucune'?S.o.autonomie:'discrete',niv=A.autonomie(site,etat.orbe),n=S.L.filter(function(x){return x.site}).length;
+ if(niv==='discrete'||!n||!$('palette').hidden||!$('tout').hidden||!$('orbePan').hidden)return;dejaPropose[S.a.id]=true;
+ if(niv==='active'){remplirOrbe();$('orbePan').hidden=false;$('orbeBtn').setAttribute('aria-expanded','true');annoncer('L\'orbe propose '+n+' suggestion'+(n>1?'s':'')+' pour '+S.a.nom+'.');return}
+ $('orbeBulleT').textContent=(n>1?n+' suggestions':'Une suggestion')+' pour '+S.a.nom;$('orbeBulle').hidden=false}
+$('orbeBulleVoir').onclick=function(){$('orbeBulle').hidden=true;$('orbeBtn').click()};$('orbeBulleNon').onclick=function(){$('orbeBulle').hidden=true};
+['pointermove','keydown','scroll'].forEach(function(ev){addEventListener(ev,activite,{passive:true})});
 $('orbeBtn').onclick=function(){var ouvert=!$('orbePan').hidden;fermerTout();if(ouvert)return;remplirOrbe();$('orbePan').hidden=false;this.setAttribute('aria-expanded','true');var f=$('orbeSugg').querySelector('button');f&&f.focus()};
 
-function fermerTout(){['voile','palette','tout','orbePan'].forEach(function(id){$(id).hidden=true});$('orbeBtn').setAttribute('aria-expanded','false')}
+function fermerTout(){['voile','palette','tout','orbePan','orbeBulle'].forEach(function(id){$(id).hidden=true});$('orbeBtn').setAttribute('aria-expanded','false')}
 $('voile').onclick=fermerTout;
 function raccourcis(e){if((e.ctrlKey||e.metaKey)&&!e.altKey&&(e.key==='k'||e.key==='K')){e.preventDefault();ouvrirPalette()}else if(e.key==='Escape'){var ouvert=!$('palette').hidden||!$('tout').hidden||!$('orbePan').hidden;if(ouvert){e.preventDefault();fermerTout();($('lanceur-q')).blur()}}}
 document.addEventListener('keydown',raccourcis);

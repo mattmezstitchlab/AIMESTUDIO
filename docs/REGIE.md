@@ -27,3 +27,9 @@ L'espace d'administration du site : une page, sept vues. Elle n'est pas indexée
 - Pas de connexion : la régie est utilisable par quiconque ouvre `/regie/`, mais elle n'agit que sur **son propre navigateur** ; rien ne devient public sans fusion dans le dépôt.
 - Un site extérieur peut refuser d'être affiché dans un écran (en-têtes anti-cadre) : utiliser une capture.
 - La facturation électronique obligatoire (réception 2026, émission 2027 pour les micro-entreprises, calendrier à confirmer) passera par une plateforme agréée ; la régie produit des documents conformes à imprimer ou envoyer en PDF en attendant.
+
+## Phase 1 (réforme 2027, orbe explicable)
+
+- **Factures** : nature de l'opération (services, biens, mixte) et adresse de livraison si différente, imprimées ; SIREN du client professionnel exigé pour toute facture datée du 1er septembre 2027 ou après (avant : un avertissement). Source : [economie.gouv.fr, mentions obligatoires](https://economie.gouv.fr/entreprises/factures-mentions-obligatoires).
+- **Factur-X (XML)** : pour une facture ou un avoir émis, le fichier XML CII (norme EN 16931, profil BASIC), TVA catégorie E avec le motif de franchise, IBAN, échéance, facture d'origine pour un avoir. C'est la partie « données » de la facture électronique : la **plateforme agréée** produit et transmet le document final. À faire valider par elle et par votre expert-comptable.
+- **Orbe** : trois niveaux d'autonomie par site (« à la demande », « propose aux pauses », « s'ouvre d'elle-même aux pauses ») ; une pause = une action puis 8 s sans rien, une seule fois par page. Chaque suggestion a son « ? » (le pourquoi écrit dans la Régie), et « Pourquoi ces suggestions ? » dit la règle. Le visiteur peut faire taire l'orbe sur un site ; dans l'OS, son propre choix l'emporte sur celui du site.

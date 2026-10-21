@@ -85,3 +85,31 @@ test('régie · la scène est chargée sur les sites, et Le Monde AIME lui laiss
   assert.match(s, /e\.origin!==location\.origin\|\|e\.source!==parent/, 'messages de la régie : même origine, cadre parent seulement');
   assert.ok(!/innerHTML\s*=/.test(s), 'la scène n\'écrit jamais de HTML venu de la configuration');
 });
+
+test('réforme 2027 · nature, livraison, SIREN du client pro, et Factur-X (XML CII, profil BASIC)', () => {
+  let c = R.comptaVide();
+  Object.assign(c.emetteur, { nom: 'Prénom Nom', adresse: '1 rue Fictive\n75000 Paris', siren: '123456789', iban: 'FR76 0000 0000 0000 0000 0000 000' });
+  c.clients.push(R.client({ id: 'c-pro', societe: 'Atelier <Fictif> & Cie', nom: 'Camille', adresse: '2 avenue Fictive, 44000 Nantes', pro: true }));
+  c.docs.push(R.doc({ id: 'f-a', type: 'facture', clientId: 'c-pro', prestation: 'Octobre 2026', nature: 'services', livraison: '3 quai Fictif, 44000 Nantes', lignes: [{ designation: 'Site vitrine', quantite: 1, pu: 1200 }] }));
+  assert.equal(c.docs[0].nature, 'services'); assert.equal(R.doc({ nature: 'pirate' }).nature, 'services');
+  assert.ok(R.avertissements(c, c.docs[0]).some(x => /SIREN du client/.test(x)), 'prévenu avant la réforme');
+  const avant = R.emettre(c, 'f-a', '2026-10-21'); assert.equal(avant.docs[0].numero, 'F-2026-001', 'avant le 1er sept. 2027 : émise, avec un avertissement');
+  c.docs.push(R.doc({ id: 'f-b', type: 'facture', clientId: 'c-pro', prestation: 'Sept. 2027', lignes: [{ designation: 'Maintenance', quantite: 1, pu: 80 }] }));
+  assert.throws(() => R.emettre(c, 'f-b', '2027-09-02'), /SIREN du client/, 'après : le SIREN du client pro est exigé');
+  const m = R.mentions(avant.docs[0]); assert.ok(m.some(x => /Nature de l'opération : prestation de services/.test(x)));
+  const x = R.facturX(avant.docs[0]);
+  for (const t of ['urn:factur-x.eu:1p0:basic', '<ram:ID>F-2026-001</ram:ID>', '<ram:TypeCode>380</ram:TypeCode>', 'format="102">20261021<', '<ram:ID schemeID="0002">123456789</ram:ID>', '<ram:CategoryCode>E</ram:CategoryCode>', '293 B', '<ram:GrandTotalAmount>1200.00</ram:GrandTotalAmount>', '<ram:IBANID>FR7600000000000000000000000</ram:IBANID>', '<ram:PostcodeCode>44000</ram:PostcodeCode>', '<ram:CityName>Nantes</ram:CityName>', 'ShipToTradeParty'])
+    assert.ok(x.includes(t), t);
+  assert.ok(x.includes('Atelier &lt;Fictif&gt; &amp; Cie') && !x.includes('<Fictif>'), 'échappé');
+  assert.throws(() => R.facturX(c.docs[1]), /émis/);
+  const av = R.avoirDe(avant, 'f-a'), a2 = R.emettre(av.compta, av.id, '2026-10-22'), ad = a2.docs.find(d => d.id === av.id);
+  const xa = R.facturX(ad, a2.docs.find(d => d.id === 'f-a')); assert.ok(xa.includes('<ram:TypeCode>381</ram:TypeCode>') && xa.includes('<ram:IssuerAssignedID>F-2026-001</ram:IssuerAssignedID>'), 'avoir : type 381 et facture d\'origine');
+  assert.deepEqual(R.adresse('2 avenue Fictive, 44000 Nantes'), { ligne: '2 avenue Fictive', cp: '44000', ville: 'Nantes' });
+});
+
+test('orbe · autonomie et « pourquoi » par suggestion, assainis', () => {
+  const o = R.orbe({ autonomie: 'pirate', suggestions: [{ libelle: 'Voir', cible: '/g44/', pourquoi: 'x'.repeat(500) }] });
+  assert.equal(o.autonomie, 'discrete', 'à la demande par défaut'); assert.equal(o.suggestions[0].pourquoi.length, 160);
+  assert.equal(R.orbe({ autonomie: 'attentive' }).autonomie, 'attentive');
+  const s = fs.readFileSync('regie/scene.js', 'utf8'); assert.match(s, /Pourquoi ces suggestions/); assert.match(s, /aime-orbe-silence:/, 'le visiteur peut faire taire l\'orbe'); assert.match(s, /8000/, 'attend une vraie pause');
+});

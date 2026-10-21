@@ -64,6 +64,9 @@ function feuille(){if(document.getElementById('rg-css'))return;var s=document.cr
 '.rg-orbe.droite .rg-pan{right:0}.rg-orbe.gauche .rg-pan{left:0}'+
 '.rg-orbe .rg-pan>div{background:rgba(14,13,20,.97);color:#EDEDF0;border-radius:16.5px;padding:14px;display:grid;gap:10px}'+
 '.rg-orbe .rg-pan p{margin:0;color:#C9C9D2}.rg-orbe .rg-pan nav{display:grid;gap:6px}'+
+'.rg-orbe .rg-s{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:center}.rg-orbe .rg-q{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:none;color:#C9C9D2;cursor:pointer;font:600 12px Inter,system-ui,sans-serif}.rg-orbe .rg-q[aria-expanded=true]{background:#EDEDF0;color:#0E0D14}.rg-orbe .rg-pq{grid-column:1/-1;margin:0 4px 4px;font-size:12.5px;color:#A1A1AC}'+
+'.rg-orbe .rg-pz{font-size:12.5px;color:#A1A1AC}.rg-orbe .rg-pz summary{cursor:pointer}.rg-orbe .rg-pz p{margin:6px 0}.rg-orbe .rg-taire{border:0;background:none;color:#C4B5FD;text-decoration:underline;cursor:pointer;padding:0;font:inherit}'+
+'.rg-orbe [hidden]{display:none!important}.rg-orbe .rg-bulle{position:absolute;bottom:calc(var(--rg-t) + 10px);display:flex;align-items:center;gap:8px;white-space:nowrap;padding:8px 10px 8px 14px;border-radius:999px;background:rgba(14,13,20,.97);color:#EDEDF0;box-shadow:0 10px 30px -8px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.12);font:500 13px Inter,system-ui,sans-serif}.rg-orbe.droite .rg-bulle{right:0}.rg-orbe.gauche .rg-bulle{left:0}.rg-orbe .rg-bulle button{border:0;border-radius:999px;padding:5px 10px;cursor:pointer;font:600 12px Inter,system-ui,sans-serif;background:rgba(255,255,255,.1);color:#EDEDF0}.rg-orbe .rg-bulle button:first-of-type{background:#EDEDF0;color:#0E0D14}'+
 '.rg-orbe .rg-pan a{display:block;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);color:#EDEDF0;text-decoration:none;font-weight:500}.rg-orbe .rg-pan a:hover,.rg-orbe .rg-pan a:focus-visible{background:rgba(255,255,255,.12)}'+
 /* l'édition, dans la régie seulement */
 'html.rg-edition .rg-app{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}html.rg-edition .rg-app.rg-tient{cursor:grabbing;transition:none}'+
@@ -109,15 +112,26 @@ function appliquerTextes(regles){restaurer();var n=regles.length,fait=0;if(!n)re
 
 /* ---------- l'orbe du site ---------- */
 var orbeEl=null,compagnonLance=false;
+/* une pause = le visiteur a agi, puis plus rien pendant 8 s (pas pendant qu'il agit : Iqbal et Bailey, 2008) */
+function pause(cb){var actif=false,t=0,fait=false;function bouge(){actif=true;clearTimeout(t);if(!fait)t=setTimeout(function(){if(actif&&!fait&&!document.hidden){fait=true;cb()}},8000)}['pointermove','keydown','scroll','touchstart'].forEach(function(ev){addEventListener(ev,bouge,{passive:true})})}
 /* dans AIME OS, l'orbe est celle du système : la page ne pose pas la sienne */
 var DANS_OS=window.parent!==window&&(function(){try{return!!parent.AIMEOS}catch(e){return false}})();
 function monterOrbe(o){if(orbeEl){orbeEl.remove();orbeEl=null}if(DANS_OS)return;
  if(o.presence==='bouton'||o.presence==='les-deux'){var b=document.createElement('div');b.className='rg-orbe '+o.cote;b.style.setProperty('--rg-t',o.taille+'px');
   var pan=document.createElement('div'),inner=document.createElement('div'),idp='rg-pan-'+Math.random().toString(36).slice(2,7);pan.className='rg-pan';pan.id=idp;pan.hidden=true;pan.setAttribute('role','dialog');pan.setAttribute('aria-label','Suggestions');
   if(o.accueil){var p=document.createElement('p');p.textContent=o.accueil;inner.appendChild(p)}
-  var nav=document.createElement('nav');nav.setAttribute('aria-label','Suggestions');o.suggestions.forEach(function(s){var a=document.createElement('a');a.href=s.cible;a.textContent=s.libelle;if(/^https:/.test(s.cible)){a.target='_blank';a.rel='noopener'}nav.appendChild(a)});inner.appendChild(nav);pan.appendChild(inner);
+  var nav=document.createElement('nav');nav.setAttribute('aria-label','Suggestions');o.suggestions.forEach(function(s,k){var li=document.createElement('div');li.className='rg-s';var a=document.createElement('a');a.href=s.cible;a.textContent=s.libelle;if(/^https:/.test(s.cible)){a.target='_blank';a.rel='noopener'}
+   var q=document.createElement('button');q.type='button';q.className='rg-q';q.textContent='?';q.setAttribute('aria-label','Pourquoi : '+s.libelle);q.setAttribute('aria-expanded','false');var pq=document.createElement('p');pq.className='rg-pq';pq.hidden=true;pq.id=idp+'-q'+k;q.setAttribute('aria-controls',pq.id);
+   pq.textContent=s.pourquoi||'Suggestion choisie par le propriétaire de ce site.';q.addEventListener('click',function(e){e.stopPropagation();pq.hidden=!pq.hidden;q.setAttribute('aria-expanded',String(!pq.hidden))});li.appendChild(a);li.appendChild(q);li.appendChild(pq);nav.appendChild(li)});inner.appendChild(nav);
+  /* « Pourquoi ces suggestions ? » : la règle, dite simplement ; et le moyen de faire taire l'orbe ici */
+  var pz=document.createElement('details'),pzs=document.createElement('summary'),pzp=document.createElement('p');pz.className='rg-pz';pzs.textContent='Pourquoi ces suggestions ?';pz.appendChild(pzs);pz.appendChild(pzp);pzp.textContent='Elles sont choisies par le propriétaire de ce site, dans sa Régie. Ce sont des règles écrites : aucune IA, et rien de ce que vous faites ici n\'est envoyé.';
+  var taire=null,cleS='aime-orbe-silence:'+(siteId||cle);if(o.autonomie!=='discrete'){taire=document.createElement('button');taire.type='button';taire.className='rg-taire';taire.textContent='Ne plus me proposer d\'elle-même ici';taire.addEventListener('click',function(){try{localStorage.setItem(cleS,'1')}catch(e){}taire.textContent='C\'est noté : elle attendra que vous l\'appeliez.';taire.disabled=true});pz.appendChild(taire)}
+  inner.appendChild(pz);pan.appendChild(inner);
   var bt=document.createElement('button');bt.type='button';bt.setAttribute('aria-label','Suggestions de l\'orbe');bt.setAttribute('aria-expanded','false');bt.setAttribute('aria-controls',idp);
-  function ouvrir(on){pan.hidden=!on;bt.setAttribute('aria-expanded',String(on));if(on){var f=pan.querySelector('a');f&&f.focus()}}
+  function ouvrir(on,doux){pan.hidden=!on;bt.setAttribute('aria-expanded',String(on));if(bulle)bulle.hidden=true;if(on&&!doux){var f=pan.querySelector('a');f&&f.focus()}}
+  /* autonomie : à la demande, ou proposer (bulle) / s'ouvrir (panneau) à la première vraie pause, une fois par page, jamais si le visiteur l'a fait taire */
+  var bulle=null;if(o.autonomie!=='discrete'&&o.suggestions.length&&!EDITION&&(function(){try{return localStorage.getItem('aime-orbe-silence:'+(siteId||cle))!=='1'}catch(e){return true}})())pause(function(){if(!pan.hidden)return;if(o.autonomie==='active')return ouvrir(true,true);
+   bulle=document.createElement('div');bulle.className='rg-bulle';bulle.setAttribute('role','status');var t=document.createElement('span');t.textContent=o.suggestions.length>1?o.suggestions.length+' suggestions pour vous':'Une suggestion pour vous';var v=document.createElement('button');v.type='button';v.textContent='Voir';v.onclick=function(){ouvrir(true)};var l=document.createElement('button');l.type='button';l.textContent='Plus tard';l.onclick=function(){bulle.hidden=true};bulle.appendChild(t);bulle.appendChild(v);bulle.appendChild(l);b.appendChild(bulle)});
   bt.addEventListener('click',function(){ouvrir(pan.hidden)});b.addEventListener('keydown',function(e){if(e.key==='Escape'&&!pan.hidden){ouvrir(false);bt.focus()}});
   document.addEventListener('click',function(e){if(!b.contains(e.target)&&!pan.hidden)ouvrir(false)});
   pan.addEventListener('click',function(e){if(e.target.closest('a'))ouvrir(false)});
