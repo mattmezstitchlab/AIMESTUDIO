@@ -36,6 +36,9 @@ test('OS sur la Page Zéro : coque chargée, scopée, pas d\'OS dans l\'OS', () 
   assert.ok(ordre.every((x, i) => x > 0 && (i === 0 || x > ordre[i - 1])), 'ordre de chargement');
   const css = fs.readFileSync('os/coque.css', 'utf8').split('\n').filter(l => /^[^@/\s].*\{/.test(l));
   assert.ok(css.every(l => /^(\.os-coque|body\.os-geste \.os-coque|body\.os-page|@)/.test(l)), 'toutes les règles sont enfermées sous .os-coque');
+  const brut = fs.readFileSync('os/coque.css', 'utf8');
+  assert.match(brut, /\.os-coque \.palette-q svg\{width:16px/, 'la loupe de la recherche garde sa taille (règle groupée conservée)');
+  assert.match(brut, /\.os-coque \.pt\{position:static/, 'les .pt de la Page Zéro ne déforment pas la liste de recherche');
   assert.match(fs.readFileSync('os/coque.js', 'utf8'), /pas d'OS dans l'OS/);
   assert.match(fs.readFileSync('os/os.js', 'utf8'), /var PAGE=document\.body\.classList\.contains\('os-page'\)/);
   assert.match(fs.readFileSync('regie/scene.js', 'utf8'), /avecCoque\(\)/, 'l\'orbe du dock remplace le bouton d\'orbe');
