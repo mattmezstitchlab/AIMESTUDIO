@@ -1,0 +1,98 @@
+/* AIME G44 LAB · habillage « laboratoire » : page posée dans un cadre, filets de construction, capitales mono,
+   étiquettes en pointillé, titres à deux tons, et chaque module présenté sur un visuel pleine largeur.
+   Se charge après g44.css ; ne touche ni aux identifiants ni aux scripts. Visuels : dépôt AIMELEMONDEAIME (g44/img/). */
+:root{
+ --papier:#F7F7F7;--papier2:#F0F0F0;--blanc:#FFFFFF;--encre:#111112;--graphite:#3A3A3E;--doux:#707076;--trait:#E4E4E6;--trait2:#D2D2D6;
+ --saumonF:#111112;--mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+ --metal:repeating-linear-gradient(118deg,#f4f4f4 0 22px,#cfcfd2 34px,#ffffff 48px,#9d9da3 62px,#e9e9ec 78px,#bcd3ea 84px,#f6f6f6 92px,#d8d8db 118px,#fafafa 140px);
+ --gris-titre:#9A9AA0}
+html{background:#E9E9EB var(--metal) fixed}
+body{background:var(--papier);max-width:1520px;margin:clamp(0px,1.6vw,22px) auto;border-radius:clamp(0px,1.4vw,18px);box-shadow:0 30px 80px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.06);overflow:clip;
+ background-image:linear-gradient(90deg,transparent calc(50% - 621px),var(--trait) calc(50% - 621px),var(--trait) calc(50% - 620px),transparent calc(50% - 620px),transparent calc(50% + 620px),var(--trait) calc(50% + 620px),var(--trait) calc(50% + 621px),transparent calc(50% + 621px))}
+:focus-visible{outline:2px solid var(--encre);outline-offset:3px}
+
+/* en-tête : capitales mono, un bouton en pointillé */
+.tete{background:rgba(247,247,247,.9);border-bottom:1px solid var(--trait)}
+.tete .wrap{height:64px}
+.marque b{font:600 21px var(--ui);letter-spacing:-.03em}
+.marque span{font:500 11px var(--mono);letter-spacing:.08em;color:var(--doux)}
+.tete nav a{font:500 12.5px var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--encre);border-radius:6px}
+.tete nav a:hover{background:var(--papier2)}
+.fictif{font:500 11px var(--mono)!important;letter-spacing:.06em;text-transform:uppercase}
+.cta-tete{flex:none;font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:var(--encre);background:var(--blanc);border:1px dashed #9C9CA2;border-radius:6px;padding:9px 16px;box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.cta-tete:hover{border-style:solid}
+@media (max-width:860px){.cta-tete{display:none}}
+
+/* étiquettes, intertitres, boutons */
+.k{font:500 11.5px var(--mono);letter-spacing:.08em;color:var(--doux)}
+.k.tag,.section-tete>.k{display:inline-flex;align-items:center;gap:8px;width:auto;padding:6px 11px;border:1px dashed #A8A8AE;border-radius:6px;background:var(--blanc);color:var(--encre);box-shadow:0 1px 0 rgba(0,0,0,.05)}
+.k.tag::before,.section-tete>.k::before{content:"";width:9px;height:9px;background:var(--encre);transform:rotate(45deg);border-radius:1px}
+.t-xxl,.t-xl,.t-l{font-weight:500;letter-spacing:-.04em}
+.t-xxl{font-size:clamp(42px,6.6vw,92px);line-height:1.02}
+.hero .t-xxl span{display:block}
+.hero .t-xxl span+span{color:var(--gris-titre)}
+.sous{color:var(--doux)}
+.btn{border-radius:6px;font:500 13px var(--mono);letter-spacing:.06em;text-transform:uppercase;min-height:46px;padding:0 20px;background:var(--encre);color:#fff;box-shadow:inset 0 0 0 1px #000,inset 0 0 0 3px #111,inset 0 0 0 4px rgba(255,255,255,.25)}
+.btn:hover{transform:none;background:#000}
+.btn.sec{background:var(--papier2);color:var(--encre);box-shadow:inset 0 0 0 1px var(--trait2)}
+.btn.sec:hover{background:#E8E8EA}
+.btn.saumon{background:var(--encre);color:#fff}
+.statut{font:500 11px var(--mono);letter-spacing:.06em;border-radius:6px;gap:7px;align-items:center}
+.statut::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.statut.op{background:#E8F3EC;color:#1F5C3E}
+.statut.proto{background:#F3EFE6;color:#6B5216}
+.statut.prevu{background:var(--blanc);color:var(--doux)}
+.labo-tete small{font:500 12px var(--mono);letter-spacing:.08em}
+
+/* sections : filets plutôt que fonds colorés */
+.fond{background:var(--blanc)}
+.section,.labo{border-top:1px solid var(--trait)}
+.chiffres{border-top:1px solid var(--trait)}
+.chiffres b{font-weight:500;font-family:var(--ui);letter-spacing:-.04em}
+.chiffres span{font:500 12px/1.4 var(--mono);letter-spacing:.02em;color:var(--doux)}
+
+/* le visuel pleine largeur, puis l'écran blanc posé dessus */
+.bande{position:relative;padding:clamp(48px,7vw,96px) 0;margin-top:clamp(40px,6vw,80px);border-top:1px solid var(--trait);border-bottom:1px solid var(--trait);overflow:hidden}
+.bande.metal{background:#dcdcdf var(--metal)}
+.ecran{position:relative;background:var(--blanc);border:1px solid rgba(0,0,0,.08);border-radius:16px;padding:clamp(18px,3vw,36px);box-shadow:0 40px 90px rgba(10,10,20,.28),0 0 0 6px rgba(255,255,255,.55);color:var(--encre)}
+.ecran-barre{display:flex;align-items:center;gap:7px;margin:-6px 0 18px;padding-bottom:14px;border-bottom:1px solid var(--trait);font:500 12px var(--mono);letter-spacing:.04em;color:var(--doux)}
+.ecran-barre i{width:10px;height:10px;border-radius:50%;background:#E2E2E5}
+.ecran-barre span{margin-left:8px}
+.ecran-hero .ligne{margin-top:0}
+
+.section.plein,.labo.plein{position:relative;background:#141416 var(--visuel) center/cover no-repeat;color:#fff;border-top:0;isolation:isolate}
+.plein::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(10,10,12,.72) 0%,rgba(10,10,12,.45) 38%,rgba(10,10,12,.25) 60%,rgba(10,10,12,.55) 100%)}
+.plein .k,.plein .sous,.plein .labo-tete small{color:rgba(255,255,255,.86)}
+.plein .section-tete>.k{color:var(--encre)}
+.plein h2{color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+.plein .sous{max-width:62ch;text-shadow:0 1px 14px rgba(0,0,0,.4)}
+.plein .ecran{margin-top:clamp(28px,4vw,48px)}
+.plein .ecran .sous,.plein .ecran .k{color:var(--doux);text-shadow:none}
+.plein .ecran h3{color:var(--encre)}
+.plein.labo{padding:clamp(80px,10vw,150px) 0}
+
+/* les six laboratoires : une section sombre, une règle graduée */
+#labos{background:#0B0B0D;color:#F2F2F3;border-top:0}
+#labos .sous{color:#A9A9B0}
+#labos .section-tete{position:relative;padding-bottom:42px}
+#labos .section-tete::after{content:"";position:absolute;left:0;right:0;bottom:0;height:18px;background:repeating-linear-gradient(90deg,#4A4A50 0 1px,transparent 1px 14px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+#labos .labos{background:#232327;border-color:#232327;border-radius:14px}
+#labos .labos a{background:#121214;color:#F2F2F3}
+#labos .labos a:hover{background:#18181B}
+#labos .labos small{color:#8E8E96}
+#labos .labos p{color:#B4B4BB}
+
+/* fin de page : le même métal que la démonstration */
+.final{background:#dcdcdf var(--metal);border-top:1px solid var(--trait)}
+.final .wrap{background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:18px;padding-top:48px;padding-bottom:48px;max-width:1080px;box-shadow:0 30px 80px rgba(0,0,0,.15)}
+.pied{border-top:1px solid var(--trait)}
+.pied span{font:500 12px/1.5 var(--mono);letter-spacing:.02em}
+
+@media (max-width:640px){body{margin:0;border-radius:0}.ecran{border-radius:12px;padding:16px}.plein{background-position:60% center}}
+@media (forced-colors:active){.plein::before{display:none}.ecran{border:1px solid CanvasText}}
+.labos .statut{justify-self:start}
+.vue .lig{gap:12px}.vue .lig>span:first-child{flex:none}.vue .lig>span:last-child{min-width:0;text-align:right}
+@media (max-width:1240px){.persp{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.persp{grid-template-columns:minmax(0,1fr)}}
+.vue .lig{grid-template-columns:auto minmax(0,1fr)}.vue .lig>span:last-child{text-align:right;justify-self:end}
+button.btn.saumon,a.btn.saumon,button.btn.saumon:hover{background:var(--encre);color:#fff}
