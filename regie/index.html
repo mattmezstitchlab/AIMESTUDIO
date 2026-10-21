@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Régie · AIME</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B0B0E">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/regie/regie.css">
+</head>
+<body>
+<a class="evite" href="#vue">Aller au contenu</a>
+<header class="tete">
+ <a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup> <span>Régie</span></a>
+ <div class="tete-d">
+  <label class="bascule" title="Voir vos réglages non publiés sur le site, dans ce navigateur seulement"><input type="checkbox" id="apercu"> <span>Aperçu de mes réglages</span></label>
+  <span class="etat-pub" id="etatPub" aria-live="polite"></span>
+  <button class="b b-p" type="button" data-aller="publier">Publier</button>
+ </div>
+</header>
+<div class="cadre">
+ <nav class="onglets" aria-label="Régie">
+  <p class="og-t">Le site</p>
+  <button type="button" data-onglet="pages">Pages et arborescence</button>
+  <button type="button" data-onglet="edition">Édition sur la page</button>
+  <button type="button" data-onglet="orbe">L'orbe, site par site</button>
+  <p class="og-t">L'activité</p>
+  <button type="button" data-onglet="docs">Devis et factures</button>
+  <button type="button" data-onglet="clients">Clients</button>
+  <button type="button" data-onglet="entreprise">Mon entreprise</button>
+  <p class="og-t">Fichiers</p>
+  <button type="button" data-onglet="publier">Publier et sauvegarder</button>
+  <p class="og-note">Tout ce que vous faites ici reste dans ce navigateur jusqu'à la publication. Les devis et factures ne quittent jamais ce navigateur, sauf dans vos sauvegardes.</p>
+ </nav>
+ <main id="vue" tabindex="-1"></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div id="impression" aria-hidden="true"></div>
+<script src="/nav/registre.js"></script>
+<script src="/regie/donnees.js"></script>
+<script src="/regie/regie.js"></script>
+</body>
+</html>

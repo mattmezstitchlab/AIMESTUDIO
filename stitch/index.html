@@ -161,5 +161,6 @@ $('boiteF').addEventListener('change',compte);$('boiteQ').addEventListener('inpu
 $('boite').addEventListener('close',function(){if($('boite').returnValue!=='ok')return;S.mesFils([].map.call(document.querySelectorAll('#boiteF input:checked'),function(i){return i.value}));liste();S.toast('Boîte à fils enregistrée.')});
 })();
 </script>
+<script src="/regie/scene.js" defer></script>
 </body>
 </html>
