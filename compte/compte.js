@@ -14,14 +14,15 @@ var MODELES={mariage:'Mariage',seminaire:'Séminaire'};
 
 var Q=new URLSearchParams(location.search),INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(Q.get('invitation')||'')?Q.get('invitation'):null,moi=null;
 if(INVIT)$('invite').hidden=false;
-if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
-function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
+if(Q.get('supprime'))toast('Votre compte a été supprimé. Merci d\'être passé par AIME.');
+else if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
+function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
 
 /* ---------- au chargement : la session ---------- */
 requete('/api/auth/get-session').then(function(r){
  if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=(r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.';return}
  if(!r.j||!r.j.user){$('connexion').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
- moi=r.j.user;afficherProfil();$('profil').hidden=false;$('espaces').hidden=false;$('sortir').hidden=false;
+ moi=r.j.user;afficherProfil();$('profil').hidden=false;$('espaces').hidden=false;$('sortir').hidden=false;$('zoneSuppr').hidden=false;
  (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' » ('+(ROLES[x.role]||x.role)+').');$('invite').hidden=true}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
   .then(function(){nettoyerAdresse();chargerEspaces();chargerCles()})
 }).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.'});
@@ -34,6 +35,13 @@ $('fLien').onsubmit=function(e){e.preventDefault();var b=this.querySelector('but
 $('cPasskey').onclick=function(){if(!W)return;requete('/api/auth/passkey/generate-authenticate-options').then(function(r){if(r.statut!==200)throw new Error('Clés d\'accès indisponibles.');return W.startAuthentication({optionsJSON:r.j})})
  .then(function(rep){return requete('/api/auth/passkey/verify-authentication',{corps:{response:rep}})}).then(function(r){if(r.statut!==200)throw new Error('Clé d\'accès refusée.');location.reload()})
  .catch(function(e){if(e&&e.name==='NotAllowedError')return;toast(e.message||'Connexion impossible.',true)})};
+/* supprimer son compte : la confirmation est dans la page, jamais une boîte du navigateur */
+$('suppr1').onclick=function(){$('suppr2').hidden=false;$('suppr1').hidden=true;$('supprNon').focus()};
+$('supprNon').onclick=function(){$('suppr2').hidden=true;$('suppr1').hidden=false;$('suppr1').focus()};
+$('supprOui').onclick=function(){var b=this;b.disabled=true;requete('/api/auth/delete-user',{corps:{}}).then(function(r){b.disabled=false;
+  if(r.statut===200){location.href='/compte/?supprime=1';return}
+  var expire=r.j&&/SESSION_EXPIRED|fresh|expired/i.test(String(r.j.code||'')+' '+String(r.j.message||''));
+  toast(expire?'Par sécurité, reconnectez-vous (lien e-mail ou clé d\'accès), puis supprimez votre compte dans la foulée.':'Suppression impossible pour le moment : réessayez.',true)}).catch(function(){b.disabled=false;toast('Serveur injoignable : réessayez.',true)})};
 $('sortir').onclick=function(){requete('/api/auth/sign-out',{corps:{}}).then(function(){location.href='/compte/'})};
 
 /* ---------- profil en timbre ---------- */

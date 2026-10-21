@@ -59,7 +59,9 @@ export function auth(env = process.env) {
     trustedOrigins: [base],
     emailAndPassword: { enabled: false },
     advanced: { cookiePrefix: 'aime', useSecureCookies: base.startsWith('https://'), ipAddress: { ipAddressHeaders: ['x-forwarded-for', 'x-real-ip'] } },
-    session: { expiresIn: 60 * 60 * 24 * 30, updateAge: 60 * 60 * 24 },
+    session: { expiresIn: 60 * 60 * 24 * 30, updateAge: 60 * 60 * 24, freshAge: 60 * 60 * 24 },
+    /* supprimer son compte : session de moins de 24 h exigée ; ses espaces, ses adhésions et ses invitations partent avec */
+    user: { deleteUser: { enabled: true, beforeDelete: u => effacerTraces(pool, u) } },
     rateLimit: { enabled: true, window: 60, max: 30, storage: 'memory' },
     databaseHooks: { user: {
       create: { before: async u => ({ data: propre(u) }) },
@@ -70,6 +72,24 @@ export function auth(env = process.env) {
     ]
   });
   return instance;
+}
+
+/* ce que la personne laisse hors des tables de Better Auth : ses espaces (et leur direct), ses adhésions, les invitations à son adresse */
+export async function effacerTraces(db, u) {
+  const c = await db.connect();
+  try {
+    await c.query('begin');
+    const possedes = (await c.query('select id::text as id from spaces where owner_id = $1', [u.id])).rows.map(r => r.id);
+    if (possedes.length) {
+      const j = await c.query("select to_regclass('public.live_journal') as t");
+      if (j.rows[0] && j.rows[0].t) await c.query('delete from live_journal where espace = any($1::text[])', [possedes]);
+      await c.query('delete from spaces where owner_id = $1', [u.id]);
+    }
+    await c.query('delete from space_members where user_id = $1', [u.id]);
+    if (u.email) await c.query('delete from invitations where lower(email) = lower($1) and used_at is null', [u.email]);
+    await c.query('commit');
+  } catch (e) { await c.query('rollback').catch(() => {}); throw e; }
+  finally { c.release(); }
 }
 
 /* la personne connectée, ou null : TOUJOURS depuis le cookie de session vérifié, jamais depuis le corps */

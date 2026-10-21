@@ -4,14 +4,14 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 function res() { let d; const p = new Promise(r => { d = r; }); return { p, statusCode: 200, h: {}, setHeader(k, v) { this.h[k] = v; }, end(t) { d({ code: this.statusCode, body: JSON.parse(t) }); } }; }
 
-test('comptes · fermés par défaut : sans base ou sans secret, 503 ; en production, 404', async () => {
+test('comptes · fermés par défaut : sans base ou sans secret, 503, en production comme ailleurs', async () => {
   const sauv = { ...process.env }; delete process.env.DATABASE_URL; delete process.env.BETTER_AUTH_SECRET; delete process.env.VERCEL_ENV;
   const A = await import('../api/_auth/auth.mjs');
   assert.equal(A.pret({ DATABASE_URL: 'x', BETTER_AUTH_SECRET: 'court' }), false, 'un secret trop court ne suffit pas');
   const h = (await import('../api/comptes.mjs')).default, E = (await import('../api/espaces.mjs')).default;
   let r = res(); await h({ method: 'GET', url: '/api/auth/get-session', headers: {} }, r); r = await r.p; assert.equal(r.code, 503); assert.doesNotMatch(JSON.stringify(r.body), /DATABASE|SECRET|postgres/i);
   r = res(); await E({ method: 'POST', body: { action: 'mes' }, headers: {} }, r); assert.equal((await r.p).code, 503);
-  process.env.VERCEL_ENV = 'production'; r = res(); await h({ method: 'GET', url: '/api/auth/get-session', headers: {} }, r); assert.equal((await r.p).code, 404);
+  process.env.VERCEL_ENV = 'production'; r = res(); await h({ method: 'GET', url: '/api/auth/get-session', headers: {} }, r); assert.equal((await r.p).code, 503, 'ouvert en production, mais toujours fermé sans base ni secret');
   Object.keys(process.env).forEach(k => { if (!(k in sauv)) delete process.env[k]; }); Object.assign(process.env, sauv);
 });
 
@@ -47,4 +47,12 @@ test('comptes · l\'expéditeur des liens : AUTH_EMAIL_FROM, sinon AUTH_FROM, si
   assert.equal(A.expediteur({ AUTH_FROM: 'b', CONTACT_FROM: 'c' }), 'b');
   assert.equal(A.envoiPret({ AUTH_EMAIL_FROM: 'AIME <x@y.fr>' }), false, 'sans clé Resend, pas d\'envoi');
   assert.equal(A.envoiPret({ RESEND_API_KEY: 'k', AUTH_EMAIL_FROM: 'AIME <x@y.fr>' }), true);
+});
+
+test('comptes · supprimer son compte : prévu côté serveur et côté page, avec une page confidentialité', () => {
+  const fs = require('fs'), a = fs.readFileSync('api/_auth/auth.mjs', 'utf8'), p = fs.readFileSync('compte/index.html', 'utf8');
+  assert.match(a, /deleteUser: \{ enabled: true, beforeDelete: u => effacerTraces\(pool, u\) \}/);
+  assert.match(a, /delete from spaces where owner_id = \$1/); assert.match(a, /delete from space_members where user_id = \$1/);
+  assert.match(p, /id="supprOui"/); assert.match(p, /href="\/confidentialite\/"/);
+  assert.ok(fs.existsSync('confidentialite/index.html'));
 });
