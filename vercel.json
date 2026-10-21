@@ -22,6 +22,22 @@
   ],
   "rewrites": [
     {
+      "source": "/travaux",
+      "destination": "/api/travaux"
+    },
+    {
+      "source": "/travaux/",
+      "destination": "/api/travaux"
+    },
+    {
+      "source": "/travaux/:p",
+      "destination": "/api/travaux?p=:p"
+    },
+    {
+      "source": "/travaux/:p/",
+      "destination": "/api/travaux?p=:p"
+    },
+    {
       "source": "/api/auth/:chemin*",
       "destination": "/api/comptes?__chemin=:chemin*"
     },
