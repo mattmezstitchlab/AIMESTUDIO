@@ -43,3 +43,13 @@ test('OS sur la Page Zéro : coque chargée, scopée, pas d\'OS dans l\'OS', () 
   assert.match(fs.readFileSync('os/os.js', 'utf8'), /var PAGE=document\.body\.classList\.contains\('os-page'\)/);
   assert.match(fs.readFileSync('regie/scene.js', 'utf8'), /avecCoque\(\)/, 'l\'orbe du dock remplace le bouton d\'orbe');
 });
+
+test('production : « Mon compte » n\'apparaît pas là où les comptes sont fermés', () => {
+  const N = require('../nav/registre.js');
+  assert.ok(N.enProduction('www.lemondeaime.com') && N.enProduction('lemondeaime.com') && N.enProduction('aimestudio.vercel.app'));
+  assert.ok(!N.enProduction('aimestudio-git-integration-matthieulecointre-9534s-projects.vercel.app') && !N.enProduction('localhost'));
+  const vm = require('vm'), src = require('fs').readFileSync('nav/registre.js', 'utf8');
+  const ids = h => { const ctx = { location: { hostname: h }, self: {} }; ctx.self = ctx; vm.runInNewContext(src, ctx); return ctx.AIMENav.ENTREES.map(e => e.id); };
+  assert.ok(!ids('www.lemondeaime.com').includes('compte'), 'masqué en production');
+  assert.ok(ids('aimestudio-git-integration-x.vercel.app').includes('compte'), 'présent sur les previews');
+});
