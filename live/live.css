@@ -25,6 +25,7 @@ select,input:not([type]),input[type=text]{font:inherit;color:var(--encre);backgr
 .tete-d{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .presents{font:600 12px var(--ui);color:var(--ok)}.presents:not(:empty)::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;animation:pouls 1.6s infinite}
 @keyframes pouls{50%{opacity:.35}}
+.mode{font:600 11px var(--ui);letter-spacing:.06em;text-transform:uppercase;color:var(--doux);border:1px solid var(--ligne);border-radius:999px;padding:4px 10px}.mode.appareils{color:var(--cyan);border-color:rgba(34,211,238,.45)}
 
 .horloge{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;padding:12px var(--gd) 12px var(--g);border-bottom:1px solid var(--ligne);background:var(--panneau)}
 .h-heure{display:grid}.h-heure .k{margin:0}.h-heure output{font:600 30px/1 var(--titre);font-variant-numeric:tabular-nums}
