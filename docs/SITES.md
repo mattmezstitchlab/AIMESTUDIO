@@ -36,9 +36,17 @@ Un site complet, page par page, construit avec le **moteur partagé** (`vitrine/
 - **Les chiffres** sont ceux que la personne saisit : l'éditeur n'en invente pas.
 
 ## Export
-- **Le site** en `.zip` : une page HTML autonome par page, `site.aime.json` (qui se réimporte) et un LISEZ-MOI.
+Deux actions séparées, depuis le 21/10/2026 (avant, le `.zip` public embarquait `site.aime.json`, c'est-à-dire tout le projet, réservé compris).
+
+**Exporter pour publier** : la vue publique seulement (`AIMESite.exporterPublic`).
+- **Le site** en `.zip` (`…publication.zip`) : une page HTML autonome par page visible du public, et un `LISEZ-MOI.txt` qui dit quoi publier. Aucun fichier de projet.
 - **Une seule page** (`.html`), avec des ancres.
-- **Les données** (`.json`).
+- Les sections et les lignes réservées (membres, équipe, organisation) ne sont pas dans les fichiers ; une page dont tout est réservé n'est pas exportée et disparaît de la navigation ; le nom interne du projet (« Nom du site, pour vous ») n'apparaît pas.
+- Testé : des marqueurs privés dans des sections, des lignes de programme, de galerie (image comprise), de FAQ et dans une page entière sont absents de **tous** les fichiers exportés, noms de fichiers compris (`tests/site.test.cjs`), et d'un vrai `.zip` téléchargé dans Chromium.
+
+**Sauvegarder mon projet** : tout, réimportable (`AIMESite.sauvegarde`).
+- Un `.sauvegarde-privee.aime-site.json`, avec un champ `_avertissement` : il contient le réservé, il ne doit pas être publié.
+- Il se réimporte par « Importer » ; testé : aller-retour identique, et la vue Organisation retrouve tout.
 - Les polices viennent de Google Fonts, comme dans le Studio.
 
 ## Bureau
@@ -124,9 +132,27 @@ Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / F�
     - les dates, adresses, e-mails, téléphones, horaires, prix et questions sont reconnus ;
     - les images du dossier vont dans la galerie, réduites ;
     - les couleurs et polices donnent l'ambiance et la typographie les plus proches.
-  - Les scripts, iframes, formulaires et vidéos du site d'origine sont ignorés, pour la sécurité, et le compte rendu le dit.
+  - Les scripts, iframes, formulaires et vidéos du site d'origine sont ignorés, pour la sécurité, et le compte rendu le dit. Rien n'est jamais exécuté : le HTML est lu par `DOMParser`, et le site est recomposé avec les blocs AIME.
   - Les images hébergées ailleurs ne sont pas reprises.
-- **Chaque import affiche un compte rendu** : ce qui a été reconnu, et ce qui ne l'a pas été.
+  - **Ce n'est pas une copie fidèle** : la mise en page d'origine n'est pas reproduite, et le compte rendu le rappelle.
+- **Limites** (`AIMEImport.LIMITES`, vérifiées avant toute lecture) :
+
+  | Limite | Valeur | Si elle est dépassée |
+  |---|---|---|
+  | Taille de l'archive `.zip` | 25 Mo | refus, avant même de charger JSZip |
+  | Nombre de fichiers | 400 | refus |
+  | Volume décompressé (fichiers retenus) | 60 Mo | refus, d'après les tailles déclarées, puis revérifié fichier par fichier |
+  | Une page HTML | 2 Mo | page ignorée |
+  | Une feuille CSS | 1 Mo | ignorée |
+  | Une image | 8 Mo | ignorée |
+  | Pages / images reprises | 12 / 24 | le surplus est ignoré |
+
+  - Une archive n'est décompressée qu'après ce tri, un fichier à la fois, avec contrôle CRC ; un fichier plus gros que déclaré est écarté.
+  - Sont écartés sans être ouverts : les chemins suspects (`..`, absolus, `C:`, barre inverse, caractère nul, plus de 240 caractères ; c'est le nom d'origine qui est jugé, pas celui que JSZip assainit), les fichiers actifs (`.js`, `.php`, `.sh`, `.exe`, `.wasm`…), les SVG (ils peuvent contenir du code), les fichiers cachés.
+  - Dans les pages, les attributs actifs (`onclick`, `javascript:`), les redirections `meta` et `base` sont comptés et ignorés.
+  - En cas d'erreur : un message clair (« Rien n'a été importé », « Votre site en cours n'a pas été modifié »). L'import crée toujours un **nouveau** site : le site en cours n'est jamais touché. Un seul import à la fois.
+- **Chaque import affiche un compte rendu en quatre catégories** : reconnu, transformé (images recompressées, couleurs et polices rapprochées), ignoré (avec la raison), à vérifier (date retenue, titres sans contenu, mise en page non reproduite).
+- **Vérifié dans Chromium (21/10/2026)** : archive de 26 Mo refusée ; archive de 70 Ko qui ferait 71 Mo décompressée refusée sans décompression ; archive piégée (`../../evil.html`, `.js`, `.svg`, `onclick`, `javascript:`, script, iframe) : tout est écarté et listé ; dans les deux refus, le stockage est resté identique octet pour octet.
 - **Vérifié sur un site d'exemple** (2 pages, programme, tarifs, accès, FAQ, contact, 2 images, CSS) :
   - date, adresse, e-mail, téléphone, 3 horaires, 2 tarifs, 2 questions et 2 images sont retrouvés ;
   - la police Playfair est reconnue ;
@@ -137,3 +163,21 @@ Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / F�
 - **Quatre poignées** pour agrandir par n'importe quel coin, le coin opposé restant fixe.
 - **Repères verts** quand un bord s'aligne sur celui d'un autre bloc.
 - **Une petite barre sur le bloc choisi** : Teinte (+45°), Arrondi (0, 12 ou 26), Serif ou Sans, A− / A+, Dupliquer, Neutre, Retirer.
+
+## Le « + », comme sur la landing (21/10/2026)
+- Un bouton rond « + » en bas à gauche de l'aperçu ouvre le même panneau que le mini-site de la landing :
+  - **Vos informations** : titre, accroche, date, heure, lieu, adresse, ville, accès, plan B, e-mail, téléphone, bouton, en tuiles à remplir directement. L'aperçu suit à la frappe.
+  - **Les blocs**, en familles de six au plus, avec une icône chacun :
+    - Présenter, Organiser et Relier reprennent les familles de la landing ;
+    - Compléter et Activité rangent les blocs que la landing n'a pas.
+- Toucher une tuile pose le bloc, et le panneau reste ouvert pour enchaîner. En grille libre, on peut aussi glisser la tuile à sa place : le panneau s'efface pendant le geste.
+- « Échap » ou × referme le panneau, et le focus revient au « + ». Le bouton « + Ajouter un bloc » de la colonne ouvre le même panneau, directement sur les blocs.
+- Testé : chaque bloc du moteur est dans une famille, une seule fois, avec son icône (`tests/site.test.cjs`). Vérifié dans Chromium (serveur local), à 1440 px et à 390 px : saisie, ajout au toucher, glisser en grille, clavier, aucun débordement.
+
+## Les supports du Studio, en blocs web (21/10/2026)
+- Parmi les 96 supports du Studio, beaucoup sont faits pour l'impression. Ceux qui ont un sens sur une page web sont devenus 15 vrais blocs du moteur (`vitrine/rendu.js`). Ils lisent les informations écrites une fois (titre, date, lieu, contact) et sept nouvelles listes : `tables`, `messages`, `credits`, `allergenes`, `setlist`, `orientation`, `consignes`.
+  - **Annoncer** : Faire-part (Arche, Classique, Réservez la date, Hommage), Monogramme (initiales du titre), Remerciements (carte, ou récap avec les photos de la galerie), Livre d'or, « Ils ont fait ce jour » (crédits), Carte de visite.
+  - **Accueillir** : Bienvenue, Plan de table, Orientation (flèches), Sans téléphone, Partagez vos photos, Billet.
+  - **Informer** (avec Tarifs, Chiffres et Chronologie) : Allergènes (un vrai tableau), Setlist, Facile à lire.
+- Ils sont tous dans le « + », en familles de six. Ils suivent l'ambiance du site et se placent dans la grille libre, et ils sont échappés et testés comme les autres blocs.
+- Écartés pour l'instant, faute de sens sur le web : enveloppe, bracelet, étiquette de tireuse, DPE, set de table, marque-place, papier à en-tête, etc.

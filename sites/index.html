@@ -21,7 +21,7 @@
   <button type="button" class="pill" id="importer">Importer</button>
   <a class="pill" id="comparer" href="/synchroview/" title="Voir le site par rôle, côte à côte, dans SynchroView">Comparer les rôles</a>
   <div class="gen-exp"><button type="button" class="pill p" id="exporter" aria-expanded="false" aria-controls="menuExp">Exporter</button>
-   <div class="gen-menu" id="menuExp" hidden><button type="button" data-exp="zip">Le site (.zip, une page HTML par page)</button><button type="button" data-exp="une">Une seule page (.html)</button><button type="button" data-exp="json">Les données (.json)</button><button type="button" data-exp="onglet">Ouvrir l'aperçu dans un onglet</button></div></div>
+   <div class="gen-menu" id="menuExp" hidden><p class="gm-t">Exporter pour publier <small>vue publique seulement : sans le réservé, sans fichier de projet</small></p><button type="button" data-exp="zip">Le site (.zip, une page HTML par page)</button><button type="button" data-exp="une">Une seule page (.html)</button><p class="gm-t prive">Sauvegarder mon projet <small>tout, y compris le réservé : à garder pour vous, ne pas publier</small></p><button type="button" data-exp="json">Sauvegarde privée (.json, réimportable)</button><p class="gm-t">Voir</p><button type="button" data-exp="onglet">Ouvrir la vue choisie dans un onglet</button></div></div>
  </nav>
 </header>
 
@@ -48,8 +48,7 @@
   <div class="gen-pact"><button type="button" class="mini" id="pageMode" aria-pressed="false" title="Grille libre : poser les blocs sur 12 colonnes">Grille</button><button type="button" class="mini" id="pageAjout">+ Page</button><button type="button" class="mini" id="pageRenommer">Renommer</button><button type="button" class="mini" id="pageSuppr">Supprimer</button></div>
   <h2 class="gen-h">Sections</h2>
   <ol class="gen-secs" id="sections"></ol>
-  <button type="button" class="gen-ajout" id="ajout" aria-expanded="false" aria-controls="catalogue">+ Ajouter une section</button>
-  <div class="gen-cat" id="catalogue" hidden></div>
+  <button type="button" class="gen-ajout" id="ajout" aria-expanded="false" aria-controls="catalogue">+ Ajouter un bloc</button>
  </aside>
 
  <section class="gen-c" aria-label="Aperçu">
@@ -60,6 +59,13 @@
   </div>
   <div class="gen-cadre"><iframe id="apercu" title="Aperçu du site" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe></div>
   <p class="gen-note" id="noteP"></p>
+  <div class="gen-dock">
+   <div class="gen-pop" id="catalogue" role="dialog" aria-label="Vos informations et les blocs" hidden>
+    <div class="gp-tabs" id="ptabs" role="group" aria-label="Familles de blocs"></div>
+    <div class="gp-tray" id="tray"></div>
+   </div>
+   <button type="button" class="gen-plus" id="plus" aria-expanded="false" aria-controls="catalogue" aria-label="Ajouter un bloc, ou modifier vos informations"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
   <div class="gen-onde" id="onde" role="status" hidden><span></span><button type="button" class="mini" id="ondeAnnuler">Annuler</button></div>
  </section>
 

@@ -33,6 +33,12 @@ test('sources : tout est retrouvé, rien n\'est écrit, rien n\'est inventé',()
  const rep=B.reprendre(inv,3);assert.equal(rep[0].enCours,true,'ce qui est en cours passe d\'abord');assert.ok(!rep.some(p=>p.source==='carte'));
  const v=B.inventaire(stock({}));assert.equal(v.projets.length,0);assert.equal(v.total,0);
  const abime=B.inventaire(stock({'echos:v2':'{pas du json','aime-carte':'"autre"','sv-compositions':'{}'}));assert.equal(abime.projets.length,0,'des données abîmées ne cassent rien');
+ assert.equal(par('studio').find(p=>p.id==='p1').lien,'/studio/#open.p1','le Bureau ouvre CE projet, même si un autre était actif');
+ assert.equal(par('evenements')[0].lien,'/studio/#ev.e1');assert.equal(par('broderies')[0].action,'Ouvrir la bibliothèque','pas de promesse de reprise exacte');
+ const hist=B.inventaire(stock({'aime-app':JSON.stringify({events:[{id:'e2',names:'Léa & Marc',type:'mariage'},{id:'x y',type:'seminaire'}]}),'echos:v2':JSON.stringify({projects:[{id:'a/b',name:'Ancien'}]})}));
+ assert.equal(hist.sources.find(s=>s.id==='evenements').projets[0].titre,'Léa & Marc','titre historique dans names');
+ assert.equal(hist.sources.find(s=>s.id==='evenements').projets[1].lien,'/studio/','identifiant hors contrat : lien générique, honnête');
+ assert.equal(hist.sources.find(s=>s.id==='studio').projets[0].lien,'/studio/');
  assert.equal(B.interne('//ailleurs.com/x','/b/'),'/b/');assert.equal(B.interne('/\\\\ailleurs','/b/'),'/b/')});
 
 test('sauvegarde : tout part, tout revient, rien n\'est effacé, rien n\'est remplacé sans accord',()=>{

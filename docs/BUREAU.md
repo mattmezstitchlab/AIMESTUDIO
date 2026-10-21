@@ -131,6 +131,8 @@ Branche `bureau` (depuis `integration`). Phase 1 : l'audit (§1 à §5). Phase 2
 ### Limites
 - **Les projets sont ceux de ce navigateur.** Pas de compte : rien n'est synchronisé, et le Bureau le dit.
 - **Rouvrir un projet précis.**
-  - Le Studio n'a pas d'adresse par projet : le Bureau ouvre le Studio, qui reprend le projet en cours.
-  - Stitch rouvre un brouillon précis (`?brouillon=`), mais pour une broderie, il ouvre la liste « Reprendre une broderie ».
+  - Le Bureau réutilise les contrats d'ouverture existants, sans en créer d'autres : Studio `/studio/#open.<id>`, événement `/studio/#ev.<id>` (traités par `aimeOpenHash`), Stitch `?brouillon=<id>`, Sites `?site=<id>`. Si A était actif, cliquer sur B ouvre B (vérifié dans Chromium le 21/10/2026 : `echos:v2.cur` passe à B).
+  - Un identifiant hors du format de ces contrats (données anciennes) garde le lien générique « Ouvrir le Studio » : rien n'est réécrit pour le faire entrer.
+  - Les titres d'événements historiques rangés dans `names` sont lus.
+  - Une broderie en cours n'a pas d'adresse précise (la page Broder s'ouvre par produit, la progression est rangée par patron) : l'action dit « Ouvrir la bibliothèque », pas « Reprendre la broderie ».
 - **Les tableaux `echos:boards` du Studio** ne sont pas listés : leur forme n'est pas assez sûre pour en tirer des titres sans rien inventer.

@@ -40,7 +40,7 @@ test('tous les blocs se dessinent, vides ou remplis, et l\'édition montre quoi 
  const s=complet(),vide=S.document(s,{presentation:P,edition:true}).html;assert.ok((vide.match(/class="s-vide"/g)||[]).length>=10);
  const pub=S.document(s,{presentation:P}).html;assert.ok(!pub.includes('class="s-vide"'),'rien à remplir dans l\'export');
  Object.keys(S.LISTES).forEach(k=>{const o={};S.LISTES[k].forEach(c=>o[c]=c==='src'?'https://exemple.fr/a.jpg':c==='url'||c==='lien'?'https://exemple.fr':'valeur '+c);s.listes[k].push(o)});Object.assign(s.infos,{titre:'T',date:'2027-01-01',lieu:'L',email:'a@b.fr',tel:'01 02',url:'https://x.fr',bouton:'Go'});
- const plein=S.document(s,{presentation:P,edition:true}).html;assert.ok((plein.match(/class="s-vide"/g)||[]).length<=4,'presque tout est rempli');assert.ok(S.contraste('#000000','#FFFFFF')>20)});
+ const plein=S.document(s,{presentation:P,edition:true}).html;assert.ok((plein.match(/class="s-vide"/g)||[]).length<=5,'presque tout est rempli (restent : texte, citation, bouton, vidéo, photos partagées, qui ont leurs propres champs)');assert.ok(S.contraste('#000000','#FFFFFF')>20)});
 test('export : une page HTML autonome par page, ou une seule page avec ancres',()=>{
  const s=S.appliquerModele(S.vide(),M.find(m=>m.id==='mariage'));const f=S.exporter(s,{presentation:P});assert.deepEqual(f.map(x=>x.chemin),['index.html','jour-j.html','pratique.html','reponse.html']);
  assert.ok(f[0].contenu.startsWith('<!doctype html>')&&f[0].contenu.includes('href="jour-j.html"'));const u=S.exporter(s,{presentation:P,unePage:true});assert.equal(u.length,1);assert.ok(u[0].contenu.includes('href="#jour-j"'))});
@@ -54,7 +54,7 @@ test('grille libre (reprise du mini-site de la landing) : formes selon la largeu
  const d=s.pages[0].sections.find(x=>x.type==='date');d.w=6;h=S.document(s,{presentation:P}).html;assert.ok(h.includes('inf-mois'),'à 6 colonnes, la date devient un calendrier');
  const l=s.pages[0].sections,g=l.find(x=>x.type==='gens'),e=l.find(x=>x.type==='endroit');g.x=e.x;g.y=e.y;S.tasser(l,g.id);
  const occ={};for(const x of l){for(let a=x.y;a<x.y+S.hauteur(x.type,x.w);a++)for(let b=x.x;b<x.x+x.w;b++){assert.ok(!occ[a+':'+b],'chevauchement en '+a+':'+b);occ[a+':'+b]=1}}
- assert.deepEqual(S.DEPS.date.slice().sort(),['compte','date','hero']);const t=S.vide();S.ajouterSection(t,'index','texte');S.ajouterSection(t,'index','compte');S.versGrille(t.pages[0]);assert.ok(t.pages[0].sections.every(x=>x.x!=null&&x.w));S.versSections(t.pages[0]);assert.equal(t.pages[0].mode,'sections')});
+ assert.deepEqual(S.DEPS.date.slice().sort(),['bienvenue','billet','compte','date','fairepart','hero','monogramme']);const t=S.vide();S.ajouterSection(t,'index','texte');S.ajouterSection(t,'index','compte');S.versGrille(t.pages[0]);assert.ok(t.pages[0].sections.every(x=>x.x!=null&&x.w));S.versSections(t.pages[0]);assert.equal(t.pages[0].mode,'sections')});
 test('régénérer : le mini-site de la landing et un projet du Studio, sans perte, et ce qui manque est dit',()=>{
  const j={preset:'maries',P:{title:'A & B',sub:'S',date:'14 juin 2027',iso:'',place:'Domaine',text:'Histoire',quote:'Q',cta:'Répondre',url:'',prog:[['15:00','Moment','abri']],people:[['A','rôle']],photos:['data:image/jpeg;base64,AAAA','javascript:alert(1)'],rain:true},
   blocks:[{k:'hero',x:0,y:0,w:12},{k:'i-date',x:0,y:4,w:4,hue:90},{k:'texte',x:4,y:4,w:8,serif:true,br:0},{k:'radial',x:0,y:8,w:4},{k:'i-gens',x:0,y:4,w:4}]};
@@ -64,3 +64,57 @@ test('régénérer : le mini-site de la landing et un projet du Studio, sans per
  assert.ok(S.document(s,{presentation:P}).html.includes('hsl(90'));assert.throws(()=>S.depuisMiniSite({}),/mini-site/);
  const q=S.depuisStudio({id:'p',name:'Lin',pack:'artisan',versions:[{d:{title:'Lin',blurb:'B',items:[{n:'Ourlet',p:'15 €'}],series:'Ana ; couturière',contact:'a@b.fr 06 12 34 56 78',city:'Nantes'},b:{amb:'h_lin'}}]}).site;
  assert.equal(q.infos.email,'a@b.fr');assert.equal(q.listes.tarifs[0].prix,'15 €');assert.equal(q.listes.personnes[0].role,'couturière');assert.equal(q.presentation.ambiance,'h_lin');assert.ok(q.pages[0].sections.some(x=>x.type==='contact'))});
+test('exporter pour publier : aucun contenu réservé dans AUCUN fichier ; la sauvegarde privée garde tout et se réimporte',()=>{
+ const R=require('../synchroview/permissions.js');const s=S.vide('vierge');s.nom='NOM-INTERNE-PRIVE';s.infos.titre='Fête publique';s.infos.date='2027-06-12';
+ const pub=S.ajouterSection(s,'index','texte');pub.texte='Texte public';
+ const m=S.ajouterSection(s,'index','texte');m.titre='SECRET-MEMBRES-TITRE';m.texte='SECRET-MEMBRES';m.audience='membres';
+ const e=S.ajouterSection(s,'index','citation');e.texte='SECRET-EQUIPE';e.auteur='SECRET-AUTEUR';e.audience='equipe';
+ S.ajouterSection(s,'index','programme');s.listes.programme=[{heure:'14:00',titre:'Accueil'},{heure:'12:00',titre:'SECRET-LIGNE-EQUIPE',detail:'SECRET-DETAIL',audience:'equipe'},{heure:'23:00',titre:'SECRET-LIGNE-ORGA',audience:'organisation'}];
+ S.ajouterSection(s,'index','galerie');s.listes.galerie=[{src:'data:image/png;base64,UFVCTElD',legende:'Photo publique'},{src:'data:image/png;base64,U0VDUkVU',legende:'SECRET-PHOTO',audience:'organisation'}];
+ S.ajouterSection(s,'index','faq');s.listes.faq=[{q:'Public ?',r:'Oui'},{q:'SECRET-QUESTION',r:'SECRET-REPONSE',audience:'membres'}];
+ s.pages.push({id:'coulisses',titre:'SECRET-PAGE-ORGA',mode:'sections',sections:[{id:'xo',type:'texte',texte:'SECRET-PAGE-TEXTE',audience:'organisation',variante:'simple'}]});
+ const MARQUES=['SECRET','U0VDUkVU','NOM-INTERNE-PRIVE','coulisses'];
+ for(const opts of [{},{unePage:true}]){const F=opts.unePage?S.exporter(s,Object.assign({presentation:P},opts)):S.exporterPublic(s,{presentation:P});
+  assert.ok(F.length>=1);for(const f of F){for(const k of MARQUES)assert.ok(!f.contenu.includes(k),f.chemin+' contient '+k);assert.ok(!/aime-site|site\.aime\.json|_avertissement/.test(f.chemin+f.contenu.slice(0,0)),f.chemin)}
+  assert.ok(!F.some(f=>/\.json$/.test(f.chemin)),'aucun fichier de projet dans l\'export public');assert.ok(F.some(f=>f.contenu.includes('Texte public')))}
+ assert.deepEqual(S.exporterPublic(s,{presentation:P}).map(f=>f.chemin),['index.html','LISEZ-MOI.txt'],'la page entièrement réservée n\'est pas exportée');
+ const sv=S.sauvegarde(s);assert.match(sv.chemin,/sauvegarde-privee\.aime-site\.json$/);for(const k of ['SECRET-MEMBRES','SECRET-LIGNE-ORGA','SECRET-PHOTO','SECRET-PAGE-ORGA'])assert.ok(sv.contenu.includes(k),'la sauvegarde garde '+k);
+ const j=JSON.parse(sv.contenu);assert.match(j._avertissement,/Ne le publiez pas/);delete j._avertissement;const r=S.migrer(j);
+ assert.deepEqual(r.listes,s.listes);assert.deepEqual(r.pages.map(p=>p.sections.map(x=>[x.type,x.audience,x.texte||''])),s.pages.map(p=>p.sections.map(x=>[x.type,x.audience,x.texte||''])));
+ const vueOrga=S.document(r,{presentation:P,vue:{role:'owner'},regles:R}).html;assert.ok(vueOrga.includes('SECRET-LIGNE-ORGA'),'après réimport, l\'organisation retrouve tout')});
+test('import HTML/ZIP : limites explicites, chemins suspects, contenus actifs, refus propre',async()=>{
+ const I=require('../sites/importer.js').AIMEImport,L=I.LIMITES;
+ assert.ok(L.archive&&L.entrees&&L.decompresse&&L.html&&L.image&&L.css,'limites déclarées');
+ const t=I.trier([{chemin:'index.html',taille:1000},{chemin:'../../etc/passwd.html',taille:10},{chemin:'/abs/x.html',taille:10},{chemin:'C:/x.html',taille:1},{chemin:'a\\b.html',taille:1},{chemin:'app.js',taille:10},{chemin:'shell.php',taille:5},{chemin:'logo.svg',taille:5},{chemin:'enorme.jpg',taille:L.image+1},{chemin:'__MACOSX/x',taille:1},{chemin:'.DS_Store',taille:1},{chemin:'photo.jpg',taille:2000},{chemin:'notes.txt',taille:3}]);
+ assert.equal(t.erreur,'');assert.deepEqual(t.garder.map(e=>e.chemin),['index.html','photo.jpg']);
+ const raison=c=>(t.ignores.find(x=>x.chemin===c)||{}).raison||'';
+ assert.match(raison('../../etc/passwd.html'),/remonte/);assert.match(raison('/abs/x.html'),/absolu/);assert.match(raison('C:/x.html'),/absolu/);assert.match(raison('a\\b.html'),/inverse/);
+ assert.match(raison('app.js'),/actif/);assert.match(raison('shell.php'),/actif/);assert.match(raison('logo.svg'),/SVG/);assert.match(raison('enorme.jpg'),/trop lourd/);assert.equal(t.caches,2);
+ assert.match(I.trier(Array.from({length:L.entrees+1},(_,i)=>({chemin:i+'.html',taille:1}))).erreur,/limite est de 400/);
+ assert.match(I.trier(Array.from({length:40},(_,i)=>({chemin:i+'.jpg',taille:L.image-1})).concat([{chemin:'index.html',taille:1}])).erreur,/décompressé.*limite/);
+ assert.match(I.trier([{chemin:'a.js',taille:1}]).erreur,/Aucune page HTML/);
+ // une archive : rien n'est décompressé si le tri échoue ; la taille réelle est revérifiée
+ let ouverts=0;const zip=E=>({forEach:f=>E.forEach(([c,taille,u])=>f(c,{dir:false,_data:{uncompressedSize:taille},async:()=>{ouverts++;return Promise.resolve(u)}}))});
+ await assert.rejects(I.depuisArchive(zip([['index.html',100,new Uint8Array(1)]].concat(Array.from({length:9},(_,i)=>[i+'.jpg',L.image-1,new Uint8Array(1)])))),/Rien n'a été importé/);assert.equal(ouverts,0,'aucune entrée décompressée avant validation');
+ const menteur=zip([['site/index.html',10,new Uint8Array(L.html+5)],['site/b.html',10,new TextEncoder().encode('<h1>B</h1>')],['site/x.js',10,new Uint8Array(1)]]);
+ const assaini=zip([['index.html',5,new TextEncoder().encode('<h1>A</h1>')]]);const f0=assaini.forEach;assaini.forEach=f=>f0((c,e)=>{e.unsafeOriginalName='../../index.html';f(c,e)});await assert.rejects(I.depuisArchive(assaini),/Aucune page HTML/,'le nom d\'origine en ../ est jugé, pas le nom assaini');
+ const r=await I.depuisArchive(menteur);assert.deepEqual(r.fichiers.map(f=>f.chemin),['b.html'],'racine commune retirée, fichier menteur écarté');assert.ok(r.tri.ignores.some(x=>/décompressé/.test(x.raison)));assert.ok(r.tri.ignores.some(x=>x.chemin==='site/x.js'));
+ const c=I.classer({sections:{texte:2},infos:['e-mail'],images:1,ignores:['1 script (index.html) : contenu actif, jamais exécuté'],nonReconnu:[],transformes:[]});
+ assert.deepEqual(Object.keys(c),['reconnu','transforme','ignore','aVerifier']);assert.equal(c.reconnu.length,2);assert.match(c.transforme[0],/recompress/);assert.match(c.aVerifier.join(' '),/n'est pas reproduite/,'aucune promesse de fidélité');
+ const ed=require('fs').readFileSync(path.join(__dirname,'..','sites/editeur.js'),'utf8');assert.ok(/blob\.size>L\.archive/.test(ed),'taille de l\'archive vérifiée avant de charger JSZip');assert.ok(!/f\.async\('blob'\)/.test(ed),'plus de décompression en bloc dans l\'éditeur')});
+test('le « + » du générateur (comme sur la landing) : chaque bloc du moteur dans une famille, une seule fois, avec son icône',()=>{
+ const ed=require('fs').readFileSync(path.join(__dirname,'..','sites/editeur.js'),'utf8');
+ const PAL=JSON.parse(ed.match(/var PALETTE=(\[.*?\]\]\]);/)[1]);const tous=PAL.flatMap(f=>f[1]);
+ assert.deepEqual([...tous].sort(),Object.keys(S.BLOCS).sort(),'aucun bloc oublié, aucun bloc inventé');assert.equal(new Set(tous).size,tous.length,'aucun doublon');
+ for(const k of tous)assert.ok(new RegExp('[{,]'+k+':\'<').test(ed),'icône pour '+k);
+ const html=require('fs').readFileSync(path.join(__dirname,'..','sites/index.html'),'utf8');assert.match(html,/id="plus"[^>]*aria-controls="catalogue"/);assert.match(html,/id="catalogue"[^>]*role="dialog"/)});
+test('supports du Studio devenus blocs web : ils lisent les infos écrites une fois, échappent tout, n\'inventent rien',()=>{
+ const s=S.vide('vierge');Object.assign(s.infos,{titre:'Alice & Bruno',date:'2027-06-12',heure:'15:00',lieu:'Le Moulin',ville:'Nantes',email:'a@b.fr'});
+ ['fairepart','monogramme','bienvenue','billet','plantable','livreor','allergenes','setlist','facile','signaletique','credits','carte','merci','sanstel'].forEach(t=>S.ajouterSection(s,'index',t));
+ s.listes.tables=[{table:'Table 1',noms:'Ana, Ben ; Cléo'}];s.listes.messages=[{nom:'Zoé',message:'<script>x</script>Bravo'}];s.listes.allergenes=[{plat:'Tarte',allergenes:'gluten, œuf'},{plat:'Sorbet',allergenes:''}];
+ s.listes.setlist=[{titre:'Ouverture',detail:'4 min'}];s.listes.consignes=[{texte:'Venez à 15 h.'}];s.listes.orientation=[{libelle:'Vestiaire',direction:'Gauche'}];s.listes.credits=[{role:'Photo',nom:'Studio Lin',url:'javascript:alert(1)'}];
+ const h=S.document(s,{presentation:P}).html;
+ assert.ok(h.includes('A &amp; B'),'le monogramme reprend les initiales du titre');assert.ok((h.match(/Alice &amp; Bruno/g)||[]).length>=3,'le titre écrit une fois sert au faire-part, à la bienvenue, au billet');
+ assert.ok(h.includes('<li>Cléo</li>'),'plan de table : les noms séparés deviennent une liste');assert.ok(!h.includes('<script>x'),'tout est échappé');assert.ok(h.includes('Aucun déclaré'),'un plat sans allergène déclaré le dit, sans rien inventer');
+ assert.ok(h.includes('scope="row"'),'tableau des allergènes accessible');assert.ok(h.includes('aria-label="Gauche">←'),'orientation : la flèche suit la direction écrite');assert.ok(!/href="javascript/i.test(h),'lien dangereux refusé');
+ for(const t of ['fairepart','plantable','livreor','allergenes','setlist','facile'])assert.ok(S.BLOCS[t]&&S.LARGEUR[t]&&S.hauteur(t,S.LARGEUR[t])>0,t+' placé dans la grille')});
