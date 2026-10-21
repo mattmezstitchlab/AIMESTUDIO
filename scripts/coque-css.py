@@ -32,8 +32,9 @@ def regles(t):
         elif tete == ':root':
             o.append('.os-coque{' + corps + '}')
         else:
-            sels = [s for s in tete.split(',') if s.strip()]
-            if sels and all(s.strip().startswith(PREF) for s in sels):
+            # une règle groupée (« .cherche svg,.palette-q svg ») garde ses sélecteurs de la coque, au lieu d'être perdue en entier
+            sels = [s for s in tete.split(',') if s.strip() and s.strip().startswith(PREF)]
+            if sels:
                 o.append(','.join(portee(s) for s in sels) + '{' + corps + '}')
     return ''.join(o)
 css = regles(src)
@@ -43,6 +44,8 @@ entete = '/* GÉNÉRÉ par scripts/coque-css.py depuis os/os.css : ne pas modifi
 page = '''
 /* la Page Zéro est le bureau : les fenêtres flottent au-dessus d'elle, le dock reste en bas */
 .os-coque [hidden]{display:none!important}
+/* la Page Zéro a ses propres .pt (les points animés, en position absolue) : on les neutralise dans la coque */
+.os-coque .pt{position:static;border-radius:0;background:none;box-shadow:none;transform:none;animation:none;pointer-events:auto}
 .os-coque{--barre:0px;color:var(--ink);font-family:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 .os-coque .fenetres{position:fixed;inset:0 0 calc(var(--dock) + 24px + env(safe-area-inset-bottom,0px)) 0;z-index:900;pointer-events:none}
 .os-coque .fen{pointer-events:auto}
