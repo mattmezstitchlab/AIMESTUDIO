@@ -113,3 +113,32 @@ test('orbe · autonomie et « pourquoi » par suggestion, assainis', () => {
   assert.equal(R.orbe({ autonomie: 'attentive' }).autonomie, 'attentive');
   const s = fs.readFileSync('regie/scene.js', 'utf8'); assert.match(s, /Pourquoi ces suggestions/); assert.match(s, /aime-orbe-silence:/, 'le visiteur peut faire taire l\'orbe'); assert.match(s, /8000/, 'attend une vraie pause');
 });
+
+test('phase 2 · un site du générateur dans un écran : identifiant strict, page et perspective assainies', () => {
+  const a = R.appareil({ type: 'macbook', contenu: { type: 'site', src: 'site:abc-123', page: 'Contact!', vue: 'admin' } });
+  assert.equal(a.contenu.type, 'site'); assert.equal(a.contenu.src, 'site:abc-123');
+  assert.equal(a.contenu.page, 'index', 'page inconnue → accueil'); assert.equal(a.contenu.vue, 'public', 'perspective inconnue → public, jamais plus');
+  for (const ko of ['site:../x', 'site:a', 'site:<x>', 'https://x.fr', '/g44/']) assert.equal(R.appareil({ contenu: { type: 'site', src: ko } }).contenu.type, 'vide', ko);
+  assert.equal(R.resoudre('site:abc-123', R.vide()), '/regie/medias/site-abc-123.html');
+  assert.deepEqual(Object.keys(R.VUES_SITE), ['public', 'proche', 'viewer', 'pro', 'coord', 'moi']);
+});
+
+test('phase 2 · blocs métamorphose : noms sûrs, uniques par page, transitions désactivées par défaut', () => {
+  assert.deepEqual(R.morph({ sel: 'h1', nom: 'Titre-Projet' }), { sel: 'h1', nom: 'titre-projet' });
+  for (const ko of ['1x', 'a', 'a b', 'x"y', '-a']) assert.equal(R.morph({ sel: 'h1', nom: ko }), null, ko);
+  assert.equal(R.morph({ sel: '<b>', nom: 'ok' }), null);
+  const c = R.config({ transitions: 'oui', pages: { '/': { morphs: [{ sel: 'h1', nom: 'titre' }, { sel: 'h2', nom: 'titre' }, { sel: 'p', nom: '9' }] } } });
+  assert.equal(c.transitions, false, 'seul true active'); assert.equal(c.pages['/'].morphs.length, 1, 'un nom par page, les noms invalides tombent');
+  assert.equal(R.config({ transitions: true }).transitions, true); assert.equal(R.vide().transitions, false);
+  const s = fs.readFileSync('regie/scene.js', 'utf8');
+  assert.match(s, /@view-transition\{navigation:auto\}/); assert.match(s, /prefers-reduced-motion:reduce\)\{@view-transition\{navigation:none\}/, 'respecte la réduction des animations');
+  assert.doesNotMatch(s, /innerHTML/);
+});
+
+test('phase 2 · la Régie montre les sites sans scripts et publie leur version publique', () => {
+  const j = fs.readFileSync('regie/regie.js', 'utf8'), x = fs.readFileSync('regie/sites.js', 'utf8');
+  assert.match(j, /setAttribute\('sandbox','allow-same-origin'\)/, 'aperçus sans scripts');
+  assert.match(j, /'medias\/site-'\+id\+'\.html'/); assert.match(x, /exporterPublic/);
+  assert.match(fs.readFileSync('regie/index.html', 'utf8'), /\/regie\/sites\.js/);
+  assert.match(j, /n\\'accorde aucun droit/, 'changer de perspective n\'accorde rien');
+});

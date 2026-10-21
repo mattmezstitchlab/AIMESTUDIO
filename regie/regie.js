@@ -33,7 +33,8 @@ function etatPub(){$('etatPub').textContent=modifie()?'Réglages non publiés':'
 /* ---------- pages connues : le registre, plus celles déjà réglées ---------- */
 function pages(){var vus={},L=[];N.ENTREES.forEach(function(e){var c=R.cleDePage(e.href.split('?')[0]);if(vus[c])return;vus[c]=1;L.push({cle:c,nom:e.nom,href:e.href,id:e.id,statut:e.statut})});
  Object.keys(cfg.pages).forEach(function(c){if(!vus[c]){vus[c]=1;L.push({cle:c,nom:c,href:c,id:null,statut:'disponible'})}});return L}
-function pageCfg(c){return cfg.pages[c]||(cfg.pages[c]={appareils:[],textes:[]})}
+function pageCfg(c){var p=cfg.pages[c]||(cfg.pages[c]={appareils:[],textes:[],morphs:[]});if(!p.morphs)p.morphs=[];return p}
+var XS=window.AIMERegieSites||null;
 
 /* ---------- médias importés (IndexedDB) ---------- */
 function idb(){return new Promise(function(ok,ko){var rq=indexedDB.open('aime-regie',1);rq.onupgradeneeded=function(){rq.result.createObjectStore('medias')};rq.onsuccess=function(){ok(rq.result)};rq.onerror=function(){ko(rq.error)}})}
@@ -50,10 +51,10 @@ function vignette(src){if(!src)return Promise.resolve('');var m;if((m=/^biblio:(
 var BIB=null;function bib(){return BIB?Promise.resolve(BIB):fetch('/sites/bibliotheque/bibliotheque.json').then(function(r){return r.json()}).then(function(j){BIB=j;return j})}
 
 /* ---------- navigation ---------- */
-var VUES={pages:vPages,edition:vEdition,orbe:vOrbe,docs:vDocs,clients:vClients,entreprise:vEntreprise,publier:vPublier};
+var VUES={pages:vPages,sites:vSites,edition:vEdition,orbe:vOrbe,docs:vDocs,clients:vClients,entreprise:vEntreprise,publier:vPublier};
 var courant=null;
 function aller(nom,opts){if(!VUES[nom])nom='pages';courant=nom;ecrire(CLE_O,nom);[].forEach.call(document.querySelectorAll('[data-onglet]'),function(b){if(b.dataset.onglet===nom)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
- if(nom!=='edition')ed.frame=null;vue.onclick=vue.oninput=vue.onchange=vue.onkeydown=null;VUES[nom](opts||{});if(history.replaceState)history.replaceState(null,'','#'+nom);vue.focus({preventScroll:true});scrollTo(0,0)}
+ if(nom!=='edition')ed.frame=null;sitesVue.actif=nom==='sites';vue.onclick=vue.oninput=vue.onchange=vue.onkeydown=null;VUES[nom](opts||{});if(history.replaceState)history.replaceState(null,'','#'+nom);vue.focus({preventScroll:true});scrollTo(0,0)}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-onglet],[data-aller]');if(b){aller(b.dataset.onglet||b.dataset.aller)}});
 
 /* ================= Pages et arborescence ================= */
@@ -67,36 +68,81 @@ function vPages(){var cats=N.categories();var h='<h1>Pages et arborescence</h1><
  $('autreP').onsubmit=function(e){e.preventDefault();var c=$('autreChemin').value.trim();if(!R.cheminOk(c))return toast('Un chemin du site commence par « / », par exemple /stitch/atelier/.',true);aller('edition',{cle:R.cleDePage(c),href:c})};
  vue.onclick=function(e){var b=e.target.closest('[data-editer]');if(b)return aller('edition',{cle:b.dataset.editer,href:b.dataset.href});b=e.target.closest('[data-orbe-site]');if(b)return aller('orbe',{site:b.dataset.orbeSite})}}
 
+/* ================= Sites clients : le générateur, vu depuis la Régie ================= */
+var sitesVue={actif:false,id:null,page:'index',vue:'public',mode:'appareils',ecoute:false};
+var FORMATS=[{l:1440,h:900,nom:'Ordinateur'},{l:820,h:1180,nom:'Tablette'},{l:390,h:844,nom:'Téléphone'}];
+function vSites(o){if(o.id)sitesVue.id=o.id;var L=XS?XS.liste():[];
+ if(!XS){vue.innerHTML='<h1>Sites clients</h1><p class="alerte">Le module des sites n\'a pas pu être chargé.</p>';return}
+ if(!L.length){vue.innerHTML='<h1>Sites clients</h1><p class="sous">Les sites composés avec le générateur, dans ce navigateur.</p><div class="carte pile"><p>Aucun site pour l\'instant.</p><span><a class="b b-p" href="/sites/" target="_blank" rel="noopener">Composer un premier site</a></span></div>';return}
+ if(!L.some(function(x){return x.id===sitesVue.id}))sitesVue.id=L[0].id;var S=L.filter(function(x){return x.id===sitesVue.id})[0],PG=S.pages.length?S.pages:[{id:'index',nom:'Accueil'}];
+ if(!PG.some(function(p){return p.id===sitesVue.page}))sitesVue.page=PG[0].id;
+ vue.innerHTML='<h1>Sites clients</h1><p class="sous">Les sites du générateur, en direct : chaque modification faite dans le générateur s\'affiche ici aussitôt. Voyez-les sur trois écrans, ou tels que chaque rôle les voit.</p>'+
+ '<div class="sites-cl"><div class="liste-app" role="list">'+L.map(function(x){return'<button type="button" role="listitem" data-sid="'+esc(x.id)+'" aria-pressed="'+(x.id===S.id)+'"><span class="sig">'+esc((x.nom.match(/[A-Za-zÀ-ÿ0-9]/g)||['?']).slice(0,2).join('').toUpperCase())+'</span><span><b>'+esc(x.nom)+'</b><br><i>'+x.pages.length+' page'+(x.pages.length>1?'s':'')+(x.maj?' · '+esc(R.frDate(String(x.maj).slice(0,10))):'')+'</i></span></button>'}).join('')+'</div>'+
+ '<div class="pile"><div class="ed-barre"><label class="sr" for="scPage">Page</label><select id="scPage">'+PG.map(function(p){return'<option value="'+esc(p.id)+'"'+(p.id===sitesVue.page?' selected':'')+'>'+esc(p.nom)+'</option>'}).join('')+'</select>'+
+ '<span class="seg" role="group" aria-label="Aperçu"><button type="button" data-mode="appareils" aria-pressed="'+(sitesVue.mode==='appareils')+'">Trois écrans</button><button type="button" data-mode="roles" aria-pressed="'+(sitesVue.mode==='roles')+'">Par rôle</button></span>'+
+ (sitesVue.mode==='appareils'?'<label class="sr" for="scVue">Vu par</label><select id="scVue">'+Object.keys(R.VUES_SITE).map(function(k){return'<option value="'+k+'"'+(k===sitesVue.vue?' selected':'')+'>Vu par : '+esc(R.VUES_SITE[k])+'</option>'}).join('')+'</select>':'')+
+ '<button class="b b-s" type="button" id="scOuvrir">Ouvrir dans le générateur</button><button class="b b-s" type="button" id="scPoser">Poser dans un appareil</button></div>'+
+ '<div class="'+(sitesVue.mode==='appareils'?'trio':'roles')+'" id="scGrille"></div>'+
+ (sitesVue.mode==='roles'?'<p class="leg">Chaque cadre montre ce que ce rôle voit, et rien de plus : les règles de partage (SynchroView) décident, pas l\'aperçu. Changer de rôle ici n\'accorde aucun droit.</p>':'')+'</div></div>';
+ XS.pret().then(function(){if(courant==='sites')rendreSites()});
+ if(!sitesVue.ecoute){sitesVue.ecoute=true;XS.ecouter(function(){if(sitesVue.actif)rendreSites(true)})}
+ vue.onclick=function(e){var b=e.target.closest('button');if(!b)return;
+  if(b.dataset.sid){sitesVue.id=b.dataset.sid;sitesVue.page='index';vSites({});return}
+  if(b.dataset.mode){sitesVue.mode=b.dataset.mode;vSites({});return}
+  if(b.id==='scOuvrir'){try{var st=JSON.parse(localStorage.getItem(XS.CLE)||'null');if(st&&st.sites&&st.sites[S.id]){st.cur=S.id;localStorage.setItem(XS.CLE,JSON.stringify(st))}}catch(err){}window.open('/sites/','_blank','noopener');return}
+  if(b.id==='scPoser'){var P0=pageCfg('/'),mac=P0.appareils.filter(function(a){return a.type==='macbook'})[0],C0={type:'site',src:'site:'+S.id,page:sitesVue.page,vue:'public'},alt='Un MacBook affichant le site « '+S.nom+' », réalisé avec AIME.',n;
+   if(mac){var o=copie(mac);o.contenu=C0;o.alt=alt;o.lien='';n=R.appareil(o);P0.appareils[P0.appareils.indexOf(mac)]=n}else{n=R.appareil({id:R.nouvelId('macbook'),type:'macbook',ancre:'#vitrine-scene',x:19,y:4,l:58,z:2,contenu:C0,mobile:'visible',alt:alt});P0.appareils.push(n)}
+   sauverCfg(true);aller('edition',{cle:'/',href:'/'});ed.choisi=n.id;panneau();toast(mac?'Le MacBook de la Page Zéro montre maintenant ce site (brouillon).':'Un MacBook montre ce site sur la Page Zéro (brouillon).');return}};
+ vue.onchange=function(e){if(e.target.id==='scPage'){sitesVue.page=e.target.value;rendreSites()}else if(e.target.id==='scVue'){sitesVue.vue=e.target.value;rendreSites()}}}
+/* chaque cadre est rendu à sa vraie largeur, puis réduit ; srcdoc sans scripts : la page n'a que son HTML et ses styles */
+function cadreSite(box,html,l,h,titre){var f=box.querySelector('iframe');if(!f){f=document.createElement('iframe');f.setAttribute('sandbox','allow-same-origin');f.tabIndex=-1;f.title=titre;f.width=l;f.height=h;f.style.width=l+'px';f.style.height=h+'px';box.appendChild(f);
+  var ech=function(){var k=box.clientWidth/l;f.style.transform='scale('+k+')';box.style.height=Math.round(h*k)+'px'};ech();if(window.ResizeObserver)new ResizeObserver(ech).observe(box)}
+ if(f.srcdoc!==html)f.srcdoc=html||'<p style="font:14px system-ui;padding:20px">Rien à montrer.</p>'}
+function rendreSites(maj){var g=$('scGrille');if(!g||!XS)return;var id=sitesVue.id;
+ if(!XS.site(id)){vSites({});return}
+ if(sitesVue.mode==='appareils'){if(!g.children.length)g.innerHTML=FORMATS.map(function(F,i){return'<figure class="ecr-cl" style="--r:'+F.l/F.h+'"><figcaption>'+esc(F.nom)+' <span class="leg">'+F.l+' px</span></figcaption><div class="cadre-cl" data-i="'+i+'"></div></figure>'}).join('');
+  var h=XS.html(id,{page:sitesVue.page,vue:sitesVue.vue});FORMATS.forEach(function(F,i){cadreSite(g.querySelector('[data-i="'+i+'"]'),h,F.l,F.h,'Aperçu '+F.nom)})}
+ else{var V=Object.keys(R.VUES_SITE);if(!g.children.length)g.innerHTML=V.map(function(k){return'<figure class="ecr-cl"><figcaption>'+esc(R.VUES_SITE[k])+'</figcaption><div class="cadre-cl" data-v="'+k+'"></div></figure>'}).join('');
+  V.forEach(function(k){cadreSite(g.querySelector('[data-v="'+k+'"]'),XS.html(id,{page:sitesVue.page,vue:k}),1100,760,'Vu par : '+R.VUES_SITE[k])})}
+ if(maj)toast('Site mis à jour depuis le générateur.')}
+
 /* ================= Édition sur la page ================= */
 var LARGEURS={1440:'Ordinateur',820:'Tablette',390:'Téléphone'};
-var ed={cle:'/',href:'/',largeur:1440,choisi:null,texte:false,ancres:[],selTexte:null,frame:null,biblio:false,cat:null};
+var ed={cle:'/',href:'/',largeur:1440,choisi:null,texte:false,morph:false,selMorph:null,ancres:[],selTexte:null,frame:null,biblio:false,cat:null};
 function envoyerCfg(){if(ed.frame&&ed.frame.contentWindow){ed.frame.contentWindow.postMessage({type:'regie:config',config:cfg},location.origin);if(ed.choisi)ed.frame.contentWindow.postMessage({type:'regie:choisir',id:ed.choisi},location.origin)}}
 function dirFrame(m){if(ed.frame&&ed.frame.contentWindow)ed.frame.contentWindow.postMessage(m,location.origin)}
 function appCourant(){return pageCfg(ed.cle).appareils.filter(function(a){return a.id===ed.choisi})[0]||null}
-function vEdition(o){if(o.cle){ed.cle=o.cle;ed.href=o.href||o.cle;ed.choisi=null;ed.selTexte=null}var P=pages();
+function vEdition(o){if(o.cle){ed.cle=o.cle;ed.href=o.href||o.cle;ed.choisi=null;ed.selTexte=null;ed.selMorph=null}var P=pages();
  vue.innerHTML='<h1>Édition sur la page</h1><p class="sous">Faites glisser un appareil pour le déplacer, tirez le rond violet pour le redimensionner. En « Mode texte », cliquez un texte de la page pour le changer. Rien n\'est public avant « Publier ».</p>'+
  '<div class="ed"><div><div class="ed-barre"><label class="sr" for="edPage">Page</label><select id="edPage">'+P.map(function(p){return'<option value="'+esc(p.cle)+'" data-href="'+esc(p.href)+'"'+(p.cle===ed.cle?' selected':'')+'>'+esc(p.nom)+' · '+esc(p.cle)+'</option>'}).join('')+(P.some(function(p){return p.cle===ed.cle})?'':'<option value="'+esc(ed.cle)+'" data-href="'+esc(ed.href)+'" selected>'+esc(ed.cle)+'</option>')+'</select>'+
  '<span class="seg" role="group" aria-label="Largeur d\'aperçu">'+Object.keys(LARGEURS).sort(function(a,b){return b-a}).map(function(w){return'<button type="button" data-l="'+w+'" aria-pressed="'+(+w===ed.largeur)+'">'+LARGEURS[w]+'</button>'}).join('')+'</span>'+
- '<button class="b b-s" type="button" id="edTexte" aria-pressed="'+ed.texte+'">Mode texte</button><span class="lgn"><button class="b b-s" type="button" data-plus="iphone">+ iPhone</button><button class="b b-s" type="button" data-plus="ipad">+ iPad</button><button class="b b-s" type="button" data-plus="macbook">+ MacBook</button></span>'+
+ '<button class="b b-s" type="button" id="edTexte" aria-pressed="'+ed.texte+'">Mode texte</button><button class="b b-s" type="button" id="edMorph" aria-pressed="'+ed.morph+'" title="Nommer un bloc pour qu\'il se transforme d\'une page à l\'autre">Métamorphose</button><span class="lgn"><button class="b b-s" type="button" data-plus="iphone">+ iPhone</button><button class="b b-s" type="button" data-plus="ipad">+ iPad</button><button class="b b-s" type="button" data-plus="macbook">+ MacBook</button></span>'+
  '<a class="b b-s" id="edOuvrir" href="'+esc(ed.href)+'" target="_blank" rel="noopener">Ouvrir la page</a></div>'+
  '<div class="ed-scene" id="edScene"><iframe id="edFrame" title="Page en édition : '+esc(ed.cle)+'" src="'+esc(ed.href+(ed.href.indexOf('?')<0?'?':'&')+'regie=edition')+'"></iframe></div></div>'+
  '<aside class="ed-cote" id="edCote" aria-label="Réglages"></aside></div>';
  ed.frame=$('edFrame');ajuster();if(window.ResizeObserver)new ResizeObserver(ajuster).observe($('edScene'));
  $('edPage').onchange=function(){var op=this.selectedOptions[0];vEdition({cle:this.value,href:op.dataset.href})};
- $('edTexte').onclick=function(){ed.texte=!ed.texte;this.setAttribute('aria-pressed',ed.texte);dirFrame({type:'regie:mode',texte:ed.texte});if(ed.texte)toast('Mode texte : cliquez un titre ou un paragraphe dans la page.')};
+ function modes(){$('edTexte').setAttribute('aria-pressed',ed.texte);$('edMorph').setAttribute('aria-pressed',ed.morph);dirFrame({type:'regie:mode',texte:ed.texte,morph:ed.morph})}
+ $('edTexte').onclick=function(){ed.texte=!ed.texte;if(ed.texte)ed.morph=false;modes();if(ed.texte)toast('Mode texte : cliquez un titre ou un paragraphe dans la page.')};
+ $('edMorph').onclick=function(){ed.morph=!ed.morph;if(ed.morph)ed.texte=false;modes();if(ed.morph)toast('Métamorphose : cliquez un bloc, puis donnez-lui un nom. Le même nom sur une autre page, et le bloc s\'y transforme.')};
  vue.querySelector('.ed-barre').addEventListener('click',function(e){var b=e.target.closest('[data-l]');if(b){ed.largeur=+b.dataset.l;[].forEach.call(this.querySelectorAll('[data-l]'),function(x){x.setAttribute('aria-pressed',String(x===b))});ajuster();return}
   b=e.target.closest('[data-plus]');if(b){var t=b.dataset.plus;dirFrame({type:'regie:ajoute',appareil:{id:R.nouvelId(t),type:t,l:R.APPAREILS[t].l,contenu:{type:'vide'},mobile:t==='macbook'?'visible':'masque',alt:''}})}});
  panneau()}
 function ajuster(){var sc=$('edScene'),f=ed.frame;if(!sc||!f)return;var k=Math.min(1,sc.clientWidth/ed.largeur);f.style.width=ed.largeur+'px';f.style.height=Math.ceil(sc.clientHeight/k)+'px';f.style.transform='scale('+k+')'}
 addEventListener('message',function(e){if(e.origin!==location.origin||!ed.frame||e.source!==ed.frame.contentWindow)return;var m=e.data||{},P=pageCfg(ed.cle);
- if(m.type==='regie:pret'){ed.ancres=m.ancres||[];envoyerCfg();if(ed.texte)dirFrame({type:'regie:mode',texte:true});panneau()}
+ if(m.type==='regie:pret'){ed.ancres=m.ancres||[];envoyerCfg();if(ed.texte||ed.morph)dirFrame({type:'regie:mode',texte:ed.texte,morph:ed.morph});panneau()}
  else if(m.type==='regie:selection'){ed.choisi=m.id;ed.selTexte=null;panneau()}
  else if(m.type==='regie:deplace'){var a=P.appareils.filter(function(x){return x.id===m.id})[0];if(!a)return;a.x=m.x;a.y=m.y;a.l=m.l;sauverCfg(true);panneau()}
  else if(m.type==='regie:ajoute-ok'){var n=R.appareil(m.appareil);P.appareils.push(n);ed.choisi=n.id;sauverCfg();panneau();toast(R.APPAREILS[n.type].nom+' posé. Choisissez ce qu\'il affiche, à droite.')}
+ else if(m.type==='regie:morph'){var mm=R.morph({sel:m.sel,nom:'x'+'x'});if(!mm)return toast('Ce bloc ne peut pas être nommé.',true);var ex=P.morphs.filter(function(x){return x.sel===mm.sel})[0];ed.selMorph={sel:mm.sel,nom:ex?ex.nom:String(m.nom||''),apercu:String(m.apercu||'').slice(0,80)};ed.choisi=null;ed.selTexte=null;panneau()}
  else if(m.type==='regie:texte'){ed.selTexte={sel:String(m.sel||'').slice(0,300),original:String(m.texte||''),actuel:String(m.actuel||'')};ed.choisi=null;panneau()}});
 
 function champ(lib,html){return'<label class="ch"><span>'+lib+'</span>'+html+'</label>'}
 function panneau(){var c=$('edCote');if(!c)return;var P=pageCfg(ed.cle),a=appCourant(),h='';
+ if(ed.selMorph){var nomsAilleurs=morphsAilleurs();
+  h+='<div class="carte pile"><h3>Bloc métamorphose</h3><p class="leg">« '+esc(ed.selMorph.apercu||'…')+' »</p><p class="leg" style="font-family:var(--mono);word-break:break-all">'+esc(ed.selMorph.sel)+'</p>'+
+  champ('Nom (lettres minuscules, chiffres, tirets)','<input id="mfNom" list="mfNoms" value="'+esc(ed.selMorph.nom)+'" placeholder="titre-projet" maxlength="41" autocomplete="off">')+'<datalist id="mfNoms">'+nomsAilleurs.map(function(n){return'<option value="'+esc(n.nom)+'">'+esc(n.page)+'</option>'}).join('')+'</datalist>'+
+  '<p class="leg">Donnez ce nom à un bloc d\'une autre page : en passant de l\'une à l\'autre, le bloc glisse et se transforme au lieu de disparaître.</p><div class="lgn"><button class="b b-p b-s" type="button" id="mfOk">Enregistrer</button>'+(P.morphs.some(function(x){return x.sel===ed.selMorph.sel})?'<button class="b b-s" type="button" id="mfSuppr">Retirer le nom</button>':'')+'<button class="b b-s" type="button" id="mfAnn">Fermer</button></div></div>'}
  if(ed.selTexte){var r=P.textes.filter(function(t){return t.sel===ed.selTexte.sel})[0];
   h+='<div class="carte pile"><h3>Texte choisi</h3><p class="leg" style="font-family:var(--mono);word-break:break-all">'+esc(ed.selTexte.sel)+'</p>'+champ('Nouveau texte','<textarea id="txVal" rows="4">'+esc(r?r.texte:ed.selTexte.actuel)+'</textarea>')+'<p class="leg">Texte seul. Un retour à la ligne devient un saut de ligne.</p><div class="lgn"><button class="b b-p b-s" type="button" id="txOk">Enregistrer</button>'+(r?'<button class="b b-s" type="button" id="txSuppr">Rétablir l\'original</button>':'')+'<button class="b b-s" type="button" id="txAnn">Fermer</button></div></div>'}
  if(a){var C=a.contenu;h+='<div class="carte pile"><div class="lgn" style="justify-content:space-between"><h3>'+esc(R.APPAREILS[a.type].nom)+'</h3><button class="b b-s" type="button" id="apFermer">Fermer</button></div>'+
@@ -106,19 +152,27 @@ function panneau(){var c=$('edCote');if(!c)return;var P=pageCfg(ed.cle),a=appCou
    champ('Ou une adresse (chemin du site ou https)','<input data-k="contenu.src" value="'+esc(/^(biblio|media):/.test(C.src||'')?'':C.src||'')+'" placeholder="'+(C.type==='image'?'/zero/ecrans/… ou https://…':'https://….mp4')+'">')+(C.src?'<p class="leg">Actuel : '+esc(/^media:/.test(C.src)?'fichier importé · '+((cfg.medias[C.src.slice(6)]||{}).nom||''):C.src)+'</p>':'')+
    (ed.biblio&&C.type==='image'?'<div id="apBiblio" class="pile"></div>':'')+champ('Cadrage','<select data-k="contenu.ajustement"><option value="cover"'+(C.ajustement==='cover'?' selected':'')+'>Remplir l\'écran</option><option value="contain"'+(C.ajustement==='contain'?' selected':'')+'>Image entière</option></select>')}
   else if(C.type==='page'){h+=champ('Page du site','<select data-k="contenu.src"><option value="">— choisir —</option>'+pages().map(function(p){return'<option value="'+esc(p.href)+'"'+(p.href===C.src?' selected':'')+'>'+esc(p.nom)+'</option>'}).join('')+'</select>')+'<p class="leg">La page est affichée en direct, réduite à la taille de l\'écran.</p>'}
+  else if(C.type==='site'){var LS=XS?XS.liste():[],sc=LS.filter(function(x){return'site:'+x.id===C.src})[0];
+   h+=(LS.length?champ('Site','<select data-k="contenu.src"><option value="">— choisir —</option>'+LS.map(function(x){return'<option value="site:'+esc(x.id)+'"'+('site:'+x.id===C.src?' selected':'')+'>'+esc(x.nom)+'</option>'}).join('')+'</select>'):'<p class="leg">Aucun site dans le générateur de ce navigateur. <a href="/sites/" target="_blank" rel="noopener">Composer un site</a>.</p>')+
+   (sc?'<div class="g2">'+champ('Page','<select data-k="contenu.page">'+(sc.pages.length?sc.pages:[{id:'index',nom:'Accueil'}]).map(function(pg){return'<option value="'+esc(pg.id)+'"'+(pg.id===C.page?' selected':'')+'>'+esc(pg.nom)+'</option>'}).join('')+'</select>')+
+   champ('Vu par','<select data-k="contenu.vue">'+Object.keys(R.VUES_SITE).map(function(k){return'<option value="'+k+'"'+(k===C.vue?' selected':'')+'>'+esc(R.VUES_SITE[k])+'</option>'}).join('')+'</select>')+'</div>':'')+
+   '<p class="leg">Vivant dans l\'aperçu : chaque modification du générateur s\'affiche aussitôt. Une fois publié, le visiteur voit la version publique, celle du paquet .zip.</p>'}
   else if(C.type==='url')h+=champ('Adresse https','<input data-k="contenu.src" value="'+esc(C.src||'')+'" placeholder="https://…">')+'<p class="leg">Beaucoup de sites refusent d\'être affichés dans un cadre : utilisez alors une capture.</p>';
   h+=champ('Lien au clic (facultatif)','<input data-k="lien" value="'+esc(a.lien)+'" placeholder="/g44/ ou https://…">')+champ('Description pour les lecteurs d\'écran','<textarea data-k="alt" rows="2">'+esc(a.alt)+'</textarea>')+
   '<div class="g4">'+champ('X %','<input type="number" step="0.5" data-k="x" value="'+a.x+'">')+champ('Y %','<input type="number" step="0.5" data-k="y" value="'+a.y+'">')+champ('Largeur %','<input type="number" step="0.5" min="3" max="100" data-k="l" value="'+a.l+'">')+champ('Rotation °','<input type="number" step="1" min="-45" max="45" data-k="rot" value="'+a.rot+'">')+'</div>'+
   '<div class="g2">'+champ('Accroché à','<select data-k="ancre">'+uniq([a.ancre].concat(ed.ancres,['body'])).map(function(x){return'<option'+(x===a.ancre?' selected':'')+'>'+esc(x)+'</option>'}).join('')+'</select>')+champ('Sur petit écran','<select data-k="mobile">'+Object.keys(R.MOBILE).map(function(k){return'<option value="'+k+'"'+(k===a.mobile?' selected':'')+'>'+R.MOBILE[k]+'</option>'}).join('')+'</select>')+'</div>'+
   '<div class="lgn"><button class="b b-s" type="button" id="apDevant">Devant</button><button class="b b-s" type="button" id="apDerriere">Derrière</button><button class="b b-s" type="button" id="apDup">Dupliquer</button><button class="b b-s b-dg" type="button" id="apSuppr">Supprimer</button></div></div>'}
- if(!a&&!ed.selTexte){h+='<div class="carte pile"><h3>Sur cette page</h3>'+(P.appareils.length?'<div class="liste-app">'+P.appareils.map(function(x){return'<button type="button" data-ch="'+esc(x.id)+'"><img class="vign" alt="" data-v="'+esc(x.contenu.src||'')+'"><span><b>'+R.APPAREILS[x.type].nom+'</b><br><i>'+esc(R.CONTENUS[x.contenu.type])+'</i></span></button>'}).join('')+'</div>':'<p class="leg">Aucun appareil. Ajoutez-en un avec « + iPhone », « + iPad » ou « + MacBook ».</p>')+'</div>'+
-  '<div class="carte pile"><h3>Textes remplacés</h3>'+(P.textes.length?P.textes.map(function(t,i){return'<div class="pile" style="gap:6px;border-top:1px solid var(--ligne);padding-top:8px"><span class="leg" style="font-family:var(--mono);word-break:break-all">'+esc(t.sel)+'</span><textarea data-tx="'+i+'" rows="2" aria-label="Texte">'+esc(t.texte)+'</textarea><span><button class="b b-s" type="button" data-txs="'+i+'">Rétablir l\'original</button></span></div>'}).join(''):'<p class="leg">Aucun. Activez « Mode texte » puis cliquez un texte dans la page.</p>')+'</div>'}
- c.innerHTML=h;
+ if(!a&&!ed.selTexte&&!ed.selMorph){h+='<div class="carte pile"><h3>Sur cette page</h3>'+(P.appareils.length?'<div class="liste-app">'+P.appareils.map(function(x){return'<button type="button" data-ch="'+esc(x.id)+'"><img class="vign" alt="" data-v="'+esc(x.contenu.src||'')+'"><span><b>'+R.APPAREILS[x.type].nom+'</b><br><i>'+esc(R.CONTENUS[x.contenu.type])+'</i></span></button>'}).join('')+'</div>':'<p class="leg">Aucun appareil. Ajoutez-en un avec « + iPhone », « + iPad » ou « + MacBook ».</p>')+'</div>'+
+  '<div class="carte pile"><h3>Textes remplacés</h3>'+(P.textes.length?P.textes.map(function(t,i){return'<div class="pile" style="gap:6px;border-top:1px solid var(--ligne);padding-top:8px"><span class="leg" style="font-family:var(--mono);word-break:break-all">'+esc(t.sel)+'</span><textarea data-tx="'+i+'" rows="2" aria-label="Texte">'+esc(t.texte)+'</textarea><span><button class="b b-s" type="button" data-txs="'+i+'">Rétablir l\'original</button></span></div>'}).join(''):'<p class="leg">Aucun. Activez « Mode texte » puis cliquez un texte dans la page.</p>')+'</div>'+
+  '<div class="carte pile"><h3>Métamorphoses</h3><label class="lgn"><input type="checkbox" id="mfOn"'+(cfg.transitions?' checked':'')+'> Transitions entre les pages du site</label>'+
+  (P.morphs.length?P.morphs.map(function(m,i){var ail=morphsAilleurs().filter(function(n){return n.nom===m.nom});return'<div class="lgn" style="justify-content:space-between;border-top:1px solid var(--ligne);padding-top:8px"><span><b>'+esc(m.nom)+'</b><br><span class="leg">'+(ail.length?'aussi sur '+esc(ail.map(function(n){return n.page}).join(', ')):'sur aucune autre page pour l\'instant')+'</span></span><button class="b b-s" type="button" data-mfx="'+i+'">Retirer</button></div>'}).join(''):'<p class="leg">Aucun bloc nommé. Activez « Métamorphose » puis cliquez un bloc.</p>')+
+  '<p class="leg">Navigateurs récents seulement ; ailleurs, la page change normalement. Désactivé si le visiteur réduit les animations.</p></div>'}
+ c.innerHTML=h;var mfOn=$('mfOn');if(mfOn)mfOn.onchange=function(){cfg.transitions=this.checked;sauverCfg();toast(this.checked?'Transitions activées (brouillon).':'Transitions désactivées.')};
  [].forEach.call(c.querySelectorAll('img[data-v]'),function(im){vignette(im.dataset.v).then(function(u){if(u)im.src=u})});
  c.oninput=c.onchange=function(e){var t=e.target;if(t.dataset.tx!=null){P.textes[+t.dataset.tx].texte=t.value.slice(0,2000);sauverCfg();return}var k=t.dataset.k,a=appCourant();if(!k||!a)return;
   var v=t.type==='checkbox'?t.checked:t.type==='number'?parseFloat(t.value):t.value,o=copie(a);
   if(k.indexOf('contenu.')===0){var kk=k.slice(8);o.contenu[kk]=v;if(kk==='type'){o.contenu.src=null;ed.biblio=v==='image'}}else o[k]=v;
-  if(k==='contenu.src'&&v&&!(R.sourceOk(v)||(o.contenu.type==='page'&&R.cheminOk(v))||(o.contenu.type==='url'&&R.httpsOk(v)))){if(e.type==='change')toast('Adresse refusée : un chemin du site (« /… ») ou une adresse https.',true);return}
+  if(k==='contenu.src'&&v&&!((o.contenu.type==='site'&&R.siteOk(v))||R.sourceOk(v)||(o.contenu.type==='page'&&R.cheminOk(v))||(o.contenu.type==='url'&&R.httpsOk(v)))){if(e.type==='change')toast('Adresse refusée : un chemin du site (« /… ») ou une adresse https.',true);return}
   if(k==='lien'&&v&&!R.cibleOk(v)){if(e.type==='change')toast('Lien refusé : un chemin du site, une ancre « #… » ou une adresse https.',true);return}
   if(e.type==='input'&&(t.tagName==='SELECT'||t.type==='checkbox'))return;
   var n=R.appareil(o),i=P.appareils.indexOf(a);P.appareils[i]=n;sauverCfg();if(e.type==='change'&&(k==='type'||k==='contenu.type'||k==='contenu.src'||k==='paysage'))panneau()};
@@ -126,6 +180,12 @@ function panneau(){var c=$('edCote');if(!c)return;var P=pageCfg(ed.cle),a=appCou
   if(b.dataset.ch){ed.choisi=b.dataset.ch;dirFrame({type:'regie:choisir',id:ed.choisi});panneau();return}
   if(b.dataset.txs!=null){P.textes.splice(+b.dataset.txs,1);sauverCfg();panneau();return}
   if(b.id==='txAnn'){ed.selTexte=null;panneau();return}
+  if(b.id==='mfAnn'){ed.selMorph=null;panneau();return}
+  if(b.dataset.mfx!=null){P.morphs.splice(+b.dataset.mfx,1);sauverCfg();panneau();return}
+  if(b.id==='mfSuppr'){P.morphs=P.morphs.filter(function(x){return x.sel!==ed.selMorph.sel});cfg.pages[ed.cle].morphs=P.morphs;sauverCfg();ed.selMorph=null;panneau();return}
+  if(b.id==='mfOk'){var nm=R.morph({sel:ed.selMorph.sel,nom:$('mfNom').value});if(!nm)return toast('Un nom commence par une lettre : minuscules, chiffres et tirets, 2 à 41 caractères.',true);
+   if(P.morphs.some(function(x){return x.nom===nm.nom&&x.sel!==nm.sel}))return toast('Ce nom est déjà pris sur cette page : un nom par bloc.',true);
+   P.morphs=P.morphs.filter(function(x){return x.sel!==nm.sel});P.morphs.push(nm);cfg.pages[ed.cle].morphs=P.morphs;if(!cfg.transitions){cfg.transitions=true;toast('Transitions activées pour le site.')}sauverCfg();ed.selMorph=null;panneau();return}
   if(b.id==='txOk'){var v=$('txVal').value,r=P.textes.filter(function(t){return t.sel===ed.selTexte.sel})[0];if(r)r.texte=v;else{var nt=R.texte({sel:ed.selTexte.sel,texte:v,avant:ed.selTexte.original});if(!nt)return toast('Ce texte ne peut pas être remplacé.',true);P.textes.push(nt)}sauverCfg();ed.selTexte=null;panneau();toast('Texte enregistré dans le brouillon.');return}
   if(b.id==='txSuppr'){P.textes=P.textes.filter(function(t){return t.sel!==ed.selTexte.sel});cfg.pages[ed.cle].textes=P.textes;sauverCfg();ed.selTexte=null;panneau();return}
   a=appCourant();if(!a)return;var i=P.appareils.indexOf(a);
@@ -139,6 +199,7 @@ function panneau(){var c=$('edCote');if(!c)return;var P=pageCfg(ed.cle),a=appCou
   box.innerHTML='<span class="seg" role="group" aria-label="Catégories">'+cats.map(function(k){return'<button type="button" data-cat="'+k+'" aria-pressed="'+(k===ed.cat)+'">'+esc(j.categories[k])+'</button>'}).join('')+'</span><div class="biblio">'+j.images.filter(function(i){return i.cat===ed.cat}).map(function(i){return'<button type="button" data-img="'+esc(i.id)+'" title="'+esc(i.alt)+'"><img src="/sites/bibliotheque/'+esc(i.vignette)+'" alt="'+esc(i.alt)+'" loading="lazy"></button>'}).join('')+'</div>';
   box.onclick=function(e){var b=e.target.closest('button');if(!b)return;e.stopPropagation();if(b.dataset.cat){ed.cat=b.dataset.cat;panneau();return}var im=j.images.filter(function(i){return i.id===b.dataset.img})[0],a=appCourant();if(!im||!a)return;
    var o=copie(a);o.contenu.src='biblio:'+im.id;if(!o.alt||/visuel de la bibliothèque/.test(o.alt))o.alt='Un '+R.APPAREILS[o.type].nom+' affichant : '+im.alt.charAt(0).toLowerCase()+im.alt.slice(1)+', visuel de la bibliothèque AIME.';P.appareils[P.appareils.indexOf(a)]=R.appareil(o);sauverCfg();panneau()}})}
+function morphsAilleurs(){var L=[];Object.keys(cfg.pages).forEach(function(k){if(k===ed.cle)return;(cfg.pages[k].morphs||[]).forEach(function(m){L.push({nom:m.nom,page:k})})});return L}
 function uniq(l){var v={};return l.filter(function(x){if(!x||v[x])return false;v[x]=1;return true})}
 
 /* ================= L'orbe, site par site ================= */
@@ -275,11 +336,11 @@ function vEntreprise(){var E=compta.emetteur;
  vue.onclick=function(e){if(e.target.id==='eDefaut'){var M=R.MENTIONS_DEFAUT;['tva','paiement','penalites','indemnite','escompte','validite'].forEach(function(k){E[k]=M[k]});sauverCompta();vEntreprise();toast('Mentions par défaut rétablies.')}}}
 
 /* ================= Publier et sauvegarder ================= */
-function vPublier(){var nb=Object.keys(cfg.pages).reduce(function(s,k){return s+cfg.pages[k].appareils.length},0),nm=Object.keys(cfg.medias).length,sv=compta.sauvegarde,ndoc=compta.docs.length;
+function vPublier(){var nb=Object.keys(cfg.pages).reduce(function(s,k){return s+cfg.pages[k].appareils.length},0),nm=Object.keys(cfg.medias).length,ns=sitesUtilises(cfg).length,sv=compta.sauvegarde,ndoc=compta.docs.length;
  var jours=sv?Math.floor((Date.now()-Date.parse(sv))/864e5):null;
  vue.innerHTML='<h1>Publier et sauvegarder</h1><p class="sous">Le site ne change que quand le fichier de configuration est déposé dans le dépôt : aucune publication automatique.</p>'+
  '<div class="carte pile"><h3>Le site</h3><p>'+(modifie()?'<b>Vos réglages diffèrent de la version publiée.</b>':'Vos réglages sont identiques à la version publiée.')+' '+nb+' appareil'+(nb>1?'s':'')+' sur '+Object.keys(cfg.pages).length+' page'+(Object.keys(cfg.pages).length>1?'s':'')+', '+Object.keys(cfg.orbe).length+' réglage'+(Object.keys(cfg.orbe).length>1?'s':'')+' d\'orbe, '+nm+' média'+(nm>1?'s':'')+' importé'+(nm>1?'s':'')+'.</p>'+
- '<div class="lgn"><button class="b b-p" type="button" id="pJson">Télécharger site.json</button>'+(nm?'<button class="b" type="button" id="pZip">Télécharger le paquet (.zip, avec les médias)</button>':'')+'<label class="b">Importer un site.json<input type="file" id="pImp" accept="application/json,.json" hidden></label><button class="b b-dg" type="button" id="pRaz">Revenir à la version publiée</button></div>'+
+ '<div class="lgn"><button class="b b-p" type="button" id="pJson">Télécharger site.json</button>'+(nm||ns?'<button class="b" type="button" id="pZip">Télécharger le paquet (.zip, avec les médias'+(ns?' et '+ns+' site'+(ns>1?'s':''):'')+')</button>':'')+'<label class="b">Importer un site.json<input type="file" id="pImp" accept="application/json,.json" hidden></label><button class="b b-dg" type="button" id="pRaz">Revenir à la version publiée</button></div>'+
  '<ol class="leg" style="margin:0;padding-left:18px"><li>Téléchargez le fichier (ou le paquet si vous avez importé des images ou des vidéos).</li><li>Déposez <code>site.json</code> dans <code>regie/</code> et les médias dans <code>regie/medias/</code>, puis ouvrez une PR — ou envoyez simplement le fichier à Claude.</li><li>Après fusion, tous les visiteurs voient vos réglages.</li></ol>'+
  '<p class="leg">« Aperçu de mes réglages » (en haut) vous montre le brouillon sur le vrai site, dans ce navigateur seulement.</p></div>'+
  '<div class="carte pile" style="margin-top:14px"><h3>Devis, factures et clients</h3>'+(ndoc&&(jours===null||jours>7)?'<p class="alerte">'+(jours===null?'Aucune sauvegarde encore.':'Dernière sauvegarde il y a '+jours+' jours.')+' Ces données ne vivent que dans ce navigateur : un nettoyage du navigateur les effacerait.</p>':'<p class="leg">'+(sv?'Dernière sauvegarde : '+R.frDate(sv.slice(0,10))+'.':'Aucune sauvegarde encore.')+'</p>')+
@@ -294,8 +355,10 @@ function vPublier(){var nb=Object.keys(cfg.pages).reduce(function(s,k){return s+
  $('pImp').onchange=function(){var f=this.files[0];this.value='';lireFichier(f,function(t){var c=R.config(JSON.parse(t));cfg=c;sauverCfg(true);vPublier();toast('Configuration importée dans le brouillon.')})};
  $('cImp').onchange=function(){var f=this.files[0];this.value='';lireFichier(f,function(t){var c=R.compta(t);if(compta.docs.length&&!window.__aimeConfirmeRestauration){window.__aimeConfirmeRestauration=t;toast('Restaurer remplacera vos '+compta.docs.length+' documents actuels. Choisissez de nouveau le fichier pour confirmer.',true);return}delete window.__aimeConfirmeRestauration;compta=c;sauverCompta();vPublier();toast('Sauvegarde restaurée : '+c.docs.length+' documents, '+c.clients.length+' clients.')})}}
 function lireFichier(f,ok){if(!f)return;if(f.size>20e6)return toast('Fichier trop lourd.',true);var r=new FileReader();r.onload=function(){try{ok(String(r.result))}catch(e){toast(e.message||'Fichier illisible.',true)}};r.readAsText(f)}
+function sitesUtilises(P){var v={};Object.keys(P.pages).forEach(function(k){P.pages[k].appareils.forEach(function(a){if(a.contenu.type==='site'&&R.siteOk(a.contenu.src))v[a.contenu.src.slice(5)]=1})});return Object.keys(v)}
 function paquet(){var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=function(){var z=new JSZip(),P=propre();z.file('site.json',JSON.stringify(P,null,1));
-  Promise.all(Object.keys(cfg.medias).map(function(id){return mediaLire(id).then(function(v){if(v)z.file('medias/'+id+'.'+cfg.medias[id].ext,v.blob)})})).then(function(){return z.generateAsync({type:'blob'})}).then(function(b){telecharger('regie-'+aujourdhui()+'.zip',b)})};
+  var ids=sitesUtilises(P);
+  Promise.all(Object.keys(cfg.medias).map(function(id){return mediaLire(id).then(function(v){if(v)z.file('medias/'+id+'.'+cfg.medias[id].ext,v.blob)})}).concat(ids.length&&XS?[XS.pret().then(function(){ids.forEach(function(id){var h=XS.publique(id);if(h)z.file('medias/site-'+id+'.html',h);else toast('Le site '+id+' n\'est pas dans ce navigateur : il manquera au paquet.',true)})})]:[])).then(function(){return z.generateAsync({type:'blob'})}).then(function(b){telecharger('regie-'+aujourdhui()+'.zip',b)})};
  s.onerror=function(){toast('Impossible de charger l\'outil .zip. Téléchargez site.json et ajoutez les médias à la main.',true)};if(window.JSZip)s.onload();else document.head.appendChild(s)}
 
 /* ---------- aperçu sur le vrai site ---------- */

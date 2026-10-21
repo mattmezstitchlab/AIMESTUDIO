@@ -93,6 +93,16 @@ h3{margin:0;font:600 15px var(--ui)}
 .orbe-v{width:var(--t,56px);height:var(--t,56px);border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55),rgba(255,255,255,.08) 28%,transparent 46%),conic-gradient(from 200deg,#22D3EE,#7C5CFF,#FB7185,#F59E0B,#22D3EE);box-shadow:0 10px 30px -8px rgba(124,92,255,.7);flex:none}
 .sites-orbe{display:grid;grid-template-columns:240px minmax(0,1fr);gap:16px;align-items:start}
 .sites-orbe .liste-app{max-height:calc(100vh - 200px);overflow:auto}
+.sites-cl{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px;align-items:start}
+.sites-cl .liste-app{max-height:calc(100vh - 200px);overflow:auto}
+.sig{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none;font:700 11px var(--mono);color:#fff;background:conic-gradient(from 200deg,#22D3EE,#7C5CFF,#FB7185,#F59E0B,#22D3EE)}
+.trio{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,2.4fr) minmax(0,1.25fr);gap:14px;align-items:end}
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.ecr-cl{margin:0;display:grid;gap:6px;min-width:0}
+.ecr-cl figcaption{font:600 12px var(--sans,inherit);color:var(--doux)}
+.cadre-cl{position:relative;overflow:hidden;border:1px solid var(--ligne);border-radius:12px;background:#fff;box-shadow:0 18px 40px -24px rgba(0,0,0,.6)}
+.cadre-cl iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;pointer-events:none;background:#fff}
+@media (max-width:1100px){.sites-cl{grid-template-columns:minmax(0,1fr)}.sites-cl .liste-app{max-height:none;grid-auto-flow:column;grid-auto-columns:minmax(200px,1fr);overflow-x:auto}.trio{grid-template-columns:minmax(0,1fr)}}
 .sugg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) auto;gap:6px;align-items:center}
 
 /* devis et factures */
