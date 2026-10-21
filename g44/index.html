@@ -6,10 +6,11 @@
 <title>AIME G44 LAB · Le laboratoire des dépendances administratives</title>
 <meta name="description" content="Démonstrateur indépendant : une date erronée, des opérations à reprendre, une chaîne à comprendre. Graphe de dépendances, simulation isolée, six laboratoires. Données fictives.">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#F6F4EF">
+<meta name="theme-color" content="#F7F7F7">
 <link rel="icon" href="data:,">
 <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/g44/g44.css">
+<link rel="stylesheet" href="/g44/lab.css">
 </head>
 <body>
 <a class="evite" href="#contenu">Aller au contenu</a>
@@ -17,15 +18,18 @@
  <a class="marque" href="#haut"><b>AIME<sup>®</sup></b><span>G44 LAB</span></a>
  <nav aria-label="Sections"><a href="#scenario">Scénario</a><a href="#graphe">Graphe</a><a href="#labos">Laboratoires</a><a href="#mesurer">Mesurer</a><a href="#verite">Méthode</a><a href="#moteurs">Moteurs</a></nav>
  <span class="fictif">Données fictives</span>
+ <a class="cta-tete" href="#scenario">Explorer</a>
 </div></header>
 
 <main id="contenu">
 <!-- 01 · HERO -->
 <section class="hero" id="haut" aria-labelledby="h1"><div class="wrap">
- <span class="k">Laboratoire des systèmes et des relations</span>
+ <span class="k tag">Laboratoire des systèmes et des relations</span>
  <h1 class="t-xxl" id="h1"><span>Une date erronée.</span><span>Des opérations à reprendre.</span><span>Une chaîne à comprendre.</span></h1>
  <p class="sous">AIME rend visibles les dépendances administratives avant toute correction.</p>
  <div class="actions"><a class="btn" href="#scenario">Explorer le scénario</a><a class="btn sec" href="#moteurs">Voir les moteurs</a></div>
+</div>
+ <div class="bande metal" aria-label="Démonstration interactive"><div class="wrap"><div class="ecran ecran-hero"><div class="ecran-barre" aria-hidden="true"><i></i><i></i><i></i><span>Dossier DOS-FICTIF-0001 · simulation</span></div>
  <div class="ligne" id="ligne">
   <div class="onde" id="onde" aria-hidden="true"></div>
   <ol>
@@ -36,6 +40,8 @@
   </ol>
   <div class="ligne-leg leg"><span>Calculé par le moteur sur le dossier fictif, pour une année corrigée de 2015 à 2016.</span><span>En italique : un lien hypothétique, signalé mais jamais appliqué.</span></div>
  </div>
+ </div></div></div>
+<div class="wrap">
  <div class="chiffres" role="list" aria-label="Chiffres de structure">
   <div role="listitem"><b>1</b><span>information de référence par objet</span></div>
   <div role="listitem"><b>2</b><span>états comparables : initial et simulé</span></div>
@@ -47,9 +53,10 @@
 </div></section>
 
 <!-- 02 · SCÉNARIO -->
-<section class="section fond" id="scenario" aria-labelledby="t-scen"><div class="wrap">
+<section class="section fond plein" id="scenario" aria-labelledby="t-scen" style="--visuel:url(/g44/img/mariage.webp)"><div class="wrap">
  <div class="section-tete"><span class="k">02 · Une seule erreur</span><h2 class="t-xl" id="t-scen">Une année de mariage mal enregistrée. Un enfant déjà rattaché.</h2>
   <p class="sous">Dans la simulation, une règle expérimentale empêche de corriger directement la date : il faut d'abord comprendre ce qui en dépend.</p></div>
+ <div class="ecran">
  <div class="famille">
   <div class="carte">
    <span class="k" style="color:var(--doux)">Dossier DOS-FICTIF-0001</span>
@@ -65,7 +72,7 @@
    <p class="leg frise-lecture" id="friseTxt" aria-live="polite"></p>
   </div>
  </div>
-</div></section>
+</div></div></section>
 
 <!-- 03 · GRAPHE -->
 <section class="section" id="graphe" aria-labelledby="t-gr"><div class="wrap">
@@ -85,34 +92,38 @@
  <div class="labos" id="labosListe"></div>
 </div></section>
 
-<section class="labo" id="lab01" aria-labelledby="t-l1"><div class="wrap">
+<section class="labo plein" id="lab01" aria-labelledby="t-l1" style="--visuel:url(/g44/img/conseiller.webp)"><div class="wrap">
  <div class="labo-tete"><small>LAB 01</small><span class="statut proto">Prototype</span></div>
  <h2 class="t-l" id="t-l1">G44 historique. Comprendre l'existant.</h2>
  <p class="sous">Un écran à formulaires reconstitué pour la pédagogie. Il ne reproduit aucun logiciel réel : les codes et les libellés sont fictifs, et chacun le dit.</p>
+ <div class="ecran">
  <div class="bascule" role="group" aria-label="Mode de lecture"><button type="button" aria-pressed="true" data-mode="hist">Grille historique</button><button type="button" aria-pressed="false" data-mode="aug">Lecture augmentée</button></div>
  <div id="l1"></div>
  <p class="note">La grille G44 documentée, dans l'exemple dont nous disposons, sert à corriger un <b>coefficient d'emploi</b>. C'est une situation distincte du mariage : rien n'indique qu'elle suive la même procédure. Elle n'est pas reconstituée ici tant que le document source n'a pas été versé et autorisé (voir LAB 04).</p>
-</div></section>
+</div></div></section>
 
-<section class="labo" id="lab02" aria-labelledby="t-l2"><div class="wrap">
+<section class="labo plein" id="lab02" aria-labelledby="t-l2" style="--visuel:url(/g44/img/difficultes.webp)"><div class="wrap">
  <div class="labo-tete"><small>LAB 02</small><span class="statut op">Opérationnel</span></div>
  <h2 class="t-l" id="t-l2">G44 Rewind. Comprendre avant de corriger.</h2>
  <p class="sous">Simuler, comparer les états, abandonner. La simulation est déterministe, reproductible et annulable. Aucune action réelle.</p>
+ <div class="ecran">
  <div class="commandes"><button class="btn saumon" type="button" id="simuler">Simuler</button><button class="btn sec" type="button" id="comparer" disabled>Comparer les états</button><button class="btn sec" type="button" id="abandonner" disabled>Abandonner la simulation</button><span class="leg" id="simInfo">Année envisagée : 2016.</span></div>
  <div id="l2"><p class="vide">Aucune simulation en cours. L'état du dossier est l'état enregistré.</p></div>
-</div></section>
+</div></div></section>
 
-<section class="labo" id="lab03" aria-labelledby="t-l3"><div class="wrap">
+<section class="labo plein" id="lab03" aria-labelledby="t-l3" style="--visuel:url(/g44/img/famille.webp)"><div class="wrap">
  <div class="labo-tete"><small>LAB 03</small><span class="statut op">Opérationnel</span></div>
  <h2 class="t-l" id="t-l3">Family Graph. Trois natures de relation.</h2>
  <p class="sous">Un lien familial, un rattachement administratif et un droit social ne sont pas interchangeables. Activez chaque couche ; touchez l'enfant.</p>
+ <div class="ecran">
  <div class="fam"><div><div class="couches" id="couches"></div><div class="graphe" id="famBox"></div></div><aside class="panneau" id="famPanneau" aria-live="polite"><span class="k">Lecture</span><h3>Touchez une personne.</h3></aside></div>
-</div></section>
+</div></div></section>
 
-<section class="labo" id="lab04" aria-labelledby="t-l4"><div class="wrap">
+<section class="labo plein" id="lab04" aria-labelledby="t-l4" style="--visuel:url(/g44/img/cotisations.webp)"><div class="wrap">
  <div class="labo-tete"><small>LAB 04</small><span class="statut proto">Prototype</span></div>
  <h2 class="t-l" id="t-l4">Document Intelligence. Une procédure devient une connaissance.</h2>
  <p class="sous">Le texte d'un PDF est lu dans votre navigateur ; rien n'est envoyé. Chaque élément repéré est une proposition, marquée comme telle et corrigible. Rien n'est jamais écrit dans un dossier.</p>
+ <div class="ecran">
  <div class="docs">
   <div><label class="depot" id="depot"><input type="file" id="fichier" accept="application/pdf,image/png,image/jpeg" hidden><b>Déposer un PDF ou une image</b><span class="leg">PDF avec texte : lecture réelle. Image : affichée, sans reconnaissance de caractères dans ce prototype.</span></label>
    <div class="actions" style="margin-top:14px"><button class="btn sec petit" type="button" id="exemple">Utiliser la fiche d'exemple fictive</button></div>
@@ -120,23 +131,25 @@
    <div class="apercu-doc" id="docVue" hidden></div></div>
   <div class="bloc"><h3>Propositions d'extraction <span id="docInfo"></span></h3><div id="docExtraits"><p class="vide">Aucun document lu.</p></div></div>
  </div>
-</div></section>
+</div></div></section>
 
-<section class="labo" id="lab05" aria-labelledby="t-l5"><div class="wrap">
+<section class="labo plein" id="lab05" aria-labelledby="t-l5" style="--visuel:url(/g44/img/espace.webp)"><div class="wrap">
  <div class="labo-tete"><small>LAB 05</small><span class="statut op">Opérationnel</span></div>
  <h2 class="t-l" id="t-l5">SynchroView. Une même situation, quatre responsabilités.</h2>
  <p class="sous">La perspective choisit ce qui s'affiche. Elle n'accorde aucun droit : l'autorisation se calcule à part, à partir de l'identité, de la mission et des habilitations fictives.</p>
+ <div class="ecran">
  <div class="axes"><div><b>Axe 1 · Présentation</b><span class="etat visible">Visible</span> <span class="etat masque">Masqué</span><p>Décidé par la perspective.</p></div><div><b>Axe 2 · Autorisation</b><span class="etat autorise">Autorisé</span> <span class="etat refuse">Refusé</span> <span class="etat nonverifie">Non vérifié</span><p>Décidé par une règle explicite. En production, côté serveur.</p></div></div>
  <div class="persp" id="persp"></div>
-</div></section>
+</div></div></section>
 
-<section class="labo" id="lab06" aria-labelledby="t-l6"><div class="wrap">
+<section class="labo plein" id="lab06" aria-labelledby="t-l6" style="--visuel:url(/g44/img/emploi.webp)"><div class="wrap">
  <div class="labo-tete"><small>LAB 06</small><span class="statut op">Opérationnel</span></div>
  <h2 class="t-l" id="t-l6">Formation. Transmettre sans multiplier les erreurs.</h2>
  <p class="sous">« Une année de mariage est erronée. Un enfant est déjà rattaché. Que faut-il examiner avant de préparer une correction ? » Choisissez des étapes, dans l'ordre. Pas de note : des explications.</p>
+ <div class="ecran">
  <div class="form"><div class="bloc"><h3>Étapes possibles</h3><div class="puces" id="puces"></div></div>
   <div class="bloc"><h3>Votre suite <button class="btn sec petit" type="button" id="effacer">Recommencer</button></h3><ol class="suite" id="suite"></ol><div class="actions" style="margin-top:16px"><button class="btn" type="button" id="expliquer" disabled>Expliquer mes choix</button></div><div id="bilan" aria-live="polite"></div></div></div>
-</div></section>
+</div></div></section>
 
 <!-- 04 · MESURER -->
 <section class="section fond" id="mesurer" aria-labelledby="t-mes"><div class="wrap">

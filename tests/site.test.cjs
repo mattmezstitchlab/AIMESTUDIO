@@ -138,3 +138,16 @@ test('tous les supports du Studio sont dans le générateur : un bloc dédié, o
  for(const v of Object.keys(S.BLOCS.support.variantes))S.ajouterSection(s,'index','support').variante=v;const h=S.document(s,{presentation:P}).html;
  assert.ok(!h.includes('<Lin>')&&h.includes('Atelier &lt;Lin&gt;'),'échappé');assert.ok(h.includes('<td>Ourlet')&&h.includes('15 €'),'devis et facture lisent les tarifs');assert.ok(h.includes('class="sp sp-rond sp-vitro"'),'la vitrophanie est ronde');
  assert.ok(/--r:0\.707/.test(h)||/--r:0\.70/.test(h),'une affiche A3 garde ses proportions')});
+test('visuels associés : chaque univers a ses images, accordées à l\'emplacement ; la photo de la personne passe avant ; on peut les couper',()=>{
+ const B=JSON.parse(require('fs').readFileSync(path.join(__dirname,'..','sites/bibliotheque/bibliotheque.json'),'utf8')),A=B.associations,ids=new Set(B.images.map(x=>x.id));
+ for(const u of Object.keys(A))for(const k of Object.keys(A[u]))for(const id of A[u][k])assert.ok(ids.has(id),u+'/'+k+' '+id);
+ for(const m of M)assert.ok(A[m.univers]||A['*'],m.id);for(const u of ['mariage','anniv','conf','artisan','portfolio','asso','*'])for(const k of ['hero','image','video','lieu','support-affiche','support-ecran'])assert.ok(A[u][k]&&A[u][k].length,u+'/'+k);
+ const cat=id=>B.images.find(x=>x.id===id).cat;assert.ok(A.mariage.hero.every(i=>cat(i)==='ceremonie'),'un en-tête de mariage montre une cérémonie');assert.ok(A.conf.hero.every(i=>cat(i)==='lieux'),'un séminaire montre des salles');
+ const s=S.appliquerModele(S.vide(),M.find(m=>m.id==='mariage'));S.ajouterSection(s,'index','support').variante='poster';s.listes.galerie=[];
+ const h=S.document(s,{presentation:P,visuels:A}).html;const vus=S.mediasDe(h);assert.ok(vus.length>=2&&vus.every(i=>ids.has(i)));
+ s.listes.galerie=[{src:'https://exemple.fr/ma-photo.jpg'}];assert.ok(S.document(s,{presentation:P,visuels:A}).html.includes('ma-photo.jpg'),'la photo posée passe avant');
+ s.presentation.visuels=false;s.listes.galerie=[];assert.equal(S.mediasDe(S.document(s,{presentation:P,visuels:A}).html).length,0,'désactivable')});
+test('l\'export public embarque aussi les visuels associés qu\'il affiche',()=>{
+ const A=JSON.parse(require('fs').readFileSync(path.join(__dirname,'..','sites/bibliotheque/bibliotheque.json'),'utf8')).associations;
+ const s=S.appliquerModele(S.vide(),M.find(m=>m.id==='mariage'));s.listes.galerie=[];const F=S.exporterPublic(s,{presentation:P,visuels:A,medias:'medias/'});
+ assert.ok(F.some(f=>S.mediasDe(f.contenu).length>0),'les pages exportées référencent leurs visuels dans medias/')});

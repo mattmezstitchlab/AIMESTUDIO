@@ -219,3 +219,9 @@ Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / F�
   - L'émargement, les convocations et les attestations lisent les personnes.
   - Les programmes et les fiches lisent le programme ; l'immobilier lit les chiffres.
 - C'est une adaptation au web, pas une copie à l'identique de la mise en page imprimée du Studio. Pour imprimer, le Studio reste l'outil.
+
+## Visuels associés, partout où un bloc a une place pour une image (21/10/2026)
+- Tant que la personne n'a pas posé sa propre photo, l'en-tête, le bloc Image, la vidéo, le lieu et les supports (affiche, écran…) prennent un visuel de la bibliothèque **accordé à l'univers du site**. Exemples : des cérémonies pour un mariage, des salles pour un séminaire, des objets d'atelier pour un artisan, des places de village pour une association, des textures pour un portfolio.
+- Les associations sont dans `sites/bibliotheque/bibliotheque.json` (`associations`), d'abord par univers, puis par emplacement (`hero`, `image`, `video`, `lieu`, `support-affiche`, `support-ecran`, `support:<format>`). Le choix est stable d'une section à l'autre.
+- La photo posée par la personne passe toujours avant. Une case de l'onglet Style coupe ces visuels (`presentation.visuels = false`), et le décor dessiné revient alors.
+- Le `.zip` à publier embarque les visuels associés qu'il affiche (testé).
