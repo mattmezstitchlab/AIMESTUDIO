@@ -92,7 +92,10 @@ function image(t){orbeSuivre(t);phrasesMaj();metaMaj();lienMaj(t);document.body.
 meta();requestAnimationFrame(image);
 /* les points des « i » ; puis les titres qui attirent l'orbe, dans l'ordre de la page */
 if(window.AIMEYeux&&$('duo'))yeux=AIMEYeux.monter($('duo'));
-if(window.AIMEPoints)AIMEPoints.preparer('.zero .intention,.phrase p,.meta h2,.meta .sous,.lien h2,.lien .sous,.promesse .grand:not(.grand+.grand),.exemples li,.autorisations,.entrer h2,.entrer p:not(.sorties-note)',function(){
+/* la régie remplace d'abord les textes ; dans l'édition de la régie, les textes restent simples (sans points) */
+var regie=window.AIMERegieScene;
+(regie?regie.textes:Promise.resolve()).then(function(){
+if(window.AIMEPoints&&!(regie&&regie.edition))AIMEPoints.preparer('.zero .intention,.phrase p,.meta h2,.meta .sous,.lien h2,.lien .sous,.promesse .grand:not(.grand+.grand),.exemples li,.autorisations,.entrer h2,.entrer p:not(.sorties-note)',function(){
  titre('.zero .intention',function(){return window.scrollY>40});
  [].forEach.call(document.querySelectorAll('.phrase:not(.comprendre) p'),function(p,i){titre('.phrase:not(.comprendre):nth-child('+(i+1)+') p')});
  titre('.meta h2',function(){return progres($('meta'))>.86});
@@ -101,6 +104,7 @@ if(window.AIMEPoints)AIMEPoints.preparer('.zero .intention,.phrase p,.meta h2,.m
  titre('.entrer h2',null,true);
  if(calme()){AIMEPoints.tous().forEach(function(p){AIMEPoints.allumer(p)});if(yeux)yeux.reveiller()}});
 else if(yeux)yeux.reveiller();
+});
 
 /* ---------- réduire les animations : le choix du visiteur s'ajoute à la préférence du système ---------- */
 var b=$('calme');function etiquette(){b.setAttribute('aria-pressed',String(calme()));b.textContent=calme()?'Rétablir les animations':'Réduire les animations'}

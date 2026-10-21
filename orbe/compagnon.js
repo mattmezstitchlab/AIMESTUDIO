@@ -80,7 +80,7 @@ function surPointeur(e){if(e.pointerType&&e.pointerType!=='mouse')return;px=e.cl
  if(!t){if(survol){survol=null;cadrer(null);cacherBulle()}return}
  if(survol&&survol.el===t.el){if(BUL.classList.contains('on'))placer(BUL,px,py);return}
  survol=t;cadrer(lienEnCours?t.el:null);cacherBulle();clearTimeout(attente);debutArret=performance.now();
- if(reglages.commentaires===false)return;attente=setTimeout(function(){if(survol===t&&!menuOuvert&&!fixe&&!detache)commenter(t)},lienEnCours?0:520)}
+ if(reglages.commentaires===false||O.commentaires===false)return;attente=setTimeout(function(){if(survol===t&&!menuOuvert&&!fixe&&!detache)commenter(t)},lienEnCours?0:520)}
 
 /* ---------- le menu d'actions ---------- */
 var CONTENU={titre:1,texte:1,citation:1,image:1,carte:1,tableau:1,liste:1,date:1,lieu:1,personne:1,code:1};

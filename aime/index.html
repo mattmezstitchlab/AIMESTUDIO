@@ -904,7 +904,7 @@ body.acur #gorb{opacity:0!important;pointer-events:none!important}
 <header class="top"><a class="mk" href="/">AIME<sup>®</sup></a><nav><a href="/lab/orb/">Lab</a><a href="/tout/">Tout voir</a></nav></header>
 <script src="/nav/registre.js" defer></script>
 <script src="/menu/menu.js" defer></script>
-<script src="/orbe/systeme.js" defer></script><script src="/orbe/compagnon.js" defer></script><script src="/orbe/fleche.js" defer></script><script src="/carte/carte.js" defer></script><script src="/carte/guide.js" defer></script><script src="/carte/rendu.js" defer></script><script src="/carte/facette.js" defer></script><script>addEventListener("load",function(){window.AIMECompagnon&&AIMECompagnon.demarrer({pointeur:false,envie:false})})</script>
+<script src="/orbe/systeme.js" defer></script><script src="/orbe/compagnon.js" defer></script><script src="/orbe/fleche.js" defer></script><script src="/carte/carte.js" defer></script><script src="/carte/guide.js" defer></script><script src="/carte/rendu.js" defer></script><script src="/carte/facette.js" defer></script><script>addEventListener("load",function(){/* la régie décide de l'orbe quand elle est là (regie/scene.js) */if(window.AIMERegieScene&&AIMERegieScene.actif)return;window.AIMECompagnon&&AIMECompagnon.demarrer({pointeur:false,envie:false})})</script>
 <div class="modes" id="modes" role="group" aria-label="Les quatre vues d'AIME"></div>
 <button class="orb" id="orb" type="button" aria-label="AIME, revenir au début"></button>
 <main>
@@ -2121,5 +2121,6 @@ window.svAnchors=function(){var n=document.getElementById('naiss'),ih=innerHeigh
  [['story2','Votre cube'],['story3','La causalité'],['build','Votre site']].forEach(function(s){var e=document.getElementById(s[0]);if(e)L.push({id:s[0],label:s[1],top:e.getBoundingClientRect().top+scrollY})});return L};
 </script>
 <script src="/synchroview/bridge.js" defer></script>
+<script src="/regie/scene.js" defer></script>
 </body>
 </html>
