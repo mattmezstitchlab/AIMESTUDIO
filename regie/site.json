@@ -130,6 +130,10 @@
    "accueil": "Par où voulez-vous commencer ?",
    "suggestions": [
     {
+     "libelle": "Parler d'un projet",
+     "cible": "#contact"
+    },
+    {
      "libelle": "Voir le G44 LAB",
      "cible": "/g44/"
     },
