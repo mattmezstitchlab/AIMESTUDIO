@@ -84,3 +84,28 @@ Le Bureau a un dossier « Sites ». Chaque site s'y rouvre (`/sites/?site=…`).
   - Les moments non publics deviennent des lignes « équipe ».
   - On y trouve une page Organisation réservée à l'organisation.
 - **Vérifié** : sur AIME WORLD, la vue Public masque 2 sections et 20 lignes, la vue Participant 1 section et 1 ligne, la vue Pro 1 section, et la vue Coordinateur rien. Une modification du titre apparaît dans les quatre vues de SynchroView sans recharger. Aucune erreur.
+
+## Grille libre, reprise du mini-site de la landing (21/10/2026)
+Les idées du constructeur de la landing sont reprises ici. Le constructeur lui-même n'est pas touché ; il reste dans `aime/index.html`, et son audit est résumé plus bas.
+
+- **Une page « Grille ».** On pose les blocs sur 12 colonnes.
+  - On les glisse pour les déplacer et on les agrandit avec la poignée violette ; la hauteur suit la largeur (`RATIO`).
+  - Un bloc déplacé garde sa place ; ceux qu'il recouvre descendent (`tasser`), donc aucun chevauchement.
+  - On repasse en sections à tout moment, sans rien perdre.
+- **Trois informations qui changent de forme avec leur largeur** (`FORMES`) :
+  - **La date** : pastille J-x (moins de 4 colonnes), compte à rebours (4 à 5), calendrier du mois (6 à 8), frise du jour (9 et plus).
+  - **Le lieu** : nom, puis carte (dès 5 colonnes), puis itinéraire avec un lien OpenStreetMap (dès 8).
+  - **Les personnes** : avatars, puis équipe (dès 5 colonnes), puis réseau (dès 9).
+- **Le plan B pluie.** Le bouton Soleil / Pluie bascule `infos.pluie`. Alors :
+  - chaque moment du programme affiche sa variante « pluie » ;
+  - le lieu et l'en-tête affichent le plan B.
+- **L'onde.** Changer une information allume les blocs qui l'affichent (`DEPS`) et propose « N blocs mis à jour · Annuler ».
+- **Un nouveau modèle, « Mini-site libre ».**
+- **Les rôles s'appliquent aussi en grille.** Chaque bloc et chaque ligne a son public.
+
+### Ce qui n'est pas repris du mini-site de la landing, et pourquoi
+- **Les blocs « Lab »** (menu radial, document vivant, réglage de couleur, anticipation, cubes, globe) : ce sont des démonstrations de la landing, pas des blocs de site.
+- **La face « code »** des blocs : elle montre des balises fictives.
+- **« Publier »** : simulé dans la landing. Ici, il viendra avec les comptes.
+
+Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / Fête du constructeur n'ont pas d'écouteur, et le bloc i-noms n'a pas de rendu.

@@ -36,7 +36,7 @@
 <main class="gen-main" id="atelier" hidden>
  <aside class="gen-g" aria-label="Structure">
   <div class="gen-pages" role="tablist" aria-label="Pages" id="pages"></div>
-  <div class="gen-pact"><button type="button" class="mini" id="pageAjout">+ Page</button><button type="button" class="mini" id="pageRenommer">Renommer</button><button type="button" class="mini" id="pageSuppr">Supprimer</button></div>
+  <div class="gen-pact"><button type="button" class="mini" id="pageMode" aria-pressed="false" title="Grille libre : poser les blocs sur 12 colonnes">Grille</button><button type="button" class="mini" id="pageAjout">+ Page</button><button type="button" class="mini" id="pageRenommer">Renommer</button><button type="button" class="mini" id="pageSuppr">Supprimer</button></div>
   <h2 class="gen-h">Sections</h2>
   <ol class="gen-secs" id="sections"></ol>
   <button type="button" class="gen-ajout" id="ajout" aria-expanded="false" aria-controls="catalogue">+ Ajouter une section</button>
@@ -46,10 +46,12 @@
  <section class="gen-c" aria-label="Aperçu">
   <div class="gen-barre">
    <div class="seg" role="group" aria-label="Taille de l'aperçu"><button type="button" data-taille="100%" aria-pressed="true">Ordinateur</button><button type="button" data-taille="820px" aria-pressed="false">Tablette</button><button type="button" data-taille="390px" aria-pressed="false">Téléphone</button></div>
-   <div class="seg" role="group" aria-label="Perspective" id="persps"></div>
+   <div class="seg" role="group" aria-label="Météo" id="meteo"><button type="button" data-meteo="0" aria-pressed="true">Soleil</button><button type="button" data-meteo="1" aria-pressed="false">Pluie · plan B</button></div>
+   <div class="seg" role="group" aria-label="Voir comme" id="persps"></div>
   </div>
   <div class="gen-cadre"><iframe id="apercu" title="Aperçu du site" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe></div>
   <p class="gen-note" id="noteP"></p>
+  <div class="gen-onde" id="onde" role="status" hidden><span></span><button type="button" class="mini" id="ondeAnnuler">Annuler</button></div>
  </section>
 
  <aside class="gen-d" aria-label="Réglages">

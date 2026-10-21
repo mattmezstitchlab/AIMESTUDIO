@@ -104,6 +104,116 @@
    }
   },
   {
+   "id": "libre",
+   "nom": "Mini-site libre",
+   "univers": "vierge",
+   "ambiance": "pastel",
+   "description": "Repris du mini-site de la landing : une grille de 12 colonnes où l'on pose les blocs. La date, le lieu et les personnes changent de forme avec leur largeur ; plan B pluie.",
+   "pages": [
+    {
+     "id": "index",
+     "titre": "Accueil",
+     "mode": "grille",
+     "sections": [
+      {
+       "type": "hero",
+       "x": 0,
+       "y": 0,
+       "w": 12,
+       "variante": "affiche"
+      },
+      {
+       "type": "date",
+       "x": 0,
+       "y": 5,
+       "w": 4
+      },
+      {
+       "type": "endroit",
+       "x": 4,
+       "y": 5,
+       "w": 8
+      },
+      {
+       "type": "gens",
+       "x": 0,
+       "y": 8,
+       "w": 4
+      },
+      {
+       "type": "programme",
+       "x": 4,
+       "y": 11,
+       "w": 8
+      },
+      {
+       "type": "citation",
+       "x": 0,
+       "y": 10,
+       "w": 4,
+       "texte": "Une information saisie une fois, partout où elle sert."
+      },
+      {
+       "type": "rsvp",
+       "x": 0,
+       "y": 18,
+       "w": 6
+      },
+      {
+       "type": "contact",
+       "x": 6,
+       "y": 18,
+       "w": 6
+      }
+     ]
+    }
+   ],
+   "exemple": {
+    "infos": {
+     "titre": "Votre événement",
+     "sous": "Posez les blocs, agrandissez-les : leur forme suit la place.",
+     "bouton": "Répondre",
+     "planB": "La salle couverte"
+    },
+    "listes": {
+     "programme": [
+      {
+       "heure": "15:00",
+       "titre": "Accueil",
+       "detail": "Dans le jardin",
+       "pluie": "Sous la halle"
+      },
+      {
+       "heure": "17:00",
+       "titre": "Le moment fort",
+       "detail": "",
+       "pluie": ""
+      },
+      {
+       "heure": "20:00",
+       "titre": "Dîner",
+       "detail": "",
+       "pluie": ""
+      }
+     ],
+     "personnes": [
+      {
+       "nom": "Vous",
+       "role": "Hôte"
+      },
+      {
+       "nom": "Un proche",
+       "role": "Témoin"
+      },
+      {
+       "nom": "Une amie",
+       "role": "Organisation"
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "anniversaire",
    "nom": "Anniversaire ou fête",
    "univers": "anniv",

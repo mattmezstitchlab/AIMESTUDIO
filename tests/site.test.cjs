@@ -46,3 +46,12 @@ test('export : une page HTML autonome par page, ou une seule page avec ancres',(
  assert.ok(f[0].contenu.startsWith('<!doctype html>')&&f[0].contenu.includes('href="jour-j.html"'));const u=S.exporter(s,{presentation:P,unePage:true});assert.equal(u.length,1);assert.ok(u[0].contenu.includes('href="#jour-j"'))});
 test('le Bureau retrouve les sites de ce navigateur',()=>{const m=new Map([['aime-sites',JSON.stringify({cur:'s1',sites:{s1:{nom:'Mariage',pages:[{},{}],infos:{titre:'A & N'},majLe:'2026-10-21T01:00:00Z'}}})]]);
  const st={get length(){return m.size},key:i=>[...m.keys()][i],getItem:k=>m.get(k)??null};const inv=B.inventaire(st),s=inv.sources.find(x=>x.id==='sites').projets[0];assert.equal(s.lien,'/sites/?site=s1');assert.match(s.detail,/2 pages · A & N/);assert.ok(s.enCours)});
+
+test('grille libre (reprise du mini-site de la landing) : formes selon la largeur, pas de chevauchement, plan B, onde',()=>{
+ assert.deepEqual([2,4,6,9].map(w=>S.formeDe('date',w)),['pastille','compte','mois','frise']);assert.deepEqual([2,5,8].map(w=>S.formeDe('endroit',w)),['nom','carte','itineraire']);assert.deepEqual([2,5,9].map(w=>S.formeDe('gens',w)),['avatars','equipe','reseau']);
+ const m=M.find(x=>x.id==='libre');const s=S.appliquerModele(S.vide(),m);assert.equal(s.pages[0].mode,'grille');Object.assign(s.infos,{date:'2027-06-12',lieu:'Domaine',planB:'La halle',pluie:true});
+ let h=S.document(s,{presentation:P}).html;assert.ok(h.includes('class="grille"'));assert.match(h,/grid-column:1 \/ span 12/);assert.ok(h.includes('Plan B pluie : La halle'));assert.ok(h.includes('Plan B : Sous la halle'));
+ const d=s.pages[0].sections.find(x=>x.type==='date');d.w=6;h=S.document(s,{presentation:P}).html;assert.ok(h.includes('inf-mois'),'à 6 colonnes, la date devient un calendrier');
+ const l=s.pages[0].sections,g=l.find(x=>x.type==='gens'),e=l.find(x=>x.type==='endroit');g.x=e.x;g.y=e.y;S.tasser(l,g.id);
+ const occ={};for(const x of l){for(let a=x.y;a<x.y+S.hauteur(x.type,x.w);a++)for(let b=x.x;b<x.x+x.w;b++){assert.ok(!occ[a+':'+b],'chevauchement en '+a+':'+b);occ[a+':'+b]=1}}
+ assert.deepEqual(S.DEPS.date.slice().sort(),['compte','date','hero']);const t=S.vide();S.ajouterSection(t,'index','texte');S.ajouterSection(t,'index','compte');S.versGrille(t.pages[0]);assert.ok(t.pages[0].sections.every(x=>x.x!=null&&x.w));S.versSections(t.pages[0]);assert.equal(t.pages[0].mode,'sections')});
