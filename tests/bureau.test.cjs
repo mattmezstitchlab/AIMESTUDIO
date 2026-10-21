@@ -83,3 +83,9 @@ test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
  const ATS=st.match(/const ATELIERS=\{([^\n]*?)\};/);for(const a of A){assert.ok(ATS&&new RegExp('\\b'+a+':\\{').test(ATS[1]),a+' est un atelier connu du Studio');
   assert.ok(!fs.existsSync(R(a+'/index.html')),a+'/index.html : copie revenue');for(const s of ['/'+a,'/'+a+'/'])assert.ok(rw.some(r=>r.source===s&&r.destination==='/studio/'),s+' réécrit vers le Studio')}
  assert.ok(fs.existsSync(R('docs/BUREAU.md')),'les documents de /docs/ restent servis')});
+test('Page Zéro · la vitrine Mac + iPhone montre des captures réelles, étiquetées fictives, avant l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8');
+ const v=z.indexOf('id="vitrine"'),p=z.indexOf('id="t-prom"'),e=z.indexOf('id="entrer"');assert.ok(p>0&&v>p&&e>v,'entre la promesse et « Et maintenant ? »');
+ const sec=z.slice(v,e);const imgs=[...sec.matchAll(/<img src="([^"]+)"[^>]*alt="([^"]+)"/g)];assert.equal(imgs.length,4,'deux Mac, deux iPhone');
+ for(const [,src,alt] of imgs){assert.ok(fs.existsSync(R('.'+src)),src);assert.ok(alt.length>40,'texte de remplacement descriptif : '+src)}
+ for(const h of ['/sites/','/g44/','/studio/'])assert.ok(sec.includes('href="'+h+'"'),'lien vers '+h);
+ assert.equal((sec.match(/Démonstration · données fictives/g)||[]).length,2,'chaque scène dit qu\'elle est une démonstration')});

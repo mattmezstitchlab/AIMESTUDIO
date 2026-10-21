@@ -166,6 +166,42 @@ html.calme .bouton,html.calme .bouton span{transition:none}
 .sorties-note{text-align:center}
 html.calme .pt.vif{animation:none}
 html.calme .mo{opacity:1}
+
+/* 5 bis · la vitrine : ce qui existe déjà, dans un Mac et un iPhone (captures réelles des pages, données fictives) */
+.vitrine{padding:clamp(60px,10vh,120px) 0 clamp(120px,18vh,200px)}
+.vitrine .tete{max-width:760px;margin:0 auto clamp(56px,9vh,96px);text-align:center;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.vitrine .k{margin:0 0 18px;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
+.vitrine h2{margin:0;font:400 clamp(36px,5.4vw,72px)/1.02 var(--display);letter-spacing:-.025em;text-wrap:balance}
+.vitrine .tete p:last-child{margin:22px auto 0;max-width:560px;font-size:clamp(16px,1.5vw,19px);color:var(--soft);text-wrap:balance}
+.duo-ap{position:relative;max-width:1180px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+.duo-ap+.duo-ap{margin-top:clamp(100px,16vh,180px)}
+.scene-ap{position:relative;padding-bottom:clamp(40px,7vw,90px)}
+.scene-ap::before{content:"";position:absolute;inset:8% 6% 0;background:radial-gradient(closest-side,rgba(124,92,255,.22),rgba(34,211,238,.06) 60%,transparent);filter:blur(30px);z-index:-1}
+/* le Mac */
+.mac{display:block;width:86%;margin:0;text-decoration:none}
+.mac .ecr{display:block;position:relative;border-radius:clamp(10px,1.6vw,20px) clamp(10px,1.6vw,20px) 0 0;background:#0C0C0E;padding:clamp(6px,1.1vw,14px) clamp(6px,1.1vw,14px) clamp(8px,1.4vw,18px);box-shadow:0 0 0 1px #2B2B33,inset 0 0 0 1px #1A1A1F,0 40px 80px -30px rgba(0,0,0,.8)}
+.mac .ecr::before{content:"";position:absolute;left:50%;top:clamp(2px,.4vw,5px);width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#26262C}
+.mac img{display:block;width:100%;height:auto;aspect-ratio:16/10;border-radius:3px;background:#16161A}
+.mac .pied-mac{display:block;height:clamp(10px,1.4vw,18px);margin:0 -7%;border-radius:0 0 clamp(8px,1.2vw,16px) clamp(8px,1.2vw,16px);background:linear-gradient(#3A3A42,#1C1C21 55%,#0E0E11);box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 22px 40px -18px rgba(0,0,0,.9)}
+.mac .pied-mac::before{content:"";display:block;width:16%;height:38%;margin:0 auto;border-radius:0 0 8px 8px;background:#121216}
+/* l'iPhone */
+.tel{position:absolute;z-index:2;bottom:0;width:23%;min-width:118px;max-width:270px;display:block;text-decoration:none;border-radius:clamp(22px,3.6vw,44px);padding:clamp(5px,.75vw,9px);background:linear-gradient(145deg,#4A4A52,#1E1E23 40%,#2C2C33);box-shadow:0 0 0 1px #0A0A0C,0 40px 70px -24px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06) inset}
+.tel .ecr{position:relative;display:block;border-radius:clamp(17px,2.9vw,36px);overflow:hidden;background:#000}
+.tel .ecr::before{content:"";position:absolute;left:50%;top:2.2%;width:31%;height:3.6%;transform:translateX(-50%);border-radius:999px;background:#000;z-index:1}
+.tel img{display:block;width:100%;height:auto;aspect-ratio:390/844}
+.scene-ap.d .mac{margin-left:auto}
+.scene-ap.g .tel{right:0}.scene-ap.d .tel{left:0}
+.mac,.tel{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.mac:hover{transform:translateY(-4px)}.tel:hover{transform:translateY(-6px) rotate(-1deg)}
+.legende{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px 28px;padding-top:6px;border-top:1px solid var(--line)}
+.legende h3{margin:0;font:400 clamp(22px,2.4vw,30px)/1.15 var(--display);letter-spacing:-.015em}
+.legende p{margin:6px 0 0;max-width:560px;color:var(--soft);font-size:16px}
+.legende .liens{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font:500 14.5px var(--ui)}
+.legende .liens a{text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px;transition:border-color .2s}.legende .liens a:hover{border-color:var(--ink)}
+.etiq{display:inline-block;font:600 11px var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+@media (max-width:640px){.mac{width:92%}.tel{width:34%}.scene-ap{padding-bottom:22%}}
+html.calme .mac,html.calme .tel{transition:none}html.calme .mac:hover,html.calme .tel:hover{transform:none}
+@media (forced-colors:active){.mac .ecr,.tel{border:1px solid CanvasText}}
 </style>
 </head>
 <body>
@@ -232,6 +268,27 @@ html.calme .mo{opacity:1}
  </ul>
  <p class="autorisations apparait">Toujours dans le respect des autorisations.</p>
 </div></section>
+
+<!-- 5 bis · la vitrine -->
+<section class="vitrine" id="vitrine" aria-labelledby="t-vitrine">
+ <div class="tete apparait"><p class="k">Déjà là</p><h2 id="t-vitrine">Saisi une fois. Vu partout.</h2><p>Ce ne sont pas des maquettes dessinées : ce sont les pages telles qu'elles existent aujourd'hui, avec des données fictives.</p></div>
+
+ <div class="duo-ap">
+  <div class="scene-ap g apparait">
+   <a class="mac" href="/sites/" aria-label="Ouvrir le générateur de site"><span class="ecr"><img src="/zero/ecrans/mac-generateur.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="Le générateur de site AIME sur un écran d'ordinateur : le site de mariage de Léa et Marc en cours d'édition, sections à gauche, aperçu au centre, réglages à droite."></span><span class="pied-mac" aria-hidden="true"></span></a>
+   <a class="tel" href="/sites/" aria-label="Le même site, sur téléphone : ouvrir le générateur"><span class="ecr"><img src="/zero/ecrans/tel-mariage.webp" width="780" height="1688" loading="lazy" decoding="async" alt="Le site produit, affiché sur téléphone : Léa et Marc, 14 juin 2027, Domaine des Aulnes, bouton Répondre."></span></a>
+  </div>
+  <div class="legende apparait"><div><span class="etiq">Démonstration · données fictives</span><h3>Le générateur de site</h3><p>La date, le lieu, le programme s'écrivent une seule fois. Le même site se compose sur l'ordinateur et se lit sur le téléphone.</p></div><div class="liens"><a href="/sites/">Composer un site →</a><a href="/vitrine/site/?u=mariage">Voir un site produit</a></div></div>
+ </div>
+
+ <div class="duo-ap">
+  <div class="scene-ap d apparait">
+   <a class="tel" href="/studio/" aria-label="Ouvrir AIME Studio"><span class="ecr"><img src="/zero/ecrans/tel-studio.webp" width="780" height="1688" loading="lazy" decoding="async" alt="AIME Studio sur téléphone : « Un contenu. Tous vos supports. », puis les domaines Mariage, Photographe, Vidéaste, Fleuriste, DJ, Traiteur et leurs supports."></span></a>
+   <a class="mac" href="/g44/" aria-label="Ouvrir le G44 LAB"><span class="ecr"><img src="/zero/ecrans/mac-g44.webp" width="1600" height="1000" loading="lazy" decoding="async" alt="Le G44 LAB sur un écran d'ordinateur : une date erronée, le refus du système, puis la chaîne défaite, corrigée et rejouée dans l'ordre, règle par règle."></span><span class="pied-mac" aria-hidden="true"></span></a>
+  </div>
+  <div class="legende apparait"><div><span class="etiq">Démonstration · données fictives</span><h3>AIME Studio, et le G44 LAB</h3><p>Sur le téléphone, un contenu décliné en tous ses supports. Sur l'ordinateur, une correction administrative comprise avant d'être faite.</p></div><div class="liens"><a href="/studio/">Ouvrir AIME Studio →</a><a href="/g44/">Voir le Rewind G44</a></div></div>
+ </div>
+</section>
 
 <!-- 6 · entrer -->
 <section class="entrer" id="entrer" aria-labelledby="t-entrer">
