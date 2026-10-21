@@ -82,3 +82,23 @@ test('exporter pour publier : aucun contenu réservé dans AUCUN fichier ; la sa
  const j=JSON.parse(sv.contenu);assert.match(j._avertissement,/Ne le publiez pas/);delete j._avertissement;const r=S.migrer(j);
  assert.deepEqual(r.listes,s.listes);assert.deepEqual(r.pages.map(p=>p.sections.map(x=>[x.type,x.audience,x.texte||''])),s.pages.map(p=>p.sections.map(x=>[x.type,x.audience,x.texte||''])));
  const vueOrga=S.document(r,{presentation:P,vue:{role:'owner'},regles:R}).html;assert.ok(vueOrga.includes('SECRET-LIGNE-ORGA'),'après réimport, l\'organisation retrouve tout')});
+test('import HTML/ZIP : limites explicites, chemins suspects, contenus actifs, refus propre',async()=>{
+ const I=require('../sites/importer.js').AIMEImport,L=I.LIMITES;
+ assert.ok(L.archive&&L.entrees&&L.decompresse&&L.html&&L.image&&L.css,'limites déclarées');
+ const t=I.trier([{chemin:'index.html',taille:1000},{chemin:'../../etc/passwd.html',taille:10},{chemin:'/abs/x.html',taille:10},{chemin:'C:/x.html',taille:1},{chemin:'a\\b.html',taille:1},{chemin:'app.js',taille:10},{chemin:'shell.php',taille:5},{chemin:'logo.svg',taille:5},{chemin:'enorme.jpg',taille:L.image+1},{chemin:'__MACOSX/x',taille:1},{chemin:'.DS_Store',taille:1},{chemin:'photo.jpg',taille:2000},{chemin:'notes.txt',taille:3}]);
+ assert.equal(t.erreur,'');assert.deepEqual(t.garder.map(e=>e.chemin),['index.html','photo.jpg']);
+ const raison=c=>(t.ignores.find(x=>x.chemin===c)||{}).raison||'';
+ assert.match(raison('../../etc/passwd.html'),/remonte/);assert.match(raison('/abs/x.html'),/absolu/);assert.match(raison('C:/x.html'),/absolu/);assert.match(raison('a\\b.html'),/inverse/);
+ assert.match(raison('app.js'),/actif/);assert.match(raison('shell.php'),/actif/);assert.match(raison('logo.svg'),/SVG/);assert.match(raison('enorme.jpg'),/trop lourd/);assert.equal(t.caches,2);
+ assert.match(I.trier(Array.from({length:L.entrees+1},(_,i)=>({chemin:i+'.html',taille:1}))).erreur,/limite est de 400/);
+ assert.match(I.trier(Array.from({length:40},(_,i)=>({chemin:i+'.jpg',taille:L.image-1})).concat([{chemin:'index.html',taille:1}])).erreur,/décompressé.*limite/);
+ assert.match(I.trier([{chemin:'a.js',taille:1}]).erreur,/Aucune page HTML/);
+ // une archive : rien n'est décompressé si le tri échoue ; la taille réelle est revérifiée
+ let ouverts=0;const zip=E=>({forEach:f=>E.forEach(([c,taille,u])=>f(c,{dir:false,_data:{uncompressedSize:taille},async:()=>{ouverts++;return Promise.resolve(u)}}))});
+ await assert.rejects(I.depuisArchive(zip([['index.html',100,new Uint8Array(1)]].concat(Array.from({length:9},(_,i)=>[i+'.jpg',L.image-1,new Uint8Array(1)])))),/Rien n'a été importé/);assert.equal(ouverts,0,'aucune entrée décompressée avant validation');
+ const menteur=zip([['site/index.html',10,new Uint8Array(L.html+5)],['site/b.html',10,new TextEncoder().encode('<h1>B</h1>')],['site/x.js',10,new Uint8Array(1)]]);
+ const assaini=zip([['index.html',5,new TextEncoder().encode('<h1>A</h1>')]]);const f0=assaini.forEach;assaini.forEach=f=>f0((c,e)=>{e.unsafeOriginalName='../../index.html';f(c,e)});await assert.rejects(I.depuisArchive(assaini),/Aucune page HTML/,'le nom d\'origine en ../ est jugé, pas le nom assaini');
+ const r=await I.depuisArchive(menteur);assert.deepEqual(r.fichiers.map(f=>f.chemin),['b.html'],'racine commune retirée, fichier menteur écarté');assert.ok(r.tri.ignores.some(x=>/décompressé/.test(x.raison)));assert.ok(r.tri.ignores.some(x=>x.chemin==='site/x.js'));
+ const c=I.classer({sections:{texte:2},infos:['e-mail'],images:1,ignores:['1 script (index.html) : contenu actif, jamais exécuté'],nonReconnu:[],transformes:[]});
+ assert.deepEqual(Object.keys(c),['reconnu','transforme','ignore','aVerifier']);assert.equal(c.reconnu.length,2);assert.match(c.transforme[0],/recompress/);assert.match(c.aVerifier.join(' '),/n'est pas reproduite/,'aucune promesse de fidélité');
+ const ed=require('fs').readFileSync(path.join(__dirname,'..','sites/editeur.js'),'utf8');assert.ok(/blob\.size>L\.archive/.test(ed),'taille de l\'archive vérifiée avant de charger JSZip');assert.ok(!/f\.async\('blob'\)/.test(ed),'plus de décompression en bloc dans l\'éditeur')});

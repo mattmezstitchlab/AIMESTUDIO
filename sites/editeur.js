@@ -193,21 +193,28 @@ function installer(res,quoi){var s2=res.site;if(etat.sites[s2.id])s2.id=S.uid('s
 function compteRendu(R,quoi){var li=function(t){return'<li>'+esc(t)+'</li>'},sec=R.sections?Object.keys(R.sections).map(function(k){return R.sections[k]+' × '+((S.BLOCS[k]||{}).nom||k)}):[];
  $('rapport').innerHTML='<h2 id="t-rap">'+esc(quoi)+' : compte rendu</h2>'+
   (R.pages!=null?'<p>'+R.pages+' page'+(R.pages>1?'s':'')+' · '+sec.length+' sorte'+(sec.length>1?'s':'')+' de sections · '+R.images+' image'+(R.images>1?'s':'')+'</p>':'<p>'+R.repris+' bloc'+(R.repris>1?'s':'')+' repris.</p>')+
+  (R.categories?['reconnu','transforme','ignore','aVerifier'].map(function(k){var l=R.categories[k],t={reconnu:'Reconnu',transforme:'Transformé',ignore:'Ignoré',aVerifier:'À vérifier'}[k];return'<h3>'+t+' <small>('+l.length+')</small></h3>'+(l.length?'<ul>'+l.map(li).join('')+'</ul>':'<p class="aide">Rien.</p>')}).join(''):
   (sec.length?'<h3>Reconnu</h3><ul>'+sec.map(li).join('')+(R.infos||[]).map(function(t){return li('Info : '+t)}).join('')+(R.ambiance?li('Ambiance : '+R.ambiance):'')+(R.typo?li('Typographie : '+R.typo):'')+'</ul>':'')+
-  ((R.omis&&R.omis.length)||(R.nonReconnu&&R.nonReconnu.length)||(R.ignores&&R.ignores.length)?'<h3>Non repris</h3><ul>'+(R.omis||[]).map(function(k){return li('Bloc « '+k+' » : démonstration de la landing, pas un bloc de site')}).join('')+(R.nonReconnu||[]).map(li).join('')+(R.ignores||[]).map(function(t){return li('Ignoré pour la sécurité : '+t)}).join('')+'</ul>':'<p>Rien n\'a été laissé de côté.</p>')+
-  '<p class="aide">Vérifiez les textes : la lecture est faite par des règles fixes, sans IA.</p><div class="e-acts"><button type="button" class="e-btn e-p" id="rapOk">Compris</button></div>';
+  ((R.omis&&R.omis.length)||(R.nonReconnu&&R.nonReconnu.length)||(R.ignores&&R.ignores.length)?'<h3>Non repris</h3><ul>'+(R.omis||[]).map(function(k){return li('Bloc « '+k+' » : démonstration de la landing, pas un bloc de site')}).join('')+(R.nonReconnu||[]).map(li).join('')+(R.ignores||[]).map(function(t){return li('Ignoré pour la sécurité : '+t)}).join('')+'</ul>':'<p>Rien n\'a été laissé de côté.</p>'))+
+  (R.categories?'':'<p class="aide">Vérifiez les textes : la lecture est faite par des règles fixes, sans IA.</p>')+'<div class="e-acts"><button type="button" class="e-btn e-p" id="rapOk">Compris</button></div>';
  $('rapport').hidden=false;$('rapOk').focus();$('rapOk').onclick=function(){$('rapport').hidden=true}}
 function importerJSON(texte,nom){var j=JSON.parse(texte);
  if(j&&j.format==='aime-site'){delete j._avertissement;var s2=S.migrer(j);installer({site:s2,rapport:{repris:s2.pages.reduce(function(a,p){return a+p.sections.length},0),omis:[]}},'Site AIME');return}
  if(j&&j.P&&Array.isArray(j.blocks)){installer(S.depuisMiniSite(j),'Mini-site de la landing');return}
  throw new Error('Ce fichier JSON n\'est ni un site AIME ni un export du mini-site de la landing.')}
 function importerHTML(fichiers,quoi){if(!$('droits').checked&&!confirmeDroits){dire('Cochez d\'abord : « Ce site m\'appartient, ou j\'ai l\'autorisation de le reprendre ».');accueil();$('droits').focus();return}
- dire('Lecture du site…');window.AIMEImport.lire(fichiers,PRES).then(function(r){installer(r,quoi)}).catch(function(e){dire(e.message||'Import impossible.')})}
+ var I=window.AIMEImport,lot;try{lot=fichiers.tri?fichiers:I.depuisFichiers(fichiers)}catch(e){echec(e);return}
+ if(importEnCours){dire('Un import est déjà en cours.');return}importEnCours=true;dire('Lecture du site…');
+ I.lire(lot.fichiers,PRES,lot.tri).then(function(r){importEnCours=false;installer(r,quoi)}).catch(function(e){importEnCours=false;echec(e,'Import impossible.')})}
+function echec(e,defaut){var m=e&&e.message||defaut;dire(m+(/n'a été (importé|modifié)/.test(m)?'':' Votre site en cours n\'a pas été modifié.'))}
+var importEnCours=false;
 var confirmeDroits=false;
-function zipVersFichiers(blob){return charge('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js').then(function(){return JSZip.loadAsync(blob)}).then(function(z){var L=[];z.forEach(function(chemin,f){if(!f.dir&&!/(^|\/)(__MACOSX|\.)/.test(chemin))L.push(f.async('blob').then(function(b){return{chemin:chemin,blob:b}}))});return Promise.all(L)}).then(function(L){var racine=L.map(function(f){return f.chemin.split('/')[0]});var commun=racine.every(function(r){return r===racine[0]})&&L.every(function(f){return f.chemin.indexOf('/')>0})?racine[0]+'/':'';return L.map(function(f){return{chemin:f.chemin.slice(commun.length),blob:f.blob}})})}
+/* l'archive : taille vérifiée avant de charger quoi que ce soit, puis tri des entrées, puis décompression une à une (sites/importer.js) */
+function zipVersFichiers(blob){var L=window.AIMEImport.LIMITES;if(blob.size>L.archive)return Promise.reject(new Error('Cette archive pèse '+String(Math.round(blob.size/1e5)/10).replace('.',',')+' Mo ; la limite est de '+L.archive/1e6+' Mo. Rien n\'a été importé.'));
+ return charge('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js').then(function(){return JSZip.loadAsync(blob,{checkCRC32:true}).catch(function(){throw new Error('Ce .zip est illisible ou abîmé. Rien n\'a été importé.')})}).then(window.AIMEImport.depuisArchive)}
 function routerFichiers(fs){fs=[].slice.call(fs||[]);if(!fs.length)return;var f=fs[0];
  if(fs.length===1&&/\.json$/i.test(f.name)){var r=new FileReader();r.onload=function(){try{importerJSON(r.result,f.name)}catch(e){dire(e.message)}};r.readAsText(f);return}
- if(fs.length===1&&/\.zip$/i.test(f.name)){if(!$('droits').checked){accueil();dire('Cochez d\'abord la case des droits, puis reprenez le .zip.');$('droits').focus();return}zipVersFichiers(f).then(function(L){importerHTML(L,'Site HTML (.zip)')}).catch(function(){dire('Ce .zip est illisible.')});return}
+ if(fs.length===1&&/\.zip$/i.test(f.name)){if(!$('droits').checked){accueil();dire('Cochez d\'abord la case des droits, puis reprenez le .zip.');$('droits').focus();return}zipVersFichiers(f).then(function(lot){importerHTML(lot,'Site HTML (.zip)')}).catch(function(e){echec(e,'Ce .zip est illisible.')});return}
  importerHTML(fs.map(function(x){return{chemin:x.webkitRelativePath?x.webkitRelativePath.split('/').slice(1).join('/'):x.name,blob:x}}),fs[0].webkitRelativePath?'Dossier HTML':'Pages HTML')}
 $('fichierSite').addEventListener('change',function(){var fs=this.files;routerFichiers(fs);this.value=''});
 $('fichierDossier').addEventListener('change',function(){var fs=this.files;routerFichiers(fs);this.value=''});
