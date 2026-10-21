@@ -16,30 +16,37 @@ var LISTENT={};B.SOURCES.forEach(function(s){LISTENT[s.outil]=1});
 function outils(role){return N.par('role',role).filter(function(e){return e.id!=='bureau'}).map(function(e){var o={href:e.href,nom:e.nom,phrase:e.phrase,statut:e.statut};
  if(role==='realiser'&&!LISTENT[e.id]&&!/^(stitchlab|web|buro|accessibilite|image)$/.test(e.id))o.note=e.id==='g44'?'Ne garde rien : rien à lister.':'Ses projets ne sont pas encore listés ici.';return o})}
 
-function contenu(){var st=S||vide,inv=B.inventaire(st),c=null;try{c=K?K.migrer(JSON.parse(st.getItem('aime-carte')||'null')):null}catch(e){c=null}
- var ill={},carte;
- if(c){if(R)ill.carte=R.svg(c,{id:'bc',mode:'grande'});var p=inv.sources[0].projets[0]||{};
-  carte={titre:c.nom||'Ma Carte',texte:p.detail||'',illustration:R?'carte':null,actions:[{lien:'/aime/',libelle:'La voir dans Le Monde AIME',principal:true}]}}
- else carte={titre:'Votre carte',texte:'Elle se compose sur Le Monde AIME : qui vous êtes, ce que vous faites, ce que vous préparez.',actions:[{lien:'/aime/#story2',libelle:'Composer ma carte',principal:true}]};
- var nom={};inv.sources.forEach(function(s){nom[s.id]=s.nom});
- var groupes=inv.sources.filter(function(s){return s.id!=='carte'}).map(function(s){return{nom:s.nom+(s.demo?' (données fictives)':''),elements:s.projets}});
+/* les dossiers : un par outil qui a quelque chose dans ce navigateur, plus Ma carte, Applications, Lab, Découvrir */
+var TEINTES={carte:['#FB7185','#F59E0B'],studio:['#7C5CFF','#22D3EE'],evenements:['#F472B6','#7C5CFF'],stitch:['#34D399','#22D3EE'],compositions:['#60A5FA','#7C5CFF'],infinity:['#FBBF24','#FB7185'],simulations:['#A3E635','#22D3EE'],timeline:['#F59E0B','#F472B6'],
+ applications:['#22D3EE','#34D399'],lab:['#67E8F9','#7C5CFF'],decouvrir:['#FB7185','#7C5CFF'],archives:['#5E5E6A','#9C9CA8']};
+var NOMS={studio:'Supports',evenements:'Événements',stitch:'Broderies',compositions:'Comparaisons',infinity:'Parties',simulations:'Démonstrations',timeline:'Jour J'};
+var OUVRIR={studio:{lien:'/studio/',libelle:'Ouvrir le Studio'},evenements:{lien:'/studio/',libelle:'Ouvrir le Studio'},stitch:{lien:'/stitch/',libelle:'Ouvrir AIME Stitch'},compositions:{lien:'/synchroview/',libelle:'Ouvrir SynchroView'},infinity:{lien:'/infinity/',libelle:'Ouvrir INFINITY'},simulations:{lien:'/vitrine/world/',libelle:'Ouvrir AIME WORLD'},timeline:{lien:'/v1/',libelle:'Ouvrir la Timeline'}};
+function contenu(){var st=S||vide,inv=B.inventaire(st),src={};inv.sources.forEach(function(s){src[s.id]=s});
+ var D=[],carte=src.carte.projets;
+ D.push({id:'carte',nom:'Ma carte',teinte:TEINTES.carte,elements:carte,sous:carte.length?'Créée dans ce navigateur':'À composer',vide:'Votre carte se compose sur Le Monde AIME : qui vous êtes, ce que vous faites, ce que vous préparez.',ouvrir:carte.length?null:{lien:'/aime/#story2',libelle:'Composer ma carte',principal:true}});
+ var stitch=(src.stitch?src.stitch.projets:[]).concat(src.broderies?src.broderies.projets:[]);
+ ['studio','evenements','stitch','compositions','infinity','simulations','timeline'].forEach(function(id){var l=id==='stitch'?stitch:(src[id]?src[id].projets:[]);if(!l.length)return;
+  D.push({id:id,nom:NOMS[id],teinte:TEINTES[id],elements:l,sous:id==='simulations'?l.length+' · données fictives':null,ouvrir:OUVRIR[id]})});
+ D.push({id:'applications',nom:'Applications',teinte:TEINTES.applications,elements:outils('realiser'),sous:'Créer, ouvrir un outil'});
+ D.push({id:'lab',nom:'Lab',teinte:TEINTES.lab,elements:outils('experimenter'),sous:'Expérimental'});
+ D.push({id:'decouvrir',nom:'Découvrir',teinte:TEINTES.decouvrir,elements:outils('decouvrir'),sous:'Le Monde AIME et les démonstrateurs'});
+ if(inv.ancienBureau.length)D.push({id:'archives',nom:'Archives',teinte:TEINTES.archives,sous:'Ancien Bureau · '+inv.ancienBureau.length+' réglages',elements:inv.ancienBureau.map(function(k){return{titre:k,detail:'Réglage de l\'ancien Bureau à fenêtres, conservé tel quel',lien:'#navigateur',action:'Compris dans la sauvegarde'}})});
+ var nom={};inv.sources.forEach(function(s){nom[s.id]=NOMS[s.id]||s.nom});nom.broderies='Broderies';
  var rep=B.reprendre(inv,3).map(function(p){return{titre:p.titre,detail:p.detail,quand:p.quand,lien:p.lien,action:p.action,groupe:nom[p.source],demo:p.demo}});
  var nav=[];
  if(!S)nav.push('Ce navigateur refuse le stockage local (navigation privée, ou données du site bloquées) : le Bureau ne peut rien retrouver, et les outils ne pourront rien garder.');
  else nav.push('Vos projets sont enregistrés dans ce navigateur, pas sur un compte : '+inv.total+' élément'+(inv.total>1?'s':'')+' sur ce site. Il n\'y a ni synchronisation ni partage : un autre navigateur, un autre appareil ou une fenêtre privée ne les voient pas, et effacer les données du site les efface.');
- if(inv.ancienBureau.length)nav.push('Ce navigateur garde aussi '+inv.ancienBureau.length+' réglage'+(inv.ancienBureau.length>1?'s':'')+' de l\'ancien Bureau à fenêtres, retiré le 20 octobre 2026. Plus aucune page ne les utilise ; ils sont conservés tels quels et font partie de la sauvegarde.');
+ if(inv.ancienBureau.length)nav.push('Le dossier Archives garde '+inv.ancienBureau.length+' réglage'+(inv.ancienBureau.length>1?'s':'')+' de l\'ancien Bureau à fenêtres, retiré le 20 octobre 2026 : plus aucune page ne les utilise, ils sont conservés tels quels et font partie de la sauvegarde.');
  nav.push('Comptes : pas encore. Quand ils arriveront, vous pourrez importer cette sauvegarde dans le vôtre ; rien ne partira sans votre accord.');
- return{inv:inv,c:{espace:{kicker:'Mon Bureau',nom:'Reprendre là où vous en étiez.',sous:'Vos projets, vos outils, votre Carte. Travailler ici ; découvrir sur Le Monde AIME ; essayer dans le Lab.'},illustrations:ill,
-  blocs:{carte:carte,
-   reprendre:{elements:rep,vide:'Rien à reprendre dans ce navigateur pour l\'instant.'},
-   projets:{groupes:groupes,vide:'Ce navigateur ne contient encore aucun projet AIME. Trois façons de commencer :',actions:[{lien:'/aime/#story2',libelle:'Composer ma carte',principal:true},{lien:'/studio/',libelle:'Créer des supports dans le Studio'},{lien:'/stitch/',libelle:'Créer un patron avec Stitch'}]},
-   creer:{elements:outils('realiser'),statuts:N.STATUTS},lab:{elements:outils('experimenter'),statuts:N.STATUTS},decouvrir:{elements:outils('decouvrir'),statuts:N.STATUTS},
+ return{inv:inv,c:{espace:{kicker:'Mon Bureau',nom:'Reprendre,',accent:'là où vous en étiez.',sous:'Vos dossiers, vos outils, votre carte. Travailler ici ; découvrir sur Le Monde AIME ; essayer dans le Lab.'},illustrations:{},
+  blocs:{reprendre:{elements:rep,vide:'Rien à reprendre dans ce navigateur pour l\'instant : ouvrez un dossier, ou commencez par votre carte.'},
+   dossiers:{dossiers:D,statuts:N.STATUTS},
    navigateur:{paragraphes:nav,actions:S?[{action:'sauvegarder',libelle:'Sauvegarder tout dans un fichier',principal:true},{action:'restaurer',libelle:'Restaurer une sauvegarde…'}]:[]}}}}}
 
 var style=document.createElement('style');document.head.appendChild(style);
 function afficher(){var x=contenu();var r=V.composer({contenu:x.c,perspective:PERSP,modele:MODELE,presentation:{ambiance:AMB,polices:POL}});
  style.textContent=r.css;var ouverts=document.activeElement&&document.activeElement.closest&&document.activeElement.closest('[data-action]');var foc=ouverts?ouverts.getAttribute('data-action'):null;
- racine.innerHTML=r.html;racine.setAttribute('data-blocs',r.bilan.blocs.join(' '));if(foc){var b=racine.querySelector('[data-action="'+foc+'"]');b&&b.focus({preventScroll:true})}
+ racine.innerHTML=r.html;racine.setAttribute('data-blocs',r.bilan.blocs.join(' '));if(typeof ouvrir==='function'&&ouvert)ouvrir(ouvert,false);if(foc){var b=racine.querySelector('[data-action="'+foc+'"]');b&&b.focus({preventScroll:true})}
  return x.inv}
 
 /* ---------- sauvegarder ---------- */
@@ -63,6 +70,15 @@ fichier.addEventListener('change',function(){var f=fichier.files&&fichier.files[
 panneau.addEventListener('click',function(e){var b=e.target.closest('[data-r]');if(!b||!enCours)return;var r=b.getAttribute('data-r');if(r==='annuler'){fermer();return}
  var res=B.restaurer(S,enCours,r==='remplacer');afficher();fermer();dire(res.ecrites.length+' élément'+(res.ecrites.length>1?'s':'')+' restauré'+(res.ecrites.length>1?'s':'')+(res.gardees.length?', '+res.gardees.length+' gardé'+(res.gardees.length>1?'s':'')+' tel'+(res.gardees.length>1?'s':'')+' quel'+(res.gardees.length>1?'s':''):'')+(res.erreurs.length?', '+res.erreurs.length+' impossible'+(res.erreurs.length>1?'s':'')+' (stockage plein ?)':'')+'.')});
 panneau.addEventListener('keydown',function(e){if(e.key==='Escape')fermer()});
+/* ---------- les dossiers : un seul ouvert à la fois, comme une fenêtre posée sous la grille ---------- */
+var ouvert=null;try{ouvert=localStorage.getItem('aime-bureau-dossier')}catch(e){}
+function ouvrir(id,focus){racine.querySelectorAll('.e-fen').forEach(function(f){f.hidden=true});racine.querySelectorAll('[data-dossier]').forEach(function(b){b.setAttribute('aria-expanded','false');b.classList.remove('on')});
+ ouvert=id;try{id?localStorage.setItem('aime-bureau-dossier',id):localStorage.removeItem('aime-bureau-dossier')}catch(e){}if(!id)return;
+ var f=document.getElementById('dos-'+id),b=racine.querySelector('[data-dossier="'+id+'"]');if(!f||!b){ouvert=null;return}f.hidden=false;b.setAttribute('aria-expanded','true');b.classList.add('on');
+ if(focus){var a=f.querySelector('.e-fichiers a,.e-acts a')||f.querySelector('.e-fermer');a&&a.focus({preventScroll:true});var r=f.getBoundingClientRect();if(r.bottom>innerHeight||r.top<0)f.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}}
+racine.addEventListener('click',function(e){var d=e.target.closest('[data-dossier]');if(d){var id=d.getAttribute('data-dossier');ouvrir(ouvert===id?null:id,ouvert!==id);return}
+ if(e.target.closest('[data-fermer]')){var id2=ouvert;ouvrir(null);var b2=racine.querySelector('[data-dossier="'+id2+'"]');b2&&b2.focus();return}});
+racine.addEventListener('keydown',function(e){if(e.key==='Escape'&&ouvert){var id=ouvert;ouvrir(null);var b=racine.querySelector('[data-dossier="'+id+'"]');b&&b.focus()}});
 racine.addEventListener('click',function(e){var b=e.target.closest('[data-action]');if(!b)return;var a=b.getAttribute('data-action');if(a==='sauvegarder')sauvegarder();else if(a==='restaurer')fichier.click()});
 
 /* un autre onglet modifie un projet : le Bureau suit */

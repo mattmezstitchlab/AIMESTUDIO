@@ -5,7 +5,7 @@
   "univers": [
     "bureau"
   ],
-  "description": "Un espace de travail : la Carte, ce qu'on reprend, les projets par outil, les outils, le Lab, et ce que ce navigateur garde.",
+  "description": "Un bureau : reprendre, des dossiers (un par outil, plus Applications, Lab, Découvrir), et ce que ce navigateur garde.",
   "polices": {
     "titre": "calsans",
     "texte": "inter"
@@ -16,7 +16,8 @@
     "variantes": {
       "liste": "cartes",
       "groupes": "defaut",
-      "outils": "defaut"
+      "outils": "defaut",
+      "dossiers": "defaut"
     }
   }
 }

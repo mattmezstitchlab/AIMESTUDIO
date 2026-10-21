@@ -46,13 +46,15 @@ test('sauvegarde : tout part, tout revient, rien n\'est effacé, rien n\'est rem
 
 test('moteur partagé : le Bureau est composé par vitrine/rendu.js, sans second moteur',()=>{
  const modele=JSON.parse(fs.readFileSync(R('vitrine/modeles/bureau.json'))),persp=JSON.parse(fs.readFileSync(R('vitrine/perspectives/bureau.json'))).angles[0];
- const c={espace:{nom:'Reprendre <b>',kicker:'Mon Bureau'},illustrations:{},blocs:{carte:{titre:'Votre carte',actions:[{lien:'/aime/#story2',libelle:'Composer ma carte',principal:true}]},
-  reprendre:{elements:[],vide:'Rien à reprendre.'},projets:{groupes:[{nom:'Studio',elements:[{titre:'<img src=x onerror=1>',lien:'/studio/'}]}]},
-  creer:{elements:N.par('role','realiser'),statuts:N.STATUTS},lab:{elements:N.par('role','experimenter'),statuts:N.STATUTS},decouvrir:{elements:[]},navigateur:{paragraphes:['Dans ce navigateur.'],actions:[{action:'sauvegarder',libelle:'Sauvegarder'}]}}};
+ const c={espace:{nom:'Reprendre <b>',accent:'là',kicker:'Mon Bureau'},illustrations:{},blocs:{
+  reprendre:{elements:[],vide:'Rien à reprendre.'},
+  dossiers:{statuts:N.STATUTS,dossiers:[{id:'carte',nom:'Ma carte',elements:[],vide:'Vide.',ouvrir:{lien:'/aime/#story2',libelle:'Composer ma carte'}},{id:'studio',nom:'Supports',elements:[{titre:'<img src=x onerror=1>',lien:'/studio/'}]},{id:'lab',nom:'Lab',elements:N.par('role','experimenter')}]},
+  navigateur:{paragraphes:['Dans ce navigateur.'],actions:[{action:'sauvegarder',libelle:'Sauvegarder'}]}}};
  const r=V.composer({contenu:c,perspective:persp,modele});
  assert.ok(!r.html.includes('<img'),'tout est échappé');assert.ok(r.html.includes('Rien à reprendre.'),'état vide utile');assert.ok(r.html.includes('data-action="sauvegarder"'));
- assert.ok(r.html.includes('Expérimental'),'statut affiché');assert.ok(!r.bilan.blocs.includes('decouvrir'),'un bloc vide disparaît');
- assert.deepEqual(r.bilan.blocs,['carte','reprendre','projets','creer','lab','navigateur']);
+ assert.ok(r.html.includes('Expérimental'),'statut affiché');assert.equal((r.html.match(/data-dossier=/g)||[]).length,3,'un dossier par entrée');
+ assert.ok(/aria-controls="dos-studio"/.test(r.html)&&/id="dos-studio"[^>]*hidden/.test(r.html),'chaque dossier ouvre sa fenêtre, fermée au départ');
+ assert.deepEqual(r.bilan.blocs,['reprendre','dossiers','navigateur']);
  const html=fs.readFileSync(R('bureau/index.html'),'utf8');assert.ok(html.includes('/vitrine/rendu.js'));assert.ok(!/function (rendre|composer)\(/.test(fs.readFileSync(R('bureau/bureau.js'),'utf8')),'pas de moteur concurrent')});
 
 test('routes : /bureau/ est servi, Page Zéro y mène, aucune boucle, chaque entrée du registre aboutit',()=>{
