@@ -1,0 +1,90 @@
+/* AIME · générateur de site, habillé avec le design system « LE MONDE AIME »
+   (dépôt mattmezstitchlab/lemondeaimedesignsystem, design-system.css, révision 3634a31).
+   Repris : les tokens (encre #161616, texte #62666B, surfaces #FFFFFF / #F7F8F8 / #F1F3F3, pétrole #164C70,
+   turquoise #12B5B4, vert d'eau #B0E4D0, focus #127E83, rayon 12 px), DM Sans pour le texte, Manrope pour les titres,
+   boutons principaux noirs en pilule, puces #F4F5F5, sélection turquoise, gradient signature réservé aux accents.
+   Comme le recommande sa documentation, la feuille du laboratoire n'est PAS importée telle quelle : tout est limité à
+   body.gen, et seule l'interface de l'éditeur change. Les sites générés gardent leurs propres ambiances. */
+body.gen{
+ --paper:#FFFFFF;--ink:#161616;--soft:#62666B;--faint:#858A90;--line:#E5E7EB;
+ --verre:#FFFFFF;--verre2:#F7F8F8;--c1:#12B5B4;--c2:#B0E4D0;--deep:#164C70;--focus:#127E83;
+ --sable:#F7F8F8;--alt:#F1F3F3;--puce:#F4F5F5;
+ --ft:"Manrope",Arial,sans-serif;--fb:"DM Sans",Arial,sans-serif;
+ --iris:linear-gradient(115deg,#164C70 0%,#12B5B4 52%,#B0E4D0 100%);
+ --conic:conic-gradient(from 200deg,#164C70,#12B5B4,#B0E4D0,#12B5B4,#164C70);
+ color-scheme:light;background:#F7F8F8;color:var(--ink);font-family:var(--fb);font-size:14px}
+body.gen::before,body.gen::after{display:none}
+body.gen h1,body.gen h2,body.gen h3,body.gen .gen-h,body.gen .modele b{font-family:var(--ft);letter-spacing:-.02em}
+body.gen :focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+body.gen .e-k{font:600 11px var(--fb);letter-spacing:.15em;color:var(--soft)}
+body.gen .e-acc{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* en-tête */
+body.gen .top{background:rgba(255,255,255,.92);border-bottom:1px solid var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+body.gen .top .mk{color:var(--ink)}
+body.gen .pill,body.gen .e-btn{background:#FFFFFF;border:1px solid var(--line);color:var(--ink);border-radius:999px;font:500 13.5px var(--fb);padding:9px 16px;min-height:40px}
+body.gen .pill:hover,body.gen .e-btn:hover{border-color:#9AABA0}
+body.gen .pill.p,body.gen .e-btn.e-p{background:#161616;color:#FFFFFF;border-color:#161616}
+body.gen .pill.p:hover,body.gen .e-btn.e-p:hover{background:#000}
+body.gen .gen-menu,body.gen .gen-rapport{background:#FFFFFF;border:1px solid var(--line);box-shadow:0 24px 60px rgba(22,22,22,.14);color:var(--ink)}
+body.gen .gen-menu button{color:var(--ink)}
+body.gen .gen-menu button:hover{background:var(--sable)}
+body.gen .gen-menu .gm-t{color:var(--soft)}
+body.gen .gen-menu .gm-t.prive{color:#96392E}
+body.gen select,body.gen input,body.gen textarea{color:var(--ink);background:#FFFFFF;border:1px solid var(--line);border-radius:var(--r12,12px)}
+body.gen .gen-site select,body.gen .gen-d select,body.gen .gen-d input,body.gen .gen-d textarea{background:#FFFFFF;border-color:var(--line);border-radius:12px;padding:9px 12px}
+body.gen input:focus,body.gen select:focus,body.gen textarea:focus{outline:2px solid transparent;border-color:var(--focus);box-shadow:0 0 0 3px #12B5B433;background:#F7FCFC}
+
+/* accueil */
+body.gen .modele{background:#FFFFFF;border:1px solid var(--line);border-radius:12px;color:var(--ink)}
+body.gen .modele:hover{border-color:var(--focus);transform:none}
+body.gen .modele span{color:var(--soft)}
+body.gen .modele small{color:var(--faint);font-family:var(--fb)}
+
+/* colonnes */
+body.gen .gen-g,body.gen .gen-d{background:#FFFFFF;border:1px solid var(--line);border-radius:12px}
+body.gen .gen-cadre{background:var(--alt);border:1px solid var(--line);border-radius:12px}
+body.gen .gen-secs li{background:#FFFFFF;border-color:var(--line)}
+body.gen .gen-secs li.on{border-color:var(--focus);box-shadow:0 0 0 1px var(--focus) inset;background:#F7FCFC}
+body.gen .gen-secs li.vide{color:var(--soft)}
+body.gen .bloc-c{background:var(--sable);border-color:var(--line)}
+body.gen .ch{color:var(--soft)}
+body.gen .gen-ajout{border-color:#C9CED3;color:var(--ink);border-radius:999px;font:500 14px var(--fb)}
+body.gen .gen-ajout:hover{border-color:var(--focus);color:var(--deep)}
+
+/* puces et segments : la « chip » du design system */
+body.gen .mini{background:var(--puce);border:1px solid transparent;color:var(--ink);border-radius:999px;font:500 12px var(--fb)}
+body.gen .mini:hover{border-color:#9AABA0}
+body.gen .seg button{background:var(--puce);border:1px solid transparent;color:var(--soft);border-radius:999px;font:500 12.5px var(--fb);padding:7px 13px}
+body.gen .seg button:hover{border-color:#9AABA0}
+body.gen .seg button[aria-pressed=true],body.gen .seg button[aria-selected=true]{background:#161616;color:#FFFFFF;border-color:#161616}
+body.gen .gen-note,body.gen .aide{color:var(--soft)}
+
+/* messages */
+body.gen .gen-onde{background:#FFFFFF;border:1px solid var(--line);color:var(--ink);box-shadow:0 12px 30px rgba(22,22,22,.12)}
+body.gen .vivant{background:#161616;color:#FFFFFF}
+body.gen .gen-fantome{background:var(--deep)}
+
+/* le « + » : l'orbe prend le gradient signature, le panneau devient une carte blanche */
+body.gen .gen-plus{background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.6),transparent 34%),var(--conic);box-shadow:0 10px 28px rgba(18,126,131,.35),inset 0 -6px 14px rgba(22,76,112,.25)}
+body.gen .gen-pop{background:rgba(255,255,255,.97);border:1px solid var(--line);box-shadow:0 30px 70px rgba(22,22,22,.18)}
+body.gen .gp-t{background:var(--puce);border:1px solid transparent;color:var(--soft);border-radius:999px;font:500 13px var(--fb);padding:9px 16px}
+body.gen .gp-t:hover{border-color:#9AABA0}
+body.gen .gp-t[aria-pressed=true]{background:var(--c1);color:#161616}
+body.gen .gp-x{background:#FFFFFF;border:1px solid var(--line);color:var(--ink);border-radius:999px}
+body.gen .gp-tile{background:var(--sable);border:1px solid var(--line);border-radius:12px;color:var(--ink);font:600 13px var(--fb)}
+body.gen .gp-tile:hover{border-color:var(--focus);background:#FFFFFF}
+body.gen .gp-tile svg{stroke:var(--deep)}
+body.gen .gp-tile.inf input{background:#FFFFFF;border:1px solid var(--line);color:var(--ink);color-scheme:light}
+body.gen .gp-tile.inf input:focus{outline:2px solid transparent;border-color:var(--focus);box-shadow:0 0 0 3px #12B5B433}
+body.gen .gp-aide{color:var(--soft)}
+body.gen .gp-s{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+body.gen .gp-t:focus-visible,body.gen .gp-x:focus-visible,body.gen .gp-tile:focus-visible,body.gen .gp-tile.inf:focus-within{outline:2px solid var(--focus);outline-offset:2px}
+@media (forced-colors:active){body.gen input:focus,body.gen select:focus,body.gen textarea:focus{outline-color:Highlight}}
+/* onglets de pages, titres de colonne, bouton Explorer (le panneau Explorer reste celui de tout le site) */
+body.gen .gen-pages button{background:var(--puce);border:1px solid transparent;color:var(--soft);border-radius:999px;font:500 12.5px var(--fb);padding:7px 13px}
+body.gen .gen-pages button:hover{border-color:#9AABA0}
+body.gen .gen-pages button[aria-selected=true]{background:#161616;color:#FFFFFF;border-color:#161616}
+body.gen .gen-h{font:600 11px var(--fb);letter-spacing:.15em;color:var(--soft)}
+body.gen .amx-b{background:#FFFFFF;border:1px solid var(--line);color:var(--ink);border-radius:999px;font:500 13.5px var(--fb);-webkit-backdrop-filter:none;backdrop-filter:none}
+body.gen .gen-menu .gm-t{font:600 11px var(--fb);letter-spacing:.15em}

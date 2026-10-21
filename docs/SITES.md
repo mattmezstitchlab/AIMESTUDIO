@@ -181,3 +181,13 @@ Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / F�
   - **Informer** (avec Tarifs, Chiffres et Chronologie) : Allergènes (un vrai tableau), Setlist, Facile à lire.
 - Ils sont tous dans le « + », en familles de six. Ils suivent l'ambiance du site et se placent dans la grille libre, et ils sont échappés et testés comme les autres blocs.
 - Écartés pour l'instant, faute de sens sur le web : enveloppe, bracelet, étiquette de tireuse, DPE, set de table, marque-place, papier à en-tête, etc.
+
+## Design system « LE MONDE AIME » (21/10/2026)
+- L'interface du générateur porte maintenant le design system du dépôt `lemondeaimedesignsystem` (révision 3634a31). La preview Vercel de ce dépôt est protégée par une connexion, donc la source utilisée est le dépôt lui-même.
+- Ce qui est repris :
+  - le fond blanc et `#F7F8F8`, l'encre `#161616`, le texte secondaire `#62666B` ;
+  - les accents pétrole, turquoise et vert d'eau, et le focus `#127E83` ;
+  - DM Sans pour le texte et Manrope pour les titres ;
+  - les boutons principaux noirs en pilule, les puces grises, la sélection turquoise ;
+  - le gradient signature, réservé à l'orbe du « + ».
+- Le fichier est `sites/theme-monde-aime.css`, limité à `body.gen`, comme sa documentation le demande (« ne pas importer la feuille entière »). Les sites générés gardent leurs ambiances, et le panneau Explorer reste celui de tout le site.
