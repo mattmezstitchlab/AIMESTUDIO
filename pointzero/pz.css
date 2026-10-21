@@ -10,11 +10,13 @@
 
 /* la scène */
 .pz-scene{position:relative;width:100%;aspect-ratio:1000/600;max-height:min(62vh,640px);margin:0 auto}
-.pz-traits{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.pz-traits{position:absolute;inset:0;width:100%;height:100%;overflow:visible;-webkit-mask-image:radial-gradient(circle at 50% 50%,transparent var(--pz-r,60px),#000 calc(var(--pz-r,60px) + 1px));mask-image:radial-gradient(circle at 50% 50%,transparent var(--pz-r,60px),#000 calc(var(--pz-r,60px) + 1px))}
 .pz-rayon{transition:stroke-opacity .5s}
-.pz-centre{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:clamp(120px,19%,200px);aspect-ratio:1;border:0;padding:0;border-radius:50%;background:none;color:var(--pz-ink);cursor:pointer;display:grid;place-items:center}
-.pz-orbe{position:absolute;inset:0;border-radius:50%;transition:transform .5s cubic-bezier(.3,.7,.2,1)}
-.pz-centre:hover .pz-orbe,.pz-centre:focus-visible .pz-orbe{transform:scale(1.06)}
+.pz-centre{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:clamp(104px,13%,148px);aspect-ratio:1;border:0;padding:0;border-radius:50%;background:none;color:var(--pz-ink);cursor:pointer;display:grid;place-items:center}
+.pz-point{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.pz-noyau{transform-box:fill-box;transform-origin:center;transition:transform .5s cubic-bezier(.3,.7,.2,1);animation:pz-souffle 4.8s ease-in-out infinite}
+.pz-anneau{transition:opacity .4s}.pz-centre:hover .pz-noyau,.pz-centre:focus-visible .pz-noyau{transform:scale(1.25)}
+@keyframes pz-souffle{50%{transform:scale(1.12)}}
 .pz-centre-t{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);display:grid;gap:2px;text-align:center;white-space:nowrap}
 .pz-centre-t b{font:600 12px/1 var(--pz-ui);letter-spacing:.2em;text-transform:uppercase}
 .pz-centre-t small{font-size:12.5px;color:var(--pz-soft)}
@@ -27,10 +29,10 @@
 .pz-etape .pz-glyphe{width:clamp(56px,70%,88px);aspect-ratio:1;opacity:.92;transition:opacity .3s,transform .5s cubic-bezier(.3,.7,.2,1)}
 .pz-etape.vide .pz-glyphe{opacity:.38}
 .pz-etape-t{display:grid;gap:1px;text-align:center}.pz-etape-t b{font:600 14px/1.2 var(--pz-ui)}.pz-etape-t small{font-size:11.5px;color:var(--pz-faint)}
-.pz-n{position:absolute;top:4px;right:10px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;display:grid;place-items:center;font:600 11.5px/1 var(--pz-ui);font-variant-numeric:tabular-nums;color:#0A0A0C;background:var(--pz-ink)}
-.pz-etape.vide .pz-n{background:transparent;color:var(--pz-faint);border:1px solid var(--pz-line)}
+.pz-n{position:absolute;top:6px;right:12px;font:600 17px/1 var(--pz-ui);font-variant-numeric:tabular-nums;color:var(--pz-ink)}
+.pz-etape.vide .pz-n{color:var(--pz-faint);font-weight:500}
 .pz-etape.touche .pz-glyphe{transform:scale(1.12)}
-.pz-etape.touche .pz-n{background:var(--pz-iris)}
+.pz-etape.touche .pz-n{background:var(--pz-iris);-webkit-background-clip:text;background-clip:text;color:transparent}
 .pz-goutte{position:absolute;left:0;top:0;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#EDEDF0;box-shadow:0 0 14px 2px rgba(124,92,255,.7);pointer-events:none}
 
 .pz-etat{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;margin-top:22px;text-align:center}
@@ -95,22 +97,15 @@
 
 /* téléphone : le point en haut, les six formes en grille dessous */
 @media (max-width:720px){
- .pz-scene{aspect-ratio:auto;max-height:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:calc(min(44vw,170px) + 58px)}
+ .pz-scene{aspect-ratio:auto;max-height:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:calc(min(34vw,130px) + 58px)}
  .pz-traits{display:none}
- .pz-centre{top:0;transform:translateX(-50%);width:min(44vw,170px)}
+ .pz-centre{top:0;transform:translateX(-50%);width:min(34vw,130px)}
  .pz-etape{position:relative;left:auto;top:auto;transform:none;width:auto;grid-template-columns:auto 1fr;justify-items:start;align-items:center;gap:10px;padding:10px 12px;border-color:var(--pz-line);background:rgba(255,255,255,.03);border-radius:14px}
- .pz-etape .pz-glyphe{width:38px}.pz-etape-t{text-align:left;min-width:0}.pz-n{top:6px;right:6px;transform:none;min-width:20px;height:20px;font-size:11px}
+ .pz-etape .pz-glyphe{width:38px}.pz-etape-t{text-align:left;min-width:0}.pz-n{top:50%;right:14px;transform:translateY(-50%);font-size:18px}
+ .pz-etape{padding-right:38px}.pz-etape-t b{font-size:13.5px}
  .pz-lecture{top:auto;left:0;right:0;bottom:0;width:100%;max-height:88vh;border-radius:22px 22px 0 0;padding-bottom:env(safe-area-inset-bottom,0px);animation-name:pz-monte}
  @keyframes pz-monte{from{transform:translateY(30px);opacity:0}}
 }
-@media (prefers-reduced-motion:reduce){.pz-centre.vierge::after{animation:none;opacity:.5}.pz-lecture{animation:none}.pz-orbe,.pz-etape,.pz-etape .pz-glyphe{transition:none}}
+@media (prefers-reduced-motion:reduce){.pz-centre.vierge::after{animation:none;opacity:.5}.pz-lecture{animation:none}.pz-noyau{animation:none}.pz-noyau,.pz-etape,.pz-etape .pz-glyphe{transition:none}}
 @media (forced-colors:active){.pz-etape,.pz-lecture,.pz-carte-e{border:1px solid CanvasText}}
 
-/* l'orbe du centre, hors de l'OS aussi (mêmes règles que os/os.css, enfermées sous .pz) */
-.pz .aime-orbe{position:relative;display:block;width:100%;height:100%}
-.pz .ao-halo{position:absolute;inset:-30%;border-radius:50%;background:radial-gradient(closest-side,rgba(124,92,255,.34),rgba(34,211,238,.10) 52%,rgba(251,113,133,.05) 64%,transparent 74%);animation:pz-halo 9s ease-in-out infinite}
-.pz .ao-def{position:absolute}.pz .ao-peau,.pz .ao-lumiere{position:absolute;inset:0;display:block}.pz .ao-peau{overflow:hidden}
-.pz .ao-cone{position:absolute;inset:-21%;display:block;background:conic-gradient(from 200deg,#22D3EE,#7C5CFF,#FB7185,#F59E0B,#22D3EE);animation:pz-tourne 22s linear infinite}
-.pz .ao-lumiere{background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55),rgba(255,255,255,.08) 28%,transparent 46%),radial-gradient(circle at 70% 78%,rgba(10,10,12,.38),transparent 55%)}
-@keyframes pz-halo{50%{transform:scale(1.08);opacity:.75}}@keyframes pz-tourne{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.pz .ao-cone,.pz .ao-halo{animation:none}}
