@@ -8,12 +8,39 @@ var lisse=function(t){t=Math.max(0,Math.min(1,t));return t*t*(3-2*t)};
 var vh=function(){return window.innerHeight||document.documentElement.clientHeight};
 function progres(sec){var r=sec.getBoundingClientRect(),course=r.height-vh();return course>0?Math.max(0,Math.min(1,-r.top/course)):(r.top<vh()/2?1:0)}
 
-/* ---------- l'orbe et ses ancres ---------- */
-var flot=$('flot'),orbe=AIMEOrbe.monter(flot,{amplitude:.007}),ancres=[].slice.call(document.querySelectorAll('[data-orbe]')),cur={x:0,y:0,s:100,o:0},pret=false;
-function cible(){var V=vh(),best=null;ancres.forEach(function(a){var sec=a.closest('section'),r=sec.getBoundingClientRect();if(r.top<V*.55&&r.bottom>V*.45){var ra=a.getBoundingClientRect();best={x:ra.left,y:ra.top,s:ra.width}}});return best}
-var dernier=null;
-function orbeSuivre(t){var c=cible(),k=calme()||!pret?1:.16;if(c){dernier=c;cur.x+=(c.x-cur.x)*k;cur.y+=(c.y-cur.y)*k;cur.s+=(c.s-cur.s)*k;cur.o+=(1-cur.o)*(calme()?1:.12)}else cur.o+=(0-cur.o)*(calme()?1:.14);
- var f=calme()?0:Math.sin(t/2400)*cur.s*.012;flot.style.transform='translate('+cur.x.toFixed(1)+'px,'+(cur.y+f).toFixed(1)+'px) scale('+(cur.s/100).toFixed(4)+')';flot.style.opacity=cur.o<.01?0:cur.o.toFixed(3);pret=true}
+/* ---------- l'orbe : un seul objet, liquide ----------
+   Elle suit des ancres (le point zéro, le premier geste, le centre de la ronde) ; entre elles, elle descend avec la page
+   et se pose au-dessus du prochain titre. Quand ce titre arrive au milieu de l'écran, le point de son « i » l'attire comme
+   un aimant, l'absorbe, gonfle et éclate : ses éclats deviennent de petites orbes qui vont allumer les autres points.
+   Puis l'orbe renaît du point et continue. Ressort amorti + étirement selon la vitesse = une goutte, pas un objet rigide. */
+var flot=$('flot'),orbe=AIMEOrbe.monter(flot,{amplitude:.007}),ancres=[].slice.call(document.querySelectorAll('[data-orbe]'));
+var O={x:innerWidth/2,y:-80,s:60,vx:0,vy:0,vs:0,o:0},pret=false,etat='libre',cap=null,TITRES=[],yeux=null,tPrec=0;
+function cible(){var V=vh(),best=null;ancres.forEach(function(a){var sec=a.closest('section'),r=sec.getBoundingClientRect();if(r.top<V*.55&&r.bottom>V*.45){var ra=a.getBoundingClientRect();best={x:ra.left+ra.width/2,y:ra.top+ra.height/2,s:ra.width,o:1}}});return best}
+function titre(sel,cond,fin){var e=document.querySelector(sel);if(!e)return;var pt=e.querySelector('.pt');if(pt)TITRES.push({el:e,pt:pt,cond:cond||function(){return true},fin:!!fin,fait:false})}
+function prochain(){var V=vh(),best=null,by=1e9;TITRES.forEach(function(T){if(T.fait)return;var c=AIMEPoints.centre(T.pt);if(c.y>V*.12&&c.y<by){by=c.y;best=T;best._c=c}});return best}
+function libre(){var a=cible();if(a)return a;var V=vh(),n=prochain();
+ if(n&&n.cond()&&n._c.y<V*1.02)return{x:n._c.x,y:Math.max(V*.13,n._c.y-Math.max(64,n._c.d*16)),s:44,o:1};
+ return{x:O.x,y:-90,s:44,o:0}}
+function ressort(tg,k,am,dt){O.vx=(O.vx+(tg.x-O.x)*k*dt)*Math.pow(am,dt);O.vy=(O.vy+(tg.y-O.y)*k*dt)*Math.pow(am,dt);O.vs=(O.vs+(tg.s-O.s)*k*dt)*Math.pow(am,dt);O.x+=O.vx*dt;O.y+=O.vy*dt;O.s=Math.max(.5,O.s+O.vs*dt)}
+function capturer(T,now){var c=T._c||AIMEPoints.centre(T.pt);if(O.o<.15){O.x=c.x;O.y=-O.s;O.vx=O.vy=0}cap={T:T,t0:now};etat='capture'}
+function absorber(){var T=cap.T;etat='absorbe';O.o=0;T.fait=true;
+ AIMEPoints.gonfler(T.pt,{eclate:function(){cap=null;var c=AIMEPoints.centre(T.pt);
+  if(T.fin){etat='libre';O.y=-90;O.vy=0;if(yeux)yeux.reveiller();return}
+  /* l'orbe renaît du point éclaté */
+  O.x=c.x;O.y=c.y;O.s=Math.max(2,c.d);O.vx=0;O.vy=-7;O.vs=4;O.o=1;etat='libre'}})}
+function orbeSuivre(now){var dt=Math.min(3,Math.max(.25,(now-(tPrec||now-16.7))/16.7));tPrec=now;var V=vh();
+ if(calme()){var a=cible()||{x:O.x,y:-90,s:O.s,o:0};O.x=a.x;O.y=a.y;O.s=a.s;O.o=a.o;O.vx=O.vy=0}
+ else if(!pret){var a0=cible();if(a0){O.x=a0.x;O.y=a0.y;O.s=a0.s;O.o=1}}
+ else if(etat==='capture'){var c=AIMEPoints.centre(cap.T.pt),u=Math.min(1,(now-cap.t0)/900);
+  if(c.y<-V*.1||c.y>V*1.1){etat='libre';cap=null}
+  else{ressort({x:c.x,y:c.y,s:c.d*1.1},.03+.16*lisse(u),.72,dt);O.o+=(1-O.o)*.2*dt;
+   if((Math.hypot(c.x-O.x,c.y-O.y)<Math.max(2.5,c.d*.6)&&O.s<c.d*2.2)||now-cap.t0>2600)absorber()}}
+ else if(etat==='libre'){var tg=libre();ressort(tg,.034,.74,dt);O.o+=(tg.o-O.o)*.1*dt;
+  var n=prochain();if(n&&n.cond()&&n._c.y<V*.7&&n._c.y>V*.16)capturer(n,now)}
+ /* la goutte : étirée dans le sens de sa course, volume conservé */
+ var v=Math.hypot(O.vx,O.vy),st=calme()?0:Math.min(.5,v/40)+(etat==='capture'?.12:0),ang=Math.atan2(O.vy,O.vx)*57.2958,sx=1+st,sy=1/sx,fl=calme()?0:Math.sin(now/2400)*O.s*.012;
+ flot.style.transform='translate('+O.x.toFixed(1)+'px,'+(O.y+fl).toFixed(1)+'px) rotate('+ang.toFixed(1)+'deg) scale('+sx.toFixed(3)+','+sy.toFixed(3)+') rotate('+(-ang).toFixed(1)+'deg) scale('+(O.s/100).toFixed(4)+') translate(-50px,-50px)';
+ flot.style.opacity=O.o<.01?0:Math.min(1,O.o).toFixed(3);pret=true}
 
 /* ---------- 2 · les phrases : nettes au centre, effacées près de l'orbe ---------- */
 var phrases=[].slice.call(document.querySelectorAll('.phrase p'));
@@ -51,23 +78,9 @@ function metaMaj(){if(calme())return;var p=progres($('meta'))*1.12-.06,q=Math.ma
  for(var i=0;i<N;i++){var a=E[k][i],b=E[k+1][i],x=a[0]+(b[0]-a[0])*f,y=a[1]+(b[1]-a[1])*f;pts[i].setAttribute('cx',x.toFixed(1));pts[i].setAttribute('cy',y.toFixed(1));pts[i].setAttribute('r',q<.5?(3.6+8*(1-q*2)).toFixed(2):3.6);pts[i].setAttribute('fill',q<.5?'url(#irisZ)':'#EDEDF0')}
  grp.forEach(function(g,e){g.setAttribute('opacity',Math.max(0,1-Math.abs(q-e)*1.5).toFixed(3))});var on=Math.round(q);etapes.forEach(function(li,e){li.classList.toggle('on',e===on)})}
 
-/* ---------- 4 · le lien : un centre, des points, des relations qui se tracent ---------- */
-var R=$('reseau'),liens=[],noeuds=[],pulse=null,C=[300,210];
-var PTS=[[110,92,'une personne'],[214,48,''],[392,52,'une idée'],[520,120,''],[548,262,'un document'],[440,360,''],[300,384,'un événement'],[160,350,''],[58,250,''],[96,170,'']];
-var CHAINE=[[0,1],[2,3],[3,4],[6,5],[7,8],[9,0],[4,5]];
-function lien(){var d=el('defs',{},R),g=el('radialGradient',{id:'cz'},d);[['0','#FFFFFF','.9'],['.35','#7C5CFF','.9'],['1','#22D3EE','0']].forEach(function(s){el('stop',{offset:s[0],'stop-color':s[1],'stop-opacity':s[2]},g)});
- var gl=el('g',{},R),gn=el('g',{},R);
- PTS.forEach(function(p,i){var a=el('path',{d:'M'+C[0]+','+C[1]+' L'+p[0]+','+p[1],pathLength:1,'stroke-dasharray':1,'stroke-dashoffset':1,stroke:'#EDEDF0','stroke-opacity':.5,'stroke-width':1.2,fill:'none','vector-effect':'non-scaling-stroke'},gl);liens.push({e:a,de:-1,vers:i})});
- CHAINE.forEach(function(c){var a=PTS[c[0]],b=PTS[c[1]],mx=(a[0]+b[0])/2+(C[0]-(a[0]+b[0])/2)*.18,my=(a[1]+b[1])/2+(C[1]-(a[1]+b[1])/2)*.18,e=el('path',{d:'M'+a[0]+','+a[1]+' Q'+mx+','+my+' '+b[0]+','+b[1],pathLength:1,'stroke-dasharray':1,'stroke-dashoffset':1,stroke:'#9C9CA8','stroke-opacity':.45,'stroke-width':1,fill:'none','vector-effect':'non-scaling-stroke'},gl);liens.push({e:e,de:c[0],vers:c[1]})});
- el('circle',{cx:C[0],cy:C[1],r:58,fill:'url(#cz)',opacity:.55},gn);el('circle',{cx:C[0],cy:C[1],r:13,fill:'#EDEDF0'},gn);
- PTS.forEach(function(p){var g2=el('g',{opacity:0},gn);el('circle',{cx:p[0],cy:p[1],r:p[2]?6:4,fill:'#EDEDF0'},g2);if(p[2]){var t=el('text',{x:p[0],y:p[1]+(p[1]>C[1]?26:-16),'text-anchor':'middle',fill:'#9C9CA8','font-size':13,'font-family':'Inter Variable, Inter, sans-serif','letter-spacing':'.04em'},g2);t.textContent=p[2]}noeuds.push(g2)});
- pulse=el('circle',{r:3.2,fill:'#EDEDF0',opacity:0},gn)}
-function lienMaj(t){var p=calme()?1:progres($('lien'))*1.25,n=liens.length,vus=[];
- liens.forEach(function(l,i){var a=Math.max(0,Math.min(1,(p*(n+2)-i)/2.2));l.e.setAttribute('stroke-dashoffset',(1-lisse(a)).toFixed(3));if(a>.95)vus[l.vers]=1});
- noeuds.forEach(function(g,i){var a=Math.max(0,Math.min(1,(p*(n+2)-i-1.4)/1.2));g.setAttribute('opacity',lisse(a).toFixed(3))});
- $('lienSous').classList.toggle('vu',p>.62);
- /* une impulsion parcourt les relations une fois tout relié : la logique causale, sans interface scientifique */
- if(!calme()&&p>=1){var L=liens[Math.floor(t/1400)%liens.length],u=(t%1400)/1400,pt=L.e.getPointAtLength(u*L.e.getTotalLength());pulse.setAttribute('cx',pt.x);pulse.setAttribute('cy',pt.y);pulse.setAttribute('opacity',(Math.sin(u*Math.PI)*.9).toFixed(3))}else pulse.setAttribute('opacity',0)}
+/* ---------- 4 · le lien : la ronde des orbes (zero/ronde.js) ---------- */
+var ronde=window.AIMERonde?AIMERonde.monter($('ronde')):null;
+function lienMaj(t){var p=calme()?1:progres($('lien'))*1.2;if(ronde)ronde.maj(t,p,calme());$('lienSous').classList.toggle('vu',p>.62)}
 
 /* ---------- 5 · apparitions au fil du défilement ---------- */
 if('IntersectionObserver' in window){var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vu');io.unobserve(e.target)}})},{rootMargin:'0px 0px -18% 0px'});[].forEach.call(document.querySelectorAll('.apparait'),function(x){io.observe(x)})}
@@ -76,7 +89,18 @@ else[].forEach.call(document.querySelectorAll('.apparait'),function(x){x.classLi
 /* ---------- boucle : une seule, légère ---------- */
 var occupe=false;
 function image(t){orbeSuivre(t);phrasesMaj();metaMaj();lienMaj(t);document.body.classList.toggle('loin',window.scrollY>vh()*.6);requestAnimationFrame(image)}
-meta();lien();requestAnimationFrame(image);
+meta();requestAnimationFrame(image);
+/* les points des « i » ; puis les titres qui attirent l'orbe, dans l'ordre de la page */
+if(window.AIMEYeux&&$('duo'))yeux=AIMEYeux.monter($('duo'));
+if(window.AIMEPoints)AIMEPoints.preparer('.zero .intention,.phrase p,.meta h2,.meta .sous,.lien h2,.lien .sous,.promesse .grand:not(.grand+.grand),.exemples li,.autorisations,.entrer h2,.entrer p',function(){
+ titre('.zero .intention',function(){return window.scrollY>40});
+ [].forEach.call(document.querySelectorAll('.phrase:not(.comprendre) p'),function(p,i){titre('.phrase:not(.comprendre):nth-child('+(i+1)+') p')});
+ titre('.meta h2',function(){return progres($('meta'))>.86});
+ titre('.lien h2',function(){return progres($('lien'))>.88});
+ titre('.promesse .grand');
+ titre('.entrer h2',null,true);
+ if(calme()){AIMEPoints.tous().forEach(function(p){AIMEPoints.allumer(p)});if(yeux)yeux.reveiller()}});
+else if(yeux)yeux.reveiller();
 
 /* ---------- réduire les animations : le choix du visiteur s'ajoute à la préférence du système ---------- */
 var b=$('calme');function etiquette(){b.setAttribute('aria-pressed',String(calme()));b.textContent=calme()?'Rétablir les animations':'Réduire les animations'}

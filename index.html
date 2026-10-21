@@ -88,7 +88,7 @@ body.loin .barre::before{opacity:.92}
 /* 4 · le lien */
 .lien{position:relative;height:210svh}
 .lien .scene{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,3vh,30px);padding:calc(56px + env(safe-area-inset-top,0px)) 0 calc(28px + env(safe-area-inset-bottom,0px))}
-.lien svg{width:min(94vw,62svh*1.43,860px);height:auto;overflow:visible}
+
 .lien .sous{opacity:0;transition:opacity .8s}.lien .sous.vu{opacity:1}
 
 /* 5 · la promesse */
@@ -97,7 +97,7 @@ body.loin .barre::before{opacity:.92}
 .promesse .grand+.grand{margin-top:clamp(28px,6vh,60px);color:transparent;background:var(--iris);-webkit-background-clip:text;background-clip:text}
 .exemples{list-style:none;margin:clamp(120px,18vh,200px) auto 0;padding:0;display:grid;gap:clamp(80px,14vh,150px);max-width:720px}
 .exemples li{font:400 clamp(24px,3vw,38px)/1.25 var(--ui);letter-spacing:-.015em}
-.exemples li span{display:block;margin:0 auto 18px;width:9px;height:9px;border-radius:50%;background:var(--conic)}
+.exemples li span:empty:not(.pt){display:block;margin:0 auto 18px;width:9px;height:9px;border-radius:50%;background:var(--conic)}
 .autorisations{margin:clamp(110px,16vh,180px) 0 0;font:500 13px var(--ui);letter-spacing:.24em;text-transform:uppercase;color:var(--soft)}
 .apparait{opacity:0;transform:translateY(22px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.2,.7,.2,1)}
 .apparait.vu{opacity:1;transform:none}
@@ -131,6 +131,41 @@ html.calme .apparait{opacity:1;transform:none;transition:none}
 html.calme .lien .sous{opacity:1;transition:none}
 html.calme .ao-cone,html.calme .ao-halo,html.calme .descendre i{animation:none}
 html.calme .bouton,html.calme .bouton span{transition:none}
+
+/* les points des « i » : un « ı » et un point posé à la mesure exacte de la police */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ii{position:relative}
+.pt{position:absolute;border-radius:50%;background:currentColor;transform-origin:50% 50%;pointer-events:none}
+.promesse .grand+.grand .pt{background:#F59E0B}
+.pt.vif{background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.75),rgba(255,255,255,0) 46%),conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);box-shadow:0 0 .32em rgba(124,92,255,.75),0 0 .9em rgba(34,211,238,.25);animation:ptTourne 6s linear infinite}
+.pt.plein{box-shadow:0 0 .5em rgba(124,92,255,.9),0 0 1.4em rgba(251,113,133,.45)}
+@keyframes ptTourne{to{filter:hue-rotate(360deg)}}
+.eclats{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.eclats i{position:absolute;left:0;top:0;display:block;will-change:transform,opacity}
+
+/* 4 · la ronde */
+.ronde{position:relative;width:min(94vw,62svh*1.43,860px);aspect-ratio:600/420;max-width:100%}
+.ronde-fond{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ronde .ancre{position:absolute;left:50%;top:50%;width:15%;transform:translate(-50%,-50%);margin:0}
+.mo{position:absolute;left:0;top:0;display:grid;justify-items:center;gap:8px;will-change:transform,opacity;opacity:0}
+.mo-b{width:clamp(18px,3.2vw,30px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.7),rgba(255,255,255,0) 46%),conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);animation:ptTourne 9s linear infinite}
+.mo-n{font:500 13px var(--ui);letter-spacing:.04em;color:var(--soft);white-space:nowrap}
+@media (max-width:520px){.mo-n{font-size:11px}}
+
+/* 6 · deux orbes qui regardent */
+.duo{display:flex;justify-content:center;gap:clamp(14px,3vw,26px);margin:0 auto clamp(18px,3vh,30px)}
+.duo-o{position:relative;width:clamp(78px,11vw,112px);aspect-ratio:1;transform:scale(.2);opacity:0;transition:transform .9s cubic-bezier(.3,1.5,.5,1),opacity .5s}
+.duo-o.duo-1{transition-delay:.12s}
+.duo.eveil .duo-o{transform:none;opacity:1}
+.duo-c{position:absolute;inset:0;display:block}
+.yeux{position:absolute;left:19%;right:19%;top:27%;height:34%;display:flex;justify-content:space-between;z-index:2}
+.oeil{position:relative;width:42%;height:100%;border-radius:50%;background:#F5F5F7;box-shadow:inset 0 -2px 4px rgba(0,0,0,.18);overflow:hidden;transition:transform .12s}
+.oeil i{position:absolute;left:28%;top:26%;width:44%;height:48%;border-radius:50%;background:#0A0A0C;box-shadow:inset 2px 2px 0 rgba(255,255,255,.55)}
+.duo-o.cligne .oeil{transform:scaleY(.08)}
+.sorties{justify-content:center}
+.sorties-note{text-align:center}
+html.calme .pt.vif{animation:none}
+html.calme .mo{opacity:1}
 </style>
 </head>
 <body>
@@ -178,7 +213,7 @@ html.calme .bouton,html.calme .bouton span{transition:none}
 <!-- 4 · le lien -->
 <section class="lien" id="lien" aria-labelledby="t-lien">
  <div class="scene">
-  <svg id="reseau" viewBox="0 0 600 420" role="img" aria-labelledby="reseauT"><title id="reseauT">Un élément central ; autour, des personnes, des idées, des documents et des événements se relient peu à peu.</title></svg>
+  <div class="ronde" id="ronde" role="img" aria-label="Une orbe au centre ; autour, des personnes, des idées, des documents et des événements tournent, touchés par une onde, puis se relient."><span class="ancre" data-orbe="4"></span></div>
   <div class="col">
    <h2 id="t-lien">Rien n'existe isolément.</h2>
    <p class="sous" id="lienSous" style="margin-top:14px">Les personnes, les idées, les documents et les événements prennent du sens lorsqu'ils sont reliés.</p>
@@ -200,8 +235,8 @@ html.calme .bouton,html.calme .bouton span{transition:none}
 
 <!-- 6 · entrer -->
 <section class="entrer" id="entrer" aria-labelledby="t-entrer">
- <span class="ancre" data-orbe="3"></span>
  <div class="col">
+  <div class="duo" id="duo" aria-hidden="true"></div>
   <h2 id="t-entrer">Et maintenant ?</h2>
   <p style="margin-top:22px">Découvrez ce que nous pouvons créer, relier et faire évoluer ensemble.</p>
   <div class="sorties"><a class="bouton" id="bureau" href="/bureau/">Ouvrir mon Bureau <span aria-hidden="true">→</span></a><a class="bouton second" id="rejoindre" href="/aime/">Rejoindre Le Monde AIME</a></div>
@@ -211,6 +246,9 @@ html.calme .bouton,html.calme .bouton span{transition:none}
 </section>
 </main>
 <script src="/zero/orbe.js"></script>
+<script src="/zero/points.js"></script>
+<script src="/zero/ronde.js"></script>
+<script src="/zero/yeux.js"></script>
 <script src="/zero/zero.js"></script>
 </body>
 </html>
