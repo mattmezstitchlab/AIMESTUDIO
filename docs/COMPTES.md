@@ -18,7 +18,14 @@
 ## Limites connues
 - Les clés d'accès sont liées au nom de domaine : une clé créée sur l'adresse de preview ne servira pas sur le domaine final.
 - La protection Vercel de la preview s'applique aussi au lien reçu par e-mail : ouvrez-le dans un navigateur déjà connecté à Vercel.
-- En production, ces routes répondent 404 tant que rien n'est décidé.
+- Les comptes sont ouverts en production (décision du 22/10/2026), toujours fermés (503) sans base ni secret.
+- En production, les deux démonstrations d'AIME Live (mariage, séminaire) restent dans le navigateur : pas de journal public partagé. Seuls les espaces réels passent par le serveur, et les laissez-passer y sont signés avec un vrai secret (`LIVE_DEMO_SECRET`, sinon `BETTER_AUTH_SECRET`), jamais avec un secret dérivé du commit.
+- Supprimer son compte (`/api/auth/delete-user`, session de moins de 24 h) efface le compte, les sessions et les clés d'accès, les espaces possédés (avec leurs membres, invitations et direct), les adhésions et les invitations non utilisées à son adresse. La page `/confidentialite/` le décrit.
+
+### Mise en production : prérequis
+1. Base Neon de **production** : `db/migrations/2026-10-21-live-journal.sql`, PUIS `db/migrations/2026-10-21-comptes.sql`, dans cet ordre.
+2. Vercel, environnement Production : `BETTER_AUTH_URL=https://www.lemondeaime.com` (l'adresse exacte, celle des clés d'accès), `BETTER_AUTH_SECRET` (32 caractères ou plus), `DATABASE_URL`, `RESEND_API_KEY` et `AUTH_EMAIL_FROM` au format `AIME <connexion@lemondeaime.com>`.
+3. `lemondeaime.com` redirige vers `www.lemondeaime.com` : une seule adresse pour les cookies et les clés d'accès.
 
 ## Tests
 - `tests/comptes-statique.test.cjs` : fermeture par défaut, photo, absence de secret et d'innerHTML.

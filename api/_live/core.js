@@ -1,7 +1,9 @@
 // AIME Live · partie serveur commune (démonstration, données fictives).
 // Le serveur ne fait confiance ni au rôle ni au journal envoyés par le navigateur :
 // l'identité vient d'un laissez-passer qu'IL a signé, le rôle de vitrine/acces, et chaque action est rejouée avec les règles.
-// Fermé par défaut : sans base (DATABASE_URL) ou sans table, 503 ; en production, 404.
+// Fermé par défaut : sans base (DATABASE_URL) ou sans table, 503.
+// En production, les deux démonstrations restent dans le navigateur (pas de journal public partagé que n'importe qui pourrait écrire) :
+// seuls les espaces réels, réservés à leurs membres connectés, passent par le serveur. Et le secret de signature y est obligatoire.
 const crypto = require('crypto');
 const L = require('../../live/modele.js'), P = require('../../synchroview/permissions.js');
 const ESPACES = {
@@ -25,13 +27,17 @@ async function espace(id, sql) {
   return { donnees: ESPACES[s[0].modele].donnees, acces: { membres }, reel: true };
 }
 
-function secret() { return process.env.LIVE_DEMO_SECRET || process.env.SV_DEMO_SECRET || ('live-demo:' + (process.env.VERCEL_GIT_COMMIT_SHA || 'local')); }
-function signer(o) { const b = Buffer.from(JSON.stringify(o)).toString('base64url'); return b + '.' + crypto.createHmac('sha256', secret()).update(b).digest('base64url'); }
+const enProd = () => process.env.VERCEL_ENV === 'production';
+/* jamais de secret devinable en production (le commit est public) : sans vrai secret, pas de laissez-passer */
+function secret() { const s = process.env.LIVE_DEMO_SECRET || process.env.SV_DEMO_SECRET || process.env.BETTER_AUTH_SECRET; if (s) return s; return enProd() ? null : ('live-demo:' + (process.env.VERCEL_GIT_COMMIT_SHA || 'local')); }
+function demoServeur() { return !enProd(); }
+function signer(o) { const k = secret(); if (!k) return null; const b = Buffer.from(JSON.stringify(o)).toString('base64url'); return b + '.' + crypto.createHmac('sha256', k).update(b).digest('base64url'); }
 function lirePasse(tok) {
   if (typeof tok !== 'string' || tok.length > 600 || tok.indexOf('.') < 0) return null;
-  const [b, h] = tok.split('.'); const want = crypto.createHmac('sha256', secret()).update(b).digest('base64url');
+  const k = secret(); if (!k) return null;
+  const [b, h] = tok.split('.'); const want = crypto.createHmac('sha256', k).update(b).digest('base64url');
   if (!h || h.length !== want.length || !crypto.timingSafeEqual(Buffer.from(h), Buffer.from(want))) return null;
-  try { const o = JSON.parse(Buffer.from(b, 'base64url').toString()); return o && (ESPACES[o.espace] || UUID.test(o.espace)) && typeof o.qui === 'string' && o.exp > Date.now() ? o : null; } catch { return null; }
+  try { const o = JSON.parse(Buffer.from(b, 'base64url').toString()); return o && ((ESPACES[o.espace] && demoServeur()) || UUID.test(o.espace)) && typeof o.qui === 'string' && o.exp > Date.now() ? o : null; } catch { return null; }
 }
 function corps(req) { const b = req.body; if (!b) return {}; if (typeof b === 'string') { if (b.length > 8192) return {}; try { return JSON.parse(b); } catch { return {}; } } return b; }
 
@@ -48,7 +54,6 @@ function freiner(req, max) {
 
 function debut(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  if (process.env.VERCEL_ENV === 'production') { res.status(404).json({ ok: false }); return null; }
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); res.status(405).json({ ok: false }); return null; }
   return corps(req);
 }
@@ -58,4 +63,4 @@ const ferme = res => res.status(503).json({ ok: false, raison: 'Le direct entre 
 function equipe(acces, qui) { const s = L.sujet(acces, qui); return !!(s.role && P.can(s, 'read', { type: 'item', audience: 'equipe' }).allow); }
 function filtrer(lignes, acces, qui) { const eq = equipe(acces, qui); return lignes.filter(a => eq || !(a.action === 'annoncer' && a.p && a.p.audience === 'equipe')); }
 
-module.exports = { L, P, ESPACES, UUID, espace, DUREE, MAX_LIGNES, signer, lirePasse, base, freiner, debut, ferme, filtrer, _base(f) { fabrique = f; }, _reinitialiser() { vus.clear(); } };
+module.exports = { demoServeur, L, P, ESPACES, UUID, espace, DUREE, MAX_LIGNES, signer, lirePasse, base, freiner, debut, ferme, filtrer, _base(f) { fabrique = f; }, _reinitialiser() { vus.clear(); } };

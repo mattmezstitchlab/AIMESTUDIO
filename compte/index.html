@@ -33,6 +33,7 @@
   <p class="ok" id="lienEnvoye" hidden role="status"></p>
   <div class="sep"><span>ou</span></div>
   <button class="b" type="button" id="cPasskey">Se connecter avec une clé d'accès</button>
+  <p class="leg">En vous connectant, vous acceptez que votre adresse e-mail et votre nom servent à faire fonctionner votre compte et vos espaces. <a href="/confidentialite/">Confidentialité</a></p>
  </section>
 
  <section class="carte-c" id="profil" hidden aria-labelledby="t-moi">
@@ -45,6 +46,13 @@
     <div class="pile"><h2 class="k" style="margin:8px 0 0">Clés d'accès</h2><ul class="cles" id="cles"></ul><span><button class="b b-s" type="button" id="ajCle">+ Ajouter une clé d'accès sur cet appareil</button></span></div>
    </div>
   </div>
+ </section>
+
+ <section class="carte-c" id="zoneSuppr" hidden aria-labelledby="t-suppr">
+  <h2 class="k" id="t-suppr" style="margin:0">Supprimer mon compte</h2>
+  <p class="leg">Votre compte, vos clés d'accès, les espaces dont vous êtes propriétaire (avec leurs membres, invitations et direct) et vos adhésions aux autres espaces sont effacés. C'est définitif. <a href="/confidentialite/">Ce que nous gardons et pourquoi</a></p>
+  <span><button class="b b-s" type="button" id="suppr1">Supprimer mon compte…</button></span>
+  <div class="lgn" id="suppr2" hidden><span class="leg">Confirmez : tout sera effacé, sans retour possible.</span><button class="b b-s danger" type="button" id="supprOui">Oui, tout supprimer</button><button class="b b-s" type="button" id="supprNon">Annuler</button></div>
  </section>
 
  <section id="espaces" hidden aria-labelledby="t-esp">

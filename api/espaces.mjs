@@ -11,7 +11,6 @@ async function corps(req) {
 let db = null; export function _db(d) { db = d; }
 export default async function espaces(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  if (process.env.VERCEL_ENV === 'production') return json(res, 404, { ok: false });
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { ok: false }); }
   if (!auth()) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
   const b = await corps(req), f = ACTIONS[b.action];

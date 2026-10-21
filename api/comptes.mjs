@@ -15,7 +15,6 @@ export function adresseOrigine(url) {
 export default async function comptes(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   const origine = adresseOrigine(req.url); if (!origine) return json(res, 404, { ok: false }); req.url = origine;
-  if (process.env.VERCEL_ENV === 'production') return json(res, 404, { ok: false });
   const a = auth();
   if (!a) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
   if (/\/sign-in\/magic-link$/.test((req.url || '').split('?')[0]) && !envoiPret()) return json(res, 503, { ok: false, raison: 'L\'envoi des e-mails n\'est pas encore configuré : utilisez une clé d\'accès, ou réessayez plus tard.' });
