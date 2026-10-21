@@ -20,6 +20,7 @@ var E=[
  ['aime','Le Monde AIME','/aime/','La grande présentation, le cube, l\'orbe','monde','decouvrir','disponible'],
  ['tout','Tout voir','/tout/','Toutes les vues d\'un coup','monde','decouvrir','disponible'],
  ['world','AIME WORLD','/vitrine/world/','Paris · New York, six perspectives','evenements','decouvrir','demonstration'],
+ ['live','AIME Live','/live/','Le jour J en direct : un retard, une annonce, chacun le voit','evenements','realiser','demonstration',true],
  ['synchroview','SynchroView','/synchroview/','Comparer les perspectives côte à côte','evenements','realiser','demonstration'],
  ['mariage','Mariage Léa & Marc','/vitrine/site/?u=mariage','Démonstrateur, données fictives','evenements','decouvrir','demonstration'],
  ['seminaire','Séminaire Maison Orée','/vitrine/site/?u=seminaire','Démonstrateur, entreprise fictive','evenements','decouvrir','demonstration'],
