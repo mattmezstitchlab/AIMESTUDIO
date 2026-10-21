@@ -66,7 +66,8 @@ body.gen .vivant{background:#161616;color:#FFFFFF}
 body.gen .gen-fantome{background:var(--deep)}
 
 /* le « + » : l'orbe prend le gradient signature, le panneau devient une carte blanche */
-body.gen .gen-plus{background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.6),transparent 34%),var(--conic);box-shadow:0 10px 28px rgba(18,126,131,.35),inset 0 -6px 14px rgba(22,76,112,.25)}
+/* l'orbe du « + » garde son arc-en-ciel d'origine (celui de la landing), seul accent qui ne suit pas le design system */
+body.gen .gen-plus{background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.55),transparent 32%),conic-gradient(from 200deg,#22D3EE,#7C5CFF,#FB7185,#F59E0B,#22D3EE);box-shadow:0 10px 30px rgba(124,92,255,.45),inset 0 -6px 14px rgba(0,0,0,.25)}
 body.gen .gen-pop{background:rgba(255,255,255,.97);border:1px solid var(--line);box-shadow:0 30px 70px rgba(22,22,22,.18)}
 body.gen .gp-t{background:var(--puce);border:1px solid transparent;color:var(--soft);border-radius:999px;font:500 13px var(--fb);padding:9px 16px}
 body.gen .gp-t:hover{border-color:#9AABA0}
