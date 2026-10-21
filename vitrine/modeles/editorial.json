@@ -1,0 +1,11 @@
+{
+  "id": "editorial", "nom": "Éditorial", "offre": "gratuit", "univers": ["mariage", "seminaire"],
+  "description": "Un grand visuel pleine page, une typographie de magazine, des sections numérotées et beaucoup d'air.",
+  "polices": { "titre": "fraunces", "texte": "inter" },
+  "ambiance": "botanique",
+  "composition": {
+    "hero": "pleine-page",
+    "numeros": true,
+    "variantes": { "programme": "liste", "personnes": "colonnes", "documents": "liste", "galerie": "mosaique", "menu": "carte", "reponse": "formulaire", "actions": "boutons" }
+  }
+}

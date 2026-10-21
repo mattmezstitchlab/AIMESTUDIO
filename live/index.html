@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIME Live · le jour J en direct</title>
+<meta name="description" content="AIME Live : le jour J d'un espace partagé, en direct. Un retard, une annonce, un plan B : chacun le voit aussitôt, selon ce qu'il a le droit de voir.">
+<meta name="theme-color" content="#0B0B0E">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/live/live.css">
+<link rel="stylesheet" href="/compte/timbre.css">
+</head>
+<body>
+<a class="evite" href="#direct">Aller au direct</a>
+<header class="tete">
+ <a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup> <span>Live</span></a>
+ <div class="ev"><b id="evNom">…</b><span id="evDate"></span></div>
+ <div class="tete-d">
+  <label class="sr" for="espace">Espace</label>
+  <select id="espace"><option value="mariage">Mariage Léa &amp; Marc</option><option value="seminaire">Séminaire Maison Orée</option></select>
+  <span class="mode" id="mode" aria-live="polite">…</span>
+  <span class="presents" id="presents" aria-live="polite"></span>
+ </div>
+</header>
+
+<section class="horloge" aria-label="Horloge de démonstration">
+ <div class="h-heure"><span class="k">Heure du jour J</span><output id="hHeure">--:--</output></div>
+ <label class="sr" for="hCurseur">Heure simulée</label><input type="range" id="hCurseur" min="0" max="1" step="5" value="0">
+ <span class="seg" role="group" aria-label="Vitesse"><button type="button" data-v="0" aria-pressed="true">Pause</button><button type="button" data-v="1">×1</button><button type="button" data-v="60">×60</button><button type="button" data-v="300">×300</button></span>
+ <p class="leg">Démonstration : l'événement n'a pas encore eu lieu, l'heure est simulée et partagée par tous les onglets ouverts.</p>
+</section>
+
+<div class="cadre">
+ <aside class="qui" aria-label="Qui regarde">
+  <label class="ch"><span>Je suis</span><select id="qui"></select></label>
+  <p class="qui-nom" id="quiNom"></p>
+  <p class="leg" id="quiRole"></p>
+  <p class="leg" id="quiDemo">Démonstration : en vrai, l'identité vient de la connexion, jamais d'un menu. Le rôle vient de l'espace ; le choisir ici n'accorde aucun droit.</p>
+  <div class="lgn"><button class="b" type="button" id="autre">Ouvrir une autre personne</button><a class="b" id="salle" href="#" target="_blank" rel="noopener">Écran de salle</a></div>
+  <div class="pile" id="membres"></div>
+  <div class="pile" id="presentsListe"></div>
+ </aside>
+
+ <main id="direct" tabindex="-1">
+  <section class="maintenant" id="maintenant" aria-live="polite" aria-labelledby="t-mtn"><h1 class="k" id="t-mtn">Maintenant</h1><div id="mtn"></div></section>
+  <section class="ensuite" id="ensuite" aria-labelledby="t-ens"><h2 class="k" id="t-ens">Ensuite</h2><div id="ens"></div></section>
+  <section class="annonces" aria-labelledby="t-ann"><h2 class="k" id="t-ann">Annonces</h2>
+   <form class="annoncer" id="annoncer" hidden><label class="sr" for="annTexte">Annonce</label><input id="annTexte" maxlength="280" placeholder="Un retard, un changement de salle, un mot pour tous…" autocomplete="off"><label class="sr" for="annAud">Pour qui</label><select id="annAud"><option value="tous">Tout le monde</option><option value="equipe">L'équipe seulement</option></select><button class="b b-p" type="submit">Annoncer</button></form>
+   <ol class="flux" id="flux"></ol>
+  </section>
+  <section class="jour" aria-labelledby="t-jour"><div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-jour">La journée</h2><label class="lgn cascade" id="cascadeL" hidden><input type="checkbox" id="cascade" checked> Décaler aussi la suite</label></div><ol class="moments" id="moments"></ol></section>
+  <section class="journal" id="journalS" aria-labelledby="t-jnl" hidden><div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-jnl">Ce qui s'est passé</h2><button class="b b-s" type="button" id="recommencer">Recommencer la démonstration</button></div><p class="leg">Chaque écran rejoue ce journal avec les règles de l'espace : une action refusée y reste, sans aucun effet.</p><ol class="jnl" id="jnl"></ol></section>
+ </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<noscript><p class="ns">AIME Live a besoin de JavaScript.</p></noscript>
+<script src="/synchroview/permissions.js"></script>
+<script src="/live/modele.js"></script>
+<script src="/live/canal.js"></script>
+<script src="/compte/timbre.js"></script>
+<script src="/regie/donnees.js"></script>
+<script src="/nav/registre.js"></script>
+<script src="/regie/scene.js" defer></script>
+<script src="/live/live.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trois cartes · Lab AIME</title>
+<meta name="description" content="Lab AIME, expérimental : les trois modèles de carte qui coexistent dans AIME, côte à côte, avant de choisir.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/bureau/bureau.css">
+<style>
+.lab-c{max-width:1240px;margin:0 auto;padding:8px max(20px,env(safe-area-inset-right,0px)) 48px max(20px,env(safe-area-inset-left,0px))}
+.badge-x{display:inline-block;font:600 10px var(--fb);letter-spacing:.08em;text-transform:uppercase;color:#67E8F9;border:1px solid rgba(103,232,249,.4);border-radius:999px;padding:3px 9px;margin-left:10px;vertical-align:middle}
+.trois{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:8px}
+@media (max-width:980px){.trois{grid-template-columns:1fr}}
+.c3{position:relative;display:grid;grid-template-rows:auto auto 1fr auto;gap:14px;min-width:0;background:var(--verre);border:1px solid var(--line);border-radius:22px;padding:20px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.c3::before{content:"";position:absolute;inset:0 0 auto;height:3px;border-radius:22px 22px 0 0;background:linear-gradient(90deg,var(--t1),var(--t2))}
+.c3 .n{font:600 10.5px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--soft)}
+.c3 h2{margin:4px 0 0;font:400 28px/1.1 var(--ft)}
+.c3 .ou{font:12px var(--mono);color:var(--faint);overflow-wrap:anywhere}
+.vue{min-height:260px;display:grid;place-items:center;border-radius:16px;background:rgba(10,10,12,.45);border:1px solid var(--line);padding:16px;overflow:hidden}
+.vue svg{width:min(100%,260px);height:auto;display:block}
+.vue .ex{font:600 10px var(--mono);letter-spacing:.18em;color:#C4B5FD;margin-top:8px;text-align:center}
+.vue ul{list-style:none;margin:0;padding:0;width:100%;display:grid;gap:8px}
+.pers{display:grid;grid-template-columns:42px minmax(0,1fr);gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:rgba(255,255,255,.02)}
+.pers i{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:600 15px var(--fb);font-style:normal;color:#0A0A0C;background:linear-gradient(135deg,var(--t1),var(--t2))}
+.pers b{display:block;font-size:14.5px}.pers span{font-size:12px;color:var(--soft)}.pers code{font:11px var(--mono);color:var(--faint)}
+.cube{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.cube div{border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(255,255,255,.03);min-height:70px}
+.cube small{display:block;font:600 9.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.cube b{display:block;font-size:13px;margin-top:6px}
+dl{margin:0;display:grid;gap:10px;align-content:start}
+dt{font:600 10px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+dd{margin:2px 0 0;color:#C9C9D2;font-size:14px}
+.c3 .e-acts{margin-top:0}
+.tab-w{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:18px;background:var(--verre)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:12px 14px;border-bottom:1px solid var(--line)}
+th{font:600 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+td:first-child{color:var(--soft);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.dec{margin-top:16px;max-width:80ch;color:#C9C9D2}
+</style>
+</head>
+<body>
+<a class="evite" href="#trois">Aller aux cartes</a>
+<header class="top"><a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup></a><nav aria-label="AIME"><a class="pill" href="/bureau/">Mon Bureau</a></nav></header>
+<main class="lab-c">
+ <header class="e-entete"><span class="e-k">Lab · expérimental</span><h1>Trois cartes, <span class="e-acc">à comparer.</span></h1>
+  <p>AIME porte aujourd'hui trois modèles de carte, nés à trois endroits. Les voici côte à côte, avec ce que ce navigateur contient pour chacun. Rien n'est fusionné : on regarde, on compare, on décidera plus tard.</p></header>
+
+ <section class="e-sec" aria-labelledby="t3"><h2 id="t3">Les trois modèles</h2>
+ <div class="trois" id="trois">
+  <article class="c3" style="--t1:#FB7185;--t2:#F59E0B" aria-labelledby="ca">
+   <div><span class="n">A · carte/</span><h2 id="ca">La Carte universelle</h2><p class="ou">localStorage « aime-carte » · carte/carte.js</p></div>
+   <div class="vue" id="vueA"></div>
+   <dl><dt>Qui la crée</dt><dd>La personne elle-même, rubrique par rubrique (nom, couleurs, moments, formations, voyages, compétences, rêves, contributions…).</dd>
+    <dt>Confidentialité</dt><dd>Privée par défaut ; visibilité réglée par rubrique ; date de naissance et relations jamais publiques ; publication avec consentement daté, révocable.</dd>
+    <dt>Ce qu'elle sait faire</dt><dd>Versions, export JSON et PNG, vue publique calculée, registre filtrable, mises en relation expliquées.</dd></dl>
+   <div class="e-acts"><a class="e-btn" href="/aime/">La voir sur le cube</a></div>
+  </article>
+  <article class="c3" style="--t1:#7C5CFF;--t2:#22D3EE" aria-labelledby="cb">
+   <div><span class="n">B · Studio, uni*</span><h2 id="cb">Les Cartes universelles du Studio</h2><p class="ou">« aime:uni », « aime:cards », « aime:unilinks » · studio/index.html</p></div>
+   <div class="vue" id="vueB"></div>
+   <dl><dt>Qui la crée</dt><dd>Le Studio, à partir des personnes présentes dans les projets (invités, équipe) ; chacune reçoit un code « AIME-… ».</dd>
+    <dt>Confidentialité</dt><dd>En attente tant qu'elle n'est pas réclamée ; niveaux privé, événement, public ; un mineur reste toujours privé.</dd>
+    <dt>Ce qu'elle sait faire</dt><dd>Agréger les événements, les supports et l'activité (badgeuse) d'une personne ; profil public par code ; registre et fil d'activité.</dd></dl>
+   <div class="e-acts"><a class="e-btn" href="/studio/">Ouvrir le Studio</a></div>
+  </article>
+  <article class="c3" style="--t1:#34D399;--t2:#7C5CFF" aria-labelledby="cc">
+   <div><span class="n">C · Le Monde AIME</span><h2 id="cc">« Votre carte » de la landing</h2><p class="ou">localStorage « aime-mem » · aime/index.html</p></div>
+   <div class="vue" id="vueC"></div>
+   <dl><dt>Qui la crée</dt><dd>Le parcours de la landing : « Qui êtes-vous ? » (Moi, Pro, Participant, Coordinateur), le projet, le nom, les épingles et la frise.</dd>
+    <dt>Confidentialité</dt><dd>Tout reste dans le navigateur ; pas de publication.</dd>
+    <dt>Ce qu'elle sait faire</dt><dd>Habiller le cube et s'ouvrir sur l'essentiel : profil, agenda, budget, messages, documents, médias.</dd></dl>
+   <div class="e-acts"><a class="e-btn" href="/aime/#story2">Ouvrir sur Le Monde AIME</a></div>
+  </article>
+ </div></section>
+
+ <section class="e-sec" aria-labelledby="tc" style="margin-top:44px"><h2 id="tc">Comparer</h2>
+ <div class="tab-w"><table>
+  <thead><tr><th scope="col"></th><th scope="col">A · Carte universelle</th><th scope="col">B · Cartes du Studio</th><th scope="col">C · Votre carte</th></tr></thead>
+  <tbody>
+   <tr><td>Point de vue</td><td>Je me décris</td><td>Les projets me décrivent</td><td>Je choisis un rôle, le site s'adapte</td></tr>
+   <tr><td>Identité</td><td>Identifiant aléatoire</td><td>Code AIME-… (empreinte du nom), réclamable</td><td>Aucune</td></tr>
+   <tr><td>Données</td><td>Rubriques personnelles</td><td>Événements, supports, activité</td><td>Rôle, projet, épingles, frise</td></tr>
+   <tr><td>Partage</td><td>Registre, avec consentement</td><td>Profil public par code</td><td>Aucun</td></tr>
+   <tr><td>Protection</td><td>Rubriques jamais publiques</td><td>Mineur toujours privé</td><td>Local seulement</td></tr>
+   <tr><td>Sauvegarde distante</td><td>Prévue (Neon, après authentification)</td><td>Seulement dans un artefact Claude</td><td>Aucune</td></tr>
+  </tbody></table></div>
+ <p class="dec">Une piste, pour plus tard, sans engagement : A comme identité (ce que la personne dit d'elle), B comme index (où elle apparaît, avec réclamation), C comme vue (ce que le site montre selon le rôle). Une seule source, trois regards — la même règle que les perspectives.</p>
+ </section>
+</main>
+<footer class="pied"><span>AIME® · Lab · expérimental</span><span>Lecture seule : cette page ne modifie aucune carte.</span></footer>
+<script src="/carte/carte.js"></script>
+<script src="/carte/rendu.js"></script>
+<script>
+(function(){'use strict';
+var lire=function(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
+var X={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'},esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return X[c]})};
+/* A : la Carte de ce navigateur, sinon un exemple dit comme tel */
+var a=window.AIMECarte?AIMECarte.migrer(lire('aime-carte')):null,ex=!a;
+if(ex&&window.AIMECarte)a=Object.assign(AIMECarte.vide(null),{nom:'Camille',couleurs:['#FB7185','#7C5CFF','#22D3EE'],intention:'Créer quelque chose',competences:['Photographie','Musique'],reves:['Une exposition'],moments:[{id:'m0',titre:'Premier concert',date:'2019'}]});
+document.getElementById('vueA').innerHTML=a&&window.AIMECarteRendu?'<div>'+AIMECarteRendu.svg(a,{id:'la',mode:'grande',exemple:ex})+(ex?'<p class="ex">EXEMPLE · aucune Carte dans ce navigateur</p>':'')+'</div>':'<p class="e-vide">Rendu indisponible.</p>';
+/* B : les cartes réclamées et les métadonnées du Studio, en lecture */
+var cards=lire('aime:cards')||{},meta=lire('aime:uni')||{},L=Object.keys(cards).map(function(id){var c=cards[id]||{};return{nom:c.n||id,code:c.code||'',role:(c.roles&&c.roles[0]&&c.roles[0].label)||'',niv:c.vis&&c.vis.level||'private'}});
+Object.keys(meta).forEach(function(id){if(!cards[id])L.push({nom:id.replace(/-/g,' '),code:'',role:'',niv:'en attente'})});
+var exB=!L.length;if(exB)L=[{nom:'Léa Martin',code:'AIME-3K9QZ2F',role:'Mariée',niv:'public'},{nom:'Marc Dubois',code:'AIME-7PX1T0A',role:'Marié',niv:'événement'},{nom:'Inès',code:'AIME-0QW8E4R',role:'Témoin',niv:'en attente'}];
+document.getElementById('vueB').innerHTML='<div style="width:100%"><ul>'+L.slice(0,5).map(function(p){return'<li class="pers"><i>'+esc((p.nom||'?').charAt(0).toUpperCase())+'</i><div><b>'+esc(p.nom)+'</b><span>'+esc([p.role,p.niv].filter(Boolean).join(' · '))+'</span>'+(p.code?' <code>'+esc(p.code)+'</code>':'')+'</div></li>'}).join('')+'</ul>'+(exB?'<p class="ex">EXEMPLE · aucune carte du Studio dans ce navigateur</p>':'')+'</div>';
+/* C : la mémoire du parcours de la landing */
+var m=lire('aime-mem'),exC=!m;m=m||{role:'moi',name:'Votre nom',projet:'mariage'};var R={moi:'Moi',pro:'Pro',proche:'Participant',coord:'Coordinateur',maries:'Moi',presta:'Pro',invite:'Participant'};
+document.getElementById('vueC').innerHTML='<div style="width:100%"><div class="cube">'+[['Profil',m.name||'Votre nom'],['Rôle',R[m.role]||m.role||'—'],['Projet',m.projet||'—'],['Agenda',(m.frise&&Object.keys(m.frise).length?Object.keys(m.frise).length+' moments':'à remplir')],['Épingles',(m.pins&&m.pins.length?m.pins.length:0)+''],['Médias','sur le cube']].map(function(c){return'<div><small>'+esc(c[0])+'</small><b>'+esc(c[1])+'</b></div>'}).join('')+'</div>'+(exC?'<p class="ex">EXEMPLE · le parcours de la landing n\'a encore rien gardé</p>':'')+'</div>';
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+{
+ "format": "aime-regie",
+ "version": 1,
+ "maj": "2026-10-21",
+ "pages": {
+  "/": {
+   "appareils": [
+    {
+     "id": "zero-mac",
+     "type": "macbook",
+     "ancre": "#vitrine-scene",
+     "x": 19,
+     "y": 4,
+     "l": 58,
+     "rot": 0,
+     "z": 2,
+     "mobile": "visible",
+     "contenu": {
+      "type": "image",
+      "src": "/zero/ecrans/mac-g44.webp",
+      "ajustement": "cover"
+     },
+     "lien": "/g44/",
+     "alt": "Le G44 LAB sur un MacBook : une date erronée, le refus du système, puis la chaîne défaite et rejouée règle par règle."
+    },
+    {
+     "id": "zero-iphone-a",
+     "type": "iphone",
+     "ancre": "#vitrine-scene",
+     "x": 5,
+     "y": 34,
+     "l": 14,
+     "rot": -4,
+     "z": 4,
+     "mobile": "visible",
+     "contenu": {
+      "type": "image",
+      "src": "biblio:scene-001-saxophoniste",
+      "ajustement": "cover"
+     },
+     "lien": "/studio/",
+     "alt": "Un iPhone affichant un saxophoniste dans un jardin, visuel de la bibliothèque AIME."
+    },
+    {
+     "id": "zero-ipad",
+     "type": "ipad",
+     "ancre": "#vitrine-scene",
+     "x": 71,
+     "y": 22,
+     "l": 23,
+     "rot": 3,
+     "z": 3,
+     "mobile": "masque",
+     "contenu": {
+      "type": "image",
+      "src": "biblio:reception-018-eclairage",
+      "ajustement": "cover"
+     },
+     "lien": "/sites/",
+     "alt": "Un iPad affichant une salle de réception illuminée de guirlandes, visuel de la bibliothèque AIME."
+    },
+    {
+     "id": "zero-iphone-b",
+     "type": "iphone",
+     "ancre": "#vitrine-scene",
+     "x": 84,
+     "y": 52,
+     "l": 11,
+     "rot": 7,
+     "z": 6,
+     "mobile": "masque",
+     "contenu": {
+      "type": "image",
+      "src": "biblio:fonds-01-06",
+      "ajustement": "cover"
+     },
+     "alt": "Un iPhone affichant de l'encre bleue diffusée dans l'eau, visuel de la bibliothèque AIME."
+    }
+   ],
+   "textes": []
+  },
+  "/studio/": {
+   "appareils": [
+    {
+     "id": "studio-ipad",
+     "type": "ipad",
+     "ancre": ".atl-intro",
+     "x": 70,
+     "y": 4,
+     "l": 14.5,
+     "rot": -4,
+     "z": 3,
+     "mobile": "masque",
+     "contenu": {
+      "type": "image",
+      "src": "biblio:ceremonie-118-jardin",
+      "ajustement": "cover"
+     },
+     "alt": "Un iPad affichant des mariés dans un jardin de roses, visuel de la bibliothèque AIME."
+    },
+    {
+     "id": "studio-iphone",
+     "type": "iphone",
+     "ancre": ".atl-intro",
+     "x": 85,
+     "y": 12,
+     "l": 9.5,
+     "rot": 5,
+     "z": 4,
+     "mobile": "masque",
+     "contenu": {
+      "type": "image",
+      "src": "biblio:fonds-floral5",
+      "ajustement": "cover"
+     },
+     "alt": "Un iPhone affichant des pétales irisés, visuel de la bibliothèque AIME."
+    }
+   ],
+   "textes": []
+  }
+ },
+ "orbe": {
+  "*": {
+   "presence": "aucune"
+  },
+  "zero": {
+   "presence": "bouton",
+   "cote": "droite",
+   "taille": 56,
+   "accueil": "Par où voulez-vous commencer ?",
+   "suggestions": [
+    {
+     "libelle": "Parler d'un projet",
+     "cible": "#contact"
+    },
+    {
+     "libelle": "Voir le G44 LAB",
+     "cible": "/g44/"
+    },
+    {
+     "libelle": "Ouvrir AIME Studio",
+     "cible": "/studio/"
+    },
+    {
+     "libelle": "Composer un site",
+     "cible": "/sites/"
+    },
+    {
+     "libelle": "Ouvrir mon Bureau",
+     "cible": "/bureau/"
+    }
+   ]
+  },
+  "aime": {
+   "presence": "compagnon",
+   "compagnon": {
+    "commentaires": true,
+    "clic": true,
+    "hesitation": true,
+    "envie": false,
+    "pointeur": false
+   }
+  }
+ },
+ "medias": {},
+ "realisations": [
+  {
+   "id": "r-g44",
+   "titre": "G44 LAB",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "application",
+   "resume": "Le laboratoire des dépendances administratives : une erreur, et toute la chaîne se rejoue sous vos yeux.",
+   "presentation": "macbook",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/mac-g44.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/g44/",
+   "alt": "Le G44 LAB sur un MacBook.",
+   "publie": true
+  },
+  {
+   "id": "r-generateur",
+   "titre": "Générateur de site",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "application",
+   "resume": "Composer un site complet, page par page, avec des vues par rôle.",
+   "presentation": "macbook",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/mac-generateur.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/sites/",
+   "alt": "Le générateur de site sur un MacBook.",
+   "publie": true
+  },
+  {
+   "id": "r-live",
+   "titre": "AIME Live",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "evenement",
+   "resume": "Le jour J en direct : un retard, une annonce, et chacun le voit selon ses droits.",
+   "presentation": "ipad",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/tab-live.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/live/",
+   "alt": "AIME Live sur un iPad.",
+   "publie": true,
+   "paysage": true
+  },
+  {
+   "id": "r-os",
+   "titre": "AIME OS",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "application",
+   "resume": "Toutes les apps AIME dans un seul bureau, une orbe, une recherche.",
+   "presentation": "macbook",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/mac-os.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/bureau/",
+   "alt": "AIME OS sur un MacBook.",
+   "publie": true
+  },
+  {
+   "id": "r-studio",
+   "titre": "AIME Studio",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "identite",
+   "resume": "Un contenu, tous vos supports : faire-part, affiches, réseaux.",
+   "presentation": "iphone",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/tel-studio.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/studio/",
+   "alt": "AIME Studio sur un iPhone.",
+   "publie": true
+  },
+  {
+   "id": "r-mariage",
+   "titre": "Mariage Léa & Marc",
+   "client": "Démonstration · données fictives",
+   "annee": 2026,
+   "categorie": "site",
+   "resume": "Un site de mariage où chaque invité voit ce qui le concerne.",
+   "presentation": "iphone",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/tel-mariage.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/vitrine/site/?u=mariage",
+   "alt": "Le site du mariage de démonstration sur un iPhone.",
+   "publie": true
+  },
+  {
+   "id": "r-stitch",
+   "titre": "AIME Stitch",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "broderie",
+   "resume": "Des patrons de point de croix vivants : créer, éditer, lire, vendre.",
+   "presentation": "ipad",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/tab-stitch.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/stitch/",
+   "alt": "AIME Stitch sur un iPad.",
+   "publie": true,
+   "paysage": true
+  },
+  {
+   "id": "r-infinity",
+   "titre": "AIME Infinity",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "application",
+   "resume": "Un jeu infini : chaque victoire révèle un monde plus grand.",
+   "presentation": "iphone",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/tel-infinity.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/infinity/",
+   "alt": "AIME Infinity sur un iPhone.",
+   "publie": true
+  }
+ ],
+ "carrousels": [
+  {
+   "id": "c-outils",
+   "titre": "Applications et outils",
+   "page": "/",
+   "apres": "#meta",
+   "defilement": "auto",
+   "items": [
+    "r-g44",
+    "r-live",
+    "r-generateur",
+    "r-os"
+   ]
+  },
+  {
+   "id": "c-univers",
+   "titre": "Sites, identités et univers",
+   "page": "/",
+   "apres": ".promesse",
+   "defilement": "auto",
+   "items": [
+    "r-studio",
+    "r-mariage",
+    "r-stitch",
+    "r-infinity"
+   ]
+  }
+ ]
+}

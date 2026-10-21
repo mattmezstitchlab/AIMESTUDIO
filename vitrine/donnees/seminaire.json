@@ -1,0 +1,477 @@
+{
+  "_": "Contenu métier du séminaire de démonstration Maison Orée (entreprise fictive). Écrit une seule fois : les quatre perspectives le lisent, aucune ne le recopie.",
+  "evenement": {
+    "id": "seminaire-maison-oree",
+    "univers": "seminaire",
+    "nom": "Maison Orée · Cap 2030",
+    "accroche": "Séminaire annuel",
+    "date": "2027-03-18",
+    "ville": "Lille",
+    "lieu": {
+      "nom": "Les Docks Verrière",
+      "adresse": "Quai des Verriers, 59000 Lille (lieu fictif)",
+      "acces": "À 12 minutes à pied de la gare Lille-Flandres · navette à 8 h 20",
+      "planB": "Plénière repliée en Atelier 1 (120 places) avec retransmission dans le hall"
+    },
+    "visuels": {
+      "hero": {
+        "source": "generatif",
+        "style": "architecture",
+        "graine": 2030,
+        "credit": "Création générative AIME (originale)",
+        "photo": null
+      }
+    }
+  },
+  "personnes": [
+    {
+      "id": "u-claire",
+      "nom": "Claire Morel",
+      "fonction": "Directrice générale",
+      "groupe": "organisation",
+      "contact": "06 18 •• •• 40"
+    },
+    {
+      "id": "u-samir",
+      "nom": "Samir Haddad",
+      "fonction": "Communication interne",
+      "groupe": "organisation",
+      "contact": "06 33 •• •• 71"
+    },
+    {
+      "id": "u-julien",
+      "nom": "Julien Petit",
+      "fonction": "Coordination logistique",
+      "groupe": "coordination",
+      "contact": "06 02 •• •• 95"
+    },
+    {
+      "id": "u-ines",
+      "nom": "Inès Garnier",
+      "fonction": "Prospective et climat",
+      "groupe": "intervenants",
+      "contact": "07 50 •• •• 19"
+    },
+    {
+      "id": "u-tom",
+      "nom": "Tom Baudry",
+      "fonction": "Design de services",
+      "groupe": "intervenants",
+      "contact": "06 47 •• •• 82"
+    },
+    {
+      "id": "u-saveurs",
+      "nom": "Saveurs du Nord",
+      "fonction": "Traiteur",
+      "groupe": "prestataires",
+      "contact": "03 20 •• •• 61"
+    },
+    {
+      "id": "u-echo",
+      "nom": "Écho Technique",
+      "fonction": "Son, lumière et vidéo",
+      "groupe": "prestataires",
+      "contact": "03 28 •• •• 07"
+    },
+    {
+      "id": "u-hugo",
+      "nom": "Hugo Lambert",
+      "fonction": "Chef de projet",
+      "groupe": "participants"
+    },
+    {
+      "id": "u-mina",
+      "nom": "Mina Diallo",
+      "fonction": "Responsable achats",
+      "groupe": "participants"
+    },
+    {
+      "id": "u-eric",
+      "nom": "Éric Vasseur",
+      "fonction": "Administrateur",
+      "groupe": "participants"
+    }
+  ],
+  "moments": [
+    {
+      "id": "montage",
+      "debut": "07:30",
+      "fin": "08:30",
+      "titre": "Montage et essais son",
+      "espace": "Grande Verrière",
+      "public": false,
+      "assigneeId": "u-echo",
+      "equipe": "Essais micros et retour scène avant 8 h 15.",
+      "materiel": "Régie, 4 micros serre-tête, écran 6 m"
+    },
+    {
+      "id": "accueil",
+      "debut": "08:45",
+      "fin": "09:15",
+      "titre": "Accueil et café",
+      "espace": "Hall",
+      "public": true,
+      "assigneeId": "u-saveurs",
+      "equipe": "Badges imprimés sur place, 2 personnes à l'accueil."
+    },
+    {
+      "id": "ouverture",
+      "debut": "09:15",
+      "fin": "09:45",
+      "titre": "Ouverture",
+      "espace": "Grande Verrière",
+      "public": true,
+      "equipe": "Pupitre côté jardin.",
+      "personne": "u-claire"
+    },
+    {
+      "id": "keynote",
+      "debut": "09:45",
+      "fin": "10:45",
+      "titre": "2030 : ce qui change vraiment",
+      "espace": "Grande Verrière",
+      "public": true,
+      "assigneeId": "u-ines",
+      "planB": "Atelier 1 en cas de panne",
+      "equipe": "Support à transmettre la veille.",
+      "materiel": "Micro serre-tête, télécommande, retour écran",
+      "personne": "u-ines"
+    },
+    {
+      "id": "atelier",
+      "debut": "11:00",
+      "fin": "12:30",
+      "titre": "Ateliers au choix",
+      "espace": "Ateliers 1 à 3",
+      "public": true,
+      "assigneeId": "u-tom",
+      "equipe": "Paperboards et post-it dans chaque salle.",
+      "materiel": "3 paperboards, 2 écrans mobiles",
+      "personne": "u-tom"
+    },
+    {
+      "id": "dejeuner",
+      "debut": "12:30",
+      "fin": "14:00",
+      "titre": "Déjeuner",
+      "espace": "Terrasse couverte",
+      "public": true,
+      "assigneeId": "u-saveurs",
+      "equipe": "Service en buffet, 214 couverts."
+    },
+    {
+      "id": "table-ronde",
+      "debut": "14:00",
+      "fin": "15:30",
+      "titre": "Table ronde : nos métiers en 2030",
+      "espace": "Grande Verrière",
+      "public": true,
+      "assigneeId": "u-ines",
+      "planB": "Inverser avec les ateliers si un intervenant est en retard",
+      "equipe": "4 fauteuils, 4 micros main.",
+      "personne": "u-ines"
+    },
+    {
+      "id": "cloture",
+      "debut": "17:30",
+      "fin": "19:00",
+      "titre": "Clôture et apéritif",
+      "espace": "Hall et terrasse",
+      "public": true,
+      "personne": "u-claire"
+    },
+    {
+      "id": "demontage",
+      "debut": "19:00",
+      "fin": "20:30",
+      "titre": "Démontage",
+      "espace": "Tous les espaces",
+      "public": false,
+      "assigneeId": "u-echo",
+      "equipe": "Le site ferme à 21 h."
+    }
+  ],
+  "documents": [
+    {
+      "id": "budget",
+      "titre": "Budget prévisionnel",
+      "nature": "Finances",
+      "taille": "3 pages"
+    },
+    {
+      "id": "releve-decisions",
+      "titre": "Relevé de décisions du comité",
+      "nature": "Comité",
+      "taille": "2 pages"
+    },
+    {
+      "id": "brief-intervenants",
+      "titre": "Brief des intervenants",
+      "nature": "Brief",
+      "taille": "4 pages"
+    },
+    {
+      "id": "gabarit",
+      "titre": "Gabarit de présentation",
+      "nature": "Support",
+      "taille": "12 diapositives"
+    },
+    {
+      "id": "contrat-ines",
+      "titre": "Contrat d'intervention",
+      "nature": "Contrat",
+      "taille": "3 pages",
+      "personne": "u-ines"
+    },
+    {
+      "id": "fiche-technique",
+      "titre": "Fiche technique du site",
+      "nature": "Fiche",
+      "taille": "5 pages"
+    },
+    {
+      "id": "guide",
+      "titre": "Guide du participant",
+      "nature": "Guide",
+      "taille": "6 pages"
+    }
+  ],
+  "salles": [
+    {
+      "nom": "Grande Verrière",
+      "capacite": "250 places",
+      "equipement": "Écran 6 m, régie, 6 micros",
+      "audience": "public"
+    },
+    {
+      "nom": "Atelier 1",
+      "capacite": "120 places",
+      "equipement": "Écran, sonorisation",
+      "audience": "public"
+    },
+    {
+      "nom": "Ateliers 2 et 3",
+      "capacite": "2 × 30 places",
+      "equipement": "Écrans mobiles, paperboards",
+      "audience": "public"
+    },
+    {
+      "nom": "Loge des intervenants",
+      "capacite": "8 places",
+      "equipement": "Miroir, eau, prises",
+      "audience": "equipe"
+    }
+  ],
+  "materiel": [
+    {
+      "nom": "Micros serre-tête × 4",
+      "etat": "réservé",
+      "lieu": "Grande Verrière",
+      "audience": "equipe"
+    },
+    {
+      "nom": "Vidéoprojecteurs × 3",
+      "etat": "à tester",
+      "lieu": "Ateliers",
+      "audience": "equipe"
+    },
+    {
+      "nom": "Imprimante à badges",
+      "etat": "livrée",
+      "lieu": "Hall",
+      "audience": "equipe"
+    }
+  ],
+  "incidents": [
+    {
+      "nom": "Train de 10 h 02 en retard (deux intervenants)",
+      "etat": "en cours",
+      "planB": "Avancer les ateliers, décaler la table ronde de 30 min",
+      "audience": "equipe"
+    },
+    {
+      "nom": "Vidéoprojecteur de l'Atelier 3 en panne",
+      "etat": "résolu",
+      "planB": "Écran mobile de secours installé",
+      "audience": "equipe"
+    }
+  ],
+  "decisions": [
+    {
+      "nom": "Valider la hausse du budget traiteur (+8 %)",
+      "etat": "à décider",
+      "date": "4 mars",
+      "audience": "organisation"
+    },
+    {
+      "nom": "Ouvrir 30 places supplémentaires",
+      "etat": "validé",
+      "date": "20 février",
+      "audience": "organisation"
+    },
+    {
+      "nom": "Choisir l'agence vidéo de l'aftermovie",
+      "etat": "en attente",
+      "date": "11 mars",
+      "audience": "organisation"
+    }
+  ],
+  "ateliers": [
+    {
+      "nom": "Prototyper vite",
+      "lieu": "Atelier 2",
+      "places": "12 places restantes",
+      "audience": "public",
+      "animateurId": "u-tom"
+    },
+    {
+      "nom": "Le climat dans nos choix",
+      "lieu": "Atelier 1",
+      "places": "40 places restantes",
+      "audience": "public",
+      "animateurId": "u-ines"
+    },
+    {
+      "nom": "Mieux travailler à distance",
+      "lieu": "Atelier 3",
+      "places": "Complet",
+      "audience": "public",
+      "animateurId": "u-samir"
+    }
+  ],
+  "transports": [
+    {
+      "nom": "Gare Lille-Flandres",
+      "distance": "12 min à pied",
+      "note": "Navette à 8 h 20 devant la sortie principale"
+    },
+    {
+      "nom": "Parking des Verriers",
+      "distance": "Sur place",
+      "note": "80 places, badge remis à l'accueil"
+    }
+  ],
+  "menu": {
+    "plats": [
+      {
+        "libelle": "Accueil",
+        "texte": "Café, thés, viennoiseries du marché"
+      },
+      {
+        "libelle": "Déjeuner",
+        "texte": "Buffet de saison, plats chauds et salades"
+      },
+      {
+        "libelle": "Après-midi",
+        "texte": "Pause gourmande et jus pressés"
+      }
+    ],
+    "options": [
+      "Végétarien",
+      "Sans gluten",
+      "Sans lactose"
+    ]
+  },
+  "galerie": [
+    {
+      "titre": "La Grande Verrière",
+      "graine": 41
+    },
+    {
+      "titre": "Le hall",
+      "graine": 88
+    },
+    {
+      "titre": "Salles d'ateliers",
+      "graine": 135
+    },
+    {
+      "titre": "La terrasse",
+      "graine": 172
+    },
+    {
+      "titre": "La façade",
+      "graine": 219
+    },
+    {
+      "titre": "Le quai",
+      "graine": 266
+    }
+  ],
+  "faq": [
+    {
+      "q": "Faut-il apporter un ordinateur ?",
+      "r": "Non, chaque atelier fournit le matériel nécessaire."
+    },
+    {
+      "q": "Les sessions sont-elles enregistrées ?",
+      "r": "La plénière oui, les ateliers non."
+    },
+    {
+      "q": "Puis-je changer d'atelier ?",
+      "r": "Oui, jusqu'à la veille, depuis votre inscription."
+    }
+  ],
+  "reponses": [
+    {
+      "id": "insc-hugo",
+      "subjectId": "u-hugo",
+      "reponse": "Inscrit",
+      "atelier": "Prototyper vite",
+      "regime": "Végétarien"
+    },
+    {
+      "id": "insc-mina",
+      "subjectId": "u-mina",
+      "reponse": "Inscrit",
+      "atelier": "Le climat dans nos choix",
+      "regime": "—"
+    },
+    {
+      "id": "insc-eric",
+      "subjectId": "u-eric",
+      "reponse": "Excusé",
+      "atelier": "—",
+      "regime": "—"
+    }
+  ],
+  "paiements": [
+    {
+      "id": "honoraires-ines",
+      "titre": "Honoraires",
+      "montant": 1800,
+      "payer": "space",
+      "payeeId": "u-ines",
+      "echeance": "25 mars 2027",
+      "statut": "à régler"
+    },
+    {
+      "id": "traiteur",
+      "titre": "Traiteur",
+      "montant": 9630,
+      "payer": "space",
+      "payeeId": "u-saveurs",
+      "echeance": "18 mars 2027",
+      "statut": "acompte versé"
+    },
+    {
+      "id": "technique",
+      "titre": "Technique",
+      "montant": 4200,
+      "payer": "space",
+      "payeeId": "u-echo",
+      "echeance": "18 mars 2027",
+      "statut": "prévu"
+    }
+  ],
+  "urgences": [
+    {
+      "qui": "Coordination logistique",
+      "personne": "u-julien"
+    },
+    {
+      "qui": "Sécurité du site",
+      "tel": "03 20 •• •• 99"
+    }
+  ]
+}

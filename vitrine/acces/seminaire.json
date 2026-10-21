@@ -1,0 +1,17 @@
+{
+  "_": "Couche d'accès du séminaire : rôles techniques des membres et droits explicites sur les documents. Les règles sont dans synchroview/permissions.js.",
+  "membres": {
+    "u-claire": "owner", "u-samir": "editor", "u-julien": "editor",
+    "u-ines": "contributor", "u-tom": "contributor", "u-saveurs": "contributor", "u-echo": "contributor",
+    "u-hugo": "guest", "u-mina": "guest", "u-eric": "viewer"
+  },
+  "documents": {
+    "budget": { "authorId": "u-claire", "grants": ["u-samir", "u-julien"] },
+    "releve-decisions": { "authorId": "u-claire", "grants": ["u-samir"] },
+    "brief-intervenants": { "authorId": "u-samir", "grants": ["u-claire", "u-julien", "u-ines", "u-tom"] },
+    "gabarit": { "authorId": "u-samir", "grants": ["u-ines", "u-tom", "u-claire"] },
+    "contrat-ines": { "authorId": "u-ines", "grants": ["u-claire"] },
+    "fiche-technique": { "authorId": "u-julien", "grants": ["u-claire", "u-echo", "u-saveurs", "u-ines", "u-tom"] },
+    "guide": { "authorId": "u-samir", "grants": ["u-claire", "u-julien", "u-hugo", "u-mina", "u-eric", "u-ines", "u-tom"] }
+  }
+}

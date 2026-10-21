@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIME Stitch</title>
+<meta name="description" content="Des patrons de point de croix vivants : créés, corrigés, imprimés et brodés à partir du même objet.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/stitch/stitch.css">
+<style>
+.hero{padding:clamp(56px,9vw,110px) 0 0;text-align:center;overflow:hidden}
+.hero .k{display:block;margin-bottom:10px}
+.hero .sous{margin:14px auto 26px;max-width:30ch}
+.scene{margin:clamp(40px,6vw,72px) auto 0;max-width:980px;padding:0 max(22px,env(safe-area-inset-left,0px))}
+.cadre{background:#F7F3EA;border-radius:var(--rr);box-shadow:0 30px 80px rgba(0,0,0,.12),0 4px 16px rgba(0,0,0,.05);padding:clamp(18px,3vw,40px);display:grid;place-items:center}
+.cadre canvas{display:block;max-width:100%;height:auto}
+.legende-hero{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin:22px 0 0;color:var(--doux);font-size:14px}
+.legende-hero b{color:var(--encre);font-weight:600}
+.tuiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:48px}
+.tuile{background:#fff;border-radius:var(--rr);padding:28px 26px 30px;display:grid;grid-template-rows:auto 1fr;gap:20px;min-width:0;overflow:hidden}
+.tuile h3{font-size:24px;letter-spacing:-.02em}.tuile p{margin:6px 0 0;color:var(--doux);font-size:15px;letter-spacing:-.01em}
+.tuile .zone{aspect-ratio:1/1;border-radius:16px;overflow:hidden;display:grid;place-items:center;background:var(--gris)}
+.tuile .zone canvas{max-width:100%;max-height:100%}
+.tuile .zone ul{width:100%;align-self:start;padding:8px;overflow:auto;max-height:100%}
+.filtres{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:34px auto 8px;max-width:900px}
+.filtres input[type=search]{border:0;background:var(--gris);border-radius:12px;padding:11px 16px;min-width:0;flex:1 1 240px;max-width:420px;font-size:15px;outline:none}
+.filtres input[type=search]:focus{box-shadow:0 0 0 3px rgba(0,113,227,.35)}
+.filtres .rang{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;flex-basis:100%}
+.produits{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:22px;margin-top:30px}
+.prod{display:grid;grid-template-rows:auto 1fr;color:var(--encre);background:var(--gris);border-radius:var(--rr);overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.prod:hover{text-decoration:none;transform:scale(1.015);box-shadow:0 20px 50px rgba(0,0,0,.1)}
+.prod .vis{aspect-ratio:1/.92;display:grid;place-items:center;padding:28px}
+.prod .vis canvas{max-width:100%;max-height:100%;filter:drop-shadow(0 10px 18px rgba(0,0,0,.08))}
+.prod .txt{padding:0 26px 26px;display:grid;gap:6px;align-content:start;text-align:center;justify-items:center}
+.prod .k{font-size:12px}
+.prod h3{font-size:22px}
+.prod .meta{font-size:14px;color:var(--doux)}
+.prod .px{font:400 17px var(--sf);margin-top:4px}
+.vide{text-align:center;padding:40px 0;color:var(--doux)}
+.lecteur-demo{margin:48px auto 0;max-width:900px;border-radius:30px;background:#1C1C1E;padding:14px;box-shadow:0 30px 90px rgba(0,0,0,.5)}
+.lecteur-demo canvas{display:block;width:100%;border-radius:18px;background:#fff}
+.points{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px;max-width:900px;margin:44px auto 0;text-align:left}
+.points b{display:block;color:#F5F5F7;font-size:19px;font-weight:600;margin-bottom:4px}.points span{color:#A1A1A6;font-size:15px}
+.bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:20px;margin-top:48px}
+.bento>div{background:#fff;border-radius:var(--rr);padding:30px;display:grid;gap:8px;align-content:start;min-width:0}
+.bento>div:nth-child(1),.bento>div:nth-child(2){grid-column:span 3}.bento>div:nth-child(n+3){grid-column:span 2}
+.bento h3{font-size:28px}.bento p{margin:0;color:var(--doux);font-size:15px}
+.bento .etat{font:600 12px var(--sf);color:var(--fil)}.bento .etat.ok{color:var(--vert)}
+dialog{border:0;border-radius:var(--rr);background:rgba(255,255,255,.96);backdrop-filter:blur(30px);color:var(--encre);padding:0;width:min(640px,calc(100vw - 32px));max-height:min(82vh,760px);box-shadow:0 40px 100px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(0,0,0,.3);backdrop-filter:blur(4px)}
+.dlg{padding:28px;display:grid;gap:14px}
+.dlg .fils{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:6px;max-height:46vh;overflow:auto;padding:2px}
+.dlg .fils label{display:grid;gap:5px;justify-items:center;font:500 12px var(--sf);cursor:pointer;padding:8px 2px;border-radius:12px;transition:background .2s}
+.dlg .fils label:has(input:checked){background:var(--gris2)}
+.dlg .fils input{position:absolute;opacity:0;pointer-events:none}
+.dlg .fils i{width:28px;height:28px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.dlg .fils label:has(input:checked) i{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--bleu)}
+@media (max-width:900px){.tuiles{grid-template-columns:1fr}.points{grid-template-columns:1fr}.bento>div:nth-child(n){grid-column:span 6}}
+</style>
+</head>
+<body>
+<div class="demo">Démonstration : boutiques, créatrices et achats fictifs. Aucun paiement.</div>
+<header class="tete"><div class="wrap"><a class="marque" href="/stitch/"><b>AIME</b><i>Stitch</i></a>
+ <nav class="nav" aria-label="AIME Stitch"><a href="/stitch/" aria-current="page">Découvrir</a><a href="/stitch/atelier/">Atelier</a><a href="/stitch/importer/">Importer</a><a href="/stitch/broder/">Broder</a><a href="#" id="ouvrirBoite">Mes fils</a></nav></div></header>
+<main>
+ <section class="hero">
+  <div class="wrap"><span class="k">Point de croix</span><h1 class="titre-xl">Le patron devient <span class="degrade">vivant</span>.</h1>
+   <p class="sous">Créé, corrigé, imprimé et brodé à partir du même objet.</p>
+   <div class="ligne-actions" style="justify-content:center"><a class="btn" href="#boutique">Découvrir les patrons</a><a class="lien" href="/stitch/atelier/">Ouvrir l'atelier</a></div></div>
+  <div class="scene"><figure class="cadre" style="margin:0"><canvas id="heroC" aria-label="Aperçu brodé : mésange et églantines"></canvas></figure>
+   <p class="legende-hero"><span><b id="heroDim"></b> points</span><span><b id="heroFils"></b> fils DMC</span><span><b id="heroNiv"></b></span></p></div>
+ </section>
+
+ <section class="section grise" style="margin-top:clamp(70px,10vw,120px)"><div class="wrap large centre">
+  <h2 class="titre-l">Un patron. Toutes ses formes.</h2>
+  <p class="sous" style="max-width:36ch;margin-top:14px">Ces trois vues lisent le même objet. Corrigez un point : il change partout, sauf dans les versions déjà achetées.</p>
+  <div class="tuiles" style="text-align:left">
+   <div class="tuile"><div><h3>La broderie terminée.</h3><p>Ce que vous obtiendrez, point par point.</p></div><div class="zone"><canvas id="v1"></canvas></div></div>
+   <div class="tuile"><div><h3>La grille de travail.</h3><p>Des symboles lisibles même en noir et blanc.</p></div><div class="zone"><canvas id="v2"></canvas></div></div>
+   <div class="tuile"><div><h3>La légende des fils.</h3><p>Références DMC, symboles, quantités.</p></div><div class="zone"><ul class="legende" id="v3"></ul></div></div>
+  </div></div></section>
+
+ <section class="section" id="boutique"><div class="wrap large centre">
+  <h2 class="titre-l">Choisir en connaissance de cause.</h2>
+  <p class="sous" style="max-width:34ch;margin-top:14px">Taille, toile, niveau, temps et fils, visibles avant le prix. Et ce que vous pouvez broder avec vos propres fils.</p>
+  <div class="filtres" role="group" aria-label="Filtrer les patrons">
+   <input type="search" id="q" placeholder="Rechercher : oiseau, lavande, initiale…" aria-label="Rechercher">
+   <button class="puce" type="button" id="fMesFils" aria-pressed="false">Réalisables avec mes fils</button>
+   <div class="rang" id="fCat"></div><div class="rang"><span id="fNiv" class="rang" style="flex-basis:auto"></span><span id="fTaille" class="rang" style="flex-basis:auto"></span></div>
+  </div>
+  <div class="produits" id="produits" aria-live="polite"></div>
+ </div></section>
+
+ <section class="section noire"><div class="wrap large centre">
+  <span class="k" style="color:#FF9F0A">Broder</span><h2 class="titre-l" style="margin-top:8px">Ne perdez plus jamais le fil.</h2>
+  <p class="sous" style="max-width:34ch;margin-top:14px">Un lecteur qui retient chaque point, couleur par couleur, et vous ramène là où vous vous étiez arrêtée.</p>
+  <div class="ligne-actions" style="justify-content:center;margin-top:22px"><a class="btn" href="/stitch/broder/?id=prod-papillon">Essayer le lecteur</a></div>
+  <div class="lecteur-demo"><canvas id="lec" aria-label="Aperçu du lecteur"></canvas></div>
+  <div class="points"><div><b>Une couleur à la fois.</b><span>Les autres s'estompent. Le compteur dit ce qu'il reste.</span></div><div><b>Votre progression vous appartient.</b><span>Elle reste liée à la version achetée, jamais au fichier de la créatrice.</span></div><div><b>Grande lisibilité.</b><span>Repères tous les 10 points, zoom précis, clavier et tactile.</span></div></div>
+ </div></section>
+
+ <section class="section grise"><div class="wrap large">
+  <h2 class="titre-l centre">Cinq expériences. Un seul objet.</h2>
+  <div class="bento">
+   <div><span class="etat ok">Prototype</span><h3>Découvrir</h3><p>Une boutique qui dit tout avant le prix, filtrée par vos fils.</p><a class="lien" href="#boutique">Parcourir</a></div>
+   <div><span class="etat ok">Prototype</span><h3>Créer</h3><p>Une image devient trois patrons à comparer avant de choisir.</p><a class="lien" href="/stitch/atelier/">Ouvrir l'atelier</a></div>
+   <div><span class="etat ok">Prototype</span><h3>Corriger</h3><p>Crayon, sélection, symétrie, backstitch, confettis.</p><a class="lien" href="/stitch/atelier/">Corriger</a></div>
+   <div><span class="etat ok">Prototype</span><h3>Broder</h3><p>Le lecteur qui retient chaque point.</p><a class="lien" href="/stitch/broder/?id=prod-papillon">Essayer</a></div>
+   <div><span class="etat ok">Prototype</span><h3>Imprimer</h3><p>Un PDF vectoriel, en couleur et en noir et blanc.</p><a class="lien" href="/stitch/patron/?id=prod-papillon">Voir un patron</a></div>
+  </div></div></section>
+</main>
+<footer class="pied"><div class="wrap"><span>AIME Stitch · démonstration fictive</span><span id="attrib"></span></div></footer>
+<dialog id="boite" aria-labelledby="boiteT"><form method="dialog" class="dlg"><h2 id="boiteT" style="font-size:32px">Ma boîte à fils.</h2><p style="margin:0;color:var(--doux);font-size:15px">Touchez les fils DMC que vous possédez. Cette liste vous appartient et reste dans ce navigateur.</p>
+ <input type="search" id="boiteQ" placeholder="Code ou nom (310, Red…)" aria-label="Chercher un fil" style="border:0;border-radius:12px;padding:11px 16px;background:var(--gris);outline:none">
+ <div class="fils" id="boiteF"></div><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span id="boiteN" style="color:var(--doux);font-size:14px"></span><span style="display:flex;gap:8px"><button class="btn gris petit" value="annuler">Fermer</button><button class="btn petit" id="boiteOk" value="ok">Enregistrer</button></span></div></form></dialog>
+<div class="toast" id="toast" role="status"></div>
+<script src="/stitch/js/couleur.js"></script><script src="/stitch/js/patron.js"></script><script src="/stitch/js/symboles.js"></script><script src="/stitch/js/mesures.js"></script><script src="/stitch/js/rendu.js"></script><script src="/stitch/js/commun.js"></script>
+<script>
+(function(){"use strict";var S=window.Stitch,P=StitchPatron,R=StitchRendu,$=function(s){return document.getElementById(s)},esc=S.esc;
+var etat={q:'',mesFils:false,cat:null,niv:null,taille:null},D=null,items=[];
+S.donnees().then(function(d){D=d;$('attrib').textContent=d.dmc.source.attribution+'. DMC est une marque de DMC ; couleurs d\'écran approximatives.';
+ return Promise.all(d.catalogue.produits.map(function(pr){return S.patron(pr.patron).then(function(p){return{pr:pr,p:p,f:S.fiche(p,14)}})}))}).then(function(r){items=r;hero();trio();lecteur();filtres();liste()}).catch(function(e){$('produits').innerHTML='<p class="vide">Chargement impossible : '+esc(e.message)+'</p>'});
+function mes(){return S.mesFils()||D.boiteDemo}
+/* le héros : la mésange se brode couleur par couleur */
+function hero(){var it=items.filter(function(i){return i.p.id==='pat-mesange'})[0];if(!it)return;var p=it.p,cv=$('heroC'),su=P.surface(p),w=Math.min(860,cv.parentNode.clientWidth-40),s=Math.max(3,Math.floor(w/p.l));
+ $('heroDim').textContent=su.l+' × '+su.h;$('heroFils').textContent=p.palette.length;$('heroNiv').textContent=it.f.mesures.niveau;
+ var m=P.matrice(p),reduit=matchMedia('(prefers-reduced-motion: reduce)').matches;if(reduit){R.apercu(cv,p,{case:s,toile:'#F7F3EA'});return}
+ var ordre=[];for(var i=0;i<m.length;i++)if(m[i])ordre.push(i);ordre.sort(function(a,b){return(m[a]-m[b])||(a-b)});
+ var vide=Object.create(p);Object.defineProperty(vide,'_m',{value:new Uint16Array(m.length)});var k=0,pas=Math.ceil(ordre.length/80);
+ (function f(){for(var q=0;q<pas&&k<ordre.length;q++,k++)vide._m[ordre[k]]=m[ordre[k]];R.apercu(cv,vide,{case:s,toile:'#F7F3EA'});if(k<ordre.length)setTimeout(function(){requestAnimationFrame(f)},18)})()}
+function trio(){var it=items.filter(function(i){return i.p.id==='pat-papillon'})[0];if(!it)return;var p=it.p,z=$('v1').parentNode.clientWidth-24;
+ R.apercu($('v1'),p,{case:Math.max(2,Math.floor(z/p.l)),toile:'#F7F3EA'});
+ var cv=$('v2'),dpr=Math.min(2,devicePixelRatio||1),W=z+24,H=W,s=Math.max(9,Math.floor(W/24));cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';var g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+ var su=P.surface(p);R.grille(g,p,{x:su.x+su.l/2-W/s/2,y:su.y+su.h/2-H/s/2,s:s},W,H,{mode:'mixte',fond:'#FFFFFF'});
+ $('v3').innerHTML='';P.quantites(p).forEach(function(q){var f=S.fil(q.dmc),li=document.createElement('li'),c=document.createElement('canvas');R.pastille(c,q.dmc,q.symbole,22);li.appendChild(c);li.insertAdjacentHTML('beforeend','<span class="code">'+esc(q.dmc)+'</span><span class="nom">'+esc(f?f.nom:'')+'</span><span class="n">'+q.points+'</span>');$('v3').appendChild(li)})}
+/* une vue du lecteur : une couleur suivie, quelques points faits */
+function lecteur(){var it=items.filter(function(i){return i.p.id==='pat-mesange'})[0];if(!it)return;var p=it.p,m=P.matrice(p),cv=$('lec'),dpr=Math.min(2,devicePixelRatio||1),W=cv.parentNode.clientWidth-28,H=Math.round(W*.52),s=Math.max(10,Math.floor(W/46));
+ cv.width=W*dpr;cv.height=H*dpr;cv.style.height=H+'px';var g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);var fait=new Uint8Array(m.length),hl=1,tot=0,n=0;for(var i=0;i<m.length;i++)if(m[i]===hl)tot++;for(var j=0;j<m.length&&n<tot*.55;j++)if(m[j]===hl){fait[j]=1;n++}
+ var su=P.surface(p);R.grille(g,p,{x:su.x+su.l*.42-W/s/2,y:su.y+su.h*.6-H/s/2,s:s},W,H,{mode:'mixte',surbrillance:hl,fait:fait,fond:'#FFFFFF'})}
+function puces(id,liste,cle){$(id).innerHTML=liste.map(function(x){return'<button class="puce" type="button" data-k="'+cle+'" data-v="'+esc(x[0])+'" aria-pressed="false">'+esc(x[1])+'</button>'}).join('')}
+function filtres(){var cats=D.catalogue.categories.filter(function(c){return items.some(function(i){return i.pr.categories.indexOf(c[0])>=0})});puces('fCat',cats,'cat');
+ puces('fNiv',[['Débutant','Débutant'],['Intermédiaire','Intermédiaire'],['Confirmé','Confirmé']],'niv');puces('fTaille',[['petit','Moins de 50 points'],['moyen','50 à 80'],['grand','Plus de 80']],'taille');
+ document.querySelector('.filtres').addEventListener('click',function(e){var b=e.target.closest('[data-k]');if(b){var k=b.dataset.k;etat[k]=etat[k]===b.dataset.v?null:b.dataset.v;[].forEach.call(document.querySelectorAll('[data-k='+k+']'),function(x){x.setAttribute('aria-pressed',String(etat[k]===x.dataset.v))});liste();return}
+  if(e.target.closest('#fMesFils')){etat.mesFils=!etat.mesFils;$('fMesFils').setAttribute('aria-pressed',String(etat.mesFils));liste()}});
+ $('q').addEventListener('input',function(){etat.q=this.value.trim().toLowerCase();liste()})}
+function liste(){var mf=mes(),html=items.filter(function(i){var dsp=S.disponibilite(i.p,mf),su=P.surface(i.p),t=Math.max(su.l,su.h);i.dsp=dsp;
+  if(etat.mesFils&&dsp.manquants.length)return false;if(etat.cat&&i.pr.categories.indexOf(etat.cat)<0)return false;if(etat.niv&&i.f.mesures.niveau!==etat.niv)return false;
+  if(etat.taille&&!(etat.taille==='petit'?t<50:etat.taille==='moyen'?t<=80:t>80))return false;
+  if(etat.q&&(i.p.titre+' '+i.pr.accroche+' '+i.pr.categories.join(' ')+' '+i.pr.collection).toLowerCase().indexOf(etat.q)<0)return false;return true});
+ $('produits').innerHTML=html.length?'':'<p class="vide">Aucun patron ne correspond. '+(etat.mesFils?'Ajoutez des fils à votre boîte, ou retirez ce filtre.':'')+'</p>';
+ html.forEach(function(i){var a=document.createElement('a'),f=i.f,d=f.dimensions,b=D.catalogue.boutiques.filter(function(x){return x.id===i.pr.boutique})[0];a.className='prod';a.href='/stitch/patron/?id='+encodeURIComponent(i.pr.id);
+  a.innerHTML='<div class="vis"><canvas></canvas></div><div class="txt"><span class="k">'+(i.pr.prix?'':'Offert · ')+esc(b?b.nom:'')+'</span><h3>'+esc(i.p.titre)+'</h3><span class="meta">'+d.points.l+' × '+d.points.h+' points · '+i.p.palette.length+' fils · '+esc(f.mesures.niveau)+'</span>'+
+   '<span class="etiq '+(i.dsp.manquants.length?'manque':'ok')+'">'+(i.dsp.manquants.length?'Il vous manque '+i.dsp.manquants.length+' fil'+(i.dsp.manquants.length>1?'s':''):'Réalisable avec vos fils')+'</span><span class="px">'+S.prix(i.pr)+'</span></div>';
+  $('produits').appendChild(a);var cv=a.querySelector('canvas');requestAnimationFrame(function(){var v=a.querySelector('.vis'),w=v.clientWidth-56,h=v.clientHeight-56,su=P.surface(i.p);R.apercu(cv,i.p,{case:Math.max(2,Math.floor(Math.min(w/i.p.l,h/i.p.h))),toile:'#F7F3EA'})})})}
+$('ouvrirBoite').addEventListener('click',function(e){e.preventDefault();var m={};mes().forEach(function(c){m[c]=1});
+ $('boiteF').innerHTML=D.dmc.fils.map(function(f){return'<label title="'+esc(f.nom)+'" data-t="'+esc((f.code+' '+f.nom).toLowerCase())+'"><input type="checkbox" value="'+esc(f.code)+'"'+(m[f.code]?' checked':'')+'><i style="background:'+f.hex+'"></i>'+esc(f.code)+'</label>'}).join('');compte();$('boite').showModal()});
+function compte(){$('boiteN').textContent=document.querySelectorAll('#boiteF input:checked').length+' fils dans votre boîte'}
+$('boiteF').addEventListener('change',compte);$('boiteQ').addEventListener('input',function(){var q=this.value.trim().toLowerCase();[].forEach.call(document.querySelectorAll('#boiteF label'),function(l){l.hidden=q&&l.dataset.t.indexOf(q)<0})});
+$('boite').addEventListener('close',function(){if($('boite').returnValue!=='ok')return;S.mesFils([].map.call(document.querySelectorAll('#boiteF input:checked'),function(i){return i.value}));liste();S.toast('Boîte à fils enregistrée.')});
+})();
+</script>
+<script src="/regie/scene.js" defer></script>
+</body>
+</html>

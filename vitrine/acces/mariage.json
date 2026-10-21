@@ -1,0 +1,15 @@
+{
+  "_": "Couche d'accès, séparée du contenu : qui est membre de l'espace avec quel rôle technique, et qui a le droit explicite sur chaque document. Les règles elles-mêmes sont dans synchroview/permissions.js.",
+  "membres": {
+    "u-lea": "owner", "u-marc": "owner", "u-camille": "editor",
+    "u-lumen": "contributor", "u-bleu": "contributor", "u-anne": "contributor", "u-nova": "contributor",
+    "u-lucie": "guest", "u-nina": "guest", "u-paul": "viewer"
+  },
+  "documents": {
+    "contrat-lumen": { "authorId": "u-lumen", "grants": ["u-lea", "u-marc"] },
+    "fiche-technique": { "authorId": "u-camille", "grants": ["u-lea", "u-marc", "u-lumen", "u-bleu", "u-anne", "u-nova"] },
+    "deroule": { "authorId": "u-camille", "grants": ["u-lea", "u-marc", "u-lumen", "u-bleu", "u-nova"] },
+    "plan-de-table": { "authorId": "u-lea", "grants": ["u-marc", "u-camille", "u-bleu"] },
+    "livret": { "authorId": "u-lea", "grants": ["u-marc", "u-camille", "u-lucie", "u-nina", "u-paul"] }
+  }
+}

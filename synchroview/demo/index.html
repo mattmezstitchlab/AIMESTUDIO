@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Démonstration des droits · AIME</title>
+<link rel="icon" href="data:,">
+<meta name="robots" content="noindex">
+<style>
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin.woff2") format("woff2")}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}
+:root{--desk:#0A0A0C;--ink:#EDEDF0;--soft:#9C9CA8;--line:#2B2B33;--card:#121216;--ui:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--display:"Cal Sans","Inter Variable",Inter,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;background:var(--desk);color:var(--ink);font:400 15px/1.5 var(--ui);-webkit-font-smoothing:antialiased}
+main{max-width:1120px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 60px max(16px,env(safe-area-inset-left,0px));display:grid;gap:18px}
+.k{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+h1{margin:4px 0 0;font:400 clamp(28px,4vw,44px)/1.05 var(--display);letter-spacing:-.02em}
+h2{margin:0;font:400 22px/1.15 var(--display)}
+.who{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.who b{font:600 16px var(--ui)}
+.chip{display:inline-block;padding:2px 9px;border-radius:7px;font:600 12px/1.6 var(--ui);background:#1F1F25}
+.srv{color:var(--soft);font-size:13px}
+.srv.err{color:#FCA5A5}
+label.sw{margin-left:auto;display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--soft);cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:18px;display:grid;grid-template-rows:auto auto 1fr auto auto;gap:10px;min-height:320px;min-width:0}
+.card .t{font:600 17px var(--ui)}
+.body{border-radius:12px;background:#0C0C10;border:1px dashed #2B2B33;padding:12px;font-size:14px;min-height:96px;color:var(--soft);overflow:hidden}
+.body dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}.body dt{color:var(--soft)}.body dd{margin:0;color:var(--ink)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.acts button{border:1px solid rgba(255,255,255,.12);background:#1F1F25;color:var(--ink);border-radius:10px;padding:8px 13px;font:500 14px var(--ui);cursor:pointer}
+.acts button:hover{border-color:rgba(255,255,255,.35)}
+.acts button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.acts button.forced{border-style:dashed;color:#C9C9D2}
+.acts button.forced::after{content:" · masqué";font-size:11px;color:#6B6B76}
+.log{min-height:44px;font:500 12.5px/1.45 var(--mono);display:grid;gap:3px;align-content:end}
+.log .ok{color:#6EE7B7}.log .no{color:#FCA5A5}.log .tx{color:#FCD34D}
+.conf{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px;border-radius:12px;background:rgba(251,191,36,.1);color:#FCD34D;font-size:13.5px}
+.conf button{border:1px solid rgba(251,191,36,.5);background:none;color:#FCD34D;border-radius:9px;padding:6px 11px;cursor:pointer;font:500 13px var(--ui)}
+.note{color:var(--soft);font-size:13px;margin:0}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.card{min-height:0}}
+</style>
+</head>
+<body>
+<main>
+ <header data-sv="demo-tete" data-sv-label="Identité">
+  <span class="k">Espace de démonstration · données fictives · rien n'est enregistré</span>
+  <h1>Mariage de Léa &amp; Marc</h1>
+ </header>
+ <div class="who" data-sv-id="identite">
+  <span>Vous êtes <b id="wn">…</b></span><span class="chip" id="wp">…</span><span class="chip" id="wr" title="Rôle donné par le serveur, pas par la page">rôle : …</span>
+  <span class="srv" id="srv">Vérification auprès du serveur…</span>
+  <label class="sw"><input type="checkbox" id="force"> Montrer aussi les boutons masqués (pour tester le serveur)</label>
+ </div>
+ <div class="grid">
+  <section class="card" data-sv="demo-doc" data-sv-label="Un même document" data-sv-id="doc:contrat" data-res="doc:contrat" data-act="read">
+   <span class="k">Un même document</span><span class="t">Contrat · Studio Lumen</span>
+   <div class="body" data-out></div>
+   <div class="acts"><button type="button" data-res="doc:contrat" data-act="read">Ouvrir</button><button type="button" data-res="doc:contrat" data-act="edit">Modifier</button><button type="button" data-res="doc:contrat" data-act="share">Partager</button><button type="button" data-res="doc:contrat" data-act="delete">Supprimer</button></div>
+   <div class="log" aria-live="polite"></div>
+  </section>
+  <section class="card" data-sv="demo-event" data-sv-label="Un même événement" data-sv-id="event:shooting" data-res="event:shooting" data-act="read">
+   <span class="k">Un même événement</span><span class="t">Séance photo du couple</span>
+   <div class="body" data-out></div>
+   <div class="acts"><button type="button" data-res="event:shooting" data-act="read">Voir</button><button type="button" data-res="event:shooting" data-act="edit">Modifier l'heure</button><button type="button" data-res="event:shooting" data-act="delete">Supprimer</button></div>
+   <div class="log" aria-live="polite"></div>
+  </section>
+  <section class="card" data-sv="demo-pay" data-sv-label="Une même action" data-sv-id="pay:acompte" data-res="pay:acompte" data-act="pay">
+   <span class="k">Une même action</span><span class="t">Payer l'acompte du photographe · 360 €</span>
+   <div class="body" data-out></div>
+   <div class="acts"><button type="button" data-res="pay:acompte" data-act="read">Voir le paiement</button><button type="button" data-res="pay:acompte" data-act="pay">Payer 360 €</button></div>
+   <div class="log" aria-live="polite"></div>
+  </section>
+  <section class="card" data-sv="demo-perso" data-sv-label="Données personnelles" data-sv-id="personal" data-res="personal:lucie" data-act="read">
+   <span class="k">Données personnelles des participants</span><span class="t">Réponses et régimes</span>
+   <div class="body" data-out></div>
+   <div class="acts"><button type="button" data-res="personal:lucie" data-act="read">Réponse de Lucie</button><button type="button" data-res="personal:nina" data-act="read">Réponse de Nina</button><button type="button" data-res="summary:reponses" data-act="read">Résumé sans noms</button></div>
+   <div class="log" aria-live="polite"></div>
+  </section>
+  <section class="card" data-sv="demo-space" data-sv-label="Membres et espace" data-sv-id="space" data-res="space" data-act="manage_members">
+   <span class="k">Membres et espace</span><span class="t">Inviter, gérer, supprimer</span>
+   <div class="body" data-out><p class="note">Invitations, rôles des membres et suppression de l'espace.</p></div>
+   <div class="acts"><button type="button" data-res="invite:guest" data-act="invite">Inviter un invité</button><button type="button" data-res="invite:editor" data-act="invite">Inviter une coordination</button><button type="button" data-res="space" data-act="manage_members">Changer un rôle</button><button type="button" data-res="space" data-act="delete">Supprimer l'espace</button></div>
+   <div class="log" aria-live="polite"></div>
+  </section>
+  <section class="card" data-sv="demo-preuves" data-sv-label="Preuves">
+   <span class="k">Comment lire cette page</span><span class="t">Masqué n'est pas refusé</span>
+   <div class="body" style="color:var(--ink)"><p class="note" style="color:var(--ink)">Les boutons s'affichent selon la réponse du serveur. Les afficher tous ne donne aucun droit : chaque clic est revérifié par le serveur, qui répond 403 si la règle refuse.</p></div>
+   <div></div><div></div><div></div>
+  </section>
+ </div>
+</main>
+<script src="/synchroview/profiles.js"></script>
+<script>
+(function(){"use strict";
+var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};
+var Q=new URLSearchParams(location.search),PF=(window.SVProfiles||[]).filter(function(p){return p.id===Q.get('mode')})[0]||(window.SVProfiles||[])[0];
+var DEC={},TESTED={},ROLE=null,OK=false;
+function key(r,a){return r+'|'+a}
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function api(path,body){return fetch('/api/sv/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({identity:PF.identity},body)),credentials:'same-origin'}).then(function(r){return r.json().then(function(j){return{code:r.status,body:j}},function(){return{code:r.status,body:{}}})})}
+$('#wn').textContent='…';$('#wp').textContent='carte : '+PF.label;
+/* 1 · le serveur décide pour chaque bouton ; l'interface ne fait que suivre */
+var pairs=[];$$('[data-res][data-act]').forEach(function(b){var k=key(b.dataset.res,b.dataset.act);if(!pairs.some(function(p){return key(p.res,p.action)===k}))pairs.push({res:b.dataset.res,action:b.dataset.act})});
+api('check',{checks:pairs}).then(function(r){if(r.code!==200)throw new Error(r.body&&r.body.error||('réponse '+r.code));OK=true;ROLE=r.body.role;$('#wn').textContent=r.body.identity.name;$('#wr').textContent='rôle : '+ROLE;
+ $('#srv').textContent='Décisions reçues du serveur ('+r.body.results.length+').';r.body.results.forEach(function(d){DEC[key(d.res,d.action)]=d});draw()})
+ .catch(function(e){$('#srv').textContent='Serveur indisponible : aucune décision, tout reste « Non vérifié ».';$('#srv').classList.add('err');draw()});
+function draw(){var f=$('#force').checked;$$('.acts button').forEach(function(b){var d=DEC[key(b.dataset.res,b.dataset.act)],allow=d&&d.allow;b.hidden=!allow&&!f;b.classList.toggle('forced',!allow&&f)})}
+$('#force').addEventListener('change',draw);
+/* 2 · chaque clic est revérifié par le serveur : 200 autorisé (effet simulé) ou 403 refusé */
+function log(card,cls,txt){var l=$('.log',card);var p=document.createElement('div');p.className=cls;p.textContent=txt;l.appendChild(p);while(l.children.length>3)l.removeChild(l.firstChild)}
+function show(card,res){var o=$('[data-out]',card);if(!res||!res.data){return}o.innerHTML='<dl>'+Object.keys(res.data).map(function(k){return'<dt>'+esc(k)+'</dt><dd>'+esc(res.data[k])+'</dd>'}).join('')+'</dl>'}
+function run(b,tx){var card=b.closest('.card'),res=b.dataset.res,act=b.dataset.act;
+ return api('act',{res:res,action:act,tx:tx}).then(function(r){var k=key(res,act);TESTED[k]={allow:r.code===200,code:r.code,rule:r.body.rule,reason:r.body.reason};
+  if(r.code===200){log(card,'ok','✓ '+b.textContent+' · 200 · autorisé par le serveur'+(r.body.effet&&r.body.effet!=='lecture'?' · '+r.body.effet:''));if(r.body.resource)show(card,r.body.resource);return}
+  if(r.body.needsTx){confirmTx(b);return}
+  log(card,'no','✕ '+b.textContent+' · '+r.code+' · refusé par le serveur : '+(r.body.reason||r.body.error||''))})
+ .catch(function(){log(card,'no','✕ serveur injoignable : rien n\'a été fait')})}
+/* 3 · paiement : une autorisation propre à cette transaction, demandée puis confirmée */
+function confirmTx(b){var card=b.closest('.card'),o=$('[data-out]',card);o.innerHTML='<div class="conf">Confirmer la transaction de 360 € à Studio Lumen ? <button type="button" data-y>Confirmer</button><button type="button" data-n>Annuler</button></div>';
+ $('[data-n]',o).onclick=function(){o.innerHTML='';log(card,'tx','… transaction annulée')};
+ $('[data-y]',o).onclick=function(){api('tx',{res:b.dataset.res}).then(function(r){if(r.code!==200){log(card,'no','✕ autorisation de transaction refusée par le serveur : '+(r.body.reason||''));o.innerHTML='';return}log(card,'tx','… autorisation de transaction obtenue (60 s)');o.innerHTML='';run(b,r.body.tx)})}}
+document.addEventListener('click',function(e){var b=e.target.closest('.acts button');if(!b)return;run(b)});
+/* 4 · pour SynchroView : la règle d'un élément, avec son niveau de preuve */
+window.svPerm=function(k,el){var b=el&&el.closest&&(el.matches('[data-act]')?el:el.closest('[data-act]'));if(!b)return null;var kk=key(b.dataset.res,b.dataset.act),t=TESTED[kk],d=DEC[kk];
+ if(t)return{allow:t.allow,proof:'test',rule:(t.rule||'')+(t.allow?'':' — '+(t.reason||'')),code:t.code};
+ if(d)return{allow:d.allow,proof:'serveur',rule:d.rule+(d.allow?'':' — '+d.reason)};return null};
+})();
+</script>
+<script src="/synchroview/bridge.js" defer></script>
+</body>
+</html>

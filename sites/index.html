@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#F7F8F8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Générateur de site · AIME</title>
+<meta name="description" content="Composer un site complet, page par page, avec le moteur partagé d'AIME : une information saisie une fois, partout où elle sert.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/bureau/bureau.css">
+<link rel="stylesheet" href="/sites/editeur.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/sites/theme-monde-aime.css">
+</head>
+<body class="gen">
+<a class="evite" href="#apercu">Aller à l'aperçu</a>
+<header class="top gen-top">
+ <a class="mk" href="/bureau/" aria-label="AIME, retour au Bureau">AIME<sup>®</sup></a>
+ <div class="gen-titre"><span class="e-k">Générateur de site</span><label class="gen-site"><span class="sr">Site ouvert</span><select id="choixSite"></select></label></div>
+ <nav class="gen-act" aria-label="Actions">
+  <button type="button" class="pill" id="nouveau">Nouveau</button>
+  <button type="button" class="pill" id="annuler" disabled>Annuler</button>
+  <button type="button" class="pill" id="retablir" disabled>Rétablir</button>
+  <button type="button" class="pill" id="importer">Importer</button>
+  <a class="pill" id="comparer" href="/synchroview/" title="Voir le site par rôle, côte à côte, dans SynchroView">Comparer les rôles</a>
+  <div class="gen-exp"><button type="button" class="pill p" id="exporter" aria-expanded="false" aria-controls="menuExp">Exporter</button>
+   <div class="gen-menu" id="menuExp" hidden><p class="gm-t">Exporter pour publier <small>vue publique seulement : sans le réservé, sans fichier de projet</small></p><button type="button" data-exp="zip">Le site (.zip, une page HTML par page)</button><button type="button" data-exp="une">Une seule page (.html)</button><p class="gm-t prive">Sauvegarder mon projet <small>tout, y compris le réservé : à garder pour vous, ne pas publier</small></p><button type="button" data-exp="json">Sauvegarde privée (.json, réimportable)</button><p class="gm-t">Voir</p><button type="button" data-exp="onglet">Ouvrir la vue choisie dans un onglet</button></div></div>
+ </nav>
+</header>
+
+<div class="gen-accueil" id="accueil" hidden>
+ <header class="e-entete"><span class="e-k">Générateur de site</span><h1>Un site complet, <span class="e-acc">écrit une fois.</span></h1>
+  <p>Choisissez un point de départ. La date, le lieu, le programme ou le contact s'écrivent une seule fois, puis se retrouvent partout où ils servent : en-tête, compte à rebours, plan, réponse. Tout reste dans ce navigateur jusqu'à l'export.</p></header>
+ <ul class="modeles" id="modeles"></ul>
+ <h2 class="gen-h" style="margin-top:34px">Partir d'un démonstrateur <small>les mêmes faits, rôles et accès, devenus un site à modifier</small></h2>
+ <ul class="modeles" id="demos"></ul>
+ <h2 class="gen-h" style="margin-top:34px">Régénérer un site existant <small>rien n'est perdu sans être dit : un compte rendu accompagne chaque import</small></h2>
+ <ul class="modeles imports">
+  <li><button type="button" class="modele imp" data-imp="landing"><b>Le mini-site de la landing</b><span>Le fichier « .aime.json » exporté depuis « Votre site » sur Le Monde AIME : blocs, positions sur la grille, styles, programme, personnes, photos.</span><small>Fidèle · grille libre</small></button></li>
+  <li><button type="button" class="modele imp" data-imp="studio"><b>Un projet du Studio</b><span id="studioN">Les projets d'AIME Studio gardés dans ce navigateur : textes, marque, programme ou offre, personnes, contact.</span><small>Fidèle · sections</small></button></li>
+  <li><div class="modele imp html"><b>Un dossier ou un .zip de site HTML</b><span>Un site qui vous appartient : chaque page devient une page, les titres des sections, les images du dossier une galerie ; dates, adresses, e-mails, horaires et prix sont reconnus.</span>
+   <label class="cc"><input type="checkbox" id="droits"> Ce site m'appartient, ou j'ai l'autorisation de le reprendre.</label>
+   <span class="imp-b"><button type="button" class="mini" data-imp="dossier">Choisir un dossier</button><button type="button" class="mini" data-imp="zip">Un .zip ou des .html</button></span><small>Approché · compte rendu détaillé</small></div></li>
+ </ul>
+ <div class="studio-l" id="studioListe" hidden></div>
+</div>
+
+<main class="gen-main" id="atelier" hidden>
+ <aside class="gen-g" aria-label="Structure">
+  <div class="gen-pages" role="tablist" aria-label="Pages" id="pages"></div>
+  <div class="gen-pact"><button type="button" class="mini" id="pageMode" aria-pressed="false" title="Grille libre : poser les blocs sur 12 colonnes">Grille</button><button type="button" class="mini" id="pageAjout">+ Page</button><button type="button" class="mini" id="pageRenommer">Renommer</button><button type="button" class="mini" id="pageSuppr">Supprimer</button></div>
+  <h2 class="gen-h">Sections</h2>
+  <ol class="gen-secs" id="sections"></ol>
+  <button type="button" class="gen-ajout" id="ajout" aria-expanded="false" aria-controls="catalogue">+ Ajouter un bloc</button>
+ </aside>
+
+ <section class="gen-c" aria-label="Aperçu">
+  <div class="gen-barre">
+   <div class="seg" role="group" aria-label="Taille de l'aperçu"><button type="button" data-taille="100%" aria-pressed="true">Ordinateur</button><button type="button" data-taille="820px" aria-pressed="false">Tablette</button><button type="button" data-taille="390px" aria-pressed="false">Téléphone</button></div>
+   <div class="seg" role="group" aria-label="Météo" id="meteo"><button type="button" data-meteo="0" aria-pressed="true">Soleil</button><button type="button" data-meteo="1" aria-pressed="false">Pluie · plan B</button></div>
+   <div class="seg" role="group" aria-label="Voir comme" id="persps"></div>
+  </div>
+  <div class="gen-cadre"><iframe id="apercu" title="Aperçu du site" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe></div>
+  <p class="gen-note" id="noteP"></p>
+  <div class="gen-dock">
+   <div class="gen-pop" id="catalogue" role="dialog" aria-label="Vos informations et les blocs" hidden>
+    <div class="gp-tabs" id="ptabs" role="group" aria-label="Familles de blocs"></div>
+    <div class="gp-tray" id="tray"></div>
+   </div>
+   <button type="button" class="gen-plus" id="plus" aria-expanded="false" aria-controls="catalogue" aria-label="Ajouter un bloc, ou modifier vos informations"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
+  <div class="gen-onde" id="onde" role="status" hidden><span></span><button type="button" class="mini" id="ondeAnnuler">Annuler</button></div>
+ </section>
+
+ <aside class="gen-d" aria-label="Réglages">
+  <div class="seg tabs" role="tablist" aria-label="Réglages"><button type="button" role="tab" data-onglet="section" aria-selected="true">Section</button><button type="button" role="tab" data-onglet="contenu" aria-selected="false">Contenu</button><button type="button" role="tab" data-onglet="style" aria-selected="false">Style</button></div>
+  <div class="gen-onglet" id="o-section" role="tabpanel"></div>
+  <div class="gen-onglet" id="o-contenu" role="tabpanel" hidden></div>
+  <div class="gen-onglet" id="o-style" role="tabpanel" hidden></div>
+ </aside>
+</main>
+<input type="file" id="fichierSite" accept="application/json,.json,.zip,.html,.htm" hidden>
+<input type="file" id="fichierDossier" webkitdirectory directory multiple hidden>
+<input type="file" id="fichierZip" accept=".zip,.html,.htm" multiple hidden>
+<div class="gen-rapport" id="rapport" role="dialog" aria-modal="false" aria-labelledby="t-rap" hidden></div>
+<input type="file" id="fichierImg" accept="image/*" hidden>
+<p id="vivant" class="vivant" role="status" aria-live="polite"></p>
+<script src="/nav/registre.js"></script>
+<script src="/synchroview/permissions.js"></script>
+<script src="/vitrine/rendu.js"></script>
+<script src="/sites/importer.js"></script>
+<script src="/sites/editeur.js"></script>
+<script src="/menu/menu.js"></script>
+<script src="/regie/scene.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "_": "Le Bureau, vu par une personne sans compte, dans son navigateur. La perspective choisit les blocs et leur ordre ; elle ne contient ni donnée ni droit.",
+  "univers": "bureau",
+  "angles": [
+    {
+      "id": "navigateur",
+      "label": "Mon Bureau (ce navigateur)",
+      "sections": [
+        {
+          "type": "liste",
+          "source": "reprendre",
+          "titre": "Reprendre",
+          "ancre": "reprendre"
+        },
+        {
+          "type": "dossiers",
+          "source": "dossiers",
+          "titre": "Mes dossiers",
+          "intro": "Un dossier par outil, avec ce que ce navigateur contient vraiment. Les applications, le Lab et les pages à découvrir ont aussi le leur.",
+          "ancre": "dossiers"
+        },
+        {
+          "type": "note",
+          "source": "navigateur",
+          "titre": "Ce navigateur",
+          "ancre": "navigateur"
+        }
+      ]
+    }
+  ]
+}

@@ -2,23 +2,57 @@
 
 « Une info saisie une fois, propagée partout. »
 
-Fusion en cours : AIME (planning) et AIME Studio (supports) deviennent une seule app.
+Quatre usages, quatre places :
+- **Travailler** : le Bureau.
+- **Découvrir** : la Page Zéro et Le Monde AIME.
+- **Réaliser une tâche** : les applications.
+- **Expérimenter** : le Lab.
 
-- `index.html` : **la landing « Le monde AIME »**, qui présente six ateliers séparés. Les adresses d'AIME déjà diffusées sont renvoyées vers `/v1/`, celles du Studio (`#aime=`, `#atlas…`, `#commencer`) vers `/studio/`.
-- `bureau/` : **le Bureau**, l'OS du monde AIME : Dock, fenêtres, Dossiers en arbre, « Pour continuer ». Chaque app ouvre un atelier dans une fenêtre ; les apps se passent le projet en cours (`#open.<projet>.<format>`, `#add.<format>`, `#ev.<événement>.<format>`).
-- `stitchlab/`, `web/`, `docs/`, `buro/`, `accessibilite/`, `image/` : chaque atelier, ouvert seul (même moteur que le Studio, réglé par `window.AIME_ATELIER`).
-- `v1/` : Timeline Jour J (AIME v72, gelé à la branche `avant-fusion`).
-- `studio/` : le grand Studio (mosaïque, tous les supports), caché de la landing, gardé pour les liens existants.
-- `sup/` : rendus d'AIME Studio utilisés par la landing et la Timeline.
-- `docs/aime-handoff.md` : passation du module Planning.
+La liste des adresses, avec leur statut (disponible, démonstration, expérimental), vit à un seul endroit : `nav/registre.js`. Le menu Explorer et le Bureau la lisent.
 
-## Étapes de la fusion
+## Les pages
 
-1. Coque commune, adresses renvoyées, événements AIME visibles dans « Mes projets » (planning et supports). ← fait
-2. Un mariage = un projet, avec deux onglets Planning et Supports, sans pont encodé.
-3. Reprise des données (`aime-app`, `aime-app-ev-*`, `jourj-plan-v5`, `aime-ma-carte`) et retrait des ponts.
-4. Audit transversal, puis retrait de `/v1/` et de `/studio/` (redirections).
+| Adresse | Rôle | Ce que c'est |
+|---|---|---|
+| `/` | Découvrir | **La Page Zéro.** Point, ligne, relation, grille, composition, projet. À la fin : « Ouvrir mon Bureau », puis « Rejoindre Le Monde AIME ». |
+| `/bureau/` | Travailler | **Le Bureau.** Il affiche ma Carte et propose de reprendre là où on en était. Il range les projets par outil, puis donne les outils, le Lab, et ce que ce navigateur garde, avec sauvegarde et restauration. Voir `docs/BUREAU.md`. |
+| `/aime/` | Découvrir | **Le Monde AIME.** La grande landing : le cube, l'orbe, le menu Explorer. |
+| `/studio/` | Réaliser | **Le Studio.** Tous les supports. |
+| `/web/`, `/docs/`, `/buro/`, `/image/`, `/accessibilite/`, `/stitchlab/` | Réaliser | Chaque atelier ouvert seul. C'est le même fichier que le Studio, réglé par `window.AIME_ATELIER`. |
+| `/stitch/` | Réaliser | **AIME Stitch** : les patrons de point de croix. |
+| `/synchroview/` | Réaliser | Comparer des perspectives (démonstration). |
+| `/g44/` | Réaliser | **G44 LAB**, un démonstrateur sans affiliation, avec des données fictives. |
+| `/infinity/` | Réaliser | **AIME INFINITY**, le jeu (expérimental). |
+| `/vitrine/site/`, `/vitrine/world/` | Découvrir | Les démonstrateurs d'événements, avec des données fictives. |
+| `/v1/` | Réaliser | **La Timeline Jour J**, l'ancienne application de planning. Elle est conservée parce qu'elle n'est pas remplacée. |
+| `/lab/orb/`, `/infinity/lab/` | Expérimenter | **Le Lab.** |
+| `/tout/` | Découvrir | Toutes les vues d'un coup. |
 
-## Déploiement
+L'ancien Bureau à fenêtres a été retiré le 20 octobre 2026. Ses réglages restent dans les navigateurs. Le nouveau Bureau les signale et les inclut dans la sauvegarde ; il ne les efface jamais.
 
-Site statique, sans étape de build (Vercel, preset *Other*). Les données restent dans le navigateur (localStorage) ; la base Supabase viendra après la fusion.
+## Les moteurs
+
+| Moteur | Rôle |
+|---|---|
+| `vitrine/rendu.js` | **Le moteur de pages commun.** `rendre()` met en page les événements ; `composer()` met en page les espaces de travail, dont le Bureau. Les couches restent séparées : données, accès, perspectives, modèles (`vitrine/modeles/`), présentation (`vitrine/presentation/`). |
+| Studio, Stitch (`stitch/js/`), SynchroView, G44, INFINITY | Chaque application garde son propre moteur métier. |
+| `carte/` | La Carte universelle (`aime-carte`) : son modèle et son rendu. Elle ne se crée plus sur la Page Zéro (21/10/2026), car la landing compose déjà « Votre carte ». Une Carte existante reste lue par le cube et le Bureau. |
+| `bureau/sources.js` | Lit, pour chaque outil, ce que ce navigateur contient. Il n'écrit jamais rien. |
+
+## Données
+
+**Sans compte, tout reste dans le navigateur.**
+- Rien n'est stocké en `localStorage` en dehors de ce navigateur, et il n'y a aucune synchronisation.
+- Le Bureau peut sauvegarder toutes les clés dans un fichier JSON.
+- La restauration ajoute ce qui manque. Elle ne remplace une clé différente que sur demande, et n'efface jamais rien.
+
+**Neon est branché mais ne reçoit encore aucune écriture.**
+- `/api/health` vérifie la connexion.
+- Le schéma est dans `db/schema.sql`.
+- Les écritures attendent l'authentification. La proposition est dans `docs/CARTE.md`, section 4.
+
+## Déploiement et tests
+
+- Site statique, sans étape de build : Vercel, preset *Other*. Les redirections sont dans `vercel.json`.
+- `npm test` lance `node --test tests/*.test.cjs`. `tests/bureau.test.cjs` vérifie que les redirections ne bouclent pas et que chaque entrée du registre aboutit.
+- `health.test` demande `@neondatabase/serverless`.

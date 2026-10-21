@@ -1,0 +1,23 @@
+{
+  "id": "bureau",
+  "nom": "Bureau",
+  "offre": "gratuit",
+  "univers": [
+    "bureau"
+  ],
+  "description": "Un bureau : reprendre, des dossiers (un par outil, plus Applications, Lab, Découvrir), et ce que ce navigateur garde.",
+  "polices": {
+    "titre": "calsans",
+    "texte": "inter"
+  },
+  "ambiance": "aime-nuit",
+  "composition": {
+    "entete": "sobre",
+    "variantes": {
+      "liste": "cartes",
+      "groupes": "defaut",
+      "outils": "defaut",
+      "dossiers": "defaut"
+    }
+  }
+}

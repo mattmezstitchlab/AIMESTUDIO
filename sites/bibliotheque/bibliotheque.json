@@ -1,0 +1,1991 @@
+{
+ "format": "aime-bibliotheque",
+ "version": 1,
+ "categories": {
+  "ceremonie": "Cérémonie et couples",
+  "reception": "Réception et tables",
+  "lieux": "Lieux",
+  "details": "Détails et objets",
+  "fonds": "Fonds et textures",
+  "scene": "Scène et prestataires"
+ },
+ "images": [
+  {
+   "id": "ceremonie-brutal-bunker-vows",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-brutal-bunker-vows.webp",
+   "vignette": "ceremonie-brutal-bunker-vows.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Échange de vœux dans un lieu de béton brut",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/brutal-bunker-vows.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-chateau-bengale-bal",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-chateau-bengale-bal.webp",
+   "vignette": "ceremonie-chateau-bengale-bal.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Découpe du gâteau devant un château illuminé",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/chateau-bengale-bal.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-chateau-terrasse-champagne",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-chateau-terrasse-champagne.webp",
+   "vignette": "ceremonie-chateau-terrasse-champagne.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Terrasse de château au coucher du soleil",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/chateau-terrasse-champagne.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-chateau-tilleuls",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-chateau-tilleuls.webp",
+   "vignette": "ceremonie-chateau-tilleuls.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Allée de cérémonie devant une demeure",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/chateau-tilleuls.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-club-amour",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-club-amour.webp",
+   "vignette": "ceremonie-club-amour.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Baiser des mariés en boîte de nuit",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/club-amour.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-club-strobe-kiss",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-club-strobe-kiss.webp",
+   "vignette": "ceremonie-club-strobe-kiss.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Mariés sous les lumières d'un club",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/club-strobe-kiss.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-cosmic",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-cosmic.webp",
+   "vignette": "ceremonie-cosmic.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Couple en tenues argentées, décor futuriste",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/cosmic.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-couple-paris",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-couple-paris.webp",
+   "vignette": "ceremonie-couple-paris.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Couple sur un balcon parisien",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/couple-paris.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-da-phare",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-da-phare.webp",
+   "vignette": "ceremonie-da-phare.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Cérémonie au bord des falaises",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-phare.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-danse",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-danse.webp",
+   "vignette": "ceremonie-danse.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Première danse sous les guirlandes",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/danse.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-desert-motel",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-desert-motel.webp",
+   "vignette": "ceremonie-desert-motel.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Mariés devant un motel du désert",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/desert-motel.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-desert-pool-vows",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-desert-pool-vows.webp",
+   "vignette": "ceremonie-desert-pool-vows.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Vœux au bord d'une piscine dans le désert",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/desert-pool-vows.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-desert-star-dance",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-desert-star-dance.webp",
+   "vignette": "ceremonie-desert-star-dance.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Danse sous un ciel étoilé, dans le désert",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/desert-star-dance.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-desert-tacos-neon",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-desert-tacos-neon.webp",
+   "vignette": "ceremonie-desert-tacos-neon.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Fête autour d'une voiture ancienne, au crépuscule",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/desert-tacos-neon.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-foret-noire",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-foret-noire.webp",
+   "vignette": "ceremonie-foret-noire.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Cérémonie dans une forêt brumeuse",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/foret-noire.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-garden",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-garden.webp",
+   "vignette": "ceremonie-garden.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Allée de chaises blanches dans un jardin",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/garden.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-hero-wedding",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-hero-wedding.webp",
+   "vignette": "ceremonie-hero-wedding.v.webp",
+   "l": 1280,
+   "h": 543,
+   "alt": "Mariés marchant vers un château",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/hero-wedding.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-last-minute",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-last-minute.webp",
+   "vignette": "ceremonie-last-minute.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Couple riant dans une rue pavée",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/last-minute.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-laverie",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-laverie.webp",
+   "vignette": "ceremonie-laverie.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Couple dans une laverie colorée",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/laverie.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-noir-blanc-entree",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-noir-blanc-entree.webp",
+   "vignette": "ceremonie-noir-blanc-entree.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Mariés entrant dans une cathédrale, en noir et blanc",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/noir-blanc-entree.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-noir-blanc",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-noir-blanc.webp",
+   "vignette": "ceremonie-noir-blanc.v.webp",
+   "l": 1280,
+   "h": 543,
+   "alt": "Couple dans un hall moderne, en noir et blanc",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/noir-blanc.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-phare-vows",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-phare-vows.webp",
+   "vignette": "ceremonie-phare-vows.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Vœux face à l'océan, près d'un phare",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/phare-vows.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-submarine-vows",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-submarine-vows.webp",
+   "vignette": "ceremonie-submarine-vows.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Cérémonie sous une voûte vitrée sous-marine",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/submarine-vows.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-traditionnel",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-traditionnel.webp",
+   "vignette": "ceremonie-traditionnel.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Sortie de cérémonie devant une église de village",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/traditionnel.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-train-vows",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-train-vows.webp",
+   "vignette": "ceremonie-train-vows.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Baiser dans un train de montagne",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/train-vows.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-zero-contrainte-wedding",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-zero-contrainte-wedding.webp",
+   "vignette": "ceremonie-zero-contrainte-wedding.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Couple et amis réunis sous les guirlandes",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/zero-contrainte-wedding.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-grandjour-hero",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-grandjour-hero.webp",
+   "vignette": "ceremonie-grandjour-hero.v.webp",
+   "l": 1280,
+   "h": 543,
+   "alt": "Mariés de dos sous une allée d'arbres",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/grandjour-hero.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-bal",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-bal.webp",
+   "vignette": "ceremonie-bal.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Première danse dans la pénombre",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/bal.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-ceremonie",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-ceremonie.webp",
+   "vignette": "ceremonie-ceremonie.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Cérémonie laïque dans un jardin fleuri",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/ceremonie.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-mariee",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-mariee.webp",
+   "vignette": "ceremonie-mariee.v.webp",
+   "l": 1024,
+   "h": 1024,
+   "alt": "Mariée près d'une fenêtre",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/people/mariee.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-006-ceremonie-laique",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-006-ceremonie-laique.webp",
+   "vignette": "ceremonie-006-ceremonie-laique.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Arche fleurie de cérémonie",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/006-ceremonie-laique.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-019-officiant",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-019-officiant.webp",
+   "vignette": "ceremonie-019-officiant.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Officiante et mariés",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/019-officiant.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-112-soir",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-112-soir.webp",
+   "vignette": "ceremonie-112-soir.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Mariés dans un jardin de nuit",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/112-soir.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-113-matin",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-113-matin.webp",
+   "vignette": "ceremonie-113-matin.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Mariés dans une chambre baignée de lumière",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/113-matin.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-114-parenthese",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-114-parenthese.webp",
+   "vignette": "ceremonie-114-parenthese.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Mariés dans une serre",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/114-parenthese.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-115-vrai-moment",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-115-vrai-moment.webp",
+   "vignette": "ceremonie-115-vrai-moment.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Mariés riant sous les lumières",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/115-vrai-moment.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-116-trace",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-116-trace.webp",
+   "vignette": "ceremonie-116-trace.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Mariés dans un cloître",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/116-trace.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-117-lumiere",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-117-lumiere.webp",
+   "vignette": "ceremonie-117-lumiere.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Mariés dans une chapelle",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/117-lumiere.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-118-jardin",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-118-jardin.webp",
+   "vignette": "ceremonie-118-jardin.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Mariés dans un jardin de roses",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/118-jardin.jpg"
+   }
+  },
+  {
+   "id": "ceremonie-119-table",
+   "cat": "ceremonie",
+   "fichier": "ceremonie-119-table.webp",
+   "vignette": "ceremonie-119-table.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Mariés à table, à la lueur des bougies",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/119-table.jpg"
+   }
+  },
+  {
+   "id": "reception-hero-mariage",
+   "cat": "reception",
+   "fichier": "reception-hero-mariage.webp",
+   "vignette": "reception-hero-mariage.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Grand repas sous une grange, au coucher du soleil",
+   "source": {
+    "depot": "AIMELEMONDEAIME",
+    "chemin": "public/images/hero-mariage.jpg"
+   }
+  },
+  {
+   "id": "reception-brocante",
+   "cat": "reception",
+   "fichier": "reception-brocante.webp",
+   "vignette": "reception-brocante.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Table de brocante colorée",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/brocante.jpg"
+   }
+  },
+  {
+   "id": "reception-champagne",
+   "cat": "reception",
+   "fichier": "reception-champagne.webp",
+   "vignette": "reception-champagne.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Coupe de champagne pétillante",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/champagne.jpg"
+   }
+  },
+  {
+   "id": "reception-corse",
+   "cat": "reception",
+   "fichier": "reception-corse.webp",
+   "vignette": "reception-corse.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Table dressée face à la mer, en Corse",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/corse.jpg"
+   }
+  },
+  {
+   "id": "reception-da-chateau",
+   "cat": "reception",
+   "fichier": "reception-da-chateau.webp",
+   "vignette": "reception-da-chateau.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Bureau d'écriture dans une demeure ancienne",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-chateau.jpg"
+   }
+  },
+  {
+   "id": "reception-da-foret",
+   "cat": "reception",
+   "fichier": "reception-da-foret.webp",
+   "vignette": "reception-da-foret.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Table dans une forêt, chandeliers",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-foret.jpg"
+   }
+  },
+  {
+   "id": "reception-da-garden",
+   "cat": "reception",
+   "fichier": "reception-da-garden.webp",
+   "vignette": "reception-da-garden.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Table de jardin aux fleurs des champs",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-garden.jpg"
+   }
+  },
+  {
+   "id": "reception-da-minimal-lin",
+   "cat": "reception",
+   "fichier": "reception-da-minimal-lin.webp",
+   "vignette": "reception-da-minimal-lin.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Assiette sur une nappe de lin",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-minimal-lin.jpg"
+   }
+  },
+  {
+   "id": "reception-da-noir-blanc",
+   "cat": "reception",
+   "fichier": "reception-da-noir-blanc.webp",
+   "vignette": "reception-da-noir-blanc.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Table élégante en noir et blanc",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-noir-blanc.jpg"
+   }
+  },
+  {
+   "id": "reception-da-rooftop",
+   "cat": "reception",
+   "fichier": "reception-da-rooftop.webp",
+   "vignette": "reception-da-rooftop.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Toast sur un toit de Paris",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-rooftop.jpg"
+   }
+  },
+  {
+   "id": "reception-da-train",
+   "cat": "reception",
+   "fichier": "reception-da-train.webp",
+   "vignette": "reception-da-train.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Wagon de train dressé pour le dîner",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-train.jpg"
+   }
+  },
+  {
+   "id": "reception-new-york",
+   "cat": "reception",
+   "fichier": "reception-new-york.webp",
+   "vignette": "reception-new-york.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Dîner sur un toit face à la ville",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/new-york.jpg"
+   }
+  },
+  {
+   "id": "reception-reunion",
+   "cat": "reception",
+   "fichier": "reception-reunion.webp",
+   "vignette": "reception-reunion.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Repas tropical en terrasse",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/reunion.jpg"
+   }
+  },
+  {
+   "id": "reception-fontaine-champagne",
+   "cat": "reception",
+   "fichier": "reception-fontaine-champagne.webp",
+   "vignette": "reception-fontaine-champagne.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Fontaine de champagne",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/fontaine-champagne.jpg"
+   }
+  },
+  {
+   "id": "reception-lumieres",
+   "cat": "reception",
+   "fichier": "reception-lumieres.webp",
+   "vignette": "reception-lumieres.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Cour éclairée de guirlandes",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/lumieres.jpg"
+   }
+  },
+  {
+   "id": "reception-vaisselle-gres-blanc",
+   "cat": "reception",
+   "fichier": "reception-vaisselle-gres-blanc.webp",
+   "vignette": "reception-vaisselle-gres-blanc.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Vaisselle en grès blanc",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/vaisselle-gres-blanc.jpg"
+   }
+  },
+  {
+   "id": "reception-vaisselle",
+   "cat": "reception",
+   "fichier": "reception-vaisselle.webp",
+   "vignette": "reception-vaisselle.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Table blanche et chandelle",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/vaisselle.jpg"
+   }
+  },
+  {
+   "id": "reception-table-noir",
+   "cat": "reception",
+   "fichier": "reception-table-noir.webp",
+   "vignette": "reception-table-noir.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Table noire aux bougies",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/table-noir.jpg"
+   }
+  },
+  {
+   "id": "reception-terrasse",
+   "cat": "reception",
+   "fichier": "reception-terrasse.webp",
+   "vignette": "reception-terrasse.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Terrasse fleurie face à la mer",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/terrasse.jpg"
+   }
+  },
+  {
+   "id": "reception-hero",
+   "cat": "reception",
+   "fichier": "reception-hero.webp",
+   "vignette": "reception-hero.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Longue table sous une verrière",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/hero.jpg"
+   }
+  },
+  {
+   "id": "reception-cocktail",
+   "cat": "reception",
+   "fichier": "reception-cocktail.webp",
+   "vignette": "reception-cocktail.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Cocktail sous les arbres",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/cocktail.jpg"
+   }
+  },
+  {
+   "id": "reception-dejeuner",
+   "cat": "reception",
+   "fichier": "reception-dejeuner.webp",
+   "vignette": "reception-dejeuner.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Déjeuner sous une pergola",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/dejeuner.jpg"
+   }
+  },
+  {
+   "id": "reception-diner",
+   "cat": "reception",
+   "fichier": "reception-diner.webp",
+   "vignette": "reception-diner.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Dîner sous une verrière",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/diner.jpg"
+   }
+  },
+  {
+   "id": "reception-discours",
+   "cat": "reception",
+   "fichier": "reception-discours.webp",
+   "vignette": "reception-discours.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Discours devant les convives",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/discours.jpg"
+   }
+  },
+  {
+   "id": "reception-soiree",
+   "cat": "reception",
+   "fichier": "reception-soiree.webp",
+   "vignette": "reception-soiree.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Soirée dansante",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/soiree.jpg"
+   }
+  },
+  {
+   "id": "reception-008-wedding-cake",
+   "cat": "reception",
+   "fichier": "reception-008-wedding-cake.webp",
+   "vignette": "reception-008-wedding-cake.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Pièce montée fleurie",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/008-wedding-cake.jpg"
+   }
+  },
+  {
+   "id": "reception-010-scenographie",
+   "cat": "reception",
+   "fichier": "reception-010-scenographie.webp",
+   "vignette": "reception-010-scenographie.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Scénographie de table",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/010-scenographie.jpg"
+   }
+  },
+  {
+   "id": "reception-018-eclairage",
+   "cat": "reception",
+   "fichier": "reception-018-eclairage.webp",
+   "vignette": "reception-018-eclairage.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Salle illuminée de guirlandes",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/018-eclairage.jpg"
+   }
+  },
+  {
+   "id": "lieux-hero-accueil",
+   "cat": "lieux",
+   "fichier": "lieux-hero-accueil.webp",
+   "vignette": "lieux-hero-accueil.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Banquet champêtre au coucher du soleil",
+   "source": {
+    "depot": "AIMELEMONDEAIME",
+    "chemin": "public/images/hero-accueil.jpg"
+   }
+  },
+  {
+   "id": "lieux-hero-campagne",
+   "cat": "lieux",
+   "fichier": "lieux-hero-campagne.webp",
+   "vignette": "lieux-hero-campagne.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Village et potager dans la campagne",
+   "source": {
+    "depot": "AIMELEMONDEAIME",
+    "chemin": "public/images/hero-campagne.jpg"
+   }
+  },
+  {
+   "id": "lieux-hero-logement",
+   "cat": "lieux",
+   "fichier": "lieux-hero-logement.webp",
+   "vignette": "lieux-hero-logement.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Maison de pierre fleurie",
+   "source": {
+    "depot": "AIMELEMONDEAIME",
+    "chemin": "public/images/hero-logement.jpg"
+   }
+  },
+  {
+   "id": "lieux-univers-arts",
+   "cat": "lieux",
+   "fichier": "lieux-univers-arts.webp",
+   "vignette": "lieux-univers-arts.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Place de village en fête, le soir",
+   "source": {
+    "depot": "AIMELEMONDEAIME",
+    "chemin": "public/images/univers-arts.jpg"
+   }
+  },
+  {
+   "id": "lieux-univers-terre",
+   "cat": "lieux",
+   "fichier": "lieux-univers-terre.webp",
+   "vignette": "lieux-univers-terre.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Marché aux fruits et légumes",
+   "source": {
+    "depot": "AIMELEMONDEAIME",
+    "chemin": "public/images/univers-terre.jpg"
+   }
+  },
+  {
+   "id": "lieux-chateau",
+   "cat": "lieux",
+   "fichier": "lieux-chateau.webp",
+   "vignette": "lieux-chateau.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Château et jardins à la française",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/chateau.jpg"
+   }
+  },
+  {
+   "id": "lieux-cinema",
+   "cat": "lieux",
+   "fichier": "lieux-cinema.webp",
+   "vignette": "lieux-cinema.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Salle de cinéma et rideau rouge",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/cinema.jpg"
+   }
+  },
+  {
+   "id": "lieux-da-brutal",
+   "cat": "lieux",
+   "fichier": "lieux-da-brutal.webp",
+   "vignette": "lieux-da-brutal.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Volume de béton et branche fleurie",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-brutal.jpg"
+   }
+  },
+  {
+   "id": "lieux-mobilier",
+   "cat": "lieux",
+   "fichier": "lieux-mobilier.webp",
+   "vignette": "lieux-mobilier.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Grange aux chaises empilées",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/mobilier.jpg"
+   }
+  },
+  {
+   "id": "lieux-table-basse-brute",
+   "cat": "lieux",
+   "fichier": "lieux-table-basse-brute.webp",
+   "vignette": "lieux-table-basse-brute.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Salle claire au mobilier brut",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/table-basse-brute.jpg"
+   }
+  },
+  {
+   "id": "lieux-table-trestle-chene",
+   "cat": "lieux",
+   "fichier": "lieux-table-trestle-chene.webp",
+   "vignette": "lieux-table-trestle-chene.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Salle voûtée et grande table",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/table-trestle-chene.jpg"
+   }
+  },
+  {
+   "id": "lieux-immersive",
+   "cat": "lieux",
+   "fichier": "lieux-immersive.webp",
+   "vignette": "lieux-immersive.v.webp",
+   "l": 1280,
+   "h": 543,
+   "alt": "Champ au crépuscule",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/immersive.jpg"
+   }
+  },
+  {
+   "id": "lieux-after",
+   "cat": "lieux",
+   "fichier": "lieux-after.webp",
+   "vignette": "lieux-after.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Ruelle de pierre à la tombée du jour",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/after.jpg"
+   }
+  },
+  {
+   "id": "lieux-world",
+   "cat": "lieux",
+   "fichier": "lieux-world.webp",
+   "vignette": "lieux-world.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Château vu du ciel",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/world.jpg"
+   }
+  },
+  {
+   "id": "lieux-002-chateau",
+   "cat": "lieux",
+   "fichier": "lieux-002-chateau.webp",
+   "vignette": "lieux-002-chateau.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Allée menant à un château",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/002-chateau.jpg"
+   }
+  },
+  {
+   "id": "details-alliances",
+   "cat": "details",
+   "fichier": "details-alliances.webp",
+   "vignette": "details-alliances.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Alliances dorées sur la pierre",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/alliances.jpg"
+   }
+  },
+  {
+   "id": "details-bouquet",
+   "cat": "details",
+   "fichier": "details-bouquet.webp",
+   "vignette": "details-bouquet.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Bouquet de pivoines",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/bouquet.jpg"
+   }
+  },
+  {
+   "id": "details-concept-super-mariage",
+   "cat": "details",
+   "fichier": "details-concept-super-mariage.webp",
+   "vignette": "details-concept-super-mariage.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Papeterie de mariage",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/concept-super-mariage.jpg"
+   }
+  },
+  {
+   "id": "details-arche",
+   "cat": "details",
+   "fichier": "details-arche.webp",
+   "vignette": "details-arche.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Arche de fleurs séchées",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/arche.jpg"
+   }
+  },
+  {
+   "id": "details-banquette-capiton",
+   "cat": "details",
+   "fichier": "details-banquette-capiton.webp",
+   "vignette": "details-banquette-capiton.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Banquette capitonnée",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/banquette-capiton.jpg"
+   }
+  },
+  {
+   "id": "details-bar-mobile",
+   "cat": "details",
+   "fichier": "details-bar-mobile.webp",
+   "vignette": "details-bar-mobile.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Bar mobile en bois",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/bar-mobile.jpg"
+   }
+  },
+  {
+   "id": "details-chaise-paille-tressee",
+   "cat": "details",
+   "fichier": "details-chaise-paille-tressee.webp",
+   "vignette": "details-chaise-paille-tressee.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Chaise en paille tressée",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/chaise-paille-tressee.jpg"
+   }
+  },
+  {
+   "id": "details-chemin-lit-affine",
+   "cat": "details",
+   "fichier": "details-chemin-lit-affine.webp",
+   "vignette": "details-chemin-lit-affine.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Chemin de table en lin",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/chemin-lit-affine.jpg"
+   }
+  },
+  {
+   "id": "details-couvert-metal-brosse",
+   "cat": "details",
+   "fichier": "details-couvert-metal-brosse.webp",
+   "vignette": "details-couvert-metal-brosse.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Couverts en métal brossé",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/couvert-metal-brosse.jpg"
+   }
+  },
+  {
+   "id": "details-mange-debout-tonneau",
+   "cat": "details",
+   "fichier": "details-mange-debout-tonneau.webp",
+   "vignette": "details-mange-debout-tonneau.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Tonneau mange-debout",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/mange-debout-tonneau.jpg"
+   }
+  },
+  {
+   "id": "details-nappe-lin-lave",
+   "cat": "details",
+   "fichier": "details-nappe-lin-lave.webp",
+   "vignette": "details-nappe-lin-lave.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Nappe en lin lavé",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/nappe-lin-lave.jpg"
+   }
+  },
+  {
+   "id": "details-parasol-toile-ecrue",
+   "cat": "details",
+   "fichier": "details-parasol-toile-ecrue.webp",
+   "vignette": "details-parasol-toile-ecrue.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Parasol en toile écrue",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/parasol-toile-ecrue.jpg"
+   }
+  },
+  {
+   "id": "details-robe",
+   "cat": "details",
+   "fichier": "details-robe.webp",
+   "vignette": "details-robe.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Robe suspendue à la lumière",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/robe.jpg"
+   }
+  },
+  {
+   "id": "details-verrerie-fin-gold",
+   "cat": "details",
+   "fichier": "details-verrerie-fin-gold.webp",
+   "vignette": "details-verrerie-fin-gold.v.webp",
+   "l": 1200,
+   "h": 896,
+   "alt": "Verres à pied dorés",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/shop/verrerie-fin-gold.jpg"
+   }
+  },
+  {
+   "id": "details-canvas",
+   "cat": "details",
+   "fichier": "details-canvas.webp",
+   "vignette": "details-canvas.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Atelier de fleurs blanches",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/canvas.jpg"
+   }
+  },
+  {
+   "id": "details-matter",
+   "cat": "details",
+   "fichier": "details-matter.webp",
+   "vignette": "details-matter.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Alliances sur une étoffe",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/matter.jpg"
+   }
+  },
+  {
+   "id": "details-mirror",
+   "cat": "details",
+   "fichier": "details-mirror.webp",
+   "vignette": "details-mirror.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Livret de cérémonie",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/mirror.jpg"
+   }
+  },
+  {
+   "id": "details-moment",
+   "cat": "details",
+   "fichier": "details-moment.webp",
+   "vignette": "details-moment.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Lettre et alliances",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/moment.jpg"
+   }
+  },
+  {
+   "id": "details-preparatifs",
+   "cat": "details",
+   "fichier": "details-preparatifs.webp",
+   "vignette": "details-preparatifs.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Robe dans une chambre ancienne",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/moments/preparatifs.jpg"
+   }
+  },
+  {
+   "id": "details-111-matiere",
+   "cat": "details",
+   "fichier": "details-111-matiere.webp",
+   "vignette": "details-111-matiere.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Matières et papeterie",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/111-matiere.jpg"
+   }
+  },
+  {
+   "id": "fonds-01-01",
+   "cat": "fonds",
+   "fichier": "fonds-01-01.webp",
+   "vignette": "fonds-01-01.v.webp",
+   "l": 914,
+   "h": 1280,
+   "alt": "Texture nocturne givrée",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/biblio/01-01.jpg"
+   }
+  },
+  {
+   "id": "fonds-01-03",
+   "cat": "fonds",
+   "fichier": "fonds-01-03.webp",
+   "vignette": "fonds-01-03.v.webp",
+   "l": 914,
+   "h": 1280,
+   "alt": "Mer sombre",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/biblio/01-03.jpg"
+   }
+  },
+  {
+   "id": "fonds-01-06",
+   "cat": "fonds",
+   "fichier": "fonds-01-06.webp",
+   "vignette": "fonds-01-06.v.webp",
+   "l": 914,
+   "h": 1280,
+   "alt": "Encre bleue dans l'eau",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/biblio/01-06.jpg"
+   }
+  },
+  {
+   "id": "fonds-01-09",
+   "cat": "fonds",
+   "fichier": "fonds-01-09.webp",
+   "vignette": "fonds-01-09.v.webp",
+   "l": 914,
+   "h": 1280,
+   "alt": "Ondes sur l'eau, trait de lumière",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/biblio/01-09.jpg"
+   }
+  },
+  {
+   "id": "fonds-01-17",
+   "cat": "fonds",
+   "fichier": "fonds-01-17.webp",
+   "vignette": "fonds-01-17.v.webp",
+   "l": 914,
+   "h": 1280,
+   "alt": "Vitre et gouttes de pluie",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/biblio/01-17.jpg"
+   }
+  },
+  {
+   "id": "fonds-01-21",
+   "cat": "fonds",
+   "fichier": "fonds-01-21.webp",
+   "vignette": "fonds-01-21.v.webp",
+   "l": 914,
+   "h": 1280,
+   "alt": "Veines lumineuses",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/biblio/01-21.jpg"
+   }
+  },
+  {
+   "id": "fonds-01-27",
+   "cat": "fonds",
+   "fichier": "fonds-01-27.webp",
+   "vignette": "fonds-01-27.v.webp",
+   "l": 914,
+   "h": 1280,
+   "alt": "Bulles et reflets",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/biblio/01-27.jpg"
+   }
+  },
+  {
+   "id": "fonds-01-28",
+   "cat": "fonds",
+   "fichier": "fonds-01-28.webp",
+   "vignette": "fonds-01-28.v.webp",
+   "l": 914,
+   "h": 1280,
+   "alt": "Mur de briques bleues",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/biblio/01-28.jpg"
+   }
+  },
+  {
+   "id": "fonds-fond-abstrait",
+   "cat": "fonds",
+   "fichier": "fonds-fond-abstrait.webp",
+   "vignette": "fonds-fond-abstrait.v.webp",
+   "l": 714,
+   "h": 1280,
+   "alt": "Fond abstrait pastel",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/fonds/fond-abstrait.jpg"
+   }
+  },
+  {
+   "id": "fonds-fond-botanique",
+   "cat": "fonds",
+   "fichier": "fonds-fond-botanique.webp",
+   "vignette": "fonds-fond-botanique.v.webp",
+   "l": 714,
+   "h": 1280,
+   "alt": "Fond botanique",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/fonds/fond-botanique.jpg"
+   }
+  },
+  {
+   "id": "fonds-fond-floral",
+   "cat": "fonds",
+   "fichier": "fonds-fond-floral.webp",
+   "vignette": "fonds-fond-floral.v.webp",
+   "l": 714,
+   "h": 1280,
+   "alt": "Fond floral",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/fonds/fond-floral.jpg"
+   }
+  },
+  {
+   "id": "fonds-fond-graphique",
+   "cat": "fonds",
+   "fichier": "fonds-fond-graphique.webp",
+   "vignette": "fonds-fond-graphique.v.webp",
+   "l": 714,
+   "h": 1280,
+   "alt": "Fond graphique art déco",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/fonds/fond-graphique.jpg"
+   }
+  },
+  {
+   "id": "fonds-fond-nocturne",
+   "cat": "fonds",
+   "fichier": "fonds-fond-nocturne.webp",
+   "vignette": "fonds-fond-nocturne.v.webp",
+   "l": 714,
+   "h": 1280,
+   "alt": "Fond nocturne",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/fonds/fond-nocturne.jpg"
+   }
+  },
+  {
+   "id": "fonds-fond-pop",
+   "cat": "fonds",
+   "fichier": "fonds-fond-pop.webp",
+   "vignette": "fonds-fond-pop.v.webp",
+   "l": 714,
+   "h": 1280,
+   "alt": "Fond pop",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/fonds/fond-pop.jpg"
+   }
+  },
+  {
+   "id": "fonds-fond-texture",
+   "cat": "fonds",
+   "fichier": "fonds-fond-texture.webp",
+   "vignette": "fonds-fond-texture.v.webp",
+   "l": 714,
+   "h": 1280,
+   "alt": "Fond de papier texturé",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/fonds/fond-texture.jpg"
+   }
+  },
+  {
+   "id": "fonds-cover-01",
+   "cat": "fonds",
+   "fichier": "fonds-cover-01.webp",
+   "vignette": "fonds-cover-01.v.webp",
+   "l": 1024,
+   "h": 1024,
+   "alt": "Sphère orangée",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/covers/cover-01.jpg"
+   }
+  },
+  {
+   "id": "fonds-cover-02",
+   "cat": "fonds",
+   "fichier": "fonds-cover-02.webp",
+   "vignette": "fonds-cover-02.v.webp",
+   "l": 1024,
+   "h": 1024,
+   "alt": "Drapé de soie",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/covers/cover-02.jpg"
+   }
+  },
+  {
+   "id": "fonds-cover-03",
+   "cat": "fonds",
+   "fichier": "fonds-cover-03.webp",
+   "vignette": "fonds-cover-03.v.webp",
+   "l": 1024,
+   "h": 1024,
+   "alt": "Traînées de lumière",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/covers/cover-03.jpg"
+   }
+  },
+  {
+   "id": "fonds-floral1",
+   "cat": "fonds",
+   "fichier": "fonds-floral1.webp",
+   "vignette": "fonds-floral1.v.webp",
+   "l": 784,
+   "h": 1168,
+   "alt": "Fleur abstraite",
+   "source": {
+    "depot": "byaime",
+    "chemin": "img/originals/floral1.jpg"
+   }
+  },
+  {
+   "id": "fonds-floral5",
+   "cat": "fonds",
+   "fichier": "fonds-floral5.webp",
+   "vignette": "fonds-floral5.v.webp",
+   "l": 784,
+   "h": 1168,
+   "alt": "Pétales irisés",
+   "source": {
+    "depot": "byaime",
+    "chemin": "img/originals/floral5.jpg"
+   }
+  },
+  {
+   "id": "fonds-floral7",
+   "cat": "fonds",
+   "fichier": "fonds-floral7.webp",
+   "vignette": "fonds-floral7.v.webp",
+   "l": 784,
+   "h": 1168,
+   "alt": "Pétale en gros plan",
+   "source": {
+    "depot": "byaime",
+    "chemin": "public/img/originals/floral7.jpg"
+   }
+  },
+  {
+   "id": "scene-da-club",
+   "cat": "scene",
+   "fichier": "scene-da-club.webp",
+   "vignette": "scene-da-club.v.webp",
+   "l": 1280,
+   "h": 698,
+   "alt": "Couple dansant sous les néons",
+   "source": {
+    "depot": "MINISITEWEDDING",
+    "chemin": "public/images/da-club.jpg"
+   }
+  },
+  {
+   "id": "scene-photographe",
+   "cat": "scene",
+   "fichier": "scene-photographe.webp",
+   "vignette": "scene-photographe.v.webp",
+   "l": 1024,
+   "h": 1024,
+   "alt": "Photographe en reportage",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/people/photographe.jpg"
+   }
+  },
+  {
+   "id": "scene-coulisses",
+   "cat": "scene",
+   "fichier": "scene-coulisses.webp",
+   "vignette": "scene-coulisses.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Coulisses de scène",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/spectacle/coulisses.jpg"
+   }
+  },
+  {
+   "id": "scene-danseuse",
+   "cat": "scene",
+   "fichier": "scene-danseuse.webp",
+   "vignette": "scene-danseuse.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Danseuse dans la lumière",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/spectacle/danseuse.jpg"
+   }
+  },
+  {
+   "id": "scene-musicien",
+   "cat": "scene",
+   "fichier": "scene-musicien.webp",
+   "vignette": "scene-musicien.v.webp",
+   "l": 1280,
+   "h": 543,
+   "alt": "Saxophoniste en concert",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/spectacle/musicien.jpg"
+   }
+  },
+  {
+   "id": "scene-regie",
+   "cat": "scene",
+   "fichier": "scene-regie.webp",
+   "vignette": "scene-regie.v.webp",
+   "l": 1280,
+   "h": 714,
+   "alt": "Régie son et lumière",
+   "source": {
+    "depot": "WEDDINGCITY",
+    "chemin": "public/editorial/spectacle/regie.jpg"
+   }
+  },
+  {
+   "id": "scene-001-saxophoniste",
+   "cat": "scene",
+   "fichier": "scene-001-saxophoniste.webp",
+   "vignette": "scene-001-saxophoniste.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Saxophoniste dans un jardin",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/001-saxophoniste.jpg"
+   }
+  },
+  {
+   "id": "scene-003-traiteur",
+   "cat": "scene",
+   "fichier": "scene-003-traiteur.webp",
+   "vignette": "scene-003-traiteur.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Traiteur au dressage",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/003-traiteur.jpg"
+   }
+  },
+  {
+   "id": "scene-004-dj",
+   "cat": "scene",
+   "fichier": "scene-004-dj.webp",
+   "vignette": "scene-004-dj.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "DJ en soirée",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/004-dj.jpg"
+   }
+  },
+  {
+   "id": "scene-009-videaste",
+   "cat": "scene",
+   "fichier": "scene-009-videaste.webp",
+   "vignette": "scene-009-videaste.v.webp",
+   "l": 848,
+   "h": 1264,
+   "alt": "Vidéaste pendant la cérémonie",
+   "source": {
+    "depot": "WEDMAG",
+    "chemin": "premium-wedding-editorial-experience/public/covers/009-videaste.jpg"
+   }
+  }
+ ],
+ "associations": {
+  "mariage": {
+   "hero": [
+    "ceremonie-hero-wedding",
+    "ceremonie-grandjour-hero",
+    "ceremonie-chateau-tilleuls",
+    "ceremonie-118-jardin",
+    "ceremonie-ceremonie",
+    "ceremonie-garden"
+   ],
+   "image": [
+    "details-bouquet",
+    "details-alliances",
+    "details-robe",
+    "details-matter",
+    "details-canvas",
+    "details-111-matiere"
+   ],
+   "video": [
+    "ceremonie-danse",
+    "ceremonie-bal",
+    "ceremonie-115-vrai-moment"
+   ],
+   "lieu": [
+    "lieux-chateau",
+    "lieux-002-chateau",
+    "lieux-hero-accueil",
+    "lieux-world"
+   ],
+   "support-affiche": [
+    "ceremonie-hero-wedding",
+    "ceremonie-118-jardin",
+    "ceremonie-114-parenthese",
+    "ceremonie-couple-paris",
+    "ceremonie-phare-vows"
+   ],
+   "support-ecran": [
+    "reception-hero-mariage",
+    "reception-lumieres",
+    "reception-018-eclairage",
+    "reception-diner"
+   ],
+   "support:yt": [
+    "scene-009-videaste",
+    "scene-001-saxophoniste"
+   ],
+   "support:tvscreen": [
+    "reception-lumieres",
+    "reception-hero"
+   ]
+  },
+  "anniv": {
+   "hero": [
+    "reception-lumieres",
+    "reception-fontaine-champagne",
+    "reception-soiree",
+    "reception-da-rooftop"
+   ],
+   "image": [
+    "reception-champagne",
+    "reception-008-wedding-cake",
+    "reception-cocktail"
+   ],
+   "video": [
+    "scene-004-dj",
+    "scene-da-club"
+   ],
+   "lieu": [
+    "lieux-univers-arts",
+    "lieux-after"
+   ],
+   "support-affiche": [
+    "reception-soiree",
+    "reception-da-rooftop",
+    "reception-lumieres"
+   ],
+   "support-ecran": [
+    "scene-004-dj",
+    "scene-da-club",
+    "scene-danseuse"
+   ]
+  },
+  "conf": {
+   "hero": [
+    "lieux-table-trestle-chene",
+    "lieux-table-basse-brute",
+    "lieux-mobilier",
+    "lieux-da-brutal"
+   ],
+   "image": [
+    "details-couvert-metal-brosse",
+    "details-chemin-lit-affine",
+    "details-nappe-lin-lave"
+   ],
+   "video": [
+    "scene-regie",
+    "scene-coulisses"
+   ],
+   "lieu": [
+    "lieux-table-trestle-chene",
+    "lieux-chateau",
+    "lieux-hero-campagne"
+   ],
+   "support-affiche": [
+    "fonds-fond-graphique",
+    "fonds-cover-03",
+    "fonds-01-21",
+    "fonds-fond-abstrait"
+   ],
+   "support-ecran": [
+    "scene-regie",
+    "scene-coulisses"
+   ]
+  },
+  "artisan": {
+   "hero": [
+    "details-canvas",
+    "details-chaise-paille-tressee",
+    "details-bar-mobile",
+    "details-111-matiere"
+   ],
+   "image": [
+    "details-chaise-paille-tressee",
+    "details-banquette-capiton",
+    "details-mange-debout-tonneau",
+    "details-parasol-toile-ecrue"
+   ],
+   "video": [
+    "scene-003-traiteur"
+   ],
+   "lieu": [
+    "lieux-hero-logement",
+    "lieux-univers-terre"
+   ],
+   "support-affiche": [
+    "details-canvas",
+    "details-bar-mobile",
+    "details-arche"
+   ],
+   "support-ecran": [
+    "lieux-univers-terre",
+    "lieux-hero-logement"
+   ]
+  },
+  "portfolio": {
+   "hero": [
+    "fonds-cover-02",
+    "fonds-floral5",
+    "fonds-01-06",
+    "fonds-fond-abstrait"
+   ],
+   "image": [
+    "fonds-floral1",
+    "fonds-floral7",
+    "fonds-cover-01",
+    "fonds-01-09"
+   ],
+   "video": [
+    "fonds-cover-03",
+    "fonds-01-21"
+   ],
+   "lieu": [
+    "lieux-da-brutal"
+   ],
+   "support-affiche": [
+    "fonds-cover-02",
+    "fonds-fond-graphique",
+    "fonds-floral5"
+   ],
+   "support-ecran": [
+    "fonds-cover-03",
+    "fonds-01-27"
+   ]
+  },
+  "asso": {
+   "hero": [
+    "lieux-univers-arts",
+    "lieux-hero-campagne",
+    "lieux-univers-terre",
+    "lieux-hero-accueil"
+   ],
+   "image": [
+    "lieux-univers-terre",
+    "lieux-hero-logement"
+   ],
+   "video": [
+    "scene-musicien",
+    "scene-001-saxophoniste"
+   ],
+   "lieu": [
+    "lieux-univers-arts",
+    "lieux-hero-campagne"
+   ],
+   "support-affiche": [
+    "lieux-univers-arts",
+    "lieux-univers-terre",
+    "lieux-hero-accueil"
+   ],
+   "support-ecran": [
+    "lieux-univers-arts",
+    "lieux-after"
+   ]
+  },
+  "*": {
+   "hero": [
+    "fonds-fond-abstrait",
+    "fonds-cover-02",
+    "fonds-fond-botanique",
+    "fonds-fond-texture"
+   ],
+   "image": [
+    "fonds-fond-botanique",
+    "fonds-fond-floral",
+    "fonds-fond-texture"
+   ],
+   "video": [
+    "fonds-cover-03"
+   ],
+   "lieu": [
+    "lieux-hero-campagne",
+    "lieux-immersive"
+   ],
+   "support-affiche": [
+    "fonds-fond-abstrait",
+    "fonds-fond-graphique",
+    "fonds-fond-pop",
+    "fonds-fond-floral"
+   ],
+   "support-ecran": [
+    "fonds-cover-03",
+    "fonds-01-21"
+   ]
+  }
+ },
+ "associations_note": "Visuels posés par défaut tant que la personne n'a pas mis sa propre photo : par univers de site (mariage, anniv, conf, artisan, portfolio, asso, sinon *), puis par emplacement (hero, image, video, lieu, support-affiche, support-ecran, support:<format>)."
+}
