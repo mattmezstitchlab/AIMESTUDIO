@@ -1,5 +1,5 @@
 // AIME · comptes (Better Auth). Connexion par lien envoyé par e-mail (Resend) puis clé d'accès (passkey).
-// Aucun secret ici : DATABASE_URL, BETTER_AUTH_SECRET, RESEND_API_KEY et AUTH_FROM viennent de l'environnement.
+// Aucun secret ici : DATABASE_URL, BETTER_AUTH_SECRET, RESEND_API_KEY et AUTH_EMAIL_FROM (ou AUTH_FROM) viennent de l'environnement.
 // Fermé par défaut : sans base ni secret, l'instance n'est pas créée et l'API répond 503.
 import { betterAuth } from 'better-auth';
 import { magicLink } from 'better-auth/plugins/magic-link';
@@ -21,10 +21,11 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ESC[c]);
 /* l'envoi d'e-mails : Resend, expéditeur de notre domaine vérifié ; injectable pour les tests */
 let envoyeur = null;
 export function _envoyeur(f) { envoyeur = f; instance = null; }
-export function envoiPret(env = process.env) { return !!(envoyeur || (env.RESEND_API_KEY && (env.AUTH_FROM || env.CONTACT_FROM))); }
+export function expediteur(env = process.env) { return env.AUTH_EMAIL_FROM || env.AUTH_FROM || env.CONTACT_FROM || ''; }
+export function envoiPret(env = process.env) { return !!(envoyeur || (env.RESEND_API_KEY && expediteur(env))); }
 export async function envoyer({ to, subject, text, html }) {
   if (envoyeur) return envoyeur({ to, subject, text, html });
-  const cle = process.env.RESEND_API_KEY, de = process.env.AUTH_FROM || process.env.CONTACT_FROM;
+  const cle = process.env.RESEND_API_KEY, de = expediteur();
   if (!cle || !de) throw new Error('envoi d\'e-mail non configuré');
   const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: de, to: [to], subject, text, html }) });
   if (!r.ok) throw new Error('envoi refusé');

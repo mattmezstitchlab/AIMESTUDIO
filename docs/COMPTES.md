@@ -11,7 +11,7 @@
 1. **Base** : console SQL Neon, branche `preview/integration`, exécuter `db/migrations/2026-10-21-comptes.sql` (ajouts, rejouable).
 2. **Variables Vercel (Preview seulement)** :
    - `BETTER_AUTH_SECRET` : une chaîne aléatoire d'au moins 32 caractères (par exemple le résultat de `openssl rand -hex 32`).
-   - `RESEND_API_KEY` et `AUTH_FROM` (ex. `AIME <connexion@votre-domaine-vérifié>`) pour l'envoi des liens. Sans elles, la connexion par lien répond « envoi des e-mails pas encore configuré ».
+   - `RESEND_API_KEY` et `AUTH_EMAIL_FROM` (ou `AUTH_FROM`) (ex. `AIME <connexion@votre-domaine-vérifié>`) pour l'envoi des liens. Sans elles, la connexion par lien répond « envoi des e-mails pas encore configuré ».
    - Facultatif : `BETTER_AUTH_URL` (sinon l'adresse de la branche Vercel est utilisée).
 3. Redéployer `integration`.
 
