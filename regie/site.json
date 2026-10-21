@@ -207,13 +207,14 @@
    "resume": "Le jour J en direct : un retard, une annonce, et chacun le voit selon ses droits.",
    "presentation": "ipad",
    "contenu": {
-    "type": "page",
-    "src": "/live/?u=mariage",
+    "type": "image",
+    "src": "/zero/ecrans/tab-live.webp",
     "ajustement": "cover"
    },
    "lien": "/live/",
    "alt": "AIME Live sur un iPad.",
-   "publie": true
+   "publie": true,
+   "paysage": true
   },
   {
    "id": "r-os",
@@ -224,8 +225,8 @@
    "resume": "Toutes les apps AIME dans un seul bureau, une orbe, une recherche.",
    "presentation": "macbook",
    "contenu": {
-    "type": "page",
-    "src": "/bureau/",
+    "type": "image",
+    "src": "/zero/ecrans/mac-os.webp",
     "ajustement": "cover"
    },
    "lien": "/bureau/",
@@ -275,13 +276,14 @@
    "resume": "Des patrons de point de croix vivants : créer, éditer, lire, vendre.",
    "presentation": "ipad",
    "contenu": {
-    "type": "page",
-    "src": "/stitch/",
+    "type": "image",
+    "src": "/zero/ecrans/tab-stitch.webp",
     "ajustement": "cover"
    },
    "lien": "/stitch/",
    "alt": "AIME Stitch sur un iPad.",
-   "publie": true
+   "publie": true,
+   "paysage": true
   },
   {
    "id": "r-infinity",
@@ -292,8 +294,8 @@
    "resume": "Un jeu infini : chaque victoire révèle un monde plus grand.",
    "presentation": "iphone",
    "contenu": {
-    "type": "page",
-    "src": "/infinity/",
+    "type": "image",
+    "src": "/zero/ecrans/tel-infinity.webp",
     "ajustement": "cover"
    },
    "lien": "/infinity/",

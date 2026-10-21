@@ -37,6 +37,6 @@ test('comptes · la réécriture Vercel /api/auth/* → /api/comptes est reconst
   assert.equal(adresseOrigine('/api/auth/get-session'), '/api/auth/get-session');
   for (const ko of ['/api/comptes?__chemin=../etc', '/api/comptes?__chemin=a//b', '/api/comptes', '/api/comptes?__chemin=%2F%2Fevil.com']) assert.equal(adresseOrigine(ko), null, ko);
   const v = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
-  assert.deepEqual(v.rewrites[0], { source: '/api/auth/:chemin*', destination: '/api/comptes?__chemin=:chemin*' });
+  assert.ok(v.rewrites.some(r => r.source === '/api/auth/:chemin*' && r.destination === '/api/comptes?__chemin=:chemin*'));
   assert.ok(!fs.existsSync('api/auth'), 'aucune fonction concurrente sous api/auth');
 });

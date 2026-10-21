@@ -124,8 +124,8 @@ function creer(a){var D=R.APPAREILS[a.type],w=a.paysage?D.ecran[1]:D.ecran[0],h=
 
 /* ---------- portfolio : les carrousels de réalisations entre les grands titres ---------- */
 var carrMontes=[];
-function oeuvre(r){var lien=r.lien&&!EDITION,el=document.createElement(lien?'a':'article');el.className='rg-oeuvre p-'+r.presentation+(r.paysage?' paysage':'');el.setAttribute('role','listitem');
- if(lien){el.href=r.lien;if(/^https:/.test(r.lien)){el.target='_blank';el.rel='noopener'}}
+function oeuvre(r){var cible=r.publie&&r.slug?'/travaux/'+r.slug+'/':r.lien,lien=cible&&!EDITION,el=document.createElement(lien?'a':'article');el.className='rg-oeuvre p-'+r.presentation+(r.paysage?' paysage':'');el.setAttribute('role','listitem');
+ if(lien){el.href=cible;if(/^https:/.test(cible)){el.target='_blank';el.rel='noopener'}}
  if(r.presentation==='visuel'){var fig=document.createElement('span');fig.className='rg-visuel';var c=r.contenu;
   if(c.type==='video'){var vi=document.createElement('video');vi.muted=true;vi.loop=true;vi.playsInline=true;vi.setAttribute('playsinline','');vi.preload='metadata';if(RM)vi.controls=true;else vi.autoplay=true;source(c.src).then(function(u){if(u){vi.src=u;if(!RM){var p=vi.play();p&&p.catch&&p.catch(function(){})}}});fig.appendChild(vi)}
   else if(c.type==='image'){var im=document.createElement('img');im.alt=r.alt||'';im.loading='lazy';im.decoding='async';source(c.src).then(function(u){if(u)im.src=u});fig.appendChild(im)}
@@ -171,7 +171,9 @@ var orbeEl=null,compagnonLance=false;
 function pause(cb){var actif=false,t=0,fait=false;function bouge(){actif=true;clearTimeout(t);if(!fait)t=setTimeout(function(){if(actif&&!fait&&!document.hidden){fait=true;cb()}},8000)}['pointermove','keydown','scroll','touchstart'].forEach(function(ev){addEventListener(ev,bouge,{passive:true})})}
 /* dans AIME OS, l'orbe est celle du système : la page ne pose pas la sienne */
 var DANS_OS=window.parent!==window&&(function(){try{return!!parent.AIMEOS}catch(e){return false}})();
-function monterOrbe(o){if(orbeEl){orbeEl.remove();orbeEl=null}if(DANS_OS)return;
+/* la page porte elle-même la coque de l'OS (Page Zéro) : l'orbe du dock remplace le bouton d'orbe */
+function avecCoque(){return!!document.querySelector('.os-coque,script[src="/os/coque.js"]')}
+function monterOrbe(o){if(orbeEl){orbeEl.remove();orbeEl=null}if(DANS_OS||avecCoque())return;
  if(o.presence==='bouton'||o.presence==='les-deux'){var b=document.createElement('div');b.className='rg-orbe '+o.cote;b.style.setProperty('--rg-t',o.taille+'px');
   var pan=document.createElement('div'),inner=document.createElement('div'),idp='rg-pan-'+Math.random().toString(36).slice(2,7);pan.className='rg-pan';pan.id=idp;pan.hidden=true;pan.setAttribute('role','dialog');pan.setAttribute('aria-label','Suggestions');
   if(o.accueil){var p=document.createElement('p');p.textContent=o.accueil;inner.appendChild(p)}
@@ -196,7 +198,7 @@ function monterOrbe(o){if(orbeEl){orbeEl.remove();orbeEl=null}if(DANS_OS)return;
    if(window.AIMECompagnon)AIMECompagnon.demarrer({pointeur:o.compagnon.pointeur&&matchMedia('(pointer:fine)').matches,envie:o.compagnon.envie,hesitation:o.compagnon.hesitation,clic:o.compagnon.clic,commentaires:o.compagnon.commentaires})})}}
 
 /* ---------- appliquer une configuration ---------- */
-function appliquer(brut){try{cfg=R.config(brut||{})}catch(e){cfg=R.vide()}var p=cfg.pages[cle]||{appareils:[],textes:[],morphs:[]};
+function appliquer(brut){try{cfg=R.config(brut||{})}catch(e){cfg=R.vide()}setTimeout(pret,0);var p=cfg.pages[cle]||{appareils:[],textes:[],morphs:[]};
  if(!EDITION&&!APERCU)try{localStorage.setItem('aime-regie-morphs',JSON.stringify({on:cfg.transitions,pages:Object.keys(cfg.pages).reduce(function(o,k){if(cfg.pages[k].morphs&&cfg.pages[k].morphs.length)o[k]=cfg.pages[k].morphs;return o},{})}))}catch(e){}
  quand(function(){feuille();appliquerTextes(p.textes);monterAppareils(p.appareils);monterCarrousels();appliquerMorphs(p.morphs||[],cfg.transitions);monterOrbe(R.orbeDe(cfg,siteId))})}
 var vtStyle=null;
@@ -262,5 +264,8 @@ Promise.all([charger('/regie/donnees.js',function(){return!!window.AIMERegie}),c
  if(EDITION){appliquer(brouillon());quand(edition);return}
  var b=APERCU?brouillon():null;if(b&&!('realisations' in b)){publie().then(function(p){b.realisations=p&&p.realisations||[];b.carrousels=p&&p.carrousels||[];appliquer(b)});return}if(b){appliquer(b);return}
  publie().then(appliquer)});
+/* une réalisation seule, pour sa page projet : l'appareil ou le visuel, sans lien ni légende */
+var attentes=[];function pret(){var L=attentes;attentes=[];L.forEach(function(f){f()})}
+API.realisation=function(id,cb){function go(){var r=(cfg.realisations||[]).filter(function(x){return x.id===id})[0];if(!r)return cb(null);feuille();var e=oeuvre(Object.assign({},r,{lien:'',publie:true,slug:'',resume:''}));var lg=e.querySelector('.rg-legende');if(lg)lg.remove();cb(e)}if(cfg)go();else attentes.push(go)};
 API.recharger=function(){var b=APERCU?brouillon():null;if(b)appliquer(b);else publie().then(appliquer)};
 })();

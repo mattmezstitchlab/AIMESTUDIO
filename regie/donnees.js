@@ -66,7 +66,7 @@ function slug(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\
 function realisation(o){o=o||{};var pr=un(o.presentation,PRESENTATIONS,'macbook'),dev=appareil({type:pr==='visuel'?'iphone':pr,contenu:o.contenu,paysage:o.paysage});
  var titre=txt(o.titre,90)||'Sans titre',sl=typeof o.slug==='string'&&/^[a-z0-9][a-z0-9-]{1,59}$/.test(o.slug)?o.slug:(slug(titre)||'projet'),an=Math.round(Number(o.annee));
  return{id:idOk(o.id)?o.id:nouvelId('r'),slug:sl,titre:titre,client:txt(o.client,90),annee:an>=1990&&an<=2100?an:null,categorie:un(o.categorie,CATEGORIES,'site'),
-  resume:txt(o.resume,280),presentation:pr,paysage:pr!=='macbook'&&pr!=='visuel'&&o.paysage===true,contenu:dev.contenu,lien:cibleOk(o.lien)?o.lien:'',alt:txt(o.alt,240),publie:o.publie===true}}
+  resume:txt(o.resume,280),presentation:pr,paysage:pr!=='macbook'&&pr!=='visuel'&&o.paysage===true,contenu:dev.contenu,couverture:sourceOk(o.couverture)&&!/^site:/.test(o.couverture)?o.couverture:'',lien:cibleOk(o.lien)?o.lien:'',alt:txt(o.alt,240),publie:o.publie===true}}
 /* un carrousel : un titre, sa place (après un élément de la page), ses réalisations dans l'ordre */
 function carrousel(o,ids){o=o||{};var vus={},sel=typeof o.apres==='string'&&o.apres.length<=120&&/^[#.][A-Za-z][\w-]*$/.test(o.apres.trim())?o.apres.trim():'#meta';
  return{id:idOk(o.id)?o.id:nouvelId('c'),titre:txt(o.titre,80),page:cleDePage(typeof o.page==='string'&&cheminOk(o.page)?o.page:'/'),apres:sel,
