@@ -16,9 +16,9 @@
 <a class="evite" href="#contenu">Aller au contenu</a>
 <header class="tete"><div class="wrap">
  <a class="marque" href="#haut"><b>AIME<sup>®</sup></b><span>G44 LAB</span></a>
- <nav aria-label="Sections"><a href="#scenario">Scénario</a><a href="#graphe">Graphe</a><a href="#labos">Laboratoires</a><a href="#mesurer">Mesurer</a><a href="#verite">Méthode</a><a href="#moteurs">Moteurs</a></nav>
+ <nav aria-label="Sections"><a href="#scenario">Scénario</a><a href="#graphe">Graphe</a><a href="#labos">Laboratoires</a><a href="#kit">Kit pilote</a><a href="#verite">Méthode</a><a href="#moteurs">Moteurs</a></nav>
  <span class="fictif">Données fictives</span>
- <a class="cta-tete" href="#scenario">Explorer</a>
+ <button class="cta-tete" type="button" data-visite>Visite guidée</button>
 </div></header>
 
 <main id="contenu">
@@ -27,7 +27,7 @@
  <span class="k tag">Laboratoire des systèmes et des relations</span>
  <h1 class="t-xxl" id="h1"><span>Une date erronée.</span><span>Des opérations à reprendre.</span><span>Une chaîne à comprendre.</span></h1>
  <p class="sous">AIME rend visibles les dépendances administratives avant toute correction.</p>
- <div class="actions"><a class="btn" href="#scenario">Explorer le scénario</a><a class="btn sec" href="#moteurs">Voir les moteurs</a></div>
+ <div class="actions"><button class="btn" type="button" data-visite>Visite guidée · 7 min</button><a class="btn sec" href="#scenario">Explorer le scénario</a><a class="btn sec" href="#kit">Kit de pilote</a></div>
 </div>
  <div class="bande metal" aria-label="Démonstration interactive"><div class="wrap"><div class="ecran ecran-hero"><div class="ecran-barre" aria-hidden="true"><i></i><i></i><i></i><span>Dossier DOS-FICTIF-0001 · simulation</span></div>
  <div class="ligne" id="ligne">
@@ -164,6 +164,23 @@
  </div>
 </div></section>
 
+
+<!-- KIT DE PILOTE -->
+<section class="section" id="kit" aria-labelledby="t-kit"><div class="wrap">
+ <div class="section-tete"><span class="k">Kit de pilote · à faire chez vous</span><h2 class="t-xl" id="t-kit">Ne nous croyez pas. Mesurez.</h2>
+  <p class="sous">Le même dossier fictif, la même consigne, 6 à 10 volontaires désignés par un code. Chacun prépare la correction deux fois : avec vos outils habituels, puis avec le laboratoire, ou l'inverse. L'ordre alterne pour neutraliser l'apprentissage. Vous repartez avec vos chiffres, mesurés chez vous.</p></div>
+ <div class="kit">
+  <ol class="kit-etapes">
+   <li><b>Préparer</b><span>Un animateur, un observateur, un expert qui jugera les plans sans savoir quel parcours a été suivi. 45 minutes par participant.</span></li>
+   <li><b>Consigne</b><span id="kitConsigne"></span></li>
+   <li><b>Mesurer</b><span>L'observateur chronomètre et compte ici, pendant que le participant travaille. Les noms ne sont jamais saisis : seulement des codes.</span></li>
+   <li><b>Lire</b><span>Les écarts ne s'affichent qu'à partir de 3 participants mesurés dans les deux parcours. Exportez, puis analysez avec vos équipes.</span></li>
+  </ol>
+  <div class="ecran kit-app" id="kitApp" aria-live="polite"></div>
+ </div>
+ <p class="leg" style="margin-top:14px">Tout reste dans ce navigateur : rien n'est envoyé. Les mesures portent sur un cas fictif ; elles disent comment vos agents travaillent avec et sans le laboratoire, pas ce qui se passerait sur vos dossiers réels.</p>
+</div></section>
+
 <!-- 05 · VÉRITÉ -->
 <section class="section" id="verite" aria-labelledby="t-ver"><div class="wrap">
  <div class="section-tete"><span class="k">05 · Ce que nous savons. Ce que nous testons.</span><h2 class="t-xl" id="t-ver">Une animation n'est pas une preuve.</h2>
@@ -200,12 +217,12 @@
  <div class="marque-xl">AIME<sup>®</sup></div>
  <h2 class="t-l" id="t-fin">L'information ne suffit pas.<br>Il faut comprendre ce qui la relie.</h2>
  <p class="sous">Un laboratoire pour comprendre les procédures, simuler leurs dépendances et préparer des interventions mieux documentées.</p>
- <div class="actions"><a class="btn" href="#scenario">Explorer le scénario G44</a><a class="btn sec" href="#labos">Examiner les six laboratoires</a><a class="btn sec" href="#verite">Consulter la méthode</a><button class="btn saumon" type="button" id="dossierPdf">Télécharger le dossier de présentation</button></div>
+ <div class="actions"><button class="btn" type="button" data-visite>Revoir la visite guidée</button><a class="btn sec" href="#kit">Organiser un pilote</a><a class="btn sec" href="#scenario">Explorer le scénario G44</a><a class="btn sec" href="#labos">Examiner les six laboratoires</a><a class="btn sec" href="#verite">Consulter la méthode</a><button class="btn saumon" type="button" id="dossierPdf">Télécharger le dossier de présentation</button></div>
  <p class="leg" style="margin-top:26px">Comprendre avant d'agir. Relier avant de reconstruire. Prouver avant de promettre.</p>
 </div></section>
 </main>
 <footer class="pied"><div class="wrap"><span><b>AIME G44 LAB</b> — Démonstrateur indépendant, sans affiliation officielle à la MSA. Données fictives. Aucune opération administrative réelle.</span><span>AIME — Rendre visible ce qui relie.</span></div></footer>
 <div class="toast" id="toast" role="status"></div>
-<script src="/g44/js/dossier.js"></script><script src="/g44/js/moteur.js"></script><script src="/g44/js/acces.js"></script><script src="/g44/js/formation.js"></script><script src="/g44/js/page.js"></script>
+<script src="/g44/js/dossier.js"></script><script src="/g44/js/moteur.js"></script><script src="/g44/js/acces.js"></script><script src="/g44/js/formation.js"></script><script src="/g44/js/page.js"></script><script src="/g44/js/kit.js"></script><script src="/g44/js/kit-ui.js"></script><script src="/g44/js/visite.js"></script>
 </body>
 </html>

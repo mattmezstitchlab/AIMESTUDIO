@@ -106,3 +106,28 @@ test('formation : des explications, pas de note ; les pièges sont expliqués', 
   assert.ok(ok.etapes.every(e => e.statut === 'pertinente'));
   assert.deepEqual(ok.oublis, []);
 });
+
+test('kit de pilote : codes jamais des noms, ordre alterné, mesures validées, écarts seulement à partir de 3 paires, CSV sûr', () => {
+  const K = require('../g44/js/kit.js');
+  const s = K.nouvelleSession(6, 'Caisse pilote');
+  assert.deepEqual(s.participants.map(p => p.code), ['P01', 'P02', 'P03', 'P04', 'P05', 'P06']);
+  assert.equal(s.participants.filter(p => p.ordre[0] === 'ref').length, 3, 'la moitié commence par la référence');
+  assert.equal(K.saisir(s, 'P01', 'ref', 'difficulte', 9), null, 'une échelle 1 à 7 refuse 9');
+  assert.equal(K.saisir(s, 'P01', 'ref', 'total', '12,5'), 12.5);
+  assert.throws(() => K.saisir(s, 'Jean Dupont', 'ref', 'total', 3), /inconnu/);
+  K.saisir(s, 'P01', 'aug', 'total', 8);
+  let r = K.resultats(s).find(x => x.id === 'total');
+  assert.equal(r.paires, 1); assert.match(r.lecture, /Pas assez/, 'aucune conclusion sur 1 paire');
+  [['P02', 10, 7], ['P03', 14, 9]].forEach(([c, a, b]) => { K.saisir(s, c, 'ref', 'total', a); K.saisir(s, c, 'aug', 'total', b); });
+  r = K.resultats(s).find(x => x.id === 'total');
+  assert.equal(r.paires, 3); assert.equal(r.ecart.mediane, -4.5); assert.match(r.lecture, /−|-4,5/);
+  ['P01', 'P02', 'P03'].forEach(c => { K.saisir(s, c, 'ref', 'complet', 'non'); K.saisir(s, c, 'aug', 'complet', 'oui'); });
+  assert.match(K.resultats(s).find(x => x.id === 'complet').lecture, /0 % en référence, 100 % en augmenté/);
+  const s2 = K.nouvelleSession(2, '=HYPERLINK("x")'); const c = K.csv(s2);
+  assert.ok(!/;=HYPERLINK/.test(c) && c.includes("'=HYPERLINK"), 'une formule n\'est jamais exécutée par le tableur');
+  const relu = K.lire(JSON.stringify(s)); assert.deepEqual(K.resultats(relu), K.resultats(s), 'une session exportée se relit à l\'identique');
+  const nom = JSON.parse(JSON.stringify(s)); nom.participants[0].code = 'Marie Martin';
+  assert.throws(() => K.lire(nom), /jamais un nom/);
+  const html = require('fs').readFileSync('g44/index.html', 'utf8');
+  assert.match(html, /id="kit"/); assert.match(html, /data-visite/); assert.match(html, /rien n'est envoyé/);
+});
