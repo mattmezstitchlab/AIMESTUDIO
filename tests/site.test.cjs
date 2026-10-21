@@ -40,7 +40,7 @@ test('tous les blocs se dessinent, vides ou remplis, et l\'édition montre quoi 
  const s=complet(),vide=S.document(s,{presentation:P,edition:true}).html;assert.ok((vide.match(/class="s-vide"/g)||[]).length>=10);
  const pub=S.document(s,{presentation:P}).html;assert.ok(!pub.includes('class="s-vide"'),'rien à remplir dans l\'export');
  Object.keys(S.LISTES).forEach(k=>{const o={};S.LISTES[k].forEach(c=>o[c]=c==='src'?'https://exemple.fr/a.jpg':c==='url'||c==='lien'?'https://exemple.fr':'valeur '+c);s.listes[k].push(o)});Object.assign(s.infos,{titre:'T',date:'2027-01-01',lieu:'L',email:'a@b.fr',tel:'01 02',url:'https://x.fr',bouton:'Go'});
- const plein=S.document(s,{presentation:P,edition:true}).html;assert.ok((plein.match(/class="s-vide"/g)||[]).length<=4,'presque tout est rempli');assert.ok(S.contraste('#000000','#FFFFFF')>20)});
+ const plein=S.document(s,{presentation:P,edition:true}).html;assert.ok((plein.match(/class="s-vide"/g)||[]).length<=5,'presque tout est rempli (restent : texte, citation, bouton, vidéo, photos partagées, qui ont leurs propres champs)');assert.ok(S.contraste('#000000','#FFFFFF')>20)});
 test('export : une page HTML autonome par page, ou une seule page avec ancres',()=>{
  const s=S.appliquerModele(S.vide(),M.find(m=>m.id==='mariage'));const f=S.exporter(s,{presentation:P});assert.deepEqual(f.map(x=>x.chemin),['index.html','jour-j.html','pratique.html','reponse.html']);
  assert.ok(f[0].contenu.startsWith('<!doctype html>')&&f[0].contenu.includes('href="jour-j.html"'));const u=S.exporter(s,{presentation:P,unePage:true});assert.equal(u.length,1);assert.ok(u[0].contenu.includes('href="#jour-j"'))});
@@ -54,7 +54,7 @@ test('grille libre (reprise du mini-site de la landing) : formes selon la largeu
  const d=s.pages[0].sections.find(x=>x.type==='date');d.w=6;h=S.document(s,{presentation:P}).html;assert.ok(h.includes('inf-mois'),'à 6 colonnes, la date devient un calendrier');
  const l=s.pages[0].sections,g=l.find(x=>x.type==='gens'),e=l.find(x=>x.type==='endroit');g.x=e.x;g.y=e.y;S.tasser(l,g.id);
  const occ={};for(const x of l){for(let a=x.y;a<x.y+S.hauteur(x.type,x.w);a++)for(let b=x.x;b<x.x+x.w;b++){assert.ok(!occ[a+':'+b],'chevauchement en '+a+':'+b);occ[a+':'+b]=1}}
- assert.deepEqual(S.DEPS.date.slice().sort(),['compte','date','hero']);const t=S.vide();S.ajouterSection(t,'index','texte');S.ajouterSection(t,'index','compte');S.versGrille(t.pages[0]);assert.ok(t.pages[0].sections.every(x=>x.x!=null&&x.w));S.versSections(t.pages[0]);assert.equal(t.pages[0].mode,'sections')});
+ assert.deepEqual(S.DEPS.date.slice().sort(),['bienvenue','billet','compte','date','fairepart','hero','monogramme']);const t=S.vide();S.ajouterSection(t,'index','texte');S.ajouterSection(t,'index','compte');S.versGrille(t.pages[0]);assert.ok(t.pages[0].sections.every(x=>x.x!=null&&x.w));S.versSections(t.pages[0]);assert.equal(t.pages[0].mode,'sections')});
 test('régénérer : le mini-site de la landing et un projet du Studio, sans perte, et ce qui manque est dit',()=>{
  const j={preset:'maries',P:{title:'A & B',sub:'S',date:'14 juin 2027',iso:'',place:'Domaine',text:'Histoire',quote:'Q',cta:'Répondre',url:'',prog:[['15:00','Moment','abri']],people:[['A','rôle']],photos:['data:image/jpeg;base64,AAAA','javascript:alert(1)'],rain:true},
   blocks:[{k:'hero',x:0,y:0,w:12},{k:'i-date',x:0,y:4,w:4,hue:90},{k:'texte',x:4,y:4,w:8,serif:true,br:0},{k:'radial',x:0,y:8,w:4},{k:'i-gens',x:0,y:4,w:4}]};
@@ -108,3 +108,13 @@ test('le « + » du générateur (comme sur la landing) : chaque bloc du moteur 
  assert.deepEqual([...tous].sort(),Object.keys(S.BLOCS).sort(),'aucun bloc oublié, aucun bloc inventé');assert.equal(new Set(tous).size,tous.length,'aucun doublon');
  for(const k of tous)assert.ok(new RegExp('[{,]'+k+':\'<').test(ed),'icône pour '+k);
  const html=require('fs').readFileSync(path.join(__dirname,'..','sites/index.html'),'utf8');assert.match(html,/id="plus"[^>]*aria-controls="catalogue"/);assert.match(html,/id="catalogue"[^>]*role="dialog"/)});
+test('supports du Studio devenus blocs web : ils lisent les infos écrites une fois, échappent tout, n\'inventent rien',()=>{
+ const s=S.vide('vierge');Object.assign(s.infos,{titre:'Alice & Bruno',date:'2027-06-12',heure:'15:00',lieu:'Le Moulin',ville:'Nantes',email:'a@b.fr'});
+ ['fairepart','monogramme','bienvenue','billet','plantable','livreor','allergenes','setlist','facile','signaletique','credits','carte','merci','sanstel'].forEach(t=>S.ajouterSection(s,'index',t));
+ s.listes.tables=[{table:'Table 1',noms:'Ana, Ben ; Cléo'}];s.listes.messages=[{nom:'Zoé',message:'<script>x</script>Bravo'}];s.listes.allergenes=[{plat:'Tarte',allergenes:'gluten, œuf'},{plat:'Sorbet',allergenes:''}];
+ s.listes.setlist=[{titre:'Ouverture',detail:'4 min'}];s.listes.consignes=[{texte:'Venez à 15 h.'}];s.listes.orientation=[{libelle:'Vestiaire',direction:'Gauche'}];s.listes.credits=[{role:'Photo',nom:'Studio Lin',url:'javascript:alert(1)'}];
+ const h=S.document(s,{presentation:P}).html;
+ assert.ok(h.includes('A &amp; B'),'le monogramme reprend les initiales du titre');assert.ok((h.match(/Alice &amp; Bruno/g)||[]).length>=3,'le titre écrit une fois sert au faire-part, à la bienvenue, au billet');
+ assert.ok(h.includes('<li>Cléo</li>'),'plan de table : les noms séparés deviennent une liste');assert.ok(!h.includes('<script>x'),'tout est échappé');assert.ok(h.includes('Aucun déclaré'),'un plat sans allergène déclaré le dit, sans rien inventer');
+ assert.ok(h.includes('scope="row"'),'tableau des allergènes accessible');assert.ok(h.includes('aria-label="Gauche">←'),'orientation : la flèche suit la direction écrite');assert.ok(!/href="javascript/i.test(h),'lien dangereux refusé');
+ for(const t of ['fairepart','plantable','livreor','allergenes','setlist','facile'])assert.ok(S.BLOCS[t]&&S.LARGEUR[t]&&S.hauteur(t,S.LARGEUR[t])>0,t+' placé dans la grille')});
