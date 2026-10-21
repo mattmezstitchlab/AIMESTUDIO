@@ -181,3 +181,41 @@ Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / F�
   - **Informer** (avec Tarifs, Chiffres et Chronologie) : Allergènes (un vrai tableau), Setlist, Facile à lire.
 - Ils sont tous dans le « + », en familles de six. Ils suivent l'ambiance du site et se placent dans la grille libre, et ils sont échappés et testés comme les autres blocs.
 - Écartés pour l'instant, faute de sens sur le web : enveloppe, bracelet, étiquette de tireuse, DPE, set de table, marque-place, papier à en-tête, etc.
+
+## Design system « LE MONDE AIME » (21/10/2026)
+- L'interface du générateur porte maintenant le design system du dépôt `lemondeaimedesignsystem` (révision 3634a31). La preview Vercel de ce dépôt est protégée par une connexion, donc la source utilisée est le dépôt lui-même.
+- Ce qui est repris :
+  - le fond blanc et `#F7F8F8`, l'encre `#161616`, le texte secondaire `#62666B` ;
+  - les accents pétrole, turquoise et vert d'eau, et le focus `#127E83` ;
+  - DM Sans pour le texte et Manrope pour les titres ;
+  - les boutons principaux noirs en pilule, les puces grises, la sélection turquoise ;
+  - le gradient signature, réservé à l'orbe du « + ».
+- Le fichier est `sites/theme-monde-aime.css`, limité à `body.gen`, comme sa documentation le demande (« ne pas importer la feuille entière »). Les sites générés gardent leurs ambiances, et le panneau Explorer reste celui de tout le site.
+
+## Bibliothèque de visuels (21/10/2026)
+- `sites/bibliotheque/` contient 134 images en WebP (1280 px au plus, avec une vignette de 360 px), soit 14,7 Mo. Elles sont décrites dans `bibliotheque.json` : famille, texte alternatif, dépôt et chemin d'origine.
+- Familles : cérémonie et couples, réception et tables, lieux, détails et objets, fonds et textures, scène et prestataires.
+- Origine : les dépôts MINISITEWEDDING, WEDDINGCITY, WEDMAG, AIMELEMONDEAIME et byaime. La provenance est gardée dans le manifeste, pas affichée.
+- Écartés, et vérifiés par un test :
+  - les photos de prestataires réels (MONDEMARIAGE) ;
+  - les portraits associés à des noms (wedding-world-grid) ;
+  - les portraits de banque d'images sans licence (`AIMESTUDIO/sup/people`) ;
+  - les photos personnelles ;
+  - les visuels qui portent des noms ou des marques ;
+  - les démonstrations de produit (ticketaime).
+- Dans le « + », l'onglet **Bibliothèque** permet de choisir une famille, puis où poser l'image : un bloc Image, dans la galerie, ou en fond de l'en-tête (première photo de la galerie).
+- Une image de la bibliothèque s'écrit `biblio:<id>` dans le site, et le moteur la résout selon le contexte :
+  - dans l'éditeur, `/sites/bibliotheque/` ;
+  - dans le `.zip` à publier, `medias/`, avec **seulement** les images visibles dans les pages publiques ;
+  - pour une page unique ou un onglet, l'adresse complète du site.
+- `scripts/bibliotheque-construire.cjs` reconstruit le dossier à partir d'une sélection.
+- Vidéos : aucune dans les dépôts examinés ; le bloc Vidéo reste un lien.
+
+## Tous les autres supports du Studio (21/10/2026)
+- Les 92 supports du Studio, sauf le site web lui-même (4 formats), sont dans l'onglet **Supports** du « + », rangés en 10 familles : Impression, Papeterie, Réseaux, Web, Événement, Documents, Série, Badges, Signalétique, Immobilier.
+- 20 supports ont déjà leur bloc : faire-part, monogramme, menu, programme, plan de table, livre d'or, allergènes… Leur tuile pose directement ce bloc.
+- Les 72 autres passent par un bloc **Support**, avec une variante par format. Chaque format garde ses proportions et prend un gabarit web qui lit les infos du site : affiche, carte, document, bandeau, écran ou rond.
+  - Les devis, factures et bons de commande lisent les tarifs.
+  - L'émargement, les convocations et les attestations lisent les personnes.
+  - Les programmes et les fiches lisent le programme ; l'immobilier lit les chiffres.
+- C'est une adaptation au web, pas une copie à l'identique de la mise en page imprimée du Studio. Pour imprimer, le Studio reste l'outil.
