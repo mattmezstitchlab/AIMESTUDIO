@@ -131,3 +131,8 @@ test('kit de pilote : codes jamais des noms, ordre alterné, mesures validées, 
   const html = require('fs').readFileSync('g44/index.html', 'utf8');
   assert.match(html, /id="kit"/); assert.match(html, /data-visite/); assert.match(html, /rien n'est envoyé/);
 });
+
+test('la page défile : le cadre arrondi (overflow:clip sur le corps) ne bloque jamais la fenêtre', () => {
+  const css = require('fs').readFileSync('g44/lab.css', 'utf8');
+  if (/body\{[^}]*overflow:\s*clip/.test(css)) assert.match(css, /html\{[^}]*overflow-y:\s*auto/, 'html doit porter son propre défilement');
+});

@@ -151,3 +151,6 @@ test('l\'export public embarque aussi les visuels associés qu\'il affiche',()=>
  const A=JSON.parse(require('fs').readFileSync(path.join(__dirname,'..','sites/bibliotheque/bibliotheque.json'),'utf8')).associations;
  const s=S.appliquerModele(S.vide(),M.find(m=>m.id==='mariage'));s.listes.galerie=[];const F=S.exporterPublic(s,{presentation:P,visuels:A,medias:'medias/'});
  assert.ok(F.some(f=>S.mediasDe(f.contenu).length>0),'les pages exportées référencent leurs visuels dans medias/')});
+test('générateur : le panneau Explorer (sombre) garde une encre claire malgré le thème clair',()=>{
+ const css=require('fs').readFileSync(path.join(__dirname,'..','sites/theme-monde-aime.css'),'utf8');
+ assert.match(css,/body\.gen \.amx[^{]*\{[^}]*--ink:#EDEDF0/)});
