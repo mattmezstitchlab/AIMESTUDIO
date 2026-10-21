@@ -2,7 +2,7 @@
    AIMETimbre.creer({id, nom, role, image, mini, legende}) → <button class="timbre"> (ou <span> si mini) */
 (function(){'use strict';if(window.AIMETimbre)return;
 var ROLES={owner:'Propriétaire',editor:'Coordination',contributor:'Contributeur',viewer:'Lecture seule',guest:'Invité'};
-var TEINTES=[['#22D3EE','#7C5CFF','#3B2B8F'],['#FB7185','#F59E0B','#9A3412'],['#86EFAC','#22D3EE','#0F5964'],['#F59E0B','#FB7185','#7C2D52'],['#7C5CFF','#FB7185','#3C1F5C'],['#E8E2D0','#C9A96E','#5B4A2B'],['#22D3EE','#86EFAC','#145233']];
+var TEINTES=[['#22D3EE','#7C5CFF','#3B2B8F'],['#FB7185','#F59E0B','#9A3412'],['#86EFAC','#22D3EE','#0F5964'],['#F59E0B','#FB7185','#7C2D52'],['#7C5CFF','#FB7185','#3C1F5C'],['#F59E0B','#7C5CFF','#22D3EE'],['#22D3EE','#86EFAC','#145233']];
 function hache(s){var h=2166136261;s=String(s||'');for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
 function initiales(n){var m=String(n||'?').replace(/\([^)]*\)/g,' ').trim().split(/[^A-Za-zÀ-ÿ0-9]+/).filter(Boolean);return((m[0]||'?').charAt(0)+(m[1]?m[1].charAt(0):'')).toUpperCase()}
 function imageOk(v){return typeof v==='string'&&v.length<=160000&&/^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/]+=*$/.test(v)}
