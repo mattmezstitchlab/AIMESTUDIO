@@ -92,3 +92,16 @@ create table if not exists audit (
   action      text not null,
   detail      jsonb
 );
+
+-- AIME Live (démonstration) : le journal du jour J partagé entre appareils. Voir db/migrations/2026-10-21-live-journal.sql.
+-- Seules les actions acceptées par les règles y sont écrites ; l'identité vient d'un laissez-passer signé par le serveur.
+create table if not exists live_journal (
+  n        bigserial primary key,
+  espace   text not null check (espace in ('mariage','seminaire')),
+  qui      text not null,
+  action   text not null check (action in ('retarder','fait','planB','annoncer')),
+  p        jsonb not null,
+  t        int not null default 0,
+  cree_le  timestamptz not null default now()
+);
+create index if not exists live_journal_espace on live_journal (espace, n);

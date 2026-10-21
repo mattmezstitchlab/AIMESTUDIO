@@ -19,14 +19,14 @@ Promise.all([fetch('/vitrine/donnees/'+U+'.json').then(function(r){return r.json
  var gens=(D.personnes||[]).filter(function(p){return A.membres[p.id]});
  qui=SALLE?ECRAN:(gens.some(function(p){return p.id===Q.get('qui')})?Q.get('qui'):((gens.filter(function(p){return A.membres[p.id]==='editor'})[0]||gens[0]||{}).id));
  $('qui').innerHTML=gens.map(function(p){return'<option value="'+esc(p.id)+'"'+(p.id===qui?' selected':'')+'>'+esc(p.nom)+' · '+esc(p.fonction||'')+'</option>'}).join('');
- $('qui').onchange=function(){qui=this.value;var u=new URL(location.href);u.searchParams.set('qui',qui);history.replaceState(null,'',u);canal.presence(qui,'moi');afficher()};
+ $('qui').onchange=function(){qui=this.value;var u=new URL(location.href);u.searchParams.set('qui',qui);history.replaceState(null,'',u);canal.presence(qui,'moi');canal.identite(qui);afficher()};
  $('salle').href='/live/?u='+U+'&mode=salle';
  $('autre').onclick=function(){var autre=gens.filter(function(p){return p.id!==qui&&A.membres[p.id]!==A.membres[qui]})[0]||gens[0];window.open('/live/?u='+U+'&qui='+encodeURIComponent(autre.id),'_blank','noopener')};
  /* horloge : de 30 min avant le premier moment à la fin du dernier */
  var fin=Math.max.apply(null,B.moments.map(function(m){return m.fin})),deb=B.debutJour-30;$('hCurseur').min=deb;$('hCurseur').max=fin;
- canal=C.ouvrir(U,{journal:function(){rejouer();afficher()},presence:presence,horloge:function(){afficher()}});
+ canal=C.ouvrir(U,{journal:function(){rejouer();afficher()},presence:presence,horloge:function(){afficher()},mode:function(m){var e=$('mode');e.textContent=m==='appareils'?'Entre appareils':'Dans ce navigateur';e.className='mode '+m;e.title=m==='appareils'?'Chaque geste est revérifié par le serveur puis reçu par tous les appareils.':'Le direct entre appareils n\'est pas ouvert ici : les onglets de ce navigateur se synchronisent entre eux.';$('recommencer').hidden=m==='appareils';rejouer();afficher(true)}});
  if(!canal.horloge())canal.regler({base:B.moments.filter(function(m){return m.public})[0].debut+20,depuis:Date.now(),vitesse:0});
- canal.presence(qui,SALLE?'salle':'moi');rejouer();afficher();setInterval(afficher,1000);
+ canal.presence(qui,SALLE?'salle':'moi');canal.identite(qui);rejouer();afficher();setInterval(afficher,1000);
 }).catch(function(){$('mtn').textContent='Impossible de charger cet espace.'});
 
 function maintenantMin(){var h=canal.horloge();if(!h)return B.debutJour;var t=h.base+(h.vitesse?(Date.now()-h.depuis)/60000*h.vitesse:0),max=+$('hCurseur').max;if(t>max){canal.regler({base:max,depuis:Date.now(),vitesse:0});t=max}return t}
@@ -34,8 +34,10 @@ function rejouer(){var r=L.rejouer(B,A,canal.journal(),P);etat=r.etat;trace=r.tr
 $('hCurseur').oninput=function(){var h=canal.horloge()||{};canal.regler({base:+this.value,depuis:Date.now(),vitesse:h.vitesse||0})};
 document.querySelector('.horloge .seg').onclick=function(e){var b=e.target.closest('[data-v]');if(!b)return;canal.regler({base:maintenantMin(),depuis:Date.now(),vitesse:+b.dataset.v})};
 
-function agir(action,p){var a={qui:qui,action:action,p:p,t:Math.round(maintenantMin())};var av=trace.length;canal.envoyer(a);rejouer();afficher(true);
- var r=trace[trace.length-1];if(trace.length>av&&r){if(r.ok)toast(action==='retarder'&&r.touches.length>1?r.touches.length+' moments décalés : tout l\'espace le voit.':'Fait : tout l\'espace le voit.');else toast('Refusé : '+r.raison,true)}}
+function agir(action,p){var a={qui:qui,action:action,p:p,t:Math.round(maintenantMin())},av=trace.length;canal.envoyer(a).then(function(rep){rejouer();afficher(true);
+ if(rep&&rep.serveur){if(rep.ok)toast(rep.touches&&rep.touches.length>1?rep.touches.length+' moments décalés : tous les appareils le voient.':'Fait : tous les appareils le voient.');else toast('Refusé : '+rep.raison,true);return}
+ if(rep&&rep.ok===false)return toast(rep.raison,true);
+ var r=trace[trace.length-1];if(trace.length>av&&r){if(r.ok)toast(action==='retarder'&&r.touches.length>1?r.touches.length+' moments décalés : tout l\'espace le voit.':'Fait : tout l\'espace le voit.');else toast('Refusé : '+r.raison,true)}})}
 
 var dernier='';
 function afficher(force){if(!etat)return;var now=maintenantMin(),v=L.vue(etat,A,qui,Math.round(now)%1440,P),h=canal.horloge()||{};

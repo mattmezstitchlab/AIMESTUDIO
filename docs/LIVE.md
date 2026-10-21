@@ -10,10 +10,16 @@
 - Chaque personne ne voit que ce que les règles lui ouvrent : moments publics pour les invités, consignes et annonces d'équipe pour l'équipe, gestes uniquement là où `event.edit` est accordé.
 - **Écran de salle** (`mode=salle`) : un invité de l'espace, en grand, sans aucun contrôle.
 
-## Ce que fait le canal aujourd'hui, et ce qu'il ne fait pas
-- `live/canal.js` partage le journal, l'horloge de démonstration et la présence **entre les onglets d'un même navigateur** (localStorage + BroadcastChannel).
-- **Entre deux appareils, il faut un serveur.** Ce n'est pas simulé. Proposition, à valider avant tout changement de base :
-  1. une table `live_journal (espace, n, qui, action, p, t)` dans Neon, en ajout seul ;
-  2. `POST /api/live/act` : l'identité vient de la session (Better Auth), l'action est revérifiée avec les mêmes règles avant d'être inscrite ;
-  3. `GET /api/live/journal?depuis=n` (sondage court ou flux SSE) : chaque appareil reçoit les nouvelles lignes et rejoue.
-- L'horloge est simulée (l'événement n'a pas eu lieu) ; le jour J, elle suivra l'heure réelle.
+## Les deux transports
+- **Entre appareils** (badge « Entre appareils ») : `/api/live/passe`, `/api/live/act`, `/api/live/journal`.
+  - Identité : un laissez-passer signé par le serveur (démonstration, en attendant les comptes Better Auth). Il ne contient pas le rôle : le rôle est relu dans `vitrine/acces` à chaque action.
+  - `act` rejoue tout le journal de la base puis l'action reçue avec les règles ; refusée → 403, **rien n'est écrit**. Acceptée → une ligne ajoutée (jamais modifiée, jamais effacée).
+  - `journal` renvoie les lignes après `depuis`, sans les annonces d'équipe pour qui n'est pas de l'équipe. Chaque appareil interroge toutes les 2 s et rejoue.
+  - Fermé par défaut : sans `DATABASE_URL` ou sans la table → 503 et l'écran repasse « Dans ce navigateur » ; en production → 404.
+- **Dans ce navigateur** (repli) : localStorage + BroadcastChannel, comme avant.
+- L'horloge de démonstration et la présence restent propres à chaque navigateur.
+
+## Ouvrir le direct entre appareils (à faire par vous, sur la base de preview d'abord)
+1. Exécuter `db/migrations/2026-10-21-live-journal.sql` dans la console SQL Neon de la base **de preview** (ajout d'une table, rien d'autre).
+2. Facultatif : `LIVE_DEMO_SECRET` (chaîne aléatoire) dans les variables Preview de Vercel ; à défaut, une clé dérivée du commit est utilisée.
+3. Redéployer la preview : le badge passe à « Entre appareils ».

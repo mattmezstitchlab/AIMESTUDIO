@@ -66,6 +66,6 @@ test('live · le séminaire fonctionne avec le même modèle (intervenant sur so
 test('live · page : registre, échappement, canal limité au navigateur et dit comme tel', () => {
   const j = fs.readFileSync('live/live.js', 'utf8'), c = fs.readFileSync('live/canal.js', 'utf8');
   assert.match(j, /function esc\(/); assert.equal((j.match(/n\.texte/g) || []).length, (j.match(/esc\(n\.texte\)/g) || []).length, 'le texte d\'une annonce est toujours échappé');
-  assert.match(c, /BroadcastChannel/); assert.match(c, /il faut un serveur/);
+  assert.match(c, /BroadcastChannel/); assert.match(c, /\/api\/live\/act/); assert.match(c, /Dans ce navigateur|ce navigateur/);
   assert.ok(require('../nav/registre.js').ENTREES.some(e => e.id === 'live' && e.href === '/live/' && e.statut === 'demonstration'));
 });
