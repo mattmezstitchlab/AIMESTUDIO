@@ -17,13 +17,13 @@ function appel(h, body, method) {
 const pp = async (espace, qui) => (await appel(passe, { espace, qui })).body.passe;
 beforeEach(() => { lignes = []; C._base(fausseBase); C._reinitialiser(); delete process.env.VERCEL_ENV; });
 
-test('live serveur · fermé sans base : 503 sans détail, et 404 en production', async () => {
+test('live serveur · fermé sans base : 503 sans détail, en production comme ailleurs', async () => {
   C._base(null); const old = process.env.DATABASE_URL; delete process.env.DATABASE_URL;
   const p = await pp('mariage', 'u-camille'); const r = await appel(act, { passe: p, action: 'fait', p: { moment: 'diner' } });
   assert.equal(r.code, 503); assert.doesNotMatch(JSON.stringify(r.body), /DATABASE|neon|postgres/i);
   if (old) process.env.DATABASE_URL = old;
-  process.env.VERCEL_ENV = 'production'; assert.equal((await appel(passe, { espace: 'mariage', qui: 'u-camille' })).code, 404);
-  assert.equal((await appel(journal, {}, 'GET')).code, 404); delete process.env.VERCEL_ENV;
+  process.env.VERCEL_ENV = 'production'; assert.equal((await appel(passe, { espace: 'mariage', qui: 'u-camille' })).code, 503);
+  delete process.env.VERCEL_ENV;
   assert.equal((await appel(journal, {}, 'GET')).code, 405);
 });
 
@@ -66,4 +66,19 @@ test('live serveur · les espaces sont étanches et la base n\'est modifiée qu\
   const fs = require('fs'), src = ['api/live/act.js', 'api/live/journal.js', 'api/live/passe.js', 'api/_live/core.js'].map(f => fs.readFileSync(f, 'utf8')).join('\n');
   assert.doesNotMatch(src, /\b(update|delete|drop|truncate|alter)\s/i); assert.doesNotMatch(src, /process\.env\.DATABASE_URL[^)]*json/);
   assert.match(fs.readFileSync('db/migrations/2026-10-21-live-journal.sql', 'utf8'), /create table if not exists live_journal/);
+});
+
+test('live serveur · en production : démonstrations dans le navigateur, et jamais de secret devinable', async () => {
+  const sauve = { a: process.env.BETTER_AUTH_SECRET, l: process.env.LIVE_DEMO_SECRET, s: process.env.SV_DEMO_SECRET };
+  delete process.env.LIVE_DEMO_SECRET; delete process.env.SV_DEMO_SECRET; delete process.env.BETTER_AUTH_SECRET;
+  const p = await pp('mariage', 'u-camille'); assert.ok(p, 'hors production, la démonstration passe par le serveur');
+  process.env.VERCEL_ENV = 'production';
+  assert.equal((await appel(passe, { espace: 'mariage', qui: 'u-camille' })).code, 503, 'pas de journal public partagé en production');
+  assert.equal(C.lirePasse(p), null, 'un ancien laissez-passer de démonstration est refusé');
+  assert.equal(C.signer({ espace: '00000000-0000-4000-8000-000000000000', qui: 'x', exp: Date.now() + 1000 }), null, 'sans secret, rien n\'est signé en production');
+  process.env.BETTER_AUTH_SECRET = 'y'.repeat(40);
+  const t = C.signer({ espace: '00000000-0000-4000-8000-000000000000', qui: 'x', exp: Date.now() + 1000 });
+  assert.ok(t && C.lirePasse(t), 'un espace réel est signé avec le secret du serveur');
+  delete process.env.VERCEL_ENV; delete process.env.BETTER_AUTH_SECRET;
+  if (sauve.a) process.env.BETTER_AUTH_SECRET = sauve.a; if (sauve.l) process.env.LIVE_DEMO_SECRET = sauve.l; if (sauve.s) process.env.SV_DEMO_SECRET = sauve.s;
 });
