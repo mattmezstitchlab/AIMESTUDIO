@@ -46,8 +46,11 @@ function adresseApp(href){href=String(href||'/');if(!/^\/(?!\/)/.test(href))retu
 /* ce qui est gardé entre deux visites : uniquement des adresses internes et des nombres */
 function etat(o){o=o||{};var f=(Array.isArray(o.fenetres)?o.fenetres:[]).slice(0,10).map(function(w){w=w||{};if(typeof w.app!=='string'||!/^[a-z0-9-]{2,40}$/.test(w.app))return null;
   var n=function(v,d){v=Number(v);return isFinite(v)?Math.round(v):d};return{app:w.app,href:adresseApp(w.href),x:n(w.x,40),y:n(w.y,40),l:n(w.l,900),h:n(w.h,600),reduite:w.reduite===true,agrandie:w.agrandie===true}}).filter(Boolean);
- var ep=Array.isArray(o.epingles)?o.epingles.filter(function(x){return typeof x==='string'&&/^[a-z0-9-]{2,40}$/.test(x)}).slice(0,16):null;return{version:1,fenetres:f,epingles:ep}}
+ var orbe=['discrete','attentive','active'].indexOf(o.orbe)>=0?o.orbe:null;
+ var ep=Array.isArray(o.epingles)?o.epingles.filter(function(x){return typeof x==='string'&&/^[a-z0-9-]{2,40}$/.test(x)}).slice(0,16):null;return{version:1,fenetres:f,epingles:ep,orbe:orbe}}
+/* l'autonomie de l'orbe : le choix du visiteur l'emporte sur celui du site ; sans choix, à la demande */
+function autonomie(site,visiteur){var ok=['discrete','attentive','active'];return ok.indexOf(visiteur)>=0?visiteur:ok.indexOf(site)>=0?site:'discrete'}
 
 function salutation(h){return h<5?'Bonne nuit':h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
-return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,adresseApp:adresseApp,etat:etat,sigle:sigle,salutation:salutation};
+return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,autonomie:autonomie,adresseApp:adresseApp,etat:etat,sigle:sigle,salutation:salutation};
 });

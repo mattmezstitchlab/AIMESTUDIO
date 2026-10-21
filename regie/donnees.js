@@ -44,13 +44,16 @@ function appareil(a){a=a||{};var t=un(a.type,APPAREILS,'iphone'),c=a.contenu||{}
 function texte(r){r=r||{};var sel=typeof r.sel==='string'?r.sel.trim().slice(0,300):'';if(!sel||/[<>{}]/.test(sel))return null;return{sel:sel,texte:txt(r.texte,2000),avant:txt(r.avant,2000)}}
 
 /* ---------- l'orbe, par site ---------- */
+/* trois niveaux d'autonomie : à la demande seulement ; propose aux pauses ; ouvre ses suggestions d'elle-même aux pauses.
+   Jamais d'action irréversible sans confirmation, quel que soit le niveau. */
+var AUTONOMIES={discrete:'À la demande',attentive:'Propose aux pauses',active:'S\'ouvre d\'elle-même aux pauses'};
 var PRESENCES={aucune:'Absente',bouton:'Bouton d\'orbe et ses suggestions',compagnon:'Compagnon (commente et propose)','les-deux':'Les deux'};
 var OPTIONS_COMPAGNON={commentaires:'Commenter au survol',clic:'Menu au clic sur un contenu',envie:'Flèche vers ce que l\'orbe veut essayer',hesitation:'Proposer de réfléchir après 3 s d\'hésitation',pointeur:'L\'orbe suit le pointeur'};
 function orbe(o){o=o||{};var c=o.compagnon||{},cc={};Object.keys(OPTIONS_COMPAGNON).forEach(function(k){cc[k]=c[k]===true});
  var s=Array.isArray(o.suggestions)?o.suggestions:[];
- return{presence:un(o.presence,PRESENCES,'aucune'),cote:o.cote==='gauche'?'gauche':'droite',taille:Math.round(nb(o.taille,36,96,56)),
+ return{presence:un(o.presence,PRESENCES,'aucune'),autonomie:un(o.autonomie,AUTONOMIES,'discrete'),cote:o.cote==='gauche'?'gauche':'droite',taille:Math.round(nb(o.taille,36,96,56)),
   accueil:txt(o.accueil,240),compagnon:cc,
-  suggestions:s.map(function(x){x=x||{};var l=txt(x.libelle,60).trim();return l&&cibleOk(x.cible)?{libelle:l,cible:x.cible}:null}).filter(Boolean).slice(0,6)}}
+  suggestions:s.map(function(x){x=x||{};var l=txt(x.libelle,60).trim();return l&&cibleOk(x.cible)?{libelle:l,cible:x.cible,pourquoi:txt(x.pourquoi,160).trim()}:null}).filter(Boolean).slice(0,6)}}
 
 /* ---------- la configuration complète ---------- */
 function vide(){return{format:'aime-regie',version:1,maj:null,pages:{},orbe:{},medias:{}}}
@@ -78,6 +81,7 @@ function orbeDe(cfg,siteId){return(cfg.orbe&&(cfg.orbe[siteId]||cfg.orbe['*']))|
 
 /* ================= comptabilité : devis, factures, avoirs ================= */
 var TYPES_DOC={devis:{nom:'Devis',prefixe:'D'},facture:{nom:'Facture',prefixe:'F'},avoir:{nom:'Avoir',prefixe:'A'}};
+var NATURES={services:'Prestation de services',biens:'Livraison de biens',mixte:'Biens et services'};
 var STATUTS={devis:{brouillon:'Brouillon',envoye:'Envoyé',accepte:'Accepté',refuse:'Refusé'},facture:{brouillon:'Brouillon',emise:'Émise',payee:'Payée'},avoir:{brouillon:'Brouillon',emise:'Émis'}};
 var MENTIONS_DEFAUT={
  tva:'TVA non applicable, art. 293 B du CGI',
@@ -93,7 +97,7 @@ function client(c){c=c||{};return{id:idOk(c.id)?c.id:nouvelId('c'),nom:txt(c.nom
 function ligne(l){l=l||{};return{designation:txt(l.designation,600),quantite:nb(l.quantite,-100000,100000,1),unite:txt(l.unite,20),pu:nb(l.pu,-1e7,1e7,0)}}
 function doc(d){d=d||{};var t=un(d.type,TYPES_DOC,'devis');return{id:idOk(d.id)?d.id:nouvelId(t[0]),type:t,numero:typeof d.numero==='string'&&/^[DFA]-\d{4}-\d{3,}$/.test(d.numero)?d.numero:null,
  statut:un(d.statut,STATUTS[t],'brouillon'),clientId:idOk(d.clientId)?d.clientId:null,client:d.client?client(d.client):null,emetteur:d.emetteur||null,
- date:dateOk(d.date)?d.date:null,echeance:dateOk(d.echeance)?d.echeance:null,prestation:txt(d.prestation,120),objet:txt(d.objet,200),
+ nature:un(d.nature,NATURES,'services'),livraison:txt(d.livraison,400),date:dateOk(d.date)?d.date:null,echeance:dateOk(d.echeance)?d.echeance:null,prestation:txt(d.prestation,120),objet:txt(d.objet,200),
  lignes:(Array.isArray(d.lignes)?d.lignes:[]).slice(0,200).map(ligne),notes:txt(d.notes,2000),
  origine:idOk(d.origine)?d.origine:null,paiement:d.paiement&&dateOk(d.paiement.date)?{date:d.paiement.date,mode:txt(d.paiement.mode,60)}:null,cree:typeof d.cree==='string'?d.cree.slice(0,30):null}}
 function compta(o){var r=comptaVide();if(!o)return r;if(typeof o==='string')o=JSON.parse(o);if(o.format!=='aime-compta')throw new Error('Ce fichier n\'est pas une sauvegarde des devis et factures AIME.');
@@ -111,10 +115,17 @@ function euros(x){return(Math.round(x*100)/100).toLocaleString('fr-FR',{style:'c
 function plusJours(date,j){var t=new Date(date+'T12:00:00Z');t.setUTCDate(t.getUTCDate()+j);return t.toISOString().slice(0,10)}
 
 /* ce qui manque pour émettre : la liste vide veut dire « prêt » */
+/* émission électronique obligatoire pour les micro-entreprises au 1er septembre 2027 (economie.gouv.fr) */
+var DATE_REFORME='2027-09-01';
+/* ce qui n'empêche pas d'émettre aujourd'hui, mais deviendra obligatoire */
+function avertissements(c,d){var a=[],cl=d.client||c.clients.filter(function(x){return x.id===d.clientId})[0];if(d.type==='devis')return a;
+ if(cl&&cl.pro&&!/^\d{9}/.test(String(cl.siren||'').replace(/\s/g,'')))a.push('SIREN du client : obligatoire sur les factures entre professionnels à partir du 1er septembre 2027.');
+ if(cl&&!cl.pro&&!cl.siren)a.push('Client particulier : la facture électronique ne s\'applique pas, mais la vente sera déclarée en e-reporting par votre plateforme agréée.');return a}
 function manques(c,d){var E=c.emetteur,m=[],cl=d.client||c.clients.filter(function(x){return x.id===d.clientId})[0];
  if(!E.nom.trim())m.push('Votre nom (émetteur)');if(!E.adresse.trim())m.push('Votre adresse');
  if(d.type!=='devis'&&!/^\d{9}$/.test(E.siren.replace(/\s/g,''))&&!/^\d{14}$/.test(E.siret.replace(/\s/g,'')))m.push('Votre SIREN (9 chiffres) ou SIRET (14 chiffres)');
  if(!cl||!(cl.nom.trim()||cl.societe.trim()))m.push('Le client');else if(!cl.adresse.trim()&&d.type!=='devis')m.push('L\'adresse du client');
+ if(cl&&cl.pro&&d.type!=='devis'&&(d.date||'')>=DATE_REFORME&&!/^\d{9}$/.test(String(cl.siren||'').replace(/\s/g,'').slice(0,9)))m.push('Le SIREN du client professionnel (obligatoire depuis la réforme)');
  if(!d.lignes.length||!d.lignes.some(function(l){return l.designation.trim()}))m.push('Au moins une ligne (désignation)');
  if(d.type!=='devis'&&!d.prestation.trim())m.push('La date ou la période de la prestation');
  if(d.type==='avoir'&&!d.origine)m.push('La facture d\'origine');
@@ -126,7 +137,7 @@ function prochainNumero(c,type,date){var y=(date||new Date().toISOString()).slic
    modifie plus : on l'annule par un avoir. Renvoie une NOUVELLE comptabilité (l'ancienne reste intacte). */
 function emettre(c,id,date){var c2=JSON.parse(JSON.stringify(c)),d=c2.docs.filter(function(x){return x.id===id})[0];if(!d)throw new Error('Document introuvable.');
  if(d.numero)throw new Error('Ce document est déjà émis ('+d.numero+').');date=dateOk(date)?date:new Date().toISOString().slice(0,10);
- var m=manques(c2,d);if(m.length)throw new Error('Il manque : '+m.join(', ')+'.');
+ var m=manques(c2,Object.assign({},d,{date:date}));if(m.length)throw new Error('Il manque : '+m.join(', ')+'.');
  /* la date d'une facture ne précède jamais celle de la précédente de la même série */
  var pref=TYPES_DOC[d.type].prefixe,der=c2.docs.filter(function(x){return x.numero&&x.numero[0]===pref&&x.numero.slice(2,6)===date.slice(0,4)}).map(function(x){return x.date}).sort().pop();
  if(d.type!=='devis'&&der&&date<der)throw new Error('La date ('+date+') précède celle de la dernière '+(d.type==='avoir'?'pièce':'facture')+' émise ('+der+') : la numérotation doit rester chronologique.');
@@ -144,11 +155,44 @@ function avoirDe(c,id){var c2=JSON.parse(JSON.stringify(c)),d=c2.docs.filter(fun
 /* les mentions imprimées en pied de document */
 function mentions(d,E){E=E||d.emetteur||emetteurVide();var m=[];if(E.tva)m.push(E.tva);
  if(d.type==='devis'){m.push('Devis valable '+(E.validite||30)+' jours à compter de sa date d\'émission.');m.push('Bon pour accord : date, signature et mention « devis reçu avant l\'exécution des travaux ».')}
- else{if(d.echeance)m.push('Date d\'échéance : '+frDate(d.echeance)+'.');if(E.paiement)m.push(E.paiement);if(E.escompte)m.push(E.escompte);if(E.penalites)m.push(E.penalites);if(E.indemnite)m.push(E.indemnite)}
+ else{m.push('Nature de l\'opération : '+(NATURES[d.nature]||NATURES.services).toLowerCase()+'.');if(d.echeance)m.push('Date d\'échéance : '+frDate(d.echeance)+'.');if(E.paiement)m.push(E.paiement);if(E.escompte)m.push(E.escompte);if(E.penalites)m.push(E.penalites);if(E.indemnite)m.push(E.indemnite)}
  if(E.assurance)m.push('Assurance professionnelle : '+E.assurance+'.');return m}
 function frDate(s){if(!dateOk(s))return'';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
 
-return{APPAREILS:APPAREILS,CONTENUS:CONTENUS,MOBILE:MOBILE,PRESENCES:PRESENCES,OPTIONS_COMPAGNON:OPTIONS_COMPAGNON,
+/* ---------- Factur-X : le XML CII (norme EN 16931, profil BASIC) d'une facture ou d'un avoir émis ----------
+   Ce fichier est la partie « données » de la facture électronique ; c'est la plateforme agréée qui produit et transmet
+   le document final. Franchise en base : TVA catégorie E (exonérée), motif imprimé. */
+function xe(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]})}
+function montant(x){return(Math.round(x*100)/100).toFixed(2)}
+function adresse(a){a=String(a||'').trim();var lignes=a.split(/\n|,\s*/).map(function(x){return x.trim()}).filter(Boolean),cp='',ville='',reste=[];
+ lignes.forEach(function(l){var m=/^(\d{5})\s+(.+)$/.exec(l);if(m&&!cp){cp=m[1];ville=m[2]}else reste.push(l)});return{ligne:reste.join(', '),cp:cp,ville:ville}}
+function partie(nom,siren,adr,balise){var A=adresse(adr),id=String(siren||'').replace(/\s/g,'').slice(0,9);
+ return'<ram:'+balise+'><ram:Name>'+xe(nom)+'</ram:Name>'+(/^\d{9}$/.test(id)?'<ram:SpecifiedLegalOrganization><ram:ID schemeID="0002">'+id+'</ram:ID></ram:SpecifiedLegalOrganization>':'')+
+  '<ram:PostalTradeAddress>'+(A.cp?'<ram:PostcodeCode>'+xe(A.cp)+'</ram:PostcodeCode>':'')+(A.ligne?'<ram:LineOne>'+xe(A.ligne)+'</ram:LineOne>':'')+(A.ville?'<ram:CityName>'+xe(A.ville)+'</ram:CityName>':'')+'<ram:CountryID>FR</ram:CountryID></ram:PostalTradeAddress></ram:'+balise+'>'}
+function facturX(d,origine){if(!d||!d.numero||d.type==='devis')throw new Error('Seule une facture ou un avoir émis a un fichier Factur-X.');
+ var E=d.emetteur||emetteurVide(),C=d.client||{},T=total(d),j=function(s){return String(s||'').replace(/-/g,'')},motif=E.tva||'TVA non applicable, art. 293 B du CGI';
+ var lignes=d.lignes.filter(function(l){return l.designation.trim()}).map(function(l,i){return'<ram:IncludedSupplyChainTradeLineItem><ram:AssociatedDocumentLineDocument><ram:LineID>'+(i+1)+'</ram:LineID></ram:AssociatedDocumentLineDocument>'+
+  '<ram:SpecifiedTradeProduct><ram:Name>'+xe(l.designation)+'</ram:Name></ram:SpecifiedTradeProduct>'+
+  '<ram:SpecifiedLineTradeAgreement><ram:NetPriceProductTradePrice><ram:ChargeAmount>'+montant(l.pu)+'</ram:ChargeAmount></ram:NetPriceProductTradePrice></ram:SpecifiedLineTradeAgreement>'+
+  '<ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode="C62">'+l.quantite+'</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>'+
+  '<ram:SpecifiedLineTradeSettlement><ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>E</ram:CategoryCode><ram:RateApplicablePercent>0</ram:RateApplicablePercent></ram:ApplicableTradeTax>'+
+  '<ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>'+montant(totalLigne(l))+'</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation></ram:SpecifiedLineTradeSettlement></ram:IncludedSupplyChainTradeLineItem>'}).join('');
+ return'<?xml version="1.0" encoding="UTF-8"?>\n<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">'+
+ '<rsm:ExchangedDocumentContext><ram:GuidelineSpecifiedDocumentContextParameter><ram:ID>urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic</ram:ID></ram:GuidelineSpecifiedDocumentContextParameter></rsm:ExchangedDocumentContext>'+
+ '<rsm:ExchangedDocument><ram:ID>'+xe(d.numero)+'</ram:ID><ram:TypeCode>'+(d.type==='avoir'?'381':'380')+'</ram:TypeCode><ram:IssueDateTime><udt:DateTimeString format="102">'+j(d.date)+'</udt:DateTimeString></ram:IssueDateTime>'+
+ '<ram:IncludedNote><ram:Content>'+xe(motif)+'</ram:Content></ram:IncludedNote>'+(d.notes?'<ram:IncludedNote><ram:Content>'+xe(d.notes)+'</ram:Content></ram:IncludedNote>':'')+'</rsm:ExchangedDocument>'+
+ '<rsm:SupplyChainTradeTransaction>'+lignes+
+ '<ram:ApplicableHeaderTradeAgreement>'+partie((E.nom+(E.statut?' '+E.statut:'')).trim(),E.siren||E.siret,E.adresse,'SellerTradeParty')+partie(C.societe||C.nom,C.siren,C.adresse,'BuyerTradeParty')+'</ram:ApplicableHeaderTradeAgreement>'+
+ '<ram:ApplicableHeaderTradeDelivery>'+(d.livraison?'<ram:ShipToTradeParty><ram:Name>'+xe(C.societe||C.nom)+'</ram:Name><ram:PostalTradeAddress><ram:LineOne>'+xe(d.livraison)+'</ram:LineOne><ram:CountryID>FR</ram:CountryID></ram:PostalTradeAddress></ram:ShipToTradeParty>':'')+'</ram:ApplicableHeaderTradeDelivery>'+
+ '<ram:ApplicableHeaderTradeSettlement><ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>'+
+ (E.iban?'<ram:SpecifiedTradeSettlementPaymentMeans><ram:TypeCode>58</ram:TypeCode><ram:PayeePartyCreditorFinancialAccount><ram:IBANID>'+xe(E.iban.replace(/\s/g,''))+'</ram:IBANID></ram:PayeePartyCreditorFinancialAccount></ram:SpecifiedTradeSettlementPaymentMeans>':'')+
+ '<ram:ApplicableTradeTax><ram:CalculatedAmount>0.00</ram:CalculatedAmount><ram:TypeCode>VAT</ram:TypeCode><ram:ExemptionReason>'+xe(motif)+'</ram:ExemptionReason><ram:BasisAmount>'+montant(T)+'</ram:BasisAmount><ram:CategoryCode>E</ram:CategoryCode><ram:RateApplicablePercent>0</ram:RateApplicablePercent></ram:ApplicableTradeTax>'+
+ (d.echeance?'<ram:SpecifiedTradePaymentTerms><ram:DueDateDateTime><udt:DateTimeString format="102">'+j(d.echeance)+'</udt:DateTimeString></ram:DueDateDateTime></ram:SpecifiedTradePaymentTerms>':'')+
+ '<ram:SpecifiedTradeSettlementHeaderMonetarySummation><ram:LineTotalAmount>'+montant(T)+'</ram:LineTotalAmount><ram:TaxBasisTotalAmount>'+montant(T)+'</ram:TaxBasisTotalAmount><ram:TaxTotalAmount currencyID="EUR">0.00</ram:TaxTotalAmount><ram:GrandTotalAmount>'+montant(T)+'</ram:GrandTotalAmount><ram:DuePayableAmount>'+montant(T)+'</ram:DuePayableAmount></ram:SpecifiedTradeSettlementHeaderMonetarySummation>'+
+ (origine&&origine.numero?'<ram:InvoiceReferencedDocument><ram:IssuerAssignedID>'+xe(origine.numero)+'</ram:IssuerAssignedID></ram:InvoiceReferencedDocument>':'')+
+ '</ram:ApplicableHeaderTradeSettlement></rsm:SupplyChainTradeTransaction></rsm:CrossIndustryInvoice>\n'}
+
+return{AUTONOMIES:AUTONOMIES,NATURES:NATURES,DATE_REFORME:DATE_REFORME,avertissements:avertissements,facturX:facturX,adresse:adresse,APPAREILS:APPAREILS,CONTENUS:CONTENUS,MOBILE:MOBILE,PRESENCES:PRESENCES,OPTIONS_COMPAGNON:OPTIONS_COMPAGNON,
  cheminOk:cheminOk,httpsOk:httpsOk,sourceOk:sourceOk,cibleOk:cibleOk,cleDePage:cleDePage,appareil:appareil,texte:texte,orbe:orbe,vide:vide,config:config,resoudre:resoudre,siteDe:siteDe,orbeDe:orbeDe,nouvelId:nouvelId,
  TYPES_DOC:TYPES_DOC,STATUTS:STATUTS,MENTIONS_DEFAUT:MENTIONS_DEFAUT,emetteurVide:emetteurVide,comptaVide:comptaVide,compta:compta,client:client,ligne:ligne,doc:doc,
  total:total,totalLigne:totalLigne,euros:euros,manques:manques,prochainNumero:prochainNumero,emettre:emettre,devisVersFacture:devisVersFacture,avoirDe:avoirDe,mentions:mentions,frDate:frDate,plusJours:plusJours}});
