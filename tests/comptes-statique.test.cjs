@@ -40,3 +40,11 @@ test('comptes · la réécriture Vercel /api/auth/* → /api/comptes est reconst
   assert.ok(v.rewrites.some(r => r.source === '/api/auth/:chemin*' && r.destination === '/api/comptes?__chemin=:chemin*'));
   assert.ok(!fs.existsSync('api/auth'), 'aucune fonction concurrente sous api/auth');
 });
+
+test('comptes · l\'expéditeur des liens : AUTH_EMAIL_FROM, sinon AUTH_FROM, sinon CONTACT_FROM', async () => {
+  const A = await import('../api/_auth/auth.mjs');
+  assert.equal(A.expediteur({ AUTH_EMAIL_FROM: 'a', AUTH_FROM: 'b', CONTACT_FROM: 'c' }), 'a');
+  assert.equal(A.expediteur({ AUTH_FROM: 'b', CONTACT_FROM: 'c' }), 'b');
+  assert.equal(A.envoiPret({ AUTH_EMAIL_FROM: 'AIME <x@y.fr>' }), false, 'sans clé Resend, pas d\'envoi');
+  assert.equal(A.envoiPret({ RESEND_API_KEY: 'k', AUTH_EMAIL_FROM: 'AIME <x@y.fr>' }), true);
+});
