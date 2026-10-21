@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vue d'un site · AIME</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<style>body{margin:0;font:16px system-ui,sans-serif}.vue-vide{padding:40px 24px;color:#555}</style>
+</head>
+<body>
+<p class="vue-vide">Chargement…</p>
+<script src="/synchroview/permissions.js"></script>
+<script src="/vitrine/rendu.js"></script>
+<script>
+/* AIME · une vue d'un site du générateur, pour SynchroView : ?site=<id>&mode=<carte>.
+   La carte (Public, Participant, Pro, Coordinateur, Moi, Lecture seule) donne un rôle de démonstration ; ce que la vue montre
+   est décidé par les règles partagées (synchroview/permissions.js). Aperçu local : en ligne, ce sera le serveur.
+   La vue suit les modifications faites dans le générateur (autre onglet), sans recharger. */
+(function(){'use strict';
+var S=window.AIMESite,Q=new URLSearchParams(location.search),id=Q.get('site'),mode=Q.get('mode')||'public',PRES=null,VUES=[];
+function lire(){try{var o=JSON.parse(localStorage.getItem('aime-sites')||'null');return o&&o.sites&&o.sites[id]?S.migrer(o.sites[id]):null}catch(e){return null}}
+function afficher(){var site=lire();if(!site){document.body.innerHTML='<p class="vue-vide">Ce site n\'existe pas dans ce navigateur. Ouvrez-le d\'abord dans le générateur (/sites/).</p>';return}
+ var v=VUES.filter(function(x){return x.id===mode})[0]||VUES[0],page=Q.get('page')||'index';
+ var d=S.document(site,{unePage:!Q.get('page'),page:page,vue:v.role?{id:'apercu-'+v.id,role:v.role}:null,regles:window.AIMEPerms,presentation:PRES});
+ var doc=new DOMParser().parseFromString(d.html,'text/html'),y=scrollY;
+ document.title=v.label+' · '+d.titre;[].forEach.call(document.head.querySelectorAll('[data-vue]'),function(n){n.remove()});
+ [].forEach.call(doc.head.querySelectorAll('style,link[rel=stylesheet]'),function(n){var c=n.cloneNode(true);c.setAttribute('data-vue','');document.head.appendChild(c)});
+ var scripts=[].map.call(doc.body.querySelectorAll('script'),function(s){var t=s.textContent;s.remove();return t});
+ document.body.innerHTML=doc.body.innerHTML;scripts.forEach(function(t){var s=document.createElement('script');s.textContent=t;document.body.appendChild(s)});
+ window.scrollTo(0,y);window.__vueBilan=d.bilan;
+ /* le pont SynchroView recalcule ses repères */
+ if(window.parent!==window)try{window.dispatchEvent(new Event('resize'))}catch(e){}}
+Promise.all([fetch('/vitrine/presentation/studio.json').then(function(r){return r.json()}),fetch('/vitrine/perspectives/sites.json').then(function(r){return r.json()})]).then(function(r){PRES=r[0];VUES=r[1].vues;afficher();
+ var b=document.createElement('script');b.src='/synchroview/bridge.js';document.body.appendChild(b)});
+addEventListener('storage',function(e){if(e.key==='aime-sites')afficher()});
+})();
+</script>
+</body>
+</html>

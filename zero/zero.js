@@ -92,7 +92,7 @@ function image(t){orbeSuivre(t);phrasesMaj();metaMaj();lienMaj(t);document.body.
 meta();requestAnimationFrame(image);
 /* les points des « i » ; puis les titres qui attirent l'orbe, dans l'ordre de la page */
 if(window.AIMEYeux&&$('duo'))yeux=AIMEYeux.monter($('duo'));
-if(window.AIMEPoints)AIMEPoints.preparer('.zero .intention,.phrase p,.meta h2,.meta .sous,.lien h2,.lien .sous,.promesse .grand:not(.grand+.grand),.exemples li,.autorisations,.entrer h2,.entrer p',function(){
+if(window.AIMEPoints)AIMEPoints.preparer('.zero .intention,.phrase p,.meta h2,.meta .sous,.lien h2,.lien .sous,.promesse .grand:not(.grand+.grand),.exemples li,.autorisations,.entrer h2,.entrer p:not(.sorties-note)',function(){
  titre('.zero .intention',function(){return window.scrollY>40});
  [].forEach.call(document.querySelectorAll('.phrase:not(.comprendre) p'),function(p,i){titre('.phrase:not(.comprendre):nth-child('+(i+1)+') p')});
  titre('.meta h2',function(){return progres($('meta'))>.86});

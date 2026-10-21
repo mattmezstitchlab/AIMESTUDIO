@@ -1,20 +1,41 @@
 {
- "_": "Perspectives du générateur de site. Une perspective choisit les sections affichées ; elle ne protège rien : un site exporté est public, tout ce qui est dans le fichier peut être lu. Pour du vraiment privé, il faudra un compte et un contrôle côté serveur.",
- "angles": [
+ "_": "Les vues du générateur de site : les cartes d'usage de SynchroView (synchroview/profiles.js) et le rôle de démonstration de chacune dans l'espace. Ce qu'une vue montre est décidé par les règles partagées (synchroview/permissions.js, item.read) selon l'audience de chaque section et de chaque ligne. Dans le navigateur, c'est un aperçu ; en ligne, le rôle viendra du serveur (appartenance à l'espace), jamais de la page. Un site exporté en fichiers est public : il ne contient que la vue publique.",
+ "vues": [
   {
    "id": "public",
    "label": "Public",
-   "description": "Ce que tout le monde voit."
+   "role": null,
+   "description": "Une personne sans compte : seulement ce qui est pour tout le monde."
   },
   {
-   "id": "invite",
-   "label": "Invité",
-   "description": "Ce qu'un invité voit (réponse, infos pratiques)."
+   "id": "proche",
+   "label": "Participant",
+   "role": "guest",
+   "description": "Rôle invité : ce qui est pour les membres de l'espace."
   },
   {
-   "id": "organisation",
-   "label": "Organisation",
-   "description": "Tout, y compris les notes d'équipe (repérées en orange dans l'aperçu)."
+   "id": "viewer",
+   "label": "Lecture seule",
+   "role": "viewer",
+   "description": "Rôle lecteur : ce qui est pour les membres, sans rien modifier."
+  },
+  {
+   "id": "pro",
+   "label": "Pro",
+   "role": "contributor",
+   "description": "Rôle contributeur (prestataire) : membres et équipe."
+  },
+  {
+   "id": "coord",
+   "label": "Coordinateur",
+   "role": "editor",
+   "description": "Rôle coordination : tout, organisation comprise."
+  },
+  {
+   "id": "moi",
+   "label": "Moi",
+   "role": "owner",
+   "description": "Rôle propriétaire : tout."
   }
  ]
 }

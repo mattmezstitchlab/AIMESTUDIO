@@ -9,7 +9,7 @@ Un site complet, page par page, construit avec le **moteur partagé** (`vitrine/
 | **Données** | le site, format `aime-site`, gardé dans `localStorage` sous `aime-sites` | Les infos sont écrites une fois : titre, accroche, date, heure, lieu, adresse, ville, accès, e-mail, téléphone, lien et texte du bouton. S'y ajoutent 13 listes (programme, questions, personnes, galerie, documents, cadeaux, hébergements, menu, tarifs, chiffres, chronologie, liens, partenaires) et les pages avec leurs sections. |
 | **Modèles** | `vitrine/modeles/sites.json` | Sept points de départ : mariage, fête, artisan, séminaire, portfolio, association, page blanche. Ils ne contiennent que des consignes, aucun contenu réel. |
 | **Présentation** | `vitrine/presentation/studio.json` | Les 36 ambiances et les 10 typographies d'AIME Studio, reprises telles quelles. Le contraste du texte posé sur la couleur principale est calculé (WCAG). |
-| **Perspectives** | `vitrine/perspectives/sites.json` | Public, invité, organisation. Une perspective **choisit** les sections à afficher ; **elle ne protège rien**. Tout ce qui est exporté peut être lu. |
+| **Vues et accès** | `vitrine/perspectives/sites.json` et `synchroview/permissions.js` | Six vues, qui reprennent les cartes de SynchroView : Public (sans compte), Participant (`guest`), Lecture seule (`viewer`), Pro (`contributor`), Coordinateur (`editor`) et Moi (`owner`). Chaque section et chaque ligne de liste a une audience : tout le monde, membres, équipe ou organisation. Ce que chaque vue voit, ce sont les **règles partagées** qui le décident (`item.read`), les mêmes que pour les espaces. Dans le navigateur, c'est un aperçu ; en ligne, c'est le serveur qui filtrera. **Un export en fichiers ne contient que la vue publique.** |
 | **Moteur** | `vitrine/rendu.js`, `AIMEVitrine.site` (alias `AIMESite`) | 24 blocs en 6 familles, l'assemblage des pages et l'export. Il n'y a qu'un fichier moteur, et le test « moteur non dupliqué » le garantit. |
 | **Éditeur** | `sites/` | Il gère la structure (pages, sections), le contenu, le style, l'historique et l'export. Il ne dessine rien lui-même : l'aperçu et l'export passent par le moteur. |
 
@@ -71,3 +71,16 @@ Le Bureau a un dossier « Sites ». Chaque site s'y rouvre (`/sites/?site=…`).
 - **Stockage local.** Les sites restent dans ce navigateur, et les photos importées prennent de la place : le stockage est limité à environ 5 Mo. L'éditeur prévient s'il est plein ; il faut alors exporter.
 - **Pas de publication en ligne** : elle viendra avec les comptes.
 - **Pas de glisser-déposer** : les sections se déplacent avec ↑ ↓.
+
+## Rôles et SynchroView (21/10/2026)
+- **« Voir comme »** dans l'aperçu : on passe d'une vue à l'autre parmi les six. La ligne du bas indique ce que la vue courante masque, et pourquoi (raison donnée par la règle).
+- **Une audience par section** (« Qui voit cette section ») **et par ligne** : par exemple, un moment du programme réservé à l'équipe.
+- **« Comparer les rôles »** ouvre SynchroView avec le site en quatre vues (Public, Participant, Pro, Coordinateur), défilement synchronisé.
+  - Chaque vue est `/sites/vue/?site=…&mode=…`, avec le pont SynchroView.
+  - Elle suit en direct les modifications faites dans le générateur.
+- **SynchroView liste tous les sites générés** de ce navigateur, à côté des démonstrateurs.
+- **Partir d'un démonstrateur** : Mariage, Séminaire ou AIME WORLD deviennent un site à modifier (`AIMESite.depuisVitrine`).
+  - Les mêmes faits sont repris, et rien n'est inventé.
+  - Les moments non publics deviennent des lignes « équipe ».
+  - On y trouve une page Organisation réservée à l'organisation.
+- **Vérifié** : sur AIME WORLD, la vue Public masque 2 sections et 20 lignes, la vue Participant 1 section et 1 ligne, la vue Pro 1 section, et la vue Coordinateur rien. Une modification du titre apparaît dans les quatre vues de SynchroView sans recharger. Aucune erreur.

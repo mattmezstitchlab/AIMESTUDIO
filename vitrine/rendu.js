@@ -274,7 +274,7 @@ function vide(univers){var l={};Object.keys(LISTES).forEach(function(k){l[k]=[]}
   infos:{titre:'',sous:'',date:'',heure:'',lieu:'',adresse:'',ville:'',acces:'',email:'',tel:'',url:'',bouton:''},listes:l,
   pages:[{id:'index',titre:'Accueil',sections:[]}],presentation:{ambiance:'minimal',typo:null,rayon:null,densite:'aere'}}}
 function migrer(s){if(!s||s.format!=='aime-site')return null;var v=vide(s.univers);for(var k in v)if(s[k]==null)s[k]=v[k];for(var i in v.infos)if(s.infos[i]==null)s.infos[i]='';for(var l in LISTES)if(!Array.isArray(s.listes[l]))s.listes[l]=[];
- if(!Array.isArray(s.pages)||!s.pages.length)s.pages=v.pages;s.pages.forEach(function(p){if(!Array.isArray(p.sections))p.sections=[];p.sections.forEach(function(x){if(!x.id)x.id=uid('x')})});s.schema=SCHEMA;return s}
+ if(!Array.isArray(s.pages)||!s.pages.length)s.pages=v.pages;s.pages.forEach(function(p){if(!Array.isArray(p.sections))p.sections=[];p.sections.forEach(function(x){if(!x.id)x.id=uid('x');if(x.pour&&!x.audience){x.audience=x.pour.length===1&&x.pour[0]==='organisation'?'organisation':'public'}delete x.pour;if(!AUDIENCES[x.audience])x.audience='public'})});s.schema=SCHEMA;return s}
 
 /* ---------- le catalogue : chaque bloc dit ce qu'il lit, ses variantes et ses champs propres ---------- */
 var CATS={structure:'Structure',texte:'Texte',medias:'Images et vidéo',evenement:'Événement',personnes:'Personnes et contact',pro:'Activité'};
@@ -347,9 +347,9 @@ var CHAMPS={titre:'Titre de la section',texte:'Texte',auteur:'Auteur',url:'Adres
 
 /* ---------- les modèles : des compositions de départ ---------- */
 function ajouterSection(site,pageId,type,apres){var p=site.pages.filter(function(q){return q.id===pageId})[0]||site.pages[0],b=BLOCS[type];if(!b)throw new Error('bloc inconnu : '+type);
- var s={id:uid('x'),type:type,variante:Object.keys(b.variantes)[0],pour:['public','invite','organisation']};var i=apres==null?p.sections.length:p.sections.map(function(x){return x.id}).indexOf(apres)+1;p.sections.splice(i,0,s);return s}
+ var s={id:uid('x'),type:type,variante:Object.keys(b.variantes)[0],audience:'public'};var i=apres==null?p.sections.length:p.sections.map(function(x){return x.id}).indexOf(apres)+1;p.sections.splice(i,0,s);return s}
 function appliquerModele(site,m){var s=copie(site);s.modele=m.id;s.univers=m.univers||s.univers;if(m.ambiance)s.presentation.ambiance=m.ambiance;
- s.pages=m.pages.map(function(p){return{id:p.id||slug(p.titre),titre:p.titre,sections:p.sections.map(function(t){var o=typeof t==='string'?{type:t}:copie(t);o.id=uid('x');if(!o.variante)o.variante=Object.keys(BLOCS[o.type].variantes)[0];if(!o.pour)o.pour=['public','invite','organisation'];return o})}});
+ s.pages=m.pages.map(function(p){return{id:p.id||slug(p.titre),titre:p.titre,sections:p.sections.map(function(t){var o=typeof t==='string'?{type:t}:copie(t);o.id=uid('x');if(!o.variante)o.variante=Object.keys(BLOCS[o.type].variantes)[0];if(o.pour&&!o.audience)o.audience=o.pour.length===1&&o.pour[0]==='organisation'?'organisation':'public';delete o.pour;if(!o.audience)o.audience='public';return o})}});
  if(m.exemple){Object.keys(m.exemple.infos||{}).forEach(function(k){if(!s.infos[k])s.infos[k]=m.exemple.infos[k]});Object.keys(m.exemple.listes||{}).forEach(function(k){if(!s.listes[k].length)s.listes[k]=copie(m.exemple.listes[k])})}return s}
 
 /* ---------- la présentation ---------- */
@@ -391,29 +391,65 @@ function css(pr,dense){var a=pr.a,t=pr.t,surC1=surCouleur(a.c1,a.fond,a.encre),r
  '.docs{display:grid;gap:8px}.docs a{display:flex;gap:12px;align-items:center;text-decoration:none;border:1px solid color-mix(in srgb,var(--encre) 14%,transparent);border-radius:var(--r);padding:14px 16px;font-weight:600}.docs i{width:22px;height:28px;border-radius:3px 9px 3px 3px;background:var(--c2)}'+
  '.s-vide{border:1px dashed color-mix(in srgb,var(--encre) 30%,transparent);border-radius:var(--r);padding:18px;opacity:.7;font-size:15px}'+
  'footer.pied{padding:36px max(20px,6vw);text-align:center;font-size:14px;opacity:.7;border-top:1px solid color-mix(in srgb,var(--encre) 10%,transparent)}'+
- '[data-sec].sel{outline:2px solid var(--c1);outline-offset:-2px}[data-sec].pour-org{box-shadow:inset 4px 0 0 #F59E0B}'+
+ '[data-sec].sel{outline:2px solid var(--c1);outline-offset:-2px}.aud-m{display:inline-block;margin:0 0 12px!important;font:600 11px var(--fb);letter-spacing:.08em;text-transform:uppercase;color:#7A4B00;background:#FDE7B0;border-radius:999px;padding:3px 10px}'+
  '@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}'}
 
 var SCRIPT="(function(){function pad(n){return n<10?'0'+n:n}document.querySelectorAll('[data-compte]').forEach(function(c){var t=new Date(c.getAttribute('data-compte')).getTime();function f(){var d=Math.max(0,t-Date.now());c.querySelector('[data-j]').textContent=Math.floor(d/864e5);c.querySelector('[data-h]').textContent=pad(Math.floor(d/36e5)%24);c.querySelector('[data-m]').textContent=pad(Math.floor(d/6e4)%60)}f();setInterval(f,30000)});"+
  "document.querySelectorAll('[data-rsvp]').forEach(function(f){f.addEventListener('submit',function(e){e.preventDefault();var d=new FormData(f),corps='Nom : '+(d.get('nom')||'')+'\\nPrésence : '+(d.get('p')||'')+'\\nPersonnes : '+(d.get('n')||'')+'\\nMot : '+(d.get('mot')||'');location.href='mailto:'+f.getAttribute('data-rsvp')+'?subject='+encodeURIComponent(f.getAttribute('data-objet'))+'&body='+encodeURIComponent(corps)})})})();";
 
 /* ---------- l'assemblage d'une page ---------- */
-function filtrer(sections,perspective){return sections.filter(function(s){return!perspective||!s.pour||s.pour.indexOf(perspective)>=0})}
-function document_(site,o){o=o||{};var pr=presentation(site,o.presentation),page=site.pages.filter(function(p){return p.id===o.page})[0]||site.pages[0],persp=o.perspective||'public';
+/* ---------- qui voit quoi : les mêmes règles que les espaces partagés (synchroview/permissions.js, « item.read ») ----------
+   audience d'une section ou d'une ligne : public · membres (tout rôle de l'espace) · equipe (organisation et prestataires) · organisation.
+   vue : { role } d'une identité membre de l'espace, ou null pour une personne sans compte (public seulement).
+   Dans le navigateur, c'est un APERÇU : en ligne, ces mêmes règles seront appliquées par le serveur, qui ne transmettra pas
+   ce qu'une personne n'a pas le droit de voir. Un fichier exporté, lui, est public : on n'exporte que la vue publique par défaut. */
+var AUDIENCES={public:'Tout le monde',membres:'Les membres de l\'espace',equipe:'L\'équipe',organisation:'L\'organisation'};
+var ROLES_LOC={public:{public:1,membres:1,equipe:1,organisation:1},membres:{owner:1,editor:1,contributor:1,viewer:1,guest:1},equipe:{owner:1,editor:1,contributor:1},organisation:{owner:1,editor:1}};
+function voit(vue,aud,regles){aud=aud||'public';if(aud==='public')return{ok:true};if(!vue||!vue.role)return{ok:false,raison:'réservé aux membres de l\'espace : une personne sans compte ne le voit pas'};
+ if(regles&&regles.can){var d=regles.can({id:vue.id||'apercu',role:vue.role},'read',{type:'item',audience:aud});return{ok:!!d.allow,raison:d.reason||d.rule}}
+ var t=ROLES_LOC[aud];return t&&t[vue.role]?{ok:true}:{ok:false,raison:'réservé : '+AUDIENCES[aud]}}
+var COMPAT={public:null,invite:{role:'guest'},organisation:{role:'owner'}};
+function document_(site,o){o=o||{};var pr=presentation(site,o.presentation),page=site.pages.filter(function(p){return p.id===o.page})[0]||site.pages[0];
+ var vue=o.vue!==undefined?o.vue:(o.perspective?COMPAT[o.perspective]:null),masq=[],lm=0;
+ var visibles=function(p){return p.sections.filter(function(s){var v=voit(vue,s.audience,o.regles);if(!v.ok)masq.push({id:s.id,nom:(BLOCS[s.type]||{}).nom||s.type,titre:s.titre||'',audience:s.audience,raison:v.raison});return v.ok})};
+ var L={};Object.keys(site.listes).forEach(function(k){L[k]=(site.listes[k]||[]).filter(function(r){var v=voit(vue,r&&r.audience,o.regles);if(!v.ok)lm++;return v.ok})});
  var fichier=function(p){return o.unePage?'#'+p.id:(p.id==='index'?'index.html':p.id+'.html')};
- var toutes=o.unePage?site.pages:[page],ancres={};toutes.forEach(function(p){filtrer(p.sections,persp).forEach(function(s){if(!ancres[s.type])ancres[s.type]='#'+s.id})});
- var x={site:site,infos:site.infos,listes:site.listes,amb:pr.a,edition:!!o.edition,perspective:persp,ancre:function(t){return ancres[t]||''}};
- var n=0,corps=toutes.map(function(p){return(o.unePage&&p.id!=='index'?'<span id="'+esc(p.id)+'"></span>':'')+filtrer(p.sections,persp).map(function(s){var b=BLOCS[s.type];if(!b)return'';var h=b.rendre(x,s);if(!h)return'';n++;
-  var org=s.pour&&s.pour.length===1&&s.pour[0]==='organisation';return s.type==='hero'?'<div id="'+esc(s.id)+'"'+(o.edition?' data-sec="'+esc(s.id)+'"':'')+'>'+h+'</div>':'<section id="'+esc(s.id)+'" class="s-'+esc(s.type)+(['texte','citation','compte','faq','tarifs','personnes'].indexOf(s.type)>=0?' bande':'')+(org?' pour-org':'')+'"'+(o.edition?' data-sec="'+esc(s.id)+'"':'')+'>'+h+'</section>'}).join('')}).join('');
+ var toutes=o.unePage?site.pages:[page],vis={},ancres={};toutes.forEach(function(p){vis[p.id]=visibles(p);vis[p.id].forEach(function(s){if(!ancres[s.type])ancres[s.type]='#'+s.id})});
+ var x={site:site,infos:site.infos,listes:L,amb:pr.a,edition:!!o.edition,vue:vue,ancre:function(t){return ancres[t]||''}};
+ var n=0,corps=toutes.map(function(p){return(o.unePage&&p.id!=='index'?'<span id="'+esc(p.id)+'"></span>':'')+vis[p.id].map(function(s){var b=BLOCS[s.type];if(!b)return'';var h=b.rendre(x,s);if(!h)return'';n++;
+  var aud=s.audience&&s.audience!=='public'?' aud aud-'+esc(s.audience):'',sv=' data-sv="'+esc(s.id)+'" data-sv-label="'+esc(s.titre||b.nom)+'"'+(o.edition?' data-sec="'+esc(s.id)+'"':'');
+  return s.type==='hero'?'<div id="'+esc(s.id)+'"'+sv+'>'+h+'</div>':'<section id="'+esc(s.id)+'" class="s-'+esc(s.type)+(['texte','citation','compte','faq','tarifs','personnes'].indexOf(s.type)>=0?' bande':'')+aud+'"'+sv+'>'+(o.edition&&aud?'<p class="aud-m">'+esc(AUDIENCES[s.audience])+'</p>':'')+h+'</section>'}).join('')}).join('');
  var nav=site.pages.length>1?'<nav class="nav" aria-label="Pages"><b>'+esc(site.infos.titre||site.nom)+'</b><ul>'+site.pages.map(function(p){return'<li><a href="'+esc(fichier(p))+'"'+(!o.unePage&&p.id===page.id?' aria-current="page"':'')+'>'+esc(p.titre)+'</a></li>'}).join('')+'</ul></nav>':'';
  var titre=(page.id==='index'||o.unePage?'':page.titre+' · ')+(site.infos.titre||site.nom);
  var html='<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+esc(titre)+'</title>'+(site.infos.sous?'<meta name="description" content="'+esc(site.infos.sous)+'">':'')+
-  (pr.fonts?'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="'+esc(pr.fonts)+'">':'')+'<style>'+css(pr,site.presentation.densite)+'</style></head><body>'+nav+'<main>'+corps+'</main><footer class="pied"><p>'+esc(site.infos.titre||site.nom)+(site.infos.date?' · '+esc(dateLongue(site.infos.date)):'')+'</p><p>Fait avec AIME</p></footer><script>'+SCRIPT+'</'+'script></body></html>';
- return{html:html,titre:titre,bilan:{sections:n,page:page.id,perspective:persp}}}
+  (pr.fonts?'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="'+esc(pr.fonts)+'">':'')+'<style>'+css(pr,site.presentation.densite)+'</style></head><body>'+nav+'<main>'+corps+'</main><footer class="pied"><p>'+esc(site.infos.titre||site.nom)+(site.infos.date?' · '+esc(dateLongue(site.infos.date)):'')+'</p><p>Fait avec AIME</p></footer><script>'+SCRIPT+'</'+'script>'+(o.pont?'<script src="'+esc(o.pont)+'"></'+'script>':'')+'</body></html>';
+ return{html:html,titre:titre,bilan:{sections:n,page:page.id,vue:vue,masquees:masq,lignesMasquees:lm}}}
 function exporter(site,o){o=o||{};if(o.unePage)return[{chemin:'index.html',contenu:document_(site,{presentation:o.presentation,unePage:true,perspective:o.perspective}).html}];
  return site.pages.map(function(p){return{chemin:p.id==='index'?'index.html':p.id+'.html',contenu:document_(site,{presentation:o.presentation,page:p.id,perspective:o.perspective}).html}})}
 
-return{SCHEMA:SCHEMA,LISTES:LISTES,CATS:CATS,BLOCS:BLOCS,CHAMPS:CHAMPS,vide:vide,migrer:migrer,ajouterSection:ajouterSection,appliquerModele:appliquerModele,
+/* ---------- partir d'un démonstrateur (vitrine/donnees/*.json) : les mêmes faits, devenus un site éditable ----------
+   Rien n'est inventé : chaque champ vient des données du démonstrateur (fictives et dites comme telles). Les moments non
+   publics deviennent des lignes « équipe » ; les échéances, des lignes « membres » ; les accès restent ceux des règles. */
+function depuisVitrine(d,o){o=o||{};var e=d.evenement||{},s=vide(e.univers||'vierge'),lx={};(d.lieux||[]).forEach(function(l){lx[l.id]=l});
+ var lieu=typeof e.lieu==='object'&&e.lieu?e.lieu:(lx[e.lieu]||{});s.nom=(e.nom||'Démonstrateur')+' · démonstrateur';s.modele='vitrine:'+(e.univers||'');
+ s.infos.titre=e.nom||'';s.infos.sous=[e.sousTitre||e.accroche,'(démonstrateur, données fictives)'].filter(Boolean).join(' ');s.infos.date=e.date||'';s.infos.lieu=lieu.nom||'';s.infos.adresse=lieu.adresse||'';s.infos.ville=e.ville||lieu.ville||'';s.infos.acces=lieu.acces||'';s.infos.bouton='Répondre';
+ s.listes.programme=(d.moments||[]).map(function(m){return{heure:m.debut||'',titre:m.titre||'',detail:(lx[m.espace]||{}).nom||m.espace||'',audience:m.public===false?'equipe':'public'}});
+ var hote=((d.personnes||[])[0]||{}).groupe;/* les hôtes (le groupe de la première personne) sont publics ; les autres, pour les membres */
+ s.listes.personnes=(d.personnes||[]).map(function(p){return{nom:p.nom,role:p.fonction||'',audience:p.groupe===hote?'public':'membres'}});
+ s.listes.faq=(d.faq||[]).map(function(f){return{q:f.q,r:f.r}});
+ s.listes.hebergements=(d.hebergements||d.transports||[]).map(function(h){return{nom:h.nom,detail:[h.distance,h.note].filter(Boolean).join(' · '),lien:''}});
+ s.listes.menu=((d.menu&&d.menu.plats)||[]).map(function(m){return{plat:m.libelle,detail:m.texte}});
+ if(d.cadeaux)s.listes.cadeaux=[].concat(d.cadeaux).map(function(c){return{titre:c.titre,detail:c.detail||'',lien:''}});
+ s.listes.etapes=(d.echeances||[]).map(function(x){return{date:x.date,titre:x.titre,detail:'',audience:'membres'}});
+ var sec=function(t,o2){return Object.assign({type:t},o2||{})};
+ s.pages=[{id:'index',titre:'Accueil',sections:[sec('hero',{variante:'plein'}),sec('compte'),sec('personnes',{titre:'Qui est là'})]},
+  {id:'programme',titre:'Programme',sections:[sec('programme',{texte:'Les moments réservés à l\'équipe n\'apparaissent qu\'à l\'équipe.'}),sec('lieu'),sec('menu')]},
+  {id:'pratique',titre:'Infos pratiques',sections:[sec('hebergement'),sec('etapes',{titre:'Les échéances',audience:'membres'}),sec('cadeaux'),sec('faq')]},
+  {id:'organisation',titre:'Organisation',sections:[sec('texte',{titre:'Note d\'organisation',texte:'Page réservée à l\'organisation : un exemple de ce que les règles retirent pour les autres vues.',audience:'organisation'})]},
+  {id:'reponse',titre:'Répondre',sections:[sec('rsvp'),sec('contact')]}].map(function(p){p.sections=p.sections.map(function(x){x.id=uid('x');if(!x.variante)x.variante=Object.keys(BLOCS[x.type].variantes)[0];if(!x.audience)x.audience='public';return x});return p});
+ s.presentation.ambiance=o.ambiance||'minimal';return s}
+
+return{AUDIENCES:AUDIENCES,voit:voit,depuisVitrine:depuisVitrine,SCHEMA:SCHEMA,LISTES:LISTES,CATS:CATS,BLOCS:BLOCS,CHAMPS:CHAMPS,vide:vide,migrer:migrer,ajouterSection:ajouterSection,appliquerModele:appliquerModele,
  document:document_,exporter:exporter,contraste:contraste,lien:lien,img:img,slug:slug,esc:esc,uid:uid};
 })({visuel:visuel});
 

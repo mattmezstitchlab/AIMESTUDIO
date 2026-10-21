@@ -19,6 +19,7 @@
   <button type="button" class="pill" id="annuler" disabled>Annuler</button>
   <button type="button" class="pill" id="retablir" disabled>Rétablir</button>
   <button type="button" class="pill" id="importer">Importer</button>
+  <a class="pill" id="comparer" href="/synchroview/" title="Voir le site par rôle, côte à côte, dans SynchroView">Comparer les rôles</a>
   <div class="gen-exp"><button type="button" class="pill p" id="exporter" aria-expanded="false" aria-controls="menuExp">Exporter</button>
    <div class="gen-menu" id="menuExp" hidden><button type="button" data-exp="zip">Le site (.zip, une page HTML par page)</button><button type="button" data-exp="une">Une seule page (.html)</button><button type="button" data-exp="json">Les données (.json)</button><button type="button" data-exp="onglet">Ouvrir l'aperçu dans un onglet</button></div></div>
  </nav>
@@ -28,6 +29,8 @@
  <header class="e-entete"><span class="e-k">Générateur de site</span><h1>Un site complet, <span class="e-acc">écrit une fois.</span></h1>
   <p>Choisissez un point de départ. La date, le lieu, le programme ou le contact s'écrivent une seule fois, puis se retrouvent partout où ils servent : en-tête, compte à rebours, plan, réponse. Tout reste dans ce navigateur jusqu'à l'export.</p></header>
  <ul class="modeles" id="modeles"></ul>
+ <h2 class="gen-h" style="margin-top:34px">Partir d'un démonstrateur <small>les mêmes faits, rôles et accès, devenus un site à modifier</small></h2>
+ <ul class="modeles" id="demos"></ul>
 </div>
 
 <main class="gen-main" id="atelier" hidden>
@@ -60,6 +63,7 @@
 <input type="file" id="fichierImg" accept="image/*" hidden>
 <p id="vivant" class="vivant" role="status" aria-live="polite"></p>
 <script src="/nav/registre.js"></script>
+<script src="/synchroview/permissions.js"></script>
 <script src="/vitrine/rendu.js"></script>
 <script src="/sites/editeur.js"></script>
 <script src="/menu/menu.js"></script>

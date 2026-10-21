@@ -18,11 +18,24 @@ test('rien d\'écrit par la personne ne devient du code ; les liens dangereux so
  s.pages[0].sections.forEach(x=>{x.titre=X;x.texte=X;x.url='data:text/html,<script>1</script>'});const h=S.document(s,{presentation:P}).html;
  assert.ok(!h.includes('<img src=x'),'échappé');assert.ok(!/href="javascript:/i.test(h));assert.ok(!/href="data:/i.test(h));assert.ok(!/src="javascript:/i.test(h));
  assert.equal(S.lien('javascript:x'),'');assert.equal(S.lien('exemple.fr'),'https://exemple.fr');assert.equal(S.img('http://x.fr/a.jpg'),'');assert.ok(S.img('data:image/jpeg;base64,AAAA'))});
-test('les perspectives choisissent les sections ; elles ne sont pas un droit',()=>{
- assert.deepEqual(PE.map(p=>p.id),['public','invite','organisation']);
- const s=S.vide();const a=S.ajouterSection(s,'index','texte');a.texte='Pour tous';const b=S.ajouterSection(s,'index','texte');b.texte='Note d\'équipe';b.pour=['organisation'];
- const pub=S.document(s,{presentation:P,perspective:'public'}).html,org=S.document(s,{presentation:P,perspective:'organisation'}).html;
- assert.ok(pub.includes('Pour tous')&&!pub.includes('Note d'));assert.ok(org.includes('Note d'));assert.match(require('../vitrine/perspectives/sites.json')._,/ne protège rien/)});
+test('qui voit quoi : les règles partagées (permissions.js, item.read) décident, section par section et ligne par ligne',()=>{
+ const R=require('../synchroview/permissions.js'),V=require('../vitrine/perspectives/sites.json').vues;assert.deepEqual(V.map(v=>v.id),['public','proche','viewer','pro','coord','moi']);assert.match(require('../vitrine/perspectives/sites.json')._,/exporté en fichiers est public/);
+ const s=S.vide();const a=S.ajouterSection(s,'index','texte');a.texte='Pour tous';const b=S.ajouterSection(s,'index','texte');b.texte='Note d\'équipe';b.audience='equipe';const o=S.ajouterSection(s,'index','texte');o.texte='Budget';o.audience='organisation';
+ S.ajouterSection(s,'index','programme');s.listes.programme=[{heure:'14:00',titre:'Cérémonie'},{heure:'12:30',titre:'Installation',audience:'equipe'}];
+ const vue=role=>S.document(s,{presentation:P,vue:role?{role}:null,regles:R});
+ const pub=vue(null),inv=vue('guest'),pro=vue('contributor'),coord=vue('editor');
+ assert.ok(pub.html.includes('Pour tous')&&!pub.html.includes('Note d')&&!pub.html.includes('Budget')&&!pub.html.includes('Installation'));
+ assert.ok(!inv.html.includes('Note d')&&!inv.html.includes('Installation'));assert.equal(inv.bilan.masquees[0].raison,'réservé à l\'équipe');
+ assert.ok(pro.html.includes('Note d')&&pro.html.includes('Installation')&&!pro.html.includes('Budget'));
+ assert.ok(coord.html.includes('Budget'));assert.equal(coord.bilan.masquees.length,0);
+ assert.ok(!S.exporter(s,{presentation:P})[0].contenu.includes('Note d'),'un export ne contient que la vue publique');
+ const m=S.migrer(JSON.parse(JSON.stringify(Object.assign(S.vide(),{pages:[{id:'index',titre:'A',sections:[{id:'x1',type:'texte',pour:['organisation']},{id:'x2',type:'texte',pour:['public','invite']}]}]}))));
+ assert.deepEqual(m.pages[0].sections.map(x=>x.audience),['organisation','public'],'les anciens sites passent aux audiences')});
+test('partir d\'un démonstrateur : les mêmes faits, rien d\'inventé, les moments d\'équipe restent à l\'équipe',()=>{
+ const R=require('../synchroview/permissions.js');for(const u of ['mariage','seminaire','world']){const d=require('../vitrine/donnees/'+u+'.json'),s=S.depuisVitrine(d);
+  assert.equal(s.infos.titre,d.evenement.nom);assert.equal(s.listes.programme.length,d.moments.length);assert.match(s.infos.sous,/données fictives/);
+  const nonPublics=d.moments.filter(m=>m.public===false).length;assert.equal(s.listes.programme.filter(l=>l.audience==='equipe').length,nonPublics);
+  const p=S.document(s,{presentation:P,page:'programme',vue:null,regles:R}),c=S.document(s,{presentation:P,page:'programme',vue:{role:'editor'},regles:R});assert.ok(p.bilan.lignesMasquees>=nonPublics);assert.equal(c.bilan.lignesMasquees,0)}});
 test('tous les blocs se dessinent, vides ou remplis, et l\'édition montre quoi remplir',()=>{
  const s=complet(),vide=S.document(s,{presentation:P,edition:true}).html;assert.ok((vide.match(/class="s-vide"/g)||[]).length>=10);
  const pub=S.document(s,{presentation:P}).html;assert.ok(!pub.includes('class="s-vide"'),'rien à remplir dans l\'export');
