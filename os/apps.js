@@ -13,6 +13,7 @@ var EPINGLES=['espace','regie','studio','sites','stitch','g44','world','zero'];
 var ACTIONS=[
  {id:'nouveau-devis',nom:'Nouveau devis',app:'regie',href:'/regie/#nouveau-devis',mots:'devis facture client'},
  {id:'nouveau-site',nom:'Composer un site',app:'sites',href:'/sites/',mots:'site générateur page web'},
+ {id:'sites-clients',nom:'Voir les sites clients (trois écrans, par rôle)',app:'regie',href:'/regie/#sites',mots:'site client aperçu rôle perspective générateur'},
  {id:'editer-zero',nom:'Placer des appareils sur la Page Zéro',app:'regie',href:'/regie/#edition',mots:'iphone ipad macbook appareil maquette'},
  {id:'regler-orbe',nom:'Régler l\'orbe, site par site',app:'regie',href:'/regie/#orbe',mots:'orbe compagnon suggestions'},
  {id:'publier',nom:'Publier les réglages du site',app:'regie',href:'/regie/#publier',mots:'publier sauvegarde site.json'},
