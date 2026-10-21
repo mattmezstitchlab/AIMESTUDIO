@@ -64,3 +64,21 @@ test('régénérer : le mini-site de la landing et un projet du Studio, sans per
  assert.ok(S.document(s,{presentation:P}).html.includes('hsl(90'));assert.throws(()=>S.depuisMiniSite({}),/mini-site/);
  const q=S.depuisStudio({id:'p',name:'Lin',pack:'artisan',versions:[{d:{title:'Lin',blurb:'B',items:[{n:'Ourlet',p:'15 €'}],series:'Ana ; couturière',contact:'a@b.fr 06 12 34 56 78',city:'Nantes'},b:{amb:'h_lin'}}]}).site;
  assert.equal(q.infos.email,'a@b.fr');assert.equal(q.listes.tarifs[0].prix,'15 €');assert.equal(q.listes.personnes[0].role,'couturière');assert.equal(q.presentation.ambiance,'h_lin');assert.ok(q.pages[0].sections.some(x=>x.type==='contact'))});
+test('exporter pour publier : aucun contenu réservé dans AUCUN fichier ; la sauvegarde privée garde tout et se réimporte',()=>{
+ const R=require('../synchroview/permissions.js');const s=S.vide('vierge');s.nom='NOM-INTERNE-PRIVE';s.infos.titre='Fête publique';s.infos.date='2027-06-12';
+ const pub=S.ajouterSection(s,'index','texte');pub.texte='Texte public';
+ const m=S.ajouterSection(s,'index','texte');m.titre='SECRET-MEMBRES-TITRE';m.texte='SECRET-MEMBRES';m.audience='membres';
+ const e=S.ajouterSection(s,'index','citation');e.texte='SECRET-EQUIPE';e.auteur='SECRET-AUTEUR';e.audience='equipe';
+ S.ajouterSection(s,'index','programme');s.listes.programme=[{heure:'14:00',titre:'Accueil'},{heure:'12:00',titre:'SECRET-LIGNE-EQUIPE',detail:'SECRET-DETAIL',audience:'equipe'},{heure:'23:00',titre:'SECRET-LIGNE-ORGA',audience:'organisation'}];
+ S.ajouterSection(s,'index','galerie');s.listes.galerie=[{src:'data:image/png;base64,UFVCTElD',legende:'Photo publique'},{src:'data:image/png;base64,U0VDUkVU',legende:'SECRET-PHOTO',audience:'organisation'}];
+ S.ajouterSection(s,'index','faq');s.listes.faq=[{q:'Public ?',r:'Oui'},{q:'SECRET-QUESTION',r:'SECRET-REPONSE',audience:'membres'}];
+ s.pages.push({id:'coulisses',titre:'SECRET-PAGE-ORGA',mode:'sections',sections:[{id:'xo',type:'texte',texte:'SECRET-PAGE-TEXTE',audience:'organisation',variante:'simple'}]});
+ const MARQUES=['SECRET','U0VDUkVU','NOM-INTERNE-PRIVE','coulisses'];
+ for(const opts of [{},{unePage:true}]){const F=opts.unePage?S.exporter(s,Object.assign({presentation:P},opts)):S.exporterPublic(s,{presentation:P});
+  assert.ok(F.length>=1);for(const f of F){for(const k of MARQUES)assert.ok(!f.contenu.includes(k),f.chemin+' contient '+k);assert.ok(!/aime-site|site\.aime\.json|_avertissement/.test(f.chemin+f.contenu.slice(0,0)),f.chemin)}
+  assert.ok(!F.some(f=>/\.json$/.test(f.chemin)),'aucun fichier de projet dans l\'export public');assert.ok(F.some(f=>f.contenu.includes('Texte public')))}
+ assert.deepEqual(S.exporterPublic(s,{presentation:P}).map(f=>f.chemin),['index.html','LISEZ-MOI.txt'],'la page entièrement réservée n\'est pas exportée');
+ const sv=S.sauvegarde(s);assert.match(sv.chemin,/sauvegarde-privee\.aime-site\.json$/);for(const k of ['SECRET-MEMBRES','SECRET-LIGNE-ORGA','SECRET-PHOTO','SECRET-PAGE-ORGA'])assert.ok(sv.contenu.includes(k),'la sauvegarde garde '+k);
+ const j=JSON.parse(sv.contenu);assert.match(j._avertissement,/Ne le publiez pas/);delete j._avertissement;const r=S.migrer(j);
+ assert.deepEqual(r.listes,s.listes);assert.deepEqual(r.pages.map(p=>p.sections.map(x=>[x.type,x.audience,x.texte||''])),s.pages.map(p=>p.sections.map(x=>[x.type,x.audience,x.texte||''])));
+ const vueOrga=S.document(r,{presentation:P,vue:{role:'owner'},regles:R}).html;assert.ok(vueOrga.includes('SECRET-LIGNE-ORGA'),'après réimport, l\'organisation retrouve tout')});

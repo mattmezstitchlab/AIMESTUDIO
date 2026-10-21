@@ -198,7 +198,7 @@ function compteRendu(R,quoi){var li=function(t){return'<li>'+esc(t)+'</li>'},sec
   '<p class="aide">Vérifiez les textes : la lecture est faite par des règles fixes, sans IA.</p><div class="e-acts"><button type="button" class="e-btn e-p" id="rapOk">Compris</button></div>';
  $('rapport').hidden=false;$('rapOk').focus();$('rapOk').onclick=function(){$('rapport').hidden=true}}
 function importerJSON(texte,nom){var j=JSON.parse(texte);
- if(j&&j.format==='aime-site'){var s2=S.migrer(j);installer({site:s2,rapport:{repris:s2.pages.reduce(function(a,p){return a+p.sections.length},0),omis:[]}},'Site AIME');return}
+ if(j&&j.format==='aime-site'){delete j._avertissement;var s2=S.migrer(j);installer({site:s2,rapport:{repris:s2.pages.reduce(function(a,p){return a+p.sections.length},0),omis:[]}},'Site AIME');return}
  if(j&&j.P&&Array.isArray(j.blocks)){installer(S.depuisMiniSite(j),'Mini-site de la landing');return}
  throw new Error('Ce fichier JSON n\'est ni un site AIME ni un export du mini-site de la landing.')}
 function importerHTML(fichiers,quoi){if(!$('droits').checked&&!confirmeDroits){dire('Cochez d\'abord : « Ce site m\'appartient, ou j\'ai l\'autorisation de le reprendre ».');accueil();$('droits').focus();return}
@@ -222,17 +222,18 @@ document.addEventListener('click',function(e){if(!e.target.closest('.gen-exp'))m
 function telecharger(nom,blob){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nom;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500)}
 function charge(src){return new Promise(function(ok,ko){if(window.JSZip)return ok();var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=ko;document.head.appendChild(s)})}
 function exporter(k){var base=S.slug(site.infos.titre||site.nom);
- if(k==='json'){telecharger(base+'.aime-site.json',new Blob([JSON.stringify(site,null,1)],{type:'application/json'}));dire('Données du site exportées.');return}
- if(k==='une'){telecharger(base+'.html',new Blob([S.exporter(site,{presentation:PRES,unePage:true})[0].contenu],{type:'text/html'}));dire('Le site en une seule page est prêt.');return}
- if(k==='onglet'){var u=URL.createObjectURL(new Blob([S.document(site,{page:page,perspective:persp,presentation:PRES}).html],{type:'text/html'}));window.open(u,'_blank','noopener');return}
- if(k==='zip')charge('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js').then(function(){var z=new JSZip();S.exporter(site,{presentation:PRES}).forEach(function(f){z.file(f.chemin,f.contenu)});z.file('site.aime.json',JSON.stringify(site,null,1));
-  z.file('LISEZ-MOI.txt','Site exporté depuis le générateur AIME.\nOuvrez index.html dans un navigateur, ou déposez ces fichiers chez votre hébergeur.\nLes polices viennent de Google Fonts. Les réponses (RSVP) ouvrent la messagerie du visiteur : rien n\'est envoyé sans lui.\nsite.aime.json se réimporte dans le générateur.\n');
-  return z.generateAsync({type:'blob'})}).then(function(b){if(b){telecharger(base+'.zip',b);dire('Le site est prêt : '+site.pages.length+' page'+(site.pages.length>1?'s':'')+' HTML et les données, dans '+base+'.zip.')}}).catch(function(){dire('Export .zip impossible (bibliothèque non chargée). Essayez « Une seule page ».')})}
+ /* sauvegarder mon projet : complet, privé, réimportable */
+ if(k==='json'){var sv=S.sauvegarde(site);telecharger(sv.chemin,new Blob([sv.contenu],{type:'application/json'}));dire('Sauvegarde privée prête ('+sv.chemin+') : elle contient aussi le réservé. Gardez-la pour vous, ne la publiez pas.');return}
+ /* exporter pour publier : la vue publique seulement */
+ if(k==='une'){telecharger(base+'.html',new Blob([S.exporter(site,{presentation:PRES,unePage:true})[0].contenu],{type:'text/html'}));dire('Page publique prête : seulement ce qui est pour tout le monde.');return}
+ if(k==='onglet'){var u=URL.createObjectURL(new Blob([S.document(site,{page:page,vue:vueDe(persp),regles:window.AIMEPerms,presentation:PRES}).html],{type:'text/html'}));window.open(u,'_blank','noopener');return}
+ if(k==='zip')charge('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js').then(function(){var z=new JSZip(),F=S.exporterPublic(site,{presentation:PRES});F.forEach(function(f){z.file(f.chemin,f.contenu)});z.__n=F.length-1;return z.generateAsync({type:'blob'}).then(function(b){return{b:b,n:F.length-1}})})
+  .then(function(r){if(r){telecharger(base+'.publication.zip',r.b);dire('Prêt à publier : '+r.n+' page'+(r.n>1?'s':'')+' publique'+(r.n>1?'s':'')+', sans le réservé ni le fichier de projet ('+base+'.publication.zip).')}}).catch(function(){dire('Export .zip impossible (bibliothèque non chargée). Essayez « Une seule page ».')})}
 
 /* ---------- démarrage ---------- */
 Promise.all([charger('/vitrine/modeles/sites.json'),charger('/vitrine/presentation/studio.json'),charger('/vitrine/perspectives/sites.json')]).then(function(r){MODELES=r[0].modeles;PRES=r[1];VUES=r[2].vues;
  $('persps').innerHTML=VUES.map(function(p){return'<button type="button" data-persp="'+esc(p.id)+'" aria-pressed="'+(p.id===persp)+'" title="'+esc(p.description)+'">'+esc(p.label)+'</button>'}).join('');catalogueUI();
  etat=lire();var q=new URLSearchParams(location.search).get('site');if(q&&etat.sites[q])ouvrir(q);else if(etat.cur&&etat.sites[etat.cur])ouvrir(etat.cur);else accueil()})
  .catch(function(){document.body.insertAdjacentHTML('beforeend','<p class="e-vide" style="margin:20px">Le générateur n\'a pas pu charger ses modèles. Rechargez la page.</p>')});
-window.AIMEGenerateur={site:function(){return site},exporter:function(o){return S.exporter(site,Object.assign({presentation:PRES},o||{}))}};
+window.AIMEGenerateur={site:function(){return site},exporter:function(o){return S.exporterPublic(site,Object.assign({presentation:PRES},o||{}))},sauvegarde:function(){return S.sauvegarde(site)}};
 })();

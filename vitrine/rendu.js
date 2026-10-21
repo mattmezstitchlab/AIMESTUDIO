@@ -287,7 +287,7 @@ function vide_(x,s,msg){return x.edition?'<p class="s-vide">'+esc(msg)+'</p>':''
 function decor(x,ratio,g){var a=x.amb;return V&&V.visuel?V.visuel(g||((x.site.id||'').length*7+3),{c1:a.c1,c2:a.c2,paper:a.fond,ink:a.encre},ratio||1.6):''}
 
 bloc('hero',{nom:'En-tête',cat:'structure',variantes:{plein:'Image pleine page',scinde:'Image à côté',affiche:'Affiche',minimal:'Typographique'},champs:['titre','texte'],
- rendre:function(x,s){var i=x.infos,t=titreSec(s,i.titre||x.site.nom),sous=s.texte||i.sous,quand=[dateLongue(i.date),i.heure,i.lieu||i.ville].filter(Boolean).join(' · '),photo=img((x.listes.galerie[0]||{}).src);
+ rendre:function(x,s){var i=x.infos,t=titreSec(s,i.titre||(x.edition?x.site.nom:'')),sous=s.texte||i.sous,quand=[dateLongue(i.date),i.heure,i.lieu||i.ville].filter(Boolean).join(' · '),photo=img((x.listes.galerie[0]||{}).src);
   var vis=photo?'<img src="'+esc(photo)+'" alt="">':decor(x,s.variante==='scinde'?1:1.7);
   var cta=i.bouton?'<a class="btn" href="'+esc(lien(i.url)||(x.ancre('rsvp')||x.ancre('contact')||'#'))+'">'+esc(i.bouton)+'</a>':'';
   return'<header class="hero hero-'+esc(s.variante||'plein')+'">'+(s.variante==='minimal'?'':'<div class="hero-v">'+vis+'</div>')+'<div class="hero-t"><h1>'+esc(t)+'</h1>'+(sous?'<p class="hero-s">'+esc(sous)+'</p>':'')+(quand?'<p class="hero-q">'+esc(quand)+'</p>':'')+(i.pluie?'<p class="hero-q pb">Plan B prêt'+(i.planB?' : '+esc(i.planB):'')+'</p>':'')+cta+'</div></header>'}});
@@ -469,19 +469,30 @@ function document_(site,o){o=o||{};var pr=presentation(site,o.presentation),page
  var visibles=function(p){return p.sections.filter(function(s){var v=voit(vue,s.audience,o.regles);if(!v.ok)masq.push({id:s.id,nom:(BLOCS[s.type]||{}).nom||s.type,titre:s.titre||'',audience:s.audience,raison:v.raison});return v.ok})};
  var L={};Object.keys(site.listes).forEach(function(k){L[k]=(site.listes[k]||[]).filter(function(r){var v=voit(vue,r&&r.audience,o.regles);if(!v.ok)lm++;return v.ok})});
  var fichier=function(p){return o.unePage?'#'+p.id:(p.id==='index'?'index.html':p.id+'.html')};
- var toutes=o.unePage?site.pages:[page],vis={},ancres={};toutes.forEach(function(p){vis[p.id]=visibles(p);vis[p.id].forEach(function(s){if(!ancres[s.type])ancres[s.type]='#'+s.id})});
+ var nomPublic=site.infos.titre||(o.edition?site.nom:'');
+ /* une page sans aucune section visible pour cette vue n'est ni exportée ni citée dans la navigation (son titre pourrait être réservé) */
+ var pageVue=function(p){return p.id==='index'||p.sections.some(function(s){return voit(vue,s.audience,o.regles).ok})},pagesVues=site.pages.filter(pageVue);if(!pageVue(page))page=site.pages[0];
+ var toutes=o.unePage?pagesVues:[page],vis={},ancres={};toutes.forEach(function(p){vis[p.id]=visibles(p);vis[p.id].forEach(function(s){if(!ancres[s.type])ancres[s.type]='#'+s.id})});
  var x={site:site,infos:site.infos,listes:L,amb:pr.a,edition:!!o.edition,vue:vue,ancre:function(t){return ancres[t]||''}};
  var n=0,corps=toutes.map(function(p){var G=p.mode==='grille';var liste=G?vis[p.id].slice().sort(function(a,b){return(a.y-b.y)||(a.x-b.x)}):vis[p.id];return(o.unePage&&p.id!=='index'?'<span id="'+esc(p.id)+'"></span>':'')+(G?'<div class="grille-c"><div class="grille">':'')+liste.map(function(s){var b=BLOCS[s.type];if(!b)return'';x.largeur=G?s.w:0;var h=b.rendre(x,s);x.largeur=0;if(!h)return'';n++;
   var aud=s.audience&&s.audience!=='public'?' aud aud-'+esc(s.audience):'',sv=' data-sv="'+esc(s.id)+'" data-sv-label="'+esc(s.titre||b.nom)+'"'+(o.edition?' data-sec="'+esc(s.id)+'"':'');
   if(G)return'<div id="'+esc(s.id)+'" class="gb gb-'+esc(s.type)+aud+'" data-t="'+esc(s.type)+'" data-x="'+s.x+'" data-y="'+s.y+'" data-w="'+s.w+'" style="grid-column:'+(s.x+1)+' / span '+s.w+';grid-row:'+(s.y+1)+' / span '+hauteur(s.type,s.w)+';'+esc(styleBloc(s.style))+'"'+sv+'>'+(o.edition&&aud?'<p class="aud-m">'+esc(AUDIENCES[s.audience])+'</p>':'')+h+'</div>';
   return s.type==='hero'?'<div id="'+esc(s.id)+'" data-t="hero"'+sv+'>'+h+'</div>':'<section id="'+esc(s.id)+'" data-t="'+esc(s.type)+'" class="s-'+esc(s.type)+(['texte','citation','compte','faq','tarifs','personnes'].indexOf(s.type)>=0?' bande':'')+aud+'"'+sv+'>'+(o.edition&&aud?'<p class="aud-m">'+esc(AUDIENCES[s.audience])+'</p>':'')+h+'</section>'}).join('')+(G?'</div></div>':'')}).join('');
- var nav=site.pages.length>1?'<nav class="nav" aria-label="Pages"><b>'+esc(site.infos.titre||site.nom)+'</b><ul>'+site.pages.map(function(p){return'<li><a href="'+esc(fichier(p))+'"'+(!o.unePage&&p.id===page.id?' aria-current="page"':'')+'>'+esc(p.titre)+'</a></li>'}).join('')+'</ul></nav>':'';
- var titre=(page.id==='index'||o.unePage?'':page.titre+' · ')+(site.infos.titre||site.nom);
+ var nav=pagesVues.length>1?'<nav class="nav" aria-label="Pages"><b>'+esc(nomPublic)+'</b><ul>'+pagesVues.map(function(p){return'<li><a href="'+esc(fichier(p))+'"'+(!o.unePage&&p.id===page.id?' aria-current="page"':'')+'>'+esc(p.titre)+'</a></li>'}).join('')+'</ul></nav>':'';
+ var titre=(page.id==='index'||o.unePage?'':page.titre+(nomPublic?' · ':''))+(nomPublic||(page.id==='index'?page.titre:''));
  var html='<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+esc(titre)+'</title>'+(site.infos.sous?'<meta name="description" content="'+esc(site.infos.sous)+'">':'')+
-  (pr.fonts?'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="'+esc(pr.fonts)+'">':'')+'<style>'+css(pr,site.presentation.densite)+'</style></head><body>'+nav+'<main>'+corps+'</main><footer class="pied"><p>'+esc(site.infos.titre||site.nom)+(site.infos.date?' · '+esc(dateLongue(site.infos.date)):'')+'</p><p>Fait avec AIME</p></footer><script>'+SCRIPT+'</'+'script>'+(o.pont?'<script src="'+esc(o.pont)+'"></'+'script>':'')+'</body></html>';
+  (pr.fonts?'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="'+esc(pr.fonts)+'">':'')+'<style>'+css(pr,site.presentation.densite)+'</style></head><body>'+nav+'<main>'+corps+'</main><footer class="pied"><p>'+esc(nomPublic)+(site.infos.date?' · '+esc(dateLongue(site.infos.date)):'')+'</p><p>Fait avec AIME</p></footer><script>'+SCRIPT+'</'+'script>'+(o.pont?'<script src="'+esc(o.pont)+'"></'+'script>':'')+'</body></html>';
  return{html:html,titre:titre,bilan:{sections:n,page:page.id,vue:vue,masquees:masq,lignesMasquees:lm}}}
-function exporter(site,o){o=o||{};if(o.unePage)return[{chemin:'index.html',contenu:document_(site,{presentation:o.presentation,unePage:true,perspective:o.perspective}).html}];
- return site.pages.map(function(p){return{chemin:p.id==='index'?'index.html':p.id+'.html',contenu:document_(site,{presentation:o.presentation,page:p.id,perspective:o.perspective}).html}})}
+/* ---------- exporter pour publier : SEULEMENT la vue publique, aucun fichier de projet, aucune page réservée ----------
+   La sauvegarde complète (sauvegarde()) est une autre action : elle contient tout, y compris le réservé, et ne se publie pas. */
+function exporter(site,o){o=o||{};var base={presentation:o.presentation,vue:null};
+ if(o.unePage)return[{chemin:'index.html',contenu:document_(site,Object.assign({unePage:true},base)).html}];
+ return site.pages.filter(function(p){return p.id==='index'||p.sections.some(function(s){return voit(null,s.audience).ok})}).map(function(p){return{chemin:p.id==='index'?'index.html':p.id+'.html',contenu:document_(site,Object.assign({page:p.id},base)).html}})}
+var LISEZ_PUBLIC='Site exporté pour publication depuis le générateur AIME.\n\nCe dossier ne contient que ce qui est destiné à TOUT LE MONDE : les sections et les lignes réservées (membres, équipe, organisation) n\'y figurent pas, ni le fichier de projet.\n\nPour publier : déposez tous les fichiers de ce dossier chez votre hébergeur (index.html est la page d\'accueil). Les polices viennent de Google Fonts. Le formulaire de réponse ouvre la messagerie du visiteur : rien n\'est envoyé sans lui.\n\nPour modifier ce site plus tard, utilisez la sauvegarde du projet (« Sauvegarder mon projet »), à garder pour vous.\n';
+function exporterPublic(site,o){o=o||{};var f=exporter(site,o);f.push({chemin:'LISEZ-MOI.txt',contenu:LISEZ_PUBLIC});return f}
+/* ---------- sauvegarder mon projet : tout, pour reprendre ; à ne pas publier ---------- */
+var AVERTISSEMENT='SAUVEGARDE PRIVÉE · Ce fichier contient TOUT le projet, y compris les sections et lignes réservées aux membres, à l\'équipe ou à l\'organisation. Ne le publiez pas, ne le déposez pas chez un hébergeur. Il sert à reprendre le projet dans le générateur AIME (Importer).';
+function sauvegarde(site){var c=JSON.parse(JSON.stringify(site));var o={_avertissement:AVERTISSEMENT};for(var k in c)o[k]=c[k];return{chemin:slug(site.infos.titre||site.nom)+'.sauvegarde-privee.aime-site.json',contenu:JSON.stringify(o,null,1)}}
 
 /* ---------- partir d'un démonstrateur (vitrine/donnees/*.json) : les mêmes faits, devenus un site éditable ----------
    Rien n'est inventé : chaque champ vient des données du démonstrateur (fictives et dites comme telles). Les moments non
@@ -533,7 +544,7 @@ function depuisStudio(pj){var v=(pj.versions||[])[pj.cur||0]||(pj.versions||[])[
 /* le style propre à un bloc (repris de la barre du mini-site : teinte, arrondi, empattement, taille) */
 function styleBloc(st){if(!st)return'';var o='';if(st.teinte!=null)o+='--bt:'+(+st.teinte)+';background:color-mix(in oklab,hsl('+(+st.teinte)+' 70% 62%) 22%,var(--fond));';if(st.arrondi!=null)o+='border-radius:'+Math.max(0,Math.min(40,+st.arrondi))+'px;';if(st.serif)o+='font-family:var(--ft);';if(st.taille)o+='font-size:'+Math.max(.7,Math.min(1.6,+st.taille))+'em;';return o}
 
-return{tasser:tasser,depuisMiniSite:depuisMiniSite,depuisStudio:depuisStudio,styleBloc:styleBloc,moisFr:moisFr,FORMES:FORMES,formeDe:formeDe,RATIO:RATIO,LARGEUR:LARGEUR,hauteur:hauteur,DEPS:DEPS,placeLibre:placeLibre,versGrille:versGrille,versSections:versSections,AUDIENCES:AUDIENCES,voit:voit,depuisVitrine:depuisVitrine,SCHEMA:SCHEMA,LISTES:LISTES,CATS:CATS,BLOCS:BLOCS,CHAMPS:CHAMPS,vide:vide,migrer:migrer,ajouterSection:ajouterSection,appliquerModele:appliquerModele,
+return{exporterPublic:exporterPublic,sauvegarde:sauvegarde,AVERTISSEMENT:AVERTISSEMENT,tasser:tasser,depuisMiniSite:depuisMiniSite,depuisStudio:depuisStudio,styleBloc:styleBloc,moisFr:moisFr,FORMES:FORMES,formeDe:formeDe,RATIO:RATIO,LARGEUR:LARGEUR,hauteur:hauteur,DEPS:DEPS,placeLibre:placeLibre,versGrille:versGrille,versSections:versSections,AUDIENCES:AUDIENCES,voit:voit,depuisVitrine:depuisVitrine,SCHEMA:SCHEMA,LISTES:LISTES,CATS:CATS,BLOCS:BLOCS,CHAMPS:CHAMPS,vide:vide,migrer:migrer,ajouterSection:ajouterSection,appliquerModele:appliquerModele,
  document:document_,exporter:exporter,contraste:contraste,lien:lien,img:img,slug:slug,esc:esc,uid:uid};
 })({visuel:visuel});
 
