@@ -63,7 +63,15 @@ test('routes : /bureau/ est servi, Page Zéro y mène, aucune boucle, chaque ent
  for(const u of ['/bureau','/bureau/','/bureau/index.html'])assert.equal(suivre(u).sauts,0,u+' ne doit plus être redirigé');
  assert.ok(fs.existsSync(R('bureau/index.html')));
  for(const r of reds)suivre(r.source.replace(/:path\*/,'x').replace('(.*)','x'));
- const sert=u=>{const p=u.split(/[?#]/)[0];const f=p.endsWith('/')?p+'index.html':p;return fs.existsSync(R(f.slice(1)))||fs.existsSync(R(p.slice(1)+'/index.html'))};
+ const rw=(v.rewrites||[]);const fichier=p=>{const f=p.endsWith('/')?p+'index.html':p;return fs.existsSync(R(f.slice(1)))||fs.existsSync(R(p.slice(1)+'/index.html'))};
+ const sert=u=>{const p=u.split(/[?#]/)[0];if(fichier(p))return true;const r=rw.find(r=>r.source===p);return !!r&&fichier(r.destination)};
  for(const e of N.ENTREES){const f=suivre(e.href.split('?')[0]).fin;assert.ok(sert(f),e.id+' → '+f+' : aucun fichier')}
  const z=fs.readFileSync(R('index.html'),'utf8');const b=z.indexOf('id="bureau" href="/bureau/"'),m=z.indexOf('id="rejoindre" href="/aime/"');
  assert.ok(b>0&&m>b,'Page Zéro : Ouvrir mon Bureau en principal, Le Monde AIME ensuite');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.match(z,/href="\/bureau\/">MON BUREAU/)});
+
+test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
+ const v=JSON.parse(fs.readFileSync(R('vercel.json'))),rw=v.rewrites||[],A=['accessibilite','buro','docs','image','stitchlab','web'];
+ const st=fs.readFileSync(R('studio/index.html'),'utf8');assert.match(st,/location\.pathname\.match\(\/\^\\\/\(accessibilite\|buro\|docs\|image\|stitchlab\|web\)/,'l\'atelier se lit dans l\'adresse');
+ const ATS=st.match(/const ATELIERS=\{([^\n]*?)\};/);for(const a of A){assert.ok(ATS&&new RegExp('\\b'+a+':\\{').test(ATS[1]),a+' est un atelier connu du Studio');
+  assert.ok(!fs.existsSync(R(a+'/index.html')),a+'/index.html : copie revenue');for(const s of ['/'+a,'/'+a+'/'])assert.ok(rw.some(r=>r.source===s&&r.destination==='/studio/index.html'),s+' réécrit vers le Studio')}
+ assert.ok(fs.existsSync(R('docs/BUREAU.md')),'les documents de /docs/ restent servis')});
