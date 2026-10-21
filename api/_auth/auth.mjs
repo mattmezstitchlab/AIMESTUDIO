@@ -40,6 +40,9 @@ export function imageOk(v) { return typeof v === 'string' && v.length <= 160000 
 function propre(u) { const o = Object.assign({}, u); if (o.name !== undefined) o.name = String(o.name || '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 80); if ('image' in o && o.image && !imageOk(o.image)) o.image = null; return o; }
 
 let instance = null, pool = null;
+export function schemaManquant(e) { return /SCHEMA_MISMATCH|schema mismatch/i.test(String((e && (e.code || (e.cause && e.cause.code))) || '') + ' ' + String(e && e.message)); }
+/* oublier l'instance : la prochaine requête relit le schéma (utile juste après une migration) */
+export function oublier() { const p = pool; instance = null; pool = null; if (p) p.end().catch(() => {}); }
 export function _pool() { return pool; }
 export function auth(env = process.env) {
   if (instance) return instance;
@@ -73,5 +76,5 @@ export async function personne(req) {
   const a = auth(); if (!a) return null;
   const h = new Headers(); for (const [k, v] of Object.entries(req.headers || {})) if (v != null) h.set(k, Array.isArray(v) ? v.join(', ') : String(v));
   try { const s = await a.api.getSession({ headers: h }); return s && s.user ? { id: s.user.id, email: s.user.email, nom: s.user.name || '' } : null; }
-  catch (e) { if (/SCHEMA_MISMATCH|schema mismatch/i.test(String((e && (e.code || (e.cause && e.cause.code))) || '') + ' ' + String(e && e.message))) throw e; return null; }
+  catch (e) { if (schemaManquant(e)) { oublier(); throw e; } return null; }
 }
