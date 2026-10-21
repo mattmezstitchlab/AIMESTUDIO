@@ -102,3 +102,9 @@ test('import HTML/ZIP : limites explicites, chemins suspects, contenus actifs, r
  const c=I.classer({sections:{texte:2},infos:['e-mail'],images:1,ignores:['1 script (index.html) : contenu actif, jamais exécuté'],nonReconnu:[],transformes:[]});
  assert.deepEqual(Object.keys(c),['reconnu','transforme','ignore','aVerifier']);assert.equal(c.reconnu.length,2);assert.match(c.transforme[0],/recompress/);assert.match(c.aVerifier.join(' '),/n'est pas reproduite/,'aucune promesse de fidélité');
  const ed=require('fs').readFileSync(path.join(__dirname,'..','sites/editeur.js'),'utf8');assert.ok(/blob\.size>L\.archive/.test(ed),'taille de l\'archive vérifiée avant de charger JSZip');assert.ok(!/f\.async\('blob'\)/.test(ed),'plus de décompression en bloc dans l\'éditeur')});
+test('le « + » du générateur (comme sur la landing) : chaque bloc du moteur dans une famille, une seule fois, avec son icône',()=>{
+ const ed=require('fs').readFileSync(path.join(__dirname,'..','sites/editeur.js'),'utf8');
+ const PAL=JSON.parse(ed.match(/var PALETTE=(\[.*?\]\]\]);/)[1]);const tous=PAL.flatMap(f=>f[1]);
+ assert.deepEqual([...tous].sort(),Object.keys(S.BLOCS).sort(),'aucun bloc oublié, aucun bloc inventé');assert.equal(new Set(tous).size,tous.length,'aucun doublon');
+ for(const k of tous)assert.ok(new RegExp('[{,]'+k+':\'<').test(ed),'icône pour '+k);
+ const html=require('fs').readFileSync(path.join(__dirname,'..','sites/index.html'),'utf8');assert.match(html,/id="plus"[^>]*aria-controls="catalogue"/);assert.match(html,/id="catalogue"[^>]*role="dialog"/)});
