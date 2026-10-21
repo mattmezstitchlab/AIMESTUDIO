@@ -153,4 +153,7 @@ test('Rewind du hero : refus R3 réel, puis défaire → corriger → rejouer, s
   const html = require('fs').readFileSync('g44/index.html', 'utf8');
   assert.match(html, /id="rewind"/); assert.ok(!/class="rewind"/.test(html), 'pas de collision avec la classe .rewind du LAB 02'); assert.ok(html.indexOf('id="rewind"') < html.indexOf('id="scenario"'), 'dans le hero');
   assert.match(require('fs').readFileSync('g44/js/rewind.js', 'utf8'), /RECONSTITUTION PÉDAGOGIQUE · CODES FICTIFS/);
+  const css = require('fs').readFileSync('g44/lab.css', 'utf8');
+  assert.match(css, /\.btn\.rw-go,\.btn\.rw-go:hover[^{]*\{[^}]*linear-gradient\(90deg,#22D3EE/, 'Rembobiner reste arc-en-ciel, même au survol (bat .btn:hover)');
+  assert.match(css, /\.vue \.lig:has\(>\.etat\)\{grid-template-columns:minmax\(0,1fr\) auto\}/, 'LAB 05 : le badge a sa colonne, le libellé passe à la ligne au lieu de passer dessous');
 });
