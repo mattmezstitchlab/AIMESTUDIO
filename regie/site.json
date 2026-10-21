@@ -162,5 +162,171 @@
    }
   }
  },
- "medias": {}
+ "medias": {},
+ "realisations": [
+  {
+   "id": "r-g44",
+   "titre": "G44 LAB",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "application",
+   "resume": "Le laboratoire des dépendances administratives : une erreur, et toute la chaîne se rejoue sous vos yeux.",
+   "presentation": "macbook",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/mac-g44.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/g44/",
+   "alt": "Le G44 LAB sur un MacBook.",
+   "publie": true
+  },
+  {
+   "id": "r-generateur",
+   "titre": "Générateur de site",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "application",
+   "resume": "Composer un site complet, page par page, avec des vues par rôle.",
+   "presentation": "macbook",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/mac-generateur.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/sites/",
+   "alt": "Le générateur de site sur un MacBook.",
+   "publie": true
+  },
+  {
+   "id": "r-live",
+   "titre": "AIME Live",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "evenement",
+   "resume": "Le jour J en direct : un retard, une annonce, et chacun le voit selon ses droits.",
+   "presentation": "ipad",
+   "contenu": {
+    "type": "page",
+    "src": "/live/?u=mariage",
+    "ajustement": "cover"
+   },
+   "lien": "/live/",
+   "alt": "AIME Live sur un iPad.",
+   "publie": true
+  },
+  {
+   "id": "r-os",
+   "titre": "AIME OS",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "application",
+   "resume": "Toutes les apps AIME dans un seul bureau, une orbe, une recherche.",
+   "presentation": "macbook",
+   "contenu": {
+    "type": "page",
+    "src": "/bureau/",
+    "ajustement": "cover"
+   },
+   "lien": "/bureau/",
+   "alt": "AIME OS sur un MacBook.",
+   "publie": true
+  },
+  {
+   "id": "r-studio",
+   "titre": "AIME Studio",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "identite",
+   "resume": "Un contenu, tous vos supports : faire-part, affiches, réseaux.",
+   "presentation": "iphone",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/tel-studio.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/studio/",
+   "alt": "AIME Studio sur un iPhone.",
+   "publie": true
+  },
+  {
+   "id": "r-mariage",
+   "titre": "Mariage Léa & Marc",
+   "client": "Démonstration · données fictives",
+   "annee": 2026,
+   "categorie": "site",
+   "resume": "Un site de mariage où chaque invité voit ce qui le concerne.",
+   "presentation": "iphone",
+   "contenu": {
+    "type": "image",
+    "src": "/zero/ecrans/tel-mariage.webp",
+    "ajustement": "cover"
+   },
+   "lien": "/vitrine/site/?u=mariage",
+   "alt": "Le site du mariage de démonstration sur un iPhone.",
+   "publie": true
+  },
+  {
+   "id": "r-stitch",
+   "titre": "AIME Stitch",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "broderie",
+   "resume": "Des patrons de point de croix vivants : créer, éditer, lire, vendre.",
+   "presentation": "ipad",
+   "contenu": {
+    "type": "page",
+    "src": "/stitch/",
+    "ajustement": "cover"
+   },
+   "lien": "/stitch/",
+   "alt": "AIME Stitch sur un iPad.",
+   "publie": true
+  },
+  {
+   "id": "r-infinity",
+   "titre": "AIME Infinity",
+   "client": "AIME · projet personnel",
+   "annee": 2026,
+   "categorie": "application",
+   "resume": "Un jeu infini : chaque victoire révèle un monde plus grand.",
+   "presentation": "iphone",
+   "contenu": {
+    "type": "page",
+    "src": "/infinity/",
+    "ajustement": "cover"
+   },
+   "lien": "/infinity/",
+   "alt": "AIME Infinity sur un iPhone.",
+   "publie": true
+  }
+ ],
+ "carrousels": [
+  {
+   "id": "c-outils",
+   "titre": "Applications et outils",
+   "page": "/",
+   "apres": "#meta",
+   "defilement": "auto",
+   "items": [
+    "r-g44",
+    "r-live",
+    "r-generateur",
+    "r-os"
+   ]
+  },
+  {
+   "id": "c-univers",
+   "titre": "Sites, identités et univers",
+   "page": "/",
+   "apres": ".promesse",
+   "defilement": "auto",
+   "items": [
+    "r-studio",
+    "r-mariage",
+    "r-stitch",
+    "r-infinity"
+   ]
+  }
+ ]
 }
