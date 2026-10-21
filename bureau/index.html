@@ -3,26 +3,67 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mon Bureau · AIME</title>
-<meta name="description" content="Le Bureau AIME : retrouver et reprendre ses projets, ouvrir un outil, accéder au Lab.">
+<title>AIME OS</title>
+<meta name="description" content="AIME OS : toutes les apps AIME dans un seul bureau, une seule orbe, une seule recherche.">
+<meta name="theme-color" content="#0A0A0C">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="/bureau/bureau.css">
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/os/os.css">
 </head>
-<body>
-<a class="evite" href="#espace">Aller au Bureau</a>
-<header class="top"><a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup></a><nav aria-label="AIME"><a class="pill" href="/aime/">Découvrir AIME</a></nav></header>
-<div id="espace" class="espace" tabindex="-1"><p class="e-vide">Chargement du Bureau…</p></div>
-<div id="restauration" class="restauration" role="dialog" aria-modal="false" aria-labelledby="t-rest" hidden></div>
-<input type="file" id="fichier" accept="application/json,.json" hidden>
-<p id="vivant" class="vivant" role="status" aria-live="polite"></p>
-<footer class="pied"><span>AIME® · Bureau · version de travail</span><span>Données gardées dans ce navigateur. Aucun compte, aucune synchronisation.</span></footer>
-<noscript><p class="e-vide">Le Bureau lit ce que ce navigateur contient : il a besoin de JavaScript.</p></noscript>
+<body class="os">
+<a class="evite" href="#lanceur-q">Aller à la recherche</a>
+<header class="barre-os">
+ <button class="marque" type="button" id="accueilBtn" aria-label="AIME OS, revenir au bureau">AIME<sup>®</sup><span>OS</span></button>
+ <span class="app-courante" id="appCourante" aria-live="polite"></span>
+ <span class="barre-d">
+  <button class="cherche" type="button" id="chercheBtn" aria-haspopup="dialog"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="M13.2 13.2 17 17"/></svg><span>Rechercher</span><kbd>Ctrl K</kbd></button>
+  <time class="heure" id="heure"></time>
+ </span>
+</header>
+
+<main class="bureau" id="bureau" aria-label="Bureau">
+ <canvas class="fond" id="fond" aria-hidden="true"></canvas>
+ <section class="accueil" id="accueil" aria-labelledby="t-accueil">
+  <div class="orbe-accueil" id="orbeAccueil" aria-hidden="true"></div>
+  <h1 id="t-accueil"><span id="salut">Bonjour</span>.</h1>
+  <p class="intention">Tout commence par une intention.</p>
+  <form class="lanceur" id="lanceur" role="search"><label class="sr" for="lanceur-q">Que voulez-vous faire ?</label><input id="lanceur-q" placeholder="Que voulez-vous faire ?" autocomplete="off" spellcheck="false"><kbd>Ctrl K</kbd></form>
+  <div class="actions" id="actionsRapides" aria-label="Actions rapides"></div>
+  <section class="reprendre" id="reprendre" aria-labelledby="t-reprendre" hidden><h2 id="t-reprendre">Reprendre</h2><div class="cartes" id="cartes"></div></section>
+ </section>
+ <div class="fenetres" id="fenetres"></div>
+</main>
+
+<nav class="dock" id="dock" aria-label="Dock">
+ <button class="dock-orbe" type="button" id="orbeBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="orbePan" aria-label="L'orbe : suggestions"><span class="mini-orbe"></span></button>
+ <span class="dock-sep" aria-hidden="true"></span>
+ <div class="dock-apps" id="dockApps"></div>
+ <span class="dock-sep" aria-hidden="true"></span>
+ <button class="dock-app toutes" type="button" id="toutBtn" aria-haspopup="dialog" aria-label="Toutes les apps"><span class="ico"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5" cy="5" r="1.6"/><circle cx="10" cy="5" r="1.6"/><circle cx="15" cy="5" r="1.6"/><circle cx="5" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="15" cy="10" r="1.6"/><circle cx="5" cy="15" r="1.6"/><circle cx="10" cy="15" r="1.6"/><circle cx="15" cy="15" r="1.6"/></svg></span></button>
+</nav>
+
+<div class="voile" id="voile" hidden></div>
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Rechercher dans AIME OS" hidden>
+ <div class="palette-q"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="M13.2 13.2 17 17"/></svg><input id="paletteQ" role="combobox" aria-expanded="true" aria-controls="paletteL" aria-autocomplete="list" placeholder="Une app, un projet, une action…" autocomplete="off" spellcheck="false"></div>
+ <ul class="palette-l" id="paletteL" role="listbox" aria-label="Résultats"></ul>
+ <p class="palette-aide"><kbd>↑</kbd><kbd>↓</kbd> choisir · <kbd>Entrée</kbd> ouvrir · <kbd>Échap</kbd> fermer</p>
+</div>
+<div class="tout" id="tout" role="dialog" aria-modal="true" aria-labelledby="t-tout" hidden>
+ <div class="tout-t"><h2 id="t-tout">Toutes les apps</h2><button class="b-fermer" type="button" data-fermer aria-label="Fermer">×</button></div>
+ <div class="tout-g" id="toutG"></div>
+</div>
+<div class="orbe-pan" id="orbePan" role="dialog" aria-labelledby="t-orbe" hidden>
+ <div><p class="k" id="t-orbe">L'orbe</p><p class="orbe-dit" id="orbeDit"></p><nav class="orbe-sugg" id="orbeSugg" aria-label="Suggestions"></nav></div>
+</div>
+<p class="sr" id="annonce" role="status" aria-live="polite"></p>
+<noscript><p class="ns">AIME OS a besoin de JavaScript. <a href="/bureau/espace/">Ouvrir Mon espace</a>.</p></noscript>
+
 <script src="/nav/registre.js"></script>
-<script src="/vitrine/rendu.js"></script>
-<script src="/carte/carte.js"></script>
-<script src="/carte/rendu.js"></script>
+<script src="/regie/donnees.js"></script>
 <script src="/bureau/sources.js"></script>
-<script src="/bureau/bureau.js"></script>
-<script src="/menu/menu.js"></script>
+<script src="/zero/orbe.js"></script>
+<script src="/os/apps.js"></script>
+<script src="/os/os.js"></script>
 </body>
 </html>

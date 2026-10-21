@@ -15,7 +15,7 @@ var CATS=[
  {id:'jeux',t:'Jeux et Lab',d:'Des règles simples, des essais en cours.'}];
 /* id, nom, adresse, phrase, catégorie, rôle, statut, nouveau? */
 var E=[
- ['bureau','Mon Bureau','/bureau/','Retrouver et reprendre ses projets','monde','travailler','disponible',true],
+ ['bureau','Mon Bureau','/bureau/','AIME OS : toutes les apps, une orbe, une recherche','monde','travailler','disponible',true],
  ['zero','Page Zéro','/','Tout commence par une intention','monde','decouvrir','disponible'],
  ['aime','Le Monde AIME','/aime/','La grande présentation, le cube, l\'orbe','monde','decouvrir','disponible'],
  ['tout','Tout voir','/tout/','Toutes les vues d\'un coup','monde','decouvrir','disponible'],

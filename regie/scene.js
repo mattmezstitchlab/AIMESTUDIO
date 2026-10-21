@@ -109,7 +109,9 @@ function appliquerTextes(regles){restaurer();var n=regles.length,fait=0;if(!n)re
 
 /* ---------- l'orbe du site ---------- */
 var orbeEl=null,compagnonLance=false;
-function monterOrbe(o){if(orbeEl){orbeEl.remove();orbeEl=null}
+/* dans AIME OS, l'orbe est celle du système : la page ne pose pas la sienne */
+var DANS_OS=window.parent!==window&&(function(){try{return!!parent.AIMEOS}catch(e){return false}})();
+function monterOrbe(o){if(orbeEl){orbeEl.remove();orbeEl=null}if(DANS_OS)return;
  if(o.presence==='bouton'||o.presence==='les-deux'){var b=document.createElement('div');b.className='rg-orbe '+o.cote;b.style.setProperty('--rg-t',o.taille+'px');
   var pan=document.createElement('div'),inner=document.createElement('div'),idp='rg-pan-'+Math.random().toString(36).slice(2,7);pan.className='rg-pan';pan.id=idp;pan.hidden=true;pan.setAttribute('role','dialog');pan.setAttribute('aria-label','Suggestions');
   if(o.accueil){var p=document.createElement('p');p.textContent=o.accueil;inner.appendChild(p)}

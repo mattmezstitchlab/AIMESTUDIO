@@ -21,7 +21,7 @@ test('registre : une seule liste, des statuts et des rôles explicites, des adre
  assert.equal(N.entree('bureau').href,'/bureau/');assert.equal(N.entree('bureau').role,'travailler');assert.equal(N.par('role','travailler').length,1,'une seule entrée pour travailler');
  assert.ok(N.par('role','experimenter').length>=1,'un Lab séparé');
  const menu=fs.readFileSync(R('menu/menu.js'),'utf8');assert.match(menu,/window\.AIMENav/);
- for(const f of ['aime/index.html','bureau/index.html']){const h=fs.readFileSync(R(f),'utf8');assert.ok(h.indexOf('/nav/registre.js')>=0&&h.indexOf('/nav/registre.js')<h.indexOf('/menu/menu.js'),f+' charge le registre avant le menu')}});
+ for(const f of ['aime/index.html','bureau/espace/index.html']){const h=fs.readFileSync(R(f),'utf8');assert.ok(h.indexOf('/nav/registre.js')>=0&&h.indexOf('/nav/registre.js')<h.indexOf('/menu/menu.js'),f+' charge le registre avant le menu')}});
 
 test('sources : tout est retrouvé, rien n\'est écrit, rien n\'est inventé',()=>{
  const S=stock(plein,true),inv=B.inventaire(S),par=id=>inv.sources.find(s=>s.id===id).projets;
@@ -61,7 +61,7 @@ test('moteur partagé : le Bureau est composé par vitrine/rendu.js, sans second
  assert.ok(r.html.includes('Expérimental'),'statut affiché');assert.equal((r.html.match(/data-dossier=/g)||[]).length,3,'un dossier par entrée');
  assert.ok(/aria-controls="dos-studio"/.test(r.html)&&/id="dos-studio"[^>]*hidden/.test(r.html),'chaque dossier ouvre sa fenêtre, fermée au départ');
  assert.deepEqual(r.bilan.blocs,['reprendre','dossiers','navigateur']);
- const html=fs.readFileSync(R('bureau/index.html'),'utf8');assert.ok(html.includes('/vitrine/rendu.js'));assert.ok(!/function (rendre|composer)\(/.test(fs.readFileSync(R('bureau/bureau.js'),'utf8')),'pas de moteur concurrent')});
+ const html=fs.readFileSync(R('bureau/espace/index.html'),'utf8');assert.ok(html.includes('/vitrine/rendu.js'),'Mon espace (l\'ancien Bureau, app de l\'OS) reste composé par le moteur partagé');assert.ok(!/function (rendre|composer)\(/.test(fs.readFileSync(R('bureau/bureau.js'),'utf8')),'pas de moteur concurrent')});
 
 test('routes : /bureau/ est servi, Page Zéro y mène, aucune boucle, chaque entrée du registre aboutit',()=>{
  const v=JSON.parse(fs.readFileSync(R('vercel.json'))),reds=v.redirects||[];
