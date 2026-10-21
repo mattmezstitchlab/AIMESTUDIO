@@ -163,3 +163,21 @@ Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / F�
 - **Quatre poignées** pour agrandir par n'importe quel coin, le coin opposé restant fixe.
 - **Repères verts** quand un bord s'aligne sur celui d'un autre bloc.
 - **Une petite barre sur le bloc choisi** : Teinte (+45°), Arrondi (0, 12 ou 26), Serif ou Sans, A− / A+, Dupliquer, Neutre, Retirer.
+
+## Le « + », comme sur la landing (21/10/2026)
+- Un bouton rond « + » en bas à gauche de l'aperçu ouvre le même panneau que le mini-site de la landing :
+  - **Vos informations** : titre, accroche, date, heure, lieu, adresse, ville, accès, plan B, e-mail, téléphone, bouton, en tuiles à remplir directement. L'aperçu suit à la frappe.
+  - **Les blocs**, en familles de six au plus, avec une icône chacun :
+    - Présenter, Organiser et Relier reprennent les familles de la landing ;
+    - Compléter et Activité rangent les blocs que la landing n'a pas.
+- Toucher une tuile pose le bloc, et le panneau reste ouvert pour enchaîner. En grille libre, on peut aussi glisser la tuile à sa place : le panneau s'efface pendant le geste.
+- « Échap » ou × referme le panneau, et le focus revient au « + ». Le bouton « + Ajouter un bloc » de la colonne ouvre le même panneau, directement sur les blocs.
+- Testé : chaque bloc du moteur est dans une famille, une seule fois, avec son icône (`tests/site.test.cjs`). Vérifié dans Chromium (serveur local), à 1440 px et à 390 px : saisie, ajout au toucher, glisser en grille, clavier, aucun débordement.
+
+## Les supports du Studio, en blocs web (21/10/2026)
+- Parmi les 96 supports du Studio, beaucoup sont faits pour l'impression. Ceux qui ont un sens sur une page web sont devenus 15 vrais blocs du moteur (`vitrine/rendu.js`). Ils lisent les informations écrites une fois (titre, date, lieu, contact) et sept nouvelles listes : `tables`, `messages`, `credits`, `allergenes`, `setlist`, `orientation`, `consignes`.
+  - **Annoncer** : Faire-part (Arche, Classique, Réservez la date, Hommage), Monogramme (initiales du titre), Remerciements (carte, ou récap avec les photos de la galerie), Livre d'or, « Ils ont fait ce jour » (crédits), Carte de visite.
+  - **Accueillir** : Bienvenue, Plan de table, Orientation (flèches), Sans téléphone, Partagez vos photos, Billet.
+  - **Informer** (avec Tarifs, Chiffres et Chronologie) : Allergènes (un vrai tableau), Setlist, Facile à lire.
+- Ils sont tous dans le « + », en familles de six. Ils suivent l'ambiance du site et se placent dans la grille libre, et ils sont échappés et testés comme les autres blocs.
+- Écartés pour l'instant, faute de sens sur le web : enveloppe, bracelet, étiquette de tireuse, DPE, set de table, marque-place, papier à en-tête, etc.
