@@ -181,6 +181,13 @@ html.calme .mo{opacity:1}
 @media (max-width:640px){.scene-regie{height:84vw}}
 
 /* 7 · contact */
+.offres{padding:clamp(80px,12vh,140px) 0;border-top:1px solid var(--line)}
+.offres .col{max-width:1100px;text-align:left}
+.offres .k{margin:0 0 16px;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
+.offres h2{margin:0 0 clamp(32px,5vh,52px);font:400 clamp(32px,4.6vw,60px)/1.04 var(--display);letter-spacing:-.02em;text-wrap:balance}
+.cartes-offres{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.cartes-offres li{display:grid;gap:10px;align-content:start;padding:26px 24px 30px;background:var(--desk)}
+.cartes-offres b{font:600 18px/1.25 var(--ui)}.cartes-offres span{font-size:15px;color:var(--soft);line-height:1.55}
 .contact{position:relative;padding:clamp(90px,14vh,160px) 0 calc(120px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
 .contact .col{max-width:820px;text-align:left}
 .contact .k{margin:0 0 16px;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
@@ -293,6 +300,20 @@ html.calme .mo{opacity:1}
   <h2 id="t-entrer">Et maintenant ?</h2>
   <p data-regie="entrer-texte" style="margin-top:22px">Découvrez ce que nous pouvons créer, relier et faire évoluer ensemble.</p>
   <div class="sorties"><a class="bouton" id="bureau" href="/bureau/">Ouvrir mon Bureau <span aria-hidden="true">→</span></a><a class="bouton second" id="rejoindre" href="/aime/">Rejoindre Le Monde AIME</a><a class="bouton second" id="parler" href="#contact">Parler d'un projet</a></div>
+ </div>
+</section>
+
+<!-- 6 bis · ce que je fais (textes modifiables dans la Régie, mode texte) -->
+<section class="offres" id="offres" aria-labelledby="t-offres">
+ <div class="col">
+  <p class="k">Ce que je fais</p>
+  <h2 id="t-offres" data-regie="offres-titre">Des sites et des outils qui relient.</h2>
+  <ul class="cartes-offres">
+   <li><b data-regie="offre1-t">Sites et applications</b><span data-regie="offre1-d">Un site vitrine, un portfolio, une application sur mesure : conçus, construits et mis en ligne.</span></li>
+   <li><b data-regie="offre2-t">Identité et supports</b><span data-regie="offre2-d">Logo, couleurs, faire-part, affiches, réseaux : une même identité sur tous les supports.</span></li>
+   <li><b data-regie="offre3-t">Événements</b><span data-regie="offre3-d">Un espace partagé pour préparer le jour J, et le direct pour le vivre ensemble.</span></li>
+   <li><b data-regie="offre4-t">Sur mesure</b><span data-regie="offre4-d">Un besoin qui ne rentre dans aucune case : parlons-en, je vous propose un devis.</span></li>
+  </ul>
  </div>
 </section>
 

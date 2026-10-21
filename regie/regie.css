@@ -151,3 +151,5 @@ h3{margin:0;font:600 15px var(--ui)}
 @media (max-width:760px){.cadre{grid-template-columns:minmax(0,1fr)}.onglets{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--ligne)}.og-t,.og-note{display:none}.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.etat-pub{display:none}}
 @media (max-width:480px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}.bascule span{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.vign-t{display:grid;place-items:center;font:600 10px var(--mono);color:var(--pale);border:1px solid var(--ligne);background:var(--fond)}

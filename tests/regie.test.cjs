@@ -142,3 +142,24 @@ test('phase 2 · la Régie montre les sites sans scripts et publie leur version 
   assert.match(fs.readFileSync('regie/index.html', 'utf8'), /\/regie\/sites\.js/);
   assert.match(j, /n\\'accorde aucun droit/, 'changer de perspective n\'accorde rien');
 });
+
+test('portfolio · réalisations et carrousels assainis', () => {
+  const r = R.realisation({ titre: 'Été <b>Jazz</b>', annee: 3000, presentation: 'tv', contenu: { type: 'url', src: 'javascript:x' }, lien: 'javascript:y', publie: 'oui' });
+  assert.equal(r.presentation, 'macbook'); assert.equal(r.annee, null); assert.equal(r.contenu.type, 'vide'); assert.equal(r.lien, ''); assert.equal(r.publie, false, 'seul true publie');
+  assert.equal(r.slug, 'ete-b-jazz-b'); assert.equal(R.realisation({ presentation: 'visuel', paysage: true }).paysage, false);
+  const c = R.config({ realisations: [{ id: 'r-un', titre: 'A' }, { id: 'r-deux', titre: 'A' }], carrousels: [{ id: 'c-un', apres: 'section > p', items: ['r-un', 'r-inconnu', 'r-un', 'r-deux'] }] });
+  assert.deepEqual(c.realisations.map(x => x.slug), ['a', 'a-2'], 'des adresses de projet uniques');
+  assert.deepEqual(c.carrousels[0].items, ['r-un', 'r-deux'], 'pas de doublon ni de réalisation inconnue');
+  assert.equal(c.carrousels[0].apres, '#meta', 'une place libre retombe sur une place sûre');
+  assert.deepEqual(R.vide().realisations, []);
+});
+
+test('portfolio · la Page Zéro publiée montre des carrousels de vraies réalisations', () => {
+  const c = R.config(JSON.parse(fs.readFileSync('regie/site.json', 'utf8')));
+  assert.ok(c.realisations.length >= 6 && c.realisations.every(r => r.publie && r.titre && r.contenu.type !== 'vide'));
+  assert.ok(c.carrousels.length >= 2 && c.carrousels.every(x => x.page === '/' && x.items.length >= 3));
+  const page = fs.readFileSync('index.html', 'utf8');
+  c.carrousels.forEach(x => assert.ok(page.includes(x.apres.startsWith('#') ? 'id="' + x.apres.slice(1) + '"' : 'class="' + x.apres.slice(1)), 'la place existe : ' + x.apres));
+  assert.match(page, /id="offres"/);
+  const s = fs.readFileSync('regie/scene.js', 'utf8'); assert.match(s, /monterCarrousels/); assert.match(s, /RM&&!EDITION/, 'pas de défilement auto si animations réduites');
+});

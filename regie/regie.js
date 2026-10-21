@@ -20,7 +20,7 @@ function confirmer(b,texte,action){if(b.dataset.arme){delete b.dataset.arme;b.te
 
 /* ---------- état ---------- */
 var publie=R.vide(),cfg=null,compta;
-(function(){var t=lire(CLE_B);if(t){try{cfg=R.config(JSON.parse(t))}catch(e){cfg=null}}})();
+var sansPortfolio=false;(function(){var t=lire(CLE_B);if(t){try{var brut=JSON.parse(t);sansPortfolio=!('realisations' in brut);cfg=R.config(brut)}catch(e){cfg=null}}})();
 (function(){var t=lire(CLE_C);if(!t){compta=R.comptaVide();return}try{compta=R.compta(t)}catch(e){compta=R.comptaVide();ecrire(CLE_C+'-illisible-'+Date.now(),t);toast('La comptabilité enregistrée était illisible : elle a été mise de côté, rien n\'a été effacé.',true)}})();
 function sauverCompta(){ecrire(CLE_C,JSON.stringify(compta))}
 var envoiCfg=null;
@@ -51,7 +51,7 @@ function vignette(src){if(!src)return Promise.resolve('');var m;if((m=/^biblio:(
 var BIB=null;function bib(){return BIB?Promise.resolve(BIB):fetch('/sites/bibliotheque/bibliotheque.json').then(function(r){return r.json()}).then(function(j){BIB=j;return j})}
 
 /* ---------- navigation ---------- */
-var VUES={pages:vPages,sites:vSites,edition:vEdition,orbe:vOrbe,docs:vDocs,clients:vClients,entreprise:vEntreprise,publier:vPublier};
+var VUES={pages:vPages,realisations:vRealisations,sites:vSites,edition:vEdition,orbe:vOrbe,docs:vDocs,clients:vClients,entreprise:vEntreprise,publier:vPublier};
 var courant=null;
 function aller(nom,opts){if(!VUES[nom])nom='pages';courant=nom;ecrire(CLE_O,nom);[].forEach.call(document.querySelectorAll('[data-onglet]'),function(b){if(b.dataset.onglet===nom)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
  if(nom!=='edition')ed.frame=null;sitesVue.actif=nom==='sites';vue.onclick=vue.oninput=vue.onchange=vue.onkeydown=null;VUES[nom](opts||{});if(history.replaceState)history.replaceState(null,'','#'+nom);vue.focus({preventScroll:true});scrollTo(0,0)}
@@ -67,6 +67,68 @@ function vPages(){var cats=N.categories();var h='<h1>Pages et arborescence</h1><
  vue.innerHTML=h;
  $('autreP').onsubmit=function(e){e.preventDefault();var c=$('autreChemin').value.trim();if(!R.cheminOk(c))return toast('Un chemin du site commence par « / », par exemple /stitch/atelier/.',true);aller('edition',{cle:R.cleDePage(c),href:c})};
  vue.onclick=function(e){var b=e.target.closest('[data-editer]');if(b)return aller('edition',{cle:b.dataset.editer,href:b.dataset.href});b=e.target.closest('[data-orbe-site]');if(b)return aller('orbe',{site:b.dataset.orbeSite})}}
+
+/* ================= Réalisations : le portfolio et ses carrousels ================= */
+var PLACEMENTS={'#geste':'Après « Tout commence par une intention »','#meta':'Après « Une même matière peut prendre plusieurs formes »','#lien':'Après « Rien n\'existe isolément »','.promesse':'Après « Une information saisie une fois »','#vitrine':'Après « Saisi une fois. Vu partout »','#entrer':'Après « Et maintenant ? »','#offres':'Après « Ce que je fais »'};
+var CONTENUS_R={image:'Image (bibliothèque, import ou adresse)',video:'Vidéo',page:'Une page du site, en direct',url:'Une adresse https',site:'Un site du générateur (vivant)'};
+var port={choisi:null,biblio:false,cat:null};
+function realisations(){return cfg.realisations||(cfg.realisations=[])}function carrousels(){return cfg.carrousels||(cfg.carrousels=[])}
+function realiCourante(){return realisations().filter(function(r){return r.id===port.choisi})[0]||null}
+function vRealisations(o){if(o.id)port.choisi=o.id;var L=realisations(),C=carrousels(),r=realiCourante();
+ var h='<h1>Réalisations</h1><p class="sous">Votre portfolio : chaque projet, et les carrousels qui les montrent entre les grands titres de la Page Zéro. Brouillon tant que « Publié » n\'est pas coché, et rien n\'est public avant « Publier ».</p>'+
+ '<div class="lgn" style="margin-bottom:12px"><button class="b b-p" type="button" id="rNouveau">+ Nouvelle réalisation</button><a class="b" href="/?v=apercu" target="_blank" rel="noopener" id="rVoir">Voir sur la Page Zéro</a><span class="leg">Cochez « Aperçu de mes réglages » en haut pour y voir aussi les brouillons.</span></div>'+
+ '<div class="sites-orbe"><div class="liste-app" role="list">'+(L.length?L.map(function(x){return'<button type="button" role="listitem" data-r="'+esc(x.id)+'" aria-pressed="'+(x.id===port.choisi)+'">'+(x.contenu.type==='image'?'<img class="vign" alt="" data-v="'+esc(x.contenu.src||'')+'">':'<span class="vign vign-t" aria-hidden="true">'+({page:'Page',url:'Web',site:'Site',video:'Vidéo'}[x.contenu.type]||'—')+'</span>')+'<span><b>'+esc(x.titre)+'</b><br><i>'+esc(R.PRESENTATIONS[x.presentation])+(x.publie?'':' · brouillon')+'</i></span></button>'}).join(''):'<p class="leg">Aucune réalisation.</p>')+'</div><div class="pile">';
+ if(r){var Cn=r.contenu;h+='<div class="carte pile"><div class="lgn" style="justify-content:space-between"><h3>'+esc(r.titre)+'</h3><label class="lgn"><input type="checkbox" data-rk="publie"'+(r.publie?' checked':'')+'> Publié</label></div>'+
+  '<div class="g2">'+champ('Titre','<input data-rk="titre" maxlength="90" value="'+esc(r.titre)+'">')+champ('Client','<input data-rk="client" maxlength="90" value="'+esc(r.client)+'">')+'</div>'+
+  '<div class="g2">'+champ('Année','<input type="number" min="1990" max="2100" data-rk="annee" value="'+(r.annee||'')+'">')+champ('Catégorie','<select data-rk="categorie">'+Object.keys(R.CATEGORIES).map(function(k){return'<option value="'+k+'"'+(k===r.categorie?' selected':'')+'>'+R.CATEGORIES[k]+'</option>'}).join('')+'</select>')+'</div>'+
+  champ('En une phrase','<textarea data-rk="resume" rows="2" maxlength="280">'+esc(r.resume)+'</textarea>')+
+  '<div class="g2">'+champ('Présentation','<select data-rk="presentation">'+Object.keys(R.PRESENTATIONS).map(function(k){return'<option value="'+k+'"'+(k===r.presentation?' selected':'')+'>'+R.PRESENTATIONS[k]+'</option>'}).join('')+'</select>')+(r.presentation==='iphone'||r.presentation==='ipad'?'<label class="ch"><span>Orientation</span><span class="lgn" style="min-height:38px"><input type="checkbox" data-rk="paysage"'+(r.paysage?' checked':'')+'> Paysage</span></label>':'<span></span>')+'</div>'+
+  champ('Ce qu\'on voit','<select data-rk="contenu.type">'+Object.keys(CONTENUS_R).filter(function(k){return r.presentation!=='visuel'||k==='image'||k==='video'}).map(function(k){return'<option value="'+k+'"'+(k===Cn.type?' selected':'')+'>'+CONTENUS_R[k]+'</option>'}).join('')+(Cn.type==='vide'?'<option value="vide" selected>— à choisir —</option>':'')+'</select>');
+  if(Cn.type==='image'||Cn.type==='video'||Cn.type==='vide')h+='<div class="lgn">'+(Cn.type!=='video'?'<button class="b b-s" type="button" id="rBib" aria-expanded="'+port.biblio+'">Bibliothèque</button>':'')+'<label class="b b-s">Importer un fichier<input type="file" id="rFichier" accept="'+(Cn.type==='video'?'video/mp4,video/webm':'image/webp,image/jpeg,image/png,image/gif,image/avif')+'" hidden></label></div>'+
+   champ('Ou une adresse','<input data-rk="contenu.src" value="'+esc(/^(biblio|media):/.test(Cn.src||'')?'':Cn.src||'')+'" placeholder="/zero/ecrans/… ou https://…">')+(Cn.src?'<p class="leg">Actuel : '+esc(/^media:/.test(Cn.src)?'fichier importé · '+((cfg.medias[Cn.src.slice(6)]||{}).nom||''):Cn.src)+'</p>':'')+(port.biblio?'<div id="rBiblio" class="pile"></div>':'');
+  else if(Cn.type==='page')h+=champ('Page du site','<select data-rk="contenu.src"><option value="">— choisir —</option>'+pages().map(function(p){return'<option value="'+esc(p.href)+'"'+(p.href===Cn.src?' selected':'')+'>'+esc(p.nom)+'</option>'}).join('')+'</select>');
+  else if(Cn.type==='url')h+=champ('Adresse https','<input data-rk="contenu.src" value="'+esc(Cn.src||'')+'" placeholder="https://…">')+'<p class="leg">Beaucoup de sites refusent d\'être affichés dans un cadre : utilisez alors une capture.</p>';
+  else if(Cn.type==='site'){var LS=XS?XS.liste():[];h+=LS.length?champ('Site','<select data-rk="contenu.src"><option value="">— choisir —</option>'+LS.map(function(x){return'<option value="site:'+esc(x.id)+'"'+('site:'+x.id===Cn.src?' selected':'')+'>'+esc(x.nom)+'</option>'}).join('')+'</select>'):'<p class="leg">Aucun site dans le générateur de ce navigateur.</p>'}
+  h+=champ('Lien au clic (facultatif)','<input data-rk="lien" value="'+esc(r.lien)+'" placeholder="/g44/ ou https://…">')+champ('Description pour les lecteurs d\'écran','<textarea data-rk="alt" rows="2">'+esc(r.alt)+'</textarea>')+
+  '<div class="lgn"><button class="b b-s" type="button" id="rMonter">Monter</button><button class="b b-s" type="button" id="rDescendre">Descendre</button><button class="b b-s" type="button" id="rDup">Dupliquer</button><button class="b b-s b-dg" type="button" id="rSuppr">Supprimer</button></div></div>'}
+ else h+='<div class="carte pile"><p class="leg">Choisissez une réalisation à gauche, ou créez-en une.</p></div>';
+ /* les carrousels */
+ h+='<div class="carte pile"><div class="lgn" style="justify-content:space-between"><h3>Carrousels de la Page Zéro</h3><button class="b b-s" type="button" id="cNouveau">+ Nouveau carrousel</button></div>'+
+ (C.length?C.map(function(c,ci){return'<div class="pile carr" data-c="'+ci+'" style="border-top:1px solid var(--ligne);padding-top:12px"><div class="g2">'+champ('Titre','<input data-ck="titre" maxlength="80" value="'+esc(c.titre)+'">')+champ('Place','<select data-ck="apres">'+Object.keys(PLACEMENTS).map(function(k){return'<option value="'+esc(k)+'"'+(k===c.apres?' selected':'')+'>'+esc(PLACEMENTS[k])+'</option>'}).join('')+(PLACEMENTS[c.apres]?'':'<option selected>'+esc(c.apres)+'</option>')+'</select>')+'</div>'+
+  '<label class="lgn"><input type="checkbox" data-ck="auto"'+(c.defilement==='auto'?' checked':'')+'> Défilement automatique lent (s\'arrête au survol, au toucher, et si le visiteur réduit les animations)</label>'+
+  '<div class="pile" style="gap:4px">'+c.items.map(function(id,ii){var x=L.filter(function(y){return y.id===id})[0];return x?'<div class="lgn ligne-r"><span style="flex:1;min-width:0">'+(ii+1)+'. '+esc(x.titre)+(x.publie?'':' <i class="leg">(brouillon)</i>')+'</span><button class="b b-s" type="button" data-ci="'+ci+'" data-ih="'+ii+'" aria-label="Monter">↑</button><button class="b b-s" type="button" data-ci="'+ci+'" data-ix="'+ii+'" aria-label="Retirer">×</button></div>':''}).join('')+'</div>'+
+  '<div class="lgn"><select data-cajout="'+ci+'" aria-label="Ajouter une réalisation" style="max-width:320px"><option value="">+ Ajouter une réalisation…</option>'+L.filter(function(x){return c.items.indexOf(x.id)<0}).map(function(x){return'<option value="'+esc(x.id)+'">'+esc(x.titre)+'</option>'}).join('')+'</select><button class="b b-s b-dg" type="button" data-csuppr="'+ci+'">Supprimer le carrousel</button></div></div>'}).join(''):'<p class="leg">Aucun carrousel. Créez-en un, puis ajoutez-y vos réalisations.</p>')+'</div>';
+ vue.innerHTML=h+'</div></div>';
+ [].forEach.call(vue.querySelectorAll('img[data-v]'),function(im){vignette(im.dataset.v).then(function(u){if(u)im.src=u;else im.style.visibility='hidden'})});
+ vue.onclick=function(e){var b=e.target.closest('button');if(!b)return;var r=realiCourante(),i=r?L.indexOf(r):-1;
+  if(b.dataset.r){port.choisi=b.dataset.r;port.biblio=false;return vRealisations({})}
+  if(b.id==='rNouveau'){var n=R.realisation({titre:'Nouvelle réalisation',annee:new Date().getFullYear(),presentation:'macbook'});L.unshift(n);port.choisi=n.id;sauverCfg();return vRealisations({})}
+  if(b.id==='cNouveau'){C.push(R.carrousel({titre:'Réalisations',apres:'#meta'}));sauverCfg();return vRealisations({})}
+  if(b.dataset.csuppr!=null)return confirmer(b,'Confirmer la suppression',function(){C.splice(+b.dataset.csuppr,1);sauverCfg();vRealisations({})});
+  if(b.dataset.ih!=null){var it=C[+b.dataset.ci].items,k=+b.dataset.ih;if(k>0){it.splice(k-1,0,it.splice(k,1)[0]);sauverCfg();vRealisations({})}return}
+  if(b.dataset.ix!=null){C[+b.dataset.ci].items.splice(+b.dataset.ix,1);sauverCfg();return vRealisations({})}
+  if(!r)return;
+  if(b.id==='rMonter'&&i>0){L.splice(i-1,0,L.splice(i,1)[0]);sauverCfg();return vRealisations({})}
+  if(b.id==='rDescendre'&&i<L.length-1){L.splice(i+1,0,L.splice(i,1)[0]);sauverCfg();return vRealisations({})}
+  if(b.id==='rDup'){var d=R.realisation(Object.assign(copie(r),{id:null,slug:null,titre:r.titre+' (copie)',publie:false}));L.splice(i+1,0,d);port.choisi=d.id;sauverCfg();return vRealisations({})}
+  if(b.id==='rSuppr')return confirmer(b,'Confirmer la suppression',function(){L.splice(i,1);C.forEach(function(c){c.items=c.items.filter(function(x){return x!==r.id})});port.choisi=null;sauverCfg();vRealisations({})});
+  if(b.id==='rBib'){port.biblio=!port.biblio;return vRealisations({})}};
+ vue.onchange=vue.oninput=function(e){var t=e.target,r=realiCourante();
+  if(t.dataset.cajout!=null){if(e.type!=='change'||!t.value)return;C[+t.dataset.cajout].items.push(t.value);sauverCfg();return vRealisations({})}
+  if(t.dataset.ck){var cb=t.closest('[data-c]'),c=C[+cb.dataset.c];if(t.dataset.ck==='auto')c.defilement=t.checked?'auto':'manuel';else c[t.dataset.ck]=t.value;C[+cb.dataset.c]=R.carrousel(c);sauverCfg();return}
+  var k=t.dataset.rk;if(!k||!r)return;if(e.type==='input'&&(t.tagName==='SELECT'||t.type==='checkbox'))return;
+  var v=t.type==='checkbox'?t.checked:t.type==='number'?parseInt(t.value,10):t.value,o=copie(r);
+  if(k.indexOf('contenu.')===0){var kk=k.slice(8);o.contenu[kk]=v;if(kk==='type'){o.contenu.src=null;port.biblio=v==='image'}}else o[k]=v;
+  if(k==='presentation'&&v==='visuel'&&o.contenu.type!=='image'&&o.contenu.type!=='video')o.contenu={type:'image',src:null};
+  if(k==='contenu.src'&&v&&!((o.contenu.type==='site'&&R.siteOk(v))||R.sourceOk(v)||(o.contenu.type==='page'&&R.cheminOk(v))||(o.contenu.type==='url'&&R.httpsOk(v)))){if(e.type==='change')toast('Adresse refusée : un chemin du site (« /… ») ou une adresse https.',true);return}
+  if(k==='lien'&&v&&!R.cibleOk(v)){if(e.type==='change')toast('Lien refusé : un chemin du site, une ancre « #… » ou une adresse https.',true);return}
+  var n=R.realisation(o);if(o.contenu.type!=='vide'&&!o.contenu.src)n.contenu={type:o.contenu.type,src:null,ajustement:'cover'};L[L.indexOf(r)]=n;sauverCfg();
+  if(e.type==='change'&&/^(presentation|contenu\.type|contenu\.src|publie|titre)$/.test(k))vRealisations({})};
+ var fi=$('rFichier');if(fi)fi.onchange=function(){var f=this.files[0];this.value='';var r=realiCourante();if(!f||!r)return;importerMedia(f).then(function(id){var r2=realiCourante();if(!r2)return;var o=copie(r2);o.contenu={type:/^video/.test(f.type)?'video':'image',src:'media:'+id};if(!o.alt)o.alt=f.name.replace(/\.[^.]+$/,'');L[L.indexOf(r2)]=R.realisation(o);sauverCfg();vRealisations({});toast('Fichier importé. Il partira avec le paquet .zip.')}).catch(function(err){toast(err.message,true)})};
+ if($('rBiblio'))bib().then(function(j){var cats=Object.keys(j.categories);if(!port.cat)port.cat=cats[0];var box=$('rBiblio');if(!box)return;
+  box.innerHTML='<span class="seg" role="group" aria-label="Catégories">'+cats.map(function(k){return'<button type="button" data-cat="'+k+'" aria-pressed="'+(k===port.cat)+'">'+esc(j.categories[k])+'</button>'}).join('')+'</span><div class="biblio">'+j.images.filter(function(i){return i.cat===port.cat}).map(function(i){return'<button type="button" data-img="'+esc(i.id)+'" title="'+esc(i.alt)+'"><img src="/sites/bibliotheque/'+esc(i.vignette)+'" alt="'+esc(i.alt)+'" loading="lazy"></button>'}).join('')+'</div>';
+  box.onclick=function(e){var b=e.target.closest('button');if(!b)return;e.stopPropagation();if(b.dataset.cat){port.cat=b.dataset.cat;return vRealisations({})}var im=j.images.filter(function(i){return i.id===b.dataset.img})[0],r=realiCourante();if(!im||!r)return;
+   var o=copie(r);o.contenu={type:'image',src:'biblio:'+im.id,ajustement:'cover'};if(!o.alt)o.alt=im.alt;L[L.indexOf(r)]=R.realisation(o);sauverCfg();port.biblio=false;vRealisations({})}})}
 
 /* ================= Sites clients : le générateur, vu depuis la Régie ================= */
 var sitesVue={actif:false,id:null,page:'index',vue:'public',mode:'appareils',ecoute:false};
@@ -355,7 +417,7 @@ function vPublier(){var nb=Object.keys(cfg.pages).reduce(function(s,k){return s+
  $('pImp').onchange=function(){var f=this.files[0];this.value='';lireFichier(f,function(t){var c=R.config(JSON.parse(t));cfg=c;sauverCfg(true);vPublier();toast('Configuration importée dans le brouillon.')})};
  $('cImp').onchange=function(){var f=this.files[0];this.value='';lireFichier(f,function(t){var c=R.compta(t);if(compta.docs.length&&!window.__aimeConfirmeRestauration){window.__aimeConfirmeRestauration=t;toast('Restaurer remplacera vos '+compta.docs.length+' documents actuels. Choisissez de nouveau le fichier pour confirmer.',true);return}delete window.__aimeConfirmeRestauration;compta=c;sauverCompta();vPublier();toast('Sauvegarde restaurée : '+c.docs.length+' documents, '+c.clients.length+' clients.')})}}
 function lireFichier(f,ok){if(!f)return;if(f.size>20e6)return toast('Fichier trop lourd.',true);var r=new FileReader();r.onload=function(){try{ok(String(r.result))}catch(e){toast(e.message||'Fichier illisible.',true)}};r.readAsText(f)}
-function sitesUtilises(P){var v={};Object.keys(P.pages).forEach(function(k){P.pages[k].appareils.forEach(function(a){if(a.contenu.type==='site'&&R.siteOk(a.contenu.src))v[a.contenu.src.slice(5)]=1})});return Object.keys(v)}
+function sitesUtilises(P){var v={};Object.keys(P.pages).forEach(function(k){P.pages[k].appareils.forEach(function(a){if(a.contenu.type==='site'&&R.siteOk(a.contenu.src))v[a.contenu.src.slice(5)]=1})});(P.realisations||[]).forEach(function(r){if(r.contenu.type==='site'&&R.siteOk(r.contenu.src))v[r.contenu.src.slice(5)]=1});return Object.keys(v)}
 function paquet(){var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';s.onload=function(){var z=new JSZip(),P=propre();z.file('site.json',JSON.stringify(P,null,1));
   var ids=sitesUtilises(P);
   Promise.all(Object.keys(cfg.medias).map(function(id){return mediaLire(id).then(function(v){if(v)z.file('medias/'+id+'.'+cfg.medias[id].ext,v.blob)})}).concat(ids.length&&XS?[XS.pret().then(function(){ids.forEach(function(id){var h=XS.publique(id);if(h)z.file('medias/site-'+id+'.html',h);else toast('Le site '+id+' n\'est pas dans ce navigateur : il manquera au paquet.',true)})})]:[])).then(function(){return z.generateAsync({type:'blob'})}).then(function(b){telecharger('regie-'+aujourdhui()+'.zip',b)})};
@@ -366,7 +428,9 @@ var ap=$('apercu');ap.checked=lire(CLE_A)==='1';ap.onchange=function(){ecrire(CL
 
 /* ---------- départ : la version publiée sert de base au premier brouillon ---------- */
 fetch('/regie/site.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(j){try{publie=R.config(j||{})}catch(e){publie=R.vide()}
- if(!cfg){cfg=R.config(copie(publie));ecrire(CLE_B,JSON.stringify(cfg))}etatPub();var h=(location.hash||'').slice(1);if(h==='nouveau-devis')return nouveauDevis();aller(VUES[h]?h:(lire(CLE_O)||'pages'))});
+ if(!cfg){cfg=R.config(copie(publie));ecrire(CLE_B,JSON.stringify(cfg))}
+ /* un brouillon d'avant le portfolio : il reprend les réalisations publiées au lieu de les effacer à la prochaine publication */
+ else if(sansPortfolio){cfg.realisations=copie(publie.realisations||[]);cfg.carrousels=copie(publie.carrousels||[]);ecrire(CLE_B,JSON.stringify(cfg))}etatPub();var h=(location.hash||'').slice(1);if(h==='nouveau-devis')return nouveauDevis();aller(VUES[h]?h:(lire(CLE_O)||'pages'))});
 /* l'OS (ou un lien) peut changer de vue par l'adresse : #docs, #orbe, #edition, #nouveau-devis */
 function nouveauDevis(){var d=R.doc({type:'devis',lignes:[{designation:'',quantite:1,unite:'',pu:0}],cree:new Date().toISOString()});compta.docs.push(d);sauverCompta();aller('docs',{id:d.id})}
 addEventListener('hashchange',function(){var h=(location.hash||'').slice(1);if(h==='nouveau-devis')return nouveauDevis();if(VUES[h]&&h!==courant)aller(h)});

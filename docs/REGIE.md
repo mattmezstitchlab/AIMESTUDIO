@@ -40,3 +40,11 @@ L'espace d'administration du site : une page, sept vues. Elle n'est pas indexée
 - **Appareils vivants** : nouveau contenu d'écran `site:<id>` (+ page, + perspective, par défaut *public*). Dans l'aperçu de l'auteur, l'écran affiche le site en direct ; pour les visiteurs, il charge `/regie/medias/site-<id>.html`, la version publique exportée dans le paquet .zip.
 - **Blocs métamorphose** : en édition, « Métamorphose » puis un clic sur un bloc pour le nommer. Un même nom sur deux pages = le bloc se transforme d'une page à l'autre (View Transitions inter-documents, `@view-transition{navigation:auto}`). Désactivé par défaut (`transitions:false`), coupé si le visiteur réduit les animations ; navigateurs sans prise en charge : navigation normale.
 - « Poser dans un appareil » met le site dans le MacBook de la Page Zéro (brouillon, réversible par « Revenir à la version publiée »).
+
+## Portfolio (réalisations et carrousels)
+
+- **Réalisations** (onglet de la Régie) : titre, client, année, catégorie, phrase, présentation (iPhone, iPad, MacBook ou visuel seul), ce qu'on voit (image de la bibliothèque ou importée, vidéo, page du site en direct, adresse https, site du générateur), lien, publié / brouillon. Stockées dans `regie/site.json` → `realisations`.
+- **Carrousels** : un titre, une place (après un grand titre de la Page Zéro), le défilement (automatique lent ou manuel), les réalisations dans l'ordre. `regie/site.json` → `carrousels`.
+- Sur la page, `regie/scene.js` insère chaque carrousel après sa place : défilement au doigt, au trackpad, aux flèches du clavier ; automatique seulement si la section est visible, jamais au survol, au toucher, ni si le visiteur réduit les animations. Les brouillons n'apparaissent que dans « Aperçu de mes réglages ».
+- Un brouillon de Régie antérieur au portfolio reprend les réalisations publiées au lieu de les effacer.
+- La Page Zéro gagne la section « Ce que je fais » (`#offres`), modifiable en mode texte.

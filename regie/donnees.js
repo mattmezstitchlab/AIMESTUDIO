@@ -58,7 +58,20 @@ function orbe(o){o=o||{};var c=o.compagnon||{},cc={};Object.keys(OPTIONS_COMPAGN
   suggestions:s.map(function(x){x=x||{};var l=txt(x.libelle,60).trim();return l&&cibleOk(x.cible)?{libelle:l,cible:x.cible,pourquoi:txt(x.pourquoi,160).trim()}:null}).filter(Boolean).slice(0,6)}}
 
 /* ---------- la configuration complète ---------- */
-function vide(){return{format:'aime-regie',version:1,maj:null,transitions:false,pages:{},orbe:{},medias:{}}}
+function vide(){return{format:'aime-regie',version:1,maj:null,transitions:false,pages:{},orbe:{},medias:{},realisations:[],carrousels:[]}}
+/* ---------- portfolio : les réalisations et les carrousels qui les montrent entre les grands titres ---------- */
+var CATEGORIES={site:'Site',identite:'Identité',evenement:'Événement',application:'Application',broderie:'Broderie',image:'Image',autre:'Autre'};
+var PRESENTATIONS={iphone:'Dans un iPhone',ipad:'Dans un iPad',macbook:'Dans un MacBook',visuel:'Visuel seul'};
+function slug(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)}
+function realisation(o){o=o||{};var pr=un(o.presentation,PRESENTATIONS,'macbook'),dev=appareil({type:pr==='visuel'?'iphone':pr,contenu:o.contenu,paysage:o.paysage});
+ var titre=txt(o.titre,90)||'Sans titre',sl=typeof o.slug==='string'&&/^[a-z0-9][a-z0-9-]{1,59}$/.test(o.slug)?o.slug:(slug(titre)||'projet'),an=Math.round(Number(o.annee));
+ return{id:idOk(o.id)?o.id:nouvelId('r'),slug:sl,titre:titre,client:txt(o.client,90),annee:an>=1990&&an<=2100?an:null,categorie:un(o.categorie,CATEGORIES,'site'),
+  resume:txt(o.resume,280),presentation:pr,paysage:pr!=='macbook'&&pr!=='visuel'&&o.paysage===true,contenu:dev.contenu,lien:cibleOk(o.lien)?o.lien:'',alt:txt(o.alt,240),publie:o.publie===true}}
+/* un carrousel : un titre, sa place (après un élément de la page), ses réalisations dans l'ordre */
+function carrousel(o,ids){o=o||{};var vus={},sel=typeof o.apres==='string'&&o.apres.length<=120&&/^[#.][A-Za-z][\w-]*$/.test(o.apres.trim())?o.apres.trim():'#meta';
+ return{id:idOk(o.id)?o.id:nouvelId('c'),titre:txt(o.titre,80),page:cleDePage(typeof o.page==='string'&&cheminOk(o.page)?o.page:'/'),apres:sel,
+  defilement:o.defilement==='manuel'?'manuel':'auto',
+  items:(Array.isArray(o.items)?o.items:[]).filter(function(i){if(typeof i!=='string'||vus[i]||(ids&&!ids[i]))return false;vus[i]=1;return true}).slice(0,24)}}
 /* un bloc métamorphose : un élément de la page reçoit un nom ; le même nom sur une autre page = il se transforme en l'autre en naviguant */
 function morph(m){m=m||{};var t=texte({sel:m.sel,texte:'x'});var nom=typeof m.nom==='string'?m.nom.trim().toLowerCase():'';return t&&/^[a-z][a-z0-9-]{1,40}$/.test(nom)?{sel:t.sel,nom:nom}:null}
 function config(o){var r=vide();if(!o||typeof o!=='object')return r;if(o.format&&o.format!=='aime-regie')throw new Error('Ce fichier n\'est pas une configuration de la régie AIME.');
@@ -68,6 +81,8 @@ function config(o){var r=vide();if(!o||typeof o!=='object')return r;if(o.format&
   var tx=(Array.isArray(p.textes)?p.textes:[]).slice(0,200).map(texte).filter(Boolean),noms={};
   var mo=(Array.isArray(p.morphs)?p.morphs:[]).slice(0,40).map(morph).filter(function(m){if(!m||noms[m.nom])return false;noms[m.nom]=1;return true});
   if(app.length||tx.length||mo.length)r.pages[cle]={appareils:app,textes:tx,morphs:mo}});
+ var vusR={},vusS={};r.realisations=(Array.isArray(o.realisations)?o.realisations:[]).slice(0,120).map(realisation).filter(function(x){if(vusR[x.id])return false;vusR[x.id]=1;var s0=x.slug,n=2;while(vusS[x.slug])x.slug=s0.slice(0,56)+'-'+(n++);vusS[x.slug]=1;return true});
+ r.carrousels=(Array.isArray(o.carrousels)?o.carrousels:[]).slice(0,12).map(function(c){return carrousel(c,vusR)}).filter(function(c,i,l){return l.findIndex(function(x){return x.id===c.id})===i});
  r.transitions=o.transitions===true;
  var O=o.orbe&&typeof o.orbe==='object'?o.orbe:{};Object.keys(O).slice(0,100).forEach(function(k){if(idOk(k)||k==='*')r.orbe[k]=orbe(O[k])});
  var M=o.medias&&typeof o.medias==='object'?o.medias:{};Object.keys(M).slice(0,300).forEach(function(k){var m=M[k]||{};if(/^[a-z0-9-]{4,48}$/.test(k)&&/^(webp|jpg|jpeg|png|gif|avif|mp4|webm)$/.test(m.ext))r.medias[k]={nom:txt(m.nom,120),ext:m.ext,type:/^(mp4|webm)$/.test(m.ext)?'video':'image'}});
@@ -199,7 +214,7 @@ function facturX(d,origine){if(!d||!d.numero||d.type==='devis')throw new Error('
  (origine&&origine.numero?'<ram:InvoiceReferencedDocument><ram:IssuerAssignedID>'+xe(origine.numero)+'</ram:IssuerAssignedID></ram:InvoiceReferencedDocument>':'')+
  '</ram:ApplicableHeaderTradeSettlement></rsm:SupplyChainTradeTransaction></rsm:CrossIndustryInvoice>\n'}
 
-return{VUES_SITE:VUES_SITE,siteOk:siteOk,morph:morph,AUTONOMIES:AUTONOMIES,NATURES:NATURES,DATE_REFORME:DATE_REFORME,avertissements:avertissements,facturX:facturX,adresse:adresse,APPAREILS:APPAREILS,CONTENUS:CONTENUS,MOBILE:MOBILE,PRESENCES:PRESENCES,OPTIONS_COMPAGNON:OPTIONS_COMPAGNON,
+return{CATEGORIES:CATEGORIES,PRESENTATIONS:PRESENTATIONS,realisation:realisation,carrousel:carrousel,slug:slug,VUES_SITE:VUES_SITE,siteOk:siteOk,morph:morph,AUTONOMIES:AUTONOMIES,NATURES:NATURES,DATE_REFORME:DATE_REFORME,avertissements:avertissements,facturX:facturX,adresse:adresse,APPAREILS:APPAREILS,CONTENUS:CONTENUS,MOBILE:MOBILE,PRESENCES:PRESENCES,OPTIONS_COMPAGNON:OPTIONS_COMPAGNON,
  cheminOk:cheminOk,httpsOk:httpsOk,sourceOk:sourceOk,cibleOk:cibleOk,cleDePage:cleDePage,appareil:appareil,texte:texte,orbe:orbe,vide:vide,config:config,resoudre:resoudre,siteDe:siteDe,orbeDe:orbeDe,nouvelId:nouvelId,
  TYPES_DOC:TYPES_DOC,STATUTS:STATUTS,MENTIONS_DEFAUT:MENTIONS_DEFAUT,emetteurVide:emetteurVide,comptaVide:comptaVide,compta:compta,client:client,ligne:ligne,doc:doc,
  total:total,totalLigne:totalLigne,euros:euros,manques:manques,prochainNumero:prochainNumero,emettre:emettre,devisVersFacture:devisVersFacture,avoirDe:avoirDe,mentions:mentions,frDate:frDate,plusJours:plusJours}});
