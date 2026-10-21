@@ -36,6 +36,7 @@ var E=[
  ['infinity','AIME INFINITY','/infinity/','Le jeu de l\'onde','jeux','realiser','experimental',true],
  ['orb','Lab · AIME ORB','/lab/orb/','L\'orbe, son terrain de jeu','jeux','experimenter','experimental'],
  ['infinity-lab','Lab · INFINITY','/infinity/lab/','Les règles du jeu, en essai','jeux','experimenter','experimental'],
+ ['sante','Système nerveux','/sante/','Comprendre les parcours et les connexions','jeux','experimenter','experimental',true],
  ['cartes','Lab · Trois cartes','/lab/cartes/','Les trois modèles de carte, côte à côte','jeux','experimenter','experimental',true]
 ].map(function(x){return{id:x[0],nom:x[1],href:x[2],phrase:x[3],cat:x[4],role:x[5],statut:x[6],nouveau:!!x[7]}});
 function entree(id){for(var i=0;i<E.length;i++)if(E[i].id===id)return E[i];return null}
