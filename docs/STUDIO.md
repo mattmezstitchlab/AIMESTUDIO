@@ -55,9 +55,17 @@ Le Studio fait 5 523 lignes. Pour chaque capacité, la question est : existe-t-e
 
 Toutes ces clés sont incluses dans la sauvegarde du Bureau.
 
+### Étape 3 : faite (21/10/2026), Stitchlab sur le moteur d'AIME Stitch
+- **« Aplats nets » passe par AIME Stitch.** Dans Stitchlab, ce mode appelle `StitchConversion.convertir` (`stitch/js/conversion.js` et `couleur.js`, chargés par le Studio). Le moteur regroupe les couleurs en CIELAB, prend le fil DMC le plus proche (CIEDE2000), retire la toile et nettoie les points isolés et les petites régions en protégeant les détails.
+  - L'ancien calcul « aplats » du Studio ne sert plus qu'en secours, si le moteur n'est pas chargé.
+- **« Réaliste (dégradés) » garde le tramage du Studio**, qu'AIME Stitch ne propose pas.
+- **Fils DMC.** Les 489 fils de `DMC_RAW` sont identiques à `stitch/data/dmc.json` : mêmes codes, mêmes noms, mêmes couleurs, même ordre. `tests/stitch-studio.test.cjs` le garantit, et aucune référence n'a été modifiée.
+  - `DMC_RAW` reste dans le Studio, parce que le Studio a besoin des fils sans attendre de chargement. La référence est désormais `dmc.json`.
+- **Vérifié dans un navigateur.** Un disque en dégradé sur fond blanc donne 5 fils DMC ; le fond blanc est reconnu comme toile non brodée. Calcul en 93 ms, sans erreur. Un point d'accès de test, `window.AIMEStitchlab.parStitch`, permet de le rejouer.
+
 ### Ordre proposé (une PR par ligne, chacune vérifiable)
 1. `themeVars` et les 36 ambiances dans le moteur. Le Studio lit `ambiances.json`.
 2. Les packs d'univers et le catalogue de formats en JSON, lus par le Studio.
-3. Stitchlab utilise le moteur d'AIME Stitch (DMC, conversion, PDF), puis on supprime `pz*` et `DMC_RAW`.
-4. `siteDoc` dans le moteur. Le constructeur de `/aime/` l'utilise à son tour : le doublon est supprimé.
-5. Une seule carte : choisir entre `carte/`, `uni*` du Studio et « Votre carte ».
+3. ~~Stitchlab utilise le moteur d'AIME Stitch~~ : la conversion est faite (voir plus haut). Restent le PDF de Stitch (`stitch/js/pdf.js`) et la suppression de `DMC_RAW`, une fois que le Studio pourra charger les fils avant d'en avoir besoin.
+4. Le générateur de site. **On ne touche pas** au constructeur de mini-site de la landing. On construit à part un générateur complet, sur le même mécanisme que les autres (le moteur partagé : données, modèles, présentation, perspectives), en reprenant tout ce que `siteDoc` sait faire.
+5. Les trois cartes : une page du Lab les montre côte à côte (`/lab/cartes/`). On décidera plus tard laquelle garder.
