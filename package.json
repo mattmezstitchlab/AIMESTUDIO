@@ -2,6 +2,18 @@
   "name": "aimestudio",
   "version": "1.0.0",
   "private": true,
-  "scripts": { "test": "node --test tests/*.test.cjs" },
-  "dependencies": { "@neondatabase/serverless": "^1.2.0" }
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "better-auth": "1.7.7",
+    "@better-auth/passkey": "1.7.7",
+    "pg": "8.16.3"
+  },
+  "overrides": {
+    "@better-auth/core": "1.7.7",
+    "@better-auth/utils": "0.4.2",
+    "better-call": "1.4.0"
+  }
 }

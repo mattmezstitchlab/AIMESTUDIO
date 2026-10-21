@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>Mon compte · AIME</title>
+<meta name="theme-color" content="#0B0B0E">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/live/live.css">
+<link rel="stylesheet" href="/compte/timbre.css">
+<link rel="stylesheet" href="/compte/compte.css">
+</head>
+<body>
+<a class="evite" href="#contenu">Aller au contenu</a>
+<header class="tete">
+ <a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup> <span>Compte</span></a>
+ <div class="ev"><b id="tTitre">Mon compte</b><span id="tSous">Vos espaces partagés, vos invitations, vos clés d'accès</span></div>
+ <div class="tete-d"><button class="b" type="button" id="sortir" hidden>Se déconnecter</button></div>
+</header>
+
+<main id="contenu" tabindex="-1" class="cpt">
+ <p class="alerte" id="ferme" hidden></p>
+ <p class="bandeau" id="invite" hidden>Vous avez reçu une invitation dans un espace AIME. Connectez-vous avec l'adresse qui l'a reçue pour la rejoindre.</p>
+
+ <section class="carte-c" id="connexion" hidden aria-labelledby="t-cnx">
+  <h1 id="t-cnx">Se connecter</h1>
+  <p class="leg">Pas de mot de passe : un lien de connexion vous est envoyé par e-mail, puis vous pouvez ajouter une clé d'accès (Face ID, Touch ID, empreinte, code de l'appareil).</p>
+  <form class="lgn" id="fLien"><label class="sr" for="cEmail">Adresse e-mail</label><input id="cEmail" type="email" autocomplete="email webauthn" required placeholder="vous@exemple.fr" style="flex:1;min-width:220px"><button class="b b-p" type="submit">Recevoir un lien</button></form>
+  <p class="ok" id="lienEnvoye" hidden role="status"></p>
+  <div class="sep"><span>ou</span></div>
+  <button class="b" type="button" id="cPasskey">Se connecter avec une clé d'accès</button>
+ </section>
+
+ <section class="carte-c" id="profil" hidden aria-labelledby="t-moi">
+  <div class="moi">
+   <div class="moi-t"><div id="monTimbre"></div><label class="b b-s">Changer la photo<input type="file" id="photo" accept="image/*" hidden></label><button class="b b-s" type="button" id="sansPhoto" hidden>Retirer la photo</button></div>
+   <div class="pile" style="flex:1;min-width:0">
+    <h1 id="t-moi">Bonjour<span id="bonjour"></span></h1>
+    <p class="leg" id="monEmail"></p>
+    <form class="lgn" id="fNom"><label class="sr" for="nom">Votre nom</label><input id="nom" maxlength="80" placeholder="Votre nom, tel que les autres le verront" style="flex:1;min-width:200px"><button class="b" type="submit">Enregistrer</button></form>
+    <div class="pile"><h2 class="k" style="margin:8px 0 0">Clés d'accès</h2><ul class="cles" id="cles"></ul><span><button class="b b-s" type="button" id="ajCle">+ Ajouter une clé d'accès sur cet appareil</button></span></div>
+   </div>
+  </div>
+ </section>
+
+ <section id="espaces" hidden aria-labelledby="t-esp">
+  <div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-esp">Mes espaces</h2></div>
+  <form class="carte-c lgn" id="fEspace"><label class="sr" for="eTitre">Nom du nouvel espace</label><input id="eTitre" maxlength="120" placeholder="Nom d'un nouvel espace (le mariage de…, le séminaire…)" style="flex:1;min-width:220px" required>
+   <label class="sr" for="eModele">Programme du jour J</label><select id="eModele"><option value="mariage">Programme : mariage (démonstration)</option><option value="seminaire">Programme : séminaire (démonstration)</option><option value="">Sans programme</option></select>
+   <button class="b b-p" type="submit">Créer l'espace</button></form>
+  <div class="pile" id="liste"></div>
+ </section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<noscript><p class="ns">Le compte AIME a besoin de JavaScript.</p></noscript>
+<script src="/vendor/simplewebauthn-browser-13.3.0.umd.min.js"></script>
+<script src="/synchroview/permissions.js"></script>
+<script src="/compte/timbre.js"></script>
+<script src="/compte/compte.js"></script>
+</body>
+</html>

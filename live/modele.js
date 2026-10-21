@@ -40,7 +40,7 @@ function debutEff(e,m){return m.debut+(e.decalage[m.id]||0)}
 function finEff(e,m){return m.fin+(e.decalage[m.id]||0)}
 
 /* une action bien formée, ou null : le journal ne garde jamais autre chose */
-function action(a){a=a||{};if(ACTIONS.indexOf(a.action)<0||typeof a.qui!=='string'||!/^[a-z0-9-]{2,40}$/.test(a.qui))return null;
+function action(a){a=a||{};if(ACTIONS.indexOf(a.action)<0||typeof a.qui!=='string'||!/^[A-Za-z0-9_-]{2,64}$/.test(a.qui))return null;
  var p=a.p||{},o={qui:a.qui,action:a.action,t:typeof a.t==='number'&&isFinite(a.t)?Math.round(a.t):0,p:{}};
  if(a.action==='annoncer'){var tx=String(p.texte||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,MAX_ANNONCE);if(!tx)return null;o.p={texte:tx,audience:AUDIENCES[p.audience]?p.audience:'tous'};return o}
  if(typeof p.moment!=='string'||!/^[a-z0-9-]{1,60}$/.test(p.moment))return null;o.p.moment=p.moment;

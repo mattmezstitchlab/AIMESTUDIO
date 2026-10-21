@@ -97,7 +97,7 @@ create table if not exists audit (
 -- Seules les actions acceptées par les règles y sont écrites ; l'identité vient d'un laissez-passer signé par le serveur.
 create table if not exists live_journal (
   n        bigserial primary key,
-  espace   text not null check (espace in ('mariage','seminaire')),
+  espace   text not null check (espace in ('mariage','seminaire') or espace ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'),
   qui      text not null,
   action   text not null check (action in ('retarder','fait','planB','annoncer')),
   p        jsonb not null,
@@ -105,3 +105,4 @@ create table if not exists live_journal (
   cree_le  timestamptz not null default now()
 );
 create index if not exists live_journal_espace on live_journal (espace, n);
+-- Les tables de comptes (user, session, account, verification, passkey) : voir db/migrations/2026-10-21-comptes.sql.

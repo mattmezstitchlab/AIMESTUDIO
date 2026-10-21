@@ -1,0 +1,19 @@
+.cpt{display:grid;gap:22px;max-width:960px;margin:0 auto;padding:26px max(16px,env(safe-area-inset-right,0px)) 70px max(16px,env(safe-area-inset-left,0px));outline:none}
+.cpt h1{font:600 28px/1.15 var(--titre);margin:0;text-wrap:balance}
+.carte-c{border:1px solid var(--ligne);background:var(--carte);border-radius:18px;padding:20px;display:grid;gap:12px}
+.carte-c h3{margin:0;font:600 19px/1.2 var(--titre)}
+.alerte{border:1px solid rgba(253,164,175,.4);color:var(--ko);border-radius:12px;padding:12px 14px;margin:0}
+.bandeau{border:1px solid rgba(34,211,238,.4);color:var(--cyan);border-radius:12px;padding:12px 14px;margin:0}
+.ok{color:var(--ok);margin:0}
+.sep{display:flex;align-items:center;gap:10px;color:var(--pale);font-size:12px}.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--ligne)}
+.moi{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+.moi-t{display:grid;gap:10px;justify-items:center}
+.cles{list-style:none;margin:0;padding:0;display:grid;gap:6px}.cles li{justify-content:space-between;font-size:14px}
+.esp .pan{border-top:1px solid var(--ligne);padding-top:14px}
+.esp .planche{padding:14px 6px 6px}
+.inv select{min-width:200px}
+.lien input{font:13px var(--mono)}
+.gerer{border-top:1px solid var(--ligne);padding-top:10px}.gerer h4{margin:6px 0 0}
+.ligne{font-size:14px;padding:4px 0}.ligne>span:not(.timbre){flex:1;min-width:0;overflow-wrap:anywhere}
+input[type=email]{font:inherit;color:var(--encre);background:var(--carte);border:1px solid var(--ligne);border-radius:10px;padding:8px 10px;min-height:38px;max-width:100%}
+.cpt .carte-c input:not([type]),.cpt .carte-c input[type=email]{background:var(--panneau)}

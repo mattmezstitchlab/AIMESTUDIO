@@ -16,6 +16,7 @@ var CATS=[
 /* id, nom, adresse, phrase, catégorie, rôle, statut, nouveau? */
 var E=[
  ['bureau','Mon Bureau','/bureau/','AIME OS : toutes les apps, une orbe, une recherche','monde','travailler','disponible',true],
+ ['compte','Mon compte','/compte/','Mes espaces partagés, mes invitations, mes clés d\'accès','monde','realiser','experimental',true],
  ['zero','Page Zéro','/','Tout commence par une intention','monde','decouvrir','disponible'],
  ['aime','Le Monde AIME','/aime/','La grande présentation, le cube, l\'orbe','monde','decouvrir','disponible'],
  ['tout','Tout voir','/tout/','Toutes les vues d\'un coup','monde','decouvrir','disponible'],

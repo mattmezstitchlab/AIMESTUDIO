@@ -10,7 +10,8 @@ module.exports = async function act(req, res) {
   const sql = C.base(); if (!sql) return C.ferme(res);
   try {
     const lignes = await sql`select qui, action, p, t from live_journal where espace = ${ps.espace} order by n desc limit ${C.MAX_LIGNES}`;
-    const E = C.ESPACES[ps.espace], r = C.L.rejouer(C.L.base(E.donnees), E.acces, lignes.reverse().concat([a]), C.P), d = r.trace[r.trace.length - 1];
+    const E = await C.espace(ps.espace, sql); if (!E) return res.status(403).json({ ok: false, raison: 'pas membre de cet espace' });
+    const r = C.L.rejouer(C.L.base(E.donnees), E.acces, lignes.reverse().concat([a]), C.P), d = r.trace[r.trace.length - 1];
     if (!d.ok) return res.status(403).json({ ok: false, regle: d.regle, raison: d.raison });
     const [l] = await sql`insert into live_journal (espace, qui, action, p, t) values (${ps.espace}, ${a.qui}, ${a.action}, ${JSON.stringify(a.p)}::jsonb, ${a.t}) returning n`;
     return res.status(200).json({ ok: true, n: Number(l.n), regle: d.regle, touches: d.touches });
