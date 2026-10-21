@@ -1752,5 +1752,240 @@
     "chemin": "premium-wedding-editorial-experience/public/covers/009-videaste.jpg"
    }
   }
- ]
+ ],
+ "associations": {
+  "mariage": {
+   "hero": [
+    "ceremonie-hero-wedding",
+    "ceremonie-grandjour-hero",
+    "ceremonie-chateau-tilleuls",
+    "ceremonie-118-jardin",
+    "ceremonie-ceremonie",
+    "ceremonie-garden"
+   ],
+   "image": [
+    "details-bouquet",
+    "details-alliances",
+    "details-robe",
+    "details-matter",
+    "details-canvas",
+    "details-111-matiere"
+   ],
+   "video": [
+    "ceremonie-danse",
+    "ceremonie-bal",
+    "ceremonie-115-vrai-moment"
+   ],
+   "lieu": [
+    "lieux-chateau",
+    "lieux-002-chateau",
+    "lieux-hero-accueil",
+    "lieux-world"
+   ],
+   "support-affiche": [
+    "ceremonie-hero-wedding",
+    "ceremonie-118-jardin",
+    "ceremonie-114-parenthese",
+    "ceremonie-couple-paris",
+    "ceremonie-phare-vows"
+   ],
+   "support-ecran": [
+    "reception-hero-mariage",
+    "reception-lumieres",
+    "reception-018-eclairage",
+    "reception-diner"
+   ],
+   "support:yt": [
+    "scene-009-videaste",
+    "scene-001-saxophoniste"
+   ],
+   "support:tvscreen": [
+    "reception-lumieres",
+    "reception-hero"
+   ]
+  },
+  "anniv": {
+   "hero": [
+    "reception-lumieres",
+    "reception-fontaine-champagne",
+    "reception-soiree",
+    "reception-da-rooftop"
+   ],
+   "image": [
+    "reception-champagne",
+    "reception-008-wedding-cake",
+    "reception-cocktail"
+   ],
+   "video": [
+    "scene-004-dj",
+    "scene-da-club"
+   ],
+   "lieu": [
+    "lieux-univers-arts",
+    "lieux-after"
+   ],
+   "support-affiche": [
+    "reception-soiree",
+    "reception-da-rooftop",
+    "reception-lumieres"
+   ],
+   "support-ecran": [
+    "scene-004-dj",
+    "scene-da-club",
+    "scene-danseuse"
+   ]
+  },
+  "conf": {
+   "hero": [
+    "lieux-table-trestle-chene",
+    "lieux-table-basse-brute",
+    "lieux-mobilier",
+    "lieux-da-brutal"
+   ],
+   "image": [
+    "details-couvert-metal-brosse",
+    "details-chemin-lit-affine",
+    "details-nappe-lin-lave"
+   ],
+   "video": [
+    "scene-regie",
+    "scene-coulisses"
+   ],
+   "lieu": [
+    "lieux-table-trestle-chene",
+    "lieux-chateau",
+    "lieux-hero-campagne"
+   ],
+   "support-affiche": [
+    "fonds-fond-graphique",
+    "fonds-cover-03",
+    "fonds-01-21",
+    "fonds-fond-abstrait"
+   ],
+   "support-ecran": [
+    "scene-regie",
+    "scene-coulisses"
+   ]
+  },
+  "artisan": {
+   "hero": [
+    "details-canvas",
+    "details-chaise-paille-tressee",
+    "details-bar-mobile",
+    "details-111-matiere"
+   ],
+   "image": [
+    "details-chaise-paille-tressee",
+    "details-banquette-capiton",
+    "details-mange-debout-tonneau",
+    "details-parasol-toile-ecrue"
+   ],
+   "video": [
+    "scene-003-traiteur"
+   ],
+   "lieu": [
+    "lieux-hero-logement",
+    "lieux-univers-terre"
+   ],
+   "support-affiche": [
+    "details-canvas",
+    "details-bar-mobile",
+    "details-arche"
+   ],
+   "support-ecran": [
+    "lieux-univers-terre",
+    "lieux-hero-logement"
+   ]
+  },
+  "portfolio": {
+   "hero": [
+    "fonds-cover-02",
+    "fonds-floral5",
+    "fonds-01-06",
+    "fonds-fond-abstrait"
+   ],
+   "image": [
+    "fonds-floral1",
+    "fonds-floral7",
+    "fonds-cover-01",
+    "fonds-01-09"
+   ],
+   "video": [
+    "fonds-cover-03",
+    "fonds-01-21"
+   ],
+   "lieu": [
+    "lieux-da-brutal"
+   ],
+   "support-affiche": [
+    "fonds-cover-02",
+    "fonds-fond-graphique",
+    "fonds-floral5"
+   ],
+   "support-ecran": [
+    "fonds-cover-03",
+    "fonds-01-27"
+   ]
+  },
+  "asso": {
+   "hero": [
+    "lieux-univers-arts",
+    "lieux-hero-campagne",
+    "lieux-univers-terre",
+    "lieux-hero-accueil"
+   ],
+   "image": [
+    "lieux-univers-terre",
+    "lieux-hero-logement"
+   ],
+   "video": [
+    "scene-musicien",
+    "scene-001-saxophoniste"
+   ],
+   "lieu": [
+    "lieux-univers-arts",
+    "lieux-hero-campagne"
+   ],
+   "support-affiche": [
+    "lieux-univers-arts",
+    "lieux-univers-terre",
+    "lieux-hero-accueil"
+   ],
+   "support-ecran": [
+    "lieux-univers-arts",
+    "lieux-after"
+   ]
+  },
+  "*": {
+   "hero": [
+    "fonds-fond-abstrait",
+    "fonds-cover-02",
+    "fonds-fond-botanique",
+    "fonds-fond-texture"
+   ],
+   "image": [
+    "fonds-fond-botanique",
+    "fonds-fond-floral",
+    "fonds-fond-texture"
+   ],
+   "video": [
+    "fonds-cover-03"
+   ],
+   "lieu": [
+    "lieux-hero-campagne",
+    "lieux-immersive"
+   ],
+   "support-affiche": [
+    "fonds-fond-abstrait",
+    "fonds-fond-graphique",
+    "fonds-fond-pop",
+    "fonds-fond-floral"
+   ],
+   "support-ecran": [
+    "fonds-cover-03",
+    "fonds-01-21"
+   ]
+  }
+ },
+ "associations_note": "Visuels posés par défaut tant que la personne n'a pas mis sa propre photo : par univers de site (mariage, anniv, conf, artisan, portfolio, asso, sinon *), puis par emplacement (hero, image, video, lieu, support-affiche, support-ecran, support:<format>)."
 }
