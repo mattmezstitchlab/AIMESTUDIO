@@ -89,3 +89,5 @@ body.gen .gen-pages button[aria-selected=true]{background:#161616;color:#FFFFFF;
 body.gen .gen-h{font:600 11px var(--fb);letter-spacing:.15em;color:var(--soft)}
 body.gen .amx-b{background:#FFFFFF;border:1px solid var(--line);color:var(--ink);border-radius:999px;font:500 13.5px var(--fb);-webkit-backdrop-filter:none;backdrop-filter:none}
 body.gen .gen-menu .gm-t{font:600 11px var(--fb);letter-spacing:.15em}
+/* le panneau Explorer est celui de tout le site, sombre : il garde ses propres couleurs (sinon encre noire sur fond noir) */
+body.gen .amx,body.gen .amx-x{--ink:#EDEDF0;--soft:#9C9CA8;--faint:#6B6B78;--line:#2B2B33;--paper:#0A0A0C;--c1:#7C5CFF;--c2:#22D3EE;--conic:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);color:#EDEDF0;color-scheme:dark}

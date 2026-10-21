@@ -6,7 +6,8 @@
  --saumonF:#111112;--mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
  --metal:repeating-linear-gradient(118deg,#f4f4f4 0 22px,#cfcfd2 34px,#ffffff 48px,#9d9da3 62px,#e9e9ec 78px,#bcd3ea 84px,#f6f6f6 92px,#d8d8db 118px,#fafafa 140px);
  --gris-titre:#9A9AA0}
-html{background:#E9E9EB var(--metal) fixed}
+/* html porte son propre défilement : sans cela, le « overflow:clip » du corps (pour arrondir le cadre) passerait à la fenêtre et bloquerait le défilement */
+html{background:#E9E9EB var(--metal) fixed;overflow-x:hidden;overflow-y:auto}
 body{background:var(--papier);max-width:1520px;margin:clamp(0px,1.6vw,22px) auto;border-radius:clamp(0px,1.4vw,18px);box-shadow:0 30px 80px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.06);overflow:clip;
  background-image:linear-gradient(90deg,transparent calc(50% - 621px),var(--trait) calc(50% - 621px),var(--trait) calc(50% - 620px),transparent calc(50% - 620px),transparent calc(50% + 620px),var(--trait) calc(50% + 620px),var(--trait) calc(50% + 621px),transparent calc(50% + 621px))}
 :focus-visible{outline:2px solid var(--encre);outline-offset:3px}
