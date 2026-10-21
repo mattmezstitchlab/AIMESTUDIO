@@ -64,6 +64,14 @@
       "paper": "#DCE7F3",
       "ink": "#0B1220",
       "source": "AIME (original), heure bleue"
+    },
+    "aime-nuit": {
+      "nom": "AIME · nuit",
+      "c1": "#7C5CFF",
+      "c2": "#22D3EE",
+      "paper": "#0A0A0C",
+      "ink": "#EDEDF0",
+      "source": "AIME · Page Zéro et Bureau (identité du site, pas une ambiance du Studio)"
     }
   },
   "polices": {
@@ -84,11 +92,18 @@
       "famille": "\"Inter Variable\", Inter, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif",
       "fichier": "/fonts/InterVariable-latin.woff2",
       "licence": "SIL OFL 1.1"
+    },
+    "calsans": {
+      "nom": "Cal Sans",
+      "famille": "\"Cal Sans\", \"Inter Variable\", Inter, -apple-system, sans-serif",
+      "fichier": "/fonts/CalSans-latin.woff2",
+      "licence": "SIL OFL 1.1 · /fonts/CalSans-OFL.txt"
     }
   },
   "parUnivers": {
     "mariage": "botanique",
     "seminaire": "pierre",
-    "world": "crepuscule"
+    "world": "crepuscule",
+    "bureau": "aime-nuit"
   }
 }

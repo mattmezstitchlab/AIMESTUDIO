@@ -1,5 +1,6 @@
 /* AIME Vitrine · moteur de rendu universel.
-   rendre({ contenu, acces, perspective, modele, presentation, regles, flux? }) → { html, css, titre, bilan }
+   rendre({ contenu, acces, perspective, modele, presentation, regles, flux? }) → { html, css, titre, bilan }   (événements)
+   composer({ contenu, perspective, modele, presentation }) → { html, css, titre, bilan }                    (espaces de travail : le Bureau)
    flux (synchroview/flux.js, facultatif) : étapes et actions des missions, décidées par les mêmes règles.
 
    Cinq couches, jamais mélangées :
@@ -190,5 +191,40 @@ function rendre(o){var contenu=o.contenu,modele=o.modele,pres=o.presentation||{}
  var css=':root{--c1:'+amb.c1+';--c2:'+amb.c2+';--paper:'+amb.paper+';--ink:'+amb.ink+';--ft:'+(p.titre||'Georgia, serif')+';--fb:'+(p.texte||'system-ui, sans-serif')+'}';
  return{html:html,css:css,titre:contenu.evenement.nom+' · '+angle.label,bilan:{sections:n,sujet:vue.sujet,trace:vue.trace}}}
 
-return{rendre:rendre,politique:politique,visuel:visuel,composants:Object.keys(C)};
+/* ---------- 5 · espaces de travail : le même moteur, pour des pages qui ne sont pas des événements ----------
+   composer({ contenu, perspective, modele, presentation }) → { html, css, titre, bilan }
+     contenu      { espace:{kicker,nom,sous,actions[]}, blocs:{<source>:données}, illustrations:{<clé>:svg produit par un moteur AIME} }
+     perspective  { id, sections:[{ type, titre, source, ... }] }  l'ordre et le choix des blocs (aucune donnée, aucun droit)
+     modele       { id, nom, composition:{ entete, variantes } }   la forme
+     presentation { ambiance:{c1,c2,paper,ink}, polices }          les couleurs et les polices
+   Les composants ne lisent que leur source ; les interactions (boutons data-action) sont branchées par la page. */
+function act(a){if(!a)return'';var c='e-btn'+(a.principal?' e-p':'');if(a.action)return'<button type="button" class="'+c+'" data-action="'+esc(a.action)+'"'+(a.valeur!=null?' data-valeur="'+esc(a.valeur)+'"':'')+'>'+esc(a.libelle)+'</button>';
+ return'<a class="'+c+'" href="'+esc(a.lien)+'">'+esc(a.libelle)+'</a>'}
+function acts(l){return l&&l.length?'<div class="e-acts">'+l.map(act).join('')+'</div>':''}
+function jour(t){if(!t)return'';var d=new Date(t);return isNaN(d)?'':d.getDate()+' '+MOIS[d.getMonth()]+' '+d.getFullYear()}
+var CE={
+ entete:{sobre:function(x){var e=x.contenu.espace||{};return'<header class="e-entete" data-sv="entete" data-sv-label="'+esc(e.nom)+'">'+(e.kicker?'<span class="e-k">'+esc(e.kicker)+'</span>':'')+'<h1>'+esc(e.nom)+'</h1>'+(e.sous?'<p>'+esc(e.sous)+'</p>':'')+acts(e.actions)+'</header>'}},
+ tuile:{defaut:function(x,s){var d=x.contenu.blocs[s.source];if(!d)return'';var il=d.illustration&&x.contenu.illustrations?x.contenu.illustrations[d.illustration]:'';
+  return'<div class="e-tuile'+(il?'':' e-sans')+'">'+(il?'<div class="e-ill" aria-hidden="true">'+il+'</div>':'')+'<div><h3>'+esc(d.titre)+'</h3>'+(d.texte?'<p>'+esc(d.texte)+'</p>':'')+acts(d.actions)+'</div></div>'}},
+ liste:{cartes:function(x,s){var d=x.contenu.blocs[s.source]||{};var l=d.elements||[];if(!l.length)return d.vide?'<p class="e-vide">'+esc(d.vide)+'</p>':'';
+  return'<ul class="e-liste">'+l.map(function(p){return'<li'+(p.demo?' class="e-demo"':'')+'><a href="'+esc(p.lien)+'"><span class="e-src">'+esc(p.groupe||'')+(p.demo?' · fictif':'')+'</span><b>'+esc(p.titre)+'</b><span>'+esc(p.detail||'')+(p.quand?' · '+esc(jour(p.quand)):'')+'</span><em>'+esc(p.action||'Ouvrir')+' →</em></a></li>'}).join('')+'</ul>'}},
+ groupes:{defaut:function(x,s){var d=x.contenu.blocs[s.source]||{};var g=(d.groupes||[]).filter(function(g){return g.elements.length});if(!g.length)return d.vide?'<div class="e-vide">'+esc(d.vide)+acts(d.actions)+'</div>':'';
+  return'<div class="e-groupes">'+g.map(function(g){return'<div class="e-groupe"><h3>'+esc(g.nom)+' <small>'+g.elements.length+'</small></h3><ul>'+g.elements.map(function(p){return'<li><a href="'+esc(p.lien)+'"><b>'+esc(p.titre)+'</b><span>'+esc(p.detail||'')+(p.quand?' · '+esc(jour(p.quand)):'')+'</span></a></li>'}).join('')+'</ul></div>'}).join('')+'</div>'}},
+ outils:{defaut:function(x,s){var d=x.contenu.blocs[s.source]||{};var l=d.elements||[];if(!l.length)return'';var st=d.statuts||{};
+  return'<ul class="e-outils">'+l.map(function(o){return'<li><a href="'+esc(o.href)+'"><b>'+esc(o.nom)+'</b><span>'+esc(o.phrase)+'</span>'+(o.statut&&o.statut!=='disponible'?'<em class="e-st e-st-'+esc(o.statut)+'">'+esc(st[o.statut]||o.statut)+'</em>':'')+(o.note?'<i>'+esc(o.note)+'</i>':'')+'</a></li>'}).join('')+'</ul>'}},
+ note:{defaut:function(x,s){var d=x.contenu.blocs[s.source];if(!d)return'';return'<div class="e-note">'+(d.paragraphes||[]).map(function(t){return'<p>'+esc(t)+'</p>'}).join('')+(d.liste&&d.liste.length?'<ul>'+d.liste.map(function(t){return'<li>'+esc(t)+'</li>'}).join('')+'</ul>':'')+acts(d.actions)+'</div>'}}};
+function composer(o){var contenu=o.contenu,modele=o.modele||{},pres=o.presentation||{},angle=o.perspective||{sections:[]};
+ var amb=pres.ambiance||{c1:'#7C5CFF',c2:'#22D3EE',paper:'#0F0F14',ink:'#EDEDF0'};contenu.blocs=contenu.blocs||{};
+ var x={contenu:contenu,angle:angle,amb:amb,modele:modele},comp=modele.composition||{},vari=comp.variantes||{};
+ var pick=function(t){var v=CE[t];if(!v)return null;return v[vari[t]]||v.defaut||v[Object.keys(v)[0]]};
+ var corps='',n=0,vus=[];
+ (angle.sections||[]).forEach(function(s){var f=pick(s.type);if(!f)return;var inner=f(x,s);if(!inner)return;n++;vus.push(s.source||s.type);
+  corps+='<section class="e-sec e-s-'+esc(s.type)+'" id="'+esc(s.ancre||s.source||s.type)+'" data-sv="sec-'+esc(s.source||s.type)+'" data-sv-label="'+esc(s.titre||s.type)+'"'+(s.titre?' aria-labelledby="t-'+esc(s.source||s.type)+'"':'')+'>'+(s.titre?'<h2 id="t-'+esc(s.source||s.type)+'">'+esc(s.titre)+'</h2>':'')+(s.intro?'<p class="e-intro">'+esc(s.intro)+'</p>':'')+inner+'</section>'});
+ var ent=(CE.entete[comp.entete]||CE.entete.sobre)(x);
+ var p=pres.polices||{};
+ return{html:'<div class="e e-'+esc(modele.id||'espace')+'" data-modele="'+esc(modele.id||'')+'" data-angle="'+esc(angle.id||'')+'">'+ent+'<main class="e-main">'+corps+'</main></div>',
+  css:':root{--c1:'+amb.c1+';--c2:'+amb.c2+';--paper:'+amb.paper+';--ink:'+amb.ink+';--ft:'+(p.titre||'Georgia, serif')+';--fb:'+(p.texte||'system-ui, sans-serif')+'}',
+  titre:(contenu.espace||{}).nom||'',bilan:{sections:n,blocs:vus}}}
+
+return{rendre:rendre,composer:composer,politique:politique,visuel:visuel,composants:Object.keys(C),composantsEspace:Object.keys(CE)};
 });

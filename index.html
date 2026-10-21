@@ -108,6 +108,8 @@ body.loin .barre::before{opacity:.92}
 .entrer h2{margin:0;font:400 clamp(48px,8vw,104px)/1 var(--display);letter-spacing:-.025em}
 .entrer p{margin:0 auto;max-width:560px;font-size:clamp(18px,1.8vw,22px);color:var(--soft);text-wrap:balance}
 .bouton{display:inline-flex;align-items:center;gap:12px;margin-top:10px;padding:18px 30px;border-radius:999px;background:var(--ink);color:var(--desk);font:600 17px var(--ui);text-decoration:none;transition:transform .2s,box-shadow .3s}
+.sorties{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:38px}.sorties .bouton{margin-top:0}.bouton.second{background:transparent;color:var(--ink);border:1px solid var(--line);padding:17px 26px}.bouton.second:hover{border-color:#5E5E6A}.sorties-note{margin-top:16px;font-size:14px;color:var(--soft)}
+@media (max-width:420px){.sorties .bouton{width:100%;justify-content:center}.barre .studio{padding:8px 10px;letter-spacing:.1em}}
 .bouton:hover{transform:translateY(-1px);box-shadow:0 0 0 6px rgba(237,237,240,.08),0 10px 40px rgba(124,92,255,.28)}
 .bouton span{transition:transform .25s}.bouton:hover span{transform:translateX(4px)}
 .pied{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;flex-wrap:wrap;gap:8px 22px;font:500 12.5px var(--ui);color:var(--faint);padding:0 20px}
@@ -184,7 +186,7 @@ html.calme .bouton,html.calme .bouton span{transition:none}
 </head>
 <body>
 <a class="evite" href="#entrer">Aller à l'entrée</a>
-<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#entrer">Passer l'introduction</a><a class="studio" href="/aime/">AIME STUDIO</a></nav></header>
+<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#entrer">Passer l'introduction</a><a class="studio" href="/bureau/">MON BUREAU</a><a class="studio" href="/aime/">AIME STUDIO</a></nav></header>
 <div class="flot" id="flot" aria-hidden="true"></div>
 
 <main>
@@ -279,7 +281,8 @@ html.calme .bouton,html.calme .bouton span{transition:none}
  <div class="col">
   <h2 id="t-entrer">Et maintenant ?</h2>
   <p style="margin-top:22px" id="entrerTexte">Découvrez ce que nous pouvons créer, relier et faire évoluer ensemble.</p>
-  <a class="bouton" id="rejoindre" href="/aime/" style="margin-top:38px">Rejoindre Le Monde AIME <span aria-hidden="true">→</span></a>
+  <div class="sorties"><a class="bouton" id="bureau" href="/bureau/">Ouvrir mon Bureau <span aria-hidden="true">→</span></a><a class="bouton second" id="rejoindre" href="/aime/">Rejoindre Le Monde AIME</a></div>
+  <p class="sorties-note">Le Bureau pour travailler : vos projets et votre Carte. Le Monde AIME pour découvrir.</p>
  </div>
  <div class="pied"><span>AIME® · version de travail</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
 </section>

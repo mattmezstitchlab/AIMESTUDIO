@@ -1,0 +1,56 @@
+{
+  "_": "Le Bureau, vu par une personne sans compte, dans son navigateur. La perspective choisit les blocs et leur ordre ; elle ne contient ni donnée ni droit.",
+  "univers": "bureau",
+  "angles": [
+    {
+      "id": "navigateur",
+      "label": "Mon Bureau (ce navigateur)",
+      "sections": [
+        {
+          "type": "tuile",
+          "source": "carte",
+          "titre": "Ma Carte",
+          "ancre": "carte"
+        },
+        {
+          "type": "liste",
+          "source": "reprendre",
+          "titre": "Reprendre",
+          "ancre": "reprendre"
+        },
+        {
+          "type": "groupes",
+          "source": "projets",
+          "titre": "Mes projets",
+          "intro": "Tout ce que ce navigateur contient, outil par outil. Un outil qui ne sait pas encore lister ses projets n'apparaît qu'en lien, plus bas.",
+          "ancre": "projets"
+        },
+        {
+          "type": "outils",
+          "source": "creer",
+          "titre": "Créer ou ouvrir un outil",
+          "ancre": "outils"
+        },
+        {
+          "type": "outils",
+          "source": "lab",
+          "titre": "Lab",
+          "intro": "Des essais : ils peuvent changer ou casser, et rien de ce qu'on y fait ne compte ailleurs.",
+          "ancre": "lab"
+        },
+        {
+          "type": "outils",
+          "source": "decouvrir",
+          "titre": "Découvrir",
+          "ancre": "decouvrir"
+        },
+        {
+          "type": "note",
+          "source": "navigateur",
+          "titre": "Ce navigateur",
+          "ancre": "navigateur"
+        }
+      ]
+    }
+  ]
+}

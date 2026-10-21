@@ -1,6 +1,6 @@
 # AIME · Un seul Bureau — phase 1 : audit
 
-Branche `bureau` (depuis `integration`). Rien n'est modifié dans le code : ce document est l'audit demandé avant toute suppression. `main`, la production, `/v1/`, `/studio/` et Stitchlab ne sont pas touchés.
+Branche `bureau` (depuis `integration`). Phase 1 : l'audit (§1 à §5). Phase 2 : le Bureau construit (§6). `main`, la production, `/v1/`, `/studio/` et Stitchlab ne sont pas touchés.
 
 ## 1. Ce que dit le code (et non la documentation)
 
@@ -81,3 +81,56 @@ Branche `bureau` (depuis `integration`). Rien n'est modifié dans le code : ce d
 - Conservation des anciennes clés : sauvegarde puis restauration à l'identique.
 - Clavier, iPhone, mouvement réduit.
 - Tests existants verts : Studio, Stitch, SynchroView, vitrine, WORLD, INFINITY, G44, orbe, Carte.
+
+## 6. Phase 2 : livré
+
+### Ce qui a été remplacé
+- **Les trois redirections `/bureau*` → `/aime/`** sont retirées : `/bureau/` sert le nouveau Bureau.
+- **La liste du menu Explorer** devient le registre unique `nav/registre.js` : 20 entrées, chacune avec un rôle et un statut. Le menu garde sa propre liste en secours, si le registre n'est pas chargé.
+- **La fin de la Page Zéro** : « Ouvrir mon Bureau → » en principal, « Rejoindre Le Monde AIME » en second. Le vol de la Carte vers le cube est conservé sur ce lien. L'en-tête de la Page Zéro gagne « MON BUREAU ».
+- **Le README** décrit maintenant la réalité.
+
+### Ce qui a été ajouté au moteur partagé (pas de second moteur)
+- `vitrine/rendu.js` gagne `composer()` et six composants « espace » : entête, tuile, liste, groupes, outils, note. `rendre()` est inchangé.
+- `vitrine/modeles/bureau.json` : la forme.
+- `vitrine/perspectives/bureau.json` : l'angle « ce navigateur », c'est-à-dire l'ordre des blocs, sans aucune donnée ni aucun droit.
+- `vitrine/presentation/ambiances.json` : l'ambiance `aime-nuit` et la police Cal Sans.
+
+### Ce qui est propre au Bureau
+- `bureau/sources.js` lit les données de neuf outils, n'écrit jamais, et refuse les liens qui sortent du site. Il fournit aussi la sauvegarde, l'aperçu et la restauration.
+- `bureau/bureau.js` assemble le contenu et branche deux interactions : sauvegarder et restaurer.
+
+### Ce qui reste autonome, et pourquoi
+
+| Application | Raison |
+|---|---|
+| Studio et ses six ateliers | Éditeur interactif de supports, avec son propre moteur. Les dédoublonner demande de toucher `studio/` : à valider. |
+| Stitch, SynchroView, G44, INFINITY | Moteurs métier : le Bureau les liste et les ouvre. |
+| `/v1/` | Ses usages (plan Jour J, portefeuille) ne sont pas remplacés. |
+
+### Vérifications
+- **`tests/bureau.test.cjs` (5 tests)** couvre :
+  - le registre : unique, statuts, une seule entrée « travailler », Lab séparé ;
+  - les sources : tout retrouvé ; stockage en lecture seule ; données abîmées ; liens étrangers refusés ; ancien Bureau détecté ;
+  - la sauvegarde : aller-retour identique ; une clé différente est gardée sauf demande ; rien n'est effacé ;
+  - le moteur : composition, échappement, état vide, aucun moteur concurrent ;
+  - les routes : `/bureau/` n'est plus redirigé, aucune boucle, chaque entrée du registre aboutit à un fichier, et la Page Zéro mène au Bureau.
+- **`npm test`** : 275 tests passent. Seul `health.test` échoue, pour la raison d'environnement connue.
+- **Parcours rejoué automatiquement :**
+  - état vide ;
+  - navigateur prérempli : Carte, 2 projets Studio, 1 événement, brouillon et broderie Stitch, comparaison, partie INFINITY, simulation fictive, 2 réglages de l'ancien Bureau ;
+  - Page Zéro → « Ouvrir mon Bureau » ;
+  - sauvegarde téléchargée (10 éléments) ;
+  - restauration dans un navigateur modifié : 9 ajoutés, 1 différent gardé, une clé étrangère conservée ;
+  - clavier : lien d'évitement, puis Explorer, puis la Carte ;
+  - iPhone 13 avec mouvement réduit : aucun défilement horizontal, ni sur le Bureau ni sur la Page Zéro ;
+  - menu Explorer de `/aime/`, lu depuis le registre.
+  
+  Aucune erreur.
+
+### Limites
+- **Les projets sont ceux de ce navigateur.** Pas de compte : rien n'est synchronisé, et le Bureau le dit.
+- **Rouvrir un projet précis.**
+  - Le Studio n'a pas d'adresse par projet : le Bureau ouvre le Studio, qui reprend le projet en cours.
+  - Stitch rouvre un brouillon précis (`?brouillon=`), mais pour une broderie, il ouvre la liste « Reprendre une broderie ».
+- **Les tableaux `echos:boards` du Studio** ne sont pas listés : leur forme n'est pas assez sûre pour en tirer des titres sans rien inventer.

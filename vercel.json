@@ -110,21 +110,6 @@
       "source": "/lab/orb/naissance/:path*/",
       "destination": "/aime/",
       "permanent": false
-    },
-    {
-      "source": "/bureau",
-      "destination": "/aime/",
-      "permanent": false
-    },
-    {
-      "source": "/bureau/",
-      "destination": "/aime/",
-      "permanent": false
-    },
-    {
-      "source": "/bureau/:path*",
-      "destination": "/aime/",
-      "permanent": false
     }
   ]
 }
