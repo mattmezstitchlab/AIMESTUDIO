@@ -9,6 +9,8 @@ function cles(S){var out=[];try{for(var i=0;i<S.length;i++){var k=S.key(i);if(k!
 function quand(t){if(t==null||t==='')return null;var n=typeof t==='number'?t:Date.parse(t);return isNaN(n)?null:n}
 /* un lien enregistré ne mène qu'à une page de ce site : l'origine est retirée, le reste refusé */
 function interne(u,base){u=String(u||'');var m=u.match(/^https?:\/\/[^\/]+(\/.*)?$/);if(m)u=m[1]||'/';if(u.charAt(0)==='#'||u.charAt(0)==='?')return base+u;return/^\/(?![\/\\])/.test(u)?u:base}
+/* les contrats d'ouverture des outils, réutilisés tels quels : Studio « #open.<id> », événement « #ev.<id> » (voir aimeOpenHash dans studio/index.html) */
+function studioLien(h,id,re){return re.test(String(id))?'/studio/#'+h+'.'+id:'/studio/'}
 function nb(n,un,plusieurs){return n+' '+(n>1?plusieurs:un)}
 
 /* les données de l'ancien Bureau à fenêtres (retiré le 20/10/2026) : plus lues par aucune page, gardées telles quelles */
@@ -19,13 +21,13 @@ var SOURCES=[
   var n=['nom','intention','couleurs','moments','formations','voyages','competences','interets','reves','territoires'].filter(function(k){var v=c[k];return Array.isArray(v)?v.length:!!v}).length;
   return[{id:c.id,titre:c.nom||'Ma Carte',detail:'Version '+c.version+' · '+nb(n,'rubrique remplie','rubriques remplies')+(c.publication&&c.publication.publiee?' · publiée':' · privée'),quand:quand((c.historique&&c.historique.length&&c.historique[c.historique.length-1].date)||c.creeLe),lien:'/aime/',action:'La voir dans Le Monde AIME'}]}},
  {id:'studio',outil:'studio',nom:'Studio · supports',lister:function(S){var db=lire(S,'echos:v2');if(!db||!Array.isArray(db.projects))return[];
-  return db.projects.filter(function(p){return p&&p.id}).map(function(p){return{id:p.id,titre:p.name||'Projet sans titre',detail:(p.pack?'Univers '+p.pack:'Supports')+(db.cur===p.id?' · le Studio s\'ouvre dessus':''),quand:quand(p.updated),lien:'/studio/',action:'Ouvrir le Studio',enCours:db.cur===p.id}})}},
+  return db.projects.filter(function(p){return p&&p.id}).map(function(p){return{id:p.id,titre:p.name||'Projet sans titre',detail:(p.pack?'Univers '+p.pack:'Supports')+(db.cur===p.id?' · ouvert en dernier':''),quand:quand(p.updated),lien:studioLien('open',p.id,/^[A-Za-z0-9]+$/),action:/^[A-Za-z0-9]+$/.test(String(p.id))?'Ouvrir ce projet':'Ouvrir le Studio',enCours:db.cur===p.id}})}},
  {id:'evenements',outil:'studio',nom:'Événements',lister:function(S){var a=lire(S,'aime-app');if(!a||!Array.isArray(a.events))return[];
-  return a.events.filter(function(e){return e&&e.id}).map(function(e){return{id:e.id,titre:e.title||e.name||'Événement',detail:(e.type==='seminaire'?'Séminaire':e.type==='mariage'?'Mariage':'Événement')+(e.date?' · '+e.date:''),quand:null,lien:'/studio/',action:'Planning et supports',enCours:a.cur===e.id}})}},
+  return a.events.filter(function(e){return e&&e.id}).map(function(e){return{id:e.id,titre:e.title||e.names||e.name||'Événement',detail:(e.type==='seminaire'?'Séminaire':e.type==='mariage'?'Mariage':'Événement')+(e.date?' · '+e.date:''),quand:null,lien:studioLien('ev',e.id,/^[A-Za-z0-9_-]+$/),action:/^[A-Za-z0-9_-]+$/.test(String(e.id))?'Ouvrir ses supports':'Ouvrir le Studio',enCours:a.cur===e.id}})}},
  {id:'stitch',outil:'stitch',nom:'Stitch · brouillons',lister:function(S){var b=lire(S,'stitch-brouillons');if(!b||typeof b!=='object')return[];
   return Object.keys(b).map(function(id){var p=b[id]||{};return{id:id,titre:p.titre||id,detail:'Brouillon · version '+(p.version||1)+(p.palette?' · '+nb(p.palette.length,'couleur','couleurs'):''),quand:quand(p.modifieLe||p.majLe),lien:'/stitch/atelier/?brouillon='+encodeURIComponent(id),action:'Rouvrir dans l\'atelier'}})}},
  {id:'broderies',outil:'stitch',nom:'Stitch · broderies en cours',lister:function(S){return cles(S).filter(function(k){return k.indexOf('stitch-progression:')===0}).map(function(k){var g=lire(S,k)||{},id=k.slice(19);
-  return{id:id,titre:(function(t){return t.charAt(0).toUpperCase()+t.slice(1)})(id.split('@')[0].replace(/^pat-/,'').replace(/-/g,' ')),detail:(g.n?nb(g.n,'point fait','points faits'):'Commencée')+' · version '+(id.split('@')[1]||'?'),quand:quand(g.t||g.date),lien:'/stitch/broder/',action:'Reprendre la broderie'}})}},
+  return{id:id,titre:(function(t){return t.charAt(0).toUpperCase()+t.slice(1)})(id.split('@')[0].replace(/^pat-/,'').replace(/-/g,' ')),detail:(g.n?nb(g.n,'point fait','points faits'):'Commencée')+' · version '+(id.split('@')[1]||'?'),quand:quand(g.t||g.date),lien:'/stitch/broder/',action:'Ouvrir la bibliothèque'}})}},
  {id:'compositions',outil:'synchroview',nom:'SynchroView · comparaisons',lister:function(S){var a=lire(S,'sv-compositions');if(!Array.isArray(a))return[];
   return a.filter(function(c){return c&&c.url}).map(function(c,i){return{id:'cmp'+i,titre:c.name||'Comparaison',detail:'Comparaison enregistrée',quand:null,lien:interne(c.url,'/synchroview/'),action:'Rouvrir'}})}},
  {id:'infinity',outil:'infinity',nom:'INFINITY · partie',lister:function(S){var p=lire(S,'aime-infinity');if(!p||!p.L)return[];
