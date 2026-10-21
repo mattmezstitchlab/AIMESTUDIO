@@ -189,7 +189,7 @@ Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / F�
   - les accents pétrole, turquoise et vert d'eau, et le focus `#127E83` ;
   - DM Sans pour le texte et Manrope pour les titres ;
   - les boutons principaux noirs en pilule, les puces grises, la sélection turquoise ;
-  - le gradient signature, réservé à l'orbe du « + ».
+  - le gradient signature, réservé aux accents. L'orbe du « + » garde son arc-en-ciel d'origine.
 - Le fichier est `sites/theme-monde-aime.css`, limité à `body.gen`, comme sa documentation le demande (« ne pas importer la feuille entière »). Les sites générés gardent leurs ambiances, et le panneau Explorer reste celui de tout le site.
 
 ## Bibliothèque de visuels (21/10/2026)
