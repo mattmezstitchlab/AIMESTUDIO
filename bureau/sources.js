@@ -17,7 +17,7 @@ var ANCIEN_BUREAU=['aime-a11y','aime-lang','aime-m4','aime-orb-intro','aime-tld'
 var SOURCES=[
  {id:'carte',outil:'zero',nom:'Ma Carte',lister:function(S){var c=lire(S,'aime-carte');if(!c||c.format!=='aime-carte')return[];
   var n=['nom','intention','couleurs','moments','formations','voyages','competences','interets','reves','territoires'].filter(function(k){var v=c[k];return Array.isArray(v)?v.length:!!v}).length;
-  return[{id:c.id,titre:c.nom||'Ma Carte',detail:'Version '+c.version+' · '+nb(n,'rubrique remplie','rubriques remplies')+(c.publication&&c.publication.publiee?' · publiée':' · privée'),quand:quand((c.historique&&c.historique.length&&c.historique[c.historique.length-1].date)||c.creeLe),lien:'/#carte',action:'Ouvrir ma Carte'}]}},
+  return[{id:c.id,titre:c.nom||'Ma Carte',detail:'Version '+c.version+' · '+nb(n,'rubrique remplie','rubriques remplies')+(c.publication&&c.publication.publiee?' · publiée':' · privée'),quand:quand((c.historique&&c.historique.length&&c.historique[c.historique.length-1].date)||c.creeLe),lien:'/aime/',action:'La voir dans Le Monde AIME'}]}},
  {id:'studio',outil:'studio',nom:'Studio · supports',lister:function(S){var db=lire(S,'echos:v2');if(!db||!Array.isArray(db.projects))return[];
   return db.projects.filter(function(p){return p&&p.id}).map(function(p){return{id:p.id,titre:p.name||'Projet sans titre',detail:(p.pack?'Univers '+p.pack:'Supports')+(db.cur===p.id?' · le Studio s\'ouvre dessus':''),quand:quand(p.updated),lien:'/studio/',action:'Ouvrir le Studio',enCours:db.cur===p.id}})}},
  {id:'evenements',outil:'studio',nom:'Événements',lister:function(S){var a=lire(S,'aime-app');if(!a||!Array.isArray(a.events))return[];

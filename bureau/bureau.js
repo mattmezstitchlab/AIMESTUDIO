@@ -19,8 +19,8 @@ function outils(role){return N.par('role',role).filter(function(e){return e.id!=
 function contenu(){var st=S||vide,inv=B.inventaire(st),c=null;try{c=K?K.migrer(JSON.parse(st.getItem('aime-carte')||'null')):null}catch(e){c=null}
  var ill={},carte;
  if(c){if(R)ill.carte=R.svg(c,{id:'bc',mode:'grande'});var p=inv.sources[0].projets[0]||{};
-  carte={titre:c.nom||'Ma Carte',texte:p.detail||'',illustration:R?'carte':null,actions:[{lien:'/#carte',libelle:'Ouvrir ma Carte',principal:true},{lien:'/aime/',libelle:'La voir dans Le Monde AIME'}]}}
- else carte={titre:'Pas encore de Carte',texte:'Quelques questions de l\'orbe, toutes facultatives. Votre Carte reste dans ce navigateur, privée par défaut.',actions:[{lien:'/#carte',libelle:'Commencer ma Carte',principal:true}]};
+  carte={titre:c.nom||'Ma Carte',texte:p.detail||'',illustration:R?'carte':null,actions:[{lien:'/aime/',libelle:'La voir dans Le Monde AIME',principal:true}]}}
+ else carte={titre:'Votre carte',texte:'Elle se compose sur Le Monde AIME : qui vous êtes, ce que vous faites, ce que vous préparez.',actions:[{lien:'/aime/#story2',libelle:'Composer ma carte',principal:true}]};
  var nom={};inv.sources.forEach(function(s){nom[s.id]=s.nom});
  var groupes=inv.sources.filter(function(s){return s.id!=='carte'}).map(function(s){return{nom:s.nom+(s.demo?' (données fictives)':''),elements:s.projets}});
  var rep=B.reprendre(inv,3).map(function(p){return{titre:p.titre,detail:p.detail,quand:p.quand,lien:p.lien,action:p.action,groupe:nom[p.source],demo:p.demo}});
@@ -32,7 +32,7 @@ function contenu(){var st=S||vide,inv=B.inventaire(st),c=null;try{c=K?K.migrer(J
  return{inv:inv,c:{espace:{kicker:'Mon Bureau',nom:'Reprendre là où vous en étiez.',sous:'Vos projets, vos outils, votre Carte. Travailler ici ; découvrir sur Le Monde AIME ; essayer dans le Lab.'},illustrations:ill,
   blocs:{carte:carte,
    reprendre:{elements:rep,vide:'Rien à reprendre dans ce navigateur pour l\'instant.'},
-   projets:{groupes:groupes,vide:'Ce navigateur ne contient encore aucun projet AIME. Trois façons de commencer :',actions:[{lien:'/#carte',libelle:'Commencer ma Carte',principal:true},{lien:'/studio/',libelle:'Créer des supports dans le Studio'},{lien:'/stitch/',libelle:'Créer un patron avec Stitch'}]},
+   projets:{groupes:groupes,vide:'Ce navigateur ne contient encore aucun projet AIME. Trois façons de commencer :',actions:[{lien:'/aime/#story2',libelle:'Composer ma carte',principal:true},{lien:'/studio/',libelle:'Créer des supports dans le Studio'},{lien:'/stitch/',libelle:'Créer un patron avec Stitch'}]},
    creer:{elements:outils('realiser'),statuts:N.STATUTS},lab:{elements:outils('experimenter'),statuts:N.STATUTS},decouvrir:{elements:outils('decouvrir'),statuts:N.STATUTS},
    navigateur:{paragraphes:nav,actions:S?[{action:'sauvegarder',libelle:'Sauvegarder tout dans un fichier',principal:true},{action:'restaurer',libelle:'Restaurer une sauvegarde…'}]:[]}}}}}
 

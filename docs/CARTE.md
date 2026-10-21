@@ -1,5 +1,12 @@
 # AIME — la Carte universelle (Page Zéro → cube → Le Monde AIME)
 
+> **21 octobre 2026 : la création de la Carte est retirée de la Page Zéro.**
+> - Raison : elle faisait doublon avec « Votre carte » dans la verticale de `/aime/`, et compliquait la Page Zéro.
+> - La Page Zéro revient à sa version d'origine. Seuls changent l'orbe réduite et les deux sorties : Ouvrir mon Bureau, puis Rejoindre Le Monde AIME.
+> - Restent `carte/carte.js` (le modèle), `carte/rendu.js`, `carte/guide.js` et la facette du cube. Une Carte déjà créée dans un navigateur n'est jamais effacée : le cube et le Bureau la montrent encore.
+> - `carte/zero-carte.js` est supprimé.
+> - Le texte ci-dessous décrit la version retirée.
+
 Branche `carte` (depuis `integration`). Visible sur la preview d'intégration. `main` et la production ne sont pas modifiées. Les données sont fictives ou locales.
 
 ## 1. Le parcours livré

@@ -115,57 +115,6 @@ body.loin .barre::before{opacity:.92}
 .pied{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;flex-wrap:wrap;gap:8px 22px;font:500 12.5px var(--ui);color:var(--faint);padding:0 20px}
 .pied button{border:0;background:none;color:var(--soft);font:inherit;cursor:pointer;padding:4px 2px;text-decoration:underline;text-underline-offset:3px}
 
-
-/* ---------- la Carte universelle ---------- */
-.commencer{margin-top:26px;border:1px solid var(--line);background:rgba(237,237,240,.04);color:var(--ink);border-radius:999px;padding:12px 20px;font:600 14px var(--ui);cursor:pointer;transition:border-color .2s,background .2s}.commencer:hover{border-color:#5E5E6A;background:rgba(237,237,240,.08)}
-.k-z{display:block;font:600 12px var(--ui);letter-spacing:.24em;text-transform:uppercase;color:var(--soft)}
-.carte-s h2,.registre h2{margin:14px 0 0;font:400 clamp(36px,6vw,72px)/1.02 var(--display);letter-spacing:-.02em;text-wrap:balance}
-.sous-z{margin:16px auto 0;max-width:560px;color:var(--soft);font-size:clamp(16px,1.6vw,19px);text-wrap:balance}
-.mission{padding:clamp(120px,18vh,200px) 0 clamp(40px,8vh,80px)}
-.mission p{margin:0;font:400 clamp(26px,3.6vw,46px)/1.2 var(--display);letter-spacing:-.015em;text-wrap:balance}.mission span{color:var(--soft)}
-.carte-s{padding:clamp(100px,16vh,180px) 0 clamp(60px,10vh,120px)}
-.carte-vue{width:min(86vw,440px);aspect-ratio:1;margin:clamp(36px,6vh,60px) auto 0;border-radius:30px;box-shadow:0 30px 90px rgba(124,92,255,.22),0 10px 30px rgba(0,0,0,.4);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
-.carte-vue svg{display:block;width:100%;height:100%}
-.carte-etat{margin:18px auto 0;color:var(--soft);font-size:14px;max-width:520px}
-.carte-act{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px}
-.b-z{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:11px 18px;font:600 14px var(--ui);cursor:pointer}.b-z:hover{border-color:#5E5E6A}.b-z.p{background:var(--ink);color:var(--desk);border-color:var(--ink)}.b-z[disabled]{opacity:.4;cursor:default}
-.editeur,.confid{max-width:620px;margin:28px auto 0;text-align:left;display:grid;gap:10px}
-.editeur details,.confid>div{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:rgba(237,237,240,.025)}
-.editeur summary{cursor:pointer;font:600 15px var(--ui);display:flex;justify-content:space-between;gap:12px;align-items:center;list-style:none}.editeur summary::-webkit-details-marker{display:none}
-.editeur summary span{font:500 12px var(--ui);color:var(--soft)}
-.editeur label{display:grid;gap:6px;margin-top:12px;font-size:13px;color:var(--soft)}
-.editeur input,.editeur textarea,.editeur select,.dialogue input,.cherche{width:100%;border:1px solid var(--line);background:#0F0F13;color:var(--ink);border-radius:12px;padding:11px 12px;font:15px var(--ui)}
-.editeur .vis{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:12.5px;color:var(--soft)}.editeur .vis select{width:auto;padding:6px 8px;font-size:13px}
-.editeur .lst{display:grid;gap:6px;margin-top:10px}.editeur .lst div{display:flex;gap:8px;align-items:center}.editeur .lst button{border:0;background:none;color:var(--soft);font-size:18px;cursor:pointer}
-.nuancier{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}.nuancier button{width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}.nuancier button[aria-pressed=true]{border-color:#fff}
-.confid h3{margin:0 0 6px;font:600 15px var(--ui)}.confid p{margin:0 0 10px;color:var(--soft);font-size:14px}.confid label.acc{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:10px 0}.confid label.acc input{margin-top:3px}
-.confid .pub{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}.confid .pub span{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:4px 10px}
-.registre{padding:clamp(100px,16vh,180px) 0}
-.filtres{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:34px 0 14px}.filtres button{border:1px solid var(--line);background:transparent;color:var(--soft);border-radius:999px;padding:8px 14px;font:500 13.5px var(--ui);cursor:pointer}.filtres button[aria-pressed=true]{background:var(--ink);color:var(--desk);border-color:var(--ink)}
-.cherche{max-width:420px;margin:0 auto 26px;display:block}
-.reg-liste{list-style:none;margin:0 auto;padding:0;display:grid;gap:14px;max-width:640px;text-align:left}
-.reg-liste li{display:grid;grid-template-columns:88px minmax(0,1fr);gap:16px;align-items:start;border:1px solid var(--line);border-radius:20px;padding:14px;background:rgba(237,237,240,.02)}
-.reg-liste li.moi{border-color:#7C5CFF}
-.reg-liste .vg svg{display:block;width:88px;height:88px}
-.reg-liste b{font:400 22px var(--display)}.reg-liste .int{color:var(--soft);font-size:13.5px;margin:2px 0 8px}
-.reg-liste .tg{display:flex;flex-wrap:wrap;gap:6px}.reg-liste .tg span{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:#C9C9D2}
-.reg-liste .pq{margin:10px 0 0;font-size:13px;color:#C4B5FD}.reg-liste .ct{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--soft)}
-.reg-liste .ct button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:7px 12px;font:600 12.5px var(--ui);cursor:pointer}
-@media (max-width:480px){.reg-liste li{grid-template-columns:64px minmax(0,1fr)}.reg-liste .vg svg{width:64px;height:64px}}
-.dialogue{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(560px,calc(100vw - 24px));z-index:40;padding:1.5px;border-radius:24px;background:linear-gradient(135deg,#FB7185,#F59E0B,#7C5CFF,#22D3EE);box-shadow:0 30px 90px rgba(0,0,0,.6)}
-.dialogue>div{background:rgba(12,12,16,.97);border-radius:22.5px;padding:20px 20px 16px}
-.dialogue .tete-d{display:flex;justify-content:space-between;align-items:center;font:600 11px var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--soft)}
-.dialogue .pts{display:flex;gap:5px}.dialogue .pts i{width:6px;height:6px;border-radius:50%;background:var(--line)}.dialogue .pts i.f{background:var(--ink)}
-.dialogue h3{margin:12px 0 4px;font:400 clamp(22px,3vw,28px)/1.15 var(--display);letter-spacing:-.01em}
-.dialogue .aide{margin:0 0 10px;color:var(--soft);font-size:13.5px}
-.dialogue .ch{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.dialogue .ch button{border:1px solid var(--line);background:#16161C;color:var(--ink);border-radius:999px;padding:9px 14px;font:500 14px var(--ui);cursor:pointer}.dialogue .ch button:hover{border-color:#5E5E6A}
-.dialogue .bas{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-top:12px}.dialogue .bas div{display:flex;gap:8px}
-.dialogue .bas button{border:0;background:none;color:var(--soft);font:600 13.5px var(--ui);cursor:pointer;padding:8px 6px}.dialogue .bas button.p{background:var(--ink);color:var(--desk);border-radius:999px;padding:9px 16px}
-.dialogue .moteur{margin:10px 0 0;font-size:12px;color:#C4B5FD}.dialogue .agent{margin:6px 0 0;font-size:11.5px;color:var(--faint)}
-.voyage{position:fixed;z-index:60;left:50%;top:50%;width:min(70vw,360px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:28px;box-shadow:0 30px 90px rgba(124,92,255,.4);pointer-events:none}
-.voyage svg{display:block;width:100%;height:100%}
-html.calme .carte-vue{transition:none}
-
 /* mouvement réduit (préférence système ou choix du visiteur) : tout reste lisible, rien ne bouge */
 html.calme .meta,html.calme .lien{height:auto}
 html.calme .meta .scene,html.calme .lien .scene{position:relative;height:auto;min-height:0;padding:clamp(100px,16vh,180px) 0}
@@ -197,7 +146,6 @@ html.calme .bouton,html.calme .bouton span{transition:none}
   <h1 id="t-zero">AIME<sup>®</sup></h1>
   <p class="intention">Tout commence par une intention.</p>
   <p class="trois">Créer. Relier. Transformer.</p>
-  <button type="button" class="commencer" data-carte-ouvrir>Commencer ma Carte</button>
  </div>
  <a class="descendre" href="#geste">Découvrir<i aria-hidden="true"></i></a>
 </section>
@@ -250,47 +198,19 @@ html.calme .bouton,html.calme .bouton span{transition:none}
  <p class="autorisations apparait">Toujours dans le respect des autorisations.</p>
 </div></section>
 
-<!-- la phrase -->
-<section class="mission" aria-label="Une phrase"><div class="col"><p class="apparait">L'être humain n'a pas besoin d'une mission pour exister.<br><span>Il est déjà une mission à lui-même.</span></p></div></section>
-
-<!-- 7 · la Carte -->
-<section class="carte-s" id="carte" aria-labelledby="t-carte"><div class="col">
- <span class="k-z">Votre Carte</span>
- <h2 id="t-carte">Une Carte qui vous appartient.</h2>
- <p class="sous-z">Rien n'est obligatoire. Tout est privé tant que vous ne choisissez pas le contraire.</p>
- <div class="carte-vue" id="carteVue" aria-live="polite"></div>
- <p class="carte-etat" id="carteEtat"></p>
- <div class="carte-act"><button type="button" class="b-z p" data-carte-ouvrir>Répondre à l'orbe</button><button type="button" class="b-z" id="carteModifier" aria-expanded="false" aria-controls="editeur">Modifier ma Carte</button><button type="button" class="b-z" id="carteExporter">Exporter</button></div>
- <div class="editeur" id="editeur" hidden></div>
- <div class="confid" id="confid"></div>
-</div></section>
-
-<!-- 8 · le registre -->
-<section class="registre" id="registre" aria-labelledby="t-reg"><div class="col">
- <span class="k-z">Le registre</span>
- <h2 id="t-reg">Des Cartes publiées, volontairement.</h2>
- <p class="sous-z">Des personnes fictives, pour la démonstration. On ne voit que ce que chacune a rendu public : jamais une date de naissance, une relation ou un historique. Un contact ne se fait que si les deux personnes l'acceptent.</p>
- <div class="filtres" id="filtres" role="group" aria-label="Filtrer le registre"></div>
- <input class="cherche" id="cherche" type="search" placeholder="Chercher dans ce filtre…" aria-label="Chercher dans le registre">
- <ol class="reg-liste" id="regListe"></ol>
-</div></section>
-
-<!-- 9 · entrer -->
+<!-- 6 · entrer -->
 <section class="entrer" id="entrer" aria-labelledby="t-entrer">
  <span class="ancre" data-orbe="3"></span>
  <div class="col">
   <h2 id="t-entrer">Et maintenant ?</h2>
-  <p style="margin-top:22px" id="entrerTexte">Découvrez ce que nous pouvons créer, relier et faire évoluer ensemble.</p>
+  <p style="margin-top:22px">Découvrez ce que nous pouvons créer, relier et faire évoluer ensemble.</p>
   <div class="sorties"><a class="bouton" id="bureau" href="/bureau/">Ouvrir mon Bureau <span aria-hidden="true">→</span></a><a class="bouton second" id="rejoindre" href="/aime/">Rejoindre Le Monde AIME</a></div>
-  <p class="sorties-note">Le Bureau pour travailler : vos projets et votre Carte. Le Monde AIME pour découvrir.</p>
+  <p class="sorties-note">Le Bureau pour travailler. Le Monde AIME pour découvrir.</p>
  </div>
  <div class="pied"><span>AIME® · version de travail</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
 </section>
 </main>
-<div class="dialogue" id="dialogue" role="dialog" aria-modal="false" aria-labelledby="dQ" hidden></div>
-<script src="/carte/carte.js"></script><script src="/carte/guide.js"></script><script src="/carte/rendu.js"></script><script src="/carte/registre-demo.js"></script>
 <script src="/zero/orbe.js"></script>
-<script src="/carte/zero-carte.js"></script>
 <script src="/zero/zero.js"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@ La liste des adresses, avec leur statut (disponible, démonstration, expériment
 
 | Adresse | Rôle | Ce que c'est |
 |---|---|---|
-| `/` | Découvrir | **La Page Zéro.** Une intention, puis la Carte. À la fin : « Ouvrir mon Bureau », puis « Rejoindre Le Monde AIME ». |
+| `/` | Découvrir | **La Page Zéro.** Point, ligne, relation, grille, composition, projet. À la fin : « Ouvrir mon Bureau », puis « Rejoindre Le Monde AIME ». |
 | `/bureau/` | Travailler | **Le Bureau.** Il affiche ma Carte et propose de reprendre là où on en était. Il range les projets par outil, puis donne les outils, le Lab, et ce que ce navigateur garde, avec sauvegarde et restauration. Voir `docs/BUREAU.md`. |
 | `/aime/` | Découvrir | **Le Monde AIME.** La grande landing : le cube, l'orbe, le menu Explorer. |
 | `/studio/` | Réaliser | **Le Studio.** Tous les supports. |
@@ -36,7 +36,7 @@ L'ancien Bureau à fenêtres a été retiré le 20 octobre 2026. Ses réglages r
 |---|---|
 | `vitrine/rendu.js` | **Le moteur de pages commun.** `rendre()` met en page les événements ; `composer()` met en page les espaces de travail, dont le Bureau. Les couches restent séparées : données, accès, perspectives, modèles (`vitrine/modeles/`), présentation (`vitrine/presentation/`). |
 | Studio, Stitch (`stitch/js/`), SynchroView, G44, INFINITY | Chaque application garde son propre moteur métier. |
-| `carte/` | La Carte : une seule source de données, que lisent la Page Zéro, le cube et le Bureau. |
+| `carte/` | La Carte universelle (`aime-carte`) : son modèle et son rendu. Elle ne se crée plus sur la Page Zéro (21/10/2026), car la landing compose déjà « Votre carte ». Une Carte existante reste lue par le cube et le Bureau. |
 | `bureau/sources.js` | Lit, pour chaque outil, ce que ce navigateur contient. Il n'écrit jamais rien. |
 
 ## Données

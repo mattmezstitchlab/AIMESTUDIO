@@ -46,7 +46,7 @@ test('sauvegarde : tout part, tout revient, rien n\'est effacé, rien n\'est rem
 
 test('moteur partagé : le Bureau est composé par vitrine/rendu.js, sans second moteur',()=>{
  const modele=JSON.parse(fs.readFileSync(R('vitrine/modeles/bureau.json'))),persp=JSON.parse(fs.readFileSync(R('vitrine/perspectives/bureau.json'))).angles[0];
- const c={espace:{nom:'Reprendre <b>',kicker:'Mon Bureau'},illustrations:{},blocs:{carte:{titre:'Pas encore de Carte',actions:[{lien:'/#carte',libelle:'Commencer ma Carte',principal:true}]},
+ const c={espace:{nom:'Reprendre <b>',kicker:'Mon Bureau'},illustrations:{},blocs:{carte:{titre:'Votre carte',actions:[{lien:'/aime/#story2',libelle:'Composer ma carte',principal:true}]},
   reprendre:{elements:[],vide:'Rien à reprendre.'},projets:{groupes:[{nom:'Studio',elements:[{titre:'<img src=x onerror=1>',lien:'/studio/'}]}]},
   creer:{elements:N.par('role','realiser'),statuts:N.STATUTS},lab:{elements:N.par('role','experimenter'),statuts:N.STATUTS},decouvrir:{elements:[]},navigateur:{paragraphes:['Dans ce navigateur.'],actions:[{action:'sauvegarder',libelle:'Sauvegarder'}]}}};
  const r=V.composer({contenu:c,perspective:persp,modele});
@@ -66,4 +66,4 @@ test('routes : /bureau/ est servi, Page Zéro y mène, aucune boucle, chaque ent
  const sert=u=>{const p=u.split(/[?#]/)[0];const f=p.endsWith('/')?p+'index.html':p;return fs.existsSync(R(f.slice(1)))||fs.existsSync(R(p.slice(1)+'/index.html'))};
  for(const e of N.ENTREES){const f=suivre(e.href.split('?')[0]).fin;assert.ok(sert(f),e.id+' → '+f+' : aucun fichier')}
  const z=fs.readFileSync(R('index.html'),'utf8');const b=z.indexOf('id="bureau" href="/bureau/"'),m=z.indexOf('id="rejoindre" href="/aime/"');
- assert.ok(b>0&&m>b,'Page Zéro : Ouvrir mon Bureau en principal, Le Monde AIME ensuite');assert.match(z,/href="\/bureau\/">MON BUREAU/)});
+ assert.ok(b>0&&m>b,'Page Zéro : Ouvrir mon Bureau en principal, Le Monde AIME ensuite');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.match(z,/href="\/bureau\/">MON BUREAU/)});
