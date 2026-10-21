@@ -69,3 +69,7 @@ fieldset.ch small{color:var(--faint);font-size:12px;line-height:1.4}
 .gen-onde{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:70;display:flex;align-items:center;gap:12px;background:#15131F;border:1px solid rgba(124,92,255,.5);border-radius:999px;padding:8px 10px 8px 16px;box-shadow:0 16px 40px rgba(0,0,0,.5);font:600 14px var(--fb)}
 .gen-onde span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;background:var(--conic,linear-gradient(90deg,#FB7185,#22D3EE));vertical-align:middle}
 #pageMode[aria-pressed=true]{border-color:#7C5CFF;color:#C4B5FD}
+.imports .imp{grid-template-rows:auto 1fr auto}.imp.html{cursor:default}.imp.html:hover{transform:none}.imp-b{display:flex;flex-wrap:wrap;gap:6px}.imports .cc{color:var(--ink);font-size:13.5px;align-items:flex-start}
+.studio-l{margin-top:12px}
+.gen-rapport{position:fixed;z-index:120;left:50%;top:50%;transform:translate(-50%,-50%);width:min(620px,calc(100vw - 32px));max-height:calc(100dvh - 40px);overflow:auto;background:#15131F;border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:22px 24px;box-shadow:0 30px 90px rgba(0,0,0,.7)}
+.gen-rapport h2{margin:0 0 8px;font:400 26px var(--ft)}.gen-rapport h3{margin:16px 0 6px;font:600 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--soft)}.gen-rapport ul{margin:0;padding-left:18px;color:#C9C9D2;display:grid;gap:4px;font-size:14px}.gen-rapport p{color:#C9C9D2}

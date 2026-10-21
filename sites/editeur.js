@@ -108,6 +108,10 @@ $('fichierImg').addEventListener('change',function(){var fs=[].slice.call(this.f
 document.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var d=b.dataset;
  if(d.modele){creer(d.modele);return}
  if(d.demo){depuisDemo(d.demo);return}
+ if(d.imp==='landing'){$('fichierSite').click();return}
+ if(d.imp==='dossier'||d.imp==='zip'){if(!$('droits').checked){dire('Cochez d\'abord : « Ce site m\'appartient, ou j\'ai l\'autorisation de le reprendre ».');$('droits').focus();return}$(d.imp==='dossier'?'fichierDossier':'fichierZip').click();return}
+ if(d.imp==='studio'){var L=studioProjets(),box=$('studioListe');box.hidden=false;box.innerHTML=L.length?'<p class="aide">Projets du Studio dans ce navigateur :</p><div class="e-acts">'+L.map(function(p){return'<button type="button" class="e-btn" data-studio="'+esc(p.id)+'">'+esc(p.name||'Projet')+'</button>'}).join('')+'</div>':'<p class="aide">Aucun projet du Studio dans ce navigateur. Créez-en un dans <a href="/studio/">le Studio</a>, puis revenez.</p>';return}
+ if(d.studio){var pj=studioProjets().filter(function(p){return p.id===d.studio})[0];if(pj)installer(S.depuisStudio(pj),'Projet du Studio');return}
  if(d.page){page=d.page;sel=null;tout();return}
  if(d.sel){choisir(d.sel);return}
  if(d.monter||d.descendre){var id=d.monter||d.descendre;changer(function(){var l=pageCour().sections,i=l.map(function(s){return s.id}).indexOf(id),j=i+(d.monter?-1:1);if(j<0||j>=l.length)return;var t=l[i];l[i]=l[j];l[j]=t});return}
@@ -153,7 +157,32 @@ $('pageRenommer').addEventListener('click',function(){var p=pageCour(),b=documen
  var fin=function(ok){if(ok&&i.value.trim()&&i.value.trim()!==p.titre)changer(function(){p.titre=i.value.trim().slice(0,40)});else pagesUI()};i.addEventListener('keydown',function(e){if(e.key==='Enter')fin(true);if(e.key==='Escape')fin(false)});i.addEventListener('blur',function(){fin(true)})});
 $('pageSuppr').addEventListener('click',function(){if(page==='index')return;var t=pageCour().titre;changer(function(s){s.pages=s.pages.filter(function(p){return p.id!==page})});page='index';sel=null;tout();dire('Page « '+t+' » supprimée. « Annuler » la remet.')});
 $('importer').addEventListener('click',function(){$('fichierSite').click()});
-$('fichierSite').addEventListener('change',function(){var f=this.files[0];this.value='';if(!f)return;var r=new FileReader();r.onload=function(){try{var s=S.migrer(JSON.parse(r.result));if(!s)throw 0;if(etat.sites[s.id])s.id=S.uid('site-');etat.sites[s.id]=s;ecrire();ouvrir(s.id);dire('Site « '+s.nom+' » importé.')}catch(e){dire('Ce fichier n\'est pas un site AIME.')}};r.readAsText(f)});
+/* ---------- régénérer : fichiers AIME (fidèles) ou dossier HTML (approché, avec compte rendu) ---------- */
+function installer(res,quoi){var s2=res.site;if(etat.sites[s2.id])s2.id=S.uid('site-');s2.creeLe=s2.majLe=new Date().toISOString();etat.sites[s2.id]=s2;ecrire();ouvrir(s2.id);compteRendu(res.rapport,quoi)}
+function compteRendu(R,quoi){var li=function(t){return'<li>'+esc(t)+'</li>'},sec=R.sections?Object.keys(R.sections).map(function(k){return R.sections[k]+' × '+((S.BLOCS[k]||{}).nom||k)}):[];
+ $('rapport').innerHTML='<h2 id="t-rap">'+esc(quoi)+' : compte rendu</h2>'+
+  (R.pages!=null?'<p>'+R.pages+' page'+(R.pages>1?'s':'')+' · '+sec.length+' sorte'+(sec.length>1?'s':'')+' de sections · '+R.images+' image'+(R.images>1?'s':'')+'</p>':'<p>'+R.repris+' bloc'+(R.repris>1?'s':'')+' repris.</p>')+
+  (sec.length?'<h3>Reconnu</h3><ul>'+sec.map(li).join('')+(R.infos||[]).map(function(t){return li('Info : '+t)}).join('')+(R.ambiance?li('Ambiance : '+R.ambiance):'')+(R.typo?li('Typographie : '+R.typo):'')+'</ul>':'')+
+  ((R.omis&&R.omis.length)||(R.nonReconnu&&R.nonReconnu.length)||(R.ignores&&R.ignores.length)?'<h3>Non repris</h3><ul>'+(R.omis||[]).map(function(k){return li('Bloc « '+k+' » : démonstration de la landing, pas un bloc de site')}).join('')+(R.nonReconnu||[]).map(li).join('')+(R.ignores||[]).map(function(t){return li('Ignoré pour la sécurité : '+t)}).join('')+'</ul>':'<p>Rien n\'a été laissé de côté.</p>')+
+  '<p class="aide">Vérifiez les textes : la lecture est faite par des règles fixes, sans IA.</p><div class="e-acts"><button type="button" class="e-btn e-p" id="rapOk">Compris</button></div>';
+ $('rapport').hidden=false;$('rapOk').focus();$('rapOk').onclick=function(){$('rapport').hidden=true}}
+function importerJSON(texte,nom){var j=JSON.parse(texte);
+ if(j&&j.format==='aime-site'){var s2=S.migrer(j);installer({site:s2,rapport:{repris:s2.pages.reduce(function(a,p){return a+p.sections.length},0),omis:[]}},'Site AIME');return}
+ if(j&&j.P&&Array.isArray(j.blocks)){installer(S.depuisMiniSite(j),'Mini-site de la landing');return}
+ throw new Error('Ce fichier JSON n\'est ni un site AIME ni un export du mini-site de la landing.')}
+function importerHTML(fichiers,quoi){if(!$('droits').checked&&!confirmeDroits){dire('Cochez d\'abord : « Ce site m\'appartient, ou j\'ai l\'autorisation de le reprendre ».');accueil();$('droits').focus();return}
+ dire('Lecture du site…');window.AIMEImport.lire(fichiers,PRES).then(function(r){installer(r,quoi)}).catch(function(e){dire(e.message||'Import impossible.')})}
+var confirmeDroits=false;
+function zipVersFichiers(blob){return charge('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js').then(function(){return JSZip.loadAsync(blob)}).then(function(z){var L=[];z.forEach(function(chemin,f){if(!f.dir&&!/(^|\/)(__MACOSX|\.)/.test(chemin))L.push(f.async('blob').then(function(b){return{chemin:chemin,blob:b}}))});return Promise.all(L)}).then(function(L){var racine=L.map(function(f){return f.chemin.split('/')[0]});var commun=racine.every(function(r){return r===racine[0]})&&L.every(function(f){return f.chemin.indexOf('/')>0})?racine[0]+'/':'';return L.map(function(f){return{chemin:f.chemin.slice(commun.length),blob:f.blob}})})}
+function routerFichiers(fs){fs=[].slice.call(fs||[]);if(!fs.length)return;var f=fs[0];
+ if(fs.length===1&&/\.json$/i.test(f.name)){var r=new FileReader();r.onload=function(){try{importerJSON(r.result,f.name)}catch(e){dire(e.message)}};r.readAsText(f);return}
+ if(fs.length===1&&/\.zip$/i.test(f.name)){if(!$('droits').checked){accueil();dire('Cochez d\'abord la case des droits, puis reprenez le .zip.');$('droits').focus();return}zipVersFichiers(f).then(function(L){importerHTML(L,'Site HTML (.zip)')}).catch(function(){dire('Ce .zip est illisible.')});return}
+ importerHTML(fs.map(function(x){return{chemin:x.webkitRelativePath?x.webkitRelativePath.split('/').slice(1).join('/'):x.name,blob:x}}),fs[0].webkitRelativePath?'Dossier HTML':'Pages HTML')}
+$('fichierSite').addEventListener('change',function(){var fs=this.files;routerFichiers(fs);this.value=''});
+$('fichierDossier').addEventListener('change',function(){var fs=this.files;routerFichiers(fs);this.value=''});
+$('fichierZip').addEventListener('change',function(){var fs=this.files;routerFichiers(fs);this.value=''});
+function studioProjets(){try{var db=JSON.parse(localStorage.getItem('echos:v2')||'null');return db&&Array.isArray(db.projects)?db.projects.filter(function(p){return p&&p.id}):[]}catch(e){return[]}}
+
 function menuExp(on){$('menuExp').hidden=!on;$('exporter').setAttribute('aria-expanded',String(on))}
 $('exporter').addEventListener('click',function(e){e.stopPropagation();menuExp($('menuExp').hidden)});
 document.addEventListener('click',function(e){if(!e.target.closest('.gen-exp'))menuExp(false)});

@@ -31,6 +31,15 @@
  <ul class="modeles" id="modeles"></ul>
  <h2 class="gen-h" style="margin-top:34px">Partir d'un démonstrateur <small>les mêmes faits, rôles et accès, devenus un site à modifier</small></h2>
  <ul class="modeles" id="demos"></ul>
+ <h2 class="gen-h" style="margin-top:34px">Régénérer un site existant <small>rien n'est perdu sans être dit : un compte rendu accompagne chaque import</small></h2>
+ <ul class="modeles imports">
+  <li><button type="button" class="modele imp" data-imp="landing"><b>Le mini-site de la landing</b><span>Le fichier « .aime.json » exporté depuis « Votre site » sur Le Monde AIME : blocs, positions sur la grille, styles, programme, personnes, photos.</span><small>Fidèle · grille libre</small></button></li>
+  <li><button type="button" class="modele imp" data-imp="studio"><b>Un projet du Studio</b><span id="studioN">Les projets d'AIME Studio gardés dans ce navigateur : textes, marque, programme ou offre, personnes, contact.</span><small>Fidèle · sections</small></button></li>
+  <li><div class="modele imp html"><b>Un dossier ou un .zip de site HTML</b><span>Un site qui vous appartient : chaque page devient une page, les titres des sections, les images du dossier une galerie ; dates, adresses, e-mails, horaires et prix sont reconnus.</span>
+   <label class="cc"><input type="checkbox" id="droits"> Ce site m'appartient, ou j'ai l'autorisation de le reprendre.</label>
+   <span class="imp-b"><button type="button" class="mini" data-imp="dossier">Choisir un dossier</button><button type="button" class="mini" data-imp="zip">Un .zip ou des .html</button></span><small>Approché · compte rendu détaillé</small></div></li>
+ </ul>
+ <div class="studio-l" id="studioListe" hidden></div>
 </div>
 
 <main class="gen-main" id="atelier" hidden>
@@ -61,12 +70,16 @@
   <div class="gen-onglet" id="o-style" role="tabpanel" hidden></div>
  </aside>
 </main>
-<input type="file" id="fichierSite" accept="application/json,.json" hidden>
+<input type="file" id="fichierSite" accept="application/json,.json,.zip,.html,.htm" hidden>
+<input type="file" id="fichierDossier" webkitdirectory directory multiple hidden>
+<input type="file" id="fichierZip" accept=".zip,.html,.htm" multiple hidden>
+<div class="gen-rapport" id="rapport" role="dialog" aria-modal="false" aria-labelledby="t-rap" hidden></div>
 <input type="file" id="fichierImg" accept="image/*" hidden>
 <p id="vivant" class="vivant" role="status" aria-live="polite"></p>
 <script src="/nav/registre.js"></script>
 <script src="/synchroview/permissions.js"></script>
 <script src="/vitrine/rendu.js"></script>
+<script src="/sites/importer.js"></script>
 <script src="/sites/editeur.js"></script>
 <script src="/menu/menu.js"></script>
 </body>
