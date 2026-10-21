@@ -191,3 +191,22 @@ Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / F�
   - les boutons principaux noirs en pilule, les puces grises, la sélection turquoise ;
   - le gradient signature, réservé à l'orbe du « + ».
 - Le fichier est `sites/theme-monde-aime.css`, limité à `body.gen`, comme sa documentation le demande (« ne pas importer la feuille entière »). Les sites générés gardent leurs ambiances, et le panneau Explorer reste celui de tout le site.
+
+## Bibliothèque de visuels (21/10/2026)
+- `sites/bibliotheque/` contient 134 images en WebP (1280 px au plus, avec une vignette de 360 px), soit 14,7 Mo. Elles sont décrites dans `bibliotheque.json` : famille, texte alternatif, dépôt et chemin d'origine.
+- Familles : cérémonie et couples, réception et tables, lieux, détails et objets, fonds et textures, scène et prestataires.
+- Origine : les dépôts MINISITEWEDDING, WEDDINGCITY, WEDMAG, AIMELEMONDEAIME et byaime. La provenance est gardée dans le manifeste, pas affichée.
+- Écartés, et vérifiés par un test :
+  - les photos de prestataires réels (MONDEMARIAGE) ;
+  - les portraits associés à des noms (wedding-world-grid) ;
+  - les portraits de banque d'images sans licence (`AIMESTUDIO/sup/people`) ;
+  - les photos personnelles ;
+  - les visuels qui portent des noms ou des marques ;
+  - les démonstrations de produit (ticketaime).
+- Dans le « + », l'onglet **Bibliothèque** permet de choisir une famille, puis où poser l'image : un bloc Image, dans la galerie, ou en fond de l'en-tête (première photo de la galerie).
+- Une image de la bibliothèque s'écrit `biblio:<id>` dans le site, et le moteur la résout selon le contexte :
+  - dans l'éditeur, `/sites/bibliotheque/` ;
+  - dans le `.zip` à publier, `medias/`, avec **seulement** les images visibles dans les pages publiques ;
+  - pour une page unique ou un onglet, l'adresse complète du site.
+- `scripts/bibliotheque-construire.cjs` reconstruit le dossier à partir d'une sélection.
+- Vidéos : aucune dans les dépôts examinés ; le bloc Vidéo reste un lien.

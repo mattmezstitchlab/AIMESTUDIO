@@ -118,3 +118,14 @@ test('supports du Studio devenus blocs web : ils lisent les infos écrites une f
  assert.ok(h.includes('<li>Cléo</li>'),'plan de table : les noms séparés deviennent une liste');assert.ok(!h.includes('<script>x'),'tout est échappé');assert.ok(h.includes('Aucun déclaré'),'un plat sans allergène déclaré le dit, sans rien inventer');
  assert.ok(h.includes('scope="row"'),'tableau des allergènes accessible');assert.ok(h.includes('aria-label="Gauche">←'),'orientation : la flèche suit la direction écrite');assert.ok(!/href="javascript/i.test(h),'lien dangereux refusé');
  for(const t of ['fairepart','plantable','livreor','allergenes','setlist','facile'])assert.ok(S.BLOCS[t]&&S.LARGEUR[t]&&S.hauteur(t,S.LARGEUR[t])>0,t+' placé dans la grille')});
+test('bibliothèque : chaque image existe, a un texte alternatif, une source et une famille ; « biblio:<id> » se résout sans jamais sortir du dossier',()=>{
+ const fs=require('fs'),B=JSON.parse(fs.readFileSync(path.join(__dirname,'..','sites/bibliotheque/bibliotheque.json'),'utf8'));
+ assert.ok(B.images.length>=100);const ids=new Set();
+ for(const x of B.images){assert.ok(!ids.has(x.id),x.id);ids.add(x.id);assert.match(x.id,/^[a-z0-9-]{1,80}$/);assert.ok(B.categories[x.cat],x.id);assert.ok(x.alt&&x.alt.length>5,x.id+' alt');assert.ok(x.source&&x.source.depot&&x.source.chemin,x.id+' source');
+  for(const f of [x.fichier,x.vignette])assert.ok(fs.existsSync(path.join(__dirname,'..','sites/bibliotheque',f)),f)}
+ assert.ok(!/\bIA\b|g[ée]n[ée]r[ée]e? par|intelligence artificielle/i.test(JSON.stringify(B.images.map(x=>x.alt))),'aucune mention visible');
+ assert.ok(!B.images.some(x=>/MONDEMARIAGE|wedding-world-grid|sup\/people|matt-mez|\/matt\.|teammember/i.test(x.source.depot+'/'+x.source.chemin)),'aucune source écartée (prestataires réels, portraits nommés, photos personnelles)');
+ const s=S.vide();S.ajouterSection(s,'index','image').src='biblio:'+B.images[0].id;s.listes.galerie=[{src:'biblio:../../etc'},{src:'biblio:'+B.images[1].id}];S.ajouterSection(s,'index','galerie');
+ const h=S.document(s,{presentation:P}).html;assert.ok(h.includes('/sites/bibliotheque/'+B.images[0].id+'.webp'));assert.ok(!h.includes('../../etc')&&!h.includes('biblio:'),'identifiant douteux ignoré');
+ const z=S.exporterPublic(s,{presentation:P,medias:'medias/'});assert.deepEqual(S.mediasDe(z[0].contenu).sort(),[B.images[0].id,B.images[1].id].sort(),'l\'export sait quels médias embarquer');
+ assert.ok(!S.document(s,{presentation:P,medias:'javascript:x/'}).html.includes('javascript:'),'base de médias douteuse refusée')});

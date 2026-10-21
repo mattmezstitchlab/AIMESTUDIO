@@ -258,7 +258,11 @@ function dateLongue(d){if(!d)return'';var p=String(d).split('-');if(p.length<3)r
 /* un lien n'accepte que http(s), mailto, tel, une ancre ou un chemin relatif ; jamais javascript: ni data: */
 function lien(u){u=String(u||'').trim();if(!u)return'';if(/^(https?:|mailto:|tel:|#|\/(?!\/)|\.\/|[\w-]+\.html)/i.test(u))return u;if(/^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(u))return'https://'+u;return''}
 /* une image : une URL https ou une image importée (data:image/…) */
-function img(u){u=String(u||'');return/^https:\/\//.test(u)||/^data:image\/(png|jpe?g|webp|gif);base64,/.test(u)?u:''}
+/* une image de la bibliothèque s'écrit « biblio:<id> » : son adresse dépend de l'endroit où la page est lue
+   (l'éditeur, un export en dossier qui embarque ses médias, ou une page unique qui pointe vers le site) */
+var MEDIAS='/sites/bibliotheque/';
+function img(u){u=String(u||'');var b=u.match(/^biblio:([a-z0-9-]{1,80})$/);if(b)return MEDIAS+b[1]+'.webp';return/^https:\/\//.test(u)||/^data:image\/(png|jpe?g|webp|gif);base64,/.test(u)?u:''}
+function mediasDe(html){var v={},re=new RegExp(MEDIAS.replace(/[.*+?^${}()|[\]\\\/]/g,'\\$&')+'([a-z0-9-]{1,80})\\.webp','g'),m;while((m=re.exec(html)))v[m[1]]=1;return Object.keys(v)}
 function slug(t){return String(t||'page').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'page'}
 
 /* ---------- couleurs : contraste WCAG pour le texte posé sur une couleur ---------- */
@@ -527,7 +531,7 @@ function voit(vue,aud,regles){aud=aud||'public';if(aud==='public')return{ok:true
  if(regles&&regles.can){var d=regles.can({id:vue.id||'apercu',role:vue.role},'read',{type:'item',audience:aud});return{ok:!!d.allow,raison:d.reason||d.rule}}
  var t=ROLES_LOC[aud];return t&&t[vue.role]?{ok:true}:{ok:false,raison:'réservé : '+AUDIENCES[aud]}}
 var COMPAT={public:null,invite:{role:'guest'},organisation:{role:'owner'}};
-function document_(site,o){o=o||{};var pr=presentation(site,o.presentation),page=site.pages.filter(function(p){return p.id===o.page})[0]||site.pages[0];
+function document_(site,o){o=o||{};MEDIAS=typeof o.medias==='string'&&/^(\/|\.\/|https:\/\/|[a-z]+\/)[\w.\/:-]*$/.test(o.medias)?o.medias:'/sites/bibliotheque/';var pr=presentation(site,o.presentation),page=site.pages.filter(function(p){return p.id===o.page})[0]||site.pages[0];
  var vue=o.vue!==undefined?o.vue:(o.perspective?COMPAT[o.perspective]:null),masq=[],lm=0;
  var visibles=function(p){return p.sections.filter(function(s){var v=voit(vue,s.audience,o.regles);if(!v.ok)masq.push({id:s.id,nom:(BLOCS[s.type]||{}).nom||s.type,titre:s.titre||'',audience:s.audience,raison:v.raison});return v.ok})};
  var L={};Object.keys(site.listes).forEach(function(k){L[k]=(site.listes[k]||[]).filter(function(r){var v=voit(vue,r&&r.audience,o.regles);if(!v.ok)lm++;return v.ok})});
@@ -548,7 +552,7 @@ function document_(site,o){o=o||{};var pr=presentation(site,o.presentation),page
  return{html:html,titre:titre,bilan:{sections:n,page:page.id,vue:vue,masquees:masq,lignesMasquees:lm}}}
 /* ---------- exporter pour publier : SEULEMENT la vue publique, aucun fichier de projet, aucune page réservée ----------
    La sauvegarde complète (sauvegarde()) est une autre action : elle contient tout, y compris le réservé, et ne se publie pas. */
-function exporter(site,o){o=o||{};var base={presentation:o.presentation,vue:null};
+function exporter(site,o){o=o||{};var base={presentation:o.presentation,vue:null,medias:o.medias};
  if(o.unePage)return[{chemin:'index.html',contenu:document_(site,Object.assign({unePage:true},base)).html}];
  return site.pages.filter(function(p){return p.id==='index'||p.sections.some(function(s){return voit(null,s.audience).ok})}).map(function(p){return{chemin:p.id==='index'?'index.html':p.id+'.html',contenu:document_(site,Object.assign({page:p.id},base)).html}})}
 var LISEZ_PUBLIC='Site exporté pour publication depuis le générateur AIME.\n\nCe dossier ne contient que ce qui est destiné à TOUT LE MONDE : les sections et les lignes réservées (membres, équipe, organisation) n\'y figurent pas, ni le fichier de projet.\n\nPour publier : déposez tous les fichiers de ce dossier chez votre hébergeur (index.html est la page d\'accueil). Les polices viennent de Google Fonts. Le formulaire de réponse ouvre la messagerie du visiteur : rien n\'est envoyé sans lui.\n\nPour modifier ce site plus tard, utilisez la sauvegarde du projet (« Sauvegarder mon projet »), à garder pour vous.\n';
@@ -607,7 +611,7 @@ function depuisStudio(pj){var v=(pj.versions||[])[pj.cur||0]||(pj.versions||[])[
 /* le style propre à un bloc (repris de la barre du mini-site : teinte, arrondi, empattement, taille) */
 function styleBloc(st){if(!st)return'';var o='';if(st.teinte!=null)o+='--bt:'+(+st.teinte)+';background:color-mix(in oklab,hsl('+(+st.teinte)+' 70% 62%) 22%,var(--fond));';if(st.arrondi!=null)o+='border-radius:'+Math.max(0,Math.min(40,+st.arrondi))+'px;';if(st.serif)o+='font-family:var(--ft);';if(st.taille)o+='font-size:'+Math.max(.7,Math.min(1.6,+st.taille))+'em;';return o}
 
-return{exporterPublic:exporterPublic,sauvegarde:sauvegarde,AVERTISSEMENT:AVERTISSEMENT,tasser:tasser,depuisMiniSite:depuisMiniSite,depuisStudio:depuisStudio,styleBloc:styleBloc,moisFr:moisFr,FORMES:FORMES,formeDe:formeDe,RATIO:RATIO,LARGEUR:LARGEUR,hauteur:hauteur,DEPS:DEPS,placeLibre:placeLibre,versGrille:versGrille,versSections:versSections,AUDIENCES:AUDIENCES,voit:voit,depuisVitrine:depuisVitrine,SCHEMA:SCHEMA,LISTES:LISTES,CATS:CATS,BLOCS:BLOCS,CHAMPS:CHAMPS,vide:vide,migrer:migrer,ajouterSection:ajouterSection,appliquerModele:appliquerModele,
+return{mediasDe:mediasDe,exporterPublic:exporterPublic,sauvegarde:sauvegarde,AVERTISSEMENT:AVERTISSEMENT,tasser:tasser,depuisMiniSite:depuisMiniSite,depuisStudio:depuisStudio,styleBloc:styleBloc,moisFr:moisFr,FORMES:FORMES,formeDe:formeDe,RATIO:RATIO,LARGEUR:LARGEUR,hauteur:hauteur,DEPS:DEPS,placeLibre:placeLibre,versGrille:versGrille,versSections:versSections,AUDIENCES:AUDIENCES,voit:voit,depuisVitrine:depuisVitrine,SCHEMA:SCHEMA,LISTES:LISTES,CATS:CATS,BLOCS:BLOCS,CHAMPS:CHAMPS,vide:vide,migrer:migrer,ajouterSection:ajouterSection,appliquerModele:appliquerModele,
  document:document_,exporter:exporter,contraste:contraste,lien:lien,img:img,slug:slug,esc:esc,uid:uid};
 })({visuel:visuel});
 
