@@ -25,6 +25,7 @@ var E=[
  ['seminaire','Séminaire Maison Orée','/vitrine/site/?u=seminaire','Démonstrateur, entreprise fictive','evenements','decouvrir','demonstration'],
  ['timeline','Timeline Jour J','/v1/','L\'ancienne application de planning, conservée','evenements','realiser','disponible'],
  ['g44','G44 LAB','/g44/','Le laboratoire des dépendances administratives','institutions','realiser','demonstration',true],
+ ['sites','Générateur de site','/sites/','Composer un site complet, page par page','creation','realiser','disponible',true],
  ['studio','Le Studio','/studio/','Le studio complet : tous vos supports','creation','realiser','disponible'],
  ['stitch','AIME Stitch','/stitch/','Patrons de point de croix vivants','creation','realiser','disponible',true],
  ['stitchlab','Atelier Broderie','/stitchlab/','Le studio, côté broderie','creation','realiser','disponible'],

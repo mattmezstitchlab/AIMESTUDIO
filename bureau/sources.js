@@ -32,6 +32,8 @@ var SOURCES=[
   return[{id:'partie',titre:'Partie en cours',detail:'Niveau '+p.L+(p.record&&p.record.L?' · record niveau '+p.record.L:''),quand:null,lien:'/infinity/',action:'Reprendre la partie'}]}},
  {id:'simulations',outil:'world',nom:'Démonstrateurs · simulations',demo:true,lister:function(S){return cles(S).filter(function(k){return/^aime-sim-[a-z0-9-]+$/.test(k)}).map(function(k){var j=lire(S,k),u=k.slice(9);if(!Array.isArray(j)||!j.length)return null;
   return{id:u,titre:u==='world'?'AIME WORLD':u==='mariage'?'Mariage Léa & Marc':u==='seminaire'?'Séminaire Maison Orée':u,detail:'Simulation : '+nb(j.length,'action','actions')+' · données fictives',quand:null,lien:u==='world'?'/vitrine/world/':'/vitrine/site/?u='+encodeURIComponent(u),action:'Reprendre la simulation'}}).filter(Boolean)}},
+ {id:'sites',outil:'sites',nom:'Sites',lister:function(S){var o=lire(S,'aime-sites');if(!o||!o.sites)return[];return Object.keys(o.sites).map(function(id){var x=o.sites[id]||{};var n=(x.pages||[]).length;
+  return{id:id,titre:x.nom||'Site',detail:n+' page'+(n>1?'s':'')+(x.infos&&x.infos.titre?' · '+x.infos.titre:''),quand:quand(x.majLe),lien:'/sites/?site='+encodeURIComponent(id),action:'Ouvrir dans le générateur',enCours:o.cur===id}})}},
  {id:'timeline',outil:'timeline',nom:'Timeline Jour J',lister:function(S){var k=S.getItem('jourj-plan-v5')!=null?'jourj-plan-v5':S.getItem('jourj-plan-v4')!=null?'jourj-plan-v4':null;if(!k)return[];
   return[{id:k,titre:'Plan du jour J',detail:'Dans l\'ancienne Timeline (/v1/)',quand:null,lien:'/v1/',action:'Ouvrir la Timeline'}]}}];
 

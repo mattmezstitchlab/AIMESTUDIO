@@ -17,15 +17,15 @@ function outils(role){return N.par('role',role).filter(function(e){return e.id!=
  if(role==='realiser'&&!LISTENT[e.id]&&!/^(stitchlab|web|buro|accessibilite|image)$/.test(e.id))o.note=e.id==='g44'?'Ne garde rien : rien à lister.':'Ses projets ne sont pas encore listés ici.';return o})}
 
 /* les dossiers : un par outil qui a quelque chose dans ce navigateur, plus Ma carte, Applications, Lab, Découvrir */
-var TEINTES={carte:['#FB7185','#F59E0B'],studio:['#7C5CFF','#22D3EE'],evenements:['#F472B6','#7C5CFF'],stitch:['#34D399','#22D3EE'],compositions:['#60A5FA','#7C5CFF'],infinity:['#FBBF24','#FB7185'],simulations:['#A3E635','#22D3EE'],timeline:['#F59E0B','#F472B6'],
+var TEINTES={carte:['#FB7185','#F59E0B'],studio:['#7C5CFF','#22D3EE'],evenements:['#F472B6','#7C5CFF'],stitch:['#34D399','#22D3EE'],compositions:['#60A5FA','#7C5CFF'],infinity:['#FBBF24','#FB7185'],simulations:['#A3E635','#22D3EE'],sites:['#F472B6','#F59E0B'],timeline:['#F59E0B','#F472B6'],
  applications:['#22D3EE','#34D399'],lab:['#67E8F9','#7C5CFF'],decouvrir:['#FB7185','#7C5CFF'],archives:['#5E5E6A','#9C9CA8']};
-var NOMS={studio:'Supports',evenements:'Événements',stitch:'Broderies',compositions:'Comparaisons',infinity:'Parties',simulations:'Démonstrations',timeline:'Jour J'};
-var OUVRIR={studio:{lien:'/studio/',libelle:'Ouvrir le Studio'},evenements:{lien:'/studio/',libelle:'Ouvrir le Studio'},stitch:{lien:'/stitch/',libelle:'Ouvrir AIME Stitch'},compositions:{lien:'/synchroview/',libelle:'Ouvrir SynchroView'},infinity:{lien:'/infinity/',libelle:'Ouvrir INFINITY'},simulations:{lien:'/vitrine/world/',libelle:'Ouvrir AIME WORLD'},timeline:{lien:'/v1/',libelle:'Ouvrir la Timeline'}};
+var NOMS={studio:'Supports',evenements:'Événements',stitch:'Broderies',compositions:'Comparaisons',infinity:'Parties',simulations:'Démonstrations',sites:'Sites',timeline:'Jour J'};
+var OUVRIR={studio:{lien:'/studio/',libelle:'Ouvrir le Studio'},evenements:{lien:'/studio/',libelle:'Ouvrir le Studio'},stitch:{lien:'/stitch/',libelle:'Ouvrir AIME Stitch'},compositions:{lien:'/synchroview/',libelle:'Ouvrir SynchroView'},infinity:{lien:'/infinity/',libelle:'Ouvrir INFINITY'},simulations:{lien:'/vitrine/world/',libelle:'Ouvrir AIME WORLD'},timeline:{lien:'/v1/',libelle:'Ouvrir la Timeline'},sites:{lien:'/sites/',libelle:'Ouvrir le générateur'}};
 function contenu(){var st=S||vide,inv=B.inventaire(st),src={};inv.sources.forEach(function(s){src[s.id]=s});
  var D=[],carte=src.carte.projets;
  D.push({id:'carte',nom:'Ma carte',teinte:TEINTES.carte,elements:carte,sous:carte.length?'Créée dans ce navigateur':'À composer',vide:'Votre carte se compose sur Le Monde AIME : qui vous êtes, ce que vous faites, ce que vous préparez.',ouvrir:carte.length?null:{lien:'/aime/#story2',libelle:'Composer ma carte',principal:true}});
  var stitch=(src.stitch?src.stitch.projets:[]).concat(src.broderies?src.broderies.projets:[]);
- ['studio','evenements','stitch','compositions','infinity','simulations','timeline'].forEach(function(id){var l=id==='stitch'?stitch:(src[id]?src[id].projets:[]);if(!l.length)return;
+ ['sites','studio','evenements','stitch','compositions','infinity','simulations','timeline'].forEach(function(id){var l=id==='stitch'?stitch:(src[id]?src[id].projets:[]);if(!l.length)return;
   D.push({id:id,nom:NOMS[id],teinte:TEINTES[id],elements:l,sous:id==='simulations'?l.length+' · données fictives':null,ouvrir:OUVRIR[id]})});
  D.push({id:'applications',nom:'Applications',teinte:TEINTES.applications,elements:outils('realiser'),sous:'Créer, ouvrir un outil'});
  D.push({id:'lab',nom:'Lab',teinte:TEINTES.lab,elements:outils('experimenter'),sous:'Expérimental'});

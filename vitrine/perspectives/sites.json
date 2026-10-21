@@ -1,0 +1,20 @@
+{
+ "_": "Perspectives du générateur de site. Une perspective choisit les sections affichées ; elle ne protège rien : un site exporté est public, tout ce qui est dans le fichier peut être lu. Pour du vraiment privé, il faudra un compte et un contrôle côté serveur.",
+ "angles": [
+  {
+   "id": "public",
+   "label": "Public",
+   "description": "Ce que tout le monde voit."
+  },
+  {
+   "id": "invite",
+   "label": "Invité",
+   "description": "Ce qu'un invité voit (réponse, infos pratiques)."
+  },
+  {
+   "id": "organisation",
+   "label": "Organisation",
+   "description": "Tout, y compris les notes d'équipe (repérées en orange dans l'aperçu)."
+  }
+ ]
+}

@@ -1,0 +1,371 @@
+{
+ "_": "Modèles du générateur de site : des compositions de départ (pages, sections, ambiance). Aucun contenu réel : les textes d'exemple sont des consignes à remplacer.",
+ "modeles": [
+  {
+   "id": "mariage",
+   "nom": "Mariage",
+   "univers": "mariage",
+   "ambiance": "m_sauge",
+   "description": "Accueil, programme, lieu, hébergement, réponse et questions. Plusieurs pages.",
+   "pages": [
+    {
+     "id": "index",
+     "titre": "Accueil",
+     "sections": [
+      {
+       "type": "hero",
+       "variante": "plein"
+      },
+      "compte",
+      {
+       "type": "texte",
+       "titre": "Notre histoire",
+       "texte": "Racontez ici votre rencontre, en quelques lignes."
+      },
+      "etapes",
+      "galerie"
+     ]
+    },
+    {
+     "id": "jour-j",
+     "titre": "Le jour J",
+     "sections": [
+      "programme",
+      "lieu",
+      "menu",
+      {
+       "type": "texte",
+       "titre": "Note à l'équipe",
+       "texte": "Visible seulement dans la perspective Organisation.",
+       "pour": [
+        "organisation"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "pratique",
+     "titre": "Infos pratiques",
+     "sections": [
+      "hebergement",
+      "cadeaux",
+      "faq"
+     ]
+    },
+    {
+     "id": "reponse",
+     "titre": "Répondre",
+     "sections": [
+      "rsvp",
+      "contact"
+     ]
+    }
+   ],
+   "exemple": {
+    "infos": {
+     "titre": "Vos deux prénoms",
+     "sous": "Nous nous marions, et nous aimerions vous avoir à nos côtés.",
+     "bouton": "Répondre"
+    },
+    "listes": {
+     "programme": [
+      {
+       "heure": "15:00",
+       "titre": "Cérémonie",
+       "detail": ""
+      },
+      {
+       "heure": "17:00",
+       "titre": "Vin d'honneur",
+       "detail": ""
+      },
+      {
+       "heure": "20:00",
+       "titre": "Dîner",
+       "detail": ""
+      },
+      {
+       "heure": "23:00",
+       "titre": "Soirée",
+       "detail": ""
+      }
+     ],
+     "faq": [
+      {
+       "q": "Y a-t-il un parking ?",
+       "r": "À compléter."
+      },
+      {
+       "q": "Les enfants sont-ils les bienvenus ?",
+       "r": "À compléter."
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "anniversaire",
+   "nom": "Anniversaire ou fête",
+   "univers": "anniv",
+   "ambiance": "p_confetti",
+   "description": "Une seule page joyeuse : la date, le lieu, la réponse.",
+   "pages": [
+    {
+     "id": "index",
+     "titre": "Accueil",
+     "sections": [
+      {
+       "type": "hero",
+       "variante": "affiche"
+      },
+      "compte",
+      "programme",
+      "lieu",
+      "rsvp",
+      "faq"
+     ]
+    }
+   ],
+   "exemple": {
+    "infos": {
+     "titre": "La fête",
+     "sous": "Venez comme vous êtes.",
+     "bouton": "Je viens"
+    }
+   }
+  },
+  {
+   "id": "artisan",
+   "nom": "Artisan, indépendant",
+   "univers": "artisan",
+   "ambiance": "h_lin",
+   "description": "Présentation, prestations et tarifs, réalisations, contact.",
+   "pages": [
+    {
+     "id": "index",
+     "titre": "Accueil",
+     "sections": [
+      {
+       "type": "hero",
+       "variante": "scinde"
+      },
+      {
+       "type": "texte",
+       "titre": "Ce que je fais",
+       "texte": "Décrivez votre métier en deux ou trois phrases."
+      },
+      "chiffres",
+      "galerie",
+      {
+       "type": "bouton",
+       "titre": "Demander un devis"
+      }
+     ]
+    },
+    {
+     "id": "prestations",
+     "titre": "Prestations",
+     "sections": [
+      "tarifs",
+      "faq"
+     ]
+    },
+    {
+     "id": "contact",
+     "titre": "Contact",
+     "sections": [
+      "contact",
+      "lieu",
+      "liens"
+     ]
+    }
+   ],
+   "exemple": {
+    "infos": {
+     "titre": "Votre nom ou votre atelier",
+     "sous": "Votre métier, en une phrase.",
+     "bouton": "Me contacter"
+    }
+   }
+  },
+  {
+   "id": "seminaire",
+   "nom": "Séminaire, conférence",
+   "univers": "conf",
+   "ambiance": "e_navy",
+   "description": "Programme, intervenants, lieu, documents, inscription.",
+   "pages": [
+    {
+     "id": "index",
+     "titre": "Accueil",
+     "sections": [
+      {
+       "type": "hero",
+       "variante": "affiche"
+      },
+      "compte",
+      {
+       "type": "texte",
+       "titre": "Pourquoi venir",
+       "variante": "colonnes"
+      },
+      "chiffres"
+     ]
+    },
+    {
+     "id": "programme",
+     "titre": "Programme",
+     "sections": [
+      {
+       "type": "programme",
+       "variante": "liste"
+      },
+      "personnes"
+     ]
+    },
+    {
+     "id": "pratique",
+     "titre": "Infos pratiques",
+     "sections": [
+      "lieu",
+      "hebergement",
+      "documents",
+      "faq"
+     ]
+    },
+    {
+     "id": "inscription",
+     "titre": "Inscription",
+     "sections": [
+      "rsvp",
+      "contact",
+      "partenaires"
+     ]
+    }
+   ],
+   "exemple": {
+    "infos": {
+     "titre": "Nom de l'événement",
+     "sous": "Une journée pour…",
+     "bouton": "S'inscrire"
+    }
+   }
+  },
+  {
+   "id": "portfolio",
+   "nom": "Portfolio, créateur",
+   "univers": "portfolio",
+   "ambiance": "editorial",
+   "description": "Une galerie qui respire, une biographie, des liens.",
+   "pages": [
+    {
+     "id": "index",
+     "titre": "Travaux",
+     "sections": [
+      {
+       "type": "hero",
+       "variante": "minimal"
+      },
+      {
+       "type": "galerie",
+       "variante": "mosaique"
+      },
+      {
+       "type": "citation",
+       "variante": "grande"
+      }
+     ]
+    },
+    {
+     "id": "a-propos",
+     "titre": "À propos",
+     "sections": [
+      {
+       "type": "texte",
+       "titre": "À propos",
+       "variante": "lettrine"
+      },
+      "etapes",
+      "liens",
+      "contact"
+     ]
+    }
+   ],
+   "exemple": {
+    "infos": {
+     "titre": "Votre nom",
+     "sous": "Ce que vous créez."
+    }
+   }
+  },
+  {
+   "id": "association",
+   "nom": "Association",
+   "univers": "asso",
+   "ambiance": "a_ciel",
+   "description": "Mission, actions, équipe, prochain rendez-vous, adhésion.",
+   "pages": [
+    {
+     "id": "index",
+     "titre": "Accueil",
+     "sections": [
+      {
+       "type": "hero",
+       "variante": "plein"
+      },
+      {
+       "type": "texte",
+       "titre": "Notre mission"
+      },
+      "chiffres",
+      "etapes"
+     ]
+    },
+    {
+     "id": "agir",
+     "titre": "Agir avec nous",
+     "sections": [
+      "programme",
+      "lieu",
+      {
+       "type": "bouton",
+       "titre": "Adhérer"
+      },
+      "personnes",
+      "contact"
+     ]
+    }
+   ],
+   "exemple": {
+    "infos": {
+     "titre": "Nom de l'association",
+     "sous": "Votre mission, en une phrase."
+    }
+   }
+  },
+  {
+   "id": "vierge",
+   "nom": "Page blanche",
+   "univers": "vierge",
+   "ambiance": "minimal",
+   "description": "Un en-tête et rien d'autre : tout se compose.",
+   "pages": [
+    {
+     "id": "index",
+     "titre": "Accueil",
+     "sections": [
+      {
+       "type": "hero",
+       "variante": "minimal"
+      }
+     ]
+    }
+   ],
+   "exemple": {
+    "infos": {
+     "titre": "Mon site"
+    }
+   }
+  }
+ ]
+}

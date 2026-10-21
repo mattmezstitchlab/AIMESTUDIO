@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Générateur de site · AIME</title>
+<meta name="description" content="Composer un site complet, page par page, avec le moteur partagé d'AIME : une information saisie une fois, partout où elle sert.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/bureau/bureau.css">
+<link rel="stylesheet" href="/sites/editeur.css">
+</head>
+<body class="gen">
+<a class="evite" href="#apercu">Aller à l'aperçu</a>
+<header class="top gen-top">
+ <a class="mk" href="/bureau/" aria-label="AIME, retour au Bureau">AIME<sup>®</sup></a>
+ <div class="gen-titre"><span class="e-k">Générateur de site</span><label class="gen-site"><span class="sr">Site ouvert</span><select id="choixSite"></select></label></div>
+ <nav class="gen-act" aria-label="Actions">
+  <button type="button" class="pill" id="nouveau">Nouveau</button>
+  <button type="button" class="pill" id="annuler" disabled>Annuler</button>
+  <button type="button" class="pill" id="retablir" disabled>Rétablir</button>
+  <button type="button" class="pill" id="importer">Importer</button>
+  <div class="gen-exp"><button type="button" class="pill p" id="exporter" aria-expanded="false" aria-controls="menuExp">Exporter</button>
+   <div class="gen-menu" id="menuExp" hidden><button type="button" data-exp="zip">Le site (.zip, une page HTML par page)</button><button type="button" data-exp="une">Une seule page (.html)</button><button type="button" data-exp="json">Les données (.json)</button><button type="button" data-exp="onglet">Ouvrir l'aperçu dans un onglet</button></div></div>
+ </nav>
+</header>
+
+<div class="gen-accueil" id="accueil" hidden>
+ <header class="e-entete"><span class="e-k">Générateur de site</span><h1>Un site complet, <span class="e-acc">écrit une fois.</span></h1>
+  <p>Choisissez un point de départ. La date, le lieu, le programme ou le contact s'écrivent une seule fois, puis se retrouvent partout où ils servent : en-tête, compte à rebours, plan, réponse. Tout reste dans ce navigateur jusqu'à l'export.</p></header>
+ <ul class="modeles" id="modeles"></ul>
+</div>
+
+<main class="gen-main" id="atelier" hidden>
+ <aside class="gen-g" aria-label="Structure">
+  <div class="gen-pages" role="tablist" aria-label="Pages" id="pages"></div>
+  <div class="gen-pact"><button type="button" class="mini" id="pageAjout">+ Page</button><button type="button" class="mini" id="pageRenommer">Renommer</button><button type="button" class="mini" id="pageSuppr">Supprimer</button></div>
+  <h2 class="gen-h">Sections</h2>
+  <ol class="gen-secs" id="sections"></ol>
+  <button type="button" class="gen-ajout" id="ajout" aria-expanded="false" aria-controls="catalogue">+ Ajouter une section</button>
+  <div class="gen-cat" id="catalogue" hidden></div>
+ </aside>
+
+ <section class="gen-c" aria-label="Aperçu">
+  <div class="gen-barre">
+   <div class="seg" role="group" aria-label="Taille de l'aperçu"><button type="button" data-taille="100%" aria-pressed="true">Ordinateur</button><button type="button" data-taille="820px" aria-pressed="false">Tablette</button><button type="button" data-taille="390px" aria-pressed="false">Téléphone</button></div>
+   <div class="seg" role="group" aria-label="Perspective" id="persps"></div>
+  </div>
+  <div class="gen-cadre"><iframe id="apercu" title="Aperçu du site" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe></div>
+  <p class="gen-note" id="noteP"></p>
+ </section>
+
+ <aside class="gen-d" aria-label="Réglages">
+  <div class="seg tabs" role="tablist" aria-label="Réglages"><button type="button" role="tab" data-onglet="section" aria-selected="true">Section</button><button type="button" role="tab" data-onglet="contenu" aria-selected="false">Contenu</button><button type="button" role="tab" data-onglet="style" aria-selected="false">Style</button></div>
+  <div class="gen-onglet" id="o-section" role="tabpanel"></div>
+  <div class="gen-onglet" id="o-contenu" role="tabpanel" hidden></div>
+  <div class="gen-onglet" id="o-style" role="tabpanel" hidden></div>
+ </aside>
+</main>
+<input type="file" id="fichierSite" accept="application/json,.json" hidden>
+<input type="file" id="fichierImg" accept="image/*" hidden>
+<p id="vivant" class="vivant" role="status" aria-live="polite"></p>
+<script src="/nav/registre.js"></script>
+<script src="/vitrine/rendu.js"></script>
+<script src="/sites/editeur.js"></script>
+<script src="/menu/menu.js"></script>
+</body>
+</html>
