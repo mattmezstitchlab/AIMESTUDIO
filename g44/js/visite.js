@@ -3,7 +3,7 @@
    (les mêmes boutons qu'à la main) : rien n'est simulé à part. Clavier : ← → pour avancer ou reculer, Échap pour quitter. */
 (function(){'use strict';
 var ETAPES=[
- {id:'haut',t:'Une date erronée',x:'Dans le dossier fictif DOS-FICTIF-0001, le mariage est enregistré en 2015 au lieu de 2016. Touchez la date : le moteur calcule ce qui en dépend : liens, opérations, contrôles.',agir:function(){clic('toucher')}},
+ {id:'haut',t:'Le refus que vous connaissez',x:'Le mariage est enregistré en 2015 ; l\'acte dit 2016. On corrige, on valide… refusé : la période est verrouillée par le rattachement de l\'enfant. Puis le Rewind défait la chaîne, corrige, rejoue, dans l\'ordre et avec ses règles. Rien n\'est modifié.',agir:function(){var u=window.G44RewindUI,i=document.getElementById('rwAn');if(!u||!i)return;u.annuler(true);i.value='2016';i.dispatchEvent(new Event('input'));u.valider();setTimeout(u.rembobiner,doux?900:0)}},
  {id:'scenario',t:'Une seule erreur, plusieurs conséquences',x:'Un enfant est déjà rattaché au dossier. La simulation montre l\'état enregistré et l\'état corrigé envisagé, côte à côte. Rien n\'est modifié : c\'est une copie.',agir:function(){clic('simulerScen')}},
  {id:'graphe',t:'Un graphe calculé, pas un dessin',x:'Chaque relation a un type, une justification et une date. Seules certaines relations propagent une modification ; les autres sont seulement signalées. Touchez une relation pour savoir pourquoi elle existe.'},
  {id:'lab01',t:'L\'existant, puis la lecture augmentée',x:'La grille historique, reconstituée pour la pédagogie, puis la même information avec ses dépendances rendues visibles. Les codes sont fictifs.',agir:function(){var b=document.querySelector('#lab01 [data-mode="aug"]');b&&b.click()}},
