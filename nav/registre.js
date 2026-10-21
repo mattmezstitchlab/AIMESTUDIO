@@ -41,8 +41,13 @@ var E=[
  ['sante','Système nerveux','/sante/','Comprendre les parcours et les connexions','jeux','experimenter','experimental',true],
  ['cartes','Lab · Trois cartes','/lab/cartes/','Les trois modèles de carte, côte à côte','jeux','experimenter','experimental',true]
 ].map(function(x){return{id:x[0],nom:x[1],href:x[2],phrase:x[3],cat:x[4],role:x[5],statut:x[6],nouveau:!!x[7]}});
+/* les apps qui ont besoin du serveur de comptes : fermées en production (l'API y répond 404), donc absentes des menus là-bas.
+   Masquer n'accorde ni ne retire aucun droit : c'est le serveur qui décide. */
+var PROD=['www.lemondeaime.com','lemondeaime.com','aimestudio.vercel.app'],SERVEUR=['compte'];
+function enProduction(h){return PROD.indexOf(String(h||'').toLowerCase())>=0}
+if(typeof location!=='undefined'&&enProduction(location.hostname))E=E.filter(function(e){return SERVEUR.indexOf(e.id)<0});
 function entree(id){for(var i=0;i<E.length;i++)if(E[i].id===id)return E[i];return null}
 function par(champ,val){return E.filter(function(e){return e[champ]===val})}
 function categories(){return CATS.map(function(c){return{id:c.id,t:c.t,d:c.d,l:par('cat',c.id)}})}
-return{STATUTS:STATUTS,ROLES:ROLES,CATS:CATS,ENTREES:E,entree:entree,par:par,categories:categories};
+return{enProduction:enProduction,STATUTS:STATUTS,ROLES:ROLES,CATS:CATS,ENTREES:E,entree:entree,par:par,categories:categories};
 });
