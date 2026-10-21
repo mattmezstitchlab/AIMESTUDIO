@@ -1,0 +1,24 @@
+/* AIME · les timbres : la photo de profil comme un timbre dentelé. Sans photo, un timbre généré (initiales, couleurs de la personne). */
+.timbre{--r:5px;--l:96px;position:relative;display:inline-grid;width:var(--l);aspect-ratio:4/5;flex:none;margin:0;
+ filter:drop-shadow(0 6px 14px rgba(0,0,0,.45));transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .3s,filter .3s;border:0;padding:0;background:none;color:inherit;font:inherit;cursor:default}
+.timbre .tb-papier{display:grid;padding:calc(var(--r)*1.7);background:#F5F1E8;width:100%;height:100%;box-sizing:border-box;
+ -webkit-mask:linear-gradient(#000 0 0) content-box,radial-gradient(circle,#0000 calc(var(--r) - .5px),#000 var(--r)) calc(var(--r)*-1.5) calc(var(--r)*-1.5)/calc(var(--r)*3) calc(var(--r)*3) round;
+ mask:linear-gradient(#000 0 0) content-box,radial-gradient(circle,#0000 calc(var(--r) - .5px),#000 var(--r)) calc(var(--r)*-1.5) calc(var(--r)*-1.5)/calc(var(--r)*3) calc(var(--r)*3) round}
+.timbre .tb-image{position:relative;overflow:hidden;min-height:0;background:var(--tb-fond,#222)}
+.timbre img{width:100%;height:100%;object-fit:cover;display:block}
+.timbre .tb-gen{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,var(--tb-a) 0 38%,transparent 39%),linear-gradient(160deg,var(--tb-b),var(--tb-c))}
+.timbre .tb-gen b{font:700 calc(var(--l)*.36)/1 "Cal Sans","Inter Variable",sans-serif;color:#fff;letter-spacing:-.02em;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.timbre .tb-gen i{position:absolute;left:6%;top:5%;font:700 calc(var(--l)*.075)/1 "Inter Variable",sans-serif;font-style:normal;letter-spacing:.14em;color:rgba(255,255,255,.85)}
+.timbre .tb-gen u{position:absolute;right:6%;bottom:5%;font:700 calc(var(--l)*.075)/1 "Inter Variable",sans-serif;text-decoration:none;color:rgba(255,255,255,.85)}
+.timbre .tb-legende{position:absolute;left:calc(var(--r)*1.7);right:calc(var(--r)*1.7);bottom:calc(var(--r)*1.7);padding:8px 6px 7px;text-align:center;border-radius:8px 8px 0 0;
+ background:rgba(30,28,26,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;pointer-events:none}
+.timbre .tb-legende b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font:600 12.5px/1.2 "Inter Variable",sans-serif;overflow:hidden;overflow-wrap:anywhere}
+.timbre .tb-legende span{display:block;font:400 11px/1.3 "Inter Variable",sans-serif;opacity:.8}
+/* la planche : survoler un timbre le soulève, les autres s'effacent */
+.planche{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-end}
+.planche .timbre{cursor:pointer}
+.planche:hover .timbre,.planche:focus-within .timbre{opacity:.35;filter:grayscale(.6) drop-shadow(0 6px 14px rgba(0,0,0,.45))}
+.planche .timbre:hover,.planche .timbre:focus-visible{opacity:1;filter:drop-shadow(0 18px 30px rgba(0,0,0,.6));transform:scale(1.32) translateY(-6%);z-index:5;outline:none}
+.planche .timbre:hover .tb-legende,.planche .timbre:focus-visible .tb-legende,.timbre.legende .tb-legende{opacity:1;transform:none}
+.timbre.mini{--l:30px;--r:2px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}.timbre.mini .tb-legende{display:none}
+@media (prefers-reduced-motion:reduce){.timbre,.timbre .tb-legende{transition:none}.planche .timbre:hover,.planche .timbre:focus-visible{transform:none}}

@@ -1,0 +1,79 @@
+// Comptes, espaces, invitations et direct réel — contre une VRAIE base PostgreSQL locale de test.
+// Lancé seulement si TEST_DATABASE_URL est défini (jamais la base de preview ni de production).
+const { test, before, after } = require('node:test');
+const assert = require('node:assert/strict');
+const URLT = process.env.TEST_DATABASE_URL;
+const opts = { skip: !URLT && 'TEST_DATABASE_URL absent : base de test locale requise' };
+const BASE = 'http://localhost:8773';
+let A, E, C, liens = [], pool, ipn = 0;
+
+function reponse() { return new Promise(done => { const r = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, getHeader(k) { return this.h[k.toLowerCase()]; },
+  status(c) { this.statusCode = c; return this; }, json(o) { done({ code: this.statusCode, body: o }); }, end(t) { done({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; r.done = done; return r; }); }
+async function appel(h, body, cookie) { let res; const p = new Promise(d => { res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, status(c) { this.statusCode = c; return this; }, json(o) { d({ code: this.statusCode, body: o }); }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; });
+  await h({ method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json', 'x-forwarded-for': '198.51.100.' + Math.floor(Math.random() * 250) }, cookie ? { cookie } : {}) }, res); return p; }
+async function connecter(email) {
+  const a = A.auth(); liens = [];
+  let r = await a.handler(new Request(BASE + '/api/auth/sign-in/magic-link', { method: 'POST', headers: { 'content-type': 'application/json', origin: BASE, 'x-forwarded-for': '192.0.2.' + (++ipn) }, body: JSON.stringify({ email, callbackURL: '/compte/' }) }));
+  assert.equal(r.status, 200, 'demande du lien'); assert.equal(liens.length, 1); assert.match(liens[0].html, /Me connecter à AIME/);
+  const url = liens[0].text.match(/https?:\/\/\S+/)[0];
+  r = await a.handler(new Request(url, { headers: { origin: BASE, 'x-forwarded-for': '192.0.2.' + (++ipn) } }));
+  assert.equal(r.status, 302); const c = r.headers.getSetCookie().map(x => x.split(';')[0]).join('; ');
+  assert.match(c, /aime\.session_token=/); return c;
+}
+
+before(async () => { if (!URLT) return;
+  Object.assign(process.env, { DATABASE_URL: URLT, BETTER_AUTH_SECRET: require('crypto').randomBytes(32).toString('hex'), BETTER_AUTH_URL: BASE }); delete process.env.VERCEL_ENV;
+  A = await import('../api/_auth/auth.mjs'); E = await import('../api/espaces.mjs'); C = require('../api/_live/core.js');
+  A._envoyeur(m => { liens.push(m); }); A.auth(); pool = A._pool();
+  await pool.query('truncate "user", spaces, invitations, live_journal cascade');
+  C._base(() => (s, ...v) => pool.query(s.reduce((acc, x, i) => acc + '$' + i + x), v).then(r => r.rows)); C._reinitialiser();
+});
+after(async () => { if (pool) await pool.end(); });
+
+let lea, camille, paul, nina, esp, invEditeur;
+test('comptes · lien par e-mail : un seul usage, session par cookie', opts, async () => {
+  lea = await connecter('lea@exemple.test'); camille = await connecter('camille@exemple.test'); paul = await connecter('paul@exemple.test'); nina = await connecter('nina@exemple.test');
+  const r = await appel(E.default, { action: 'mes' }); assert.equal(r.code, 401, 'sans session : refusé');
+});
+
+test('espaces · créer, inviter par rôle, rejoindre une seule fois', opts, async () => {
+  let r = await appel(E.default, { action: 'creer', titre: 'Mariage <b>test</b>', modele: 'mariage' }, lea); assert.equal(r.code, 200); esp = r.body.id;
+  assert.equal(r.body.role, 'owner'); assert.equal(r.body.titre, 'Mariage <b>test</b>', 'texte gardé tel quel, échappé à l\'affichage');
+  r = await appel(E.default, { action: 'inviter', espace: esp, role: 'editor' }, lea); assert.equal(r.code, 200); invEditeur = r.body.lien;
+  const jeton = new URL(invEditeur).searchParams.get('invitation');
+  const { rows } = await pool.query('select token_hash from invitations'); assert.notEqual(rows[0].token_hash, jeton, 'seule l\'empreinte est gardée');
+  r = await appel(E.default, { action: 'rejoindre', jeton }, camille); assert.equal(r.code, 200); assert.equal(r.body.role, 'editor');
+  r = await appel(E.default, { action: 'rejoindre', jeton }, paul); assert.equal(r.code, 410, 'un lien ne sert qu\'une fois');
+});
+
+test('espaces · les règles décident : la coordination n\'invite que lecteurs et invités ; un non-membre ne voit rien', opts, async () => {
+  assert.equal((await appel(E.default, { action: 'inviter', espace: esp, role: 'contributor' }, camille)).code, 403);
+  let r = await appel(E.default, { action: 'inviter', espace: esp, role: 'guest', email: 'nina@exemple.test' }, camille); assert.equal(r.code, 200);
+  const jn = new URL(r.body.lien).searchParams.get('invitation');
+  assert.equal((await appel(E.default, { action: 'rejoindre', jeton: jn }, paul)).code, 410, 'invitation nominative : pas pour une autre adresse');
+  assert.equal((await appel(E.default, { action: 'rejoindre', jeton: jn }, nina)).code, 200);
+  assert.equal((await appel(E.default, { action: 'membres', espace: esp }, paul)).code, 404, 'non-membre : comme si l\'espace n\'existait pas');
+  assert.equal((await appel(E.default, { action: 'inviter', espace: esp, role: 'owner' }, lea)).code, 400, 'personne n\'invite un propriétaire');
+});
+
+test('espaces · adresses e-mail visibles du seul propriétaire ; garder un propriétaire', opts, async () => {
+  let r = await appel(E.default, { action: 'membres', espace: esp }, camille);
+  assert.equal(r.body.membres.length, 3); assert.ok(r.body.membres.filter(m => m.email).every(m => m.email === 'camille@exemple.test')); assert.equal(r.body.invitations, undefined);
+  r = await appel(E.default, { action: 'membres', espace: esp }, lea); assert.ok(r.body.membres.every(m => m.email)); assert.equal(r.body.invitations.length, 2);
+  const leaId = r.body.moi.id;
+  assert.equal((await appel(E.default, { action: 'retirer', espace: esp, membre: leaId }, lea)).code, 409);
+  assert.equal((await appel(E.default, { action: 'retirer', espace: esp, membre: leaId }, camille)).code, 403);
+});
+
+test('direct réel · la personne vient de la session, le rôle de l\'espace, l\'action est revérifiée', opts, async () => {
+  const passe = require('../api/live/passe.js'), act = require('../api/live/act.js'), journal = require('../api/live/journal.js');
+  assert.equal((await appel(passe, { espace: esp, qui: 'u-lea' })).code, 401, 'sans session');
+  assert.equal((await appel(passe, { espace: esp }, paul)).code, 403, 'non-membre');
+  const pc = (await appel(passe, { espace: esp, qui: 'quelquun-d-autre' }, camille)).body, pn = (await appel(passe, { espace: esp }, nina)).body.passe;
+  assert.notEqual(pc.qui, 'quelquun-d-autre');
+  let r = await appel(act, { passe: pc.passe, action: 'retarder', p: { moment: 'diner', minutes: 15, cascade: true } }); assert.equal(r.code, 200); assert.equal(r.body.touches.length, 5);
+  r = await appel(act, { passe: pn, action: 'retarder', p: { moment: 'bal', minutes: 30 } }); assert.equal(r.code, 403, 'une invitée ne décale rien');
+  await appel(act, { passe: pc.passe, action: 'annoncer', p: { texte: 'Équipe seulement', audience: 'equipe' } });
+  r = await appel(journal, { passe: pn, depuis: 0 }); assert.equal(r.body.lignes.length, 1, 'l\'annonce d\'équipe ne sort pas vers l\'invitée');
+  const acc = await appel(E.default, { action: 'acces', espace: esp }, nina); assert.equal(acc.body.modele, 'mariage'); assert.equal(Object.keys(acc.body.membres).length, 3); assert.ok(acc.body.personnes.every(p => !('email' in p)));
+});

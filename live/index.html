@@ -10,6 +10,7 @@
 <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/live/live.css">
+<link rel="stylesheet" href="/compte/timbre.css">
 </head>
 <body>
 <a class="evite" href="#direct">Aller au direct</a>
@@ -34,9 +35,11 @@
 <div class="cadre">
  <aside class="qui" aria-label="Qui regarde">
   <label class="ch"><span>Je suis</span><select id="qui"></select></label>
+  <p class="qui-nom" id="quiNom"></p>
   <p class="leg" id="quiRole"></p>
-  <p class="leg">Démonstration : en vrai, l'identité vient de la connexion, jamais d'un menu. Le rôle vient de l'espace ; le choisir ici n'accorde aucun droit.</p>
+  <p class="leg" id="quiDemo">Démonstration : en vrai, l'identité vient de la connexion, jamais d'un menu. Le rôle vient de l'espace ; le choisir ici n'accorde aucun droit.</p>
   <div class="lgn"><button class="b" type="button" id="autre">Ouvrir une autre personne</button><a class="b" id="salle" href="#" target="_blank" rel="noopener">Écran de salle</a></div>
+  <div class="pile" id="membres"></div>
   <div class="pile" id="presentsListe"></div>
  </aside>
 
@@ -56,6 +59,7 @@
 <script src="/synchroview/permissions.js"></script>
 <script src="/live/modele.js"></script>
 <script src="/live/canal.js"></script>
+<script src="/compte/timbre.js"></script>
 <script src="/regie/donnees.js"></script>
 <script src="/nav/registre.js"></script>
 <script src="/regie/scene.js" defer></script>
