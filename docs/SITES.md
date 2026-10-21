@@ -210,3 +210,12 @@ Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / F�
   - pour une page unique ou un onglet, l'adresse complète du site.
 - `scripts/bibliotheque-construire.cjs` reconstruit le dossier à partir d'une sélection.
 - Vidéos : aucune dans les dépôts examinés ; le bloc Vidéo reste un lien.
+
+## Tous les autres supports du Studio (21/10/2026)
+- Les 92 supports du Studio, sauf le site web lui-même (4 formats), sont dans l'onglet **Supports** du « + », rangés en 10 familles : Impression, Papeterie, Réseaux, Web, Événement, Documents, Série, Badges, Signalétique, Immobilier.
+- 20 supports ont déjà leur bloc : faire-part, monogramme, menu, programme, plan de table, livre d'or, allergènes… Leur tuile pose directement ce bloc.
+- Les 72 autres passent par un bloc **Support**, avec une variante par format. Chaque format garde ses proportions et prend un gabarit web qui lit les infos du site : affiche, carte, document, bandeau, écran ou rond.
+  - Les devis, factures et bons de commande lisent les tarifs.
+  - L'émargement, les convocations et les attestations lisent les personnes.
+  - Les programmes et les fiches lisent le programme ; l'immobilier lit les chiffres.
+- C'est une adaptation au web, pas une copie à l'identique de la mise en page imprimée du Studio. Pour imprimer, le Studio reste l'outil.

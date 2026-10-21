@@ -54,7 +54,7 @@ test('grille libre (reprise du mini-site de la landing) : formes selon la largeu
  const d=s.pages[0].sections.find(x=>x.type==='date');d.w=6;h=S.document(s,{presentation:P}).html;assert.ok(h.includes('inf-mois'),'à 6 colonnes, la date devient un calendrier');
  const l=s.pages[0].sections,g=l.find(x=>x.type==='gens'),e=l.find(x=>x.type==='endroit');g.x=e.x;g.y=e.y;S.tasser(l,g.id);
  const occ={};for(const x of l){for(let a=x.y;a<x.y+S.hauteur(x.type,x.w);a++)for(let b=x.x;b<x.x+x.w;b++){assert.ok(!occ[a+':'+b],'chevauchement en '+a+':'+b);occ[a+':'+b]=1}}
- assert.deepEqual(S.DEPS.date.slice().sort(),['bienvenue','billet','compte','date','fairepart','hero','monogramme']);const t=S.vide();S.ajouterSection(t,'index','texte');S.ajouterSection(t,'index','compte');S.versGrille(t.pages[0]);assert.ok(t.pages[0].sections.every(x=>x.x!=null&&x.w));S.versSections(t.pages[0]);assert.equal(t.pages[0].mode,'sections')});
+ assert.deepEqual(S.DEPS.date.slice().sort(),['bienvenue','billet','compte','date','fairepart','hero','monogramme','support']);const t=S.vide();S.ajouterSection(t,'index','texte');S.ajouterSection(t,'index','compte');S.versGrille(t.pages[0]);assert.ok(t.pages[0].sections.every(x=>x.x!=null&&x.w));S.versSections(t.pages[0]);assert.equal(t.pages[0].mode,'sections')});
 test('régénérer : le mini-site de la landing et un projet du Studio, sans perte, et ce qui manque est dit',()=>{
  const j={preset:'maries',P:{title:'A & B',sub:'S',date:'14 juin 2027',iso:'',place:'Domaine',text:'Histoire',quote:'Q',cta:'Répondre',url:'',prog:[['15:00','Moment','abri']],people:[['A','rôle']],photos:['data:image/jpeg;base64,AAAA','javascript:alert(1)'],rain:true},
   blocks:[{k:'hero',x:0,y:0,w:12},{k:'i-date',x:0,y:4,w:4,hue:90},{k:'texte',x:4,y:4,w:8,serif:true,br:0},{k:'radial',x:0,y:8,w:4},{k:'i-gens',x:0,y:4,w:4}]};
@@ -104,9 +104,9 @@ test('import HTML/ZIP : limites explicites, chemins suspects, contenus actifs, r
  const ed=require('fs').readFileSync(path.join(__dirname,'..','sites/editeur.js'),'utf8');assert.ok(/blob\.size>L\.archive/.test(ed),'taille de l\'archive vérifiée avant de charger JSZip');assert.ok(!/f\.async\('blob'\)/.test(ed),'plus de décompression en bloc dans l\'éditeur')});
 test('le « + » du générateur (comme sur la landing) : chaque bloc du moteur dans une famille, une seule fois, avec son icône',()=>{
  const ed=require('fs').readFileSync(path.join(__dirname,'..','sites/editeur.js'),'utf8');
- const PAL=JSON.parse(ed.match(/var PALETTE=(\[.*?\]\]\]);/)[1]);const tous=PAL.flatMap(f=>f[1]);
+ const PAL=JSON.parse(ed.match(/var PALETTE=(\[.*?\]\]\]);/)[1]);const tous=PAL.flatMap(f=>f[1]).concat(['support']);
  assert.deepEqual([...tous].sort(),Object.keys(S.BLOCS).sort(),'aucun bloc oublié, aucun bloc inventé');assert.equal(new Set(tous).size,tous.length,'aucun doublon');
- for(const k of tous)assert.ok(new RegExp('[{,]'+k+':\'<').test(ed),'icône pour '+k);
+ for(const k of tous.filter(k=>k!=='support'))assert.ok(new RegExp('[{,]'+k+':\'<').test(ed),'icône pour '+k);
  const html=require('fs').readFileSync(path.join(__dirname,'..','sites/index.html'),'utf8');assert.match(html,/id="plus"[^>]*aria-controls="catalogue"/);assert.match(html,/id="catalogue"[^>]*role="dialog"/)});
 test('supports du Studio devenus blocs web : ils lisent les infos écrites une fois, échappent tout, n\'inventent rien',()=>{
  const s=S.vide('vierge');Object.assign(s.infos,{titre:'Alice & Bruno',date:'2027-06-12',heure:'15:00',lieu:'Le Moulin',ville:'Nantes',email:'a@b.fr'});
@@ -129,3 +129,12 @@ test('bibliothèque : chaque image existe, a un texte alternatif, une source et 
  const h=S.document(s,{presentation:P}).html;assert.ok(h.includes('/sites/bibliotheque/'+B.images[0].id+'.webp'));assert.ok(!h.includes('../../etc')&&!h.includes('biblio:'),'identifiant douteux ignoré');
  const z=S.exporterPublic(s,{presentation:P,medias:'medias/'});assert.deepEqual(S.mediasDe(z[0].contenu).sort(),[B.images[0].id,B.images[1].id].sort(),'l\'export sait quels médias embarquer');
  assert.ok(!S.document(s,{presentation:P,medias:'javascript:x/'}).html.includes('javascript:'),'base de médias douteuse refusée')});
+test('tous les supports du Studio sont dans le générateur : un bloc dédié, ou le bloc Support avec ses proportions et un gabarit web',()=>{
+ const fs=require('fs'),st=fs.readFileSync(path.join(__dirname,'..','studio/index.html'),'utf8');const i=st.indexOf('const FL={');let d=0,j=i+9;for(;j<st.length;j++){if(st[j]=='{')d++;else if(st[j]=='}'){d--;if(!d)break}}
+ const ids=[...st.slice(i+9,j+1).matchAll(/^\s*([a-zA-Z0-9]+):\{/gm)].map(m=>m[1]).filter(k=>!/^(site|webd|webt|webm)$/.test(k));
+ assert.deepEqual(S.SUPPORTS.map(f=>f[0]).sort(),ids.sort(),'chaque support du Studio (hors le site lui-même) a sa place');
+ for(const f of S.SUPPORTS){if(f[6])assert.ok(S.BLOCS[f[6]],f[0]+' → '+f[6]);else assert.ok(S.BLOCS.support.variantes[f[0]],f[0]);assert.ok(f[3]>0&&f[4]>0)}
+ const s=S.vide();Object.assign(s.infos,{titre:'Atelier <Lin>',date:'2027-03-02',ville:'Nantes',email:'a@b.fr'});s.listes.tarifs=[{nom:'Ourlet',prix:'15 €'}];s.listes.personnes=[{nom:'Ana'}];
+ for(const v of Object.keys(S.BLOCS.support.variantes))S.ajouterSection(s,'index','support').variante=v;const h=S.document(s,{presentation:P}).html;
+ assert.ok(!h.includes('<Lin>')&&h.includes('Atelier &lt;Lin&gt;'),'échappé');assert.ok(h.includes('<td>Ourlet')&&h.includes('15 €'),'devis et facture lisent les tarifs');assert.ok(h.includes('class="sp sp-rond sp-vitro"'),'la vitrophanie est ronde');
+ assert.ok(/--r:0\.707/.test(h)||/--r:0\.70/.test(h),'une affiche A3 garde ses proportions')});
