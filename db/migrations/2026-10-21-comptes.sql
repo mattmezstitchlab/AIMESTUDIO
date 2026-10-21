@@ -45,5 +45,10 @@ create table if not exists invitations (
 );
 
 -- 3. Le direct accepte aussi les espaces réels (identifiant uuid), en plus des deux démonstrations.
-alter table live_journal drop constraint if exists live_journal_espace_check;
-alter table live_journal add constraint live_journal_espace_check check (espace in ('mariage','seminaire') or espace ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
+-- (sans effet si la table du direct n'existe pas encore sur cette branche de base)
+do $$ begin
+  if to_regclass('public.live_journal') is not null then
+    alter table live_journal drop constraint if exists live_journal_espace_check;
+    alter table live_journal add constraint live_journal_espace_check check (espace in ('mariage','seminaire') or espace ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
+  end if;
+end $$;

@@ -72,5 +72,6 @@ export function auth(env = process.env) {
 export async function personne(req) {
   const a = auth(); if (!a) return null;
   const h = new Headers(); for (const [k, v] of Object.entries(req.headers || {})) if (v != null) h.set(k, Array.isArray(v) ? v.join(', ') : String(v));
-  try { const s = await a.api.getSession({ headers: h }); return s && s.user ? { id: s.user.id, email: s.user.email, nom: s.user.name || '' } : null; } catch { return null; }
+  try { const s = await a.api.getSession({ headers: h }); return s && s.user ? { id: s.user.id, email: s.user.email, nom: s.user.name || '' } : null; }
+  catch (e) { if (/SCHEMA_MISMATCH|schema mismatch/i.test(String((e && (e.code || (e.cause && e.cause.code))) || '') + ' ' + String(e && e.message))) throw e; return null; }
 }

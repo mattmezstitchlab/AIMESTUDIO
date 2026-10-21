@@ -16,7 +16,8 @@ export default async function espaces(req, res) {
   if (!auth()) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
   const b = await corps(req), f = ACTIONS[b.action];
   if (!f) return json(res, 400, { ok: false, raison: 'Action inconnue.' });
-  const u = await personne(req); if (!u) return json(res, 401, { ok: false, raison: 'Connectez-vous d\'abord.' });
+  let u = null; try { u = await personne(req); } catch { return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore installés sur cette base (migration à exécuter).' }); }
+  if (!u) return json(res, 401, { ok: false, raison: 'Connectez-vous d\'abord.' });
   try { return json(res, 200, Object.assign({ ok: true }, await f(db || _pool(), u, b, adresse()))); }
   catch (e) { if (e instanceof Refus) return json(res, e.code, { ok: false, raison: e.raison }); return json(res, 500, { ok: false, raison: 'Erreur du serveur : réessayez.' }); }
 }

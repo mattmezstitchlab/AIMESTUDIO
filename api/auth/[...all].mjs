@@ -10,5 +10,6 @@ export default async function comptes(req, res) {
   if (!a) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
   if (/\/sign-in\/magic-link$/.test((req.url || '').split('?')[0]) && !envoiPret()) return json(res, 503, { ok: false, raison: 'L\'envoi des e-mails n\'est pas encore configuré : utilisez une clé d\'accès, ou réessayez plus tard.' });
   gestion = gestion || toNodeHandler(a);
-  return gestion(req, res);
+  try { return await gestion(req, res); }
+  catch (e) { if (!res.headersSent) return json(res, 503, { ok: false, raison: /SCHEMA_MISMATCH|schema mismatch/i.test(String((e && (e.code || (e.cause && e.cause.code))) || '') + ' ' + String(e && e.message)) ? 'Les comptes ne sont pas encore installés sur cette base (migration à exécuter).' : 'Service des comptes indisponible : réessayez.' }); }
 }
