@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon espace · AIME OS</title>
+<meta name="description" content="Le Bureau AIME : retrouver et reprendre ses projets, ouvrir un outil, accéder au Lab.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/bureau/bureau.css">
+</head>
+<body>
+<a class="evite" href="#espace">Aller au Bureau</a>
+<header class="top"><a class="mk" href="/bureau/" aria-label="AIME OS">AIME<sup>®</sup></a><nav aria-label="AIME"><a class="pill" href="/aime/">Découvrir AIME</a></nav></header>
+<div id="espace" class="espace" tabindex="-1"><p class="e-vide">Chargement du Bureau…</p></div>
+<div id="restauration" class="restauration" role="dialog" aria-modal="false" aria-labelledby="t-rest" hidden></div>
+<input type="file" id="fichier" accept="application/json,.json" hidden>
+<p id="vivant" class="vivant" role="status" aria-live="polite"></p>
+<footer class="pied"><span>AIME® · Bureau · version de travail</span><span>Données gardées dans ce navigateur. Aucun compte, aucune synchronisation.</span></footer>
+<noscript><p class="e-vide">Le Bureau lit ce que ce navigateur contient : il a besoin de JavaScript.</p></noscript>
+<script src="/nav/registre.js"></script>
+<script src="/vitrine/rendu.js"></script>
+<script src="/carte/carte.js"></script>
+<script src="/carte/rendu.js"></script>
+<script src="/bureau/sources.js"></script>
+<script src="/bureau/bureau.js"></script>
+<script src="/menu/menu.js"></script>
+</body>
+</html>

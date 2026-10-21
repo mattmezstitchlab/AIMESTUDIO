@@ -299,5 +299,8 @@ var ap=$('apercu');ap.checked=lire(CLE_A)==='1';ap.onchange=function(){ecrire(CL
 
 /* ---------- départ : la version publiée sert de base au premier brouillon ---------- */
 fetch('/regie/site.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(j){try{publie=R.config(j||{})}catch(e){publie=R.vide()}
- if(!cfg){cfg=R.config(copie(publie));ecrire(CLE_B,JSON.stringify(cfg))}etatPub();var h=(location.hash||'').slice(1);aller(VUES[h]?h:(lire(CLE_O)||'pages'))});
+ if(!cfg){cfg=R.config(copie(publie));ecrire(CLE_B,JSON.stringify(cfg))}etatPub();var h=(location.hash||'').slice(1);if(h==='nouveau-devis')return nouveauDevis();aller(VUES[h]?h:(lire(CLE_O)||'pages'))});
+/* l'OS (ou un lien) peut changer de vue par l'adresse : #docs, #orbe, #edition, #nouveau-devis */
+function nouveauDevis(){var d=R.doc({type:'devis',lignes:[{designation:'',quantite:1,unite:'',pu:0}],cree:new Date().toISOString()});compta.docs.push(d);sauverCompta();aller('docs',{id:d.id})}
+addEventListener('hashchange',function(){var h=(location.hash||'').slice(1);if(h==='nouveau-devis')return nouveauDevis();if(VUES[h]&&h!==courant)aller(h)});
 })();
