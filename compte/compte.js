@@ -16,7 +16,7 @@ var Q=new URLSearchParams(location.search),INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(
 if(INVIT)$('invite').hidden=false;
 if(Q.get('supprime'))toast('Votre compte a été supprimé. Merci d\'être passé par AIME.');
 else if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
-function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
+function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime','nouvel'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
 
 /* ---------- au chargement : la session ---------- */
 requete('/api/auth/get-session').then(function(r){
@@ -24,7 +24,7 @@ requete('/api/auth/get-session').then(function(r){
  if(!r.j||!r.j.user){$('connexion').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
  moi=r.j.user;afficherProfil();$('profil').hidden=false;$('espaces').hidden=false;$('sortir').hidden=false;$('zoneSuppr').hidden=false;
  (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' » ('+(ROLES[x.role]||x.role)+').');$('invite').hidden=true}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
-  .then(function(){nettoyerAdresse();chargerEspaces();chargerCles()})
+  .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();chargerEspaces();chargerCles()})
 }).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.'});
 
 /* ---------- se connecter ---------- */

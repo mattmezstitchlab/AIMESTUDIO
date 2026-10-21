@@ -6,7 +6,7 @@ const N = require('../nav/registre.js');
 
 test('OS · le catalogue : apps système, puis le registre, sans le Bureau lui-même ni doublon', () => {
   const c = A.catalogue(N.ENTREES);
-  assert.deepEqual(c.slice(0, 2).map(a => a.id), ['espace', 'regie']);
+  assert.deepEqual(c.slice(0, 3).map(a => a.id), ['pointzero', 'espace', 'regie']);
   assert.ok(!c.some(a => a.id === 'bureau'), 'l\'OS est le Bureau : pas d\'app « Mon Bureau » dedans');
   assert.equal(new Set(c.map(a => a.id)).size, c.length);
   for (const a of c) { assert.match(a.href, /^\/(?!\/)/, a.id); assert.ok(a.sigle && a.sigle.length <= 2, a.id); assert.ok(a.teinte, a.id); }

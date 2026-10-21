@@ -74,7 +74,7 @@ export function auth(env = process.env) {
   return instance;
 }
 
-/* ce que la personne laisse hors des tables de Better Auth : ses espaces (et leur direct), ses adhésions, les invitations à son adresse */
+/* ce que la personne laisse hors des tables de Better Auth : ses espaces (et leur direct), ses adhésions, les invitations à son adresse, sa matière du Point Zéro */
 export async function effacerTraces(db, u) {
   const c = await db.connect();
   try {
@@ -87,6 +87,8 @@ export async function effacerTraces(db, u) {
     }
     await c.query('delete from space_members where user_id = $1', [u.id]);
     if (u.email) await c.query('delete from invitations where lower(email) = lower($1) and used_at is null', [u.email]);
+    const m = await c.query("select to_regclass('public.matiere') as t");
+    if (m.rows[0] && m.rows[0].t) await c.query('delete from matiere where user_id = $1', [u.id]);
     await c.query('commit');
   } catch (e) { await c.query('rollback').catch(() => {}); throw e; }
   finally { c.release(); }
