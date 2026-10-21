@@ -136,3 +136,21 @@ test('la page défile : le cadre arrondi (overflow:clip sur le corps) ne bloque 
   const css = require('fs').readFileSync('g44/lab.css', 'utf8');
   if (/body\{[^}]*overflow:\s*clip/.test(css)) assert.match(css, /html\{[^}]*overflow-y:\s*auto/, 'html doit porter son propre défilement');
 });
+
+test('Rewind du hero : refus R3 réel, puis défaire → corriger → rejouer, sans rien modifier ; 2018 est arrêté avant', () => {
+  const W = require('../g44/js/rewind.js'), D = require('../g44/js/dossier.js');
+  const avant = JSON.stringify(D.dossier());
+  const s = W.sequence(2016);
+  assert.equal(s.refus.regle, 'R3', 'le refus que tout agent connaît vient de la vraie règle');
+  assert.deepEqual(s.etapes.map(e => e.sens), ['defaire', 'defaire', 'corriger', 'rejouer', 'rejouer', 'controler']);
+  assert.deepEqual(s.etapes.map(e => e.regle).filter(Boolean), ['R3', 'R3', 'R4', 'R1', 'R2']);
+  assert.equal(s.final.date, '2016-06-18'); assert.equal(s.final.periode, '2016-06-18'); assert.equal(s.final.ratt, 'ACTIF');
+  assert.equal(JSON.stringify(D.dossier()), avant, 'le dossier n\'est jamais modifié');
+  const t = W.sequence(2018);
+  assert.equal(t.etapes.length, 0, 'aucune chaîne rejouée sur une valeur incohérente');
+  assert.deepEqual(t.incoherences.map(i => i.regle).sort(), ['R2', 'R4']);
+  assert.ok(W.sequence(2015).rien); assert.ok(W.sequence('20a6').erreur);
+  const html = require('fs').readFileSync('g44/index.html', 'utf8');
+  assert.match(html, /id="rewind"/); assert.ok(!/class="rewind"/.test(html), 'pas de collision avec la classe .rewind du LAB 02'); assert.ok(html.indexOf('id="rewind"') < html.indexOf('id="scenario"'), 'dans le hero');
+  assert.match(require('fs').readFileSync('g44/js/rewind.js', 'utf8'), /RECONSTITUTION PÉDAGOGIQUE · CODES FICTIFS/);
+});
