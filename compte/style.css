@@ -1,0 +1,5 @@
+:root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+main { max-width: 32rem; margin: 4rem auto; padding: 1.5rem; }
+form { display: grid; gap: 1rem; }
+input, button { padding: .8rem; font: inherit; }
+a { color: inherit; }
