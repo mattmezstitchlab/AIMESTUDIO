@@ -109,3 +109,31 @@ Les idées du constructeur de la landing sont reprises ici. Le constructeur lui-
 - **« Publier »** : simulé dans la landing. Ici, il viendra avec les comptes.
 
 Points relevés dans la landing, sans y toucher : les boutons Mariage / Pro / Fête du constructeur n'ont pas d'écouteur, et le bloc i-noms n'a pas de rendu.
+
+## Régénérer un site, et les gestes de la landing (21/10/2026)
+### Importer, sur l'accueil du générateur ou avec « Importer »
+- **Le mini-site de la landing** (`.aime.json` exporté depuis « Votre site ») : fidèle, avec `AIMESite.depuisMiniSite`.
+  - Sont repris les blocs, leur position sur la grille, leur style (teinte, arrondi, empattement, taille), le programme avec ses variantes pluie, les personnes et les photos.
+  - Les blocs de démonstration (menu radial, cubes, globe…) sont signalés comme non repris.
+- **Un projet d'AIME Studio** gardé dans ce navigateur : fidèle, avec `AIMESite.depuisStudio`.
+  - Sont repris les textes, l'ambiance (la marque du projet), le programme (pour un événement) ou les tarifs (pour une offre), les personnes et le contact.
+- **Un dossier ou un .zip de site HTML**, avec `sites/importer.js`. Il faut d'abord confirmer : « Ce site m'appartient, ou j'ai l'autorisation de le reprendre ».
+  - La lecture se fait par règles fixes, sans IA :
+    - chaque `.html` devient une page (12 au plus) ;
+    - chaque `h2` devient une section, classée par son titre et son contenu ;
+    - les dates, adresses, e-mails, téléphones, horaires, prix et questions sont reconnus ;
+    - les images du dossier vont dans la galerie, réduites ;
+    - les couleurs et polices donnent l'ambiance et la typographie les plus proches.
+  - Les scripts, iframes, formulaires et vidéos du site d'origine sont ignorés, pour la sécurité, et le compte rendu le dit.
+  - Les images hébergées ailleurs ne sont pas reprises.
+- **Chaque import affiche un compte rendu** : ce qui a été reconnu, et ce qui ne l'a pas été.
+- **Vérifié sur un site d'exemple** (2 pages, programme, tarifs, accès, FAQ, contact, 2 images, CSS) :
+  - date, adresse, e-mail, téléphone, 3 horaires, 2 tarifs, 2 questions et 2 images sont retrouvés ;
+  - la police Playfair est reconnue ;
+  - 1 script et 1 iframe sont ignorés.
+
+### Les gestes de la landing, dans la grille libre
+- **Glisser un module** du catalogue jusque sur la grille, avec un cadre qui montre où il va se poser. Un simple clic le pose à la première place libre.
+- **Quatre poignées** pour agrandir par n'importe quel coin, le coin opposé restant fixe.
+- **Repères verts** quand un bord s'aligne sur celui d'un autre bloc.
+- **Une petite barre sur le bloc choisi** : Teinte (+45°), Arrondi (0, 12 ou 26), Serif ou Sans, A− / A+, Dupliquer, Neutre, Retirer.
