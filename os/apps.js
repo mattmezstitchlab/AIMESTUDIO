@@ -10,12 +10,16 @@ var SYSTEME=[
  {id:'pointzero',nom:'Point Zéro',href:'/point-zero/',phrase:'Déposer une matière : intention, notes, fichiers ; le système la distribue',cat:'systeme',statut:'experimental',sigle:'P0'},
  {id:'espace',nom:'Mon espace',href:'/bureau/espace/',phrase:'Reprendre ses projets, sauvegarder ce navigateur',cat:'systeme',statut:'disponible',sigle:'Es'},
  {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré'}];
-var EPINGLES=['cube','pointzero','espace','regie','studio','sites','stitch','g44','world','zero'];
+/* sigles choisis quand le calcul automatique tromperait (« Le Réseau » donnerait « Lr », trop proche d'une lettre au hasard) */
+var SIGLES={reseau:'Rs',canevas:'Cv'};
+var EPINGLES=['cube','pointzero','espace','regie','reseau','canevas','studio','stitch','g44','world','zero'];
 /* les actions que l'on peut lancer depuis la palette ou l'orbe */
 var ACTIONS=[
  {id:'deposer',nom:'Déposer une matière au point zéro',app:'pointzero',href:'/point-zero/',mots:'deposer importer note intention demande fichier trier classer point zero'},
  {id:'nouveau-devis',nom:'Nouveau devis',app:'regie',href:'/regie/#nouveau-devis',mots:'devis facture client'},
- {id:'nouveau-site',nom:'Composer un site',app:'sites',href:'/sites/',mots:'site générateur page web'},
+ {id:'canevas',nom:'Modifier un mini-site dans le Canevas',app:'canevas',href:'/canevas/',mots:'canevas modifier site mini-site page bloc disposition'},
+ {id:'reseau',nom:'Découvrir le Réseau des facettes',app:'reseau',href:'/reseau/',mots:'reseau facettes decouvrir bibliotheque module'},
+ {id:'nouveau-site',nom:'Créer un site (ancien générateur)',app:'sites',href:'/sites/',mots:'site générateur créer importer exporter page web'},
  {id:'sites-clients',nom:'Voir les sites clients (trois écrans, par rôle)',app:'regie',href:'/regie/#sites',mots:'site client aperçu rôle perspective générateur'},
  {id:'direct',nom:'Lancer le direct du jour J',app:'live',href:'/live/',mots:'live direct jour j retard annonce plan b salle'},
  {id:'editer-zero',nom:'Placer des appareils sur la Page Zéro',app:'regie',href:'/regie/#edition',mots:'iphone ipad macbook appareil maquette'},
@@ -29,7 +33,7 @@ function sigle(nom){var m=String(nom||'').replace(/^AIME\s+/i,'').replace(/[^A-Z
 /* le catalogue : apps système d'abord, puis le registre sans « bureau » ; une adresse = une app */
 function catalogue(entrees){var vus={},L=[];SYSTEME.forEach(function(a){vus[a.id]=1;L.push(Object.assign({},a,{teinte:TEINTES.systeme}))});
  (entrees||[]).forEach(function(e){if(!e||e.id==='bureau'||vus[e.id]||typeof e.href!=='string'||!/^\/(?!\/)/.test(e.href))return;vus[e.id]=1;
-  L.push({id:e.id,nom:e.nom,href:e.href,phrase:e.phrase||'',cat:e.cat||'monde',statut:e.statut||'disponible',sigle:sigle(e.nom),teinte:TEINTES[e.cat]||TEINTES.monde})});return L}
+  L.push({id:e.id,nom:e.nom,href:e.href,phrase:e.phrase||'',cat:e.cat||'monde',statut:e.statut||'disponible',sigle:SIGLES[e.id]||sigle(e.nom),teinte:TEINTES[e.cat]||TEINTES.monde})});return L}
 /* le cube, accès à la Régie personnelle, reste toujours en tête du dock, même avec des épingles choisies */
 function epingles(cat,choix){var ids=Array.isArray(choix)&&choix.length?choix:EPINGLES;ids=['cube'].concat(ids.filter(function(i){return i!=='cube'}));return ids.map(function(id){return cat.filter(function(a){return a.id===id})[0]}).filter(Boolean)}
 

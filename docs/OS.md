@@ -23,3 +23,10 @@ Le Bureau devient un système : un bureau, des fenêtres, un dock, une recherche
 - `/travaux/` et `/travaux/<projet>/` sont rendues côté serveur par `api/travaux.js` depuis `regie/site.json` (réalisations **publiées** seulement) : titre, description, adresse canonique et aperçu de partage propres à chaque projet. L'appareil est monté ensuite par `regie/scene.js` (`AIMERegieScene.realisation`).
 - Un clic sur une réalisation d'un carrousel mène à sa page projet.
 - Champ « Image de couverture » (Régie) : la vignette du portfolio et l'image de partage quand le projet n'est pas une simple image.
+
+## Navigation V1 (22 octobre 2026)
+
+- **Le Canevas est l'environnement d'édition.** Le dock, le Bureau (« Sites », « Mon espace ») et la Page Zéro mènent au Canevas. Un site rangé dans ce navigateur s'ouvre avec `/canevas/?site=<id>&de=/bureau/`, et le retour mène au Bureau.
+- **Le Réseau est atteignable.** Il figure dans le registre (`nav/registre.js`, statut « démonstration »), dans le dock et dans la palette d'actions.
+- **L'ancien générateur reste servi, mais n'est plus une destination principale.** `/sites/` garde sa route et ses fonctions : créer, importer, exporter. Il figure encore dans « Toutes les apps », sous le nom « Générateur de site (ancien) », mais plus dans le dock.
+- **La Régie maîtresse n'est pas touchée.** Ses propres liens vers `/sites/` (`regie/site.json`, onglet Sites) restent ceux qu'elle publie.

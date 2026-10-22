@@ -1,7 +1,7 @@
 /* AIME · /projet/?id=… : la carte projet ouverte en mini-site privé.
    Le projet est lu sur cet appareil (IndexedDB « aime-point-zero », là où le Point Zéro l'enregistre), traduit en site par
    pointzero/minisite.js, rendu par le moteur de pages (vitrine/rendu.js), enregistré dans « aime-sites » pour que le
-   générateur existant (/sites/) en modifie la disposition. Revenir au Point Zéro ne touche jamais au projet. */
+   Canevas (adaptateur aime-site) en modifie la disposition. Revenir au Point Zéro ne touche jamais au projet. */
 (function(){'use strict';
 var S=window.AIMESite,B=window.AIMEBroderie,M=window.AIMEModes,MS=window.AIMEMiniSite,CLE='aime-sites';
 var $=function(i){return document.getElementById(i)};

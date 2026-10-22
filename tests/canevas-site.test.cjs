@@ -20,6 +20,6 @@ t('rien n\'est écrit sans confirmation ; Enregistrer range la page là où l\'a
 t('parcours : « Voir mon mini-site » et « Modifier dans le Canevas » ; retour au projet selon l\'origine',()=>{
  assert.ok(pz.includes("'Voir mon mini-site'")&&pz.includes("'Modifier dans le Canevas'")&&pz.includes("&canevas=1"));
  assert.ok(/q\.get\('canevas'\)==='1'\)\{location\.replace\(cv\)/.test(pj),'le projet prépare le mini-site puis l\'ouvre dans le Canevas');
- assert.ok(/if\(site\)\{r\.textContent='← Retour au projet';r\.href=\([^)]*'\/point-zero\/':de\)\+\(id\?'\?projet='/.test(cv),'retour à la carte du Bureau ou du Point Zéro')});
+ assert.ok(/if\(site&&id\)\{r\.textContent='← Retour au projet';r\.href=\([^)]*'\/point-zero\/':de\)\+\(id\?'\?projet='/.test(cv),'retour à la carte du Bureau ou du Point Zéro')});
 t('l\'inspecteur du Canevas ne couvre plus la sélection (zone à éviter, générique)',()=>{assert.ok(/function placerInsp\(X,Y,ev\)/.test(pl)&&pl.includes('placerInsp(X,Y,e.eviter)'));assert.ok(ad.includes('eviter:{'))});
 console.log('canevas-site : '+n+' tests ok');

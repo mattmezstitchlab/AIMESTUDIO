@@ -1,6 +1,6 @@
 /* AIME · Point Zéro → mini-site privé du projet.
    Aucun nouveau générateur : le projet devient un site au format « aime-site », rendu par le moteur de pages existant
-   (vitrine/rendu.js) avec ses blocs, et modifiable dans le générateur existant (/sites/). Ici, seulement la traduction.
+   (vitrine/rendu.js) avec ses blocs, et modifiable dans le Canevas (adaptateur aime-site). Ici, seulement la traduction.
 
    AIMEMiniSite.depuis(p, {S, B, M, ancien, photo}) → site
      p       le projet du Point Zéro (broderie)
