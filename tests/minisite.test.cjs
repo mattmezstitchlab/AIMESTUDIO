@@ -25,5 +25,5 @@ t('nouveaux blocs du moteur : couleurs refusées si invalides, avancement borné
  s.pages[0].sections=[{id:'a',type:'fils'},{id:'b',type:'avancement'}];const h=S.document(s,{}).html;assert.ok(!h.includes('url(x)'));assert.ok(h.includes('100 %'))});
 t('page /projet/ : charge le moteur, le générateur, et ne promet pas le Canevas',()=>{const h=require('fs').readFileSync(require('path').join(__dirname,'..','projet/index.html'),'utf8');
  ['/vitrine/rendu.js','/pointzero/minisite.js','/pointzero/broderie.js','/pointzero/modes.js'].forEach(x=>assert.ok(h.includes(x),x));
- const js=require('fs').readFileSync(require('path').join(__dirname,'..','projet/projet.js'),'utf8');assert.match(js,/\/sites\/\?site=/);assert.match(js,/bientôt/i);assert.ok(!/href=["']\/canevas/.test(js),'pas de faux lien vers le Canevas')});
+ const js=require('fs').readFileSync(require('path').join(__dirname,'..','projet/projet.js'),'utf8');assert.match(js,/\/sites\/\?site=/);assert.match(js,/\/canevas\/\?projet=/,'le Canevas ouvre ce projet')});
 console.log('minisite : '+n+' tests ok');
