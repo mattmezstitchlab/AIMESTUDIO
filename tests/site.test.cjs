@@ -45,7 +45,7 @@ test('export : une page HTML autonome par page, ou une seule page avec ancres',(
  const s=S.appliquerModele(S.vide(),M.find(m=>m.id==='mariage'));const f=S.exporter(s,{presentation:P});assert.deepEqual(f.map(x=>x.chemin),['index.html','jour-j.html','pratique.html','reponse.html']);
  assert.ok(f[0].contenu.startsWith('<!doctype html>')&&f[0].contenu.includes('href="jour-j.html"'));const u=S.exporter(s,{presentation:P,unePage:true});assert.equal(u.length,1);assert.ok(u[0].contenu.includes('href="#jour-j"'))});
 test('le Bureau retrouve les sites de ce navigateur',()=>{const m=new Map([['aime-sites',JSON.stringify({cur:'s1',sites:{s1:{nom:'Mariage',pages:[{},{}],infos:{titre:'A & N'},majLe:'2026-10-21T01:00:00Z'}}})]]);
- const st={get length(){return m.size},key:i=>[...m.keys()][i],getItem:k=>m.get(k)??null};const inv=B.inventaire(st),s=inv.sources.find(x=>x.id==='sites').projets[0];assert.equal(s.lien,'/sites/?site=s1');assert.match(s.detail,/2 pages · A & N/);assert.ok(s.enCours)});
+ const st={get length(){return m.size},key:i=>[...m.keys()][i],getItem:k=>m.get(k)??null};const inv=B.inventaire(st),s=inv.sources.find(x=>x.id==='sites').projets[0];assert.equal(s.lien,'/canevas/?site=s1&de=%2Fbureau%2F');assert.match(s.detail,/2 pages · A & N/);assert.ok(s.enCours)});
 
 test('grille libre (reprise du mini-site de la landing) : formes selon la largeur, pas de chevauchement, plan B, onde',()=>{
  assert.deepEqual([2,4,6,9].map(w=>S.formeDe('date',w)),['pastille','compte','mois','frise']);assert.deepEqual([2,5,8].map(w=>S.formeDe('endroit',w)),['nom','carte','itineraire']);assert.deepEqual([2,5,9].map(w=>S.formeDe('gens',w)),['avatars','equipe','reseau']);

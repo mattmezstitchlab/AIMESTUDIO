@@ -86,6 +86,6 @@ test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
 test('Page Zéro · la vitrine est une scène pilotée par la régie, étiquetée démonstration, avant l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8');
  const v=z.indexOf('id="vitrine"'),p=z.indexOf('id="t-prom"'),e=z.indexOf('id="entrer"');assert.ok(p>0&&v>p&&e>v,'entre la promesse et « Et maintenant ? »');
  const sec=z.slice(v,e);assert.match(sec,/id="vitrine-scene"/);assert.match(sec,/Démonstration · données fictives/);
- for(const h of ['/sites/','/g44/','/studio/'])assert.ok(sec.includes('href="'+h+'"'),'lien vers '+h);
+ for(const h of ['/canevas/','/reseau/','/g44/','/studio/'])assert.ok(sec.includes('href="'+h+'"'),'lien vers '+h);
  assert.ok(z.indexOf('/regie/scene.js')<z.indexOf('/zero/zero.js'),'la scène passe avant la page : les textes de la régie précèdent les points des « i »');
  const c=JSON.parse(fs.readFileSync(R('regie/site.json'),'utf8'));assert.ok(c.pages['/'].appareils.every(a=>a.ancre==='#vitrine-scene'))});

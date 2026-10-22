@@ -9,7 +9,7 @@ var cube=q.has('cube')?String(q.get('cube')||'').replace(/[^a-z]/g,'').slice(0,2
 var site=String(q.get('site')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80)||null;
 var ORIGINES={'/point-zero/':'Point Zéro','/bureau/':'Bureau','/projet/':'Mini-site','/cube/':'Mon cube'};if(!ORIGINES[de])de=cube!==null?'/cube/':id?'/projet/':'/bureau/';
 var r=document.getElementById('retour');r.href=de==='/projet/'?'/projet/?id='+encodeURIComponent(id):de+(id&&cube===null?'?projet='+encodeURIComponent(id):'');r.textContent='← '+ORIGINES[de];
-if(site){r.textContent='← Retour au projet';r.href=(de==='/projet/'||de==='/cube/'?'/point-zero/':de)+(id?'?projet='+encodeURIComponent(id):'')}
+if(site&&id){r.textContent='← Retour au projet';r.href=(de==='/projet/'||de==='/cube/'?'/point-zero/':de)+(id?'?projet='+encodeURIComponent(id):'')}
 function lire(){try{var o=JSON.parse(localStorage.getItem(CLE)||'null');if(o&&o.scenes)return o}catch(e){}return{scenes:{}}}
 function sauver(s){var o=lire();o.scenes[s.id]=Object.assign({},s,{garde:new Date().toISOString()});var k=Object.keys(o.scenes);
  if(k.length>MAX)k.sort(function(a,b){return String(o.scenes[a].garde).localeCompare(String(o.scenes[b].garde))}).slice(0,k.length-MAX).forEach(function(x){delete o.scenes[x]});
