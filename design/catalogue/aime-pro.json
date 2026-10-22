@@ -1,0 +1,48 @@
+{
+ "format": "aime-design-system",
+ "version": "3.0.0",
+ "id": "aime-pro",
+ "revision": "1.0.0",
+ "nom": "Pro Atelier",
+ "mode": "sombre",
+ "description": "L'atelier de travail : bleu nuit, bleu franc et cyan, informations denses et nettes.",
+ "origine": "AIME Arena, studios A et B (22 octobre 2026)",
+ "jetons": {
+  "couleurs": {
+   "fond": "#071017",
+   "surface": "#0E1922",
+   "surfaceHaute": "#152431",
+   "texte": "#EEF4F9",
+   "texteDoux": "#8DA2B2",
+   "bordure": "#263B4C",
+   "primaire": "#3F8EF4",
+   "secondaire": "#23B7C9",
+   "relief": "#1C6E80",
+   "accent": "#7DD3F5",
+   "succes": "#3FCF9A",
+   "alerte": "#E9B54D",
+   "danger": "#F07979"
+  },
+  "typographie": {
+   "titres": "space-grotesk",
+   "texte": "inter",
+   "mono": "jetbrains-mono",
+   "graisseTitres": 600,
+   "interligneTitres": 1.05,
+   "interligneTexte": 1.42,
+   "approche": -0.028,
+   "casse": "none",
+   "echelle": 1.08
+  },
+  "structure": {
+   "rayons": {
+    "surface": 10,
+    "controle": 6,
+    "media": 10,
+    "pastille": 999
+   },
+   "bordure": 1,
+   "densite": "compact"
+  }
+ }
+}

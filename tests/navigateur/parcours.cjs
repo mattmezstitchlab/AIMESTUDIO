@@ -35,6 +35,23 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     }
     const lien = await p.$('a:has-text("Modifier dans le Canevas"), button:has-text("Modifier dans le Canevas")'); ok(!!lien, 'Point Zéro : le projet propose « Modifier dans le Canevas »');
     if (lien) { await lien.evaluate(e => e.click()); await p.waitForURL(/\/canevas\/\?site=/, { timeout: 10000 }).catch(() => {}); await p.waitForTimeout(2500); ok(/Mini-site/.test(await p.textContent('body')), 'Canevas : le mini-site du projet est ouvert'); }
+    // Design System (démonstration) : une direction en un clic, contenu identique, annulation, puis l'aperçu du projet relit le choix
+    if (lien && await p.$('.cvs-ds-b')) {
+      const ds = await p.evaluate(async () => { const w = ms => new Promise(x => setTimeout(x, ms)); 
+        document.querySelector('.cvs-ds-b').click(); await w(500); const r = [...document.querySelectorAll('.cvs-ds input')].map(i => i.value);
+        const lu = () => (document.querySelector('.cvs-if').contentDocument.querySelector('style').textContent.match(/--c1:[^;]+/) || [''])[0];
+        const avant = lu(); document.querySelector('.cvs-ds input[value=aime-editorial]').click(); await w(1200); const apres = lu();
+        document.querySelector('[data-a=annuler]').click(); await w(1000); const annule = lu();
+        document.querySelector('.cvs-ds input[value=aime-editorial]').click(); await w(1000);
+        const b = [...document.querySelectorAll('.cvs-barre button')].find(x => /Enregistrer/.test(x.textContent)); if (b) b.click(); await w(400);
+        return { r, avant, apres, annule, dit: document.querySelector('.cvs-ds-dit').textContent }; });
+      ok(ds.r.length === 5 && ds.apres === '--c1:#99472C' && ds.annule === ds.avant, 'Canevas : Design System Éditorial appliqué puis annulé (' + ds.avant + ' → ' + ds.apres + ' → ' + ds.annule + ')');
+      ok(/contenu n'a pas changé/.test(ds.dit), 'Canevas : le contenu reste identique');
+      const pid = new URL(p.url()).searchParams.get('projet');
+      await p.goto(B + '/projet/?id=' + encodeURIComponent(pid), { waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
+      const c1 = await p.evaluate(() => { const f = document.getElementById('site'); return f && f.srcdoc ? (f.srcdoc.match(/--c1:[^;]+/) || [''])[0] : ''; });
+      ok(c1 === '--c1:#99472C', 'Projet : l\'aperçu montre le Design System enregistré (' + c1 + ')');
+    }
     // Réseau : la carte du projet, puis un module ajouté après les sept vérifications
     await p.goto(B + '/reseau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
     ok((await p.$$('.rx-carte')).length > 0, 'Réseau : la carte du projet');
