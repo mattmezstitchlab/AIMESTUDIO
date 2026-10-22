@@ -13,7 +13,8 @@ function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null
 function teinte(e,d){e.style.setProperty('--a',d.teinte[0]);e.style.setProperty('--b',d.teinte[1]);e.style.setProperty('--c',d.teinte[2])}
 function texte(f,d){return d.champs.map(function(c){return f.champs[c.k]}).filter(Boolean).join(' · ')}
 var dernier=null;
-function remplir(face,d,f,moi){face.textContent='';teinte(face,d);var pose=f.etat==='posee';face.classList.toggle('pose',pose);face.dataset.etat=f.etat;
+/* les couleurs d'une face : son style (choisi dans le Canevas) sinon la teinte de sa facette */
+function remplir(face,d,f,moi,cube){face.textContent='';teinte(face,{teinte:C.couleurs(cube,d.id)});var pose=f.etat==='posee';face.classList.toggle('pose',pose);face.dataset.etat=f.etat;
  face.appendChild(el('small',null,d.nom));face.appendChild(el('b',null,pose?(texte(f,d)||d.nom):'à venir'));
  if(pose&&racine.AIMETimbre&&moi){var t=AIMETimbre.creer({id:moi.id,nom:moi.name||'Vous',image:moi.image,mini:true,legende:false});face.appendChild(t)}
  if(pose&&f.visibilite==='publie')face.appendChild(el('i','cv3-pub','Publiée'))}
@@ -23,7 +24,7 @@ function monter(box,o){o=o||{};var cube=o.cube,moi=o.moi,rx=-18,ry=-28,cur=null,
  var faces=C.FACETTES.map(function(d){var b=el(o.interactif?'button':'div','cv3-f');if(o.interactif){b.type='button'}b.dataset.f=d.id;
   b.style.transform='rotateY('+POSE[d.face][0]+'deg) rotateX('+POSE[d.face][1]+'deg) translateZ(calc(var(--cv3) / 2))';corps.appendChild(b);return b});
  function poser(){corps.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg)'}
- function maj(c){if(c)cube=c;dernier={cube:cube,moi:moi};C.FACETTES.forEach(function(d,i){var f=cube.facettes[d.id];remplir(faces[i],d,f,moi);
+ function maj(c){if(c)cube=c;dernier={cube:cube,moi:moi};C.FACETTES.forEach(function(d,i){var f=cube.facettes[d.id];remplir(faces[i],d,f,moi,cube);
   if(o.interactif)faces[i].setAttribute('aria-label',d.nom+(f.etat==='posee'?', posée'+(C.completude(cube,d.id)<1?', partielle':'')+(f.visibilite==='publie'?', publiée':', privée'):', à venir'))})}
  function montrer(id){var d=C.facette(id);if(!d)return;var v=VOIR[d.face];/* de trois quarts : la face choisie devant, le cube reste un cube */rx=v[0]===0?-14:v[0]>0?v[0]-16:v[0]+16;ry=v[1]-24;cur=id;faces.forEach(function(f){f.classList.toggle('choisie',f.dataset.f===id);if(o.interactif)f.setAttribute('aria-pressed',f.dataset.f===id?'true':'false')});poser()}
  if(o.interactif){var g=null,bouge=0;
@@ -37,6 +38,6 @@ function monter(box,o){o=o||{};var cube=o.cube,moi=o.moi,rx=-18,ry=-28,cur=null,
  maj(cube);poser();return{maj:maj,montrer:montrer,face:function(){return cur},element:box}}
 /* la miniature du dock : six faces en CSS, teintes des facettes posées, verre pour les autres */
 function miniHTML(){var c=dernier&&dernier.cube;return'<span class="cv3-mini'+(RM?'':' cv3-tourne')+'"><span class="cv3-corps">'+C.FACETTES.map(function(d){var p=c&&c.facettes[d.id].etat==='posee';
-  return'<span class="cv3-f'+(p?' pose':'')+'" style="--a:'+d.teinte[0]+';--b:'+d.teinte[1]+';--c:'+d.teinte[2]+';transform:rotateY('+POSE[d.face][0]+'deg) rotateX('+POSE[d.face][1]+'deg) translateZ(calc(var(--cv3) / 2))"></span>'}).join('')+'</span></span>'}
+  var t=c?C.couleurs(c,d.id):d.teinte;return'<span class="cv3-f'+(p?' pose':'')+'" style="--a:'+t[0]+';--b:'+t[1]+';--c:'+t[2]+';transform:rotateY('+POSE[d.face][0]+'deg) rotateX('+POSE[d.face][1]+'deg) translateZ(calc(var(--cv3) / 2))"></span>'}).join('')+'</span></span>'}
 racine.AIMECubeVue={monter:monter,miniHTML:miniHTML,memo:function(cube,moi){dernier={cube:cube,moi:moi}},POSE:POSE,VOIR:VOIR};
 })(typeof self!=='undefined'?self:this);
