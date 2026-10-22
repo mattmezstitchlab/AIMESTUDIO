@@ -10,8 +10,8 @@ var ORIGINES={'/point-zero/':'Retour au Point Zéro','/bureau/':'Retour au Burea
 $('retour').href=de+(id?'?projet='+encodeURIComponent(id):'');$('retour').textContent='← '+ORIGINES[de];
 function dire(t,ko){var e=$('etat');e.textContent=t;e.hidden=!t;e.classList.toggle('ko',!!ko)}
 
-/* le Canevas n'existe pas encore : le bouton le dit, il n'ouvre rien */
-$('canevas').addEventListener('click',function(e){e.preventDefault();dire('Le Canevas arrive bientôt : ce projet s\'y ouvrira avec son patron, sa grille et ses couleurs, sans rien ressaisir.')});
+/* le Canevas (Canevas 0) ouvre ce projet tel quel : patron, grille, couleurs, sans ressaisie */
+$('canevas').href='/canevas/?projet='+encodeURIComponent(id)+'&de=/projet/';
 
 function base(){return new Promise(function(ok,ko){if(!window.indexedDB)return ko(new Error('Ce navigateur ne garde pas les projets.'));var r=indexedDB.open('aime-point-zero',2);
  r.onupgradeneeded=function(){var db=r.result;if(!db.objectStoreNames.contains('fichiers'))db.createObjectStore('fichiers',{keyPath:'id'});if(!db.objectStoreNames.contains('projets'))db.createObjectStore('projets',{keyPath:'id'})};

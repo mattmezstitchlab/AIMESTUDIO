@@ -1,0 +1,34 @@
+/* Canevas 0 : une scène neutre, une vue, une grille configurable, des notes qui ne sont jamais des décisions, un adaptateur broderie. */
+const assert=require('assert'),fs=require('fs'),path=require('path');const C=require('../canevas/scene.js');
+let n=0;const t=(nom,f)=>{f();n++};const lire=f=>fs.readFileSync(path.join(__dirname,'..',f),'utf8');
+t('neutralité : le plan et la scène ne connaissent aucun moteur métier',()=>{for(const f of ['canevas/scene.js','canevas/plan.js','canevas/canevas.css']){const s=lire(f);assert.ok(!/Stitch|aime-stitch|dmc\.json|vitrine\/rendu/.test(s),f+' neutre')}
+ const h=lire('canevas/index.html');assert.ok(!/stitch/i.test(h),'la page ne charge pas Stitch');assert.ok(/canevas\/adaptateurs\/broderie\.js/.test(lire('canevas/canevas.js')),'l\'adaptateur est déclaré, chargé à la demande')});
+t('canevas vide : une scène, un calque, une grille universelle, aucune source',()=>{const s=C.vide();assert.equal(s.format,'aime-canevas');assert.equal(s.calques.length,1);assert.equal(s.source,null);assert.equal(C.actif(s).grille.type,'universelle');assert.deepEqual(s.vue,{x:0,y:0,z:1})});
+t('grille configurable : quatre types, pas borné, visibilité',()=>{const s=C.vide(),c=C.actif(s);assert.deepEqual(Object.keys(C.GRILLES),['universelle','broderie','points','libre']);
+ C.regler(s,c.id,{type:'points'});assert.equal(c.grille.type,'points');C.regler(s,c.id,{pas:900});assert.equal(c.grille.pas,400);C.regler(s,c.id,{visible:false});assert.equal(C.lignes(c,s.vue,800,600).v.length,0);
+ C.regler(s,c.id,{type:'libre',visible:true});assert.equal(C.lignes(c,s.vue,800,600).v.length,0,'fond libre : aucune ligne');
+ C.regler(s,c.id,{type:'universelle',pas:24});const L=C.lignes(c,{x:0,y:0,z:1},480,240);assert.ok(L.v.length>=20&&L.v.some(l=>l.fort),'lignes fortes toutes les 12 colonnes');
+ const Z=C.lignes(c,{x:0,y:0,z:.05},800,600);assert.ok(Z.v.length<=120,'lignes éclaircies quand elles seraient trop serrées')});
+t('unités : chaque calque porte sa transformation, aucune unité imposée',()=>{const c=C.calque({type:'broderie',grille:{type:'broderie',pas:12},t:{echelle:2,dx:10,dy:0}});assert.deepEqual(C.aimanter(c,35,49),[34,48]);
+ const l=C.calque({type:'libre'});assert.deepEqual(C.aimanter(l,3.3,7.7),[3.3,7.7])});
+t('vue : le zoom garde le point sous le pointeur, bornes, ajuster, pourcentage',()=>{let v={x:0,y:0,z:1};const p=C.versScene(v,300,200);v=C.zoomer(v,2,300,200);const q=C.versScene(v,300,200);assert.ok(Math.abs(p[0]-q[0])<1e-9&&Math.abs(p[1]-q[1])<1e-9);
+ assert.equal(C.pourcent(v),'200 %');assert.equal(C.zoomer(v,1e9,0,0).z,C.Z_MAX);assert.equal(C.zoomer(v,1e-9,0,0).z,C.Z_MIN);
+ const a=C.ajuster({x:0,y:0,l:1000,h:500},800,600,0);assert.equal(a.z,.8);assert.deepEqual(C.deplacer({x:0,y:0,z:2},20,-10),{x:-10,y:5,z:2})});
+t('notes : créées, déplacées, modifiées, répondues, résolues, rouvertes, supprimées',()=>{const s=C.vide();assert.throws(()=>C.note(s,{texte:'  '}),/texte/);
+ const no=C.note(s,{x:10,y:20,texte:'Vérifier le nez',ref:'DMC 3326 · case 4,5'});assert.equal(no.etat,'ouverte');assert.equal(no.ancre.type,'element');
+ C.deplacerNote(s,no.id,30,40);assert.deepEqual([no.ancre.x,no.ancre.y],[30,40]);C.modifierNote(s,no.id,'Vérifier le rose du nez');C.repondre(s,no.id,'OK pour moi');assert.equal(no.reponses.length,1);
+ C.resoudre(s,no.id);assert.equal(no.etat,'resolue');assert.equal(C.ouvertes(s).length,0);C.rouvrir(s,no.id);assert.equal(no.etat,'ouverte');C.retirerNote(s,no.id);assert.equal(s.notes.length,0)});
+t('une note n\'est jamais une décision : proposer crée une proposition en attente, sans toucher la source',()=>{const s=C.vide({source:{type:'broderie',id:'p1'}});const no=C.note(s,{texte:'Passer en Aïda 16'});const pr=C.proposer(s,no.id);
+ assert.equal(pr.statut,'en attente');assert.equal(pr.source,'note');assert.deepEqual(s.source,{type:'broderie',id:'p1'});assert.ok(!('decisions' in s))});
+t('garder et relire : la vue et les notes seulement, données nettoyées',()=>{const s=C.vide({id:'cv-x',source:{type:'broderie',id:'p1'}});C.note(s,{texte:'a\u0000b'});s.vue={x:5,y:6,z:3};
+ const g=JSON.parse(JSON.stringify(C.aGarder(s)));assert.ok(!JSON.stringify(g).includes('cases'));const r=C.relire(g);assert.equal(r.notes[0].texte,'ab');assert.deepEqual(r.vue,{x:5,y:6,z:3});
+ assert.equal(C.relire({format:'autre'}),null);const r2=C.relire(Object.assign({},g,{vue:{x:'a',y:0,z:-1},notes:[{id:'z'},{id:'y',texte:'ok',etat:'pirate'}]}));assert.equal(r2.notes.length,1);assert.equal(r2.notes[0].etat,'ouverte');assert.deepEqual(r2.vue,{x:0,y:0,z:1})});
+t('adaptateur broderie : le patron Stitch vient du projet confirmé, sans ressaisie, références DMC intactes',()=>{const P=require('../stitch/js/patron.js');assert.ok(P&&P.depuisConversion,'moteur Stitch réutilisé');
+ const A=require('../canevas/adaptateurs/broderie.js');const m=A.AIMECanevasBroderie||A;A.StitchPatron=P;
+ const p={id:'p1',titre:'Renard',choix:{toile:'aida16',couleurs:'equilibre'},dims:{l:3,h:2},cases:new Uint8Array([1,2,0,2,2,1]),palette:[{dmc:'310',nom:'Noir',hex:'#000'},{dmc:'06',nom:'Rose',hex:'#fcc'}]};
+ const pt=m.patronDe(p);assert.equal(pt.format,'aime-stitch');assert.equal(pt.l,3);assert.equal(pt.h,2);assert.deepEqual(pt.palette.map(x=>x.dmc),['310','06']);assert.equal(pt.toile.count,16);
+ assert.deepEqual(Array.from(P.matrice(pt)),[1,2,0,2,2,1],'chaque case garde son fil');assert.equal(m.patronDe({id:'x'}),null,'pas de patron sans conversion');
+ const d={projet:p,patron:pt},c={t:{dx:0,dy:0}};const e=m.element(d,c,m.PAS*1.5,m.PAS*.5);assert.match(e.titre,/DMC 06/);assert.match(e.dit,/3 cases/);assert.equal(m.element(d,c,-1,0),null);
+ const etat={};m.agir(d,'evidence',e,etat);assert.equal(etat.hl,2);m.agir(d,'tout',e,etat);assert.equal(etat.hl,0)});
+t('ouverture directe : la carte et le mini-site mènent au Canevas avec l\'identifiant du projet',()=>{assert.match(lire('projet/projet.js'),/\/canevas\/\?projet=/);assert.match(lire('pointzero/pz.js'),/\/canevas\/\?projet=/)});
+console.log('canevas : '+n+' tests ok');
