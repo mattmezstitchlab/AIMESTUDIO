@@ -6,7 +6,7 @@
    Comme le recommande sa documentation, la feuille du laboratoire n'est PAS importée telle quelle : tout est limité à
    body.gen, et seule l'interface de l'éditeur change. Les sites générés gardent leurs propres ambiances. */
 body.gen{
- --paper:#FFFFFF;--ink:#161616;--soft:#62666B;--faint:#858A90;--line:#E5E7EB;
+ --paper:#FFFFFF;--ink:#161616;--soft:#62666B;--faint:#686D73;--line:#E5E7EB;
  --verre:#FFFFFF;--verre2:#F7F8F8;--c1:#12B5B4;--c2:#B0E4D0;--deep:#164C70;--focus:#127E83;
  --sable:#F7F8F8;--alt:#F1F3F3;--puce:#F4F5F5;
  --ft:"Manrope",Arial,sans-serif;--fb:"DM Sans",Arial,sans-serif;
@@ -90,4 +90,4 @@ body.gen .gen-h{font:600 11px var(--fb);letter-spacing:.15em;color:var(--soft)}
 body.gen .amx-b{background:#FFFFFF;border:1px solid var(--line);color:var(--ink);border-radius:999px;font:500 13.5px var(--fb);-webkit-backdrop-filter:none;backdrop-filter:none}
 body.gen .gen-menu .gm-t{font:600 11px var(--fb);letter-spacing:.15em}
 /* le panneau Explorer est celui de tout le site, sombre : il garde ses propres couleurs (sinon encre noire sur fond noir) */
-body.gen .amx,body.gen .amx-x{--ink:#EDEDF0;--soft:#9C9CA8;--faint:#6B6B78;--line:#2B2B33;--paper:#0A0A0C;--c1:#7C5CFF;--c2:#22D3EE;--conic:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);color:#EDEDF0;color-scheme:dark}
+body.gen .amx,body.gen .amx-x{--ink:#EDEDF0;--soft:#9C9CA8;--faint:#8B8B98;--line:#2B2B33;--paper:#0A0A0C;--c1:#7C5CFF;--c2:#22D3EE;--conic:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);color:#EDEDF0;color-scheme:dark}
