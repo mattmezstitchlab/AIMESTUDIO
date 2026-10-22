@@ -3,7 +3,8 @@
 const assert=require('assert'),fs=require('fs'),path=require('path');const N=require('../nav/registre.js'),A=require('../os/apps.js');
 const lire=f=>fs.readFileSync(path.join(__dirname,'..',f),'utf8');let n=0;const t=(nom,f)=>{f();n++};
 const cat=A.catalogue(N.ENTREES),dock=A.epingles(cat).map(a=>a.id);
-t('le dock propose le Réseau et le Canevas, plus l\'ancien générateur',()=>{assert.ok(dock.includes('reseau'),'Réseau');assert.ok(dock.includes('canevas'),'Canevas');assert.ok(!dock.includes('sites'),'générateur hors du dock');assert.equal(dock[0],'cube','le cube reste en tête')});
+t('le dock propose le Réseau et le Canevas, plus l\'ancien générateur',()=>{assert.ok(dock.includes('reseau'),'Réseau');assert.ok(dock.includes('canevas'),'Canevas');assert.ok(!dock.includes('sites'),'générateur hors du dock');assert.equal(dock[0],'cube','le cube reste en tête');
+ const s=id=>cat.find(a=>a.id===id).sigle;assert.equal(s('reseau'),'Rs');assert.equal(s('canevas'),'Cv');assert.notEqual(s('reseau'),s('regie'),'Réseau et Régie se distinguent')});
 t('le registre déclare le Réseau et le Canevas ; le générateur garde sa route, signalé comme ancien',()=>{const r=N.entree('reseau'),c=N.entree('canevas'),s=N.entree('sites');
  assert.equal(r.href,'/reseau/');assert.equal(r.statut,'demonstration');assert.equal(c.href,'/canevas/');assert.equal(s.href,'/sites/');assert.match(s.nom,/ancien/);assert.ok(!s.nouveau);
  assert.ok(fs.existsSync(path.join(__dirname,'..','sites/index.html')),'la route /sites/ reste servie');assert.ok(fs.existsSync(path.join(__dirname,'..','reseau/index.html')))});
