@@ -34,7 +34,7 @@ function couche(D,R){if(D.couche)return;var c=el('div','cvs-couche'),p=el('div',
  p.appendChild(f);p.appendChild(cadre);c.appendChild(p);var fond=R.querySelector('canvas');R.insertBefore(c,fond?fond.nextSibling:R.firstChild);
  var barre=el('div','cvs-barre');barre.hidden=true;barre.setAttribute('role','status');R.appendChild(barre);
  var ds=el('button','cvs-ds-b');ds.type='button';ds.setAttribute('aria-haspopup','dialog');ds.setAttribute('aria-expanded','false');ds.appendChild(el('i',null));ds.appendChild(el('span',null,'Design System'));ds.onclick=function(){designSystem(D)};R.appendChild(ds);D.dsBouton=ds;
- D.couche=c;etiquetteDS(D);D.page=p;D.iframe=f;D.cadre=cadre;D.barre=barre;armer(D);afficherPage(D)}
+ D.couche=c;etiquetteDS(D);D.page=p;D.iframe=f;D.cadre=cadre;D.barre=barre;armer(D);afficherPage(D);etatLocal(D)}
 function afficherPage(D){var f=D.iframe,doc=root.AIMESite.document(D.site,{presentation:D.pres,medias:'/sites/bibliotheque/'});
  f.onload=function(){try{var d=f.contentDocument;d.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(a)e.preventDefault()});
   var h=Math.max(400,d.documentElement.scrollHeight);f.style.height=h+'px';D.page.style.height=h+'px';D.h=h;if(D.calque)D.calque.taille={l:LARG,h:h};mesurer(D);montrerCadre(D);if(D.redessiner)D.redessiner()}catch(e){}};
@@ -52,11 +52,23 @@ function montrerCadre(D){var b=D.sel&&D.blocs&&D.blocs[D.sel],c=D.cadre;if(!b){c
 /* ---------- modifier : un geste, les opérations du moteur, puis le rendu ---------- */
 function changer(D,id,f){var S=root.AIMESite,s=section(D,id);if(!s)return false;var avant=JSON.stringify([s.x,s.y,s.w]);f(s);s.w=Math.max(2,Math.min(12,s.w));s.x=Math.max(0,Math.min(12-s.w,s.x));s.y=Math.max(0,s.y);
  if(JSON.stringify([s.x,s.y,s.w])===avant)return false;S.tasser(page(D).sections,id);sale(D);afficherPage(D);return true}
-function sale(D){D.sale=true;barre(D,'Modifications non enregistrées')}
+function sale(D){D.sale=true;barre(D,'Modifications non enregistrées · sur cet appareil uniquement')}
 function barre(D,texte,ok){var b=D.barre;b.textContent='';b.appendChild(el('span',null,texte));
  if(D.sale){var e=el('button','cv-b cv-b-p','Enregistrer');e.type='button';e.onclick=function(){enregistrer(D)};var a=el('button','cv-b','Annuler');a.type='button';a.onclick=function(){annuler(D)};b.appendChild(e);b.appendChild(a)}
  else if(ok&&D.apercu){var v=el('a','cv-b cv-b-p','Voir mon mini-site');v.href=D.apercu;b.appendChild(v)}b.hidden=false}
-function enregistrer(D){var e=lire();D.site.majLe=new Date().toISOString();e.sites[D.site.id]=copie(D.site);if(!ecrire(e)){barre(D,'Ce navigateur est plein : rien n\'a pu être enregistré.');return}D.garde=copie(D.site);D.sale=false;barre(D,'Enregistré : votre mini-site montre cette composition.',true)}
+/* La référence est le site brut lu à l'ouverture, avant migration et mise en grille.
+   Ne pas remplacer une modification provenant d'un autre éditeur/onglet. */
+function enregistrer(D){
+ var e;try{var brut=localStorage.getItem(CLE);e=JSON.parse(brut||'null');if(!e||!e.sites||typeof e.sites!=='object'||Array.isArray(e.sites))throw new Error('stockage');}
+ catch(err){barre(D,'Stockage illisible ou indisponible : rien enregistré. Vos modifications restent ouvertes.');return false}
+ if(JSON.stringify(e.sites[D.site.id])!==D.reference){barre(D,'Ce site a changé ailleurs ou a été supprimé. Rien écrasé : gardez cet onglet ouvert et comparez avec la version du Bureau.');return false}
+ var candidat=copie(D.site);candidat.majLe=new Date().toISOString();e.sites[D.site.id]=candidat;e.cur=D.site.id;
+ if(!ecrire(e)){barre(D,'Enregistrement impossible sur cet appareil : vos modifications restent ouvertes. Libérez de la place ou vérifiez les autorisations du navigateur.');return false}
+ D.site=candidat;D.garde=copie(candidat);D.reference=JSON.stringify(candidat);D.sale=false;etatLocal(D);return true
+}
+function etatLocal(D){var date=D.garde&&D.garde.majLe,texte='Sur cet appareil uniquement · pas synchronisé avec votre compte';
+ if(date&&!isNaN(Date.parse(date)))texte+=' · enregistré le '+new Date(date).toLocaleString('fr-FR');
+ barre(D,texte,true)}
 function annuler(D){D.site=copie(D.garde);D.sale=false;D.sel=null;afficherPage(D);etiquetteDS(D);if(D.dsFen)remplirDS(D,D.dsFen);barre(D,'Revenu à la dernière version enregistrée.')}
 
 /* glisser (déplacer) et poignée (dimensionner), sur la grille du rendu ; clavier sur le cadre */
@@ -154,7 +166,7 @@ function comparer(D){var v=el('div','cvs-voile cvs-comp-v'),f=el('section','cvs-
 var A={type:'site',nom:'Mini-site',
  charger:function(source){return chargerMoteur().then(function(pres){var e=lire(),brut=e.sites[source.site];if(!brut)throw new Error('Ce mini-site n\'est pas sur cet appareil. Ouvrez-le d\'abord depuis votre projet.');
    var S=root.AIMESite,site=S.migrer?S.migrer(copie(brut)):copie(brut);var p=site.pages[0];if(p.mode!=='grille')S.versGrille(p);
-   var D={site:site,garde:copie(site),pres:pres,sel:null,sale:false,h:1600,apercu:source.projet?'/projet/?id='+encodeURIComponent(source.projet)+'&de='+encodeURIComponent(source.de||'/point-zero/'):null};
+   var D={site:site,garde:copie(site),reference:JSON.stringify(brut),pres:pres,sel:null,sale:false,h:1600,apercu:source.projet?'/projet/?id='+encodeURIComponent(source.projet)+'&de='+encodeURIComponent(source.de||'/point-zero/'):null};
    A.derniere=D;/* diagnostic : la dernière page ouverte (tests) */
    addEventListener('beforeunload',function(ev){if(D.sale){ev.preventDefault();ev.returnValue=''}});
    return{titre:site.nom||'Mini-site',sous:'Mini-site · '+p.sections.length+' blocs · rendu par le moteur de pages',calque:{nom:'Page',grille:{type:'libre',pas:20},taille:{l:LARG,h:1600}},donnees:D}})},
@@ -170,6 +182,6 @@ var A={type:'site',nom:'Mini-site',
  agir:function(D,id){if(id==='design'){designSystem(D);return''}if(!D.sel)return'';if(id==='regler'){regler(D);return''}
   var f={gauche:function(s){s.x--},droite:function(s){s.x++},haut:function(s){s.y--},bas:function(s){s.y++},plus:function(s){s.w++},moins:function(s){s.w--}}[id];
   if(!f)return'';return changer(D,D.sel,f)?'Composition modifiée : enregistrez pour la garder.':'Ce bloc ne peut pas aller plus loin.'}};
-A.LARG=LARG;A.PROTEGES=PROTEGES;A.designSystem=designSystem;
+A.enregistrer=enregistrer;A.LARG=LARG;A.PROTEGES=PROTEGES;A.designSystem=designSystem;
 if(root.AIMECanevas&&root.AIMECanevas.adaptateur)root.AIMECanevas.adaptateur('site',A);else root.AIMECanevasSite=A;
 })(typeof self!=='undefined'?self:this);
