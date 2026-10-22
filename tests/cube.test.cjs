@@ -2,6 +2,15 @@
 const assert=require('assert'),fs=require('fs'),path=require('path');const C=require('../cube/modele.js');const lire=f=>fs.readFileSync(path.join(__dirname,'..',f),'utf8');
 let n=0;const t=(nom,f)=>{f();n++};
 
+t('Régie personnelle : le Bureau et le dock lisent le même cube, par le même stockage et la même vue',()=>{const A=require('../os/apps.js'),c=A.catalogue([]);
+ assert.equal(A.epingles(c)[0].id,'cube','le cube en tête du dock');assert.equal(A.epingles(c,['regie','stitch'])[0].id,'cube','même avec des épingles choisies');assert.equal(A.epingles(c,['cube','regie']).filter(a=>a.id==='cube').length,1,'jamais en double');
+ const os=lire('os/os.js'),b=lire('bureau/index.html'),r=lire('cube/regie.js'),i=lire('cube/index.html'),v=lire('cube/vue3d.js');
+ assert.ok(os.includes("a.id==='cube'&&window.AIMECubeVue")&&os.includes('AIMECubeVue.miniHTML()'),'miniature du cube dans le dock');
+ ['/cube/modele.js','/cube/stock.js','/cube/vue3d.js'].forEach(f=>{assert.ok(b.includes(f),'Bureau : '+f);assert.ok(i.includes(f),'Mon cube : '+f)});
+ assert.ok(!/localStorage|sessionStorage/.test(r+v),'les vues ne touchent pas au stockage');assert.ok(r.includes('S.charger(moi)')&&r.includes('V.monter('),'même modèle, même vue');
+ assert.ok(r.includes("'/aime/?carte='")&&lire('cube/cartes.js').includes("get('carte')"),'écrire ou corriger la carte dans Le Monde AIME');
+ assert.ok(/droitsOrbe/.test(r)&&/aucun/.test(r),'l\'orbe : préférences affichées, droits vides');assert.ok(!/regie\/regie\.js|\/regie\/index/.test(i),'la Régie maîtresse n\'est pas chargée');
+ assert.ok(v.includes("'keydown'")&&v.includes("'pointerdown'")&&/RM\)box\.classList/.test(v.replace('if(!RM)','RM)')),'tourner au doigt, à la souris, au clavier ; mouvement réduit');});
 t('six facettes, les catégories demandées, chacune sur une face distincte du cube de la grande page',()=>{
  assert.deepStrictEqual(C.IDS,['identite','medias','temps','relations','documents','activites']);
  assert.deepStrictEqual(C.FACETTES.map(f=>f.face).sort(),[0,1,2,3,4,5]);
@@ -58,7 +67,7 @@ t('les cartes : timbre existant, glisser-déposer ET commande accessible, fente,
  assert.ok(j.includes("'pointerdown'")&&j.includes('cp-apposer'),'glisser et bouton');assert.ok(j.includes('cp-fente')&&j.includes('cp-pause')&&j.includes('cp-passer'));
  assert.ok(j.includes('aimeRuler')&&j.includes('svAnchors'),'la règle et les repères de la page sont réutilisés');
  assert.ok(/if\(RM\)\{versY\(voyage\.b\);arriver\(\)/.test(j),'mouvement réduit : arrivée directe');assert.ok(/prefers-reduced-motion/.test(s));
- assert.ok(j.includes("'aime-cube:'")&&j.includes('sessionStorage'),'local par compte ; la démonstration ne persiste pas');
+ {const st=lire('cube/stock.js');assert.ok(st.includes("'aime-cube:'")&&st.includes('sessionStorage'),'local par compte ; la démonstration ne persiste pas');assert.ok(j.includes('AIMECubeStock')&&!j.includes('localStorage'),'un seul endroit pour le stockage : cube/stock.js')}
  assert.ok(!/fetch\([^)]*(POST|method)/.test(j),'rien n\'est envoyé au serveur');assert.ok(j.includes("'Démonstration'"),'la démonstration est dite')});
 
 t('assemblage : même cube, faces en attente en verre, ouverture et orbe de la page, compagnon existant',()=>{const j=lire('cube/assemblage.js'),s=lire('cube/assemblage.css'),h=lire('aime/index.html'),c=lire('cube/cartes.js');

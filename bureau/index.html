@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="/porte/porte.css">
 <link rel="stylesheet" href="/porte/revelation.css">
 <link rel="stylesheet" href="/orbe/pilote.css">
+<link rel="stylesheet" href="/cube/vue3d.css">
 </head>
 <body class="os">
 <a class="evite" href="#lanceur-q">Aller à la recherche</a>
@@ -83,7 +84,12 @@
 <script src="/porte/revelation.js"></script>
 <script src="/pointzero/pz.js"></script>
 <script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'bureau',position:'compact'})</script>
+<script src="/cube/modele.js"></script>
+<script src="/cube/stock.js"></script>
+<script src="/cube/vue3d.js"></script>
 <script src="/os/apps.js"></script>
 <script src="/os/os.js"></script>
+<!-- le dock montre le cube de la personne : ses faces posées en couleur -->
+<script>if(window.AIMECubeStock)AIMECubeStock.qui().then(function(u){u=u||AIMECubeStock.demo();if(!u)return;AIMECubeVue.memo(AIMECubeStock.charger(u),u);var b=document.querySelector('#dockApps [data-app="cube"] .ico');if(b)b.innerHTML=AIMECubeVue.miniHTML()}).catch(function(){})</script>
 </body>
 </html>
