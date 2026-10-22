@@ -29,3 +29,28 @@ Le bureau ne commence pas par une app à choisir, mais par une matière à dépo
 ## Mise en place
 - `db/migrations/2026-10-22-matiere.sql`, sur la base de preview puis sur la production.
 - `CONTACT_TO` (et l'envoi Resend déjà configuré) pour « Transmettre à AIME ».
+
+## Lot A · les six formes deviennent des outils (l'orbe, pointeur intelligent)
+
+Une fois le projet né (première confirmation), les six noms sous la forme deviennent des boutons : chacun ouvre un **mode** sur le même canevas.
+
+| Mode | Ce qu'on manipule | Ce que l'orbe propose |
+|---|---|---|
+| Point | le cercle central | importer, écrire, compléter un projet en attente |
+| Ligne | 5 points = 5 paramètres (largeur, usage, toile, densité, couleurs) | le réglage (curseur ou choix), sa conséquence en points et en cm, puis la confirmation ; un point confirmé reste vert |
+| Relation | les fils DMC autour du point, et des liens pointillés entre fils très proches | ce que le fil représente, pourquoi il est relié, ses voisins **réels** dans le nuancier ; regrouper deux fils proches |
+| Grille | une case par fil, dans l'ordre de broderie | sélectionner, regrouper, déplacer (glisser, ou Alt + flèches) ; le patron est redessiné |
+| Composition | 5 blocs (image, grille, fils, couleurs, mesures) dans une grille responsive de 4 colonnes | largeur, hauteur, ordre, puis validation enregistrée dans le projet |
+| Projet | la carte vivante | quatre avancements séparés (analyse, confirmations, réalisation, livrables), manques, décisions et leur source, prochaine étape |
+
+**Principe.** Chaque élément interactif déclare son identifiant, son type, ses propriétés, ses actions et ses droits (`orbe/contexte.js`). Le pilote (`orbe/pilote.js`) n'affiche que ce qui est déclaré, et suit toujours : observer → proposer → régler → confirmer → enregistrer. Une action qui a des conséquences demande une seconde confirmation (« Confirmer : … »).
+
+**Gestes.** Clic, toucher ou clavier : sélectionner suffit à ouvrir les commandes. Entrée ouvre la bulle et y place le focus, Échap la referme et rend le focus. Flèches pour passer d'un élément à l'autre, Alt + flèches pour déplacer. La couche de l'orbe est transparente aux gestes (`pointer-events: none`).
+
+**L'orbe.** La même pastille conique que le compagnon. Elle suit doucement la souris (réglable, coupée sur écran tactile et si le système demande moins de mouvement), se pose près de l'élément choisi. Trois niveaux d'autonomie, mémorisés sur l'appareil : *À la demande* (rien sans clic), *Propose aux pauses* (une ligne discrète), *S'ouvre d'elle-même aux pauses*.
+
+**Ce qui n'est pas de l'IA.** Tout est calcul déterministe (grille, écarts de couleur, nuancier DMC) ou choix de l'utilisateur. Les références DMC ne sont jamais inventées : un fil ne peut être remplacé que par une entrée réelle du nuancier ; regrouper ou remplacer remet la validation DMC à faire.
+
+**Trace.** `p.decisions` (la dernière valeur par clé) et `p.historique` (200 entrées) gardent la source : *Vous*, *Calcul*, *Import*, *Hypothèse IA* (réservée au lot C). Les cases du patron (`p.cases`) restent sur l'appareil, comme l'image ; la remontée n'envoie ni l'une ni les autres.
+
+**Limites connues.** Un projet créé avant ce lot n'a pas ses cases : regrouper ou changer de fil demande de réimporter l'image (l'orbe le dit). Le mariage (lot D) et l'agent IA (lot C) ne sont pas dans ce lot.
