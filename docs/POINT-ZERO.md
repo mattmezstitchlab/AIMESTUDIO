@@ -54,3 +54,14 @@ Une fois le projet né (première confirmation), les six noms sous la forme devi
 **Trace.** `p.decisions` (la dernière valeur par clé) et `p.historique` (200 entrées) gardent la source : *Vous*, *Calcul*, *Import*, *Hypothèse IA* (réservée au lot C). Les cases du patron (`p.cases`) restent sur l'appareil, comme l'image ; la remontée n'envoie ni l'une ni les autres.
 
 **Limites connues.** Un projet créé avant ce lot n'a pas ses cases : regrouper ou changer de fil demande de réimporter l'image (l'orbe le dit). Le mariage (lot D) et l'agent IA (lot C) ne sont pas dans ce lot.
+
+## Lot B · la carte projet devient un mini-site privé
+
+« Ouvrir le mini-site », sur une carte projet ou à la fin des confirmations, ouvre `/projet/?id=…`.
+
+- **Aucun second générateur.** `pointzero/minisite.js` traduit le projet en site `aime-site` ; le moteur de pages (`vitrine/rendu.js`) le rend avec ses blocs : en-tête (photo), image (le motif redessiné net depuis les cases), Fils DMC, Chiffres (dimensions en points et en cm, nombre de fils, points à broder), Avancement (quatre mesures séparées), Paragraphe (prochaines actions et ce qui reste à confirmer), Chronologie (décisions et leur source).
+- **Deux blocs ajoutés au moteur commun** : `fils` (nuancier DMC, couleurs validées) et `avancement` (barres bornées). Ils rejoignent le catalogue du générateur, famille « Projet ».
+- **Disposition.** « Modifier la disposition » ouvre le générateur existant (`/sites/?site=…`) sur ce site : glisser, redimensionner, ajouter, retirer, changer d'ambiance. Un lien « Retour au projet » y ramène. La disposition est gardée ; le contenu qui vient du projet (fils, dimensions, avancement, décisions, motif, titre) est rafraîchi à chaque ouverture.
+- **Retour.** « Retour au Point Zéro » (ou au Bureau) reprend le projet là où il était ; le projet n'est jamais modifié par le mini-site.
+- **Canevas.** Le bouton « Ouvrir dans le Canevas » est présent et marqué « bientôt » : il n'ouvre rien tant que Canevas 0 n'existe pas.
+- **Privé.** Projet et mini-site restent dans ce navigateur (IndexedDB et `aime-sites`), comme avant ; le compte et le partage viendront avec le lot de persistance.
