@@ -35,7 +35,7 @@ var SOURCES=[
  {id:'simulations',outil:'world',nom:'Démonstrateurs · simulations',demo:true,lister:function(S){return cles(S).filter(function(k){return/^aime-sim-[a-z0-9-]+$/.test(k)}).map(function(k){var j=lire(S,k),u=k.slice(9);if(!Array.isArray(j)||!j.length)return null;
   return{id:u,titre:u==='world'?'AIME WORLD':u==='mariage'?'Mariage Léa & Marc':u==='seminaire'?'Séminaire Maison Orée':u,detail:'Simulation : '+nb(j.length,'action','actions')+' · données fictives',quand:null,lien:u==='world'?'/vitrine/world/':'/vitrine/site/?u='+encodeURIComponent(u),action:'Reprendre la simulation'}}).filter(Boolean)}},
  {id:'sites',outil:'sites',nom:'Sites',lister:function(S){var o=lire(S,'aime-sites');if(!o||!o.sites)return[];return Object.keys(o.sites).map(function(id){var x=o.sites[id]||{};var n=(x.pages||[]).length;
-  return{id:id,titre:x.nom||'Site',detail:n+' page'+(n>1?'s':'')+(x.infos&&x.infos.titre?' · '+x.infos.titre:''),quand:quand(x.majLe),lien:'/sites/?site='+encodeURIComponent(id),action:'Ouvrir dans le générateur',enCours:o.cur===id}})}},
+  return{id:id,titre:x.nom||'Site',detail:n+' page'+(n>1?'s':'')+(x.infos&&x.infos.titre?' · '+x.infos.titre:''),quand:quand(x.majLe),lien:'/canevas/?site='+encodeURIComponent(id)+'&de=%2Fbureau%2F',action:'Modifier dans le Canevas',enCours:o.cur===id}})}},
  {id:'timeline',outil:'timeline',nom:'Timeline Jour J',lister:function(S){var k=S.getItem('jourj-plan-v5')!=null?'jourj-plan-v5':S.getItem('jourj-plan-v4')!=null?'jourj-plan-v4':null;if(!k)return[];
   return[{id:k,titre:'Plan du jour J',detail:'Dans l\'ancienne Timeline (/v1/)',quand:null,lien:'/v1/',action:'Ouvrir la Timeline'}]}}];
 
@@ -48,12 +48,33 @@ function reprendre(inv,n){var l=inv.projets.filter(function(p){return p.source!=
 
 /* ---------- sauvegarde et restauration ---------- */
 function sauvegarder(S,date){var c={};cles(S).forEach(function(k){try{c[k]=S.getItem(k)}catch(e){}});return{format:'aime-sauvegarde',schema:1,date:date||null,nombre:Object.keys(c).length,cles:c}}
-function lireSauvegarde(texte){var o=typeof texte==='string'?JSON.parse(texte):texte;if(!o||o.format!=='aime-sauvegarde'||!o.cles||typeof o.cles!=='object')throw new Error('Ce fichier n\'est pas une sauvegarde AIME.');
+/* les bases du navigateur (IndexedDB) : les projets du Point Zéro et leurs images. Encodage en JSON sans perte :
+   un Blob devient {__aime:'blob',type,data:'data:…'}, un tableau typé {__aime:'ta',t,data:base64}. La lecture des Blob
+   (asynchrone) est fournie par l'appelant ; ici, seulement la forme, testée sous node. */
+var BASES={'aime-point-zero':['fichiers','projets']},TA=['Uint8Array','Uint8ClampedArray','Int16Array','Uint16Array','Int32Array','Uint32Array','Float32Array','Float64Array'];
+function b64(u8){var s='';for(var i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return typeof btoa==='function'?btoa(s):Buffer.from(s,'binary').toString('base64')}
+function deB64(t){var s=typeof atob==='function'?atob(t):Buffer.from(t,'base64').toString('binary'),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
+function encoder(v,lireBlob){if(v==null||typeof v!=='object')return Promise.resolve(v);
+ if(typeof Blob!=='undefined'&&v instanceof Blob)return lireBlob(v).then(function(d){return{__aime:'blob',type:v.type||'',data:d}});
+ if(ArrayBuffer.isView(v)&&TA.indexOf(v.constructor.name)>=0)return Promise.resolve({__aime:'ta',t:v.constructor.name,data:b64(new Uint8Array(v.buffer,v.byteOffset,v.byteLength))});
+ if(v instanceof ArrayBuffer)return Promise.resolve({__aime:'ab',data:b64(new Uint8Array(v))});
+ if(Array.isArray(v))return Promise.all(v.map(function(x){return encoder(x,lireBlob)}));
+ var k=Object.keys(v);return Promise.all(k.map(function(x){return encoder(v[x],lireBlob)})).then(function(L){var o={};k.forEach(function(x,i){o[x]=L[i]});return o})}
+function decoder(v){if(v==null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(decoder);
+ if(v.__aime==='ta'&&TA.indexOf(v.t)>=0){var u=deB64(v.data),C=(typeof self!=='undefined'?self:global)[v.t];return new C(u.buffer,u.byteOffset,u.byteLength/C.BYTES_PER_ELEMENT)}
+ if(v.__aime==='ab')return deB64(v.data).buffer;
+ if(v.__aime==='blob'&&typeof v.data==='string'&&/^data:/.test(v.data)){var m=/^data:([^;,]*)(;base64)?,(.*)$/.exec(v.data);if(m&&typeof Blob!=='undefined')return new Blob([m[2]?deB64(m[3]):decodeURIComponent(m[3])],{type:v.type||m[1]})}
+ var o={};Object.keys(v).forEach(function(k){o[k]=decoder(v[k])});return o}
+/* une base valide dans un fichier : seulement les bases et magasins connus, des enregistrements avec un id */
+function basesValides(b){if(b==null)return{};if(typeof b!=='object')throw new Error('Sauvegarde abîmée : bases illisibles.');var o={};
+ Object.keys(b).forEach(function(n){if(!BASES[n])return;o[n]={};BASES[n].forEach(function(s){var L=b[n][s];if(L==null)return;if(!Array.isArray(L))throw new Error('Sauvegarde abîmée : '+n+'/'+s+'.');o[n][s]=L.filter(function(x){return x&&typeof x==='object'&&(typeof x.id==='string'||typeof x.id==='number')})})});return o}
+function compterBases(b){var n=0;Object.keys(b||{}).forEach(function(k){Object.keys(b[k]).forEach(function(s){n+=b[k][s].length})});return n}
+function lireSauvegarde(texte){var o=typeof texte==='string'?JSON.parse(texte):texte;if(!o||o.format!=='aime-sauvegarde'||!o.cles||typeof o.cles!=='object')throw new Error('Ce fichier n\'est pas une sauvegarde AIME.');o.bases=basesValides(o.bases);
  Object.keys(o.cles).forEach(function(k){if(typeof o.cles[k]!=='string')throw new Error('Sauvegarde abîmée : « '+k+' » n\'est pas du texte.')});return o}
 /* l'aperçu, avant toute écriture : ce qui est nouveau, ce qui diffère, ce qui est identique */
 function apercu(S,sauv){var a={nouvelles:[],differentes:[],identiques:[]};Object.keys(sauv.cles).sort().forEach(function(k){var v=null;try{v=S.getItem(k)}catch(e){}if(v==null)a.nouvelles.push(k);else if(v===sauv.cles[k])a.identiques.push(k);else a.differentes.push(k)});return a}
 /* restaurer : ajoute ce qui manque ; ne remplace une clé différente que si remplacer === true ; n'efface jamais */
 function restaurer(S,sauv,remplacer){var ap=apercu(S,sauv),ecrites=[],erreurs=[];ap.nouvelles.concat(remplacer===true?ap.differentes:[]).forEach(function(k){try{S.setItem(k,sauv.cles[k]);ecrites.push(k)}catch(e){erreurs.push(k)}});return{ecrites:ecrites,gardees:remplacer===true?[]:ap.differentes,erreurs:erreurs}}
 
-return{interne:interne,SOURCES:SOURCES,ANCIEN_BUREAU:ANCIEN_BUREAU,inventaire:inventaire,reprendre:reprendre,cles:cles,sauvegarder:sauvegarder,lireSauvegarde:lireSauvegarde,apercu:apercu,restaurer:restaurer};
+return{BASES:BASES,encoder:encoder,decoder:decoder,basesValides:basesValides,compterBases:compterBases,interne:interne,SOURCES:SOURCES,ANCIEN_BUREAU:ANCIEN_BUREAU,inventaire:inventaire,reprendre:reprendre,cles:cles,sauvegarder:sauvegarder,lireSauvegarde:lireSauvegarde,apercu:apercu,restaurer:restaurer};
 });

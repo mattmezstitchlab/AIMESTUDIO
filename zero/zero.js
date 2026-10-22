@@ -47,27 +47,13 @@ var phrases=[].slice.call(document.querySelectorAll('.phrase p'));
 function phrasesMaj(){if(calme())return;var V=vh();phrases.forEach(function(p){var r=p.getBoundingClientRect(),c=(r.top+r.height/2)/V,d=Math.abs(c-.62),o=lisse(1-(d-.12)/.24);p.style.opacity=o.toFixed(3);p.style.transform='translateY('+((c-.6)*-24).toFixed(1)+'px)'})}
 
 /* ---------- 3 · la métamorphose : seize points, six formes ---------- */
-var NOMS=['Point','Ligne','Relation','Grille','Composition','Projet'],N=16;
-var RECTS=[[60,70,170,150],[250,70,90,60],[250,150,90,70],[60,240,280,90]];
-function etats(){var E=[],i,P;
- E.push(Array.apply(null,{length:N}).map(function(){return[200,200]}));
- E.push(Array.apply(null,{length:N}).map(function(_,i){return[50+i*20,200]}));
- P=[[200,200]];for(i=1;i<N;i++){var a=(i-1)/(N-1)*Math.PI*2-Math.PI/2;P.push([200+132*Math.cos(a),200+132*Math.sin(a)])}E.push(P);
- E.push(Array.apply(null,{length:N}).map(function(_,i){return[80+(i%4)*80,80+Math.floor(i/4)*80]}));
- P=[];RECTS.forEach(function(r){P.push([r[0],r[1]],[r[0]+r[2],r[1]],[r[0]+r[2],r[1]+r[3]],[r[0],r[1]+r[3]])});E.push(P);
- E.push(P.map(function(p){return[200+(p[0]-200)*.78,212+(p[1]-200)*.78]}));return E}
+/* les formes viennent de zero/formes.js, partagées avec le Point Zéro du Bureau */
+var F=window.AIMEFormes,NOMS=F.NOMS,N=F.N,etats=F.etats;
 var E=etats(),forme=$('forme'),pts=[],grp=[];
 function meta(){var defs=el('defs',{},forme),lg=el('linearGradient',{id:'irisZ',x1:0,y1:0,x2:1,y2:1},defs);[['0','#FB7185'],['.35','#F59E0B'],['.68','#7C5CFF'],['1','#22D3EE']].forEach(function(s){el('stop',{offset:s[0],'stop-color':s[1]},lg)});
  var st={fill:'none',stroke:'#EDEDF0','stroke-width':1.2,'stroke-opacity':.55,'vector-effect':'non-scaling-stroke'};
  grp=E.map(function(){return el('g',{opacity:0},forme)});
- el('circle',Object.assign({cx:200,cy:200,r:42},st,{stroke:'url(#irisZ)','stroke-opacity':.7}),grp[0]);
- el('line',Object.assign({x1:50,y1:200,x2:350,y2:200},st),grp[1]);
- for(var i=1;i<N;i++){var p=E[2][i];el('line',Object.assign({x1:200,y1:200,x2:p[0],y2:p[1]},st,{'stroke-opacity':.35}),grp[2])}
- for(var j=1;j<N;j+=3){var a=E[2][j],b=E[2][(j+4-1)%(N-1)+1];el('line',Object.assign({x1:a[0],y1:a[1],x2:b[0],y2:b[1]},st,{'stroke-opacity':.25}),grp[2])}
- for(var g=0;g<4;g++){el('line',Object.assign({x1:80+g*80,y1:80,x2:80+g*80,y2:320},st),grp[3]);el('line',Object.assign({x1:80,y1:80+g*80,x2:320,y2:80+g*80},st),grp[3])}
- RECTS.forEach(function(r){el('rect',Object.assign({x:r[0],y:r[1],width:r[2],height:r[3],rx:6},st),grp[4])});
- el('rect',Object.assign({x:28,y:28,width:344,height:344,rx:18},st,{'stroke-opacity':.8}),grp[5]);el('line',Object.assign({x1:28,y1:66,x2:372,y2:66},st),grp[5]);el('circle',{cx:348,cy:47,r:7,fill:'url(#irisZ)'},grp[5]);
- RECTS.forEach(function(r){var s=.78,x=200+(r[0]-200)*s,y=212+(r[1]-200)*s;el('rect',Object.assign({x:x,y:y,width:r[2]*s,height:r[3]*s,rx:5},st),grp[5])});
+ grp.forEach(function(g,e){F.traits(e,el,g,st,'irisZ')});
  for(var k=0;k<N;k++)pts.push(el('circle',{r:3.6,fill:'#EDEDF0'},forme));
  /* version immobile : les six formes, l'une sous l'autre */
  var S=$('statique');E.forEach(function(P,e){var f=document.createElement('figure'),sv=document.createElementNS(NS,'svg');sv.setAttribute('viewBox','0 0 400 400');sv.setAttribute('aria-hidden','true');var c=grp[e].cloneNode(true);c.setAttribute('opacity',1);sv.appendChild(c);

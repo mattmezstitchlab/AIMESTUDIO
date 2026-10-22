@@ -14,12 +14,14 @@ var RM=matchMedia('(prefers-reduced-motion: reduce)').matches,PETIT=matchMedia('
 /* mode « page » : la Page Zéro est le bureau (os/coque.js pose le dock et les fenêtres par-dessus) */
 var PAGE=document.body.classList.contains('os-page');
 function texte(id,t){var e=$(id);if(e)e.textContent=t}
-var cat=A.catalogue(N.ENTREES),parId={};cat.forEach(function(a){parId[a.id]=a});
+/* le propriétaire du site (droit décidé par le serveur, /api/identite) voit en plus la Régie et les démonstrateurs internes */
+var proprio=false,cat=A.catalogue(N.ENTREES),parId={};cat.forEach(function(a){parId[a.id]=a});
+function actionsVues(){return A.actions?A.actions({proprietaire:proprio}):A.ACTIONS}
 if(PAGE)CLE='aime-os-zero';var etat=A.etat(lire(CLE)),fen=[],z=10,focusId=null,seq=0,cfg=null;
 function annoncer(m){texte('annonce',m)}
 
 /* ---------- icônes ---------- */
-function ico(a,cls){return'<span class="ico'+(a.teinte==='iris'?' iris':'')+(cls?' '+cls:'')+'" style="--t:'+esc(a.teinte==='iris'?'#7C5CFF':a.teinte)+'" aria-hidden="true"><b>'+esc(a.sigle)+'</b></span>'}
+function ico(a,cls){if(a.id==='cube'&&window.AIMECubeVue)return'<span class="ico cube-ico'+(cls?' '+cls:'')+'" aria-hidden="true">'+AIMECubeVue.miniHTML()+'</span>';return'<span class="ico'+(a.teinte==='iris'?' iris':'')+(cls?' '+cls:'')+'" style="--t:'+esc(a.teinte==='iris'?'#7C5CFF':a.teinte)+'" aria-hidden="true"><b>'+esc(a.sigle)+'</b></span>'}
 /* l'app qui porte une adresse : le plus long préfixe */
 function appDe(href){var p=String(href||'').split(/[?#]/)[0],best=null,lg=-1;cat.forEach(function(a){var h=a.href.split(/[?#]/)[0];if(p===h||(h!=='/'&&p.indexOf(h)===0)){if(h.length>lg){lg=h.length;best=a}}});return best||parId.zero||cat[0]}
 
@@ -97,7 +99,7 @@ var resultats=[],sel=0;
 function elements(q){var projets=[];if(B){try{projets=B.inventaire(localStorage).projets.slice(0,60).map(function(p){return{type:'projet',nom:p.titre,phrase:p.detail,href:p.lien,app:appDe(p.lien)}})}catch(e){}}
  var groupes=[['Fenêtres ouvertes',A.chercher(q,fen.map(function(w){return{type:'fenetre',nom:w.app.nom,phrase:'Au premier plan',w:w,app:w.app}}),6)],
   ['Apps',A.chercher(q,cat.map(function(a){return{type:'app',nom:a.nom,phrase:a.phrase,app:a}}),q?8:12)],
-  ['Actions',A.chercher(q,A.ACTIONS.map(function(x){return{type:'action',nom:x.nom,mots:x.mots,phrase:'',href:x.href,app:parId[x.app]||appDe(x.href)}}),6)],
+  ['Actions',A.chercher(q,actionsVues().map(function(x){return{type:'action',nom:x.nom,mots:x.mots,phrase:'',href:x.href,app:parId[x.app]||appDe(x.href)}}),6)],
   ['Projets',q?A.chercher(q,projets,8):projets.slice(0,4)]];
  groupes=groupes.filter(function(g){return g[1].length});if(A.pertinence&&A.plier(q))groupes.sort(function(a,b){return A.pertinence(q,b[1][0])-A.pertinence(q,a[1][0])});return groupes}
 function rendrePalette(){var q=$('paletteQ').value,G=elements(q),h='',i=0;resultats=[];
@@ -129,7 +131,7 @@ function majContexte(){if(!$('orbePan').hidden)remplirOrbe()}
 function suggestions(){var w=courante(),a=w&&w.app||(PAGE?parId.zero:null),o=a&&cfg&&R?R.orbeDe(cfg,a.id):null,L=[];
  if(o&&o.presence!=='aucune')o.suggestions.forEach(function(s){L.push({nom:s.libelle,aide:'Pour '+a.nom,cible:s.cible,pourquoi:s.pourquoi||'Choisie par le propriétaire de '+a.nom+' dans la Régie.',site:true})});
  if(B){try{var r=B.reprendre(B.inventaire(localStorage),1)[0];if(r)L.push({nom:'Reprendre : '+r.titre,aide:r.detail,cible:r.lien,pourquoi:'C\'est le projet modifié le plus récemment dans ce navigateur.'})}catch(e){}}
- if(a&&a.id!=='regie')L.push({nom:'Régler l\'orbe de '+a.nom,aide:'Présence, autonomie, suggestions',cible:'/regie/#orbe',pourquoi:'Vous décidez de ce que l\'orbe dit et fait sur chaque site.'});
+ if(proprio&&a&&a.id!=='regie')L.push({nom:'Régler l\'orbe de '+a.nom,aide:'Présence, autonomie, suggestions',cible:'/regie/#orbe',pourquoi:'Vous décidez de ce que l\'orbe dit et fait sur chaque site.'});
  L.push({nom:'Rechercher une app, un projet, une action',aide:'Ctrl K',cible:'palette',pourquoi:'Toujours disponible, partout dans l\'OS.'});return{w:w,a:a,o:o,L:L.slice(0,7)}}
 function agir(s,w){fermerTout();if(s.cible==='palette')return ouvrirPalette();if(/^https:/.test(s.cible))return window.open(s.cible,'_blank','noopener');
  if(s.cible.charAt(0)==='#'){if(w){try{w.frame.contentWindow.location.hash=s.cible}catch(_){}}else if(PAGE)location.hash=s.cible;return}ouvrir(appDe(s.cible).id,s.cible)}
@@ -158,10 +160,12 @@ document.addEventListener('pointerdown',function(e){if(!$('orbePan').hidden&&!e.
 $('accueilBtn').onclick=function(){fen.forEach(function(w){if(!w.reduite){w.reduite=true;w.el.hidden=true}});focusId=null;texte('appCourante','');majDock();accueilVisible();enregistrer();if($('lanceur-q'))$('lanceur-q').focus();else if(PAGE)scrollTo({top:0,behavior:RM?'auto':'smooth'})};
 
 /* ---------- l'accueil ---------- */
-function accueil(){$('salut').textContent=A.salutation(new Date().getHours());
- if(window.AIMEOrbe)try{var o=AIMEOrbe.monter($('orbeAccueil'),{amplitude:.03});if(RM&&o&&o.animer)o.animer(false)}catch(e){}
- $('actionsRapides').innerHTML=A.ACTIONS.slice(0,5).map(function(x,i){return'<button type="button" data-a="'+i+'">'+esc(x.nom)+'</button>'}).join('');
- $('actionsRapides').onclick=function(e){var b=e.target.closest('[data-a]');if(!b)return;var x=A.ACTIONS[+b.dataset.a];ouvrir(x.app,x.href)};
+function accueil(){var salut=A.salutation(new Date().getHours());$('salut').textContent=salut;
+ /* le Point Zéro : le bureau commence par une matière à déposer ; sans lui, l'orbe seule */
+ if(window.AIMEPointZero&&$('pointZero'))try{AIMEPointZero.monter($('pointZero'),{salut:function(n){if(n)$('salut').textContent=salut+' '+n}})}catch(e){}
+ else if(window.AIMEOrbe&&$('orbeAccueil'))try{var o=AIMEOrbe.monter($('orbeAccueil'),{amplitude:.03});if(RM&&o&&o.animer)o.animer(false)}catch(e){}
+ $('actionsRapides').innerHTML=actionsVues().slice(0,5).map(function(x,i){return'<button type="button" data-a="'+i+'">'+esc(x.nom)+'</button>'}).join('');
+ $('actionsRapides').onclick=function(e){var b=e.target.closest('[data-a]');if(!b)return;var x=actionsVues()[+b.dataset.a];ouvrir(x.app,x.href)};
  var P=[];if(B){try{P=B.reprendre(B.inventaire(localStorage),6)}catch(e){}}
  if(P.length){$('reprendre').hidden=false;$('cartes').innerHTML=P.map(function(p,i){return'<button class="carte-p" type="button" data-p="'+i+'"><b>'+esc(p.titre)+'</b><small>'+esc(p.detail||'')+'</small></button>'}).join('');
   $('cartes').onclick=function(e){var b=e.target.closest('[data-p]');if(!b)return;var p=P[+b.dataset.p];ouvrir(appDe(p.lien).id,p.lien)}}}
@@ -181,7 +185,7 @@ var fond=!$('fond')?null:(function(){var c=$('fond'),x=c.getContext('2d'),P=[],W
 chargerRegie();if(!PAGE){accueil();heure();setInterval(heure,20000)}majDock();
 /* sur la Page Zéro : les liens vers une app s'ouvrent dans une fenêtre (sur grand écran), la page reste dessous */
 if(PAGE)document.addEventListener('click',function(e){if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||PETIT.matches)return;var l=e.target.closest&&e.target.closest('a[href]');
- if(!l||l.target||l.hasAttribute('download')||l.closest('.os-coque'))return;var u;try{u=new URL(l.href)}catch(_){return}if(u.origin!==location.origin||u.pathname==='/'||/^\/travaux\//.test(u.pathname))return;
+ if(!l||l.target||l.hasAttribute('download')||l.closest('.os-coque')||l.closest('.aime-porte'))return;/* la porte ouvre une vraie page, jamais une fenêtre */var u;try{u=new URL(l.href)}catch(_){return}if(u.origin!==location.origin||u.pathname==='/'||/^\/travaux\//.test(u.pathname))return;
  var p=A.adresseApp(u.pathname),a=null,lg=-1;cat.forEach(function(x){var h=x.href.split(/[?#]/)[0];if(h!=='/'&&(p===h||p.indexOf(h)===0)&&h.length>lg){lg=h.length;a=x}});if(!a)return;
  e.preventDefault();ouvrir(a.id,p===u.pathname?p+u.search+u.hash:p)});
 if(!PAGE)etat.fenetres.forEach(function(s){var a=parId[s.app]||appDe(s.href);if(a)creer({app:a,href:s.href,x:s.x,y:s.y,l:s.l,h:s.h,reduite:s.reduite,agrandie:s.agrandie})});
@@ -189,4 +193,6 @@ fen.forEach(function(w){if(w.agrandie)w.el.classList.add('agrandie');placer(w)})
 /* ouvrir une app par l'adresse : /bureau/#app=studio */
 var m=/^#app=([a-z0-9-]+)$/.exec(location.hash);if(m&&parId[m[1]]){ouvrir(m[1]);history.replaceState(null,'',location.pathname)}
 accueilVisible();
+fetch('/api/identite',{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||j.proprietaire!==true)return;
+ proprio=true;cat=A.catalogue(N.ENTREES,{proprietaire:true});cat.forEach(function(a){parId[a.id]=a});majDock()}).catch(function(){});
 })();

@@ -1,18 +1,27 @@
 /* AIME OS · le catalogue des apps et la logique pure du bureau (recherche, placement des fenêtres).
-   Le registre (nav/registre.js) reste la seule liste des sites ; l'OS y ajoute ses deux apps système
-   (Mon espace, la Régie) et retire l'entrée « Mon Bureau », puisque l'OS EST le Bureau. Testé sous node. */
+   Le registre (nav/registre.js) reste la seule liste des sites ; l'OS y ajoute ses apps système
+   (le Point Zéro, Mon espace, la Régie) et retire l'entrée « Mon Bureau », puisque l'OS EST le Bureau. Testé sous node. */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.AIMEOSApps=factory()})(typeof self!=='undefined'?self:this,function(){'use strict';
 
 /* une couleur par famille, tirée de l'iris AIME */
 var TEINTES={systeme:'iris',monde:'#7C5CFF',evenements:'#FB7185',institutions:'#22D3EE',creation:'#F59E0B',jeux:'#86EFAC'};
 var SYSTEME=[
+ {id:'cube',nom:'Mon cube',href:'/cube/',phrase:'Ma Régie personnelle : mes six facettes, mon timbre, mon orbe',cat:'systeme',statut:'experimental',sigle:'Cu'},
+ {id:'pointzero',nom:'Point Zéro',href:'/point-zero/',phrase:'Déposer une matière : intention, notes, fichiers ; le système la distribue',cat:'systeme',statut:'experimental',sigle:'P0'},
  {id:'espace',nom:'Mon espace',href:'/bureau/espace/',phrase:'Reprendre ses projets, sauvegarder ce navigateur',cat:'systeme',statut:'disponible',sigle:'Es'},
- {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré'}];
-var EPINGLES=['espace','regie','studio','sites','stitch','g44','world','zero'];
+ {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré',reserve:true}];
+/* réservé : seulement pour le propriétaire du site, droit décidé par le serveur (/api/identite → proprietaire) ;
+   l'interface ne fait que montrer ou masquer, elle ne protège rien. */
+/* sigles choisis quand le calcul automatique tromperait (« Le Réseau » donnerait « Lr », trop proche d'une lettre au hasard) */
+var SIGLES={reseau:'Rs',canevas:'Cv'};
+var EPINGLES=['cube','pointzero','espace','regie','reseau','canevas','studio','stitch','g44','world','zero'];
 /* les actions que l'on peut lancer depuis la palette ou l'orbe */
 var ACTIONS=[
+ {id:'deposer',nom:'Déposer une matière au point zéro',app:'pointzero',href:'/point-zero/',mots:'deposer importer note intention demande fichier trier classer point zero'},
  {id:'nouveau-devis',nom:'Nouveau devis',app:'regie',href:'/regie/#nouveau-devis',mots:'devis facture client'},
- {id:'nouveau-site',nom:'Composer un site',app:'sites',href:'/sites/',mots:'site générateur page web'},
+ {id:'canevas',nom:'Modifier un mini-site dans le Canevas',app:'canevas',href:'/canevas/',mots:'canevas modifier site mini-site page bloc disposition'},
+ {id:'reseau',nom:'Découvrir le Réseau des facettes',app:'reseau',href:'/reseau/',mots:'reseau facettes decouvrir bibliotheque module'},
+ {id:'nouveau-site',nom:'Créer un site (ancien générateur)',app:'sites',href:'/sites/',mots:'site générateur créer importer exporter page web'},
  {id:'sites-clients',nom:'Voir les sites clients (trois écrans, par rôle)',app:'regie',href:'/regie/#sites',mots:'site client aperçu rôle perspective générateur'},
  {id:'direct',nom:'Lancer le direct du jour J',app:'live',href:'/live/',mots:'live direct jour j retard annonce plan b salle'},
  {id:'editer-zero',nom:'Placer des appareils sur la Page Zéro',app:'regie',href:'/regie/#edition',mots:'iphone ipad macbook appareil maquette'},
@@ -24,10 +33,13 @@ var ACTIONS=[
 
 function sigle(nom){var m=String(nom||'').replace(/^AIME\s+/i,'').replace(/[^A-Za-zÀ-ÿ0-9 ]/g,' ').trim().split(/\s+/);return((m[0]||'?').charAt(0).toUpperCase()+((m[1]||m[0]||'').charAt(m[1]?0:1)||'').toLowerCase()).slice(0,2)}
 /* le catalogue : apps système d'abord, puis le registre sans « bureau » ; une adresse = une app */
-function catalogue(entrees){var vus={},L=[];SYSTEME.forEach(function(a){vus[a.id]=1;L.push(Object.assign({},a,{teinte:TEINTES.systeme}))});
- (entrees||[]).forEach(function(e){if(!e||e.id==='bureau'||vus[e.id]||typeof e.href!=='string'||!/^\/(?!\/)/.test(e.href))return;vus[e.id]=1;
-  L.push({id:e.id,nom:e.nom,href:e.href,phrase:e.phrase||'',cat:e.cat||'monde',statut:e.statut||'disponible',sigle:sigle(e.nom),teinte:TEINTES[e.cat]||TEINTES.monde})});return L}
-function epingles(cat,choix){var ids=Array.isArray(choix)&&choix.length?choix:EPINGLES;return ids.map(function(id){return cat.filter(function(a){return a.id===id})[0]}).filter(Boolean)}
+function catalogue(entrees,o){var proprio=!!(o&&o.proprietaire),vus={},L=[];SYSTEME.forEach(function(a){vus[a.id]=1;if(a.reserve&&!proprio)return;L.push(Object.assign({},a,{teinte:TEINTES.systeme}))});
+ (entrees||[]).forEach(function(e){if(!e||e.id==='bureau'||(e.interne&&!proprio)||vus[e.id]||typeof e.href!=='string'||!/^\/(?!\/)/.test(e.href))return;vus[e.id]=1;
+  L.push({id:e.id,nom:e.nom,href:e.href,phrase:e.phrase||'',cat:e.cat||'monde',statut:e.statut||'disponible',sigle:SIGLES[e.id]||sigle(e.nom),teinte:TEINTES[e.cat]||TEINTES.monde})});return L}
+/* le cube, accès à la Régie personnelle, reste toujours en tête du dock, même avec des épingles choisies */
+/* les actions proposées : celles d'une app réservée seulement au propriétaire */
+function actions(o){var proprio=!!(o&&o.proprietaire);return ACTIONS.filter(function(x){return proprio||!SYSTEME.some(function(a){return a.reserve&&a.id===x.app})})}
+function epingles(cat,choix){var ids=Array.isArray(choix)&&choix.length?choix:EPINGLES;ids=['cube'].concat(ids.filter(function(i){return i!=='cube'}));return ids.map(function(id){return cat.filter(function(a){return a.id===id})[0]}).filter(Boolean)}
 
 /* recherche tolérante : sans accents ni casse ; début de mot > contenu ; le nom compte plus que la phrase */
 function plier(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
@@ -54,5 +66,5 @@ function etat(o){o=o||{};var f=(Array.isArray(o.fenetres)?o.fenetres:[]).slice(0
 function autonomie(site,visiteur){var ok=['discrete','attentive','active'];return ok.indexOf(visiteur)>=0?visiteur:ok.indexOf(site)>=0?site:'discrete'}
 
 function salutation(h){return h<5?'Bonne nuit':h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
-return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,autonomie:autonomie,adresseApp:adresseApp,etat:etat,sigle:sigle,salutation:salutation};
+return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,actions:actions,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,autonomie:autonomie,adresseApp:adresseApp,etat:etat,sigle:sigle,salutation:salutation};
 });

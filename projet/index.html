@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Projet · AIME</title>
+<meta name="description" content="Le mini-site privé d'un projet AIME : le motif, la palette, les dimensions, les décisions et l'avancement.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/live/live.css">
+<link rel="stylesheet" href="/projet/projet.css">
+<script src="/compte/donnees.js" defer></script>
+</head>
+<body>
+<a class="evite" href="#site">Aller au mini-site</a>
+<header class="tete">
+ <a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup> <span>Projet</span></a>
+ <div class="ev"><b id="titre">Projet</b><span id="statut">Mini-site privé</span></div>
+ <div class="tete-d"><a class="b" href="/compte/">Mon compte</a></div>
+</header>
+<nav class="pj-barre" aria-label="Actions du projet">
+ <a class="pj-b" id="retour" href="/point-zero/">← Retour au Point Zéro</a>
+ <span class="pj-sep" aria-hidden="true"></span>
+ <span class="pj-b pj-ici" aria-current="page">Voir mon mini-site</span>
+ <a class="pj-b pj-p" id="disposer" href="/canevas/" hidden>Modifier dans le Canevas</a>
+ <a class="pj-b" id="canevas" href="/canevas/">Le patron dans le Canevas</a>
+</nav>
+<main id="contenu" class="pj">
+ <p data-donnees></p>
+ <p class="pj-etat" id="etat" role="status">Je prépare le mini-site du projet…</p>
+ <div class="pj-cadre" id="cadre" hidden><iframe id="site" title="Mini-site du projet" loading="eager"></iframe></div>
+ <p class="pj-note" id="note" hidden>Ce mini-site est privé : il reste dans ce navigateur, comme le projet. Sa composition se modifie dans le Canevas ; le contenu (motif, fils, dimensions, décisions) vient toujours du projet validé.</p>
+</main>
+<noscript><p class="ns">Le mini-site a besoin de JavaScript.</p></noscript>
+<script src="/vitrine/rendu.js"></script>
+<script src="/pointzero/broderie.js"></script>
+<script src="/pointzero/modes.js"></script>
+<script src="/pointzero/minisite.js"></script>
+<script src="/projet/projet.js"></script>
+</body>
+</html>

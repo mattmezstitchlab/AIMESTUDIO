@@ -1,0 +1,29 @@
+/* AIME · la révélation : la scène remonte comme un rideau, les couleurs du Monde AIME apparaissent dessous ;
+   à l'arrivée, le même voile se dissipe sur le héros. Une seule matière, sans rupture. */
+:root{--rv-fond:radial-gradient(60% 50% at 30% 70%,rgba(124,92,255,.55),transparent 70%),radial-gradient(50% 45% at 75% 30%,rgba(34,211,238,.45),transparent 70%),radial-gradient(45% 40% at 70% 80%,rgba(251,113,133,.42),transparent 70%),radial-gradient(40% 35% at 25% 25%,rgba(245,158,11,.30),transparent 70%),#0A0A0C}
+.rv-scene{position:fixed;inset:0;z-index:0;background:var(--rv-fond);display:grid;place-items:center;pointer-events:none}
+.rv-titre{margin:0;font:400 clamp(44px,10vw,140px)/.95 "Cal Sans","Inter Variable",Inter,sans-serif;letter-spacing:-.03em;color:#fff;text-align:center;opacity:0;transform:translateY(30px);transition:opacity .7s .35s,transform .9s .3s cubic-bezier(.2,.8,.2,1)}
+.rv-titre em{display:block;font-style:normal;background:linear-gradient(90deg,#22D3EE,#7C5CFF,#FB7185,#F59E0B);-webkit-background-clip:text;background-clip:text;color:transparent}
+html.rv-depart{background:var(--rv-fond)!important;overflow:hidden}
+/* seule la part visible de la page se soulève : on la découpe à la fenêtre (--rv-y = défilement au départ) */
+html.rv-depart body{position:relative;z-index:1;clip-path:inset(var(--rv-y,0px) 0 calc(100% - var(--rv-y,0px) - 100vh) 0 round 0 0 48px 48px);transition:transform 1.05s cubic-bezier(.65,0,.25,1);will-change:transform}
+html.rv-depart.rv-leve body{transform:translateY(-104vh)}
+html.rv-depart.rv-leve .rv-titre{opacity:1;transform:none}
+/* l'arrivée : le voile du départ, qui se dissipe sur le héros */
+html.rv-arrivee::after{content:"";position:fixed;inset:0;z-index:9999;background:var(--rv-fond);pointer-events:none;animation:rv-dissipe 1.3s .15s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes rv-dissipe{to{opacity:0;visibility:hidden}}
+/* le timbre qui entre dans le titre, à la place du O */
+.rv-vol{position:fixed;z-index:9998;left:0;top:0;pointer-events:none;transition:transform 1.1s cubic-bezier(.3,.7,.2,1),opacity .4s}
+.hf-timbre{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;overflow:hidden;border-radius:inherit}.hf-timbre .timbre{transform:none!important;box-shadow:none}
+.hf.timbre-on>svg,.hf.timbre-on>b{opacity:0}
+.hcube.rv-absent .hc3{transform:scale(0);transition:transform .5s}
+.rv-bulle{position:fixed;z-index:9997;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;align-items:center;gap:12px;flex-wrap:wrap;max-width:calc(100vw - 32px);padding:12px 14px;border-radius:18px;color:#EDEDF0;font:14px/1.45 "Inter Variable",Inter,sans-serif;
+ border:1.5px solid transparent;background:linear-gradient(#141418,#141418) padding-box,linear-gradient(120deg,#22D3EE,#7C5CFF,#FB7185,#F59E0B) border-box;box-shadow:0 30px 80px -20px rgba(0,0,0,.8);animation:rv-monte .5s .9s both cubic-bezier(.2,.8,.2,1)}
+@keyframes rv-monte{from{opacity:0;transform:translate(-50%,16px)}}
+.rv-bulle i{width:22px;height:22px;flex:none;border-radius:50%;background:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);box-shadow:0 0 14px rgba(124,92,255,.6)}
+.rv-bulle p{margin:0;flex:1;min-width:180px}.rv-bulle a,.rv-bulle button{min-height:36px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#EDEDF0;font:600 13px/1.2 inherit;font-family:inherit;text-decoration:none;cursor:pointer}
+.rv-bulle a{background:#EDEDF0;color:#0A0A0C;border-color:#EDEDF0}.rv-bulle :focus-visible{outline:2px solid #22D3EE;outline-offset:2px}
+.rv-demo{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:rgba(245,158,11,.18);color:#FCD34D;font-size:11.5px;font-weight:600}
+@media (prefers-reduced-motion:reduce){html.rv-depart body,.rv-titre,.rv-vol,.hcube.rv-absent .hc3{transition:none!important}html.rv-arrivee::after{animation-duration:.2s;animation-delay:0s}.rv-bulle{animation:none}}
+.hc3.rv-presente{animation:none!important;transform:rotateX(-10deg) rotateY(-14deg);transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+@media (prefers-reduced-motion:reduce){.hc3.rv-presente{transition:none}}

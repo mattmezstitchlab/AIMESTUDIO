@@ -10,6 +10,12 @@
 <link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/os/os.css">
+<link rel="stylesheet" href="/pointzero/pz.css">
+<link rel="stylesheet" href="/compte/timbre.css">
+<link rel="stylesheet" href="/porte/porte.css">
+<link rel="stylesheet" href="/porte/revelation.css">
+<link rel="stylesheet" href="/orbe/pilote.css">
+<link rel="stylesheet" href="/cube/vue3d.css">
 </head>
 <body class="os">
 <a class="evite" href="#lanceur-q">Aller à la recherche</a>
@@ -17,7 +23,8 @@
  <button class="marque" type="button" id="accueilBtn" aria-label="AIME OS, revenir au bureau">AIME<sup>®</sup><span>OS</span></button>
  <span class="app-courante" id="appCourante" aria-live="polite"></span>
  <span class="barre-d">
-  <button class="cherche" type="button" id="chercheBtn" aria-haspopup="dialog"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="M13.2 13.2 17 17"/></svg><span>Rechercher</span><kbd>Ctrl K</kbd></button>
+  <span id="porte"></span>
+  <button class="cherche" type="button" id="chercheBtn" aria-haspopup="dialog" aria-label="Rechercher (Ctrl K)"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="M13.2 13.2 17 17"/></svg><span>Rechercher</span><kbd>Ctrl K</kbd></button>
   <time class="heure" id="heure"></time>
  </span>
 </header>
@@ -25,9 +32,9 @@
 <main class="bureau" id="bureau" aria-label="Bureau">
  <canvas class="fond" id="fond" aria-hidden="true"></canvas>
  <section class="accueil" id="accueil" aria-labelledby="t-accueil">
-  <div class="orbe-accueil" id="orbeAccueil" aria-hidden="true"></div>
   <h1 id="t-accueil"><span id="salut">Bonjour</span>.</h1>
-  <p class="intention">Tout commence par une intention.</p>
+  <p class="intention">Tout commence par une intention. Déposez-la au point zéro.</p>
+  <div class="point-zero" id="pointZero"><div class="orbe-accueil" id="orbeAccueil" aria-hidden="true"></div></div>
   <form class="lanceur" id="lanceur" role="search"><label class="sr" for="lanceur-q">Que voulez-vous faire ?</label><input id="lanceur-q" placeholder="Que voulez-vous faire ?" autocomplete="off" spellcheck="false"><kbd>Ctrl K</kbd></form>
   <div class="actions" id="actionsRapides" aria-label="Actions rapides"></div>
   <section class="reprendre" id="reprendre" aria-labelledby="t-reprendre" hidden><h2 id="t-reprendre">Reprendre</h2><div class="cartes" id="cartes"></div></section>
@@ -64,7 +71,25 @@
 <script src="/regie/donnees.js"></script>
 <script src="/bureau/sources.js"></script>
 <script src="/zero/orbe.js"></script>
+<script src="/zero/formes.js"></script>
+<script src="/pointzero/analyse.js"></script>
+<script src="/pointzero/broderie.js"></script>
+<script src="/pointzero/modes.js"></script>
+<script src="/orbe/contexte.js"></script>
+<script src="/orbe/pilote.js"></script>
+<script src="/stitch/js/couleur.js"></script>
+<script src="/stitch/js/conversion.js"></script>
+<script src="/compte/timbre.js"></script>
+<script src="/porte/porte.js"></script>
+<script src="/porte/revelation.js"></script>
+<script src="/pointzero/pz.js"></script>
+<script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'bureau',position:'compact'})</script>
+<script src="/cube/modele.js"></script>
+<script src="/cube/stock.js"></script>
+<script src="/cube/vue3d.js"></script>
 <script src="/os/apps.js"></script>
 <script src="/os/os.js"></script>
+<!-- le dock montre le cube de la personne : ses faces posées en couleur -->
+<script>if(window.AIMECubeStock)AIMECubeStock.qui().then(function(u){u=u||AIMECubeStock.demo();if(!u)return;AIMECubeVue.memo(AIMECubeStock.charger(u),u);var b=document.querySelector('#dockApps [data-app="cube"] .ico');if(b)b.innerHTML=AIMECubeVue.miniHTML()}).catch(function(){})</script>
 </body>
 </html>

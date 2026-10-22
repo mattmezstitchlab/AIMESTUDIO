@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Canevas · AIME</title>
+<meta name="description" content="Le Canevas d'AIME : un plan de travail neutre où ouvrir et manipuler les projets, avec une palette commune et des notes.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/live/live.css">
+<link rel="stylesheet" href="/canevas/canevas.css">
+<link rel="stylesheet" href="/porte/porte.css">
+<link rel="stylesheet" href="/porte/revelation.css">
+</head>
+<body class="cv-page">
+<a class="evite" href="#plan">Aller au plan de travail</a>
+<header class="tete">
+ <a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup> <span>Canevas</span></a>
+ <div class="ev"><b>Canevas</b><span>Un plan de travail commun à tous les projets</span></div>
+ <div class="tete-d"><a class="b" id="retour" href="/bureau/">← Bureau</a><span id="porte"></span></div>
+</header>
+<main id="plan" class="cv-zone" aria-label="Plan de travail"></main>
+<noscript><p class="ns">Le Canevas a besoin de JavaScript.</p></noscript>
+<script src="/canevas/scene.js"></script>
+<script src="/canevas/plan.js"></script>
+<script src="/canevas/canevas.js"></script>
+<script src="/porte/porte.js"></script>
+<script src="/porte/revelation.js"></script>
+<!-- la porte partagée, en haut : jamais sur la palette, les notes ni le zoom, qui vivent en bas et sur le plan -->
+<script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'canevas',position:'compact'})</script>
+</body>
+</html>

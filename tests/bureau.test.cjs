@@ -75,7 +75,7 @@ test('routes : /bureau/ est servi, Page Zéro y mène, aucune boucle, chaque ent
  const sert=u=>{const p=u.split(/[?#]/)[0];if(fichier(p))return true;const r=rw.find(r=>r.source===p);return !!r&&fichier(r.destination)};
  for(const e of N.ENTREES){const f=suivre(e.href.split('?')[0]).fin;assert.ok(sert(f),e.id+' → '+f+' : aucun fichier')}
  const z=fs.readFileSync(R('index.html'),'utf8');const b=z.indexOf('id="bureau" href="/bureau/"'),m=z.indexOf('id="rejoindre" href="/aime/"');
- assert.ok(b>0&&m>b,'Page Zéro : Ouvrir mon Bureau en principal, Le Monde AIME ensuite');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.match(z,/href="\/bureau\/">MON BUREAU/)});
+ assert.ok(b>0&&m>b,'Page Zéro : Ouvrir mon Bureau en principal, Le Monde AIME ensuite');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.ok(!/MON BUREAU|AIME STUDIO<\/a>/.test(z),'en haut, un seul accès : la porte irisée');assert.match(z,/id="porte"/);assert.match(z,/AIMEPorte\.monter/)});
 
 test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
  const v=JSON.parse(fs.readFileSync(R('vercel.json'))),rw=v.rewrites||[],A=['accessibilite','buro','docs','image','stitchlab','web'];
@@ -86,6 +86,6 @@ test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
 test('Page Zéro · la vitrine est une scène pilotée par la régie, étiquetée démonstration, avant l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8');
  const v=z.indexOf('id="vitrine"'),p=z.indexOf('id="t-prom"'),e=z.indexOf('id="entrer"');assert.ok(p>0&&v>p&&e>v,'entre la promesse et « Et maintenant ? »');
  const sec=z.slice(v,e);assert.match(sec,/id="vitrine-scene"/);assert.match(sec,/Démonstration · données fictives/);
- for(const h of ['/sites/','/g44/','/studio/'])assert.ok(sec.includes('href="'+h+'"'),'lien vers '+h);
+ for(const h of ['/canevas/','/reseau/','/g44/','/studio/'])assert.ok(sec.includes('href="'+h+'"'),'lien vers '+h);
  assert.ok(z.indexOf('/regie/scene.js')<z.indexOf('/zero/zero.js'),'la scène passe avant la page : les textes de la régie précèdent les points des « i »');
  const c=JSON.parse(fs.readFileSync(R('regie/site.json'),'utf8'));assert.ok(c.pages['/'].appareils.every(a=>a.ancre==='#vitrine-scene'))});

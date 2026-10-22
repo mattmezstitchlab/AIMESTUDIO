@@ -1,6 +1,6 @@
 @font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}
 @font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin-ext.woff2") format("woff2-variations");unicode-range:U+0100-024F,U+1E00-1EFF}
-:root{color-scheme:dark;--fond:#0B0B0E;--panneau:#131317;--carte:#18181D;--ligne:#2A2A31;--ligne2:#3A3A42;--encre:#EDEDF0;--doux:#A1A1AC;--pale:#6B6B76;
+:root{color-scheme:dark;--fond:#0B0B0E;--panneau:#131317;--carte:#18181D;--ligne:#2A2A31;--ligne2:#3A3A42;--encre:#EDEDF0;--doux:#A1A1AC;--pale:#8E8E9A;
  --violet:#7C5CFF;--cyan:#22D3EE;--rose:#FB7185;--ambre:#F59E0B;--ok:#86EFAC;--ko:#FDA4AF;
  --iris:linear-gradient(90deg,#22D3EE,#7C5CFF,#FB7185,#F59E0B);--ui:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
 *{box-sizing:border-box}

@@ -6,7 +6,7 @@
  mask:linear-gradient(#000 0 0) content-box,radial-gradient(circle,#0000 calc(var(--r) - .5px),#000 var(--r)) calc(var(--r)*-1.5) calc(var(--r)*-1.5)/calc(var(--r)*3) calc(var(--r)*3) round}
 .timbre .tb-image{position:relative;overflow:hidden;min-height:0;background:var(--tb-fond,#222)}
 .timbre img{width:100%;height:100%;object-fit:cover;display:block}
-.timbre .tb-gen{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 30% 25%,var(--tb-a) 0 38%,transparent 39%),linear-gradient(160deg,var(--tb-b),var(--tb-c))}
+.timbre .tb-gen{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(120% 90% at 18% 12%,var(--tb-a) 0,transparent 62%),radial-gradient(110% 90% at 92% 96%,var(--tb-c) 0,transparent 60%),linear-gradient(155deg,var(--tb-a),var(--tb-b) 52%,var(--tb-c))}
 .timbre .tb-gen b{font:700 calc(var(--l)*.36)/1 "Cal Sans","Inter Variable",sans-serif;color:#fff;letter-spacing:-.02em;text-shadow:0 2px 12px rgba(0,0,0,.25)}
 .timbre .tb-gen i{position:absolute;left:6%;top:5%;font:700 calc(var(--l)*.075)/1 "Inter Variable",sans-serif;font-style:normal;letter-spacing:.14em;color:rgba(255,255,255,.85)}
 .timbre .tb-gen u{position:absolute;right:6%;bottom:5%;font:700 calc(var(--l)*.075)/1 "Inter Variable",sans-serif;text-decoration:none;color:rgba(255,255,255,.85)}

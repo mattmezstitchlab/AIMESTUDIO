@@ -1,0 +1,19 @@
+/* AIME · le mini-site d'un projet : une barre d'actions sobre au-dessus de la page rendue par le moteur de pages. */
+body{background:#0A0A0C;min-height:100vh}
+.pj-barre{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+ background:rgba(10,10,12,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1)}
+.pj-b{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:#EDEDF0;font:600 14px/1.2 var(--ui,"Inter Variable",Inter,system-ui,sans-serif);text-decoration:none;cursor:pointer}
+.pj-b:hover{border-color:rgba(255,255,255,.4)}
+.pj-p{border:1.5px solid transparent;background:linear-gradient(#141418,#141418) padding-box,linear-gradient(120deg,#22D3EE,#7C5CFF,#FB7185,#F59E0B) border-box}
+.pj-b[aria-disabled=true]{opacity:.6;cursor:default}.pj-b em{font-style:normal;padding:1px 8px;border-radius:999px;background:rgba(124,92,255,.22);color:#DDD6FE;font-size:11.5px;letter-spacing:.04em}
+.pj-sep{flex:1}
+.pj-dit{flex-basis:100%;margin:0;color:#A1A1AC;font-size:12.5px;text-align:right}
+.pj{display:grid;gap:14px;padding:18px max(16px,env(safe-area-inset-right,0px)) 60px max(16px,env(safe-area-inset-left,0px));max-width:1240px;margin:0 auto}
+.pj-etat{margin:0;color:#EDEDF0;font-size:15px}.pj-etat:empty{display:none}.pj-etat.ko{color:#FDBA74}
+.pj-cadre{border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 40px 120px -40px rgba(0,0,0,.9);border:1px solid rgba(255,255,255,.08)}
+.pj-cadre iframe{display:block;width:100%;height:calc(100vh - 150px);height:calc(100dvh - 150px);min-height:520px;border:0}
+.pj-note{margin:0;color:#A1A1AC;font-size:13px;line-height:1.5;max-width:760px}
+.pj-b:focus-visible{outline:2px solid #7C5CFF;outline-offset:3px}
+@media (max-width:640px){.pj-barre{position:static;gap:6px}.pj-sep,.pj-dit{display:none}.pj-b{flex:1 1 40%;justify-content:center;min-height:36px;padding:6px 10px;font-size:13px}#retour{flex-basis:100%}.pj-cadre{border-radius:14px}.pj{padding-top:12px}}
+/* la page elle-même est l'aperçu : « Voir mon mini-site » est l'endroit où l'on est */
+.pj-ici{cursor:default;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.1)}
