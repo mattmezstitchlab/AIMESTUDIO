@@ -45,6 +45,17 @@ Script : `cube/cartes.js`, styles : `cube/cartes.css`, chargés par `aime/index.
 
 Rien n'est envoyé au serveur. Un autre navigateur ou un autre appareil ne voit pas les cartes. Effacer les données du site les efface. Le lot de persistance serveur (Neon pour le cube, Vercel Blob pour les médias) remplacera `charger()` / `garder()` sans changer le modèle.
 
+## Suite : Cube → Canevas → Personnalisation → Enregistrement → Régie personnelle
+
+Des PR séparées, dans cet ordre, toutes sur ce même modèle :
+
+1. **Bureau et dock.** Le cube du Bureau est l'objet central : on le fait tourner, on choisit une face, on ouvre les éléments autorisés. Le dock en montre une miniature. Ils lisent `aime-cube:<id>`.
+2. **Adaptateur Canevas « cube-personne »** (`canevas/adaptateurs/cube.js`). Le cube s'y déplie en 2D, et chaque face devient une composition de blocs rendue par le moteur de pages existant (`vitrine/rendu.js`), comme le mini-site du lot B. On y règle les couleurs, les fonds, les médias, la disposition, l'aperçu et l'enregistrement. Il n'y a pas de second système de composition.
+3. **Vue 3D** du même modèle : ouvrir le cube en grand, le faire pivoter, cliquer sur une face. Ce qui est enregistré en 2D se voit en 3D.
+4. **Blocs Timbre et Orbe** dans la face Identité. Le bloc Orbe reprend les réglages de la Régie et les composants de l'orbe, avec des préférences séparées des permissions.
+5. **Réseau** : seules les facettes publiées (`publiques()`).
+6. **Persistance serveur** du cube et de ses médias.
+
 ## Le cube, accès à la Régie personnelle (priorité 2)
 
 - **Un seul stockage** : `cube/stock.js` (AIMECubeStock). Il sait qui est la personne (`qui()` : Better Auth + timbre confirmé), et il lit et écrit le cube de cette personne seulement. Le Monde AIME, le Bureau et le dock passent tous par lui.
@@ -58,14 +69,3 @@ Rien n'est envoyé au serveur. Un autre navigateur ou un autre appareil ne voit 
   - face Identité : le timbre, les préférences de l'orbe et ses droits (aucun).
 - **AIME OS** : « Mon cube » est une app système, toujours en tête du dock, même avec des épingles choisies. Son icône est la miniature du cube de la personne (faces posées en couleur). Elle s'ouvre dans une fenêtre du Bureau.
 - La Régie maîtresse (`/regie/`) n'est ni chargée ni modifiée.
-
-## Suite : Cube → Canevas → Personnalisation → Enregistrement → Régie personnelle
-
-Des PR séparées, dans cet ordre, toutes sur ce même modèle :
-
-1. **Bureau et dock.** Le cube du Bureau est l'objet central : on le fait tourner, on choisit une face, on ouvre les éléments autorisés. Le dock en montre une miniature. Ils lisent `aime-cube:<id>`.
-2. **Adaptateur Canevas « cube-personne »** (`canevas/adaptateurs/cube.js`). Le cube s'y déplie en 2D, et chaque face devient une composition de blocs rendue par le moteur de pages existant (`vitrine/rendu.js`), comme le mini-site du lot B. On y règle les couleurs, les fonds, les médias, la disposition, l'aperçu et l'enregistrement. Il n'y a pas de second système de composition.
-3. **Vue 3D** du même modèle : ouvrir le cube en grand, le faire pivoter, cliquer sur une face. Ce qui est enregistré en 2D se voit en 3D.
-4. **Blocs Timbre et Orbe** dans la face Identité. Le bloc Orbe reprend les réglages de la Régie et les composants de l'orbe, avec des préférences séparées des permissions.
-5. **Réseau** : seules les facettes publiées (`publiques()`).
-6. **Persistance serveur** du cube et de ses médias.
