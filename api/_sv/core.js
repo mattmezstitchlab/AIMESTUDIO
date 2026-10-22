@@ -38,9 +38,13 @@ function verify(tok) {
   try { return JSON.parse(Buffer.from(b, 'base64url').toString()); } catch { return null; }
 }
 function body(req) { const b = req.body; if (!b) return {}; if (typeof b === 'string') { try { return JSON.parse(b); } catch { return {}; } } return b; }
-function start(req, res) {
+/* En production, le démonstrateur (identités fictives) n'est pas public : seul le propriétaire du site, reconnu par sa
+   session et le droit serveur (api/_auth/proprietaire.mjs), y accède. Ailleurs (aperçus, local), il reste ouvert. */
+let verifierProprietaire = req => import('../_auth/proprietaire.mjs').then(m => m.proprietaire(req));
+function _proprietaire(f) { verifierProprietaire = f; }
+async function start(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  if (blocked()) { res.status(404).json({ error: 'indisponible' }); return null; }
+  if (blocked()) { let p = null; try { p = await verifierProprietaire(req); } catch { p = null; } if (!p) { res.status(404).json({ error: 'indisponible' }); return null; } }
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); res.status(405).json({ error: 'POST seulement' }); return null; }
   const b = body(req); const who = IDENTITIES[b.identity];
   if (!who || who.id === 'u-nina') { res.status(403).json({ error: 'identité de test inconnue' }); return null; }
@@ -48,4 +52,4 @@ function start(req, res) {
 }
 // Ce que la personne a le droit de voir de la ressource, rien de plus.
 function visible(who, key) { const r = RES[key]; return { title: r.title, data: r.data || null }; }
-module.exports = { P, IDENTITIES, RES, start, sign, verify, visible };
+module.exports = { P, IDENTITIES, RES, start, sign, verify, visible, _proprietaire };
