@@ -30,5 +30,5 @@ t('adaptateur broderie : le patron Stitch vient du projet confirmé, sans ressai
  assert.deepEqual(Array.from(P.matrice(pt)),[1,2,0,2,2,1],'chaque case garde son fil');assert.equal(m.patronDe({id:'x'}),null,'pas de patron sans conversion');
  const d={projet:p,patron:pt},c={t:{dx:0,dy:0}};const e=m.element(d,c,m.PAS*1.5,m.PAS*.5);assert.match(e.titre,/DMC 06/);assert.match(e.dit,/3 cases/);assert.equal(m.element(d,c,-1,0),null);
  const etat={};m.agir(d,'evidence',e,etat);assert.equal(etat.hl,2);m.agir(d,'tout',e,etat);assert.equal(etat.hl,0)});
-t('ouverture directe : la carte et le mini-site mènent au Canevas avec l\'identifiant du projet',()=>{assert.match(lire('projet/projet.js'),/\/canevas\/\?projet=/);assert.match(lire('pointzero/pz.js'),/\/canevas\/\?projet=/)});
+t('ouverture directe : la carte et le mini-site mènent au Canevas avec l\'identifiant du projet',()=>{assert.match(lire('projet/projet.js'),/\/canevas\/\?projet=/);assert.match(lire('projet/projet.js'),/\/canevas\/\?site=/);assert.match(lire('pointzero/pz.js'),/Modifier dans le Canevas[\s\S]*&canevas=1/,'la carte passe par le projet, qui prépare le mini-site puis l\'ouvre dans le Canevas')});
 console.log('canevas : '+n+' tests ok');

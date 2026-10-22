@@ -23,13 +23,14 @@
 <nav class="pj-barre" aria-label="Actions du projet">
  <a class="pj-b" id="retour" href="/point-zero/">← Retour au Point Zéro</a>
  <span class="pj-sep" aria-hidden="true"></span>
- <a class="pj-b pj-p" id="disposer" href="/sites/" hidden>Modifier la disposition</a>
- <a class="pj-b" id="canevas" href="/canevas/">Ouvrir dans le Canevas</a>
+ <span class="pj-b pj-ici" aria-current="page">Voir mon mini-site</span>
+ <a class="pj-b pj-p" id="disposer" href="/canevas/" hidden>Modifier dans le Canevas</a>
+ <a class="pj-b" id="canevas" href="/canevas/">Le patron dans le Canevas</a>
 </nav>
 <main id="contenu" class="pj">
  <p class="pj-etat" id="etat" role="status">Je prépare le mini-site du projet…</p>
  <div class="pj-cadre" id="cadre" hidden><iframe id="site" title="Mini-site du projet" loading="eager"></iframe></div>
- <p class="pj-note" id="note" hidden>Ce mini-site est privé : il reste dans ce navigateur, comme le projet. Sa disposition se modifie dans le générateur de site ; le contenu (motif, fils, dimensions, décisions) vient toujours du projet.</p>
+ <p class="pj-note" id="note" hidden>Ce mini-site est privé : il reste dans ce navigateur, comme le projet. Sa composition se modifie dans le Canevas ; le contenu (motif, fils, dimensions, décisions) vient toujours du projet validé.</p>
 </main>
 <noscript><p class="ns">Le mini-site a besoin de JavaScript.</p></noscript>
 <script src="/vitrine/rendu.js"></script>

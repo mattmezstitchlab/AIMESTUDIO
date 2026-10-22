@@ -57,11 +57,11 @@ Une fois le projet né (première confirmation), les six noms sous la forme devi
 
 ## Lot B · la carte projet devient un mini-site privé
 
-« Ouvrir le mini-site », sur une carte projet ou à la fin des confirmations, ouvre `/projet/?id=…`.
+« Voir mon mini-site », sur une carte projet ou à la fin des confirmations, ouvre l'aperçu réel `/projet/?id=…`. « Modifier dans le Canevas » ouvre le même mini-site dans le Canevas (adaptateur `aime-site`).
 
 - **Aucun second générateur.** `pointzero/minisite.js` traduit le projet en site `aime-site` ; le moteur de pages (`vitrine/rendu.js`) le rend avec ses blocs : en-tête (photo), image (le motif redessiné net depuis les cases), Fils DMC, Chiffres (dimensions en points et en cm, nombre de fils, points à broder), Avancement (quatre mesures séparées), Paragraphe (prochaines actions et ce qui reste à confirmer), Chronologie (décisions et leur source).
 - **Deux blocs ajoutés au moteur commun** : `fils` (nuancier DMC, couleurs validées) et `avancement` (barres bornées). Ils rejoignent le catalogue du générateur, famille « Projet ».
-- **Disposition.** « Modifier la disposition » ouvre le générateur existant (`/sites/?site=…`) sur ce site : glisser, redimensionner, ajouter, retirer, changer d'ambiance. Un lien « Retour au projet » y ramène. La disposition est gardée ; le contenu qui vient du projet (fils, dimensions, avancement, décisions, motif, titre) est rafraîchi à chaque ouverture.
+- **Composition.** « Modifier dans le Canevas » ouvre le même mini-site, rendu par le moteur de pages, dans le Canevas (`/canevas/?site=…&projet=…&de=…`) : sélectionner, glisser sur la grille, dimensionner, régler la forme et le titre d'un bloc ; rien n'est écrit sans « Enregistrer ». Le contenu issu du projet validé reste protégé. « ← Retour au projet » ramène à la carte, au Point Zéro ou dans le Bureau selon l'origine. Le générateur de sites n'est plus une destination du parcours.
 - **Retour.** « Retour au Point Zéro » (ou au Bureau) reprend le projet là où il était ; le projet n'est jamais modifié par le mini-site.
-- **Canevas.** Le bouton « Ouvrir dans le Canevas » est présent et marqué « bientôt » : il n'ouvre rien tant que Canevas 0 n'existe pas.
+- **Canevas.** Le patron de broderie reste ouvrable seul (« Le patron dans le Canevas », adaptateur broderie).
 - **Privé.** Projet et mini-site restent dans ce navigateur (IndexedDB et `aime-sites`), comme avant ; le compte et le partage viendront avec le lot de persistance.

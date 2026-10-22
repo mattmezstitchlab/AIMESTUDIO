@@ -10,7 +10,7 @@ var ORIGINES={'/point-zero/':'Retour au Point Zéro','/bureau/':'Retour au Burea
 $('retour').href=de+(id?'?projet='+encodeURIComponent(id):'');$('retour').textContent='← '+ORIGINES[de];
 function dire(t,ko){var e=$('etat');e.textContent=t;e.hidden=!t;e.classList.toggle('ko',!!ko)}
 
-/* le Canevas (Canevas 0) ouvre ce projet tel quel : patron, grille, couleurs, sans ressaisie */
+/* le patron de broderie (adaptateur broderie du Canevas) : patron, grille, couleurs, sans ressaisie */
 $('canevas').href='/canevas/?projet='+encodeURIComponent(id)+'&de=/projet/';
 
 function base(){return new Promise(function(ok,ko){if(!window.indexedDB)return ko(new Error('Ce navigateur ne garde pas les projets.'));var r=indexedDB.open('aime-point-zero',2);
@@ -33,7 +33,9 @@ function ouvrir(){if(!id){dire('Aucun projet indiqué. Ouvrez un projet depuis s
   document.title=(p.titre||'Projet')+' · AIME';$('titre').textContent=p.titre||'Projet';$('statut').textContent='Broderie · '+B.statut(p)+' · mini-site privé';
   return enDataURL(p.image).then(function(photo){var etat=lireSites(),sid=MS.siteId(p),site=MS.depuis(p,{S:S,B:B,M:M,ancien:etat.sites[sid],photo:photo,motif:motif(p)});
    etat.sites[sid]=site;if(!etat.cur)etat.cur=sid;var garde=ecrireSites(etat);
-   var d=$('disposer');d.href='/sites/?site='+encodeURIComponent(sid)+'&retour='+encodeURIComponent('/projet/?id='+id+'&de='+de);d.hidden=!garde;
+   /* le même mini-site, ses vrais blocs et ses données, s'édite dans le Canevas (adaptateur aime-site) ; le retour ramène au projet */
+   var d=$('disposer'),cv='/canevas/?site='+encodeURIComponent(sid)+'&projet='+encodeURIComponent(id)+'&de='+encodeURIComponent(de);d.href=cv;d.hidden=!garde;
+   if(garde&&q.get('canevas')==='1'){location.replace(cv);return}
    if(!garde)dire('Ce navigateur est plein : le mini-site s\'affiche, mais sa disposition ne pourra pas être modifiée.',true);else dire('');
    afficher(site)})}).catch(function(e){dire((e&&e.message)||'Impossible d\'ouvrir le projet.',true)})}
 

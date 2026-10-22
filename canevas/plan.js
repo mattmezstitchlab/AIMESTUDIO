@@ -5,6 +5,7 @@
      a.dessiner(g, calque, vue, W, H, donnees, etat)     dessine son calque (la grille de son métier comprise)
      a.element(donnees, calque, x, y) → { titre, dit, actions:[{id,nom}] } | null     ce qui est sous le pointeur
      a.agir(donnees, actionId, element, etat) → texte     une action métier, contextuelle
+     (element.eviter facultatif : {x,y,w,h} à l'écran, que l'inspecteur ne doit pas couvrir)
    La palette basse ne change jamais : sélection, main, zoom, note. Les outils métier n'apparaissent qu'à la sélection.
 
    AIMECanevas.monter(conteneur, { scene, adaptateurs:{type:url}, sauver(scene) }) */
@@ -57,8 +58,10 @@ function monter(conteneur,o){o=o||{};var S=o.scene||C.vide(),outil='selection',d
  function inspecter(x,y,X,Y){var e=adapt&&adapt.element?adapt.element(donnees,C.actif(S),x,y):null;if(!e){fermerInspecteur();return}sel={x:x,y:y,e:e};insp.textContent='';
   var t=el('div','cv-insp-t');t.appendChild(el('i','cv-orbe'));var tx=el('div');tx.appendChild(el('small',null,'L\'orbe'));tx.appendChild(el('b',null,e.titre));t.appendChild(tx);t.appendChild(bouton('×','cv-x',fermerInspecteur,'Fermer'));insp.appendChild(t);
   if(e.dit)insp.appendChild(el('p',null,e.dit));var a=el('div','cv-insp-a');(e.actions||[]).forEach(function(ac){a.appendChild(bouton(ac.nom,'cv-b',function(){var r=adapt.agir(donnees,ac.id,e,etat);dessiner();if(r)dire(r);inspecter(x,y,X,Y)}))});
-  a.appendChild(bouton('Noter ici','cv-b',function(){nouvelleNote(x,y,e.ref)}));insp.appendChild(a);insp.hidden=false;placerInsp(X,Y)}
- function placerInsp(X,Y){if(innerWidth<=640){insp.style.left='';insp.style.top='';return}var w=insp.offsetWidth,h=insp.offsetHeight;insp.style.left=Math.max(12,Math.min(W-w-12,X+18))+'px';insp.style.top=Math.max(70,Math.min(H-h-90,Y-10))+'px'}
+  a.appendChild(bouton('Noter ici','cv-b',function(){nouvelleNote(x,y,e.ref)}));insp.appendChild(a);insp.hidden=false;placerInsp(X,Y,e.eviter)}
+ /* e.eviter (facultatif) : la zone, à l'écran, que l'adaptateur garde libre (un élément sélectionné et ses poignées) */
+ function placerInsp(X,Y,ev){if(innerWidth<=640){insp.style.left='';insp.style.top='';return}var w=insp.offsetWidth,h=insp.offsetHeight,L=X+18;
+  if(ev){L=ev.x+ev.w+24<=W-w-12?ev.x+ev.w+24:ev.x-w-24>=12?ev.x-w-24:L}insp.style.left=Math.max(12,Math.min(W-w-12,L))+'px';insp.style.top=Math.max(70,Math.min(H-h-90,Y-10))+'px'}
 
  /* ---------- la vue ---------- */
  var W=0,H=0,dpr=1,raf=0;
