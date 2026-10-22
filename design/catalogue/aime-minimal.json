@@ -1,0 +1,48 @@
+{
+ "format": "aime-design-system",
+ "version": "3.0.0",
+ "id": "aime-minimal",
+ "revision": "1.0.0",
+ "nom": "Minimal Clair",
+ "mode": "clair",
+ "description": "Papier chaud, encre presque noire, une seule couleur de relief. Le contenu d'abord.",
+ "origine": "AIME Arena, studios A et B (22 octobre 2026)",
+ "jetons": {
+  "couleurs": {
+   "fond": "#F6F4EF",
+   "surface": "#FFFDF9",
+   "surfaceHaute": "#EDEAE3",
+   "texte": "#151512",
+   "texteDoux": "#726E64",
+   "bordure": "#D9D4C9",
+   "primaire": "#1B1B17",
+   "secondaire": "#716A5E",
+   "relief": "#D9CBB4",
+   "accent": "#A9532F",
+   "succes": "#517A57",
+   "alerte": "#9C7327",
+   "danger": "#A54B4B"
+  },
+  "typographie": {
+   "titres": "inter",
+   "texte": "inter",
+   "mono": "jetbrains-mono",
+   "graisseTitres": 500,
+   "interligneTitres": 1.08,
+   "interligneTexte": 1.6,
+   "approche": -0.045,
+   "casse": "none",
+   "echelle": 1.06
+  },
+  "structure": {
+   "rayons": {
+    "surface": 4,
+    "controle": 2,
+    "media": 4,
+    "pastille": 999
+   },
+   "bordure": 1,
+   "densite": "aere"
+  }
+ }
+}

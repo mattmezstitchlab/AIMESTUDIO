@@ -26,7 +26,9 @@ function motif(p){if(!p.cases||!p.dims||!p.palette)return p.apercu||null;var l=p
  try{return c.toDataURL('image/png')}catch(e){return p.apercu||null}}
 
 var PRES=null;
-function presentation(){if(PRES)return Promise.resolve(PRES);return fetch('/vitrine/presentation/studio.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(j){PRES=j;return j})}
+function presentation(){if(PRES)return Promise.resolve(PRES);return fetch('/vitrine/presentation/studio.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null})
+ /* le Design System choisi dans le Canevas (pointeur presentation.design) s'affiche aussi ici ; sans catalogue, l'ambiance */
+ .then(function(j){return j&&window.AIMEDesignCharger?window.AIMEDesignCharger().then(function(c){j.systemes=c.compiles;return j}):j}).then(function(j){PRES=j;return j})}
 
 function ouvrir(){if(!id){dire('Aucun projet indiqué. Ouvrez un projet depuis ses cartes, dans le Point Zéro ou le Bureau.',true);return}
  Promise.all([projet(),presentation()]).then(function(r){var p=r[0];if(!p){dire('Ce projet n\'est pas sur cet appareil. Il a peut-être été retiré, ou créé dans un autre navigateur.',true);return}

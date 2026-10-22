@@ -1,0 +1,48 @@
+{
+ "format": "aime-design-system",
+ "version": "3.0.0",
+ "id": "aime-editorial",
+ "revision": "1.0.0",
+ "nom": "Éditorial Magazine",
+ "mode": "clair",
+ "description": "Une page de magazine : titres à empattements, terre cuite et sauge, marges généreuses.",
+ "origine": "AIME Arena, studios A et B (22 octobre 2026)",
+ "jetons": {
+  "couleurs": {
+   "fond": "#F1E9DD",
+   "surface": "#FAF5EC",
+   "surfaceHaute": "#E7DAC8",
+   "texte": "#241E18",
+   "texteDoux": "#6F6255",
+   "bordure": "#D4C4B0",
+   "primaire": "#99472C",
+   "secondaire": "#5B6B55",
+   "relief": "#C9B79C",
+   "accent": "#AA7A3E",
+   "succes": "#5E7B58",
+   "alerte": "#A97932",
+   "danger": "#A64E45"
+  },
+  "typographie": {
+   "titres": "instrument-serif",
+   "texte": "inter",
+   "mono": "jetbrains-mono",
+   "graisseTitres": 400,
+   "interligneTitres": 1,
+   "interligneTexte": 1.6,
+   "approche": -0.012,
+   "casse": "none",
+   "echelle": 1.1
+  },
+  "structure": {
+   "rayons": {
+    "surface": 2,
+    "controle": 1,
+    "media": 2,
+    "pastille": 999
+   },
+   "bordure": 1,
+   "densite": "aere"
+  }
+ }
+}

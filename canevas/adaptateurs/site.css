@@ -19,3 +19,30 @@
 @media (prefers-reduced-motion:reduce){.cvs-sel{transition:none}}
 /* téléphone : « ← Retour au projet » est plus long que « ← Bureau » ; la marque dit déjà « Canevas », le titre se retire */
 @media (max-width:640px){.cv-page .tete .ev{display:none}}
+/* Design System : le bouton de la page, le panneau des directions, la comparaison avant / après */
+.cvs-ds-b{position:absolute;z-index:6;right:max(16px,env(safe-area-inset-right,0px));top:max(120px,calc(env(safe-area-inset-top,0px) + 120px));display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:6px 14px 6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(17,17,23,.92);color:#EDEDF0;font:600 13px/1.2 "Inter Variable",sans-serif;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.28)}
+.cvs-ds-b i{width:24px;height:24px;border-radius:50%;background:conic-gradient(#7866F2,#F1E9DD,#3F8EF4,#F6F4EF,#7866F2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.cvs-ds-b:hover{background:rgba(32,32,42,.96)}.cvs-ds-b:focus-visible,.cvs-ds button:focus-visible,.cvs-comp button:focus-visible{outline:2px solid #22D3EE;outline-offset:2px}
+.cvs-ds{position:absolute;z-index:7;right:max(16px,env(safe-area-inset-right,0px));top:max(120px,calc(env(safe-area-inset-top,0px) + 120px));width:min(380px,calc(100% - 32px));max-height:calc(100% - 210px);overflow:auto;display:grid;gap:12px;padding:16px;border-radius:18px;background:#121216;color:#EDEDF0;border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 70px rgba(0,0,0,.5);font:14px/1.45 "Inter Variable",sans-serif}
+.cvs-ds-h{display:flex;align-items:center;justify-content:space-between;gap:12px}.cvs-ds-h h2{margin:0;font:600 16px/1.3 "Inter Variable",sans-serif}
+.cvs-ds-p{margin:0;color:#B4B4BE;font-size:13px}
+.cvs-ds-l{margin:0;padding:0;border:0;display:grid;gap:8px}.cvs-ds-l legend{padding:0 0 6px;font-weight:600;font-size:13px;color:#B4B4BE}
+.cvs-ds-o{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);cursor:pointer}
+.cvs-ds-o:hover{border-color:rgba(255,255,255,.24)}.cvs-ds-o:has(input:checked){border-color:#8B7BFF;background:rgba(139,123,255,.12)}
+.cvs-ds-o input{width:18px;height:18px;margin:0;accent-color:#8B7BFF}.cvs-ds-o input:focus-visible{outline:2px solid #22D3EE;outline-offset:2px}
+.cvs-ds-ot{display:grid;min-width:0}.cvs-ds-ot b{font-weight:600}.cvs-ds-ot small{font-size:12.5px;color:#B4B4BE}
+.cvs-ds-n{display:inline-flex}.cvs-ds-n i{width:16px;height:16px;border-radius:50%;margin-left:-4px;box-shadow:0 0 0 2px #121216}.cvs-ds-n i:first-child{margin-left:0}
+.cvs-ds-a{display:flex;flex-wrap:wrap;gap:8px}.cvs-ds-a button:disabled{opacity:.45;cursor:not-allowed}
+.cvs-ds-dit{margin:0;min-height:1.4em;color:#86EFAC;font-size:13px}
+.cvs-ds-e{display:grid;gap:8px;min-width:0}.cvs-ds-st{margin:0;font-weight:600;font-size:13px;color:#B4B4BE}
+.cvs-ds-tab{width:100%;border-collapse:collapse;font-size:12.5px}.cvs-ds-tab caption{text-align:left;font-weight:600;color:#B4B4BE;padding-bottom:6px}
+.cvs-ds-tab th,.cvs-ds-tab td{text-align:left;padding:5px 6px;border-top:1px solid rgba(255,255,255,.08);font-weight:400;overflow-wrap:anywhere}.cvs-ds-tab thead th{color:#B4B4BE;border-top:0}.cvs-ds-tab td .cvs-ds-n{margin-right:6px;vertical-align:-3px}
+.cvs-ds-k{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:12.5px}.cvs-ds-k li::before{content:"✓ ";color:#86EFAC}.cvs-ds-k li.ko::before{content:"✕ ";color:#FCA5A5}
+.cvs-comp-v{place-items:stretch}.cvs-comp{display:grid;grid-template-rows:auto auto 1fr;gap:12px;width:min(1400px,100%);max-height:100%;margin:auto;padding:16px;border-radius:18px;background:#121216;color:#EDEDF0;border:1px solid rgba(255,255,255,.12);font:14px/1.45 "Inter Variable",sans-serif;min-height:0}
+.cvs-comp h2{margin:0;font:600 16px/1.3 "Inter Variable",sans-serif}
+.cvs-comp-g{display:grid;grid-template-columns:1fr 1fr;gap:14px;min-height:0}.cvs-comp-f{margin:0;display:grid;grid-template-rows:auto 1fr;gap:6px;min-width:0;min-height:0}
+.cvs-comp-f figcaption{font-size:13px;color:#B4B4BE}.cvs-comp-f figcaption b{color:#EDEDF0}
+.cvs-comp-b{position:relative;overflow-x:hidden;overflow-y:auto;border-radius:12px;background:#fff;height:min(68vh,760px)}.cvs-comp-z{position:relative;overflow:hidden}.cvs-comp-b:focus-visible{outline:2px solid #22D3EE;outline-offset:2px}.cvs-comp-b iframe{display:block;width:1280px;height:1600px;border:0;transform-origin:0 0;pointer-events:none}
+@media (max-width:760px){.cvs-comp-g{grid-template-columns:1fr}.cvs-comp-b{height:34vh}}
+/* téléphone : le panneau reste en haut et s'arrête au-dessus de la barre d'enregistrement (en bas, jusqu'à trois lignes) */
+@media (max-width:640px){.cvs-ds{left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:max(116px,calc(env(safe-area-inset-top,0px) + 116px));width:auto;max-height:calc(100% - 370px);min-height:220px}}

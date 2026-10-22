@@ -1,0 +1,48 @@
+{
+ "format": "aime-design-system",
+ "version": "3.0.0",
+ "id": "aime-original",
+ "revision": "1.0.0",
+ "nom": "Original Iris",
+ "mode": "sombre",
+ "description": "La direction d'origine d'AIME : nuit profonde, iris et rose, lumière de l'orbe.",
+ "origine": "AIME Arena, studios A et B (22 octobre 2026)",
+ "jetons": {
+  "couleurs": {
+   "fond": "#08080A",
+   "surface": "#101014",
+   "surfaceHaute": "#17171D",
+   "texte": "#F5F5F7",
+   "texteDoux": "#92929E",
+   "bordure": "#2B2B35",
+   "primaire": "#7866F2",
+   "secondaire": "#C46B8B",
+   "relief": "#C46B8B",
+   "accent": "#58C5D8",
+   "succes": "#83C88D",
+   "alerte": "#D5A34B",
+   "danger": "#E47783"
+  },
+  "typographie": {
+   "titres": "outfit",
+   "texte": "inter",
+   "mono": "jetbrains-mono",
+   "graisseTitres": 600,
+   "interligneTitres": 1.02,
+   "interligneTexte": 1.55,
+   "approche": -0.02,
+   "casse": "none",
+   "echelle": 1.2
+  },
+  "structure": {
+   "rayons": {
+    "surface": 18,
+    "controle": 10,
+    "media": 18,
+    "pastille": 999
+   },
+   "bordure": 1,
+   "densite": "aere"
+  }
+ }
+}
