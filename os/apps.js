@@ -1,16 +1,18 @@
 /* AIME OS · le catalogue des apps et la logique pure du bureau (recherche, placement des fenêtres).
-   Le registre (nav/registre.js) reste la seule liste des sites ; l'OS y ajoute ses deux apps système
-   (Mon espace, la Régie) et retire l'entrée « Mon Bureau », puisque l'OS EST le Bureau. Testé sous node. */
+   Le registre (nav/registre.js) reste la seule liste des sites ; l'OS y ajoute ses apps système
+   (le Point Zéro, Mon espace, la Régie) et retire l'entrée « Mon Bureau », puisque l'OS EST le Bureau. Testé sous node. */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.AIMEOSApps=factory()})(typeof self!=='undefined'?self:this,function(){'use strict';
 
 /* une couleur par famille, tirée de l'iris AIME */
 var TEINTES={systeme:'iris',monde:'#7C5CFF',evenements:'#FB7185',institutions:'#22D3EE',creation:'#F59E0B',jeux:'#86EFAC'};
 var SYSTEME=[
+ {id:'pointzero',nom:'Point Zéro',href:'/point-zero/',phrase:'Déposer une matière : intention, notes, fichiers ; le système la distribue',cat:'systeme',statut:'experimental',sigle:'P0'},
  {id:'espace',nom:'Mon espace',href:'/bureau/espace/',phrase:'Reprendre ses projets, sauvegarder ce navigateur',cat:'systeme',statut:'disponible',sigle:'Es'},
  {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré'}];
-var EPINGLES=['espace','regie','studio','sites','stitch','g44','world','zero'];
+var EPINGLES=['pointzero','espace','regie','studio','sites','stitch','g44','world','zero'];
 /* les actions que l'on peut lancer depuis la palette ou l'orbe */
 var ACTIONS=[
+ {id:'deposer',nom:'Déposer une matière au point zéro',app:'pointzero',href:'/point-zero/',mots:'deposer importer note intention demande fichier trier classer point zero'},
  {id:'nouveau-devis',nom:'Nouveau devis',app:'regie',href:'/regie/#nouveau-devis',mots:'devis facture client'},
  {id:'nouveau-site',nom:'Composer un site',app:'sites',href:'/sites/',mots:'site générateur page web'},
  {id:'sites-clients',nom:'Voir les sites clients (trois écrans, par rôle)',app:'regie',href:'/regie/#sites',mots:'site client aperçu rôle perspective générateur'},

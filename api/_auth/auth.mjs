@@ -23,11 +23,11 @@ let envoyeur = null;
 export function _envoyeur(f) { envoyeur = f; instance = null; }
 export function expediteur(env = process.env) { return env.AUTH_EMAIL_FROM || env.AUTH_FROM || env.CONTACT_FROM || ''; }
 export function envoiPret(env = process.env) { return !!(envoyeur || (env.RESEND_API_KEY && expediteur(env))); }
-export async function envoyer({ to, subject, text, html }) {
-  if (envoyeur) return envoyeur({ to, subject, text, html });
+export async function envoyer({ to, subject, text, html, replyTo }) {
+  if (envoyeur) return envoyeur({ to, subject, text, html, replyTo });
   const cle = process.env.RESEND_API_KEY, de = expediteur();
   if (!cle || !de) throw new Error('envoi d\'e-mail non configuré');
-  const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: de, to: [to], subject, text, html }) });
+  const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ from: de, to: [to], subject, text, html }, replyTo && /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(replyTo) ? { reply_to: replyTo } : {})) });
   if (!r.ok) throw new Error('envoi refusé');
 }
 function envoyerLien({ email, url }) {
@@ -74,7 +74,7 @@ export function auth(env = process.env) {
   return instance;
 }
 
-/* ce que la personne laisse hors des tables de Better Auth : ses espaces (et leur direct), ses adhésions, les invitations à son adresse */
+/* ce que la personne laisse hors des tables de Better Auth : ses espaces (et leur direct), ses adhésions, les invitations à son adresse, sa matière du Point Zéro */
 export async function effacerTraces(db, u) {
   const c = await db.connect();
   try {
@@ -87,6 +87,8 @@ export async function effacerTraces(db, u) {
     }
     await c.query('delete from space_members where user_id = $1', [u.id]);
     if (u.email) await c.query('delete from invitations where lower(email) = lower($1) and used_at is null', [u.email]);
+    const m = await c.query("select to_regclass('public.matiere') as t");
+    if (m.rows[0] && m.rows[0].t) await c.query('delete from matiere where user_id = $1', [u.id]);
     await c.query('commit');
   } catch (e) { await c.query('rollback').catch(() => {}); throw e; }
   finally { c.release(); }

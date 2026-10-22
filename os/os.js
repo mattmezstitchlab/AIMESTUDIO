@@ -158,8 +158,10 @@ document.addEventListener('pointerdown',function(e){if(!$('orbePan').hidden&&!e.
 $('accueilBtn').onclick=function(){fen.forEach(function(w){if(!w.reduite){w.reduite=true;w.el.hidden=true}});focusId=null;texte('appCourante','');majDock();accueilVisible();enregistrer();if($('lanceur-q'))$('lanceur-q').focus();else if(PAGE)scrollTo({top:0,behavior:RM?'auto':'smooth'})};
 
 /* ---------- l'accueil ---------- */
-function accueil(){$('salut').textContent=A.salutation(new Date().getHours());
- if(window.AIMEOrbe)try{var o=AIMEOrbe.monter($('orbeAccueil'),{amplitude:.03});if(RM&&o&&o.animer)o.animer(false)}catch(e){}
+function accueil(){var salut=A.salutation(new Date().getHours());$('salut').textContent=salut;
+ /* le Point Zéro : le bureau commence par une matière à déposer ; sans lui, l'orbe seule */
+ if(window.AIMEPointZero&&$('pointZero'))try{AIMEPointZero.monter($('pointZero'),{salut:function(n){if(n)$('salut').textContent=salut+' '+n}})}catch(e){}
+ else if(window.AIMEOrbe&&$('orbeAccueil'))try{var o=AIMEOrbe.monter($('orbeAccueil'),{amplitude:.03});if(RM&&o&&o.animer)o.animer(false)}catch(e){}
  $('actionsRapides').innerHTML=A.ACTIONS.slice(0,5).map(function(x,i){return'<button type="button" data-a="'+i+'">'+esc(x.nom)+'</button>'}).join('');
  $('actionsRapides').onclick=function(e){var b=e.target.closest('[data-a]');if(!b)return;var x=A.ACTIONS[+b.dataset.a];ouvrir(x.app,x.href)};
  var P=[];if(B){try{P=B.reprendre(B.inventaire(localStorage),6)}catch(e){}}
