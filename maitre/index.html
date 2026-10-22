@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cube Maître · AIME</title>
+<meta name="description" content="Le site AIME en six facettes : pages, orbe, contenu, moteurs, santé, comptes. Lecture seule, données réelles.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/cube/vue3d.css">
+<link rel="stylesheet" href="/cube/regie.css">
+<link rel="stylesheet" href="/maitre/maitre.css">
+</head>
+<body class="rp">
+<header class="rp-tete">
+ <a class="rp-mk" href="/bureau/" id="mc-retour">AIME<sup>®</sup> <span>Bureau</span></a>
+ <div class="rp-qui" id="mc-qui"></div>
+</header>
+<main class="rp-main" id="mc-main" aria-labelledby="mc-t">
+ <div class="rp-intro">
+  <p class="rp-k">Le site AIME · lecture seule</p>
+  <h1 class="rp-t" id="mc-t">Cube Maître</h1>
+  <p class="rp-l" id="mc-l">Chargement des données réelles du site…</p>
+ </div>
+ <div class="rp-scene"><div id="mc-cube"></div><p class="rp-aide" id="mc-aide">Glissez pour le faire tourner · touchez une face · au clavier : Tab puis Entrée, flèches pour tourner</p></div>
+ <section class="rp-pan" id="mc-pan" aria-live="polite" aria-labelledby="mc-pt"></section>
+</main>
+<p class="rp-limite" id="mc-limite">Le Cube Maître lit la version publiée du site et ses fichiers publics. Il n'écrit rien : les réglages se font dans la Régie, par le propriétaire.</p>
+<noscript><p class="rp-l">Le Cube Maître a besoin de JavaScript.</p></noscript>
+<script src="/cube/modele.js"></script>
+<script src="/cube/vue3d.js"></script>
+<script src="/maitre/modele.js"></script>
+<script src="/maitre/sources.js"></script>
+<script src="/maitre/maitre.js"></script>
+</body>
+</html>

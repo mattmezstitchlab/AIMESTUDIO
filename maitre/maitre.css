@@ -1,0 +1,19 @@
+/* AIME · Cube Maître : ce qui s'ajoute à la grammaire de Mon cube (cube/regie.css). */
+#mc-cube.cv3{--cv3:min(300px,62vw);margin:calc(var(--cv3) * .14) 0 calc(var(--cv3) * .2)}
+.mc-role{padding:3px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.22);font:600 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.mc-role.pro{border-color:rgba(251,191,36,.7);color:#FCD34D}
+.mc-ch{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.mc-c{padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);min-width:0}
+.mc-c b{display:block;font:400 22px/1.15 var(--display);font-variant-numeric:tabular-nums}
+.mc-c span{display:block;font-size:12.5px;line-height:1.35;color:var(--soft)}
+.mc-src ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:4px}
+.mc-src li{font-size:12.5px;color:var(--soft);overflow-wrap:anywhere}.mc-src code{font:500 12.5px var(--mono);color:var(--ink)}
+.mc-act{display:grid;gap:8px}
+.mc-act .rp-b{justify-self:start;margin-top:4px}
+.mc-a{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:var(--ink);text-decoration:none}
+.mc-a:hover{border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.06)}
+.mc-a:focus-visible{outline:2px solid #22D3EE;outline-offset:2px}
+.mc-p{flex:none;margin-top:2px;padding:3px 8px;border-radius:999px;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.mc-p-lecture{background:rgba(74,222,128,.14);color:#86EFAC}.mc-p-regie{background:rgba(251,191,36,.14);color:#FCD34D}
+.mc-at{display:grid;min-width:0}.mc-at b{font-weight:600;font-size:14px}.mc-at small{font-size:12.5px;color:var(--soft)}
+@media (max-width:860px){.rp-main{grid-template-columns:1fr;grid-template-areas:"intro" "scene" "pan"}}
