@@ -1,0 +1,129 @@
+/* AIME · Le Monde AIME, phase C : les cartes postales qui fabriquent le cube-personne.
+   Même nuit, mêmes typos, même contour irisé que la grande page ; le papier des cartes reprend celui du timbre. */
+.cp{position:relative;z-index:3;padding:clamp(56px,12vh,120px) max(16px,env(safe-area-inset-right,0px)) clamp(80px,14vh,140px) max(16px,env(safe-area-inset-left,0px));color:var(--ink,#EDEDF0);font-family:var(--ui,"Inter Variable",sans-serif)}
+.cp-in{max-width:1080px;margin:0 auto;display:grid;gap:18px;justify-items:center;text-align:center}
+@media (min-width:761px){.cp{padding-left:max(190px,env(safe-area-inset-left,0px))}}
+/* téléphone : la règle millimétrée garde son bord gauche */
+@media (max-width:760px){.cp{padding-left:max(34px,env(safe-area-inset-left,0px))}}
+/* la fente : sous le héros, là où les cartes entrent dans le Monde AIME */
+.cp-fente{display:grid;gap:10px;justify-items:center;margin-bottom:clamp(20px,6vh,56px)}
+.cp-fente-l{position:relative;display:block;width:min(440px,72vw);height:16px;border-radius:999px;background:#000;border:2px solid transparent;
+ background:linear-gradient(#020203,#020203) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;box-shadow:inset 0 4px 10px #000,0 0 26px rgba(124,92,255,.32)}
+.cp-fente.recoit .cp-fente-l{animation:cp-fente 1.2s ease-out}
+@keyframes cp-fente{30%{box-shadow:inset 0 4px 10px #000,0 0 0 6px rgba(124,92,255,.25),0 0 44px 8px rgba(34,211,238,.5)}}
+.cp-fente p{margin:0;font:500 11.5px/1.4 var(--mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--soft,#9C9CA8)}
+.cp-fente p b{color:var(--ink,#EDEDF0);font-weight:600}
+.cp-k{margin:0;font:500 12px/1.3 var(--mono,monospace);letter-spacing:.16em;text-transform:uppercase;color:#A78BFA}
+.cp-t{margin:0;font:400 clamp(30px,5.4vw,58px)/1.02 var(--display,sans-serif);letter-spacing:-.01em;text-wrap:balance}
+.cp-t em{font-style:normal;background:linear-gradient(90deg,#FB7185,#F59E0B,#22D3EE,#7C5CFF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cp-l{margin:0;max-width:58ch;color:var(--soft,#9C9CA8);font-size:16px;line-height:1.55;text-wrap:pretty}
+.cp-mode{margin:0;display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;font-size:13.5px;color:var(--soft,#9C9CA8)}
+.cp-mode:empty{display:none}
+.cp-mode .cp-demo,.cp-demo{display:inline-block;padding:3px 9px;border-radius:999px;border:1px dashed rgba(245,158,11,.7);color:#FCD34D;font:600 11px/1.3 var(--mono,monospace);letter-spacing:.1em;text-transform:uppercase}
+.cp-mode a{color:var(--ink,#EDEDF0)}
+/* la planche de cartes */
+.cp-grille{list-style:none;margin:8px 0 0;padding:0;width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2vw,22px)}
+@media (max-width:760px){.cp-grille{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cp-carte{position:relative;display:block;width:100%;aspect-ratio:3/2;border:0;padding:0;border-radius:10px;cursor:pointer;color:#fff;text-align:left;overflow:hidden;font:inherit;
+ background:radial-gradient(90% 80% at 22% 16%,var(--a) 0,transparent 62%),linear-gradient(150deg,var(--b),var(--c) 82%);box-shadow:0 14px 34px rgba(0,0,0,.45),inset 0 0 0 1.5px rgba(255,255,255,.22);
+ transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.cp-carte::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.05) 0 2px,transparent 2px 7px);mix-blend-mode:overlay;pointer-events:none}
+.cp-carte:hover{transform:translateY(-4px) rotate(-.6deg);box-shadow:0 22px 44px rgba(0,0,0,.55),inset 0 0 0 1.5px rgba(255,255,255,.3)}
+.cp-carte:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.cp-carte svg{position:absolute;left:8%;top:12%;width:16%;height:auto;fill:none;stroke:rgba(255,255,255,.9);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.cp-carte b{position:absolute;left:8%;right:30%;bottom:22%;font:400 clamp(17px,2.4vw,27px)/1.05 var(--display,sans-serif);text-shadow:0 2px 12px rgba(0,0,0,.35)}
+.cp-carte small{position:absolute;left:8%;right:8%;bottom:8%;font-size:clamp(10.5px,1.1vw,12.5px);line-height:1.3;opacity:.86;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-carte .cp-etat{position:absolute;right:6%;top:9%;width:24%;aspect-ratio:1;border-radius:50%;border:1.5px dashed rgba(255,255,255,.65);display:grid;place-items:center;text-align:center;
+ font:600 clamp(8px,.85vw,10px)/1.15 var(--mono,monospace);letter-spacing:.06em;text-transform:uppercase;transform:rotate(-12deg);color:#fff}
+.cp-carte[data-etat=posee] .cp-etat{border-style:solid;background:rgba(10,10,12,.25)}
+.cp-carte .cp-mini{position:absolute;right:7%;bottom:12%}
+.cp-carte .cp-mini .timbre{--l:30px;--r:3px}
+@media (max-width:760px){.cp-carte .cp-etat{width:30%}.cp-carte b{right:8%;bottom:24%}}
+.cp-prog{margin:0;font:500 13px/1.4 var(--mono,monospace);letter-spacing:.06em;color:var(--soft,#9C9CA8)}
+.cp-prog b{color:var(--ink,#EDEDF0)}
+
+/* la table : la carte en grand, elle se retourne */
+.cp-table{position:fixed;inset:0;z-index:9990;display:grid;grid-template-rows:1fr auto;justify-items:center;align-items:center;gap:14px;
+ padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:rgba(6,6,9,.84);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);overflow:auto}
+.cp-table[hidden]{display:none}
+.cp-scene{perspective:1800px;width:min(760px,100%);align-self:end}
+.cp-grande{position:relative;width:100%;aspect-ratio:3/2;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.3,.7,.2,1)}
+.cp-grande.retournee{transform:rotateY(180deg)}
+.cp-face{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.6)}
+.cp-recto{background:radial-gradient(90% 80% at 22% 16%,var(--a) 0,transparent 62%),linear-gradient(150deg,var(--b),var(--c) 82%);color:#fff}
+.cp-recto svg{position:absolute;left:7%;top:12%;width:13%;fill:none;stroke:#fff;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.cp-recto b{position:absolute;left:7%;bottom:24%;font:400 clamp(30px,6vw,60px)/1 var(--display,sans-serif)}
+.cp-recto small{position:absolute;left:7%;bottom:12%;font-size:clamp(13px,1.6vw,16px);opacity:.9}
+.cp-recto i{position:absolute;right:6%;top:8%;font:600 11px var(--mono,monospace);letter-spacing:.16em;text-transform:uppercase;font-style:normal;opacity:.85}
+/* le verso : un papier crème, une encre bleue, des lignes, une écriture à la main */
+.cp-verso{transform:rotateY(180deg);display:grid;grid-template-columns:1.35fr 1px 1fr;gap:clamp(10px,2.4vw,24px);padding:clamp(14px,3vw,30px);color:#24245C;
+ background:repeating-linear-gradient(0deg,transparent 0 31px,rgba(36,36,92,.08) 31px 32px),radial-gradient(120% 90% at 10% 0,#FFFDF7,#F3ECDD);--main:"Bradley Hand","Segoe Print","Noteworthy","Chalkboard SE","Comic Neue","Comic Sans MS",cursive}
+.cp-verso::after{content:"";position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 0 1px rgba(36,36,92,.12);pointer-events:none}
+.cp-sep{background:rgba(36,36,92,.22)}
+.cp-mots{display:flex;flex-direction:column;gap:clamp(6px,1.4vw,12px);min-width:0;text-align:left;margin:0}
+.cp-cher{margin:0;font:400 clamp(17px,2.4vw,24px)/1.2 var(--main);transform:rotate(-1.2deg);transform-origin:left}
+.cp-champ{display:grid;gap:2px}
+.cp-champ span{font:600 clamp(9px,1vw,10.5px)/1.2 var(--mono,monospace);letter-spacing:.1em;text-transform:uppercase;color:rgba(36,36,92,.6)}
+.cp-champ input,.cp-champ select{width:100%;min-width:0;box-sizing:border-box;border:0;border-bottom:1.5px dotted rgba(36,36,92,.45);border-radius:0;background:transparent;color:#1E1E7A;
+ font:400 clamp(16px,2.2vw,22px)/1.3 var(--main);padding:2px 0 3px;-webkit-appearance:none;appearance:none}
+.cp-champ select{cursor:pointer;background:linear-gradient(45deg,transparent 50%,#1E1E7A 50%) right 6px center/7px 7px no-repeat}
+.cp-champ input::placeholder{color:rgba(36,36,92,.35)}
+.cp-champ input:focus-visible,.cp-champ select:focus-visible{outline:2px solid #7C5CFF;outline-offset:2px;border-bottom-color:#7C5CFF}
+.cp-droite{position:relative;display:grid;grid-template-rows:auto 1fr;gap:10px;min-width:0}
+.cp-case{justify-self:end;width:clamp(58px,10vw,92px);aspect-ratio:4/5;border:1.5px dashed rgba(36,36,92,.45);border-radius:4px;display:grid;place-items:center;text-align:center;padding:4px;box-sizing:border-box;
+ font:600 clamp(8px,.9vw,10px)/1.2 var(--mono,monospace);letter-spacing:.06em;text-transform:uppercase;color:rgba(36,36,92,.55);position:relative;transition:background .2s,border-color .2s}
+.cp-case.vise{background:rgba(124,92,255,.12);border-color:#7C5CFF;color:#5B3FE0}
+.cp-case .timbre{--l:100%;position:absolute;inset:0;width:100%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+.cp-case.pose{border-color:transparent}
+.cp-cachet{position:absolute;right:58%;top:6px;width:clamp(54px,8vw,76px);aspect-ratio:1;border-radius:50%;border:1.5px solid rgba(124,92,255,.75);color:rgba(91,63,224,.85);display:grid;place-items:center;text-align:center;
+ font:700 clamp(7px,.75vw,8.5px)/1.25 var(--mono,monospace);letter-spacing:.06em;text-transform:uppercase;transform:rotate(-14deg) scale(.6);opacity:0;transition:opacity .35s,transform .35s cubic-bezier(.2,1.6,.4,1);pointer-events:none}
+.cp-cachet.on{opacity:1;transform:rotate(-14deg) scale(1)}
+.cp-adr{align-self:end;display:grid;gap:clamp(6px,1.2vw,12px);text-align:left;font:400 clamp(14px,1.9vw,19px)/1.2 var(--main)}
+.cp-adr span{border-bottom:1px solid rgba(36,36,92,.3);padding-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:560px){.cp-verso{grid-template-columns:1fr;grid-template-rows:auto auto;gap:8px;padding:12px 14px}.cp-sep{display:none}.cp-grande{aspect-ratio:auto;height:min(520px,calc(100dvh - 210px))}
+ .cp-droite{grid-template-rows:auto;grid-template-columns:1fr auto;align-items:end}.cp-case{grid-column:2;grid-row:1}.cp-adr{grid-column:1;grid-row:1}.cp-cachet{right:auto;left:auto;right:76px;top:-6px}}
+/* les outils, sous la carte */
+.cp-outils{align-self:start;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;max-width:760px}
+.cp-outils button{min-height:42px;padding:9px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#EDEDF0;font:600 14px/1.2 var(--ui,sans-serif);cursor:pointer}
+.cp-outils button.p{background:#EDEDF0;color:#0A0A0C;border-color:#EDEDF0}
+.cp-outils button:disabled{opacity:.4;cursor:not-allowed}
+.cp-outils button:focus-visible,.cp-mien .timbre:focus-visible{outline:2px solid #22D3EE;outline-offset:2px}
+.cp-mien{display:flex;align-items:center;gap:8px;color:var(--soft,#9C9CA8);font-size:12.5px;touch-action:none}
+.cp-mien .timbre{--l:58px;cursor:grab}
+.cp-mien .timbre.porte{opacity:.35}
+.cp-dit{flex-basis:100%;margin:0;text-align:center;font-size:14px;color:var(--soft,#9C9CA8);min-height:1.4em}
+.cp-glisse{position:fixed;z-index:9995;pointer-events:none;left:0;top:0}
+.cp-glisse .timbre{--l:64px;transform:rotate(-6deg)}
+
+/* le voyage : la carte entre dans la fente, puis descend le long de la règle millimétrée */
+.cp-voy{position:fixed;z-index:9992;left:0;top:0;width:78px;aspect-ratio:3/2;border-radius:5px;pointer-events:none;will-change:transform;
+ background:radial-gradient(90% 80% at 22% 16%,var(--a) 0,transparent 62%),linear-gradient(150deg,var(--b),var(--c) 82%);box-shadow:0 10px 26px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.3)}
+.cp-voy .timbre{--l:20px;--r:2px;position:absolute;right:5px;top:4px}
+.cp-voy b{position:absolute;left:6px;bottom:4px;font:400 11px/1 var(--display,sans-serif);color:#fff}
+.cp-voy.fente{transition:transform .9s cubic-bezier(.5,0,.3,1),clip-path .55s ease-in .45s;clip-path:inset(0 0 0 0)}
+.cp-voy.fente.dedans{clip-path:inset(0 0 100% 0)}
+.cp-voy.arrive{transition:transform .8s cubic-bezier(.4,0,.2,1),opacity .5s .4s}
+.cp-barre{position:fixed;z-index:9993;left:50%;top:calc(72px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
+ max-width:calc(100vw - 32px);padding:8px 10px 8px 14px;border-radius:999px;background:rgba(17,17,23,.86);border:1px solid rgba(255,255,255,.12);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#EDEDF0;font:13px/1.3 var(--ui,sans-serif);box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.cp-barre[hidden]{display:none}
+.cp-barre p{margin:0;min-width:0}.cp-barre p b{font-weight:600}
+.cp-barre progress{width:90px;height:4px;-webkit-appearance:none;appearance:none;border:0;border-radius:4px;background:rgba(255,255,255,.15);overflow:hidden;accent-color:#7C5CFF}
+.cp-barre progress::-webkit-progress-bar{background:rgba(255,255,255,.15)}.cp-barre progress::-webkit-progress-value{background:linear-gradient(90deg,#FB7185,#22D3EE,#7C5CFF)}
+.cp-barre button{min-height:34px;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#EDEDF0;font:600 12.5px/1 var(--ui,sans-serif);cursor:pointer}
+.cp-barre button:focus-visible{outline:2px solid #22D3EE;outline-offset:2px}
+@media (max-width:560px){.cp-barre{top:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px));border-radius:18px}.cp-barre progress{width:60px}}
+
+/* la facette posée : la carte devient une face du cube de la grande page */
+.f2 .o .cp-pose{position:absolute;inset:0;z-index:2;background:radial-gradient(90% 80% at 22% 16%,var(--a) 0,transparent 62%),linear-gradient(150deg,var(--b),var(--c) 82%);color:#fff}
+.f2 .o .cp-pose small{position:absolute;left:8%;top:8%;font:600 calc(var(--c2)*.042) var(--mono,monospace);letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.f2 .o .cp-pose b{position:absolute;left:8%;right:8%;bottom:9%;font:400 calc(var(--c2)*.085)/1.12 var(--display,sans-serif);text-shadow:0 2px 10px rgba(0,0,0,.35);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.f2 .o .cp-pose .timbre{--l:calc(var(--c2)*.2);--r:3px;position:absolute;right:8%;top:8%}
+.f2 .o .cp-pose .cp-cachet{right:20%;top:12%;width:calc(var(--c2)*.26);border-color:rgba(255,255,255,.8);color:#fff;font-size:calc(var(--c2)*.026);opacity:.9;transform:rotate(-14deg)}
+.f2.cp-arrivee .o{animation:cp-face 1.6s ease-out}
+@keyframes cp-face{0%{filter:brightness(2.4)}100%{filter:none}}
+
+@media (prefers-reduced-motion:reduce){
+ .cp-carte,.cp-grande,.cp-cachet,.cp-voy,.cp-voy.fente,.cp-voy.arrive{transition:none!important}
+ .cp-fente.recoit .cp-fente-l,.f2.cp-arrivee .o{animation:none}
+ .cp-carte:hover{transform:none}}
+@media (forced-colors:active){.cp-carte,.cp-face,.cp-fente-l{border:2px solid CanvasText}}
