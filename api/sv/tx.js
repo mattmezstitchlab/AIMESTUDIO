@@ -1,7 +1,7 @@
 // POST /api/sv/tx { identity, res } → autorisation propre à UNE transaction (60 s), seulement si le rôle peut payer ce paiement.
 const { P, RES, start, sign } = require('../_sv/core.js');
-module.exports = function tx(req, res) {
-  const s = start(req, res); if (!s) return;
+module.exports = async function tx(req, res) {
+  const s = await start(req, res); if (!s) return;
   const r = RES[s.b.res];
   if (!r || r.type !== 'payment') return res.status(404).json({ allow: false, reason: 'paiement inconnu' });
   const d = P.canStart(s.who, 'pay', r);

@@ -6,7 +6,9 @@ const N = require('../nav/registre.js');
 
 test('OS · le catalogue : apps système, puis le registre, sans le Bureau lui-même ni doublon', () => {
   const c = A.catalogue(N.ENTREES);
-  assert.deepEqual(c.slice(0, 4).map(a => a.id), ['cube', 'pointzero', 'espace', 'regie']);
+  assert.deepEqual(c.slice(0, 3).map(a => a.id), ['cube', 'pointzero', 'espace']);
+  assert.ok(!c.some(a => a.id === 'regie'), 'la Régie n\'est pas une app publique');
+  assert.deepEqual(A.catalogue(N.ENTREES, { proprietaire: true }).slice(0, 4).map(a => a.id), ['cube', 'pointzero', 'espace', 'regie']);
   assert.ok(!c.some(a => a.id === 'bureau'), 'l\'OS est le Bureau : pas d\'app « Mon Bureau » dedans');
   assert.equal(new Set(c.map(a => a.id)).size, c.length);
   for (const a of c) { assert.match(a.href, /^\/(?!\/)/, a.id); assert.ok(a.sigle && a.sigle.length <= 2, a.id); assert.ok(a.teinte, a.id); }
@@ -15,7 +17,7 @@ test('OS · le catalogue : apps système, puis le registre, sans le Bureau lui-m
 });
 
 test('OS · la recherche ignore accents et casse, et classe le nom avant la description', () => {
-  const c = A.catalogue(N.ENTREES);
+  const c = A.catalogue(N.ENTREES, { proprietaire: true });
   assert.equal(A.chercher('regie', c)[0].id, 'regie');
   assert.equal(A.chercher('STITCH', c)[0].id, 'stitch');
   const act = A.chercher('facture', A.ACTIONS); assert.equal(act[0].id, 'nouveau-devis', 'les mots-clés trouvent l\'action');
@@ -45,9 +47,10 @@ test('OS · la coque : /bureau/ est l\'OS, Mon espace garde l\'ancien Bureau, la
 });
 
 test('OS · en tapant « devis », l\'action passe avant l\'app qui en parle', () => {
-  const c = A.catalogue(N.ENTREES), q = 'devis';
-  const app = A.chercher(q, c)[0], act = A.chercher(q, A.ACTIONS)[0];
+  const c = A.catalogue(N.ENTREES, { proprietaire: true }), q = 'devis';
+  const app = A.chercher(q, c)[0], act = A.chercher(q, A.actions({ proprietaire: true }))[0];
   assert.ok(A.pertinence(q, act) > A.pertinence(q, app));
+  assert.ok(!A.actions().some(x => x.app === 'regie'), 'les actions de la Régie ne sont proposées qu\'au propriétaire');
 });
 
 test('OS · autonomie de l\'orbe : le visiteur l\'emporte, à la demande par défaut', () => {
