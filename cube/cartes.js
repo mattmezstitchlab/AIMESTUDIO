@@ -1,4 +1,5 @@
 /* AIME · Le Monde AIME, phase C, première tranche : Carte postale → Timbre → Fente → Voyage vertical → Facette du cube.
+   (Rangé dans /cube/ : /monde/ est une adresse de la grande page dans vercel.json.)
    La grande page reste celle d'aujourd'hui ; ce script ajoute, sous le héros, la fente et six cartes postales.
    Une carte se retourne (verso manuscrit, champs structurés et éditables), reçoit le timbre du compte (glisser-déposer
    ou bouton), entre dans la fente, descend le long de la règle millimétrée (lecture automatique, pause, reprise, passer,

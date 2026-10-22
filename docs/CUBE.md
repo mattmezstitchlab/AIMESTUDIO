@@ -22,7 +22,7 @@ Le cube est un **contenu AIME**, pas une animation. Un seul modèle, indépendan
 
 ## Première tranche : Carte postale → Timbre → Fente → Voyage vertical → Facette
 
-Script : `monde/cartes.js`, styles : `monde/cartes.css`, chargés par `aime/index.html` (trois lignes). Le titre, le cube du héros et les animations de la page ne changent pas.
+Script : `cube/cartes.js`, styles : `cube/cartes.css`, chargés par `aime/index.html` (trois lignes). Le titre, le cube du héros et les animations de la page ne changent pas.
 
 1. **La fente et les six cartes**, sous le héros. Le sommaire du héros gagne son chapitre « 0 · Vos cartes ».
 2. **La carte se retourne en 3D.** Le verso est en papier crème, à l'encre bleue, avec une écriture manuscrite. Les champs sont structurés et éditables, et enregistrés à la frappe.

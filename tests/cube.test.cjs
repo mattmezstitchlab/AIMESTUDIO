@@ -48,11 +48,12 @@ t('relire : aller-retour fidèle, et rien d\'un autre compte ni d\'une version i
  const faux=JSON.parse(C.aGarder(c));faux.facettes.temps={etat:'posee',champs:{},visibilite:'publie'};assert.equal(C.relire(faux,'u1').facettes.temps.etat,'vide','une facette posée sans contenu redevient vide')});
 
 t('la grande page charge le modèle et les cartes, sans toucher au titre ni au cube du héros',()=>{const h=lire('aime/index.html');
- assert.ok(h.includes('/cube/modele.js')&&h.includes('/monde/cartes.js')&&h.includes('/monde/cartes.css'));
- assert.ok(h.indexOf('/compte/timbre.js')<h.indexOf('/monde/cartes.js'),'le timbre existant est chargé avant');
+ assert.ok(h.includes('/cube/modele.js')&&h.includes('/cube/cartes.js')&&h.includes('/cube/cartes.css'));
+ assert.ok(h.indexOf('/compte/timbre.js')<h.indexOf('/cube/cartes.js'),'le timbre existant est chargé avant');
+ const v=JSON.parse(lire('vercel.json')),pris=(v.rewrites||[]).map(r=>r.source.split('/')[1]).filter(Boolean);['/cube/modele.js','/cube/cartes.js','/cube/cartes.css'].forEach(f=>assert.ok(!pris.includes(f.split('/')[1]),f+' : dossier non réécrit par vercel.json'));
  assert.ok(h.includes('<h1 class="h0t" id="h0t" aria-label="Le monde AIME"><span aria-hidden="true">Le m<span class="hcube" id="hcube"><span class="hc3" id="hc3"></span></span>nde</span><em aria-hidden="true">AIME</em></h1>'),'titre intact')});
 
-t('les cartes : timbre existant, glisser-déposer ET commande accessible, fente, voyage contrôlable, mouvement réduit',()=>{const j=lire('monde/cartes.js'),s=lire('monde/cartes.css');
+t('les cartes : timbre existant, glisser-déposer ET commande accessible, fente, voyage contrôlable, mouvement réduit',()=>{const j=lire('cube/cartes.js'),s=lire('cube/cartes.css');
  assert.ok(j.includes('AIMETimbre')&&!/\.timbre\{/.test(s.replace(/\.cp[^{]*\.timbre\{/g,'')),'pas de second timbre');
  assert.ok(j.includes("'pointerdown'")&&j.includes('cp-apposer'),'glisser et bouton');assert.ok(j.includes('cp-fente')&&j.includes('cp-pause')&&j.includes('cp-passer'));
  assert.ok(j.includes('aimeRuler')&&j.includes('svAnchors'),'la règle et les repères de la page sont réutilisés');
