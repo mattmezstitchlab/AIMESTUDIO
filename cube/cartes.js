@@ -141,7 +141,7 @@ function centreCube(){var W=innerWidth,H=innerHeight,m=W<760;return[m?W/2:W*.655
 function arriver(){var V=voyage;if(!V)return;voyage=null;barre.hidden=true;
  try{C.poser(cube,V.id);garder()}catch(e){}
  var c=centreCube();if(RM){V.v.remove()}else{V.v.classList.add('arrive');V.v.style.transition='';requestAnimationFrame(function(){V.v.style.transform='translate('+(c[0]-39)+'px,'+(c[1]-26)+'px) scale(.4)';V.v.style.opacity='0'});setTimeout(function(){V.v.remove()},1300)}
- faces(V.id);planche();bulle(V.id)}
+ faces(V.id);planche();bulle(V.id);signal('posee',V.id)}
 function faces(nouvelle){C.FACETTES.forEach(function(d){var f=cube.facettes[d.id],face=document.querySelector('#cube2 .f2[data-i="'+d.face+'"]'),o=face&&face.querySelector('.o');if(!o)return;
  var p=o.querySelector('.cp-pose');if(f.etat!=='posee'){if(p)p.remove();face.classList.remove('cp-on');return}
  if(!p){p=el('span','cp-pose');p.setAttribute('aria-hidden','true');o.appendChild(p)}teinte(p,d);p.textContent='';p.appendChild(el('small',null,d.nom));
@@ -156,7 +156,9 @@ function bulle(id){var vieille=document.querySelector('.rv-bulle.cp-b');if(vieil
  var x=el('button',null,'Fermer');x.type='button';x.onclick=function(){b.remove()};b.appendChild(u);b.appendChild(a);b.appendChild(x);document.body.appendChild(b);u.focus({preventScroll:true})}
 
 /* ---------- qui est là : le compte et son timbre, sinon la démonstration ---------- */
-function afficher(){charger();mode();planche();faces()}
+/* les autres vues du cube (assemblage, Bureau, Canevas) écoutent ce signal et relisent le même modèle */
+function signal(type,id){try{dispatchEvent(new CustomEvent('aime:cube',{detail:{type:type,id:id||null}}))}catch(e){}}
+function afficher(){charger();mode();planche();faces();signal('charge')}
 afficher();
 if(!/[?&]demo=timbre\b/.test(location.search))Promise.all([fetch('/api/auth/get-session',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null}),
  fetch('/api/identite',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null})])
