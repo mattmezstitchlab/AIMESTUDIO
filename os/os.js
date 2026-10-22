@@ -183,7 +183,7 @@ var fond=!$('fond')?null:(function(){var c=$('fond'),x=c.getContext('2d'),P=[],W
 chargerRegie();if(!PAGE){accueil();heure();setInterval(heure,20000)}majDock();
 /* sur la Page Zéro : les liens vers une app s'ouvrent dans une fenêtre (sur grand écran), la page reste dessous */
 if(PAGE)document.addEventListener('click',function(e){if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||PETIT.matches)return;var l=e.target.closest&&e.target.closest('a[href]');
- if(!l||l.target||l.hasAttribute('download')||l.closest('.os-coque'))return;var u;try{u=new URL(l.href)}catch(_){return}if(u.origin!==location.origin||u.pathname==='/'||/^\/travaux\//.test(u.pathname))return;
+ if(!l||l.target||l.hasAttribute('download')||l.closest('.os-coque')||l.closest('.aime-porte'))return;/* la porte ouvre une vraie page, jamais une fenêtre */var u;try{u=new URL(l.href)}catch(_){return}if(u.origin!==location.origin||u.pathname==='/'||/^\/travaux\//.test(u.pathname))return;
  var p=A.adresseApp(u.pathname),a=null,lg=-1;cat.forEach(function(x){var h=x.href.split(/[?#]/)[0];if(h!=='/'&&(p===h||p.indexOf(h)===0)&&h.length>lg){lg=h.length;a=x}});if(!a)return;
  e.preventDefault();ouvrir(a.id,p===u.pathname?p+u.search+u.hash:p)});
 if(!PAGE)etat.fenetres.forEach(function(s){var a=parId[s.app]||appDe(s.href);if(a)creer({app:a,href:s.href,x:s.x,y:s.y,l:s.l,h:s.h,reduite:s.reduite,agrandie:s.agrandie})});

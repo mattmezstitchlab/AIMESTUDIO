@@ -11,6 +11,8 @@
 <link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/live/live.css">
 <link rel="stylesheet" href="/pointzero/pz.css">
+<link rel="stylesheet" href="/compte/timbre.css">
+<link rel="stylesheet" href="/porte/porte.css">
 <link rel="stylesheet" href="/orbe/pilote.css">
 <style>
 body{background:radial-gradient(80% 60% at 50% 40%,rgba(124,92,255,.10),transparent 60%),radial-gradient(60% 50% at 80% 90%,rgba(34,211,238,.06),transparent 60%),#0A0A0C;min-height:100vh}
@@ -25,7 +27,7 @@ body{background:radial-gradient(80% 60% at 50% 40%,rgba(124,92,255,.10),transpar
 <header class="tete">
  <a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup> <span>Point zéro</span></a>
  <div class="ev"><b>Point Zéro</b><span>Une matière déposée, distribuée dans ses formes</span></div>
- <div class="tete-d"><a class="b" href="/compte/">Mon compte</a></div>
+ <div class="tete-d"><a class="b" href="/compte/">Mon compte</a><span id="porte"></span></div>
 </header>
 <main id="contenu" tabindex="-1" class="pz-page">
  <h1><span id="salut">Bonjour</span>.</h1>
@@ -41,7 +43,10 @@ body{background:radial-gradient(80% 60% at 50% 40%,rgba(124,92,255,.10),transpar
 <script src="/orbe/pilote.js"></script>
 <script src="/stitch/js/couleur.js"></script>
 <script src="/stitch/js/conversion.js"></script>
+<script src="/compte/timbre.js"></script>
+<script src="/porte/porte.js"></script>
 <script src="/pointzero/pz.js"></script>
+<script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'pointzero',position:'haut'})</script>
 <script>AIMEPointZero.monter(document.getElementById('pointZero'),{salut:function(n){if(n)document.getElementById('salut').textContent='Bonjour '+n}});</script>
 </body>
 </html>

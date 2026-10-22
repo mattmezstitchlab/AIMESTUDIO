@@ -11,6 +11,7 @@
 <script>try{if(localStorage.getItem('aime-zero-calme')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}catch(e){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}</script>
 <link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/porte/porte.css">
 <style>
 @font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin.woff2") format("woff2")}
 @font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin-ext.woff2") format("woff2");unicode-range:U+0100-024F,U+1E00-1EFF}
@@ -38,6 +39,7 @@ body.loin .barre .mk{opacity:1}
 body.loin .barre::before{opacity:.92}
 .barre .droite{display:flex;align-items:center;gap:18px;pointer-events:auto}
 .barre .studio{font:600 12px var(--ui);letter-spacing:.16em;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:9px 14px;background:rgba(10,10,12,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:border-color .2s,background .2s}.barre .studio:hover{border-color:#5E5E6A;background:rgba(237,237,240,.06)}
+.barre .compte-d{font:500 12.5px var(--ui);color:var(--ink);opacity:.72;text-decoration:underline;text-underline-offset:3px}.barre .compte-d:hover{opacity:1}
 @media (max-width:420px){.barre .passer{display:none}}
 .barre .passer{font:500 13px var(--ui);color:var(--soft);padding:8px 2px;transition:color .2s}.barre .passer:hover{color:var(--ink)}
 
@@ -222,7 +224,7 @@ html.calme .mo{opacity:1}
 </head>
 <body>
 <a class="evite" href="#entrer">Aller à l'entrée</a>
-<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#entrer">Passer l'introduction</a><a class="studio" href="/bureau/">MON BUREAU</a><a class="studio" href="/aime/">AIME STUDIO</a></nav></header>
+<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#entrer">Passer l'introduction</a><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
 <div class="flot" id="flot" aria-hidden="true"></div>
 
 <main>
@@ -364,5 +366,7 @@ html.calme .mo{opacity:1}
 <script src="/bureau/sources.js"></script>
 <script src="/os/coque.js"></script>
 <script src="/os/os.js"></script>
+<script src="/porte/porte.js"></script>
+<script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'zero',position:'haut'})</script>
 </body>
 </html>
