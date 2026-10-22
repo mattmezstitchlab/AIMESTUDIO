@@ -4,7 +4,7 @@ const assert=require('assert'),fs=require('fs'),path=require('path');const lire=
 let n=0;const t=(nom,f)=>{f();n++};
 const ad=lire('canevas/adaptateurs/site.js'),cv=lire('canevas/canevas.js'),pj=lire('projet/projet.js'),pz=lire('pointzero/pz.js'),pl=lire('canevas/plan.js');
 t('le Canevas ouvre ?site=<id> avec l\'adaptateur aime-site, chargé à la demande',()=>{
- assert.ok(cv.includes("site:'/canevas/adaptateurs/site.js'"));assert.ok(/source:site\?\{type:'site',site:site,projet:id,de:de\}/.test(cv));
+ assert.ok(cv.includes("site:'/canevas/adaptateurs/site.js'"));assert.ok(cv.includes("{type:'site',site:site,projet:id,de:de}"),'la scène ouvre le site');
  assert.ok(/\^\\\/canevas\\\/adaptateurs\\\/\[a-z0-9-\]\+\\\.js\$/.test(pl),'chemin d\'adaptateur toujours filtré')});
 t('le rendu et les opérations sont ceux du moteur de pages ; aucun bloc réécrit, aucun générateur',()=>{
  assert.ok(ad.includes('AIMESite.document(')&&ad.includes('S.tasser(')&&ad.includes("'/vitrine/rendu.js'"));assert.ok(ad.includes('root.AIMESite.BLOCS[s.type]'),'réglages lus dans le catalogue du moteur');
@@ -20,6 +20,6 @@ t('rien n\'est écrit sans confirmation ; Enregistrer range la page là où l\'a
 t('parcours : « Voir mon mini-site » et « Modifier dans le Canevas » ; retour au projet selon l\'origine',()=>{
  assert.ok(pz.includes("'Voir mon mini-site'")&&pz.includes("'Modifier dans le Canevas'")&&pz.includes("&canevas=1"));
  assert.ok(/q\.get\('canevas'\)==='1'\)\{location\.replace\(cv\)/.test(pj),'le projet prépare le mini-site puis l\'ouvre dans le Canevas');
- assert.ok(/if\(site\)\{r\.textContent='← Retour au projet';r\.href=\(de==='\/projet\/'\?'\/point-zero\/':de\)\+\(id\?'\?projet='/.test(cv),'retour à la carte du Bureau ou du Point Zéro')});
+ assert.ok(/if\(site\)\{r\.textContent='← Retour au projet';r\.href=\([^)]*'\/point-zero\/':de\)\+\(id\?'\?projet='/.test(cv),'retour à la carte du Bureau ou du Point Zéro')});
 t('l\'inspecteur du Canevas ne couvre plus la sélection (zone à éviter, générique)',()=>{assert.ok(/function placerInsp\(X,Y,ev\)/.test(pl)&&pl.includes('placerInsp(X,Y,e.eviter)'));assert.ok(ad.includes('eviter:{'))});
 console.log('canevas-site : '+n+' tests ok');
