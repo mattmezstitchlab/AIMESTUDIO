@@ -7,12 +7,12 @@
    Le modèle est AIMECube (cube/modele.js), le même que liront le Bureau, le dock, le Canevas et le Réseau.
    Mode personnel : session Better Auth + timbre confirmé (/api/identite). Sinon, mode découverte : un timbre fictif
    (Camille), dit comme tel, rien n'est rattaché à un compte.
-   Enregistrement : local à ce navigateur (localStorage par compte ; sessionStorage en découverte) en attendant le lot
+   Enregistrement : cube/stock.js (local à ce navigateur, par compte ; effacé à la fermeture en découverte) en attendant le lot
    de persistance serveur. Rien n'est envoyé au serveur ici. */
 (function(){'use strict';
-var C=window.AIMECube,hero=document.getElementById('hero0'),story=document.getElementById('story2');if(!C||!hero||!story)return;
+var C=window.AIMECube,hero=document.getElementById('hero0'),story=document.getElementById('story2');if(!C||!window.AIMECubeStock||!hero||!story)return;
 var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-var DEMO={id:'demo-camille',name:'Camille',image:null,demo:true};
+var DEMO=window.AIMECubeStock&&AIMECubeStock.DEMO;
 var moi=DEMO,cube=C.vide(DEMO.id),ouverte=null,voyage=null;
 var ICO={identite:'<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.6 3.8-5.5 7-5.5s5.8 1.9 7 5.5"/>',medias:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M3 16l5-4 4 3 3-2 6 4"/>',
  temps:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',relations:'<circle cx="7" cy="9" r="2.6"/><circle cx="17" cy="9" r="2.6"/><path d="M2.5 19c.8-2.8 2.4-4.2 4.5-4.2S10.7 16.2 11.5 19M12.5 19c.8-2.8 2.4-4.2 4.5-4.2s3.7 1.4 4.5 4.2"/>',
@@ -26,10 +26,10 @@ function aujourdhui(){return new Date().toLocaleDateString('fr-FR',{day:'numeric
 function cachet(){var c=el('span','cp-cachet');c.setAttribute('aria-hidden','true');c.innerHTML='Le Monde<br>AIME<br>'+aujourdhui().replace(/\./g,'');return c}
 
 /* ---------- l'enregistrement : local, par compte ---------- */
-function cle(){return'aime-cube:'+moi.id}
-function stock(){try{return moi.demo?sessionStorage:localStorage}catch(e){return null}}
-function charger(){var s=stock(),t=null;try{t=s&&s.getItem(cle())}catch(e){}cube=C.relire(t,moi.id)}
-function garder(){var s=stock();try{s&&s.setItem(cle(),C.aGarder(cube))}catch(e){}}
+/* le stockage est celui de cube/stock.js : le même pour le Monde AIME, le Bureau et le Canevas */
+var S=window.AIMECubeStock;
+function charger(){cube=S.charger(moi)}
+function garder(){S.garder(moi,cube)}
 
 /* ---------- la section : la fente, puis la planche de cartes ---------- */
 var sec=el('section','cp');sec.id='cartes';sec.setAttribute('aria-labelledby','cp-t');
@@ -158,10 +158,10 @@ function bulle(id){var vieille=document.querySelector('.rv-bulle.cp-b');if(vieil
 /* ---------- qui est là : le compte et son timbre, sinon la démonstration ---------- */
 function afficher(){charger();mode();planche();faces()}
 afficher();
-if(!/[?&]demo=timbre\b/.test(location.search))Promise.all([fetch('/api/auth/get-session',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null}),
- fetch('/api/identite',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null})])
- .then(function(r){var u=r[0]&&r[0].user,i=r[1]||{};if(u&&i.timbre){moi={id:u.id,name:u.name,image:u.image,demo:false};afficher()}}).catch(function(){});
+if(!/[?&]demo=timbre\b/.test(location.search))S.qui().then(function(u){if(u){moi=u;afficher()}}).catch(function(){});
 /* les faces du cube sont construites par la page : on y repose les facettes une fois la page chargée */
 if(document.readyState!=='complete')addEventListener('load',function(){faces()});
+/* ?carte=<facette> : le Bureau ou le Canevas renvoient ici pour écrire ou corriger une carte */
+(function(){var id=new URLSearchParams(location.search).get('carte');if(id&&C.facette(id)){var go=function(){sec.scrollIntoView({behavior:'instant'});ouvrir(id)};if(document.readyState==='complete')setTimeout(go,300);else addEventListener('load',function(){setTimeout(go,300)})}})();
 window.AIMECartes={ouvrir:function(id){ouvrir(id)},cube:function(){return cube},moi:function(){return moi}};
 })();

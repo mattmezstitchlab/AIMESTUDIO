@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon cube · AIME</title>
+<meta name="description" content="Ma Régie personnelle : mon cube AIME, ses six facettes, mon timbre et mon orbe.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/compte/timbre.css">
+<link rel="stylesheet" href="/cube/vue3d.css">
+<link rel="stylesheet" href="/cube/regie.css">
+</head>
+<body class="rp">
+<header class="rp-tete">
+ <a class="rp-mk" href="/bureau/" id="rp-retour">AIME<sup>®</sup> <span>Bureau</span></a>
+ <div class="rp-qui" id="rp-qui"></div>
+</header>
+<main class="rp-main" id="rp-main" aria-labelledby="rp-t">
+ <div class="rp-intro">
+  <p class="rp-k">Ma Régie personnelle</p>
+  <h1 class="rp-t" id="rp-t">Mon cube</h1>
+  <p class="rp-l" id="rp-l">Chargement…</p>
+ </div>
+ <div class="rp-scene"><div id="rp-cube"></div><p class="rp-aide" id="rp-aide">Glissez pour le faire tourner · touchez une face · au clavier : Tab puis Entrée, flèches pour tourner</p></div>
+ <section class="rp-pan" id="rp-pan" aria-live="polite" aria-labelledby="rp-pt"></section>
+</main>
+<p class="rp-limite" id="rp-limite"></p>
+<noscript><p class="rp-l">Votre cube a besoin de JavaScript.</p></noscript>
+<script src="/cube/modele.js"></script>
+<script src="/cube/stock.js"></script>
+<script src="/compte/timbre.js"></script>
+<script src="/cube/vue3d.js"></script>
+<script src="/cube/regie.js"></script>
+</body>
+</html>

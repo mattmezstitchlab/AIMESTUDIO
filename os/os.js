@@ -19,7 +19,7 @@ if(PAGE)CLE='aime-os-zero';var etat=A.etat(lire(CLE)),fen=[],z=10,focusId=null,s
 function annoncer(m){texte('annonce',m)}
 
 /* ---------- icônes ---------- */
-function ico(a,cls){return'<span class="ico'+(a.teinte==='iris'?' iris':'')+(cls?' '+cls:'')+'" style="--t:'+esc(a.teinte==='iris'?'#7C5CFF':a.teinte)+'" aria-hidden="true"><b>'+esc(a.sigle)+'</b></span>'}
+function ico(a,cls){if(a.id==='cube'&&window.AIMECubeVue)return'<span class="ico cube-ico'+(cls?' '+cls:'')+'" aria-hidden="true">'+AIMECubeVue.miniHTML()+'</span>';return'<span class="ico'+(a.teinte==='iris'?' iris':'')+(cls?' '+cls:'')+'" style="--t:'+esc(a.teinte==='iris'?'#7C5CFF':a.teinte)+'" aria-hidden="true"><b>'+esc(a.sigle)+'</b></span>'}
 /* l'app qui porte une adresse : le plus long préfixe */
 function appDe(href){var p=String(href||'').split(/[?#]/)[0],best=null,lg=-1;cat.forEach(function(a){var h=a.href.split(/[?#]/)[0];if(p===h||(h!=='/'&&p.indexOf(h)===0)){if(h.length>lg){lg=h.length;best=a}}});return best||parId.zero||cat[0]}
 

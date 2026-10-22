@@ -45,6 +45,20 @@ Script : `cube/cartes.js`, styles : `cube/cartes.css`, chargés par `aime/index.
 
 Rien n'est envoyé au serveur. Un autre navigateur ou un autre appareil ne voit pas les cartes. Effacer les données du site les efface. Le lot de persistance serveur (Neon pour le cube, Vercel Blob pour les médias) remplacera `charger()` / `garder()` sans changer le modèle.
 
+## Le cube, accès à la Régie personnelle (priorité 2)
+
+- **Un seul stockage** : `cube/stock.js` (AIMECubeStock). Il sait qui est la personne (`qui()` : Better Auth + timbre confirmé), et il lit et écrit le cube de cette personne seulement. Le Monde AIME, le Bureau et le dock passent tous par lui.
+- **Une seule vue 3D** : `cube/vue3d.js` (AIMECubeVue). Les faces posées portent la teinte, les mots et le timbre ; les autres sont en verre, « à venir ». On fait tourner le cube à la souris ou au doigt. Au clavier, les six faces se parcourent avec Tab et s'ouvrent avec Entrée ; les flèches tournent. La même vue servira au Canevas en 3D.
+- **Mon cube** (`/cube/`) est la Régie personnelle :
+  - le cube au centre ; la face choisie se tourne de trois quarts ;
+  - le panneau de la face : état, partielle ou non, privée ou publiée, champs ;
+  - « Écrire / Corriger la carte » rouvre la carte dans Le Monde AIME (`/aime/?carte=<facette>`) ;
+  - les blocs prévus pour la face ;
+  - face Activités : les projets de ce navigateur (mini-site, Canevas) ;
+  - face Identité : le timbre, les préférences de l'orbe et ses droits (aucun).
+- **AIME OS** : « Mon cube » est une app système, toujours en tête du dock, même avec des épingles choisies. Son icône est la miniature du cube de la personne (faces posées en couleur). Elle s'ouvre dans une fenêtre du Bureau.
+- La Régie maîtresse (`/regie/`) n'est ni chargée ni modifiée.
+
 ## Suite : Cube → Canevas → Personnalisation → Enregistrement → Régie personnelle
 
 Des PR séparées, dans cet ordre, toutes sur ce même modèle :

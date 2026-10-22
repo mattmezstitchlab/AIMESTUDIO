@@ -6,10 +6,11 @@
 /* une couleur par famille, tirée de l'iris AIME */
 var TEINTES={systeme:'iris',monde:'#7C5CFF',evenements:'#FB7185',institutions:'#22D3EE',creation:'#F59E0B',jeux:'#86EFAC'};
 var SYSTEME=[
+ {id:'cube',nom:'Mon cube',href:'/cube/',phrase:'Ma Régie personnelle : mes six facettes, mon timbre, mon orbe',cat:'systeme',statut:'experimental',sigle:'Cu'},
  {id:'pointzero',nom:'Point Zéro',href:'/point-zero/',phrase:'Déposer une matière : intention, notes, fichiers ; le système la distribue',cat:'systeme',statut:'experimental',sigle:'P0'},
  {id:'espace',nom:'Mon espace',href:'/bureau/espace/',phrase:'Reprendre ses projets, sauvegarder ce navigateur',cat:'systeme',statut:'disponible',sigle:'Es'},
  {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré'}];
-var EPINGLES=['pointzero','espace','regie','studio','sites','stitch','g44','world','zero'];
+var EPINGLES=['cube','pointzero','espace','regie','studio','sites','stitch','g44','world','zero'];
 /* les actions que l'on peut lancer depuis la palette ou l'orbe */
 var ACTIONS=[
  {id:'deposer',nom:'Déposer une matière au point zéro',app:'pointzero',href:'/point-zero/',mots:'deposer importer note intention demande fichier trier classer point zero'},
@@ -29,7 +30,8 @@ function sigle(nom){var m=String(nom||'').replace(/^AIME\s+/i,'').replace(/[^A-Z
 function catalogue(entrees){var vus={},L=[];SYSTEME.forEach(function(a){vus[a.id]=1;L.push(Object.assign({},a,{teinte:TEINTES.systeme}))});
  (entrees||[]).forEach(function(e){if(!e||e.id==='bureau'||vus[e.id]||typeof e.href!=='string'||!/^\/(?!\/)/.test(e.href))return;vus[e.id]=1;
   L.push({id:e.id,nom:e.nom,href:e.href,phrase:e.phrase||'',cat:e.cat||'monde',statut:e.statut||'disponible',sigle:sigle(e.nom),teinte:TEINTES[e.cat]||TEINTES.monde})});return L}
-function epingles(cat,choix){var ids=Array.isArray(choix)&&choix.length?choix:EPINGLES;return ids.map(function(id){return cat.filter(function(a){return a.id===id})[0]}).filter(Boolean)}
+/* le cube, accès à la Régie personnelle, reste toujours en tête du dock, même avec des épingles choisies */
+function epingles(cat,choix){var ids=Array.isArray(choix)&&choix.length?choix:EPINGLES;ids=['cube'].concat(ids.filter(function(i){return i!=='cube'}));return ids.map(function(id){return cat.filter(function(a){return a.id===id})[0]}).filter(Boolean)}
 
 /* recherche tolérante : sans accents ni casse ; début de mot > contenu ; le nom compte plus que la phrase */
 function plier(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
