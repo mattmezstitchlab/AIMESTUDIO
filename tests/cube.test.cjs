@@ -27,7 +27,7 @@ t('Canevas : chaque face est une page Métamorphose ; disposition et couleurs mo
  const cv=lire('canevas/canevas.js'),ad=lire('canevas/adaptateurs/cube.js'),ed=lire('sites/editeur.js'),rg=lire('cube/regie.js');
  assert.ok(cv.includes("cube:'/canevas/adaptateurs/cube.js'")&&/\^\\\/canevas\\\/adaptateurs\\\/\[a-z0-9-\]\+\\\.js\$/.test(lire('canevas/plan.js')),'adaptateur chargé à la demande, chemin autorisé');
  assert.ok(ad.includes('AIMECubeVue.monter')&&ad.includes('AIMESite.document')&&ad.includes('AIMECubeStock.garder'),'3D, rendu et stockage partagés');assert.ok(ad.includes('R.AUTONOMIES')&&ad.includes('R.OPTIONS_COMPAGNON'),'l\'orbe se règle avec le vocabulaire de la Régie');
- assert.ok(ad.includes("'aime-orbe-reglages'"),'le compagnon existant reçoit les réglages');assert.ok(/canevas\\\/\\\?cube=/.test(ed),'le générateur revient au cube');assert.ok(rg.includes("'/canevas/?cube='"),'Mon cube ouvre le Canevas')});
+ assert.ok(ad.includes("'aime-orbe-reglages'"),'le compagnon existant reçoit les réglages');assert.ok(!/disposition|\/sites\/\?site=/.test(ad),'le générateur de sites n\'est pas exposé depuis le cube');assert.ok(rg.includes("'/canevas/?cube='"),'Mon cube ouvre le Canevas')});
 t('six facettes, les catégories demandées, chacune sur une face distincte du cube de la grande page',()=>{
  assert.deepStrictEqual(C.IDS,['identite','medias','temps','relations','documents','activites']);
  assert.deepStrictEqual(C.FACETTES.map(f=>f.face).sort(),[0,1,2,3,4,5]);

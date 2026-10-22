@@ -1,8 +1,8 @@
 /* AIME · Canevas · adaptateur « cube-personne ». Seul ce fichier relie le Canevas au cube ; le plan de travail n'en dépend pas.
    Le cube s'ouvre DÉPLIÉ en 2D : six faces en croix, chacune composée de vrais blocs Métamorphose (AIMESite), dessinés
    à leur place dans la grille de la face. Sélectionner une face ou un bloc fait apparaître, dans l'inspecteur du Canevas :
-     face  : aperçu (le rendu Métamorphose réel, avec le timbre et l'orbe), couleurs (ambiances du moteur), disposition
-             complète (le générateur de sites existant), carte postale, cube en 3D (même modèle, cube/vue3d.js)
+     face  : aperçu (le rendu Métamorphose réel, avec le timbre et l'orbe), couleurs (ambiances du moteur),
+             carte postale, cube en 3D (même modèle, cube/vue3d.js) ; le générateur de sites n'est pas exposé
      bloc  : avancer, reculer, pleine largeur ↔ moitié ; « Régler mon orbe » sur le bloc Orbe ; le timbre renvoie au Point Zéro
    Chaque changement est enregistré tout de suite : le style dans le cube (cube/stock.js), la page dans « aime-sites »
    (le rangement des sites Métamorphose, partagé avec le générateur). Le Bureau et la 3D relisent les mêmes données.
@@ -77,7 +77,7 @@ var A={type:'cube',nom:'Cube-personne',
     g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=1;g.strokeRect(q[0],q[1],w,h);if(h>10*z&&w>30){g.fillStyle=pose?'#fff':'rgba(255,255,255,.7)';g.font='500 '+Math.max(7,10*z)+'px "Inter Variable",sans-serif';g.fillText((Sx.BLOCS[b.s.type]||{}).nom||b.s.type,q[0]+5*z,q[1]+4*z,w-8*z)}});
    g.restore()})},
  element:function(D,c,x,y){var h=sous(D,c,x,y);if(!h)return null;var C=root.AIMECube,d=h.d,f=D.cube.facettes[d.id];D._sel=d.id;D._bloc=h.b&&h.b.id;
-  var face=[{id:'apercu',nom:'Aperçu (rendu réel)'},{id:'couleurs+',nom:'Couleurs suivantes'},{id:'couleurs-',nom:'Couleurs précédentes'},{id:'disposition',nom:'Disposition complète'},{id:'carte',nom:f.etat==='vide'?'Écrire la carte':'Corriger la carte'},{id:'3d',nom:'Voir en 3D'}];
+  var face=[{id:'apercu',nom:'Aperçu (rendu réel)'},{id:'couleurs+',nom:'Couleurs suivantes'},{id:'couleurs-',nom:'Couleurs précédentes'},{id:'carte',nom:f.etat==='vide'?'Écrire la carte':'Corriger la carte'},{id:'3d',nom:'Voir en 3D'}];
   if(h.b){var nb=(root.AIMESite.BLOCS[h.b.type]||{}).nom||h.b.type,act=[{id:'avant',nom:'Avancer le bloc'},{id:'apres',nom:'Reculer le bloc'},{id:'largeur',nom:h.b.w>=12?'Moitié de largeur':'Pleine largeur'}];
    if(h.b.type==='orbe')act.unshift({id:'orbe',nom:'Régler mon orbe'});if(h.b.type==='timbre')act.unshift({id:'timbre',nom:'Mon timbre (Point Zéro)'});
    return{titre:nb+' · face '+d.nom,dit:'Un bloc Métamorphose de la face '+d.nom+'. '+(f.etat==='posee'?'':'La face attend encore sa carte postale.'),ref:'Face '+d.nom+' · bloc '+nb,actions:act.concat(face)}}
@@ -89,7 +89,6 @@ var A={type:'cube',nom:'Cube-personne',
   if(id==='orbe'){reglerOrbe(D,dire);return''}
   if(id==='timbre'){location.href='/point-zero/?intention=identite';return''}
   if(id==='carte'){location.href='/aime/?carte='+fid;return''}
-  if(id==='disposition'){garder(D,fid);location.href='/sites/?site='+encodeURIComponent(site.id)+'&retour='+encodeURIComponent('/canevas/?cube='+fid);return''}
   if(id==='couleurs+'||id==='couleurs-'){var cur=site.presentation.ambiance,i=NUANCIER.indexOf(cur),n=NUANCIER[(i<0?0:i+(id==='couleurs+'?1:NUANCIER.length-1))%NUANCIER.length],amb=(D.pres.ambiances||[]).filter(function(a){return a.id===n})[0],cs=K.couleursDe(amb);
    if(!cs)return'Cette ambiance n\'est pas disponible.';C.styler(D.cube,fid,{ambiance:n,couleurs:cs});site.presentation.ambiance=n;return garder(D,fid)?'Couleurs : '+(amb.nom||n)+'. Enregistré ; le cube 3D et le Bureau les montrent.':'Ce navigateur est plein : rien n\'a pu être enregistré.'}
   if((id==='avant'||id==='apres'||id==='largeur')&&D._bloc){var ok=id==='largeur'?K.elargir(S,site,D._bloc):K.deplacer(S,site,D._bloc,id==='avant'?-1:1);if(!ok)return'Ce bloc est déjà au bout.';return garder(D,fid)?'Disposition enregistrée.':'Ce navigateur est plein.'}

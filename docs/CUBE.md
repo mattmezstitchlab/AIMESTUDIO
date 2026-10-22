@@ -73,10 +73,10 @@ Des PR séparées, dans cet ordre, toutes sur ce même modèle :
 ## Le cube dans le Canevas (priorité 3)
 
 - **Ouverture** : `/canevas/?cube=<facette>`, depuis « Composer cette face dans le Canevas » dans Mon cube. L'adaptateur `canevas/adaptateurs/cube.js` est chargé à la demande ; le plan de travail reste neutre.
-- **Dépli 2D** : les six faces en croix. Chaque face est une **page du moteur Métamorphose** (`AIMESite`, `cube/composition.js`), dont les blocs sont dessinés à leur place dans la grille de la face. Il n'y a pas de second système de composition : la page est rangée avec les autres sites (« aime-sites ») et s'ouvre aussi dans le générateur existant (« Disposition complète », avec retour au cube).
+- **Dépli 2D** : les six faces en croix. Chaque face est une **page du moteur Métamorphose** (`AIMESite`, `cube/composition.js`), dont les blocs sont dessinés à leur place dans la grille de la face. Il n'y a pas de second système de composition : la page est rangée avec les autres sites (« aime-sites »). Le générateur de sites n'est pas exposé ; l'édition se fait dans le Canevas.
 - **Personnaliser** depuis l'inspecteur du Canevas :
   - couleurs : les ambiances du moteur ;
-  - disposition : avancer, reculer, pleine largeur ou moitié ; tout le reste dans le générateur ;
+  - disposition : avancer, reculer, pleine largeur ou moitié ;
   - aperçu : le rendu Métamorphose réel ;
   - carte postale et vue 3D.
 

@@ -277,7 +277,7 @@ Promise.all([charger('/vitrine/modeles/sites.json'),charger('/vitrine/presentati
  $('persps').innerHTML=VUES.map(function(p){return'<button type="button" data-persp="'+esc(p.id)+'" aria-pressed="'+(p.id===persp)+'" title="'+esc(p.description)+'">'+esc(p.label)+'</button>'}).join('');catalogueUI();
  etat=lire();var q=new URLSearchParams(location.search).get('site'),rp=new URLSearchParams(location.search).get('retour');
  /* ouvert depuis le mini-site d'un projet (/projet/) : un lien de retour, seulement vers cette page */
- if(rp&&(/^\/projet\/\?id=[A-Za-z0-9-]{1,60}(&de=\/(point-zero|bureau)\/)?$/.test(rp)||/^\/canevas\/\?cube=[a-z]{1,20}$/.test(rp))&&$('retourProjet')){$('retourProjet').href=rp;$('retourProjet').hidden=false;if(/^\/canevas\//.test(rp))$('retourProjet').textContent='← Retour au cube (Canevas)'}if(q&&etat.sites[q])ouvrir(q);else if(etat.cur&&etat.sites[etat.cur])ouvrir(etat.cur);else accueil()})
+ if(rp&&/^\/projet\/\?id=[A-Za-z0-9-]{1,60}(&de=\/(point-zero|bureau)\/)?$/.test(rp)&&$('retourProjet')){$('retourProjet').href=rp;$('retourProjet').hidden=false}if(q&&etat.sites[q])ouvrir(q);else if(etat.cur&&etat.sites[etat.cur])ouvrir(etat.cur);else accueil()})
  .catch(function(){document.body.insertAdjacentHTML('beforeend','<p class="e-vide" style="margin:20px">Le générateur n\'a pas pu charger ses modèles. Rechargez la page.</p>')});
 window.AIMEGenerateur={site:function(){return site},exporter:function(o){return S.exporterPublic(site,Object.assign({presentation:PRES,visuels:VIS},o||{}))},sauvegarde:function(){return S.sauvegarde(site)}};
 })();
