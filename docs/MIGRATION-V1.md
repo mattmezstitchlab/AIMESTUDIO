@@ -11,6 +11,20 @@ La V1 ajoute deux tables à la base Neon de production (branche `main`). Aujourd
 
 Les deux sont **additives et rejouables** : `create … if not exists`, aucune table existante modifiée.
 
+## État vérifié le 22 octobre (lecture du schéma par l'API Neon, rien d'exécuté)
+
+| Branche Neon | `matiere` | `identite` | `pgcrypto` | `"user".id` |
+|---|---|---|---|---|
+| `main` (production) | absente | absente | installée | `text` |
+| `preview/integration` | présente, conforme au fichier (clé, contrôle 1–20 000, index `matiere_personne`) | présente, conforme (clé `user_id`) | installée | `text` |
+| `preview/preprod-v1` (copie de `main` du 22/10, 05:14 UTC) | absente | absente | installée | `text` |
+
+- **Dépendances :** aucune clé étrangère. `user_id` est un `text`, comme `"user".id`. `gen_random_uuid()` existe (PostgreSQL 18, `pgcrypto` déjà installée).
+- **Compatibilité :** le code actuel de la production (`main`) ne lit aucune de ces tables, donc la migration peut précéder ou suivre la publication. Le code V1 accepte leur absence : repli sur le navigateur, annoncé à l'écran, et suppression de compte protégée par `to_regclass`.
+- **Rejouable :** les deux fichiers, joués deux fois de suite sur une base vierge (PostgreSQL local), donnent le même résultat. Le retour simple (`drop table`) fonctionne.
+- **Restauration à un instant donné :** l'historique du projet ne couvre que **6 heures**. Créer la branche de sauvegarde (étape 2) juste avant l'exécution est donc indispensable.
+- **Attention, éditeur SQL de Neon :** il rouvre la dernière requête de l'historique, parfois un `create table`. Vérifier que l'éditeur ne contient que ce qu'on veut exécuter, et sur quelle branche, avant de cliquer sur Run.
+
 ## 1. Contrôles préalables (lecture seule)
 
 Dans Neon, ouvrir SQL Editor sur la branche **main** :
