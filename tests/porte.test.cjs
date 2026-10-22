@@ -1,0 +1,21 @@
+/* Phase A : la porte, bouton universel ; un seul accès en haut de la Page Zéro ; parcours d'identité au Point Zéro. */
+const assert=require('assert'),fs=require('fs'),path=require('path');const P=require('../porte/porte.js');const lire=f=>fs.readFileSync(path.join(__dirname,'..',f),'utf8');
+let n=0;const t=(nom,f)=>{f();n++};
+t('trois états, venus du compte',()=>{assert.equal(P.etat({}).mode,'plus');assert.equal(P.etat({connecte:true,timbre:false}).mode,'plus');assert.equal(P.etat({connecte:true,timbre:false}).href,P.IDENTITE);
+ const f=P.etat({connecte:true,timbre:true});assert.equal(f.mode,'fleche');assert.ok(f.pulsation);assert.equal(f.indice,'Découvrez votre Monde AIME');
+ const r=P.etat({connecte:true,timbre:true,mondeLe:'2026-10-22T05:00:00Z'});assert.equal(r.mode,'retour');assert.ok(!r.pulsation,'la pulsation s\'apaise après la première visite');assert.equal(r.href,P.MONDE);
+ assert.equal(P.etat({connecte:false,timbre:true}).mode,'plus','sans session, jamais d\'accès au Monde personnel')});
+t('le design est celui du rond « + » de la grande page (.plus5)',()=>{const o=lire('aime/index.html'),c=lire('porte/porte.css');const conic='conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185)';
+ assert.ok(o.includes('.plus5{')&&o.includes(conic));assert.ok(c.includes(conic),'même contour conique');assert.ok(/\.ap-b\{[^}]*width:44px;height:44px;border-radius:50%;border:2px solid transparent/.test(c),'même taille, même bordure');
+ assert.ok(/prefers-reduced-motion/.test(c));assert.ok(/ap-pouls 2\.4s ease-in-out 4\b/.test(c),'pulsation limitée, jamais permanente')});
+t('Page Zéro : en haut, un seul accès, la porte ; une connexion discrète ; les invitations passent toujours par /compte/',()=>{const z=lire('index.html'),haut=z.match(/<header class="barre">[\s\S]*?<\/header>/)[0];
+ assert.ok(!/MON BUREAU|AIME STUDIO/.test(haut));assert.ok(haut.includes('id="porte"'));assert.ok(/class="compte-d" href="\/compte\/"/.test(haut));assert.ok(/AIMEPorte\.monter\(document\.getElementById\('porte'\)/.test(z));
+ assert.ok(/INVIT|invitation/.test(lire('compte/compte.js')),'le lien d\'invitation reste traité par la page compte')});
+t('un seul composant partagé, posé sur la Page Zéro, le Point Zéro et le Bureau',()=>{for(const f of ['index.html','point-zero/index.html','bureau/index.html']){const h=lire(f);assert.ok(h.includes('/porte/porte.js')&&h.includes('/porte/porte.css'),f);assert.ok(!/\.ap-b\{/.test(h),f+' ne recopie pas le style')}});
+t('parcours d\'identité : Better Auth seul authentifie, le timbre existant, les six formes',()=>{const pz=lire('pointzero/pz.js');
+ assert.ok(pz.includes("/api/auth/sign-in/magic-link")&&pz.includes("/api/auth/update-user")&&pz.includes("/api/identite"));assert.ok(/intention'\)==='identite'/.test(pz));
+ ['Point','Ligne','Relation','Grille','Composition','Projet'].forEach(k=>assert.ok(pz.includes("['"+k+"',"),k));assert.ok(pz.includes('AIMETimbre.preparer')&&pz.includes('T.creer'));assert.ok(!/password|motDePasse/i.test(pz),'aucun mot de passe');
+ assert.ok(pz.includes("aime:identite"),'le bouton change dès la confirmation')});
+t('serveur : état lu sur la session, table additive, effacée avec le compte',()=>{const a=lire('api/identite.mjs'),m=lire('db/migrations/2026-10-22-identite.sql'),au=lire('api/_auth/auth.mjs');
+ assert.ok(a.includes('personne(req)')&&!/b\.(user|id|email)/.test(a),'la personne vient de la session');assert.ok(/create table if not exists identite/.test(m));assert.ok(/delete from identite where user_id/.test(au))});
+console.log('porte : '+n+' tests ok');

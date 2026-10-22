@@ -155,3 +155,5 @@
 }
 @media (prefers-reduced-motion:reduce){.pz-menu,.pz-orbe,.pz-projet.neuve{animation:none}.pz-barre i,.pz-phases,.pz-phases li{transition:none}}
 @media (forced-colors:active){.pz-orbe,.pz-menu,.pz-projet,.pz-carte-c{border:1px solid CanvasText}}
+.i-timbre::before{left:9px;top:8px;width:12px;height:14px;border-radius:2px;background:linear-gradient(135deg,#22D3EE,#7C5CFF,#FB7185)!important;box-shadow:0 0 0 2px #141418,0 0 0 3px rgba(237,237,240,.6)}
+.pz-timbre{display:grid;place-items:center;padding:8px 0}

@@ -89,6 +89,8 @@ export async function effacerTraces(db, u) {
     if (u.email) await c.query('delete from invitations where lower(email) = lower($1) and used_at is null', [u.email]);
     const m = await c.query("select to_regclass('public.matiere') as t");
     if (m.rows[0] && m.rows[0].t) await c.query('delete from matiere where user_id = $1', [u.id]);
+    const id = await c.query("select to_regclass('public.identite') as t");
+    if (id.rows[0] && id.rows[0].t) await c.query('delete from identite where user_id = $1', [u.id]);
     await c.query('commit');
   } catch (e) { await c.query('rollback').catch(() => {}); throw e; }
   finally { c.release(); }

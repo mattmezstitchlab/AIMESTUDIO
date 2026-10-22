@@ -110,7 +110,7 @@ function monter(conteneur,o){o=o||{};
  function enAttente(){return S.projets.filter(function(p){return B.suivante(p)})}
  function ouvrirMenu(){menu.textContent='';var en=enAttente();
   [['Importer','Une photo, une image','i-importer',function(){choixFichier.click()}],['Écrire','Une intention, une demande, une note','i-ecrire',ouvrirEcrire],
-   ['Compléter','Un projet en attente'+(en.length?' ('+en.length+')':' : aucun pour l\'instant'),'i-completer',en.length?function(){choisirEnAttente(en)}:null]].forEach(function(x){
+   ['Mon timbre','Mon identité AIME, ma première création','i-timbre',identite],['Compléter','Un projet en attente'+(en.length?' ('+en.length+')':' : aucun pour l\'instant'),'i-completer',en.length?function(){choisirEnAttente(en)}:null]].forEach(function(x){
    var b=bouton('','pz-menu-b');b.setAttribute('role','menuitem');b.appendChild(el('i',x[2]));var t=el('span');t.appendChild(el('b',null,x[0]));t.appendChild(el('small',null,x[1]));b.appendChild(t);
    if(x[3])b.onclick=function(){fermerMenu();x[3]()};else b.disabled=true;menu.appendChild(b)});
   menu.hidden=false;centre.setAttribute('aria-expanded','true');racine.classList.add('menu');menu.querySelector('button:not([disabled])').focus()}
@@ -390,6 +390,48 @@ function monter(conteneur,o){o=o||{};
  function retirerNote(x){(x.origine==='compte'?post('/api/matiere',{action:'supprimer',id:x.id}).then(function(){S.notes=S.notes.filter(function(y){return y.id!==x.id})}):Promise.resolve().then(function(){ecrire(CLE_LOCAL,(lire(CLE_LOCAL,[])||[]).filter(function(n){return n.id!==x.id}));S.local=S.local.filter(function(y){return y.id!==x.id})})).then(afficherNotes)}
  function ranger(){var L=lire(CLE_LOCAL,[])||[];post('/api/matiere',{action:'importer',textes:L.slice(0,50).map(function(n){return n.texte})}).then(function(r){if(r.statut===200&&r.j&&r.j.ok){var reste=L.slice(50);ecrire(CLE_LOCAL,reste);S.local=reste.map(enLocal);S.notes=r.j.elements.concat(S.notes);afficherNotes();dire('Rangé sur votre compte.')}else dire((r.j&&r.j.raison)||'Rangement impossible pour le moment.')})}
 
+ /* ---------- le premier Point Zéro : créer son identité, dont le timbre est la première création ----------
+    Better Auth seul authentifie (lien sécurisé par e-mail) ; rien n'est créé par l'animation. Les six formes accompagnent :
+    Point (l'intention) · Ligne (l'adresse, le lien) · Relation (le nom) · Grille (vérifier) · Composition (le timbre) · Projet (confirmer). */
+ var ID={moi:null,etat:null,nom:'',image:undefined,apercuImage:null};
+ function req(u,corps){return fetch(u,{method:corps?'POST':'GET',credentials:'same-origin',headers:corps?{'content-type':'application/json'}:{},body:corps?JSON.stringify(corps):undefined}).then(function(r){return r.text().then(function(t){var j=null;try{j=t?JSON.parse(t):null}catch(e){}return{statut:r.status,j:j}})})}
+ function etapeId(q,titre){S.occupe=false;racine.classList.add('actif');legende.hidden=true;V.couleurs=null;V.image=false;V.compo=false;V.etiq=false;aller(q,RM?0:700);return panneau(titre)}
+ function filId(c,k){var o=el('ol','pz-o-etapes');[['Point','Votre intention'],['Ligne','Votre adresse'],['Relation','Votre nom'],['Grille','Vérifier'],['Composition','Votre timbre'],['Projet','Confirmer']].forEach(function(x,i){var li=el('li',(i<k?'fait':'')+(i===k?' ici':''));li.appendChild(el('span',null,x[0]+' · '+x[1]));o.appendChild(li)});c.appendChild(o)}
+ function timbreApercu(){var T=root.AIMETimbre;if(!T)return el('p','pz-leg','Le timbre s\'affichera ici.');var t=T.creer({id:ID.moi.id,nom:ID.nom||ID.moi.email,detail:'Mon timbre',image:ID.image!==undefined?ID.image:ID.moi.image,legende:false});t.style.setProperty('--l','150px');t.tabIndex=-1;var w=el('div','pz-timbre');w.appendChild(t);return w}
+ function identite(){S.p=null;quitterMode&&quitterMode();return Promise.all([req('/api/auth/get-session'),req('/api/identite')]).then(function(r){
+   if(r[0].statut===503||r[0].statut===404){var c0=etapeId(0,'Les comptes ne sont pas encore ouverts ici.');c0.appendChild(el('p','pz-o-fin','Sur cet environnement, la création de compte est fermée. Vous pouvez tout de même déposer une matière au Point Zéro.'));return}
+   ID.moi=r[0].j&&r[0].j.user||null;ID.etat=r[1].j||{};if(!ID.moi)return idPoint();ID.nom=(ID.moi.name||'').trim();ID.image=undefined;if(ID.etat.timbre)return idFait(true);return idRelation()}).catch(function(){dire('Serveur injoignable : réessayez dans un instant.')})}
+ function idPoint(){var c=etapeId(0,'Votre première création AIME, c\'est vous.');filId(c,0);c.appendChild(el('p','pz-o-fin','Je vous accompagne pour créer votre identité : une adresse pour vous reconnaître, un nom, et votre timbre, qui vous représentera partout dans AIME. Rien d\'autre n\'est demandé maintenant.'));
+  var a=el('div','pz-o-act');a.appendChild(bouton('Commencer','pz-b pz-b-p',idLigne));var l=el('a','pz-b','J\'ai déjà un compte');l.href='/compte/';a.appendChild(l);c.appendChild(a);a.firstChild.focus()}
+ function idLigne(){var c=etapeId(1,'Votre adresse e-mail');filId(c,1);c.appendChild(el('p','pz-leg','Je vous envoie un lien de connexion sécurisé : l\'ouvrir prouve que l\'adresse est la vôtre. Elle reste privée : elle n\'apparaît jamais sur votre timbre.'));
+  var f=el('form','pz-o-q');var lab=el('label','pz-champ');lab.appendChild(el('span',null,'Adresse e-mail'));var i=el('input');i.type='email';i.required=true;i.autocomplete='email';i.maxLength=254;i.style.width='100%';lab.appendChild(i);f.appendChild(lab);
+  var b=el('button','pz-b pz-b-p','Recevoir le lien');b.type='submit';var a=el('div','pz-o-act');a.appendChild(b);a.appendChild(bouton('Retour','pz-b',idPoint));f.appendChild(a);var m=el('p','pz-leg');m.setAttribute('role','status');f.appendChild(m);c.appendChild(f);
+  f.onsubmit=function(e){e.preventDefault();b.disabled=true;var cb='/point-zero/?intention=identite';
+   req('/api/auth/sign-in/magic-link',{email:i.value.trim(),callbackURL:cb,newUserCallbackURL:cb,errorCallbackURL:cb+'&erreur=lien'}).then(function(r){b.disabled=false;
+    if(r.statut===200){m.textContent='Lien envoyé à '+i.value.trim()+'. Ouvrez-le sur cet appareil (valable 15 minutes) : je vous retrouverai ici, à l\'étape suivante.';dire('Le lien est parti. Ouvrez votre messagerie.')}
+    else m.textContent=(r.j&&(r.j.raison||r.j.message))||(r.statut===429?'Trop de demandes : patientez une minute.':'Envoi impossible pour le moment.')}).catch(function(){b.disabled=false;m.textContent='Serveur injoignable : réessayez.'})};i.focus()}
+ function idRelation(){var c=etapeId(2,'Comment voulez-vous apparaître ?');filId(c,2);c.appendChild(el('p','pz-leg','Votre nom d\'affichage est écrit sur votre timbre. Vous pourrez le changer plus tard.'));
+  var lab=el('label','pz-champ');lab.appendChild(el('span',null,'Nom d\'affichage'));var i=el('input');i.type='text';i.maxLength=80;i.autocomplete='name';i.value=ID.nom;i.style.width='100%';lab.appendChild(i);c.appendChild(lab);var m=el('p','pz-leg');c.appendChild(m);
+  var a=el('div','pz-o-act');a.appendChild(bouton('Continuer','pz-b pz-b-p',function(){var v=i.value.replace(/[\u0000-\u001F\u007F]/g,'').trim();if(v.length<2){m.textContent='Deux caractères au moins.';i.focus();return}ID.nom=v.slice(0,80);idGrille()}));c.appendChild(a);i.focus()}
+ function idGrille(){var c=etapeId(3,'Vérifiez vos informations');filId(c,3);var u=el('dl','pz-lu'),l=function(k,v){u.appendChild(el('dt',null,k));u.appendChild(el('dd',null,v))};
+  l('Nom d\'affichage',ID.nom+' · public sur votre timbre');l('Adresse e-mail',ID.moi.email+' · privée');l('Photo',(ID.image!==undefined?ID.image:ID.moi.image)?'oui · sur votre timbre':'facultative : un dégradé coloré sinon');c.appendChild(u);
+  c.appendChild(el('p','pz-leg','Rien d\'autre n\'est demandé : vos autres informations viendront plus tard, seulement quand elles serviront.'));
+  var a=el('div','pz-o-act');a.appendChild(bouton('Composer mon timbre','pz-b pz-b-p',idComposition));a.appendChild(bouton('Modifier le nom','pz-b',idRelation));c.appendChild(a);a.firstChild.focus()}
+ function idComposition(){var c=etapeId(4,'Votre timbre prend forme');filId(c,4);c.appendChild(timbreApercu());var m=el('p','pz-leg');m.setAttribute('role','status');
+  var fi=el('input');fi.type='file';fi.accept='image/*';fi.hidden=true;c.appendChild(fi);
+  fi.onchange=function(){var f=fi.files&&fi.files[0];fi.value='';if(!f||!root.AIMETimbre)return;m.textContent='Je prépare la photo…';root.AIMETimbre.preparer(f).then(function(d){ID.image=d;idComposition()}).catch(function(e){m.textContent=(e&&e.message)||'Photo refusée.'})};
+  var a=el('div','pz-o-act');a.appendChild(bouton('Ce timbre me va','pz-b pz-b-p',idProjet));a.appendChild(bouton((ID.image!==undefined?ID.image:ID.moi.image)?'Changer de photo':'Ajouter une photo','pz-b',function(){fi.click()}));
+  if(ID.image!==undefined?ID.image:ID.moi.image)a.appendChild(bouton('Garder le dégradé','pz-b',function(){ID.image=null;idComposition()}));c.appendChild(a);c.appendChild(m);a.firstChild.focus()}
+ function idProjet(){var c=etapeId(5,'Confirmez votre première création');filId(c,5);c.appendChild(timbreApercu());c.appendChild(el('p','pz-o-fin','Ce timbre vous représentera dans le Bureau, les espaces où vous êtes invité, et le Monde AIME.'));var m=el('p','pz-leg');m.setAttribute('role','status');
+  var a=el('div','pz-o-act'),ok=bouton('Confirmer mon timbre','pz-b pz-b-p',function(){ok.disabled=true;m.textContent='J\'enregistre votre timbre…';var champs={name:ID.nom};if(ID.image!==undefined)champs.image=ID.image;
+   req('/api/auth/update-user',champs).then(function(r){if(r.statut!==200)throw new Error('Enregistrement refusé : réessayez.');return req('/api/identite',{action:'timbre'})}).then(function(r){if(r.statut!==200)throw new Error((r.j&&r.j.raison)||'Confirmation impossible.');
+    ID.moi.name=ID.nom;if(ID.image!==undefined)ID.moi.image=ID.image;ID.etat=r.j;if(o.salut)o.salut(ID.nom);try{root.dispatchEvent(new CustomEvent('aime:identite'))}catch(e){}idFait(false)}).catch(function(e){ok.disabled=false;m.textContent=e.message})});
+  a.appendChild(ok);a.appendChild(bouton('Revenir au timbre','pz-b',idComposition));c.appendChild(a);c.appendChild(m);ok.focus()}
+ function idFait(deja){var c=etapeId(5,deja?'Votre timbre existe déjà.':'Votre timbre est créé.');c.appendChild(timbreApercu());
+  c.appendChild(el('p','pz-o-fin',deja?'Vous pouvez le modifier depuis Mon compte, ou commencer un projet ici.':'C\'est votre première création AIME. Le bouton irisé est devenu une flèche : il vous ouvre votre Monde AIME.'));
+  var a=el('div','pz-o-act'),m=el('a','pz-b pz-b-p','Découvrir le Monde AIME ↓');m.href=(root.AIMEPorte&&root.AIMEPorte.MONDE)||'/aime/?depuis=porte';
+  m.onclick=function(e){var p=document.querySelector('.aime-porte .ap-b');if(p&&p.dataset.mode!=='plus'){e.preventDefault();p.click()}};a.appendChild(m);
+  a.appendChild(bouton('Commencer un projet','pz-b',function(){retour()}));var mc=el('a','pz-b','Mon compte');mc.href='/compte/';a.appendChild(mc);c.appendChild(a)}
  function dire(t){dit.textContent=t}
  function charger(){S.local=(lire(CLE_LOCAL,[])||[]).filter(function(n){return n&&typeof n.texte==='string'&&n.id}).slice(0,500).map(enLocal);
   return Promise.all([fetch('/api/auth/get-session',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(j){
@@ -399,6 +441,8 @@ function monter(conteneur,o){o=o||{};
     var qp=new URLSearchParams(location.search).get('projet'),pr=qp&&S.projets.filter(function(x){return x.id===qp})[0];if(pr){reprendre(pr);dire('Vous revenez du mini-site : le projet est là, tel que vous l\'avez laissé.');return}
     var en=enAttente();dire(en.length?en.length+' projet'+(en.length>1?'s attendent':' attend')+' vos confirmations : reprenez-le plus bas, ou cliquez sur le point zéro.':'Cliquez sur le point zéro pour commencer.')})}
  charger();
+ /* venu du bouton universel « + » : le parcours d'identité */
+ var QI=new URLSearchParams(location.search);if(QI.get('intention')==='identite'){if(QI.get('erreur')==='lien')dire('Ce lien n\'est plus valable : demandez-en un nouveau.');setTimeout(identite,RM?0:300)}
  return{recharger:charger}}
 
 root.AIMEPointZero={monter:monter};
