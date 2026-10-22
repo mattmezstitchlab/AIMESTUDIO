@@ -19,7 +19,7 @@
 @font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}
 @font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin-ext.woff2") format("woff2-variations");unicode-range:U+0100-024F,U+1E00-1EFF}
 /* l'identité AIME existante : les mêmes jetons que la grande landing */
-:root{color-scheme:dark;--desk:#0A0A0C;--ink:#EDEDF0;--soft:#9C9CA8;--faint:#5E5E6A;--line:#2B2B33;
+:root{color-scheme:dark;--desk:#0A0A0C;--ink:#EDEDF0;--soft:#9C9CA8;--faint:#7E7E8A;--line:#2B2B33;
  --ui:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--display:"Cal Sans","Inter Variable",Inter,-apple-system,sans-serif;
  --conic:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);--iris:linear-gradient(90deg,#FB7185,#F59E0B,#7C5CFF,#22D3EE)}
 *{box-sizing:border-box}
@@ -81,7 +81,7 @@ body.loin .barre::before{opacity:.92}
 .meta{position:relative;height:280svh}
 .meta .scene{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,2.6vh,28px);padding:calc(56px + env(safe-area-inset-top,0px)) 0 calc(28px + env(safe-area-inset-bottom,0px))}
 .meta svg.forme{width:min(84vw,50svh,520px);height:auto;overflow:visible}
-.etapes{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font:500 13.5px var(--ui);letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.etapes{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font:500 13.5px var(--ui);letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
 .etapes li{transition:color .35s}.etapes li.on{color:var(--ink)}
 .etapes li+li::before{content:"→";margin-right:18px;color:var(--faint)}
 .meta h2,.lien h2{margin:0;font:400 clamp(32px,4.6vw,60px)/1.05 var(--display);letter-spacing:-.02em;text-wrap:balance}

@@ -1,0 +1,55 @@
+# AIME · contrôles automatiques de chaque PR (et de chaque fusion dans integration).
+# Pour qu'un échec BLOQUE la fusion : GitHub → Settings → Branches → règle sur `integration` (et `main`),
+# « Require status checks to pass » avec les contrôles « Suites (node) », « Parcours navigateur » et « Accessibilité ».
+name: Tests AIME
+on:
+  pull_request:
+    branches: [integration, main]
+  push:
+    branches: [integration]
+permissions:
+  contents: read
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  suites:
+    name: Suites (node)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm test
+  navigateur:
+    name: Parcours navigateur
+    needs: suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm install --no-save playwright@1.47.2 axe-core@4.10.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serveur de test
+        run: node scripts/serveur-test.cjs & sleep 1
+      - run: node tests/navigateur/parcours.cjs
+  accessibilite:
+    name: Accessibilité
+    needs: suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm install --no-save playwright@1.47.2 axe-core@4.10.2
+      - run: npx playwright install --with-deps chromium
+      - name: Serveur de test
+        run: node scripts/serveur-test.cjs & sleep 1
+      - run: node tests/navigateur/accessibilite.cjs
