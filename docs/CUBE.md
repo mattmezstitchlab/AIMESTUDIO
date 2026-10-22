@@ -45,6 +45,20 @@ Script : `cube/cartes.js`, styles : `cube/cartes.css`, chargés par `aime/index.
 
 Rien n'est envoyé au serveur. Un autre navigateur ou un autre appareil ne voit pas les cartes. Effacer les données du site les efface. Le lot de persistance serveur (Neon pour le cube, Vercel Blob pour les médias) remplacera `charger()` / `garder()` sans changer le modèle.
 
+## Assemblage et orbe (priorité 1) — `cube/assemblage.js`, `cube/assemblage.css`
+
+- Dès qu'une première carte est posée, le cube du chapitre « Votre cube » devient celui de la personne. Les faces validées sont pleines ; les autres sont en verre irisé, nommées, « à venir ». Le cube garde sa rotation, sa lumière, son glisser et son ouverture au défilement : `assemblage.js` ne touche ni aux faces ni à leurs transformations.
+- Une jauge de six cases, sous le cube, dit où en est l'assemblage. Quand une carte arrive, sa face se pose sur le cube.
+- Puis le cube s'ouvre : c'est l'ouverture existante, au défilement, jouée pour la personne jusqu'à mi-course. Défiler, toucher ou utiliser le clavier rend la main.
+- Au cœur, l'orbe apparaît : le même rond irisé que l'orbe de la page (`--conic`, `hue`), avec « AI + ME · I ÂME ». La toucher la présente ; elle ne voit que l'écran et n'a aucun droit sur les facettes. « Réfléchir avec elle » ouvre le compagnon existant (`AIMECompagnon.converser`).
+- Mouvement réduit : rien n'est joué. L'orbe, immobile, apparaît quand la personne ouvre le cube elle-même.
+- Lecture seule du modèle (via `AIMECartes.cube()` et l'événement `aime:cube`) ; aucune seconde copie.
+
+## État serveur, sans ambiguïté
+
+- La table `identite` (timbre confirmé, « Monde déjà visité ») existe sur les branches Neon `preview/integration` et `preview/cube-cartes`. Elle **n'existe pas en production** (`main`). En production, le statut de visite n'est donc pas persisté côté serveur.
+- Le cube lui-même n'est enregistré que localement. Sa sauvegarde serveur passera par le lot de persistance et les permissions des espaces.
+
 ## Suite : Cube → Canevas → Personnalisation → Enregistrement → Régie personnelle
 
 Des PR séparées, dans cet ordre, toutes sur ce même modèle :

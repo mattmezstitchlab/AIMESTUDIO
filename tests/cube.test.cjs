@@ -61,4 +61,10 @@ t('les cartes : timbre existant, glisser-déposer ET commande accessible, fente,
  assert.ok(j.includes("'aime-cube:'")&&j.includes('sessionStorage'),'local par compte ; la démonstration ne persiste pas');
  assert.ok(!/fetch\([^)]*(POST|method)/.test(j),'rien n\'est envoyé au serveur');assert.ok(j.includes("'Démonstration'"),'la démonstration est dite')});
 
+t('assemblage : même cube, faces en attente en verre, ouverture et orbe de la page, compagnon existant',()=>{const j=lire('cube/assemblage.js'),s=lire('cube/assemblage.css'),h=lire('aime/index.html'),c=lire('cube/cartes.js');
+ assert.ok(h.indexOf('/cube/cartes.js')<h.indexOf('/cube/assemblage.js'),'chargé après les cartes');assert.ok(c.includes("signal('posee',V.id)")&&c.includes("'aime:cube'"),'les cartes signalent la pose');
+ assert.ok(j.includes('AIMECartes.cube()')&&!/AIMECube\.vide|aGarder|localStorage/.test(j),'lecture seule du modèle, aucune seconde copie');
+ assert.ok(j.includes('#cube2 .f2')&&!/cube2'\)\.innerHTML|\.style\.transform\s*=/.test(j.replace(/orbe\.style|jauge\.style/g,'')),'le cube de la page garde ses faces et ses transformations');
+ assert.ok(j.includes('AIMECompagnon')&&j.includes('converser'),'l\'orbe ouvre le compagnon existant');assert.ok(/var\(--conic/.test(s)&&/animation:hue 6s linear infinite/.test(s),'même orbe que la page');
+ assert.ok(/if\(RM\|\|jeu\)return/.test(j)&&/prefers-reduced-motion/.test(s),'mouvement réduit : pas d\'ouverture jouée');assert.ok(j.includes("addEventListener('wheel',main"),'la personne reprend la main')});
 console.log('cube : '+n+' tests ok');

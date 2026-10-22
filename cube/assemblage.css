@@ -1,0 +1,34 @@
+/* AIME · l'assemblage du cube-personne et l'orbe au centre. Mêmes jetons que la grande page (--conic, hue, breathe). */
+/* les faces en attente : un verre irisé posé sur le média de démonstration */
+.f2 .o .ca-verre{position:absolute;inset:0;z-index:2;display:grid;align-content:end;gap:4px;padding:9%;box-sizing:border-box;border-radius:inherit;color:rgba(255,255,255,.82);
+ background:linear-gradient(150deg,rgba(124,92,255,.16),rgba(10,10,12,.86) 60%),rgba(10,10,12,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.16);outline:1.5px dashed rgba(167,139,250,.55);outline-offset:-9px}
+.f2 .o .ca-verre small{font:600 calc(var(--c2)*.042) var(--mono,monospace);letter-spacing:.14em;text-transform:uppercase;color:#A78BFA}
+.f2 .o .ca-verre b{font:400 calc(var(--c2)*.085)/1.1 var(--display,sans-serif);color:rgba(255,255,255,.7)}
+/* une face qui arrive : elle se pose sur le cube */
+.f2 .o .cp-pose.ca-pose{animation:ca-pose 1.3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ca-pose{0%{opacity:0;transform:scale(1.3);filter:brightness(2.4) blur(2px)}55%{opacity:1;filter:brightness(1.6)}100%{opacity:1;transform:none;filter:none}}
+/* la jauge : six cases, une par facette */
+.ca-jauge{position:absolute;z-index:3;transform:translateX(-50%);display:flex;align-items:center;gap:5px;pointer-events:none;transition:opacity .4s}
+.ca-jauge[hidden]{display:none}
+.ca-jauge i{width:12px;height:12px;border-radius:3px;border:1.5px dashed rgba(167,139,250,.6)}
+.ca-jauge i.on{border:0;background:var(--conic,conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185));box-shadow:0 0 10px rgba(124,92,255,.6)}
+.ca-jauge span{margin-left:6px;font:500 11px var(--mono,monospace);letter-spacing:.12em;color:var(--soft,#9C9CA8)}
+/* l'orbe au cœur : le rond irisé de la page, qui grandit pendant l'ouverture */
+.ca-orbe{--t:60px;position:absolute;z-index:4;left:0;top:0;width:var(--t);height:var(--t);padding:0;border:0;border-radius:50%;background:none;cursor:pointer;transform:translate(-50%,-50%)}
+.ca-orbe[hidden]{display:none}
+.ca-orbe .ca-coeur{position:absolute;inset:0;border-radius:50%;background:var(--conic,conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185));animation:hue 6s linear infinite;
+ box-shadow:0 0 calc(var(--t)*.6) rgba(124,92,255,.65),0 0 calc(var(--t)*1.4) rgba(34,211,238,.25)}
+.ca-orbe .ca-nom{position:absolute;inset:0;display:grid;place-content:center;text-align:center;color:#fff;opacity:0;transition:opacity .4s;text-shadow:0 1px 8px rgba(0,0,0,.45);pointer-events:none}
+.ca-orbe.pleine .ca-nom{opacity:1}
+.ca-orbe .ca-nom b{font:400 calc(var(--t)*.15)/1 var(--display,sans-serif);white-space:nowrap}
+.ca-orbe .ca-nom i{font:600 calc(var(--t)*.085)/1.6 var(--mono,monospace);font-style:normal;letter-spacing:.16em}
+.ca-orbe:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.ca-mot{position:absolute;z-index:4;transform:translateX(-50%);max-width:min(340px,86vw);margin:0;padding:10px 14px;border-radius:14px;background:rgba(17,17,23,.9);border:1px solid rgba(255,255,255,.12);color:#EDEDF0;font:13.5px/1.45 var(--ui,sans-serif);text-align:center}
+.ca-mot[hidden]{display:none}
+.ca-mot{display:grid;gap:6px}.ca-mot b{font:400 15px/1.2 var(--display,sans-serif)}.ca-mot span{color:var(--soft,#C9C9D2)}
+.ca-mot .ca-act{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+.ca-mot button{min-height:36px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#EDEDF0;font:600 13px/1.2 var(--ui,sans-serif);cursor:pointer}
+.ca-mot button:first-child{background:#EDEDF0;color:#0A0A0C;border-color:#EDEDF0}.ca-mot button:focus-visible{outline:2px solid #22D3EE;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.ca-orbe .ca-coeur{animation:none}.f2 .o .cp-pose.ca-pose{animation:none}.ca-jauge,.ca-orbe .ca-nom{transition:none}}
+@media (forced-colors:active){.ca-orbe .ca-coeur{border:2px solid ButtonText}.ca-jauge i.on{background:Highlight}}
