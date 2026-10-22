@@ -9,7 +9,9 @@ var SYSTEME=[
  {id:'cube',nom:'Mon cube',href:'/cube/',phrase:'Ma Régie personnelle : mes six facettes, mon timbre, mon orbe',cat:'systeme',statut:'experimental',sigle:'Cu'},
  {id:'pointzero',nom:'Point Zéro',href:'/point-zero/',phrase:'Déposer une matière : intention, notes, fichiers ; le système la distribue',cat:'systeme',statut:'experimental',sigle:'P0'},
  {id:'espace',nom:'Mon espace',href:'/bureau/espace/',phrase:'Reprendre ses projets, sauvegarder ce navigateur',cat:'systeme',statut:'disponible',sigle:'Es'},
- {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré'}];
+ {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré',reserve:true}];
+/* réservé : seulement pour le propriétaire du site, droit décidé par le serveur (/api/identite → proprietaire) ;
+   l'interface ne fait que montrer ou masquer, elle ne protège rien. */
 /* sigles choisis quand le calcul automatique tromperait (« Le Réseau » donnerait « Lr », trop proche d'une lettre au hasard) */
 var SIGLES={reseau:'Rs',canevas:'Cv'};
 var EPINGLES=['cube','pointzero','espace','regie','reseau','canevas','studio','stitch','g44','world','zero'];
@@ -31,10 +33,12 @@ var ACTIONS=[
 
 function sigle(nom){var m=String(nom||'').replace(/^AIME\s+/i,'').replace(/[^A-Za-zÀ-ÿ0-9 ]/g,' ').trim().split(/\s+/);return((m[0]||'?').charAt(0).toUpperCase()+((m[1]||m[0]||'').charAt(m[1]?0:1)||'').toLowerCase()).slice(0,2)}
 /* le catalogue : apps système d'abord, puis le registre sans « bureau » ; une adresse = une app */
-function catalogue(entrees){var vus={},L=[];SYSTEME.forEach(function(a){vus[a.id]=1;L.push(Object.assign({},a,{teinte:TEINTES.systeme}))});
- (entrees||[]).forEach(function(e){if(!e||e.id==='bureau'||vus[e.id]||typeof e.href!=='string'||!/^\/(?!\/)/.test(e.href))return;vus[e.id]=1;
+function catalogue(entrees,o){var proprio=!!(o&&o.proprietaire),vus={},L=[];SYSTEME.forEach(function(a){vus[a.id]=1;if(a.reserve&&!proprio)return;L.push(Object.assign({},a,{teinte:TEINTES.systeme}))});
+ (entrees||[]).forEach(function(e){if(!e||e.id==='bureau'||(e.interne&&!proprio)||vus[e.id]||typeof e.href!=='string'||!/^\/(?!\/)/.test(e.href))return;vus[e.id]=1;
   L.push({id:e.id,nom:e.nom,href:e.href,phrase:e.phrase||'',cat:e.cat||'monde',statut:e.statut||'disponible',sigle:SIGLES[e.id]||sigle(e.nom),teinte:TEINTES[e.cat]||TEINTES.monde})});return L}
 /* le cube, accès à la Régie personnelle, reste toujours en tête du dock, même avec des épingles choisies */
+/* les actions proposées : celles d'une app réservée seulement au propriétaire */
+function actions(o){var proprio=!!(o&&o.proprietaire);return ACTIONS.filter(function(x){return proprio||!SYSTEME.some(function(a){return a.reserve&&a.id===x.app})})}
 function epingles(cat,choix){var ids=Array.isArray(choix)&&choix.length?choix:EPINGLES;ids=['cube'].concat(ids.filter(function(i){return i!=='cube'}));return ids.map(function(id){return cat.filter(function(a){return a.id===id})[0]}).filter(Boolean)}
 
 /* recherche tolérante : sans accents ni casse ; début de mot > contenu ; le nom compte plus que la phrase */
@@ -62,5 +66,5 @@ function etat(o){o=o||{};var f=(Array.isArray(o.fenetres)?o.fenetres:[]).slice(0
 function autonomie(site,visiteur){var ok=['discrete','attentive','active'];return ok.indexOf(visiteur)>=0?visiteur:ok.indexOf(site)>=0?site:'discrete'}
 
 function salutation(h){return h<5?'Bonne nuit':h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
-return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,autonomie:autonomie,adresseApp:adresseApp,etat:etat,sigle:sigle,salutation:salutation};
+return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,actions:actions,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,autonomie:autonomie,adresseApp:adresseApp,etat:etat,sigle:sigle,salutation:salutation};
 });

@@ -10,7 +10,6 @@ var CATS=[
   ['AIME ORB','/lab/orb/','L\'orbe, en laboratoire']]},
  {t:'Événements',d:'Une information écrite une fois, vue par chacun.',l:[
   ['AIME WORLD','/vitrine/world/','Paris · New York, six perspectives'],
-  ['SynchroView','/synchroview/','Comparer les perspectives côte à côte'],
   ['Mariage Léa & Marc','/vitrine/site/?u=mariage','Démonstrateur, données fictives'],
   ['Séminaire Maison Orée','/vitrine/site/?u=seminaire','Démonstrateur, entreprise fictive']]},
  {t:'Institutions',d:'Comprendre avant d\'agir.',l:[
@@ -25,7 +24,7 @@ var CATS=[
  {t:'Jeux',d:'Des règles simples, une grille sans fin.',l:[
   ['AIME INFINITY','/infinity/','Le jeu de l\'onde','Nouveau']]}];
 /* le registre unique (nav/registre.js) remplace la liste ci-dessus quand il est chargé : statuts explicites */
-var N=window.AIMENav;if(N)CATS=N.categories().map(function(c){return{t:c.t,d:c.d,l:c.l.map(function(e){return[e.nom,e.href,e.phrase,e.statut!=='disponible'?N.STATUTS[e.statut]:(e.nouveau?'Nouveau':'')]})}});
+var N=window.AIMENav;if(N)CATS=(N.categoriesPubliques?N.categoriesPubliques(false):N.categories()).map(function(c){return{t:c.t,d:c.d,l:c.l.map(function(e){return[e.nom,e.href,e.phrase,e.statut!=='disponible'?N.STATUTS[e.statut]:(e.nouveau?'Nouveau':'')]})}});
 var nav=document.querySelector('header.top nav');if(!nav)return;
 var css=document.createElement('style');css.textContent=
 '.amx-b{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line,#2B2B33);border-radius:10px;padding:8px 12px;background:rgba(10,10,12,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--ink,#EDEDF0);font:600 14px var(--ui,Inter,-apple-system,sans-serif);cursor:pointer}'+
