@@ -9,7 +9,7 @@
 var C=window.AIMECube,S=window.AIMECubeStock,V=window.AIMECubeVue;if(!C||!S||!V)return;
 var $=function(i){return document.getElementById(i)},moi=null,cube=null,vue=null;
 var ETAT={vide:'À venir',ecrite:'Écrite, pas encore timbrée',timbree:'Timbrée, pas encore posée',posee:'Posée'};
-var ORBE_L={apparence:'Apparence',couleurs:'Couleurs',comportement:'Comportement',animation:'Animation',autonomie:'Autonomie',interaction:'Interaction',explications:'Explications'};
+var ORBE_L={apparence:'Apparence',couleurs:'Couleurs',presence:'Présence',animation:'Animation',autonomie:'Autonomie',interaction:'Interaction',explications:'Explications'};
 var dansOS=window.top!==window.self;
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function lien(txt,href,cls){var a=el('a',cls||'rp-b',txt);a.href=href;if(dansOS&&/^\/aime\//.test(href))a.target='_top';return a}
@@ -24,7 +24,7 @@ function panneau(id){var d=C.facette(id),f=cube.facettes[id],P=$('rp-pan');P.tex
  P.appendChild(el('p','rp-vis',f.visibilite==='publie'?'Publiée : visible des membres du Réseau.':'Privée : visible de vous seul. Apparaître dans le cube ne publie rien.'));
  var dl=el('dl','rp-ch');d.champs.forEach(function(c){dl.appendChild(el('dt',null,c.l));dl.appendChild(el('dd',f.champs[c.k]?null:'rp-vide',f.champs[c.k]||'pas encore écrit'))});P.appendChild(dl);
  var act=el('div','rp-act');act.appendChild(lien(f.etat==='vide'?'Écrire la carte':'Corriger la carte','/aime/?carte='+id,'rp-b p'));
- var cv=el('a','rp-b','Composer cette face dans le Canevas');cv.href='/canevas/?cube='+encodeURIComponent(id);cv.setAttribute('aria-disabled','true');cv.title='Bientôt : la prochaine étape';cv.addEventListener('click',function(e){e.preventDefault()});cv.appendChild(el('em',null,' · bientôt'));act.appendChild(cv);P.appendChild(act);
+ act.appendChild(lien('Composer cette face dans le Canevas','/canevas/?cube='+encodeURIComponent(id)+'&de=/cube/'));P.appendChild(act);
  var bl=el('div','rp-blocs');bl.appendChild(el('p','rp-k','Blocs prévus pour cette face'));var ul=el('ul');d.blocs.forEach(function(b){ul.appendChild(el('li',null,b))});bl.appendChild(ul);P.appendChild(bl);
  if(id==='identite'){var z=el('div','rp-id');if(window.AIMETimbre){var tb=AIMETimbre.creer({id:moi.id,nom:moi.name||'Vous',image:moi.image,mini:false,legende:false});tb.tabIndex=-1;tb.setAttribute('aria-label','Mon timbre');z.appendChild(tb)}
   var o=el('div','rp-orbe');o.appendChild(el('p','rp-k','Mon orbe · préférences'));var od=el('dl','rp-ch');Object.keys(ORBE_L).forEach(function(k){od.appendChild(el('dt',null,ORBE_L[k]));od.appendChild(el('dd',null,cube.orbe[k]))});o.appendChild(od);

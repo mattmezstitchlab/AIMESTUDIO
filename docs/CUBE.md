@@ -83,3 +83,22 @@ Des PR séparées, dans cet ordre, toutes sur ce même modèle :
   - face Identité : le timbre, les préférences de l'orbe et ses droits (aucun).
 - **AIME OS** : « Mon cube » est une app système, toujours en tête du dock, même avec des épingles choisies. Son icône est la miniature du cube de la personne (faces posées en couleur). Elle s'ouvre dans une fenêtre du Bureau.
 - La Régie maîtresse (`/regie/`) n'est ni chargée ni modifiée.
+
+## Le cube dans le Canevas (priorité 3)
+
+- **Ouverture** : `/canevas/?cube=<facette>`, depuis « Composer cette face dans le Canevas » dans Mon cube. L'adaptateur `canevas/adaptateurs/cube.js` est chargé à la demande ; le plan de travail reste neutre.
+- **Dépli 2D** : les six faces en croix. Chaque face est une **page du moteur Métamorphose** (`AIMESite`, `cube/composition.js`), dont les blocs sont dessinés à leur place dans la grille de la face. Il n'y a pas de second système de composition : la page est rangée avec les autres sites (« aime-sites »). Le générateur de sites n'est pas exposé ; l'édition se fait dans le Canevas.
+- **Personnaliser** depuis l'inspecteur du Canevas :
+  - couleurs : les ambiances du moteur ;
+  - disposition : avancer, reculer, pleine largeur ou moitié ;
+  - aperçu : le rendu Métamorphose réel ;
+  - carte postale et vue 3D.
+
+  Chaque geste est **enregistré** aussitôt : le style dans le cube, la page dans les sites.
+- **3D du même modèle** : « Voir en 3D » monte `cube/vue3d.js` sur le même cube. Les couleurs choisies en 2D s'y voient, ainsi que dans Mon cube, le dock et le Bureau.
+- **Bloc Timbre et bloc Orbe** : deux blocs ajoutés au moteur (`vitrine/rendu.js`) et au générateur, famille « Cube ». Ils lisent la personne et l'orbe **au rendu** (`AIMESite.document(site, {personne, orbe})`) : ni nom ni identifiant n'est écrit dans la page. Sans personne, la page publique n'affiche pas de timbre.
+- **Régler mon orbe** utilise le vocabulaire de la Régie (`regie/donnees.js` : présence, autonomie, options du compagnon), plus l'apparence, les couleurs, l'animation, l'interaction et les explications.
+  - Le compagnon existant reçoit ses options sur cet appareil (`aime-orbe-reglages`).
+  - **Préférences ≠ droits** : `droitsOrbe` reste vide, quelle que soit l'autonomie choisie.
+
+**Limites.** Tout est enregistré sur cet appareil : le lot de persistance et les permissions des espaces prendront le relais. Les médias s'ajoutent par le générateur (bibliothèque). La 3D se consulte et se fait tourner ; on la compose en 2D.
