@@ -1,0 +1,602 @@
+{
+ "format": "aime-site",
+ "schema": 1,
+ "id": "aime-magazine-temoins",
+ "nom": "AIME Magazine · doubles pages témoins",
+ "univers": "vierge",
+ "modele": "publication",
+ "creeLe": null,
+ "majLe": null,
+ "infos": {
+  "titre": "AIME Magazine",
+  "sous": "N° 001 · L'encyclopédie visuelle d'AIME. Trois doubles pages témoins composées avec le Studio Publication.",
+  "date": "2026-10-22",
+  "heure": "",
+  "lieu": "",
+  "adresse": "",
+  "ville": "",
+  "acces": "",
+  "planB": "",
+  "pluie": false,
+  "email": "",
+  "tel": "",
+  "url": "",
+  "bouton": ""
+ },
+ "listes": {
+  "programme": [],
+  "faq": [],
+  "personnes": [],
+  "galerie": [],
+  "documents": [],
+  "cadeaux": [],
+  "hebergements": [],
+  "menu": [],
+  "tarifs": [],
+  "chiffres": [],
+  "etapes": [],
+  "liens": [],
+  "partenaires": [],
+  "tables": [],
+  "messages": [],
+  "credits": [],
+  "allergenes": [],
+  "setlist": [],
+  "orientation": [],
+  "consignes": [],
+  "fils": [],
+  "avancement": []
+ },
+ "pages": [
+  {
+   "id": "index",
+   "titre": "Couverture",
+   "rubrique": "",
+   "mode": "planche",
+   "sections": [
+    {
+     "id": "s-mvjlor9o4ana8",
+     "type": "titraille",
+     "variante": "masthead",
+     "audience": "public",
+     "surtitre": "Magazine",
+     "titre": "AIME",
+     "texte": "",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 1,
+      "w": 8,
+      "h": 4,
+      "z": 2
+     },
+     "lecture": 1,
+     "role": "masthead",
+     "ton": "inverse"
+    },
+    {
+     "id": "s-mvjlor9oscrcm",
+     "type": "image",
+     "variante": "pleine",
+     "audience": "public",
+     "src": "biblio:scene-001-saxophoniste",
+     "texte": "",
+     "place": {
+      "p": 1,
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 16,
+      "z": 0
+     },
+     "lecture": 3,
+     "role": "visuel",
+     "voile": true,
+     "alt": "Saxophoniste en costume jouant dans un jardin, pendant une réception au crépuscule.",
+     "cadrage": {
+      "x": 62,
+      "y": 30,
+      "zoom": 100
+     }
+    },
+    {
+     "id": "s-mvjlor9opaov9",
+     "type": "titraille",
+     "variante": "grand",
+     "audience": "public",
+     "surtitre": "L'encyclopédie visuelle d'AIME",
+     "titre": "Ce qui nous *relie*",
+     "texte": "",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 9,
+      "w": 10,
+      "h": 3,
+      "z": 2
+     },
+     "lecture": 3,
+     "role": "accroche",
+     "ton": "inverse"
+    },
+    {
+     "id": "s-mvjlor9ouf2kt",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "",
+     "texte": "Point Zéro · une matière devient un projet\n\nDesign Systems · un contenu, quatre directions\n\nMétiers · mêmes blocs, vies différentes",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 12,
+      "w": 10,
+      "h": 3,
+      "z": 2
+     },
+     "lecture": 4,
+     "role": "une",
+     "ton": "inverse"
+    },
+    {
+     "id": "s-mvjlor9ohsrmu",
+     "type": "citation",
+     "variante": "grande",
+     "audience": "public",
+     "texte": "Moins d'outils qui s'ignorent. Plus de liens *visibles.*",
+     "auteur": "",
+     "place": {
+      "p": 0,
+      "x": 1,
+      "y": 1,
+      "w": 10,
+      "h": 4,
+      "z": 0
+     },
+     "lecture": 5,
+     "role": "citation"
+    },
+    {
+     "id": "s-mvjlor9oz7lvd",
+     "type": "sommaire",
+     "variante": "liste",
+     "audience": "public",
+     "titre": "Dans ce numéro",
+     "place": {
+      "p": 0,
+      "x": 1,
+      "y": 5,
+      "w": 10,
+      "h": 7,
+      "z": 0
+     },
+     "lecture": 6,
+     "role": "sommaire"
+    },
+    {
+     "id": "s-mvjlor9o9cixg",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "",
+     "texte": "Édition de référence datée du 22 octobre 2026. Composée avec le Studio Publication du Canevas d'AIME. Écrans capturés avec des données inventées.",
+     "place": {
+      "p": 0,
+      "x": 1,
+      "y": 12,
+      "w": 10,
+      "h": 2,
+      "z": 0
+     },
+     "lecture": 7,
+     "role": "colophon"
+    },
+    {
+     "id": "s-mvjlor9ovw2ku",
+     "type": "folio",
+     "variante": "sceau",
+     "audience": "public",
+     "texte": "AIME Magazine · N° 001",
+     "place": {
+      "p": 0,
+      "x": 1,
+      "y": 15,
+      "w": 10,
+      "h": 1,
+      "z": 0
+     },
+     "lecture": 8,
+     "role": "sceau",
+     "numero": false
+    },
+    {
+     "id": "numero",
+     "type": "titraille",
+     "variante": "moyen",
+     "role": "numero",
+     "audience": "public",
+     "surtitre": "Octobre 2026",
+     "titre": "*N° 001*",
+     "texte": "",
+     "ton": "inverse",
+     "aligne": "droite",
+     "place": {
+      "p": 1,
+      "x": 8,
+      "y": 1,
+      "w": 3,
+      "h": 3,
+      "z": 2
+     },
+     "lecture": 2
+    }
+   ],
+   "gabarit": "couverture",
+   "pages": 2,
+   "fonds": [
+    "surface",
+    "fond"
+   ],
+   "sommaire": false
+  },
+  {
+   "id": "edito",
+   "titre": "Ce qui nous relie",
+   "rubrique": "00",
+   "mode": "planche",
+   "sections": [
+    {
+     "id": "s-mvjlor9ooo744",
+     "type": "titraille",
+     "variante": "monumental",
+     "audience": "public",
+     "surtitre": "Édito · 00",
+     "titre": "Ce qui nous *relie.*",
+     "texte": "Dix-huit ans de mariages, un saxophone, et une conviction : tout ce qui compte est relié. Ce que veut dire AIME, Architecture Intelligente de la Mémoire Ensemble.",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 1,
+      "w": 10,
+      "h": 5,
+      "z": 0
+     },
+     "lecture": 1,
+     "role": "titre"
+    },
+    {
+     "id": "s-mvjlor9ot79my",
+     "type": "image",
+     "variante": "pleine",
+     "audience": "public",
+     "src": "biblio:details-111-matiere",
+     "texte": "",
+     "place": {
+      "p": 0,
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 16,
+      "z": 0
+     },
+     "lecture": 2,
+     "role": "visuel",
+     "alt": "Papiers, tissus et échantillons posés sur une table d'atelier.",
+     "cadrage": {
+      "x": 52,
+      "y": 41,
+      "zoom": 112
+     }
+    },
+    {
+     "id": "s-mvjlor9o2yd6k",
+     "type": "texte",
+     "variante": "lettrine",
+     "audience": "public",
+     "titre": "",
+     "texte": "Depuis dix-huit ans, presque chaque semaine, je joue du saxophone dans des mariages. J'ai vu des centaines de journées se dérouler depuis le même endroit : un peu en retrait, attentif au moment où il faudra entrer. Et j'ai appris une chose que personne ne m'avait enseignée : une journée n'est pas une liste de tâches. C'est un réseau.\n\nUne averse annoncée à midi déplace le cocktail sous la tente. La tente change le chemin des invités, donc le moment où le photographe peut les réunir, donc l'heure à laquelle la musique commence. Rien n'arrive seul. Presque tout ce qui se passe mal vient d'un lien que personne n'avait vu.\n\nNos outils ignorent ces liens. Un tableur pour le budget, une application pour les invités, un site pour les annonces, des messages pour tout le reste. Chacun garde sa part de vérité, et c'est à nous de tenir l'ensemble en tête.\n\nAIME est né d'une question simple : et si un système se souvenait des liens à notre place ? Architecture, parce qu'il s'agit d'abord de structure. Intelligente, parce qu'elle explique ce qu'elle fait. Mémoire, parce qu'une information saisie une fois vit partout où elle compte. Ensemble, parce qu'elle n'appartient à personne seul.",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 6,
+      "w": 10,
+      "h": 6,
+      "z": 0
+     },
+     "lecture": 3,
+     "role": "texte"
+    },
+    {
+     "id": "s-mvjlor9odqejf",
+     "type": "citation",
+     "variante": "encadree",
+     "audience": "public",
+     "texte": "Une journée n'est pas une liste de tâches. C'est un *réseau.*",
+     "auteur": "Matt",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 12,
+      "w": 8,
+      "h": 2,
+      "z": 0
+     },
+     "lecture": 4,
+     "role": "citation"
+    },
+    {
+     "id": "s-mvjlor9orlpth",
+     "type": "folio",
+     "variante": "sceau",
+     "audience": "public",
+     "texte": "Édito",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 15,
+      "w": 10,
+      "h": 1,
+      "z": 0
+     },
+     "lecture": 5,
+     "role": "folio"
+    }
+   ],
+   "gabarit": "ouverture-image",
+   "pages": 2,
+   "fonds": [
+    "fond",
+    "fond"
+   ]
+  },
+  {
+   "id": "design-systems",
+   "titre": "Un contenu, quatre directions",
+   "rubrique": "04",
+   "mode": "planche",
+   "sections": [
+    {
+     "id": "s-mvjlor9plda9x",
+     "type": "titraille",
+     "variante": "grand",
+     "audience": "public",
+     "surtitre": "04 · Les Design Systems",
+     "titre": "Un contenu, *quatre* directions.",
+     "texte": "Dans le Canevas, une réalisation change d'apparence en un clic. Les mots, les images et les données ne bougent pas : AIME le vérifie à chaque fois.",
+     "place": {
+      "p": 0,
+      "x": 1,
+      "y": 1,
+      "w": 10,
+      "h": 5,
+      "z": 0
+     },
+     "lecture": 1,
+     "role": "titre"
+    },
+    {
+     "id": "s-mvjlor9pq9na2",
+     "type": "image",
+     "variante": "encadree",
+     "audience": "public",
+     "src": "biblio:ecran-canevas-design-system",
+     "texte": "",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 1,
+      "w": 10,
+      "h": 7,
+      "z": 0
+     },
+     "lecture": 2,
+     "role": "ecran",
+     "ratio": 1.6,
+     "alt": "Le Canevas d'AIME avec le panneau Design System ouvert ; Éditorial Magazine est sélectionné.",
+     "legende": "Écran réel du Canevas, capturé avec le projet fictif « Renard d'automne ». Les repères renvoient aux étapes.",
+     "reperes": [
+      {
+       "x": 78,
+       "y": 23,
+       "texte": "Le panneau Design System"
+      },
+      {
+       "x": 74,
+       "y": 73,
+       "texte": "La direction choisie"
+      },
+      {
+       "x": 47,
+       "y": 35,
+       "texte": "Le rendu réel de la page"
+      },
+      {
+       "x": 55,
+       "y": 16,
+       "texte": "Enregistrer ou annuler"
+      }
+     ]
+    },
+    {
+     "id": "s-mvjlor9pbwi69",
+     "type": "etapes",
+     "variante": "numerotee",
+     "audience": "public",
+     "titre": "",
+     "texte": "",
+     "place": {
+      "p": 0,
+      "x": 1,
+      "y": 6,
+      "w": 10,
+      "h": 5,
+      "z": 0
+     },
+     "lecture": 3,
+     "role": "etapes",
+     "liste": [
+      {
+       "date": "1",
+       "titre": "Ouvrir le panneau",
+       "detail": "Sur la page, ou dans l'inspecteur d'un bloc."
+      },
+      {
+       "date": "2",
+       "titre": "Choisir une direction",
+       "detail": "Un clic, ou les flèches du clavier : la page se redessine aussitôt."
+      },
+      {
+       "date": "3",
+       "titre": "Comparer avant de décider",
+       "detail": "Deux rendus réels, côte à côte, qui défilent ensemble."
+      },
+      {
+       "date": "4",
+       "titre": "Enregistrer, ou revenir",
+       "detail": "Rien n'est gardé sans « Enregistrer » ; « Annuler » reste possible."
+      }
+     ]
+    },
+    {
+     "id": "s-mvjlor9pj9mcy",
+     "type": "comparaison",
+     "variante": "design-systems",
+     "audience": "public",
+     "titre": "Les quatre directions · rendues en direct",
+     "texte": "",
+     "src": "",
+     "src2": "",
+     "avant": "",
+     "apres": "",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 8,
+      "w": 10,
+      "h": 5,
+      "z": 0
+     },
+     "lecture": 4,
+     "role": "comparaison"
+    },
+    {
+     "id": "s-mvjlor9pvbwfa",
+     "type": "encadre",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "Ce qui ne change jamais",
+     "texte": "Avant tout changement, le Canevas vérifie l'empreinte du contenu. S'il devait changer, rien ne serait appliqué.",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 13,
+      "w": 7,
+      "h": 2,
+      "z": 0
+     },
+     "lecture": 6,
+     "role": "encadre"
+    },
+    {
+     "id": "s-mvjlor9plv1y7",
+     "type": "bouton",
+     "variante": "centre",
+     "audience": "public",
+     "titre": "Ouvrir le Canevas",
+     "texte": "Essayer : Canevas → Design System",
+     "url": "/canevas/",
+     "place": {
+      "p": 1,
+      "x": 8,
+      "y": 13,
+      "w": 3,
+      "h": 2,
+      "z": 0
+     },
+     "lecture": 7,
+     "role": "lien"
+    },
+    {
+     "id": "s-mvjlor9pw84aw",
+     "type": "folio",
+     "variante": "simple",
+     "audience": "public",
+     "texte": "Les Design Systems",
+     "place": {
+      "p": 0,
+      "x": 1,
+      "y": 15,
+      "w": 10,
+      "h": 1,
+      "z": 0
+     },
+     "lecture": 7,
+     "role": "folio"
+    },
+    {
+     "id": "s-mvjlor9pws2f9",
+     "type": "folio",
+     "variante": "sceau",
+     "audience": "public",
+     "texte": "Démonstration",
+     "place": {
+      "p": 1,
+      "x": 1,
+      "y": 15,
+      "w": 10,
+      "h": 1,
+      "z": 0
+     },
+     "lecture": 8,
+     "role": "folio-d"
+    },
+    {
+     "id": "avant-apres",
+     "type": "comparaison",
+     "variante": "avant-apres",
+     "role": "avant-apres",
+     "audience": "public",
+     "titre": "Avant / après",
+     "texte": "",
+     "src": "biblio:ecran-canevas-minisite",
+     "src2": "biblio:ecran-comparaison",
+     "avant": "Avant : l'ambiance d'origine du mini-site",
+     "apres": "Après : la comparaison, Minimal Clair et Éditorial Magazine",
+     "place": {
+      "p": 0,
+      "x": 1,
+      "y": 11,
+      "w": 10,
+      "h": 4,
+      "z": 0
+     },
+     "lecture": 4
+    }
+   ],
+   "gabarit": "demonstration",
+   "pages": 2,
+   "fonds": [
+    "fond",
+    "fond"
+   ]
+  }
+ ],
+ "presentation": {
+  "ambiance": "minimal",
+  "typo": null,
+  "rayon": null,
+  "densite": "aere",
+  "design": {
+   "id": "aime-editorial",
+   "revision": "1.0.0"
+  }
+ },
+ "publication": {
+  "format": {
+   "l": 3,
+   "h": 4
+  },
+  "numero": "001",
+  "date": "2026-10-22"
+ }
+}
