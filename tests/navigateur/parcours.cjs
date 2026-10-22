@@ -14,7 +14,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
-    for (const u of ['/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/']) {
+    for (const u of ['/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
     // le dock : Réseau et Canevas ; ni ancien générateur ni Régie pour le public
