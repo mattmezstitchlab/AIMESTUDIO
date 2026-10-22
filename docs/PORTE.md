@@ -30,3 +30,10 @@ Point (l'intention) → Ligne (l'adresse e-mail, lien de connexion Better Auth) 
 - `api/identite.mjs` : GET l'état ; POST `timbre` (exige un nom) et `monde`. La personne vient de la session.
 - `db/migrations/2026-10-22-identite.sql` : table `identite (user_id, timbre_le, monde_le)`, additive. **À exécuter sur la branche Neon de préversion, puis de production.** Sans la table, l'état se déduit du compte (un nom = un timbre) et la découverte du Monde n'est pas mémorisée.
 - La suppression du compte efface la ligne `identite`.
+
+## Phase B · la révélation du Monde AIME
+
+- **Départ** (`porte/revelation.js`, `revelation.css`) : au clic sur la flèche, la partie visible de la page se soulève comme un rideau (découpée à la fenêtre, coins arrondis) ; dessous, les couleurs du Monde AIME et le titre « Le monde AIME » apparaissent. Puis la page change. Mouvement réduit : immédiat. Jamais bloquant.
+- **Arrivée** (`porte/arrivee.js`, sur `/aime/?depuis=porte`) : le même voile, posé dès le premier rendu, se dissipe sur le héros. Le cube qui tient la place du O s'efface, le timbre du compte descend jusqu'à lui, le cube revient avec le timbre sur sa face « vous » et se tourne vers la personne six secondes avant de reprendre sa rotation. L'orbe accueille, avec « Aller au Bureau ». L'adresse est nettoyée.
+- **Deux modes** : personnel (timbre confirmé du compte, rien d'autre) ; découverte (`/aime/?demo=timbre`, timbre fictif « Camille », marqué « Démonstration », qui propose de créer le sien). Sans timbre, la page reste exactement comme avant.
+- Le titre et le cube ne sont pas modifiés : le timbre est posé sur la face existante.
