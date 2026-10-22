@@ -64,3 +64,45 @@ test('point zéro · stockage : session obligatoire, analyse refaite côté serv
   assert.match(fs.readFileSync('db/migrations/2026-10-22-matiere.sql', 'utf8'), /create table if not exists matiere/);
   assert.doesNotMatch(pz, /innerHTML\s*=\s*[^'"]/, 'le contenu déposé ne passe jamais par innerHTML');
 });
+
+const Br = require('../pointzero/broderie.js');
+test('broderie · reconnaître : une photo est un projet broderie plausible, un texte doit en parler', () => {
+  const i = Br.reconnaitre({ type: 'image', l: 1200, h: 900, nom: 'renard-a-broder.png', couleurs: 20 });
+  assert.equal(i.broderie, true); assert.ok(i.score >= .9 && i.raisons.length >= 3);
+  assert.equal(Br.reconnaitre({ type: 'texte', texte: 'Je voudrais broder la photo de mon chien en point de croix' }).broderie, true);
+  assert.equal(Br.reconnaitre({ type: 'texte', texte: 'Un devis pour un site web' }).broderie, false);
+});
+
+test('broderie · la grille vient du format et de la toile, la finesse l\'allège, un plafond protège le navigateur', () => {
+  const g = Br.grille({ largeurCm: 15, toile: 'aida14', finesse: 'fidele' }, 4 / 3);
+  assert.equal(g.l, 83); assert.equal(g.h, 62); assert.deepEqual(g.cm, [15.1, 11.2]);
+  assert.equal(Br.grille({ largeurCm: 15, toile: 'aida14', finesse: 'simple' }, 4 / 3).l, 42);
+  assert.ok(Br.grille({ largeurCm: 120, toile: 'aida18', finesse: 'fidele' }, 1).plafonne);
+  assert.equal(Br.grille({ largeurCm: 120, toile: 'aida18', finesse: 'fidele' }, 1).l, Br.MAX_POINTS);
+});
+
+test('broderie · écran, impression, fil : trois langages, et l\'avancement se lit en pourcentage', () => {
+  assert.deepEqual(Br.cmjn([255, 0, 0]), [0, 100, 100, 0]); assert.deepEqual(Br.cmjn([0, 0, 0]), [0, 0, 0, 100]);
+  assert.equal(Br.hex([34, 211, 238]), '#22D3EE'); assert.deepEqual(Br.rgbDe('#22D3EE'), [34, 211, 238]);
+  const p = { titre: 'Renard', confirme: {}, choix: { largeurCm: 15, toile: 'aida14' } };
+  assert.equal(Br.progression(p), 14); assert.equal(Br.suivante(p).id, 'format'); assert.equal(Br.statut(p), 'en préparation');
+  Br.ETAPES.forEach(e => { p.confirme[e.id] = true; });
+  assert.equal(Br.progression(p), 100); assert.equal(Br.suivante(p), null); assert.equal(Br.statut(p), 'prêt pour l\'atelier');
+  const r = Br.remontee(Object.assign(p, { image: 'NE PAS ENVOYER', palette: [{ dmc: '922', nom: 'Copper Light', hex: '#E27323', ecran: '#DB783D', points: 1121 }] }));
+  assert.equal(r.image, undefined, 'l\'image ne part jamais'); assert.deepEqual(r.palette, [{ dmc: '922', nom: 'Copper Light', points: 1121 }]);
+});
+
+test('broderie · les références DMC viennent du nuancier d\'AIME Stitch, telles quelles, et l\'atelier ne s\'ouvre pas trop tôt', () => {
+  const pz = fs.readFileSync('pointzero/pz.js', 'utf8');
+  assert.match(pz, /fetch\('\/stitch\/data\/dmc\.json'\)/); assert.match(pz, /root\.StitchConversion\.convertir\(/);
+  assert.doesNotMatch(pz, /location\.href\s*=\s*'\/stitch/, 'aucune ouverture automatique de l\'atelier');
+  assert.match(pz, /Ouvrir dans AIME Stitch · bientôt/);
+});
+
+test('remontée · session obligatoire, résumé revalidé, jamais d\'image', async () => {
+  const R = await import('../api/remontee.mjs');
+  const p = R.nettoyer({ type: 'broderie', titre: 'x'.repeat(500), image: 'data:image/png;base64,AAAA', palette: [{ dmc: '922<script>', nom: 'Copper', points: 'beaucoup' }], confirme: { dmc: 1, pirate: true } });
+  assert.equal(p.titre.length, 120); assert.equal(p.image, undefined); assert.equal(p.palette[0].points, null); assert.deepEqual(Object.keys(p.confirme), ['format', 'toile', 'points', 'couleurs', 'conversion', 'dmc']);
+  const t = R.texte(p, { nom: 'Matt', email: 'm@exemple.fr' }); assert.match(t, /Fils DMC : 922<script>/); 
+  const src = fs.readFileSync('api/remontee.mjs', 'utf8'); assert.match(src, /await personne\(req\)/); assert.match(src, /401/); assert.match(src, /esc\(corpsTexte\)/, 'le HTML de l\'e-mail est échappé');
+});

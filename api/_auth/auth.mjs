@@ -23,11 +23,11 @@ let envoyeur = null;
 export function _envoyeur(f) { envoyeur = f; instance = null; }
 export function expediteur(env = process.env) { return env.AUTH_EMAIL_FROM || env.AUTH_FROM || env.CONTACT_FROM || ''; }
 export function envoiPret(env = process.env) { return !!(envoyeur || (env.RESEND_API_KEY && expediteur(env))); }
-export async function envoyer({ to, subject, text, html }) {
-  if (envoyeur) return envoyeur({ to, subject, text, html });
+export async function envoyer({ to, subject, text, html, replyTo }) {
+  if (envoyeur) return envoyeur({ to, subject, text, html, replyTo });
   const cle = process.env.RESEND_API_KEY, de = expediteur();
   if (!cle || !de) throw new Error('envoi d\'e-mail non configuré');
-  const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: de, to: [to], subject, text, html }) });
+  const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ from: de, to: [to], subject, text, html }, replyTo && /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(replyTo) ? { reply_to: replyTo } : {})) });
   if (!r.ok) throw new Error('envoi refusé');
 }
 function envoyerLien({ email, url }) {

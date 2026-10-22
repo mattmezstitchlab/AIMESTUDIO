@@ -1,26 +1,31 @@
 # Point Zéro (`/point-zero/`, et l'accueil de `/bureau/`)
 
-Le bureau ne commence pas par une app à choisir, mais par une matière à déposer.
+Le bureau ne commence pas par une app à choisir, mais par une matière à déposer, que l'orbe aide à transformer en projet.
 
-## Ce qu'on voit
-- **Au centre, le point zéro** (l'orbe AIME). Un clic ouvre le dépôt : texte libre (intention, demande, notes, description, éléments en vrac), fichiers glissés, choisis ou collés.
-- **Autour, six formes** (`zero/formes.js`, le même module que la métamorphose de la Page Zéro) : **Point** (tout ce qui est entré), **Ligne** (les dates en jalons), **Relation** (personnes, adresses, liens, et ce qui les relie), **Grille** (thèmes × natures), **Composition** (un premier brouillon à copier ou télécharger en .md), **Projet** (des dossiers par thème, avec prochaine date, personnes, montants, et « Créer un espace pour ce projet » qui ouvre `/compte/?nouvel=…`).
-- Au dépôt, un point part du centre vers chaque forme touchée. En mouvement réduit, il n'y a pas de trajet : la forme s'allume.
-- Sur téléphone, le point est en haut et les six formes en grille dessous. La lecture d'une forme s'ouvre en panneau à droite, ou par le bas sur téléphone.
+## Le parcours
+1. **Au repos**, un seul point : l'anneau iris et le point iris, le premier état de la métamorphose de la Page Zéro (`zero/formes.js`).
+2. **Un clic sur le point** ouvre un petit menu : **Importer** (une photo, une image), **Écrire** (une intention, une demande, une note), **Compléter** (un projet en attente). On peut aussi glisser un fichier sur le point.
+3. **La matière se transforme sous les yeux**, avec les six formes de la Page Zéro, pilotées dans le temps et non par le défilement. La phase en cours est surlignée (POINT → … → PROJET) et une phrase dit ce que le système fait :
+   - **Image** : la ligne de points prend les couleurs dominantes de l'image ; au cercle, chaque fil DMC retenu est relié au centre, l'un après l'autre (la propagation) ; la grille montre un premier aperçu du patron.
+   - **Texte** : la ligne pour les dates ; au cercle, les personnes, adresses et dates citées ; puis le classement, la composition et le projet.
+4. **L'orbe guide les confirmations** dans un panneau, avec une barre d'avancement. Pour la broderie, six étapes : le format final (taille, usage), la toile, le nombre de points (la finesse), le nombre de couleurs (les modes d'AIME Stitch), la différence écran RVB / impression CMJN / fil DMC, puis la validation des références DMC. La toile passe avant le nombre de points, puisque c'est elle qui le détermine.
+5. **La carte projet naît** à la première confirmation (la forme passe par la composition, puis par le projet). Elle s'affiche dans le Bureau avec l'image, l'aperçu de la grille, le statut (en préparation, puis prêt pour l'atelier), le pourcentage d'avancement, le résumé (format, support, points, couleurs, conversion DMC) et l'action suivante proposée par l'orbe. Les boutons « Reprendre » et « Revoir » rouvrent les confirmations.
+6. **Rien n'ouvre l'atelier trop tôt** : « Ouvrir dans AIME Stitch » est annoncé, mais désactivé. Le PDF du patron viendra ensuite.
 
-## La lecture (`pointzero/analyse.js`, testée)
-Ce sont des règles lisibles, sans IA et sans appel extérieur. Le navigateur et le serveur appliquent les mêmes.
-- **Genre** : intention (« je veux », « objectif »…), demande (« peux-tu », « ? »…), liste (3 puces ou plus), description (texte long), note, fichier.
-- **Dates** : `2027-06-14`, `14/06/2027`, `05/11` (la prochaine occurrence), `14 juin 2027`, `3 novembre`. Les dates impossibles sont ignorées.
-- **Personnes** : « Léa & Marc », « Prénom Nom » ailleurs qu'en tête de phrase, « avec Camille ». C'est heuristique : un nom en tout début de texte peut échapper.
-- **Adresses e-mail, liens, téléphones, montants.**
-- **Thèmes** : événement, site, identité, documents, contenus, produit, budget.
+## Ce qui est réutilisé
+- `zero/formes.js` : les six formes, partagées avec la Page Zéro.
+- `stitch/js/conversion.js` et `stitch/data/dmc.json` : la conversion photo → points → fils DMC (CIELAB, CIEDE2000) et le nuancier, **tels quels**. Les références DMC ne sont jamais modifiées.
+- `pointzero/analyse.js` : la lecture des textes (genre, dates, personnes, adresses, liens, montants, thèmes).
+- `pointzero/broderie.js` : reconnaître, mesurer (format × toile → points), les trois langages de la couleur (RVB, CMJN indicatif, DMC), l'avancement et le résumé. Logique pure, testée.
+
+## L'orbe remonte à AIME
+« Transmettre à AIME » (personne connectée seulement) envoie à `CONTACT_TO` un résumé structuré, via `POST /api/remontee` : le format, la grille, les fils DMC et ce qui a été confirmé, ou le message. Le résumé est revalidé côté serveur et le nombre d'envois est limité. **L'image n'est jamais envoyée.**
 
 ## Où vit la matière
-- **Connecté** : les textes sont sur le compte, table `matiere` (`db/migrations/2026-10-22-matiere.sql`), via `POST /api/matiere` (`liste`, `ajouter`, `importer`, `supprimer`). L'API exige la session, refait l'analyse côté serveur, plafonne à 20 000 caractères par texte et 500 éléments par personne, et chacun ne supprime que sa propre matière.
-- **Non connecté** : les textes restent dans ce navigateur (`localStorage` « aime-point-zero »). Une fois connecté, un bouton les range sur le compte.
-- **Fichiers** : toujours sur l'appareil (IndexedDB « aime-point-zero »), jamais envoyés. Les fichiers texte (.txt, .md, .csv…) sont lus localement pour l'analyse.
-- **Supprimer son compte** efface aussi sa matière (`effacerTraces`).
+- **Textes** : sur le compte si l'on est connecté (table `matiere`, `POST /api/matiere`), sinon dans le navigateur, avec un bouton pour les ranger sur le compte plus tard.
+- **Images et cartes projet** : sur l'appareil (IndexedDB « aime-point-zero »), jamais envoyées.
+- **Supprimer son compte** efface sa matière.
 
 ## Mise en place
-Lancer `db/migrations/2026-10-22-matiere.sql` sur chaque base : preview, puis production. Sans la table, l'API répond 503 et la matière reste dans le navigateur.
+- `db/migrations/2026-10-22-matiere.sql`, sur la base de preview puis sur la production.
+- `CONTACT_TO` (et l'envoi Resend déjà configuré) pour « Transmettre à AIME ».
