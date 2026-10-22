@@ -42,3 +42,6 @@ body.cv-page{background:#0A0A0C;display:flex;flex-direction:column}
  .cv-o{width:42px;height:42px}
 }
 @media (prefers-reduced-motion:reduce){.cv *{transition:none!important;animation:none!important}}
+
+/* téléphone : la tête reste sur une ligne (marque, retour, porte), le plan garde sa place */
+@media (max-width:640px){.cv-page .tete .ev span{display:none}}

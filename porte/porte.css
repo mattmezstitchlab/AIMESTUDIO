@@ -19,3 +19,5 @@
 @media (forced-colors:active){.ap-b{border:2px solid ButtonText;forced-color-adjust:none}}
 .aime-porte.ap-compact{padding:0;gap:6px;background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
 .aime-porte.ap-compact .ap-b{width:32px;height:32px}.aime-porte.ap-compact .ap-b svg{width:15px;height:15px}.aime-porte.ap-compact .ap-dit{display:none}
+/* compacte à l'œil, mais une zone tactile de 46 px */
+.aime-porte.ap-compact .ap-b{position:relative}.aime-porte.ap-compact .ap-b::after{content:"";position:absolute;inset:-7px;border-radius:50%}
