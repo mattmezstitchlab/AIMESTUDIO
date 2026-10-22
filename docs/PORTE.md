@@ -46,7 +46,9 @@ La porte partagée est montée dans la tête du Canevas (`position:'compact'`), 
 
 Validée localement : rejouée deux fois sur une copie du schéma (rejouable), `user_id text` compatible avec `"user".id text` de Better Auth, aucune clé étrangère, aucune table existante modifiée. Prérequis : les tables Better Auth (`db/migrations/2026-10-21-comptes.sql`) déjà présentes.
 
-1. Console Neon → projet AIME → branche de **préversion** (celle de `DATABASE_URL` des Previews Vercel), jamais la branche principale.
+1. Console Neon → projet `le-monde-aime`. L'intégration Neon ↔ Vercel crée **une branche par branche Git** : `preview/<branche>`, copiée depuis `main` à sa création. Viser `preview/integration` (la preview de référence) et, pour tester une PR avec un vrai compte, sa propre branche (ex. `preview/cube-cartes`). Jamais `main` (production) sans validation.
+   - Prérequis : `select to_regclass('public."user"')` doit répondre `user` ; sinon, exécuter d'abord `db/migrations/2026-10-21-comptes.sql` sur cette branche.
+   - Fait le 22/10/2026 : `preview/integration` et `preview/cube-cartes`.
 2. SQL Editor : coller le contenu de `db/migrations/2026-10-22-identite.sql`, exécuter.
 3. Contrôle : `select column_name, data_type from information_schema.columns where table_name = 'identite';` → `user_id`, `timbre_le`, `monde_le`, `cree_le`.
 4. Sur une préversion : créer un timbre au Point Zéro, cliquer la flèche, puis `select timbre_le is not null, monde_le is not null from identite;` → `t | t`. Revenir sur la Page Zéro : la porte doit rester en mode « retour » et non revenir à « ↓ ».
