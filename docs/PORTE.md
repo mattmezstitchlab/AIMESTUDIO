@@ -37,3 +37,17 @@ Point (l'intention) → Ligne (l'adresse e-mail, lien de connexion Better Auth) 
 - **Arrivée** (`porte/arrivee.js`, sur `/aime/?depuis=porte`) : le même voile, posé dès le premier rendu, se dissipe sur le héros. Le cube qui tient la place du O s'efface, le timbre du compte descend jusqu'à lui, le cube revient avec le timbre sur sa face « vous » et se tourne vers la personne six secondes avant de reprendre sa rotation. L'orbe accueille, avec « Aller au Bureau ». L'adresse est nettoyée.
 - **Deux modes** : personnel (timbre confirmé du compte, rien d'autre) ; découverte (`/aime/?demo=timbre`, timbre fictif « Camille », marqué « Démonstration », qui propose de créer le sien). Sans timbre, la page reste exactement comme avant.
 - Le titre et le cube ne sont pas modifiés : le timbre est posé sur la face existante.
+
+## Canevas
+
+La porte partagée est montée dans la tête du Canevas (`position:'compact'`), à côté du retour au Bureau : jamais sur la palette basse, les notes, l'inspecteur ni le zoom, qui vivent sur le plan et en bas. Compacte à l'œil (32 px), sa zone tactile fait 46 px. Sur téléphone, le sous-titre du Canevas se masque pour que la tête tienne sur une ligne.
+
+## Migration `identite` sur la branche Neon de préversion
+
+Validée localement : rejouée deux fois sur une copie du schéma (rejouable), `user_id text` compatible avec `"user".id text` de Better Auth, aucune clé étrangère, aucune table existante modifiée. Prérequis : les tables Better Auth (`db/migrations/2026-10-21-comptes.sql`) déjà présentes.
+
+1. Console Neon → projet AIME → branche de **préversion** (celle de `DATABASE_URL` des Previews Vercel), jamais la branche principale.
+2. SQL Editor : coller le contenu de `db/migrations/2026-10-22-identite.sql`, exécuter.
+3. Contrôle : `select column_name, data_type from information_schema.columns where table_name = 'identite';` → `user_id`, `timbre_le`, `monde_le`, `cree_le`.
+4. Sur une préversion : créer un timbre au Point Zéro, cliquer la flèche, puis `select timbre_le is not null, monde_le is not null from identite;` → `t | t`. Revenir sur la Page Zéro : la porte doit rester en mode « retour » et non revenir à « ↓ ».
+5. Production : seulement après validation, même fichier, même contrôle.

@@ -11,11 +11,14 @@ t('le design est celui du rond « + » de la grande page (.plus5)',()=>{const o=
 t('Page Zéro : en haut, un seul accès, la porte ; une connexion discrète ; les invitations passent toujours par /compte/',()=>{const z=lire('index.html'),haut=z.match(/<header class="barre">[\s\S]*?<\/header>/)[0];
  assert.ok(!/MON BUREAU|AIME STUDIO/.test(haut));assert.ok(haut.includes('id="porte"'));assert.ok(/class="compte-d" href="\/compte\/"/.test(haut));assert.ok(/AIMEPorte\.monter\(document\.getElementById\('porte'\)/.test(z));
  assert.ok(/INVIT|invitation/.test(lire('compte/compte.js')),'le lien d\'invitation reste traité par la page compte')});
-t('un seul composant partagé, posé sur la Page Zéro, le Point Zéro et le Bureau',()=>{for(const f of ['index.html','point-zero/index.html','bureau/index.html']){const h=lire(f);assert.ok(h.includes('/porte/porte.js')&&h.includes('/porte/porte.css'),f);assert.ok(!/\.ap-b\{/.test(h),f+' ne recopie pas le style')}});
+t('un seul composant partagé, posé sur la Page Zéro, le Point Zéro, le Bureau et le Canevas',()=>{for(const f of ['index.html','point-zero/index.html','bureau/index.html','canevas/index.html']){const h=lire(f);assert.ok(h.includes('/porte/porte.js')&&h.includes('/porte/porte.css'),f);assert.ok(!/\.ap-b\{/.test(h),f+' ne recopie pas le style')}});
 t('parcours d\'identité : Better Auth seul authentifie, le timbre existant, les six formes',()=>{const pz=lire('pointzero/pz.js');
  assert.ok(pz.includes("/api/auth/sign-in/magic-link")&&pz.includes("/api/auth/update-user")&&pz.includes("/api/identite"));assert.ok(/intention'\)==='identite'/.test(pz));
  ['Point','Ligne','Relation','Grille','Composition','Projet'].forEach(k=>assert.ok(pz.includes("['"+k+"',"),k));assert.ok(pz.includes('AIMETimbre.preparer')&&pz.includes('T.creer'));assert.ok(!/password|motDePasse/i.test(pz),'aucun mot de passe');
  assert.ok(pz.includes("aime:identite"),'le bouton change dès la confirmation')});
 t('serveur : état lu sur la session, table additive, effacée avec le compte',()=>{const a=lire('api/identite.mjs'),m=lire('db/migrations/2026-10-22-identite.sql'),au=lire('api/_auth/auth.mjs');
  assert.ok(a.includes('personne(req)')&&!/b\.(user|id|email)/.test(a),'la personne vient de la session');assert.ok(/create table if not exists identite/.test(m));assert.ok(/delete from identite where user_id/.test(au))});
+t('Canevas : la porte en tête, compacte, jamais sur la palette basse, les notes ni le zoom',()=>{const h=lire('canevas/index.html'),tete=h.match(/<header class="tete">[\s\S]*?<\/header>/)[0];
+ assert.ok(tete.includes('id="porte"'));assert.ok(/contexte:'canevas',position:'compact'/.test(h));assert.ok(!/position:'bas'/.test(h));
+ assert.ok(/ap-compact \.ap-b::after\{[^}]*inset:-7px/.test(lire('porte/porte.css')),'zone tactile élargie')});
 console.log('porte : '+n+' tests ok');
