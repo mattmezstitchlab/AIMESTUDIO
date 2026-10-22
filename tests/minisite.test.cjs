@@ -23,7 +23,8 @@ t('la disposition modifiée dans le générateur est gardée, le contenu du proj
  assert.ok(s2.pages[0].sections.some(x=>x.type==='citation'),'un bloc ajouté reste');assert.equal(s2.listes.fils.length,3,'palette à jour')});
 t('nouveaux blocs du moteur : couleurs refusées si invalides, avancement borné',()=>{const s=S.vide('vierge');s.listes.fils=[{dmc:'1',hex:'red;background:url(x)'}];s.listes.avancement=[{nom:'A',valeur:250}];
  s.pages[0].sections=[{id:'a',type:'fils'},{id:'b',type:'avancement'}];const h=S.document(s,{}).html;assert.ok(!h.includes('url(x)'));assert.ok(h.includes('100 %'))});
-t('page /projet/ : charge le moteur, le générateur, et ne promet pas le Canevas',()=>{const h=require('fs').readFileSync(require('path').join(__dirname,'..','projet/index.html'),'utf8');
+t('page /projet/ : charge le moteur ; « Modifier dans le Canevas » remplace le générateur',()=>{const h=require('fs').readFileSync(require('path').join(__dirname,'..','projet/index.html'),'utf8');
  ['/vitrine/rendu.js','/pointzero/minisite.js','/pointzero/broderie.js','/pointzero/modes.js'].forEach(x=>assert.ok(h.includes(x),x));
- const js=require('fs').readFileSync(require('path').join(__dirname,'..','projet/projet.js'),'utf8');assert.match(js,/\/sites\/\?site=/);assert.match(js,/\/canevas\/\?projet=/,'le Canevas ouvre ce projet')});
+ const js=require('fs').readFileSync(require('path').join(__dirname,'..','projet/projet.js'),'utf8');assert.ok(!/\/sites\/\?site=/.test(js),'le générateur de sites n\'est plus la destination');assert.match(js,/\/canevas\/\?site='\+encodeURIComponent\(sid\)\+'&projet='/,'le même mini-site s\'édite dans le Canevas');assert.match(js,/\/canevas\/\?projet=/,'le patron reste ouvrable');
+ assert.match(h,/Voir mon mini-site/);assert.match(h,/Modifier dans le Canevas/);assert.ok(!/Modifier la disposition|générateur/.test(h))});
 console.log('minisite : '+n+' tests ok');
