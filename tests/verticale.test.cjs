@@ -58,16 +58,25 @@ test('verticale · une modification unique met à jour contrat, jalons, initiale
   assert.match(n.briefContact(), /Claire & Hugo/);
 });
 
-test('verticale · la page unique assemble tous les Actes, la Règle vivante, le Mode Site et la synchro /tout/', () => {
-  const html = lire('index.html');
+test('verticale · la Grande Partition complète vit au Lab ; l\'accueil garde les capacités utiles sur le projet du visiteur', () => {
+  const lab = lire('lab/grande-partition/index.html');
   for (const id of [
     'rul', 'filBarre', 'repriseLocale',
     'haut', 'impulsion', 'geste', 'meta', 'naiss', 'lien',
     'story2', 'regards', 'story3', 'vitrine', 'build', 'atlas',
     'entrer', 'offres', 'contact', 'tiroirAtelier'
   ]) {
-    assert.match(html, new RegExp('id="' + id + '"'), 'section présente : #' + id);
+    assert.match(lab, new RegExp('id="' + id + '"'), 'Lab, section présente : #' + id);
   }
+  const accueil = lire('index.html');
+  for (const id of ['haut', 'monProjet', 'capacites', 'regards', 'story3', 'build', 'vitrine', 'entrer', 'offres', 'contact', 'tiroirAtelier']) {
+    assert.match(accueil, new RegExp('id="' + id + '"'), 'accueil, section présente : #' + id);
+  }
+  for (const id of ['naiss', 'story2', 'atlas', 'lien', 'geste', 'pan-g44']) {
+    assert.doesNotMatch(accueil, new RegExp('id="' + id + '"'), 'accueil, gardé au Lab : #' + id);
+  }
+  assert.match(accueil, /href="\/lab\/grande-partition\/"/, 'un lien mène au Lab');
+  const html = lab;
   for (const script of [
     '/contrats/projet.js', '/compte/timbre.js', '/cube/modele.js', '/cube/vue3d.js',
     '/synchroview/permissions.js', '/synchroview/flux.js', '/vitrine/rendu.js',

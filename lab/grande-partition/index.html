@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La Grande Partition · AIME Lab</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="AIME. Une information saisie une fois, propagée partout : site multi-perspectives, cube, direct, print millimétré, édition 12×16, point de croix DMC et simulation causale.">
+<meta name="theme-color" content="#0A0A0C">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<script>try{if(localStorage.getItem('aime-zero-calme')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}catch(e){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}</script>
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/porte/porte.css">
+<link rel="stylesheet" href="/porte/revelation.css">
+<link rel="stylesheet" href="/compte/timbre.css">
+<link rel="stylesheet" href="/cube/vue3d.css">
+<link rel="stylesheet" href="/verticale/verticale.css">
+<style>
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin.woff2") format("woff2")}
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin-ext.woff2") format("woff2");unicode-range:U+0100-024F,U+1E00-1EFF}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin-ext.woff2") format("woff2-variations");unicode-range:U+0100-024F,U+1E00-1EFF}
+/* l'identité AIME existante : les mêmes jetons que la grande landing */
+:root{color-scheme:dark;--desk:#0A0A0C;--ink:#EDEDF0;--soft:#9C9CA8;--faint:#7E7E8A;--line:#2B2B33;
+ --ui:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--display:"Cal Sans","Inter Variable",Inter,-apple-system,sans-serif;
+ --conic:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);--iris:linear-gradient(90deg,#FB7185,#F59E0B,#7C5CFF,#22D3EE)}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{margin:0;background:var(--desk);color:var(--ink);font:400 17px/1.55 var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid #7C5CFF;outline-offset:4px;border-radius:6px}
+.evite{position:absolute;left:-999px;top:10px;z-index:50;background:var(--ink);color:var(--desk);padding:10px 14px;border-radius:10px;text-decoration:none}.evite:focus{left:12px}
+.col{max-width:980px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));text-align:center}
+
+/* la barre : presque rien */
+.barre{position:fixed;inset:0 0 auto;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 14px max(20px,env(safe-area-inset-left,0px));pointer-events:none}
+.barre a{pointer-events:auto;text-decoration:none}
+.barre .mk{font:400 19px var(--display);letter-spacing:-.01em;opacity:0;transition:opacity .6s;padding-left:44px}
+.barre .mk sup{font-size:.5em}
+body.loin .barre .mk{opacity:1}
+.barre::before{content:"";position:absolute;inset:0 0 -24px;background:linear-gradient(var(--desk) 40%,transparent);opacity:0;transition:opacity .5s;z-index:-1}
+body.loin .barre::before{opacity:.92}
+.barre .droite{display:flex;align-items:center;gap:16px;pointer-events:auto}
+.barre .compte-d{font:500 12.5px var(--ui);color:var(--ink);opacity:.85;text-decoration:underline;text-underline-offset:3px}.barre .compte-d:hover{opacity:1}
+@media (max-width:620px){.barre .passer{display:none}.barre .mk{padding-left:0}}
+.barre .passer{font:500 13px var(--ui);color:var(--soft);padding:8px 2px;transition:color .2s}.barre .passer:hover{color:var(--ink)}
+
+/* l'orbe : un seul objet, qui suit des ancres posées dans la page */
+.flot{position:fixed;left:0;top:0;width:100px;height:100px;z-index:2;pointer-events:none;will-change:transform,opacity;transform-origin:0 0}
+.aime-orbe{position:relative;display:block;width:100%;height:100%}
+.ao-halo{position:absolute;inset:-30%;border-radius:50%;background:radial-gradient(closest-side,rgba(124,92,255,.34),rgba(34,211,238,.10) 52%,rgba(251,113,133,.05) 64%,transparent 74%);animation:halo 9s ease-in-out infinite;will-change:transform,opacity}
+.ao-def{position:absolute}
+.ao-peau,.ao-lumiere{position:absolute;inset:0;display:block}.ao-peau{overflow:hidden}
+.ao-cone{position:absolute;inset:-21%;display:block;background:var(--conic);animation:tourne 22s linear infinite;will-change:transform}
+.ao-lumiere{background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55),rgba(255,255,255,.08) 28%,transparent 46%),radial-gradient(circle at 70% 78%,rgba(10,10,12,.38),transparent 55%)}
+@keyframes tourne{to{transform:rotate(360deg)}}
+@keyframes halo{50%{transform:scale(1.08);opacity:.75}}
+.ancre{display:block;margin:0 auto;aspect-ratio:1;flex:none}
+
+/* 1 · le point zéro */
+.zero{min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(22px,3.6vh,38px);padding:calc(76px + env(safe-area-inset-top,0px)) 0 96px;position:relative}
+.zero .ancre{width:min(28vmin,220px)}
+.zero h1{margin:0;font:400 clamp(56px,9vw,112px)/.95 var(--display);letter-spacing:-.02em}
+.zero h1 sup{font-size:.28em;vertical-align:top;position:relative;top:.35em;margin-left:.04em}
+.zero .intention{margin:14px 0 0;font:400 clamp(22px,2.6vw,32px)/1.25 var(--ui);letter-spacing:-.015em}
+.zero .trois{margin:14px 0 0;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
+.descendre{position:absolute;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font:500 14px var(--ui);color:var(--soft);text-decoration:none;display:grid;justify-items:center;gap:8px;padding:6px 10px}
+.descendre i{width:1px;height:30px;background:linear-gradient(var(--soft),transparent);display:block;animation:fil 2.8s ease-in-out infinite;transform-origin:top}
+@keyframes fil{0%{transform:scaleY(0);opacity:0}40%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
+
+/* 2 · le premier geste */
+.geste{position:relative}
+.geste .scene{position:sticky;top:0;height:100svh;display:grid;justify-items:center;align-content:start;padding-top:calc(13svh + env(safe-area-inset-top,0px));pointer-events:none}
+.geste .ancre{width:min(22vmin,175px)}
+.geste .phrases{margin-top:-100svh}
+.phrase{min-height:46svh;display:grid;place-items:center;padding:18svh 0 0}
+.phrase p{margin:0;font:400 clamp(40px,6.4vw,86px)/1.02 var(--display);letter-spacing:-.02em;will-change:opacity,transform}
+.phrase.comprendre p{font:400 clamp(21px,2.3vw,29px)/1.4 var(--ui);letter-spacing:-.01em;color:var(--soft);max-width:620px}
+.phrase.comprendre p b{color:var(--ink);font-weight:500}
+
+/* 3 · la métamorphose */
+.meta{position:relative;height:230svh}
+.meta .scene{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,2.6vh,28px);padding:calc(56px + env(safe-area-inset-top,0px)) 0 calc(28px + env(safe-area-inset-bottom,0px))}
+.meta svg.forme{width:min(84vw,48svh,500px);height:auto;overflow:visible}
+.etapes{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font:500 13.5px var(--ui);letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+.etapes li{transition:color .35s}.etapes li.on{color:var(--ink)}
+.etapes li+li::before{content:"→";margin-right:18px;color:var(--soft)}
+.meta h2,.lien h2{margin:0;font:400 clamp(32px,4.6vw,60px)/1.05 var(--display);letter-spacing:-.02em;text-wrap:balance}
+.meta .sous,.lien .sous{margin:0 auto;max-width:600px;font-size:clamp(16px,1.5vw,19px);color:var(--soft);text-wrap:balance}
+.statique{display:none}
+
+/* 4 · le lien */
+.lien{position:relative;height:190svh}
+.lien .scene{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,3vh,30px);padding:calc(56px + env(safe-area-inset-top,0px)) 0 calc(28px + env(safe-area-inset-bottom,0px))}
+.lien .sous{opacity:0;transition:opacity .8s}.lien .sous.vu{opacity:1}
+
+/* 5 · la promesse */
+.promesse{padding:clamp(110px,16vh,200px) 0 clamp(90px,14vh,170px);border-top:1px solid var(--line)}
+.promesse .grand{margin:0;font:400 clamp(42px,7.4vw,104px)/1 var(--display);letter-spacing:-.025em;text-wrap:balance}
+.promesse .grand+.grand{margin-top:clamp(24px,5vh,52px);color:transparent;background:var(--iris);-webkit-background-clip:text;background-clip:text}
+.exemples{list-style:none;margin:clamp(80px,12vh,140px) auto 0;padding:0;display:grid;gap:clamp(48px,8vh,96px);max-width:720px}
+.exemples li{font:400 clamp(22px,2.8vw,34px)/1.25 var(--ui);letter-spacing:-.015em}
+.exemples li span:empty:not(.pt){display:block;margin:0 auto 16px;width:9px;height:9px;border-radius:50%;background:var(--conic)}
+.autorisations{margin:clamp(72px,10vh,120px) 0 0;font:500 13px var(--ui);letter-spacing:.24em;text-transform:uppercase;color:var(--soft)}
+.apparait{opacity:0;transform:translateY(22px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.2,.7,.2,1)}
+.apparait.vu{opacity:1;transform:none}
+
+/* 6 · entrer */
+.entrer{min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(24px,4vh,40px);padding:110px 0 calc(100px + env(safe-area-inset-bottom,0px));position:relative;border-top:1px solid var(--line)}
+.entrer .col{max-width:1160px}
+.entrer .ancre{width:min(34vmin,260px)}
+.entrer h2{margin:0;font:400 clamp(44px,7.2vw,96px)/1 var(--display);letter-spacing:-.025em}
+.entrer p{margin:0 auto;max-width:600px;font-size:clamp(17px,1.7vw,21px);color:var(--soft);text-wrap:balance}
+.bouton{display:inline-flex;align-items:center;gap:12px;margin-top:10px;padding:17px 28px;border-radius:999px;background:var(--ink);color:var(--desk);font:600 16.5px var(--ui);text-decoration:none;transition:transform .2s,box-shadow .3s}
+.sorties{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin-top:34px}.sorties .bouton{margin-top:0}.bouton.second{background:transparent;color:var(--ink);border:1px solid var(--line);padding:16px 24px}.bouton.second:hover{border-color:#5E5E6A}.sorties-note{margin-top:16px;font-size:14px;color:var(--soft);text-align:center}
+@media (max-width:420px){.sorties .bouton{width:100%;justify-content:center}}
+.bouton:hover{transform:translateY(-1px);box-shadow:0 0 0 6px rgba(237,237,240,.08),0 10px 40px rgba(124,92,255,.28)}
+.bouton span{transition:transform .25s}.bouton:hover span{transform:translateX(4px)}
+.pied{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;flex-wrap:wrap;gap:8px 22px;font:500 12.5px var(--ui);color:var(--soft);padding:0 20px}
+.pied button{border:0;background:none;color:var(--ink);font:inherit;cursor:pointer;padding:4px 2px;text-decoration:underline;text-underline-offset:3px}
+
+/* mouvement réduit */
+html.calme .meta,html.calme .lien{height:auto}
+html.calme .meta .scene,html.calme .lien .scene{position:relative;height:auto;min-height:0;padding:clamp(90px,14vh,150px) 0}
+html.calme .meta svg.forme,html.calme .meta .etapes{display:none}
+html.calme .statique{display:grid;gap:34px;justify-items:center;margin:8px 0 18px}
+.statique figure{margin:0;display:grid;gap:10px;justify-items:center}
+.statique svg{width:min(56vw,190px);height:auto}
+.statique figcaption{font:500 12.5px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+html.calme .geste .scene{position:relative;height:auto;padding-top:90px}
+html.calme .geste .phrases{margin-top:0}
+html.calme .phrase{min-height:0;padding:56px 0}
+html.calme .phrase p{opacity:1!important;transform:none!important}
+html.calme .apparait{opacity:1;transform:none;transition:none}
+html.calme .lien .sous{opacity:1;transition:none}
+html.calme .ao-cone,html.calme .ao-halo,html.calme .descendre i{animation:none}
+html.calme .bouton,html.calme .bouton span{transition:none}
+
+/* les points des « i » */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ii{position:relative}
+.pt{position:absolute;border-radius:50%;background:currentColor;transform-origin:50% 50%;pointer-events:none}
+.promesse .grand+.grand .pt{background:#F59E0B}
+.pt.vif{background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.75),rgba(255,255,255,0) 46%),conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);box-shadow:0 0 .32em rgba(124,92,255,.75),0 0 .9em rgba(34,211,238,.25);animation:ptTourne 6s linear infinite}
+.pt.plein{box-shadow:0 0 .5em rgba(124,92,255,.9),0 0 1.4em rgba(251,113,133,.45)}
+@keyframes ptTourne{to{filter:hue-rotate(360deg)}}
+.eclats{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.eclats i{position:absolute;left:0;top:0;display:block;will-change:transform,opacity}
+
+/* 4 · la ronde */
+.ronde{position:relative;width:min(94vw,62svh*1.43,860px);aspect-ratio:600/420;max-width:100%}
+.ronde-fond{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ronde .ancre{position:absolute;left:50%;top:50%;width:15%;transform:translate(-50%,-50%);margin:0}
+.mo{position:absolute;left:0;top:0;display:grid;justify-items:center;gap:8px;will-change:transform,opacity;opacity:0}
+.mo-b{width:clamp(18px,3.2vw,30px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.7),rgba(255,255,255,0) 46%),conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);animation:ptTourne 9s linear infinite}
+.mo-n{font:500 13px var(--ui);letter-spacing:.04em;color:var(--soft);white-space:nowrap}
+@media (max-width:520px){.mo-n{font-size:11px}}
+
+/* deux orbes qui regardent */
+.duo{display:flex;justify-content:center;gap:clamp(14px,3vw,26px);margin:0 auto clamp(18px,3vh,30px)}
+.duo-o{position:relative;width:clamp(78px,11vw,112px);aspect-ratio:1;transform:scale(.2);opacity:0;transition:transform .9s cubic-bezier(.3,1.5,.5,1),opacity .5s}
+.duo-o.duo-1{transition-delay:.12s}
+.duo.eveil .duo-o{transform:none;opacity:1}
+.duo-c{position:absolute;inset:0;display:block}
+.yeux{position:absolute;left:19%;right:19%;top:27%;height:34%;display:flex;justify-content:space-between;z-index:2}
+.oeil{position:relative;width:42%;height:100%;border-radius:50%;background:#F5F5F7;box-shadow:inset 0 -2px 4px rgba(0,0,0,.18);overflow:hidden;transition:transform .12s}
+.oeil i{position:absolute;left:28%;top:26%;width:44%;height:48%;border-radius:50%;background:#0A0A0C;box-shadow:inset 2px 2px 0 rgba(255,255,255,.55)}
+.duo-o.cligne .oeil{transform:scaleY(.08)}
+html.calme .pt.vif{animation:none}
+html.calme .mo{opacity:1}
+
+/* vitrine multi-appareils */
+.vitrine{padding:clamp(60px,10vh,120px) 0 clamp(90px,14vh,150px);border-top:1px solid var(--line)}
+.vitrine .tete{max-width:760px;margin:0 auto clamp(56px,9vh,96px);text-align:center;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.vitrine .k{margin:0 0 18px;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
+.vitrine h2{margin:0;font:400 clamp(36px,5.4vw,72px)/1.02 var(--display);letter-spacing:-.025em;text-wrap:balance}
+.vitrine .tete p:last-child{margin:22px auto 0;max-width:560px;font-size:clamp(16px,1.5vw,19px);color:var(--soft);text-wrap:balance}
+.scene-regie{position:relative;max-width:1240px;margin:0 auto;height:clamp(440px,52vw,760px);overflow-x:clip}
+.scene-regie::before{content:"";position:absolute;inset:6% 8% 0;background:radial-gradient(closest-side,rgba(124,92,255,.24),rgba(34,211,238,.07) 60%,transparent);filter:blur(30px);pointer-events:none}
+.vitrine .liens{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px 22px;margin:clamp(24px,4vh,40px) auto 0;padding:0 20px;font:500 15px var(--ui)}
+.vitrine .liens a{text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px;transition:border-color .2s}.vitrine .liens a:hover{border-color:var(--ink)}
+.etiq{display:inline-block;font:600 11px var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+@media (max-width:640px){.scene-regie{height:84vw}}
+
+/* offres et contact */
+.offres{padding:clamp(80px,12vh,140px) 0;border-top:1px solid var(--line)}
+.offres .col{max-width:1100px;text-align:left}
+.offres .k{margin:0 0 16px;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
+.offres h2{margin:0 0 clamp(32px,5vh,52px);font:400 clamp(32px,4.6vw,60px)/1.04 var(--display);letter-spacing:-.02em;text-wrap:balance}
+.cartes-offres{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.cartes-offres li{display:grid;gap:10px;align-content:start;padding:26px 24px 30px;background:var(--desk)}
+.cartes-offres b{font:600 18px/1.25 var(--ui)}.cartes-offres span{font-size:15px;color:var(--soft);line-height:1.55}
+.contact{position:relative;padding:clamp(90px,14vh,160px) 0 calc(120px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
+.contact .col{max-width:820px;text-align:left}
+.contact .k{margin:0 0 16px;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
+.contact h2{margin:0;font:400 clamp(38px,6vw,76px)/1.02 var(--display);letter-spacing:-.025em;text-wrap:balance}
+.contact .intro{margin:20px 0 0;max-width:600px;font-size:clamp(17px,1.6vw,20px);color:var(--soft)}
+.formulaire{margin-top:clamp(28px,5vh,44px);display:grid;gap:22px}
+.types{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.types legend{padding:0;margin-bottom:12px;font:600 14px var(--ui)}
+.types label{position:relative;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--line);border-radius:999px;font-size:15px;cursor:pointer;transition:border-color .2s,background .2s}
+.types input{position:absolute;opacity:0;width:1px;height:1px}
+.types label:has(input:checked){border-color:transparent;background:linear-gradient(var(--desk),var(--desk)) padding-box,var(--iris) border-box;border:1.5px solid transparent}
+.types label:has(input:focus-visible){outline:2px solid #7C5CFF;outline-offset:3px}
+.grille{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 20px}
+.champ{display:grid;gap:7px;min-width:0}.champ.large{grid-column:1/-1}
+.champ label{font:600 14px var(--ui)}
+.champ input,.champ textarea{width:100%;font:400 16px/1.5 var(--ui);color:var(--ink);background:#131317;border:1px solid var(--line);border-radius:12px;padding:12px 14px;transition:border-color .2s}
+.champ textarea{resize:vertical;min-height:150px}
+.champ input:focus,.champ textarea:focus{outline:none;border-color:#7C5CFF;box-shadow:0 0 0 3px rgba(124,92,255,.25)}
+.champ [aria-invalid="true"]{border-color:#FB7185}
+.err{margin:0;min-height:0;font-size:13.5px;color:#FDA4AF}.err:empty{display:none}
+.aide,.note{margin:0;font-size:13px;color:var(--soft)}
+.obl{color:#FDA4AF}
+.formulaire input,.formulaire textarea{scroll-margin-top:120px}
+.piege{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.accord{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;color:var(--soft);cursor:pointer}
+.accord input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:#7C5CFF}
+.envoi{display:flex;flex-wrap:wrap;align-items:center;gap:16px}.envoi .bouton{margin:0;border:0;cursor:pointer}
+.envoi .bouton[disabled]{opacity:.6;cursor:progress}
+.etat{margin:0;font-size:15px}.etat.ok{color:#86EFAC}.etat.ko{color:#FDA4AF}
+@media (max-width:620px){.grille{grid-template-columns:minmax(0,1fr)}.envoi .bouton{width:100%;justify-content:center}}
+</style>
+</head>
+<body>
+<a class="evite" href="#impulsion">Aller à la saisie unique</a>
+<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#impulsion">Saisir une fois</a><a class="passer" href="#atlas">10 univers</a><a class="passer" href="#entrer">Passer l'introduction</a><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
+
+<!-- La Règle vivante sur la tranche gauche : change d'unité à chaque Acte et ouvre les loupes d'échelle -->
+<aside class="regle" id="rul" aria-label="Règle de navigation et d'échelles">
+ <button type="button" class="regle-unite" id="regleUnite" title="Ouvrir l'aperçu à l'échelle millimétrique">0 · Point</button>
+ <div class="regle-actes" id="regleActes" role="group" aria-label="Chapitres de la page"></div>
+ <div class="regle-loupes" role="group" aria-label="Loupes d'échelle">
+  <button type="button" id="loupeMM" title="Voir les supports imprimés à l'échelle millimétrique">mm</button>
+  <button type="button" id="loupePartition" title="Voir la partition temporelle du projet">J−0</button>
+  <button type="button" id="loupeTout" title="Voir les 4 regards côte à côte en défilement synchronisé">4×</button>
+ </div>
+</aside>
+
+<div class="flot" id="flot" aria-hidden="true"></div>
+
+<main>
+<!-- 0 · Ouverture : le Point Zéro -->
+<section class="zero" id="haut" aria-labelledby="t-zero">
+ <span class="ancre" data-orbe="1"></span>
+ <div class="col">
+  <h1 id="t-zero">AIME<sup>®</sup></h1>
+  <p class="intention" data-regie="intention">Tout commence par une intention.</p>
+  <p class="trois" data-regie="trois">Créer. Relier. Transformer.</p>
+ </div>
+ <a class="descendre" href="#impulsion">Saisir ou explorer<i aria-hidden="true"></i></a>
+</section>
+
+<!-- Barre collante du Fil Rouge : regard actif + compteur de propagation + lien vers /tout/ -->
+<div class="fil-barre" id="filBarre" role="region" aria-label="Fil conducteur en direct">
+ <div class="fil-barre-in">
+  <a class="fil-resume" href="#impulsion" title="Modifier l'impulsion unique">
+   <span class="fil-puce" aria-hidden="true"></span>
+   <b id="filTitre">Inès &amp; Théo</b>
+   <small id="filDetail">2027-09-18 · Verrière du Marais &amp; Brooklyn Loft</small>
+  </a>
+  <div class="fil-regards" id="filRegards" role="group" aria-label="Choisir le regard sur tout le projet"></div>
+  <span class="fil-compteur" id="filCompteur" aria-live="polite">rév. 1 · 9 actes liés</span>
+  <a class="fil-tout" href="/tout/" data-atelier="/tout/" data-atelier-titre="Tout voir · 4 regards synchronisés">4 écrans live ↗</a>
+ </div>
+</div>
+
+<!-- Reprise conditionnelle (strictement lecture seule via bureau/sources.js : invisible s'il n'y a rien) -->
+<section class="reprise-locale" id="repriseLocale" hidden aria-label="Créations déjà présentes sur cet appareil">
+ <div class="reprise-in">
+  <strong>Déjà sur cet appareil :</strong>
+  <div class="reprise-liens" id="repriseLiens"></div>
+ </div>
+</section>
+
+<!-- ACTE I · Impulsion unique, Timbre & Contrat aime-projet v1 -->
+<section class="vt-acte" id="impulsion" aria-labelledby="t-impulsion">
+ <div class="vt-wrap">
+  <div class="vt-entete">
+   <div class="vt-sur"><span class="vt-num">Acte 01 · Impulsion</span><span class="vt-preuve">Contrat canonique aime-projet v1 · AIMETimbre</span></div>
+   <h2 id="t-impulsion">Saisissez une seule fois. Toute la page suit.</h2>
+   <p>Choisissez un archétype réel ou changez un mot ci-dessous : la Terre, le Cube à 6 faces, les 4 perspectives filtrées, le Jour J, les imprimés millimétrés, la planche magazine, la broderie DMC et le devis Factur-X se recalculent immédiatement.</p>
+  </div>
+  <div class="imp-grille">
+   <div class="vt-carte">
+    <div class="vt-pilules" id="impCas" role="group" aria-label="Archétypes de projet"></div>
+    <div class="imp-champs">
+     <div class="imp-champ">
+      <label for="impTitre">Titre ou personnes</label>
+      <input id="impTitre" type="text" maxlength="90" value="Inès &amp; Théo">
+     </div>
+     <div class="imp-champ">
+      <label for="impDate">Date clé</label>
+      <input id="impDate" type="date" value="2027-09-18">
+     </div>
+     <div class="imp-champ">
+      <label for="impLieu">Lieux reliés</label>
+      <input id="impLieu" type="text" maxlength="120" value="Verrière du Marais &amp; Brooklyn Loft">
+     </div>
+     <div class="imp-champ">
+      <label for="impPhoto">Image pour le Timbre (locale, optionnelle)</label>
+      <input id="impPhoto" type="file" accept="image/*">
+     </div>
+     <div class="imp-champ large">
+      <label for="impIntention">Intention directrice (propagée partout)</label>
+      <input id="impIntention" type="text" maxlength="220" value="Réunir deux villes, cinquante proches et douze missions sans jamais ressaisir.">
+     </div>
+    </div>
+    <p id="impPhotoEtat" style="margin:10px 0 0;font-size:13px;color:var(--vt-rose)" aria-live="polite"></p>
+    <p id="impRegardIndice" style="margin:12px 0 0;font-size:13.5px;color:var(--vt-cyan)"></p>
+    <div class="vt-actions-bas">
+     <button type="button" class="vt-btn" id="btnVoirContrat" aria-expanded="false">Inspecter le contrat JSON live (v1)</button>
+     <a class="vt-btn" href="/point-zero/" data-atelier="/point-zero/" data-atelier-titre="Point Zéro · Déposer une matière brute">Ouvrir le Point Zéro complet ↗</a>
+    </div>
+    <pre class="imp-contrat" id="impContratJson" tabindex="0" aria-label="Contrat JSON aime-projet v1" hidden></pre>
+   </div>
+   <div class="vt-carte imp-timbre-zone">
+    <div>
+     <span class="vt-num">Identité mobile</span>
+     <h3 style="margin:8px 0 0;font:400 24px/1.1 var(--display)">Votre Timbre vivant</h3>
+     <p style="margin:6px 0 0;font-size:13.5px;color:var(--vt-soft)">Généré au DOM par <code>compte/timbre.js</code>, sans serveur ni pistage.</p>
+    </div>
+    <div class="imp-timbre-porte" id="impTimbrePorte"></div>
+    <div>
+     <p style="margin:0 0 8px;font:600 11.5px var(--vt-mono);color:var(--vt-soft);text-transform:uppercase;letter-spacing:.12em">Harmonie chromatique</p>
+     <div class="imp-palettes" id="impPalettes" role="group" aria-label="Harmonies chromatiques"></div>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 2 · Le premier geste -->
+<section class="geste" id="geste" aria-label="Le premier geste">
+ <div class="scene"><span class="ancre" data-orbe="2"></span></div>
+ <div class="phrases col">
+  <div class="phrase"><p data-regie="phrase-1">Une idée.</p></div>
+  <div class="phrase"><p data-regie="phrase-2">Une information.</p></div>
+  <div class="phrase"><p data-regie="phrase-3">Une relation.</p></div>
+  <div class="phrase"><p data-regie="phrase-4">Une possibilité.</p></div>
+  <div class="phrase comprendre"><p>AIME ne commence pas par choisir une application.<br><b>Il commence par comprendre ce que vous souhaitez accomplir.</b></p></div>
+ </div>
+</section>
+
+<!-- 3 · La métamorphose géométrique -->
+<section class="meta" id="meta" aria-labelledby="t-meta">
+ <div class="scene">
+  <svg class="forme" id="forme" viewBox="0 0 400 400" role="img" aria-labelledby="formeT"><title id="formeT">Un point devient une ligne, une relation, une grille, une composition, puis un projet.</title></svg>
+  <ol class="etapes" id="etapes" aria-hidden="true"><li>Point</li><li>Ligne</li><li>Relation</li><li>Grille</li><li>Composition</li><li>Projet</li></ol>
+  <div class="statique" id="statique"></div>
+  <div class="col">
+   <h2 id="t-meta">Une même matière peut prendre plusieurs formes.</h2>
+   <p class="sous" data-regie="meta-sous" style="margin-top:14px">Une information peut devenir un document, une création, une action ou un lien entre des personnes.</p>
+  </div>
+ </div>
+</section>
+
+<!-- ACTE II · La Terre 3D (terres.txt) & la Frise du Temps -->
+<section class="vt-acte" id="naiss" aria-labelledby="t-naiss">
+ <div class="vt-wrap">
+  <div class="vt-entete">
+   <div class="vt-sur"><span class="vt-num">Acte 02 · Espace &amp; Temps</span><span class="vt-preuve">Nuage côtier réel terres.txt · Arcs géodésiques</span></div>
+   <h2 id="t-naiss">Relier des lieux sur la Terre et des jalons dans le temps.</h2>
+   <p>Faites tourner le globe au doigt ou ajoutez une ville : l’arc lumineux recalcule aussitôt le lieu propagé dans les invitations, les missions et la régie.</p>
+  </div>
+  <div class="terre-grille">
+   <div class="vt-carte globe-boite">
+    <div class="vt-pilules" id="globeVilles" role="group" aria-label="Villes reliées sur le globe"></div>
+    <div class="globe-canvas-wrap">
+     <canvas id="globeCanvas" role="img" aria-label="Globe terrestre interactif reliant les villes du projet"></canvas>
+    </div>
+    <div class="globe-legende">
+     <span id="globeStatut">Projection orthographique interactive</span>
+     <span>Glisser pour orienter · Cliquer une ville pour relier</span>
+    </div>
+   </div>
+   <div class="vt-carte">
+    <span class="vt-num">Chronologie déduite de votre date clé</span>
+    <h3 style="margin:8px 0 4px;font:400 26px/1.1 var(--display)">De J − 360 à l’archive</h3>
+    <p style="margin:0;font-size:14px;color:var(--vt-soft)">Changez la date à l’Acte 01 : tous les jalons amont et aval se recalant sans ressaisie.</p>
+    <ul class="frise-liste" id="friseListe"></ul>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 4 · La ronde des liens -->
+<section class="lien" id="lien" aria-labelledby="t-lien">
+ <div class="scene">
+  <div class="ronde" id="ronde" role="img" aria-label="Une orbe au centre ; autour, des personnes, des idées, des documents et des événements tournent, touchés par une onde, puis se relient."><span class="ancre" data-orbe="4"></span></div>
+  <div class="col">
+   <h2 id="t-lien">Rien n'existe isolément.</h2>
+   <p class="sous" id="lienSous" style="margin-top:14px">Les personnes, les idées, les documents et les événements prennent du sens lorsqu'ils sont reliés.</p>
+  </div>
+ </div>
+</section>
+
+<!-- ACTE III · Le Cube à 6 Faces (cube/modele.js + cube/vue3d.js) -->
+<section class="vt-acte" id="story2" aria-labelledby="t-cube">
+ <div class="vt-wrap">
+  <div class="vt-entete">
+   <div class="vt-sur"><span class="vt-num">Acte 03 · Le Volume</span><span class="vt-preuve">Moteur réel cube/modele.js + cube/vue3d.js</span></div>
+   <h2 id="t-cube">Un seul Cube, six facettes complémentaires.</h2>
+   <p>Tournez le Cube à la souris, au doigt ou aux flèches du clavier : chaque face lit directement le même modèle sans duplication, tandis que la vue à plat à droite reste immédiatement lisible.</p>
+  </div>
+  <div class="cube-grille">
+   <div class="vt-carte cube-scene-carte">
+    <div class="cube-hote" id="cubeHote"></div>
+    <div class="cube-faces-bar" id="cubeFacesBar" role="group" aria-label="Choisir une facette du Cube"></div>
+    <a class="vt-btn" href="/cube/" data-atelier="/cube/" data-atelier-titre="Le Cube AIME · Édition complète des 6 facettes">Éditer mon Cube complet ↗</a>
+   </div>
+        <div class="cube-deplie" id="cubeDeplie" role="group" aria-label="Les six facettes dépliées du Cube"></div>
+  </div>
+ </div>
+</section>
+
+<!-- ACTE IV · Quatre Regards Simultanés & Règles de Sécurité (vitrine/rendu.js + permissions.js + flux.js) -->
+<section class="vt-acte" id="regards" aria-labelledby="t-regards">
+ <div class="vt-wrap">
+  <div class="vt-entete">
+   <div class="vt-sur"><span class="vt-num">Acte 04 · Perspectives &amp; Droits</span><span class="vt-preuve">vitrine/rendu.js · synchroview/permissions.js · flux.js</span></div>
+   <h2 id="t-regards">Une seule donnée. Quatre regards filtrés avant mise en page.</h2>
+   <p>Ni copie de fichier, ni simple masquage visuel : le moteur évalue les droits de chaque personne avant de composer sa vue. Faites progresser la mission florale ou testez une action non autorisée.</p>
+  </div>
+  <div class="regards-commandes" id="regardsActions">
+   <div class="vt-pilules">
+    <button type="button" class="vt-btn plein" data-wact="avancer">Faire avancer la mission « Installation florale » →</button>
+    <button type="button" class="vt-btn" data-wact="lieu">Basculer le lieu de réception</button>
+    <button type="button" class="vt-btn" data-wact="refus">Tester une action non autorisée (Agence → Valider)</button>
+   </div>
+   <div class="vt-pilules">
+    <a class="vt-btn" href="/vitrine/world/" data-atelier="/vitrine/world/" data-atelier-titre="AIME WORLD · Paris / New York (6 perspectives)">AIME WORLD ↗</a>
+    <a class="vt-btn" href="/synchroview/" data-atelier="/synchroview/" data-atelier-titre="SynchroView · Comparateur multi-rôles">SynchroView ↗</a>
+   </div>
+  </div>
+  <p class="regards-trace" id="regardsTrace" role="status" aria-live="polite"></p>
+  <div class="regards-colonnes" id="regardsColonnes"></div>
+ </div>
+</section>
+
+<!-- ACTE V · L'Onde Causale : Jour J en Direct (live/) & Jeu AIME INFINITY (infinity/) -->
+<section class="vt-acte" id="story3" aria-labelledby="t-causalite">
+ <div class="vt-wrap">
+  <div class="vt-entete">
+   <div class="vt-sur"><span class="vt-num">Acte 05 · Ondes Causales</span><span class="vt-preuve">live/modele.js (journal append-only) · infinity/ (SCC exact)</span></div>
+   <h2 id="t-causalite">Quand le réel bouge, toute la suite s’ajuste proprement.</h2>
+   <p>À gauche, la régie du Jour J absorbe une averse ou un retard en cascade atomique réversible. À droite, la même loi physique devient un jeu pur d’ondes et de résonances musicales.</p>
+  </div>
+  <div class="caus-grille">
+   <div class="vt-carte">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+     <h3 style="margin:0;font:400 24px/1.15 var(--display)">Régie Jour J &amp; Plan B</h3>
+     <span id="liveRoleActif" style="font:600 11.5px var(--vt-mono);color:var(--vt-amber)"></span>
+    </div>
+    <p id="liveEtat" style="margin:8px 0 12px;font-size:13.5px;color:var(--vt-cyan)" role="status" aria-live="polite"></p>
+    <div class="vt-pilules" id="liveCommandes">
+     <button type="button" class="vt-btn plein" data-lact="pluie">🌧 Pluie à 15 h → Activer Plan B</button>
+     <button type="button" class="vt-btn" data-lact="retard">⏱ +25 min en cascade</button>
+     <button type="button" class="vt-btn" data-lact="fait">✓ Installation terminée</button>
+     <button type="button" class="vt-btn" data-lact="annuler">↶ Annuler (rejeu n − 1)</button>
+    </div>
+    <ul class="live-moments" id="liveMoments" tabindex="0" aria-label="Moments et horaires du Jour J"></ul>
+    <div class="vt-actions-bas">
+     <a class="vt-btn" href="/live/" data-atelier="/live/" data-atelier-titre="AIME Live · Régie temps réel du Jour J">Ouvrir le poste AIME Live complet ↗</a>
+    </div>
+   </div>
+
+   <div class="vt-carte inf-zone">
+    <div style="width:100%;display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+     <div>
+      <h3 style="margin:0;font:400 24px/1.15 var(--display)">AIME INFINITY · Jouable ici</h3>
+      <p style="margin:4px 0 0;font-size:13.5px;color:var(--vt-soft)">Touchez une case : chaque anneau propage son onde.</p>
+     </div>
+     <a class="vt-btn" href="/infinity/" data-atelier="/infinity/" data-atelier-titre="AIME INFINITY · Plein écran jusqu'à 128 × 128">Plein écran ↗</a>
+    </div>
+    <div class="inf-canvas-box">
+     <canvas id="infMiniCanvas" tabindex="0" role="application" aria-label="Grille jouable AIME INFINITY : flèches pour viser, Entrée ou clic pour déclencher une cascade"></canvas>
+    </div>
+    <div class="inf-stats">
+     <span id="infStatsTaille">Grille 4 × 4</span>
+     <span id="infStatsCoups" aria-live="polite">Touchez une case pour commencer</span>
+    </div>
+    <div class="vt-pilules" id="infCommandes" style="width:100%">
+     <button type="button" class="vt-btn" data-iact="rejouer">Recommencer la grille</button>
+     <button type="button" class="vt-btn" data-iact="defi">Défi du jour (16 × 16)</button>
+     <button type="button" class="vt-btn" data-iact="son" aria-pressed="false">♪ Activer le son pentatonique</button>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- 5 · La promesse -->
+<section class="promesse" aria-labelledby="t-prom"><div class="col">
+ <h2 class="grand apparait" id="t-prom">Une information saisie une fois.</h2>
+ <p class="grand apparait" data-regie="promesse-2">Répercutée partout où elle est utile.</p>
+ <ul class="exemples">
+  <li class="apparait"><span aria-hidden="true"></span>Une création devient plusieurs supports.</li>
+  <li class="apparait"><span aria-hidden="true"></span>Une décision actualise les perspectives concernées.</li>
+  <li class="apparait"><span aria-hidden="true"></span>Une modification révèle ses conséquences.</li>
+ </ul>
+ <p class="autorisations apparait" data-regie="autorisations">Toujours dans le respect des autorisations.</p>
+</div></section>
+
+<!-- 5 bis · La vitrine multi-écrans pilotée par la Régie -->
+<section class="vitrine" id="vitrine" aria-labelledby="t-vitrine">
+ <div class="tete apparait"><p class="k">Déjà là</p><h2 id="t-vitrine">Saisi une fois. Vu partout.</h2><p data-regie="vitrine-intro">Les sites, tels qu'ils existent aujourd'hui. Touchez un écran pour l'ouvrir.</p></div>
+ <div class="scene-regie" id="vitrine-scene" data-regie-scene="vitrine" role="group" aria-label="Les sites AIME sur un MacBook, un iPad et des iPhone"></div>
+ <p class="liens apparait"><span class="etiq">Démonstration · données fictives</span><a href="/g44/">Le G44 LAB</a><a href="/studio/">AIME Studio</a><a href="/canevas/">Le Canevas</a><a href="/reseau/">Le Réseau</a></p>
+</section>
+
+<!-- ACTE VI · L'Atelier des Supports en Direct : Design Systems, Magazine 12×16, Print mm, Broderie DMC, G44 & Factur-X -->
+<section class="vt-acte" id="build" aria-labelledby="t-supports">
+ <div class="vt-wrap">
+  <div class="vt-entete">
+   <div class="vt-sur"><span class="vt-num">Acte 06 · Matérialisations</span><span class="vt-preuve">AIMEDesign v3 · AIMEPlanche · Stitch CIEDE2000 · G44 Rewind · Factur-X</span></div>
+   <h2 id="t-supports">Cinq métiers, cinq rendus exacts — zéro ressaisie.</h2>
+   <p>Changez la direction artistique en un clic sans altérer un seul octet du contenu, puis passez du site web au magazine 12 × 16, à la carterie millimétrée, au point de croix DMC et à la simulation réglementaire.</p>
+  </div>
+
+  <div class="sup-ds-barre">
+   <div class="vt-pilules" id="supDesignBtns" role="group" aria-label="Directions artistiques AIMEDesign v3">
+    <button type="button" class="vt-pilule" data-ds="aime-original" aria-pressed="true">Original Iris</button>
+    <button type="button" class="vt-pilule" data-ds="aime-minimal" aria-pressed="false">Minimal Clair</button>
+    <button type="button" class="vt-pilule" data-ds="aime-editorial" aria-pressed="false">Éditorial</button>
+    <button type="button" class="vt-pilule" data-ds="aime-pro" aria-pressed="false">Pro Atelier</button>
+   </div>
+   <span id="dsPreuveEmpreinte" style="font:500 12px/1.35 var(--vt-mono);color:var(--vt-mint)">Vérification WCAG AA &amp; empreinte…</span>
+  </div>
+
+  <div class="sup-onglets" id="supOnglets" role="group" aria-label="Choisir la matérialisation">
+   <button type="button" class="vt-pilule" data-sup="web" aria-pressed="true">1 · Web 12 col. &amp; Code 3D</button>
+   <button type="button" class="vt-pilule" data-sup="magazine" aria-pressed="false">2 · Magazine 12 × 16</button>
+   <button type="button" class="vt-pilule" data-sup="print" aria-pressed="false">3 · Print au millimètre</button>
+   <button type="button" class="vt-pilule" data-sup="stitch" aria-pressed="false">4 · Broderie &amp; Fil DMC</button>
+   <button type="button" class="vt-pilule" data-sup="g44" aria-pressed="false">5 · G44 Rewind &amp; Factur-X</button>
+  </div>
+
+  <!-- Panneau 1 : Web 12 col + Code 3D -->
+  <div class="sup-panneau" id="pan-web">
+   <div class="blocs-12" id="blocsWeb12"></div>
+   <div class="vt-actions-bas">
+    <a class="vt-btn" href="/canevas/" data-atelier="/canevas/" data-atelier-titre="Le Canevas · Composition multi-adaptateurs">Ouvrir le Canevas complet ↗</a>
+    <a class="vt-btn" href="/aime/" data-atelier="/aime/" data-atelier-titre="Le Monde AIME · Grille complète à 42 blocs">Grille 42 blocs (/aime/) ↗</a>
+   </div>
+  </div>
+
+  <!-- Panneau 2 : Magazine 12 × 16 -->
+  <div class="sup-panneau" id="pan-magazine" hidden>
+   <div class="vt-carte">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+     <div class="vt-pilules" id="pubVueMode" role="group" aria-label="Format de lecture de la publication">
+      <button type="button" class="vt-pilule" data-pvue="ordi" aria-pressed="true">Double-page 12 × 16</button>
+      <button type="button" class="vt-pilule" data-pvue="tel" aria-pressed="false">Lecture téléphone</button>
+     </div>
+     <div class="vt-pilules">
+      <a class="vt-btn" href="/canevas/?publication=exemple-aime-magazine" data-atelier="/canevas/?publication=exemple-aime-magazine" data-atelier-titre="Studio Publication · Chemin de fer & gabarits">Modifier dans Studio Publication ↗</a>
+      <a class="vt-btn" href="/publication/?exemple=aime-magazine" data-atelier="/publication/?exemple=aime-magazine" data-atelier-titre="Liseuse publique de publication">Liseuse plein écran ↗</a>
+     </div>
+    </div>
+    <div class="pub-cadre-wrap" id="pubCadreWrap">
+     <iframe id="pubApercuFrame" title="Aperçu en direct de la publication éditoriale AIME"></iframe>
+    </div>
+   </div>
+  </div>
+
+  <!-- Panneau 3 : Print au millimètre -->
+  <div class="sup-panneau" id="pan-print" hidden>
+   <div class="vt-carte">
+    <div class="print-plateau" id="printPlateauLive"></div>
+    <div class="vt-actions-bas">
+     <a class="vt-btn plein" href="/studio/" data-atelier="/studio/" data-atelier-titre="AIME Studio · 150 supports imprimés et numériques">Ouvrir les 150 supports dans AIME Studio ↗</a>
+    </div>
+   </div>
+  </div>
+
+  <!-- Panneau 4 : Broderie & Fil DMC en direct -->
+  <div class="sup-panneau" id="pan-stitch" hidden>
+   <div class="vt-carte">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px">
+     <div class="vt-pilules" id="stitchModes" role="group" aria-label="Précision de conversion DMC">
+      <button type="button" class="vt-pilule" data-smode="simple" aria-pressed="true">Simple (8 fils)</button>
+      <button type="button" class="vt-pilule" data-smode="equilibre" aria-pressed="false">Équilibré (16 fils)</button>
+      <button type="button" class="vt-pilule" data-smode="precis" aria-pressed="false">Précis (28 fils)</button>
+     </div>
+     <label style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--vt-soft)">
+      Largeur :
+      <input id="stitchLargeur" type="range" min="28" max="76" step="4" value="44" aria-label="Largeur de la grille en points">
+      <b id="stitchLargeurVal" style="color:var(--vt-ink);font-family:var(--vt-mono)">44 pts</b>
+     </label>
+     <label class="vt-btn" style="cursor:pointer">
+      Convertir ma propre photo
+      <input id="stitchFichier" type="file" accept="image/*" style="position:absolute;opacity:0;width:1px;height:1px">
+     </label>
+    </div>
+    <p id="stitchBilan" style="margin:0 0 14px;font:500 12.5px var(--vt-mono);color:var(--vt-cyan)"></p>
+    <div class="stitch-grille">
+     <div class="stitch-toile-box">
+      <span class="vt-num">Rendu brodé sur toile Aïda</span>
+      <canvas id="stitchCanvasBrode" role="img" aria-label="Aperçu réaliste des brins croisés sur toile Aïda"></canvas>
+     </div>
+     <div class="stitch-toile-box">
+      <span class="vt-num">Diagramme symboles 10 × 10</span>
+      <canvas id="stitchCanvasGrille" role="img" aria-label="Grille de travail numérotée avec symboles de broderie"></canvas>
+     </div>
+     <div>
+      <p style="margin:0 0 8px;font:600 12px var(--vt-mono);color:var(--vt-soft)">ÉCHEVETTES DMC (CLIQUER POUR ISOLER)</p>
+      <div class="stitch-legende" id="stitchLegende" tabindex="0" role="region" aria-label="Liste des échevettes DMC"></div>
+     </div>
+    </div>
+    <div class="vt-actions-bas">
+     <button type="button" class="vt-btn plein" id="stitchOuvrirAtelier">Envoyer ce patron vers l'Atelier Stitch complet (PDF vectoriel) ↗</button>
+     <a class="vt-btn" href="/stitch/broder/" data-atelier="/stitch/broder/" data-atelier-titre="Liseuse de broderie interactive">Ouvrir la liseuse à broder ↗</a>
+    </div>
+   </div>
+  </div>
+
+  <!-- Panneau 5 : G44 Rewind + Factur-X -->
+  <div class="sup-panneau" id="pan-g44" hidden>
+   <div class="g44-grille">
+    <div class="vt-carte">
+     <span class="vt-num">Démonstrateur institutionnel indépendant · données fictives</span>
+     <h3 style="margin:8px 0 6px;font:400 24px/1.15 var(--display)">AIME G44 Lab · Simulation isolée Rewind</h3>
+     <p style="margin:0 0 12px;font-size:13.5px;color:var(--vt-soft)">Testez une correction de date sur le dossier : le moteur calcule chaque impact et vérifie par empreinte que le dossier initial n’a subi aucune écriture.</p>
+     <div class="vt-pilules" id="g44DatesBtns" role="group" aria-label="Date simulée sur le dossier">
+      <button type="button" class="vt-pilule" data-gdate="2017-05-12" aria-pressed="true">Simuler 2017-05-12 (conflit R2)</button>
+      <button type="button" class="vt-pilule" data-gdate="2015-06-12" aria-pressed="false">Simuler 2015-06-12 (concordant)</button>
+      <button type="button" class="vt-pilule" data-gdate="2016-01-10" aria-pressed="false">Simuler 2016-01-10</button>
+     </div>
+     <div id="g44Resultat" style="margin-top:14px"></div>
+     <div class="vt-actions-bas">
+      <a class="vt-btn plein" href="/g44/" data-atelier="/g44/" data-atelier-titre="AIME G44 LAB · Graphe causal, pdf.js & kit pilote">Ouvrir les 6 laboratoires G44 ↗</a>
+     </div>
+    </div>
+    <div class="vt-carte">
+     <span class="vt-num">Gestion &amp; Facturation électronique</span>
+     <h3 style="margin:8px 0 6px;font:400 24px/1.15 var(--display)">Devis Factur-X (EN 16931)</h3>
+     <p style="margin:0 0 12px;font-size:13.5px;color:var(--vt-soft)">XML CrossIndustryInvoice généré en direct depuis les lignes du projet actif.</p>
+     <pre class="imp-contrat" id="facturXPre" tabindex="0" aria-label="Aperçu XML Factur-X EN 16931" style="margin-top:0;max-height:210px"></pre>
+     <div class="vt-actions-bas">
+      <button type="button" class="vt-btn plein" id="btnTelechargerFacturX">↓ Télécharger le fichier XML EN 16931</button>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ACTE VII · L'Atlas Vivant des 10 Univers & des 130 Dépôts (univers.json + moteurs.json) -->
+<section class="vt-acte" id="atlas" aria-labelledby="t-atlas">
+ <div class="vt-wrap">
+  <div class="vt-entete">
+   <div class="vt-sur"><span class="vt-num">Acte 07 · L’Atlas R&amp;D</span><span class="vt-preuve">univers.json · moteurs.json (inventaire vérifié)</span></div>
+   <h2 id="t-atlas">Dix univers métiers, cent trente dépôts, un seul système nerveux.</h2>
+   <p>Pour la première fois réunis au grand jour dans la page : parcourez les chaînes complètes entre outils et fouillez l’inventaire intégral avec le statut réel de chaque brique.</p>
+  </div>
+  <div class="atlas-stats" id="atlasStats"></div>
+  <div class="vt-pilules" id="atlasUniversBtns" role="group" aria-label="Choisir l'un des dix univers AIME"></div>
+  <div class="atlas-corps">
+   <div class="vt-carte" id="atlasUniversDetail"></div>
+   <div class="vt-carte">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px">
+     <label for="atlasRecherche" style="font:600 13px var(--ui);color:var(--vt-ink)">Explorer les 130 dépôts &amp; 1 191 modules</label>
+     <span id="atlasCompteFiltre" style="font:500 12px var(--vt-mono);color:var(--vt-mint)"></span>
+    </div>
+    <input id="atlasRecherche" type="search" placeholder="Filtrer par mot-clé : mariage, dmc, pdf, calendrier, contrat, audio…" style="width:100%;margin-top:10px;font:400 14.5px var(--ui);color:var(--ink);background:var(--vt-surface-2);border:1px solid var(--vt-border);border-radius:11px;padding:9px 13px">
+    <div class="vt-pilules" id="atlasEtatsBtns" role="group" aria-label="Filtrer par maturité réelle" style="margin-top:10px">
+     <button type="button" class="vt-pilule" data-etat="tous" aria-pressed="true">Tous (130)</button>
+     <button type="button" class="vt-pilule" data-etat="fonctionnel" aria-pressed="false">Fonctionnels (57)</button>
+     <button type="button" class="vt-pilule" data-etat="prototype" aria-pressed="false">Prototypes (44)</button>
+     <button type="button" class="vt-pilule" data-etat="maquette" aria-pressed="false">Maquettes (8)</button>
+    </div>
+    <div class="atlas-repos" id="atlasReposListe" tabindex="0" role="region" aria-label="Inventaire filtrable des dépôts AIME"></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ACTE VIII · Entrer, tous les Ateliers, Souveraineté des données, Offres & Contact -->
+<section class="entrer" id="entrer" aria-labelledby="t-entrer">
+ <div class="col">
+  <div class="duo" id="duo" aria-hidden="true"></div>
+  <h2 id="t-entrer">Et maintenant ?</h2>
+  <p data-regie="entrer-texte" style="margin-top:22px">Découvrez ce que nous pouvons créer, relier et faire évoluer ensemble — ou ouvrez directement n’importe quel atelier sans quitter cette page.</p>
+  <div class="sorties">
+   <a class="bouton" id="rejoindre" href="/aime/">Découvrir Le Monde AIME <span aria-hidden="true">→</span></a>
+   <a class="bouton second" id="parler" href="#contact">Parler d'un projet</a>
+   <button type="button" class="bouton second" id="btnExporterProjet">↓ Exporter mon esquisse (.json)</button>
+   <button type="button" class="bouton second" id="btnSauvegardeLocale">Sauvegarder mes données locales</button>
+  </div>
+  <p class="sorties-note">Vos essais restent dans ce navigateur (aucun cookie publicitaire, aucun envoi silencieux). <a href="/sante/">Vérifier l'état et les garanties du système</a> · <a href="/confidentialite/">Confidentialité</a>.</p>
+  <div class="ateliers-grille" id="tousLesAteliers" aria-label="Tous les ateliers et démonstrateurs du registre AIME"></div>
+ </div>
+</section>
+
+<!-- Ce que je fais (textes modifiables dans la Régie) -->
+<section class="offres" id="offres" aria-labelledby="t-offres">
+ <div class="col">
+  <p class="k">Ce que je fais</p>
+  <h2 id="t-offres" data-regie="offres-titre">Des sites et des outils qui relient.</h2>
+  <ul class="cartes-offres">
+   <li><b data-regie="offre1-t">Sites et applications</b><span data-regie="offre1-d">Un site vitrine, un portfolio, une application sur mesure : conçus, construits et mis en ligne.</span></li>
+   <li><b data-regie="offre2-t">Identité et supports</b><span data-regie="offre2-d">Logo, couleurs, faire-part, affiches, réseaux : une même identité sur tous les supports.</span></li>
+   <li><b data-regie="offre3-t">Événements</b><span data-regie="offre3-d">Un espace partagé pour préparer le jour J, et le direct pour le vivre ensemble.</span></li>
+   <li><b data-regie="offre4-t">Sur mesure</b><span data-regie="offre4-d">Un besoin qui ne rentre dans aucune case : parlons-en, je vous propose un devis.</span></li>
+  </ul>
+ </div>
+</section>
+
+<!-- Contact : un devis, un projet -->
+<section class="contact" id="contact" aria-labelledby="t-contact">
+ <div class="col">
+  <p class="k">Contact</p>
+  <h2 id="t-contact">Parlons de votre projet.</h2>
+  <p class="intro">Un site à créer, des supports, une idée à discuter : décrivez-la, je vous réponds avec un devis.</p>
+  <div style="margin-top:18px">
+   <button type="button" class="vt-btn" id="btnInjecterBrief">+ Reprendre dans le message l’esquisse composée en haut de page</button>
+  </div>
+  <form id="formContact" class="formulaire" novalidate>
+   <fieldset class="types"><legend>Votre demande <span class="obl" aria-hidden="true">*</span></legend>
+    <label><input type="radio" name="projet" value="site" required checked> Création de site</label>
+    <label><input type="radio" name="projet" value="refonte"> Refonte ou évolution</label>
+    <label><input type="radio" name="projet" value="supports"> Supports</label>
+    <label><input type="radio" name="projet" value="projet"> Parler d'un projet</label>
+    <label><input type="radio" name="projet" value="autre"> Autre</label>
+   </fieldset>
+   <div class="grille">
+    <div class="champ"><label for="c-prenom">Prénom <span class="obl" aria-hidden="true">*</span></label><input id="c-prenom" name="prenom" autocomplete="given-name" maxlength="80" required aria-describedby="e-prenom"><p class="err" id="e-prenom"></p></div>
+    <div class="champ"><label for="c-nom">Nom <span class="obl" aria-hidden="true">*</span></label><input id="c-nom" name="nom" autocomplete="family-name" maxlength="80" required aria-describedby="e-nom"><p class="err" id="e-nom"></p></div>
+    <div class="champ"><label for="c-email">E-mail <span class="obl" aria-hidden="true">*</span></label><input id="c-email" name="email" type="email" autocomplete="email" maxlength="160" required aria-describedby="e-email"><p class="err" id="e-email"></p></div>
+    <div class="champ"><label for="c-tel">Téléphone</label><input id="c-tel" name="tel" type="tel" autocomplete="tel" maxlength="30" aria-describedby="e-tel"><p class="err" id="e-tel"></p></div>
+    <div class="champ large"><label for="c-adresse">Adresse</label><input id="c-adresse" name="adresse" autocomplete="street-address" maxlength="300" aria-describedby="e-adresse"><p class="err" id="e-adresse"></p></div>
+    <div class="champ"><label for="c-livraison">Livraison souhaitée</label><input id="c-livraison" name="livraison" type="date" aria-describedby="e-livraison"><p class="err" id="e-livraison"></p></div>
+    <div class="champ large"><label for="c-message">Votre projet <span class="obl" aria-hidden="true">*</span></label><textarea id="c-message" name="message" rows="6" minlength="20" maxlength="4000" required aria-describedby="a-message e-message"></textarea><p class="aide" id="a-message"><span id="compte">0</span> / 4 000 caractères</p><p class="err" id="e-message"></p></div>
+   </div>
+   <div class="piege" aria-hidden="true"><label for="c-site">Ne pas remplir</label><input id="c-site" name="site_web" tabindex="-1" autocomplete="off"></div>
+   <label class="accord"><input type="checkbox" id="c-accord" name="consentement" required aria-describedby="e-consentement"> <span>J'accepte que ces informations servent uniquement à répondre à ma demande. Elles sont transmises par e-mail et ne sont pas conservées sur ce site.</span></label>
+   <p class="err" id="e-consentement"></p>
+   <div class="envoi"><button class="bouton" type="submit" id="c-envoyer">Envoyer ma demande <span aria-hidden="true">→</span></button><p class="etat" id="c-etat" role="status" aria-live="polite"></p></div>
+   <p class="note"><span class="obl" aria-hidden="true">*</span> champ obligatoire</p>
+  </form>
+ </div>
+ <div class="pied"><span>AIME® · Grande Partition unifiée</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
+</section>
+</main>
+
+<!-- Tiroir accessible plein écran pour ouvrir tout atelier sans perdre sa lecture verticale -->
+<dialog class="vt-tiroir" id="tiroirAtelier" aria-labelledby="tiroirTitre">
+ <div class="vt-tiroir-in">
+  <div class="vt-tiroir-barre">
+   <b id="tiroirTitre">Atelier AIME</b>
+   <div style="display:flex;align-items:center;gap:8px">
+    <a class="vt-btn" id="tiroirExterne" href="/" target="_blank" rel="noopener">Ouvrir dans un onglet ↗</a>
+    <button type="button" class="vt-btn plein" id="tiroirFermer">Fermer (Échap)</button>
+   </div>
+  </div>
+  <div class="vt-tiroir-corps" id="tiroirCorps"></div>
+ </div>
+</dialog>
+
+<script src="/contrats/projet.js"></script>
+<script src="/compte/timbre.js"></script>
+<script src="/cube/modele.js"></script>
+<script src="/cube/vue3d.js"></script>
+<script src="/synchroview/permissions.js"></script>
+<script src="/synchroview/flux.js"></script>
+<script src="/vitrine/rendu.js"></script>
+<script src="/design/systemes.js"></script>
+<script src="/design/charger.js"></script>
+<script src="/publication/planche.js"></script>
+<script src="/publication/gabarits.js"></script>
+<script src="/live/modele.js"></script>
+<script src="/infinity/js/regles.js"></script>
+<script src="/infinity/js/niveaux.js"></script>
+<script src="/infinity/js/partie.js"></script>
+<script src="/infinity/js/rendu.js"></script>
+<script src="/infinity/js/son.js"></script>
+<script src="/stitch/js/couleur.js"></script>
+<script src="/stitch/js/symboles.js"></script>
+<script src="/stitch/js/patron.js"></script>
+<script src="/stitch/js/conversion.js"></script>
+<script src="/stitch/js/rendu.js"></script>
+<script src="/g44/js/dossier.js"></script>
+<script src="/g44/js/moteur.js"></script>
+<script src="/regie/donnees.js"></script>
+<script src="/nav/registre.js"></script>
+<script src="/regie/scene.js"></script>
+<script src="/zero/orbe.js"></script>
+<script src="/zero/points.js"></script>
+<script src="/zero/ronde.js"></script>
+<script src="/zero/yeux.js"></script>
+<script src="/zero/formes.js"></script>
+<script src="/zero/zero.js"></script>
+<script src="/zero/contact.js"></script>
+<script src="/os/apps.js"></script>
+<script src="/bureau/sources.js"></script>
+<script src="/os/coque.js"></script>
+<script src="/os/os.js"></script>
+<script src="/porte/porte.js"></script>
+<script src="/porte/revelation.js"></script>
+<script src="/verticale/noyau.js"></script>
+<script src="/verticale/regle.js"></script>
+<script src="/verticale/globe.js"></script>
+<script src="/verticale/cube-regards.js"></script>
+<script src="/verticale/causalite.js"></script>
+<script src="/verticale/supports.js"></script>
+<script src="/verticale/atlas.js"></script>
+<script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'zero',position:'haut'})</script>
+</body>
+</html>

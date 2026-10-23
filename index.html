@@ -225,11 +225,11 @@ html.calme .mo{opacity:1}
 <link rel="stylesheet" href="/accueil/accueil.css">
 </head>
 <body>
-<a class="evite" href="#impulsion">Aller à la saisie unique</a>
-<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#impulsion">Saisir une fois</a><a class="passer" href="#atlas">10 univers</a><a class="passer" href="#entrer">Passer l'introduction</a><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
+<a class="evite" href="#acTexte">Aller au champ « Que préparez-vous ? »</a>
+<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#capacites">Capacités</a><a class="passer" href="/lab/grande-partition/">Lab</a><a class="passer" href="#entrer">Passer l'introduction</a><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
 
 <!-- La Règle vivante sur la tranche gauche : change d'unité à chaque Acte et ouvre les loupes d'échelle -->
-<aside class="regle" id="rul" aria-label="Règle de navigation et d'échelles">
+<aside class="regle" id="rul" aria-label="Règle de navigation et d'échelles" hidden>
  <button type="button" class="regle-unite" id="regleUnite" title="Ouvrir l'aperçu à l'échelle millimétrique">0 · Point</button>
  <div class="regle-actes" id="regleActes" role="group" aria-label="Chapitres de la page"></div>
  <div class="regle-loupes" role="group" aria-label="Loupes d'échelle">
@@ -256,7 +256,7 @@ html.calme .mo{opacity:1}
   </form>
   <p class="ac-reprendre" id="acReprendre" hidden><button type="button" id="acReprendreB">Reprendre mon projet</button></p>
  </div>
- <a class="descendre" href="#impulsion">Voir ce que fait AIME<i aria-hidden="true"></i></a>
+ <a class="descendre" href="#capacites">Voir ce que fait AIME<i aria-hidden="true"></i></a>
 </section>
 
 <!-- Le projet de la personne : ce qui a été compris, puis sa page (accueil/accueil.js) -->
@@ -291,7 +291,7 @@ html.calme .mo{opacity:1}
 <!-- Barre collante du Fil Rouge : regard actif + compteur de propagation + lien vers /tout/ -->
 <div class="fil-barre" id="filBarre" role="region" aria-label="Fil conducteur en direct">
  <div class="fil-barre-in">
-  <a class="fil-resume" href="#impulsion" title="Modifier l'impulsion unique">
+  <a class="fil-resume" href="#haut" title="Mon projet">
    <span class="fil-puce" aria-hidden="true"></span>
    <b id="filTitre">Inès &amp; Théo</b>
    <small id="filDetail">2027-09-18 · Verrière du Marais &amp; Brooklyn Loft</small>
@@ -311,7 +311,7 @@ html.calme .mo{opacity:1}
 </section>
 
 <!-- ACTE I · Impulsion unique, Timbre & Contrat aime-projet v1 -->
-<section class="vt-acte" id="impulsion" aria-labelledby="t-impulsion">
+<section class="vt-acte" id="impulsion" aria-labelledby="t-impulsion" hidden>
  <div class="vt-wrap">
   <div class="vt-entete">
    <div class="vt-sur"><span class="vt-num">Acte 01 · Impulsion</span><span class="vt-preuve">Contrat canonique aime-projet v1 · AIMETimbre</span></div>
@@ -367,95 +367,35 @@ html.calme .mo{opacity:1}
  </div>
 </section>
 
-<!-- 2 · Le premier geste -->
-<section class="geste" id="geste" aria-label="Le premier geste">
- <div class="scene"><span class="ancre" data-orbe="2"></span></div>
- <div class="phrases col">
-  <div class="phrase"><p data-regie="phrase-1">Une idée.</p></div>
-  <div class="phrase"><p data-regie="phrase-2">Une information.</p></div>
-  <div class="phrase"><p data-regie="phrase-3">Une relation.</p></div>
-  <div class="phrase"><p data-regie="phrase-4">Une possibilité.</p></div>
-  <div class="phrase comprendre"><p>AIME ne commence pas par choisir une application.<br><b>Il commence par comprendre ce que vous souhaitez accomplir.</b></p></div>
- </div>
-</section>
 
-<!-- 3 · La métamorphose géométrique -->
-<section class="meta" id="meta" aria-labelledby="t-meta">
- <div class="scene">
-  <svg class="forme" id="forme" viewBox="0 0 400 400" role="img" aria-labelledby="formeT"><title id="formeT">Un point devient une ligne, une relation, une grille, une composition, puis un projet.</title></svg>
-  <ol class="etapes" id="etapes" aria-hidden="true"><li>Point</li><li>Ligne</li><li>Relation</li><li>Grille</li><li>Composition</li><li>Projet</li></ol>
-  <div class="statique" id="statique"></div>
-  <div class="col">
-   <h2 id="t-meta">Une même matière peut prendre plusieurs formes.</h2>
-   <p class="sous" data-regie="meta-sous" style="margin-top:14px">Une information peut devenir un document, une création, une action ou un lien entre des personnes.</p>
-  </div>
- </div>
-</section>
 
-<!-- ACTE II · La Terre 3D (terres.txt) & la Frise du Temps -->
-<section class="vt-acte" id="naiss" aria-labelledby="t-naiss">
- <div class="vt-wrap">
-  <div class="vt-entete">
-   <div class="vt-sur"><span class="vt-num">Acte 02 · Espace &amp; Temps</span><span class="vt-preuve">Nuage côtier réel terres.txt · Arcs géodésiques</span></div>
-   <h2 id="t-naiss">Relier des lieux sur la Terre et des jalons dans le temps.</h2>
-   <p>Faites tourner le globe au doigt ou ajoutez une ville : l’arc lumineux recalcule aussitôt le lieu propagé dans les invitations, les missions et la régie.</p>
-  </div>
-  <div class="terre-grille">
-   <div class="vt-carte globe-boite">
-    <div class="vt-pilules" id="globeVilles" role="group" aria-label="Villes reliées sur le globe"></div>
-    <div class="globe-canvas-wrap">
-     <canvas id="globeCanvas" role="img" aria-label="Globe terrestre interactif reliant les villes du projet"></canvas>
-    </div>
-    <div class="globe-legende">
-     <span id="globeStatut">Projection orthographique interactive</span>
-     <span>Glisser pour orienter · Cliquer une ville pour relier</span>
-    </div>
-   </div>
-   <div class="vt-carte">
-    <span class="vt-num">Chronologie déduite de votre date clé</span>
-    <h3 style="margin:8px 0 4px;font:400 26px/1.1 var(--display)">De J − 360 à l’archive</h3>
-    <p style="margin:0;font-size:14px;color:var(--vt-soft)">Changez la date à l’Acte 01 : tous les jalons amont et aval se recalant sans ressaisie.</p>
-    <ul class="frise-liste" id="friseListe"></ul>
-   </div>
-  </div>
- </div>
-</section>
 
-<!-- 4 · La ronde des liens -->
-<section class="lien" id="lien" aria-labelledby="t-lien">
- <div class="scene">
-  <div class="ronde" id="ronde" role="img" aria-label="Une orbe au centre ; autour, des personnes, des idées, des documents et des événements tournent, touchés par une onde, puis se relient."><span class="ancre" data-orbe="4"></span></div>
-  <div class="col">
-   <h2 id="t-lien">Rien n'existe isolément.</h2>
-   <p class="sous" id="lienSous" style="margin-top:14px">Les personnes, les idées, les documents et les événements prennent du sens lorsqu'ils sont reliés.</p>
-  </div>
- </div>
-</section>
 
-<!-- ACTE III · Le Cube à 6 Faces (cube/modele.js + cube/vue3d.js) -->
-<section class="vt-acte" id="story2" aria-labelledby="t-cube">
- <div class="vt-wrap">
-  <div class="vt-entete">
-   <div class="vt-sur"><span class="vt-num">Acte 03 · Le Volume</span><span class="vt-preuve">Moteur réel cube/modele.js + cube/vue3d.js</span></div>
-   <h2 id="t-cube">Un seul Cube, six facettes complémentaires.</h2>
-   <p>Tournez le Cube à la souris, au doigt ou aux flèches du clavier : chaque face lit directement le même modèle sans duplication, tandis que la vue à plat à droite reste immédiatement lisible.</p>
-  </div>
-  <div class="cube-grille">
-   <div class="vt-carte cube-scene-carte">
-    <div class="cube-hote" id="cubeHote"></div>
-    <div class="cube-faces-bar" id="cubeFacesBar" role="group" aria-label="Choisir une facette du Cube"></div>
-    <a class="vt-btn" href="/cube/" data-atelier="/cube/" data-atelier-titre="Le Cube AIME · Édition complète des 6 facettes">Éditer mon Cube complet ↗</a>
-   </div>
-        <div class="cube-deplie" id="cubeDeplie" role="group" aria-label="Les six facettes dépliées du Cube"></div>
-  </div>
- </div>
+
+
+
+
+
+
+<!-- Ce qu'AIME fait avec votre projet : cinq capacités, chacune un vrai moteur -->
+<section class="ac-capacites" id="capacites" aria-labelledby="t-capacites">
+ <p class="ac-k">Ce qu'AIME sait faire</p>
+ <h2 id="t-capacites">Cinq capacités, sur votre projet.</h2>
+ <p class="ac-cap-note" id="acCapNote">Pas encore de projet : les démonstrations ci-dessous utilisent un exemple fictif. Écrivez votre intention en haut de la page pour les voir avec le vôtre.</p>
+ <ol class="ac-cap">
+  <li><a href="#haut"><b>Une page, quatre styles</b><span>Le contenu reste, l'apparence change.</span></a></li>
+  <li><a href="#regards"><b>Chacun voit ce qui le concerne</b><span>Couple, coordination, prestataire, invité.</span></a></li>
+  <li><a href="#story3"><b>Le jour J s'ajuste</b><span>Un retard ou la pluie : tout se recale.</span></a></li>
+  <li><a href="#build"><b>Tous les supports</b><span>Site, magazine, carterie, sans ressaisie.</span></a></li>
+  <li><a href="#build" data-ac-sup="stitch"><b>D'une photo à une broderie</b><span>La grille et les fils DMC.</span></a></li>
+ </ol>
 </section>
 
 <!-- ACTE IV · Quatre Regards Simultanés & Règles de Sécurité (vitrine/rendu.js + permissions.js + flux.js) -->
 <section class="vt-acte" id="regards" aria-labelledby="t-regards">
  <div class="vt-wrap">
   <div class="vt-entete">
-   <div class="vt-sur"><span class="vt-num">Acte 04 · Perspectives &amp; Droits</span><span class="vt-preuve">vitrine/rendu.js · synchroview/permissions.js · flux.js</span></div>
+   <div class="vt-sur"><span class="vt-num">2 · Chacun voit ce qui le concerne</span><span class="vt-preuve">vitrine/rendu.js · synchroview/permissions.js · flux.js</span></div>
    <h2 id="t-regards">Une seule donnée. Quatre regards filtrés avant mise en page.</h2>
    <p>Ni copie de fichier, ni simple masquage visuel : le moteur évalue les droits de chaque personne avant de composer sa vue. Faites progresser la mission florale ou testez une action non autorisée.</p>
   </div>
@@ -479,9 +419,9 @@ html.calme .mo{opacity:1}
 <section class="vt-acte" id="story3" aria-labelledby="t-causalite">
  <div class="vt-wrap">
   <div class="vt-entete">
-   <div class="vt-sur"><span class="vt-num">Acte 05 · Ondes Causales</span><span class="vt-preuve">live/modele.js (journal append-only) · infinity/ (SCC exact)</span></div>
+   <div class="vt-sur"><span class="vt-num">3 · Le jour J s'ajuste</span><span class="vt-preuve">live/modele.js (journal append-only)</span></div>
    <h2 id="t-causalite">Quand le réel bouge, toute la suite s’ajuste proprement.</h2>
-   <p>À gauche, la régie du Jour J absorbe une averse ou un retard en cascade atomique réversible. À droite, la même loi physique devient un jeu pur d’ondes et de résonances musicales.</p>
+   <p>Déclarez une averse ou un retard : la régie du jour J recale tout le programme en cascade, et chaque changement peut être annulé.</p>
   </div>
   <div class="caus-grille">
    <div class="vt-carte">
@@ -502,57 +442,22 @@ html.calme .mo{opacity:1}
     </div>
    </div>
 
-   <div class="vt-carte inf-zone">
-    <div style="width:100%;display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
-     <div>
-      <h3 style="margin:0;font:400 24px/1.15 var(--display)">AIME INFINITY · Jouable ici</h3>
-      <p style="margin:4px 0 0;font-size:13.5px;color:var(--vt-soft)">Touchez une case : chaque anneau propage son onde.</p>
-     </div>
-     <a class="vt-btn" href="/infinity/" data-atelier="/infinity/" data-atelier-titre="AIME INFINITY · Plein écran jusqu'à 128 × 128">Plein écran ↗</a>
-    </div>
-    <div class="inf-canvas-box">
-     <canvas id="infMiniCanvas" tabindex="0" role="application" aria-label="Grille jouable AIME INFINITY : flèches pour viser, Entrée ou clic pour déclencher une cascade"></canvas>
-    </div>
-    <div class="inf-stats">
-     <span id="infStatsTaille">Grille 4 × 4</span>
-     <span id="infStatsCoups" aria-live="polite">Touchez une case pour commencer</span>
-    </div>
-    <div class="vt-pilules" id="infCommandes" style="width:100%">
-     <button type="button" class="vt-btn" data-iact="rejouer">Recommencer la grille</button>
-     <button type="button" class="vt-btn" data-iact="defi">Défi du jour (16 × 16)</button>
-     <button type="button" class="vt-btn" data-iact="son" aria-pressed="false">♪ Activer le son pentatonique</button>
-    </div>
-   </div>
+   
   </div>
  </div>
 </section>
 
-<!-- 5 · La promesse -->
-<section class="promesse" aria-labelledby="t-prom"><div class="col">
- <h2 class="grand apparait" id="t-prom">Une information saisie une fois.</h2>
- <p class="grand apparait" data-regie="promesse-2">Répercutée partout où elle est utile.</p>
- <ul class="exemples">
-  <li class="apparait"><span aria-hidden="true"></span>Une création devient plusieurs supports.</li>
-  <li class="apparait"><span aria-hidden="true"></span>Une décision actualise les perspectives concernées.</li>
-  <li class="apparait"><span aria-hidden="true"></span>Une modification révèle ses conséquences.</li>
- </ul>
- <p class="autorisations apparait" data-regie="autorisations">Toujours dans le respect des autorisations.</p>
-</div></section>
 
-<!-- 5 bis · La vitrine multi-écrans pilotée par la Régie -->
-<section class="vitrine" id="vitrine" aria-labelledby="t-vitrine">
- <div class="tete apparait"><p class="k">Déjà là</p><h2 id="t-vitrine">Saisi une fois. Vu partout.</h2><p data-regie="vitrine-intro">Les sites, tels qu'ils existent aujourd'hui. Touchez un écran pour l'ouvrir.</p></div>
- <div class="scene-regie" id="vitrine-scene" data-regie-scene="vitrine" role="group" aria-label="Les sites AIME sur un MacBook, un iPad et des iPhone"></div>
- <p class="liens apparait"><span class="etiq">Démonstration · données fictives</span><a href="/g44/">Le G44 LAB</a><a href="/studio/">AIME Studio</a><a href="/canevas/">Le Canevas</a><a href="/reseau/">Le Réseau</a></p>
-</section>
+
+
 
 <!-- ACTE VI · L'Atelier des Supports en Direct : Design Systems, Magazine 12×16, Print mm, Broderie DMC, G44 & Factur-X -->
 <section class="vt-acte" id="build" aria-labelledby="t-supports">
  <div class="vt-wrap">
   <div class="vt-entete">
-   <div class="vt-sur"><span class="vt-num">Acte 06 · Matérialisations</span><span class="vt-preuve">AIMEDesign v3 · AIMEPlanche · Stitch CIEDE2000 · G44 Rewind · Factur-X</span></div>
-   <h2 id="t-supports">Cinq métiers, cinq rendus exacts — zéro ressaisie.</h2>
-   <p>Changez la direction artistique en un clic sans altérer un seul octet du contenu, puis passez du site web au magazine 12 × 16, à la carterie millimétrée, au point de croix DMC et à la simulation réglementaire.</p>
+   <div class="vt-sur"><span class="vt-num">4 et 5 · Tous les supports, jusqu'à la broderie</span><span class="vt-preuve">AIMEDesign v3 · AIMEPlanche · Stitch CIEDE2000 · G44 Rewind · Factur-X</span></div>
+   <h2 id="t-supports">Tous les supports, sans rien ressaisir.</h2>
+   <p>Changez la direction artistique en un clic sans altérer un seul octet du contenu, puis passez du site web au magazine 12 × 16, à la carterie millimétrée, et au point de croix DMC.</p>
   </div>
 
   <div class="sup-ds-barre">
@@ -570,7 +475,6 @@ html.calme .mo{opacity:1}
    <button type="button" class="vt-pilule" data-sup="magazine" aria-pressed="false">2 · Magazine 12 × 16</button>
    <button type="button" class="vt-pilule" data-sup="print" aria-pressed="false">3 · Print au millimètre</button>
    <button type="button" class="vt-pilule" data-sup="stitch" aria-pressed="false">4 · Broderie &amp; Fil DMC</button>
-   <button type="button" class="vt-pilule" data-sup="g44" aria-pressed="false">5 · G44 Rewind &amp; Factur-X</button>
   </div>
 
   <!-- Panneau 1 : Web 12 col + Code 3D -->
@@ -653,65 +557,33 @@ html.calme .mo{opacity:1}
   </div>
 
   <!-- Panneau 5 : G44 Rewind + Factur-X -->
-  <div class="sup-panneau" id="pan-g44" hidden>
-   <div class="g44-grille">
-    <div class="vt-carte">
-     <span class="vt-num">Démonstrateur institutionnel indépendant · données fictives</span>
-     <h3 style="margin:8px 0 6px;font:400 24px/1.15 var(--display)">AIME G44 Lab · Simulation isolée Rewind</h3>
-     <p style="margin:0 0 12px;font-size:13.5px;color:var(--vt-soft)">Testez une correction de date sur le dossier : le moteur calcule chaque impact et vérifie par empreinte que le dossier initial n’a subi aucune écriture.</p>
-     <div class="vt-pilules" id="g44DatesBtns" role="group" aria-label="Date simulée sur le dossier">
-      <button type="button" class="vt-pilule" data-gdate="2017-05-12" aria-pressed="true">Simuler 2017-05-12 (conflit R2)</button>
-      <button type="button" class="vt-pilule" data-gdate="2015-06-12" aria-pressed="false">Simuler 2015-06-12 (concordant)</button>
-      <button type="button" class="vt-pilule" data-gdate="2016-01-10" aria-pressed="false">Simuler 2016-01-10</button>
-     </div>
-     <div id="g44Resultat" style="margin-top:14px"></div>
-     <div class="vt-actions-bas">
-      <a class="vt-btn plein" href="/g44/" data-atelier="/g44/" data-atelier-titre="AIME G44 LAB · Graphe causal, pdf.js & kit pilote">Ouvrir les 6 laboratoires G44 ↗</a>
-     </div>
-    </div>
-    <div class="vt-carte">
-     <span class="vt-num">Gestion &amp; Facturation électronique</span>
-     <h3 style="margin:8px 0 6px;font:400 24px/1.15 var(--display)">Devis Factur-X (EN 16931)</h3>
-     <p style="margin:0 0 12px;font-size:13.5px;color:var(--vt-soft)">XML CrossIndustryInvoice généré en direct depuis les lignes du projet actif.</p>
-     <pre class="imp-contrat" id="facturXPre" tabindex="0" aria-label="Aperçu XML Factur-X EN 16931" style="margin-top:0;max-height:210px"></pre>
-     <div class="vt-actions-bas">
-      <button type="button" class="vt-btn plein" id="btnTelechargerFacturX">↓ Télécharger le fichier XML EN 16931</button>
-     </div>
-    </div>
-   </div>
-  </div>
+  
  </div>
 </section>
 
-<!-- ACTE VII · L'Atlas Vivant des 10 Univers & des 130 Dépôts (univers.json + moteurs.json) -->
-<section class="vt-acte" id="atlas" aria-labelledby="t-atlas">
- <div class="vt-wrap">
-  <div class="vt-entete">
-   <div class="vt-sur"><span class="vt-num">Acte 07 · L’Atlas R&amp;D</span><span class="vt-preuve">univers.json · moteurs.json (inventaire vérifié)</span></div>
-   <h2 id="t-atlas">Dix univers métiers, cent trente dépôts, un seul système nerveux.</h2>
-   <p>Pour la première fois réunis au grand jour dans la page : parcourez les chaînes complètes entre outils et fouillez l’inventaire intégral avec le statut réel de chaque brique.</p>
-  </div>
-  <div class="atlas-stats" id="atlasStats"></div>
-  <div class="vt-pilules" id="atlasUniversBtns" role="group" aria-label="Choisir l'un des dix univers AIME"></div>
-  <div class="atlas-corps">
-   <div class="vt-carte" id="atlasUniversDetail"></div>
-   <div class="vt-carte">
-    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px">
-     <label for="atlasRecherche" style="font:600 13px var(--ui);color:var(--vt-ink)">Explorer les 130 dépôts &amp; 1 191 modules</label>
-     <span id="atlasCompteFiltre" style="font:500 12px var(--vt-mono);color:var(--vt-mint)"></span>
-    </div>
-    <input id="atlasRecherche" type="search" placeholder="Filtrer par mot-clé : mariage, dmc, pdf, calendrier, contrat, audio…" style="width:100%;margin-top:10px;font:400 14.5px var(--ui);color:var(--ink);background:var(--vt-surface-2);border:1px solid var(--vt-border);border-radius:11px;padding:9px 13px">
-    <div class="vt-pilules" id="atlasEtatsBtns" role="group" aria-label="Filtrer par maturité réelle" style="margin-top:10px">
-     <button type="button" class="vt-pilule" data-etat="tous" aria-pressed="true">Tous (130)</button>
-     <button type="button" class="vt-pilule" data-etat="fonctionnel" aria-pressed="false">Fonctionnels (57)</button>
-     <button type="button" class="vt-pilule" data-etat="prototype" aria-pressed="false">Prototypes (44)</button>
-     <button type="button" class="vt-pilule" data-etat="maquette" aria-pressed="false">Maquettes (8)</button>
-    </div>
-    <div class="atlas-repos" id="atlasReposListe" tabindex="0" role="region" aria-label="Inventaire filtrable des dépôts AIME"></div>
-   </div>
-  </div>
- </div>
+
+
+<!-- 5 · La promesse -->
+<section class="promesse" aria-labelledby="t-prom"><div class="col">
+ <h2 class="grand apparait" id="t-prom">Une information saisie une fois.</h2>
+ <p class="grand apparait" data-regie="promesse-2">Répercutée partout où elle est utile.</p>
+ <ul class="exemples">
+  <li class="apparait"><span aria-hidden="true"></span>Une création devient plusieurs supports.</li>
+  <li class="apparait"><span aria-hidden="true"></span>Une décision actualise les perspectives concernées.</li>
+  <li class="apparait"><span aria-hidden="true"></span>Une modification révèle ses conséquences.</li>
+ </ul>
+ <p class="autorisations apparait" data-regie="autorisations">Toujours dans le respect des autorisations.</p>
+</div></section>
+
+<!-- 5 bis · La vitrine multi-écrans pilotée par la Régie -->
+<section class="vitrine" id="vitrine" aria-labelledby="t-vitrine">
+ <div class="tete apparait"><p class="k">Déjà là</p><h2 id="t-vitrine">Saisi une fois. Vu partout.</h2><p data-regie="vitrine-intro">Les sites, tels qu'ils existent aujourd'hui. Touchez un écran pour l'ouvrir.</p></div>
+ <div class="scene-regie" id="vitrine-scene" data-regie-scene="vitrine" role="group" aria-label="Les sites AIME sur un MacBook, un iPad et des iPhone"></div>
+ <p class="liens apparait"><span class="etiq">Démonstration · données fictives</span><a href="/g44/">Le G44 LAB</a><a href="/studio/">AIME Studio</a><a href="/canevas/">Le Canevas</a><a href="/reseau/">Le Réseau</a></p>
 </section>
+
+<!-- Ancre de la Régie : le carrousel « Applications et outils » se pose ici (regie/site.json, apres:#meta) -->
+<div id="meta" class="ac-ancre"></div>
 
 <!-- ACTE VIII · Entrer, tous les Ateliers, Souveraineté des données, Offres & Contact -->
 <section class="entrer" id="entrer" aria-labelledby="t-entrer">
