@@ -1,0 +1,221 @@
+{
+ "_": "Scénario AIME Magazine : un numéro, quatre personnes. Le numéro reste magazine/n001.aime-site.json ; ce fichier ne décrit que les arrivées.",
+ "univers": "magazine",
+ "moteur": "magazine",
+ "titre": "AIME Magazine · N° 001",
+ "genre": "Édition · AIME Magazine",
+ "scripts": [
+  "/publication/planche.js",
+  "/publication/gabarits.js",
+  "/publication/coeur-magazine.js"
+ ],
+ "arriveesTexte": "Une autrice écrit, une rédactrice en chef compose le numéro, un maquettiste le met en page, une lectrice le lit. Un seul fichier ; l'orbe recueille ce que chacun apporte.",
+ "source": {
+  "champs": [
+   {
+    "id": "titre",
+    "label": "Le titre de l'édito",
+    "type": "text",
+    "defaut": "Ce qui nous relie"
+   }
+  ]
+ },
+ "roles": [
+  {
+   "angle": "autrice",
+   "couleur": "#F59E0B",
+   "encre": "#141416",
+   "nom": "L'autrice",
+   "de": "de l'autrice",
+   "resume": "Son article, et où il paraît.",
+   "arrivee": {
+    "titre": "L'autrice écrit son édito.",
+    "texte": "Elle écrit une fois son texte. Il paraît dans le numéro, sur le site, en lecture téléphone, sans être recopié ; personne ne le réécrit à sa place.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Invitée par la rédaction",
+        "Pour écrire l'édito"
+       ],
+       [
+        "Elle écrit",
+        "Dans le Canevas, sur le même fichier"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Article",
+        "Édito"
+       ],
+       [
+        "Titre",
+        "Ce qui nous relie"
+       ],
+       [
+        "Place",
+        "Page 2 du numéro"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "L'autrice",
+     "rédaction",
+     "de l'édito"
+    ]
+   }
+  },
+  {
+   "angle": "chef",
+   "couleur": "#FB7185",
+   "encre": "#141416",
+   "nom": "La rédactrice en chef",
+   "de": "de la rédactrice en chef",
+   "resume": "Le chemin de fer, la date, la publication.",
+   "arrivee": {
+    "titre": "La rédactrice en chef compose le numéro.",
+    "texte": "Elle ordonne les pages, valide le chemin de fer et date l'édition. Elle seule publie : le numéro 001 devient une référence datée.",
+    "fiche": [
+     {
+      "k": "Son rôle",
+      "chemins": [
+       [
+        "Propriétaire du numéro",
+        "Elle crée l'édition"
+       ],
+       [
+        "Elle invite",
+        "L'autrice et le maquettiste"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Numéro",
+        "001"
+       ],
+       [
+        "Pages",
+        "4"
+       ],
+       [
+        "Date",
+        "22 octobre 2026"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "La rédactrice en chef",
+     "propriétaire",
+     "du numéro"
+    ]
+   }
+  },
+  {
+   "angle": "maquettiste",
+   "couleur": "#6D4AFF",
+   "encre": "#FFFFFF",
+   "nom": "Le maquettiste",
+   "de": "du maquettiste",
+   "resume": "Les gabarits, la grille 12 × 16.",
+   "arrivee": {
+    "titre": "Le maquettiste met en page.",
+    "texte": "Il pose les sections sur la grille 12 × 16 avec des gabarits, sans toucher au texte : une section sans place passe en réserve, rien n'est perdu.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Invité par la rédaction",
+        "Pour la mise en page"
+       ],
+       [
+        "Il compose",
+        "Gabarits, double page, réserve"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Grille",
+        "12 × 16 par page"
+       ],
+       [
+        "Gabarits",
+        "8"
+       ],
+       [
+        "Texte",
+        "Jamais modifié"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Le maquettiste",
+     "mise en page",
+     "du numéro"
+    ]
+   }
+  },
+  {
+   "angle": "lectrice",
+   "couleur": "#22D3EE",
+   "encre": "#141416",
+   "nom": "La lectrice",
+   "de": "de la lectrice",
+   "resume": "La page publiée, sur son téléphone.",
+   "arrivee": {
+    "titre": "La lectrice ouvre le numéro.",
+    "texte": "Sans compte, sur son téléphone, elle lit la page publiée. Elle ne voit ni les brouillons, ni les gabarits, ni le chemin de fer.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Un lien",
+        "Vers le magazine public"
+       ],
+       [
+        "Elle lit",
+        "Sur téléphone ou en double page"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Lecture",
+        "Publique, sans compte"
+       ],
+       [
+        "Page",
+        "Édito"
+       ],
+       [
+        "Format",
+        "Téléphone"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "La lectrice",
+     "public",
+     "du magazine"
+    ]
+   }
+  }
+ ]
+}

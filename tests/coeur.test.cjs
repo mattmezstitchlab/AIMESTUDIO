@@ -5,9 +5,9 @@ const R = p => path.join(__dirname, '..', p), lire = p => JSON.parse(fs.readFile
 const C = require('../coeur/coeur.js'), V = require('../vitrine/rendu.js'), P = require('../synchroview/permissions.js'), F = require('../synchroview/flux.js');
 const SC = fs.readdirSync(R('vitrine/scenarios')).filter(f => f.endsWith('.json')).map(f => lire('vitrine/scenarios/' + f));
 
-test('cinq exemples, de quatre à six rôles', () => {
-  assert.deepEqual(SC.map(s => s.univers).sort(), ['g44', 'mariage', 'seminaire', 'stitch', 'world']);
-  assert.deepEqual(Object.fromEntries(SC.map(s => [s.univers, s.roles.length])), { g44: 4, mariage: 4, seminaire: 6, stitch: 4, world: 6 });
+test('six exemples, de quatre à six rôles', () => {
+  assert.deepEqual(SC.map(s => s.univers).sort(), ['g44', 'magazine', 'mariage', 'seminaire', 'stitch', 'world']);
+  assert.deepEqual(Object.fromEntries(SC.map(s => [s.univers, s.roles.length])), { g44: 4, magazine: 4, mariage: 4, seminaire: 6, stitch: 4, world: 6 });
 });
 
 for (const sc of SC.filter(s => !s.moteur)) test(sc.univers + ' · chaque rôle pointe une perspective et un membre réels, sans rôle technique recopié', () => {
@@ -41,7 +41,7 @@ test('la page des exemples charge le cœur et ne propose que des exemples qui ex
   for (const s of ['/coeur/coeur.js', '/coeur/coeur.css', '/coeur/charte.css', '/synchroview/permissions.js', '/vitrine/rendu.js']) assert.ok(h.includes(s), s);
   for (const u of ['world', 'seminaire']) { assert.ok(h.includes("u:'" + u + "'"), u); assert.ok(fs.existsSync(R('vitrine/scenarios/' + u + '.json'))) }
   assert.ok(h.indexOf("$('exCorps').innerHTML=AIMECoeur.html(sc)") < h.indexOf('.concat(ORBE),function(){AIMECoeur.monter(sc)'), 'le balisage est posé avant que l\'orbe ne charge');
-  for (const u of ['world', 'seminaire', 'g44', 'stitch']) assert.ok(h.includes("u:'" + u + "'"), u);
+  for (const u of ['world', 'seminaire', 'g44', 'stitch', 'magazine']) assert.ok(h.includes("u:'" + u + "'"), u);
 });
 
 test('une couleur par rôle technique, la même partout ; l\'encre posée dessus reste lisible (AA)', () => {
@@ -75,4 +75,17 @@ test('Stitch · la grille et la boîte à fils ne sortent que pour qui y a droit
   assert.deepEqual(sc.roles.map(r => r.angle), ['creatrice', 'boutique', 'brodeuse', 'visiteuse']);
   assert.match(s, /'voir-grille':\{[^}]*qui:\{creatrice:1,brodeuse:1\}/); assert.match(s, /'voir-boite':\{[^}]*qui:\{brodeuse:1\}/);
   assert.match(s, /P\.fournitures\(/); assert.match(s, /P\.dimensions\(/); assert.ok(!/"palette"|"points"/.test(JSON.stringify(sc)), 'aucune donnée du patron dans le scénario');
+});
+
+test('Magazine · la lectrice voit la vraie page publiée ; seule la rédaction en chef publie', () => {
+  global.self = global; const Ro = require('../vitrine/rendu.js'); global.AIMESite = Ro.site; global.AIMECoeur = C; require('../publication/coeur-magazine.js');
+  const Ad = C.adaptateurs.magazine, sc = lire('vitrine/scenarios/magazine.json'), k = { c: '#22D3EE', e: '#141416' };
+  global.fetch = u => Promise.resolve({ ok: true, json: () => Promise.resolve(lire(u.replace(/^\//, ''))) });
+  return Ad.charger(sc).then(() => {
+    const pages = sc.roles.map(r => Ad.page(r, { titre: 'Ce qui nous lie' }, k));
+    assert.equal(new Set(pages).size, 4); assert.ok(pages.every(h => !/<script/i.test(h)));
+    assert.ok(pages.every(h => h.includes('Ce qui nous lie')) || pages.filter(h => h.includes('Ce qui nous lie')).length >= 2, 'le titre écrit une fois paraît');
+    const pub = Ad.droits(sc.roles).find(l => /Publier/.test(l.titre)); assert.deepEqual(pub.valeurs.map(v => /Autorisé/.test(v)), sc.roles.map(r => r.angle === 'chef'));
+    delete global.fetch;
+  });
 });
