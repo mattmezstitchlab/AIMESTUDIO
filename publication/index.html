@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lire une publication · AIME</title>
+<meta name="description" content="Lire une publication composée avec le Studio Publication du Canevas d'AIME : doubles pages sur ordinateur, ordre de lecture sur téléphone.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/publication/lecture.css">
+</head>
+<body>
+<header class="lp-tete">
+ <a class="lp-mk" href="/canevas/" aria-label="AIME, retour au Canevas">AIME <span>Publication</span></a>
+ <b id="titre" class="lp-t">Lecture</b>
+ <div class="lp-a" role="group" aria-label="Aperçu">
+  <button type="button" id="ordi" aria-pressed="true">Ordinateur</button>
+  <button type="button" id="tel" aria-pressed="false">Téléphone</button>
+  <a id="modifier" class="lp-p" href="/canevas/">Modifier dans le Canevas</a>
+ </div>
+</header>
+<main class="lp">
+ <p id="etat" class="lp-etat" role="status">J'ouvre la publication…</p>
+ <div id="cadre" class="lp-cadre" hidden><iframe id="doc" title="La publication, rendue par le moteur de pages"></iframe></div>
+</main>
+<noscript><p class="lp-etat">La lecture a besoin de JavaScript.</p></noscript>
+<script src="/vitrine/rendu.js"></script>
+<script src="/publication/planche.js"></script>
+<script src="/publication/gabarits.js"></script>
+<script src="/design/charger.js"></script>
+<script src="/publication/lecture.js"></script>
+</body>
+</html>

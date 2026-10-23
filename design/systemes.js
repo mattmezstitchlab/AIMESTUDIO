@@ -109,9 +109,9 @@ function polices(ids){var f=[];ids.forEach(function(i){var p=POLICES[i];if(p&&p.
 function compiler(s){var k=s.jetons.couleurs,t=s.jetons.typographie,st=s.jetons.structure;
  return{id:s.id,nom:s.nom,revision:s.revision,mode:s.mode,
   a:{id:s.id,nom:s.nom,c1:k.primaire,c2:k.relief,fond:k.fond,encre:k.texte,rayon:st.rayons.surface},
-  t:{nom:POLICES[t.titres].nom,titre:POLICES[t.titres].pile,texte:POLICES[t.texte].pile,graisse:t.graisseTitres,casse:t.casse,interligne:t.interligneTitres,approche:t.approche+'em'},
+  t:{nom:POLICES[t.titres].nom,titre:POLICES[t.titres].pile,texte:POLICES[t.texte].pile,mono:POLICES[t.mono].pile,graisse:t.graisseTitres,casse:t.casse,interligne:t.interligneTitres,approche:t.approche+'em'},
   rayon:st.rayons.surface,rayons:{surface:st.rayons.surface,controle:st.rayons.controle,media:st.rayons.media,pastille:st.rayons.pastille},densite:st.densite,
-  fonts:polices([t.titres,t.texte]),couleurs:copie(k)}}
+  fonts:polices([t.titres,t.texte,t.mono]),couleurs:copie(k)}}
 
 /* Le catalogue : les systèmes livrés avec AIME, validés au chargement. Les bases de complétion : Minimal (clair), Original (sombre). */
 function catalogue(liste){var c={ids:[],sources:{},compiles:{},rapports:{},bases:{}},brut={};(liste||[]).forEach(function(o){if(o&&o.id)brut[o.id]=o});
