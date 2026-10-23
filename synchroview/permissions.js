@@ -54,6 +54,14 @@ var RULES={
   read:function(s,r){if(r.subjectId===s.id)return yes('personal.read : ses propres données');if(ORGA[s.role])return yes('personal.read : organisation');return no('personal.read','données personnelles d\'un autre participant')},
   edit:function(s,r){if(r.subjectId===s.id)return yes('personal.edit : ses propres données');if(s.role==='owner')return yes('personal.edit : propriétaire');return no('personal.edit','données personnelles d\'un autre participant')}
  },
+ /* ---- les membres d'un espace : chacun ne voit que ce que sa portée permet (règle 2) ----
+    ressource : { subjectId, role } (le membre regardé). L'organisation voit tout le monde ; un contributeur ou un contrôleur,
+    lui-même et l'organisation (à qui écrire) ; un destinataire, lui-même seulement. Les effectifs passent par summary.read. */
+ member:{
+  read:function(s,r){if(r.subjectId===s.id)return yes('member.read : soi-même');if(ORGA[s.role])return yes('member.read : organisation');
+   if((s.role==='contributor'||s.role==='viewer')&&ORGA[r.role])return yes('member.read : '+s.role+', l\'organisation de l\'espace');
+   return no('member.read',s.role==='guest'?'un invité ne voit que lui-même':'hors de sa portée : effectifs seulement')}
+ },
  /* résumé sans nom (nombre de réponses, régimes comptés) : pour préparer sans exposer les personnes */
  summary:{
   read:function(s){return s.role!=='guest'?yes('summary.read : membre (sans données nominatives)'):no('summary.read','les invités ne voient que leurs propres réponses')}
