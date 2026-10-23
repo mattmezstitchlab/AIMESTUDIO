@@ -28,7 +28,7 @@ test('sources : tout est retrouvé, rien n\'est écrit, rien n\'est inventé',()
  assert.equal(par('carte')[0].titre,'Camille');assert.equal(par('studio').length,2);assert.equal(par('evenements')[0].titre,'Mariage Léa & Marc');
  assert.equal(par('stitch')[0].lien,'/stitch/atelier/?brouillon=pat-lavande');assert.match(par('broderies')[0].detail,/120 points faits/);
  assert.equal(par('compositions')[0].lien,'/synchroview/?v=a#s');assert.equal(par('compositions')[1].lien,'/synchroview/','un lien étranger est refusé');
- assert.match(par('infinity')[0].detail,/Niveau 7/);assert.ok(par('simulations')[0].demo,'une simulation est dite fictive');assert.equal(par('timeline').length,1);
+ assert.match(par('infinity')[0].detail,/Niveau 7/);assert.ok(par('simulations')[0].demo,'une simulation est dite fictive');assert.ok(!inv.sources.some(s=>s.id==='timeline'),'/v1/ abandonné : plus listé');
  assert.deepEqual(inv.ancienBureau,['aime-lang','aime-tlz','aime-wp']);
  {const o=B.inventaire(stock({'aime-os':JSON.stringify({folders:[],memos:['x']})}));assert.deepEqual(o.ancienBureau,['aime-os'],'l\'ancien Bureau sous « aime-os » est inventorié');
   const n=B.inventaire(stock({'aime-os':JSON.stringify({version:1,fenetres:[]})}));assert.deepEqual(n.ancienBureau,[],'un état de fenêtres n\'est pas l\'ancien Bureau')}
@@ -89,7 +89,7 @@ test('Page Zéro · le cœur de haut en bas : quatre écrans composés par le mo
  const ordre=['id="haut"','id="coeur"','id="arrivees"','id="arr-couple"','id="arr-prestataire"','id="arr-invite"','id="arr-coord"','id="ecrans"','id="droits"','id="jourj"','id="partout"','id="entrer"','id="contact"'].map(s=>z.indexOf(s));
  assert.ok(ordre.every((x,i)=>x>0&&(i===0||x>ordre[i-1])),'les chapitres se suivent de haut en bas');
  assert.equal((z.match(/<iframe [^>]*sandbox="allow-same-origin"/g)||[]).length,5,'quatre écrans + l\'aperçu du projet, tous sans script');assert.ok(!/allow-scripts/.test(z));
- assert.match(z,/Démonstration · données fictives/);assert.match(z,/href="\/synchroview\/\?v=mariage\.couple\.pc,mariage\.coordinateur\.pc,mariage\.prestataire\.pc,mariage\.invite\.pc"/);
+ assert.match(z,/Démonstration · données fictives/);assert.ok(!/href="\/synchroview\//.test(z),'SynchroView est réservé au propriétaire du site : l\'accueil n\'y renvoie pas');
  assert.ok(c.includes('Vit.rendre(')&&c.includes('Vit.politique(')&&c.includes('Live.rejouer('),'les vrais moteurs : pages, règles, journal du jour J');assert.ok(!/localStorage\.setItem|fetch\([^)]*method/.test(c),'rien n\'est écrit ni envoyé');
  assert.equal((z.match(/class="ancre[^"]*" [^>]*data-orbe="1"/g)||[]).length,6,'l\'orbe part du point zéro, recueille chaque arrivée puis passe d\'écran en écran');assert.match(c,/function choregraphie\(/);
  assert.ok(!/#7C5CFF|#22D3EE|#FB7185|#F59E0B/i.test(fs.readFileSync(R('coeur/coeur.css'),'utf8')),'le cœur reste monochrome');
