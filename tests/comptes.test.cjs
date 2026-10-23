@@ -143,3 +143,62 @@ test('espaces · règle 2 : membres selon la portée (un invité ne reçoit que 
   for (const q of ['owner', 'editor']) { r = await lire(q); assert.equal(r.membres.length, 5, q + ' voit tout le monde'); assert.equal(r.effectif, undefined); }
   r = (await appel(E.default, { action: 'acces', espace: id }, M.guest)).body; assert.equal(r.personnes.length, 1); assert.deepEqual(Object.values(r.membres), ['guest']);
 });
+
+/* Règle 11 : chaque décision laisse une trace, en ajout seul ; le propriétaire lit le journal de l'espace, chacun ce qui le concerne. */
+test('espaces · règle 11 : journal en ajout seul, lisible par la personne concernée', opts, async () => {
+  let r = await appel(E.default, { action: 'creer', titre: 'Journal' }, M.owner); const id = r.body.id; assert.equal(r.body.journal, true);
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'guest', email: 'g@exemple.test' }, M.owner); assert.equal(r.body.journal, true);
+  r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M.guest); assert.equal(r.body.journal, true);
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'viewer' }, M.owner);
+  await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M.viewer);
+  const membres = (await appel(E.default, { action: 'membres', espace: id }, M.owner)).body.membres, idv = membres.find(m => m.role === 'viewer').id, idg = membres.find(m => m.role === 'guest').id;
+  r = await appel(E.default, { action: 'retirer', espace: id, membre: idv }, M.owner); assert.equal(r.body.journal, true);
+  const tout = (await appel(E.default, { action: 'journal', espace: id }, M.owner)).body;
+  assert.equal(tout.tout, true); assert.deepEqual(tout.journal.map(l => l.action).reverse(), ['creation', 'invitation', 'acceptation', 'invitation', 'acceptation', 'retrait']);
+  assert.ok(!JSON.stringify(tout).includes('@'), 'aucune adresse e-mail au journal');
+  const g = (await appel(E.default, { action: 'journal', espace: id }, M.guest)).body;
+  assert.equal(g.tout, false); assert.ok(g.journal.length >= 1 && g.journal.every(l => l.qui === idg || l.detail.cible === idg), 'l\'invitée ne lit que ce qui la concerne');
+  assert.ok(!g.journal.some(l => l.action === 'retrait'), 'pas le retrait d\'un autre');
+  assert.equal((await appel(E.default, { action: 'journal', espace: id }, M.viewer)).code, 404, 'retirée : plus rien');
+  await assert.rejects(pool.query("update audit set action = 'x' where space_id = $1", [id]), /ajout seul/);
+  await assert.rejects(pool.query('delete from audit where space_id = $1', [id]), /ajout seul/);
+});
+
+/* Durée : un rôle peut avoir une date de fin ; après elle, il est refusé partout, et la fermeture est inscrite au journal. */
+test('espaces · durée des rôles : « jusqu\'au … », refus après échéance, fermeture au journal', opts, async () => {
+  let r = await appel(E.default, { action: 'creer', titre: 'Durée' }, M.owner); const id = r.body.id;
+  for (const j of ['pas une date', new Date(Date.now() - 864e5).toISOString(), new Date(Date.now() + 4 * 366 * 864e5).toISOString()])
+    assert.equal((await appel(E.default, { action: 'inviter', espace: id, role: 'viewer', jusquau: j }, M.owner)).code, 400, 'date refusée : ' + j);
+  const fin = new Date(Date.now() + 2 * 864e5).toISOString();
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'viewer', jusquau: fin }, M.owner); assert.equal(r.body.jusquau, fin);
+  r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M.viewer); assert.equal(r.body.role, 'viewer');
+  r = await appel(E.default, { action: 'membres', espace: id }, M.viewer); assert.equal(r.body.membres.find(m => m.role === 'viewer').jusquau, fin, 'il voit « jusqu\'au … »');
+  assert.equal((await appel(E.default, { action: 'acces', espace: id }, M.viewer)).body.moi.jusquau, fin);
+  /* le temps passe (on avance la date de fin dans la base de test) */
+  await pool.query("update space_members set jusqu_au = now() - interval '1 minute' where space_id = $1 and role = 'viewer'", [id]);
+  for (const action of ['membres', 'acces', 'journal']) assert.equal((await appel(E.default, { action, espace: id }, M.viewer)).code, 404, 'après échéance : ' + action);
+  assert.ok(!(await appel(E.default, { action: 'mes' }, M.viewer)).body.espaces.some(e => e.id === id), 'plus dans « mes espaces »');
+  assert.ok(!(await appel(E.default, { action: 'membres', espace: id }, M.owner)).body.membres.some(m => m.role === 'viewer'), 'plus dans la liste du propriétaire');
+  assert.equal((await appel(require('../api/live/passe.js'), { espace: id }, M.viewer)).code, 403, 'plus de direct');
+  const j = (await appel(E.default, { action: 'journal', espace: id }, M.owner)).body.journal;
+  assert.equal(j.filter(l => l.action === 'fermeture').length, 1, 'fermeture inscrite une seule fois'); assert.ok(j.some(l => l.action === 'acceptation' && l.detail.jusqu_au === fin), 'ouverture datée');
+  /* une nouvelle invitation remplace le rôle échu */
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'guest' }, M.owner);
+  r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M.viewer); assert.equal(r.body.role, 'guest');
+});
+
+/* « Je vois un accès inattendu » : tout membre peut le dire, sans preuve ; inscrit au journal, le propriétaire est prévenu. */
+test('espaces · « Je vois un accès inattendu » : au journal, propriétaire prévenu, sans le texte ni le nom', opts, async () => {
+  const id = await espaceComplet('Signalement'); liens = [];
+  let r = await appel(E.default, { action: 'signaler', espace: id, motif: 'Je vois le budget <b>du traiteur</b>' }, M.guest);
+  assert.equal(r.code, 200); assert.equal(r.body.journal, true); assert.equal(r.body.prevenu, true);
+  assert.equal(liens.length, 1, 'un e-mail, au seul propriétaire'); assert.equal(liens[0].to, 'o@exemple.test');
+  assert.ok(!/budget|traiteur|g@exemple/.test(liens[0].text + liens[0].html), 'ni le texte ni l\'auteur dans l\'e-mail');
+  const j = (await appel(E.default, { action: 'journal', espace: id }, M.owner)).body.journal.find(l => l.action === 'signalement');
+  assert.equal(j.detail.objet, 'acces_inattendu'); assert.equal(j.detail.role, 'guest');
+  assert.ok((await appel(E.default, { action: 'journal', espace: id }, M.guest)).body.journal.some(l => l.action === 'signalement'), 'la personne relit son signalement');
+  assert.ok(!(await appel(E.default, { action: 'journal', espace: id }, M.contributor)).body.journal.some(l => l.action === 'signalement'), 'un autre membre ne le lit pas');
+  assert.equal((await appel(E.default, { action: 'signaler', espace: id }, M.dehors)).code, 404, 'non-membre : rien');
+  for (let i = 0; i < 4; i++) await appel(E.default, { action: 'signaler', espace: id }, M.guest);
+  assert.equal((await appel(E.default, { action: 'signaler', espace: id }, M.guest)).code, 429, 'cinq par jour');
+});

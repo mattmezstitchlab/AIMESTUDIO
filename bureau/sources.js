@@ -36,9 +36,7 @@ var SOURCES=[
  {id:'simulations',outil:'world',nom:'Démonstrateurs · simulations',demo:true,lister:function(S){return cles(S).filter(function(k){return/^aime-sim-[a-z0-9-]+$/.test(k)}).map(function(k){var j=lire(S,k),u=k.slice(9);if(!Array.isArray(j)||!j.length)return null;
   return{id:u,titre:u==='world'?'AIME WORLD':u==='mariage'?'Mariage Léa & Marc':u==='seminaire'?'Séminaire Maison Orée':u,detail:'Simulation : '+nb(j.length,'action','actions')+' · données fictives',quand:null,lien:u==='world'?'/vitrine/world/':'/vitrine/site/?u='+encodeURIComponent(u),action:'Reprendre la simulation'}}).filter(Boolean)}},
  {id:'sites',outil:'sites',nom:'Sites',lister:function(S){var o=lire(S,'aime-sites');if(!o||!o.sites)return[];return Object.keys(o.sites).map(function(id){var x=o.sites[id]||{};var n=(x.pages||[]).length;
-  return{id:id,titre:x.nom||'Site',detail:n+' page'+(n>1?'s':'')+(x.infos&&x.infos.titre?' · '+x.infos.titre:''),quand:quand(x.majLe),lien:'/canevas/?site='+encodeURIComponent(id)+'&de=%2Fbureau%2F',action:'Modifier dans le Canevas',enCours:o.cur===id}})}},
- {id:'timeline',outil:'timeline',nom:'Timeline Jour J',lister:function(S){var k=S.getItem('jourj-plan-v5')!=null?'jourj-plan-v5':S.getItem('jourj-plan-v4')!=null?'jourj-plan-v4':null;if(!k)return[];
-  return[{id:k,titre:'Plan du jour J',detail:'Dans l\'ancienne Timeline (/v1/)',quand:null,lien:'/v1/',action:'Ouvrir la Timeline'}]}}];
+  return{id:id,titre:x.nom||'Site',detail:n+' page'+(n>1?'s':'')+(x.infos&&x.infos.titre?' · '+x.infos.titre:''),quand:quand(x.majLe),lien:'/canevas/?site='+encodeURIComponent(id)+'&de=%2Fbureau%2F',action:'Modifier dans le Canevas',enCours:o.cur===id}})}}];
 
 function inventaire(S){var out={sources:[],projets:[],ancienBureau:[],total:cles(S).length};
  SOURCES.forEach(function(src){var l=[];try{l=src.lister(S)||[]}catch(e){l=[]}l.forEach(function(p){p.source=src.id;p.outil=src.outil;if(src.demo)p.demo=true});out.sources.push({id:src.id,nom:src.nom,outil:src.outil,demo:!!src.demo,projets:l});out.projets=out.projets.concat(l)});

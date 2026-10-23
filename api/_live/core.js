@@ -22,7 +22,9 @@ async function espace(id, sql) {
   if (!UUID.test(String(id || '')) || !sql) return null;
   const s = await sql`select data->>'modele' as modele from spaces where id = ${id}`;
   if (!s[0] || !ESPACES[s[0].modele]) return null;
-  const m = await sql`select user_id, role from space_members where space_id = ${id}`;
+  /* les rôles actifs seulement : après sa date de fin (colonne jusqu_au, si la migration est appliquée), un membre n'est plus là */
+  const c = await sql`select count(*)::int as n from information_schema.columns where table_schema = 'public' and table_name = 'space_members' and column_name = 'jusqu_au'`;
+  const m = c[0] && c[0].n ? await sql`select user_id, role from space_members where space_id = ${id} and (jusqu_au is null or jusqu_au > now())` : await sql`select user_id, role from space_members where space_id = ${id}`;
   const membres = {}; m.forEach(r => { membres[r.user_id] = r.role; });
   return { donnees: ESPACES[s[0].modele].donnees, acces: { membres }, reel: true };
 }
