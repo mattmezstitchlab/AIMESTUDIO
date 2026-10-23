@@ -26,10 +26,14 @@ Un site complet, page par page, construit avec le **moteur partagé** (`vitrine/
 - **Événement** : compte à rebours, programme (liste ou frise), lieu, réponse (RSVP), hébergement, menu, cadeaux, questions.
 - **Personnes et contact** : personnes, contact, réseaux et liens.
 - **Activité** : tarifs, chiffres, chronologie, partenaires, documents.
+- **Commerce** (repris d'AIME STUDIO, 23/10/2026) : services, produits, réservation, annonce, avant / après.
+- **Raconter** : valeurs, actualités, réalisations.
+- **Confiance** : presse et prix, garanties et labels, engagement.
+- **Agir** : lettre d'information, recrutement, mentions légales.
 
 ## Honnêteté et sécurité
 - **Le formulaire de réponse** ouvre la messagerie de la personne qui répond, avec la réponse prête : rien n'est envoyé sans elle, et le site le dit.
-- **Aucun paiement**, aucune collecte de données, aucun compte. Le livre d'or, la newsletter et l'inscription demandent un serveur ; ils viendront avec l'authentification.
+- **Aucun paiement**, aucune collecte de données, aucun compte. L'inscription à la lettre d'information et les candidatures ouvrent, elles aussi, la messagerie de la personne : rien n'est collecté par le site. Une vraie inscription en ligne demandera un serveur ; elle viendra avec l'authentification.
 - **Les liens** n'acceptent que `https`, `mailto`, `tel`, les ancres et les pages du site. `javascript:` et `data:` sont refusés.
 - **Les images** acceptent une adresse `https` ou une image importée, réduite à 1 600 px en JPEG.
 - **Tout ce qui est écrit est échappé**, et un test le vérifie avec du code injecté dans chaque champ.
