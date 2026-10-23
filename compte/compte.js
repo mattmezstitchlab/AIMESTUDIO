@@ -43,7 +43,8 @@ $('supprNon').onclick=function(){$('suppr2').hidden=true;$('suppr1').hidden=fals
 $('supprOui').onclick=function(){var b=this;b.disabled=true;requete('/api/auth/delete-user',{corps:{}}).then(function(r){b.disabled=false;
   if(r.statut===200){location.href='/compte/?supprime=1';return}
   var expire=r.j&&/SESSION_EXPIRED|fresh|expired/i.test(String(r.j.code||'')+' '+String(r.j.message||''));
-  toast(expire?'Par sécurité, reconnectez-vous (lien e-mail ou clé d\'accès), puis supprimez votre compte dans la foulée.':'Suppression impossible pour le moment : réessayez.',true)}).catch(function(){b.disabled=false;toast('Serveur injoignable : réessayez.',true)})};
+  var partage=r.j&&String(r.j.code||'')==='ESPACES_PARTAGES';
+  toast(expire?'Par sécurité, reconnectez-vous (lien e-mail ou clé d\'accès), puis supprimez votre compte dans la foulée.':partage?String(r.j.message):'Suppression impossible pour le moment : réessayez.',true)}).catch(function(){b.disabled=false;toast('Serveur injoignable : réessayez.',true)})};
 $('sortir').onclick=function(){requete('/api/auth/sign-out',{corps:{}}).then(function(){location.href='/compte/'})};
 
 /* ---------- profil en timbre ---------- */
@@ -81,7 +82,7 @@ function chargerMembres(s,pan,dernier){pan.textContent='';pan.appendChild(el('p'
  /* inviter : seulement les rôles que les règles ouvrent à mon rôle (le serveur revérifie) */
  var possibles=['editor','contributor','viewer','guest'].filter(function(k){return P.can({id:r.moi.id,role:r.moi.role},'invite',{type:'space',role:k}).allow});
  if(possibles.length){var f=el('form','lgn inv');var sel=el('select');sel.setAttribute('aria-label','Rôle de la personne invitée');possibles.forEach(function(k){var o=el('option',null,ROLES[k]);o.value=k;sel.appendChild(o)});
-  var em=el('input');em.type='email';em.placeholder='Son adresse e-mail (facultatif : réserve le lien à cette adresse)';em.setAttribute('aria-label','Adresse e-mail de la personne invitée');em.style.flex='1';em.style.minWidth='220px';
+  var em=el('input');em.type='email';em.placeholder='Son adresse e-mail (conseillé : réserve le lien à cette personne ; sans adresse, 48 h)';em.setAttribute('aria-label','Adresse e-mail de la personne invitée');em.style.flex='1';em.style.minWidth='220px';
   var ju=el('input');ju.type='date';ju.setAttribute('aria-label','Rôle valable jusqu\'au (facultatif)');ju.title='Rôle valable jusqu\'au (facultatif)';ju.min=new Date(Date.now()+864e5).toISOString().slice(0,10);
   var ok=el('button','b b-p','Créer le lien d\'invitation');ok.type='submit';f.appendChild(sel);f.appendChild(em);f.appendChild(ju);f.appendChild(ok);pan.appendChild(f);var res=el('div','pile');pan.appendChild(res);
   function montrer(x){res.textContent='';var lg=el('div','lgn lien');var i=el('input');i.readOnly=true;i.value=x.lien;i.setAttribute('aria-label','Lien d\'invitation');i.style.flex='1';i.style.minWidth='0';
