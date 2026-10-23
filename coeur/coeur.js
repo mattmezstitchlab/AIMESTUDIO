@@ -43,7 +43,8 @@ function html(sc,o){o=o||{};var N=sc.roles.length,n0=o.premier||1,num=function(k
   sc.roles.map(function(r){return'<figure class="tel" role="listitem" data-angle="'+esc(r.angle)+'"><div class="tel-ecran"><span class="tel-attente" aria-hidden="true"></span><iframe title="Écran '+esc(r.de)+'" sandbox="allow-same-origin" loading="lazy" tabindex="0"></iframe></div><figcaption><b>'+esc(r.nom)+'</b><span>'+esc(r.resume||'')+'</span></figcaption></figure>'}).join('')+
   '</div><p class="ecrans-etat" id="ecransPas" aria-hidden="true"></p></div></section>'+
   '<div class="cx-in"><form class="source" id="source" aria-labelledby="t-source"><p class="source-t" id="t-source">Écrivez une fois, les '+esc(nombre(N).toLowerCase())+' écrans suivent</p><div class="source-champs">'+
-  '<label>'+esc((sc.source&&sc.source.titre)||'Le projet')+'<input id="srcTitre" type="text" maxlength="60" autocomplete="off"></label><label>La date<input id="srcDate" type="date"></label><label>Le lieu<input id="srcLieu" type="text" maxlength="80" autocomplete="off"></label>'+
+  (sc.source&&sc.source.champs?sc.source.champs.map(function(c){return'<label>'+esc(c.label)+'<input id="src-'+esc(c.id)+'" type="'+esc(c.type||'text')+'"'+(c.min!=null?' min="'+c.min+'"':'')+(c.max!=null?' max="'+c.max+'"':'')+' autocomplete="off"></label>'}).join(''):
+  '<label>'+esc((sc.source&&sc.source.titre)||'Le projet')+'<input id="srcTitre" type="text" maxlength="60" autocomplete="off"></label><label>La date<input id="srcDate" type="date"></label><label>Le lieu<input id="srcLieu" type="text" maxlength="80" autocomplete="off"></label>')+
   '<button type="button" class="source-r" id="srcRetour">Revenir à l\'exemple</button></div><p class="source-etat" id="srcEtat" role="status" aria-live="polite"></p></form>'+
   '<p class="cx-note" id="ecransEtat">Démonstration · données fictives ('+esc(sc.titre)+'). Rien n\'est enregistré ni envoyé.</p></div></section>';
  var d='<section class="cx" id="droits" aria-labelledby="t-droits"><div class="cx-in"><div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">'+num(2)+'</p><h2 id="t-droits">Décidé avant l\'affichage.</h2><p>Ce qu\'un écran ne montre pas n\'est pas masqué : la page n\'est composée qu\'avec ce que les règles autorisent pour cette personne.</p></div>'+
@@ -57,7 +58,10 @@ function html(sc,o){o=o||{};var N=sc.roles.length,n0=o.premier||1,num=function(k
 /* ================= le comportement ================= */
 function monter(sc){
 var Vit=root.AIMEVitrine,Perms=root.AIMEPerms,Live=root.AIMELive,Flux=root.AIMEFlux;
-if(!Vit||!Perms||!$('ecrans'))return null;
+/* un moteur qui n'est pas une vitrine (G44, Stitch…) apporte son adaptateur : charger, page(rôle), droits(rôles) */
+var AD=sc.moteur?(root.AIMECoeur.adaptateurs||{})[sc.moteur]:null,CH=sc.source&&sc.source.champs||null;
+if(sc.moteur&&!AD)return null;
+if((!AD&&(!Vit||!Perms))||!$('ecrans'))return null;
 var ROLES=sc.roles,N=ROLES.length,J=sc.jourJ||null,S=null,journal=[],perso={},pret=false,minuterie=0;
 function j(u){return fetch(u,{cache:'no-cache'}).then(function(r){if(!r.ok)throw new Error(u);return r.json()})}
 function angleDe(r){return S.ps.angles.filter(function(a){return a.id===r.angle})[0]}
@@ -81,7 +85,11 @@ function page(c,role){var k=couleur(sc,ROLES.indexOf(role)),out=Vit.rendre({cont
   '.v-hero .v-img,.hero .v-img{background:'+k.c+'!important}.v-hero .v-img>*,.hero .v-img>*{display:none!important}.v-hero .v-img::after,.hero-plein::after,.hero .v-img::after{display:none!important}'+
   '.v-hero,.v-hero *,.hero-plein,.hero-plein *{color:'+k.e+'!important;text-shadow:none!important}</style></head><body><div id="app">'+
   String(out.html).replace(/<script\b[\s\S]*?<\/script>/gi,'')+'</div></body></html>'}
-function ecrans(){var c=contenu();
+function ecrans(){if(AD){[].forEach.call(document.querySelectorAll('#ecransGrille [data-angle]'),function(fig){var i=-1;ROLES.forEach(function(r,k){if(r.angle===fig.getAttribute('data-angle'))i=k});if(i<0)return;var fr=fig.querySelector('iframe'),y=0;
+  try{y=fr.contentWindow?fr.contentWindow.scrollY:0}catch(_){}fr.onload=function(){try{if(y)fr.contentWindow.scrollTo(0,y)}catch(_){}};fr.srcdoc=AD.page(ROLES[i],perso,couleur(sc,i))});
+ var t=$('droitsCorps');if(t)t.innerHTML=AD.droits(ROLES,perso).map(function(l){return'<tr><th scope="row">'+esc(l.titre)+'</th>'+l.valeurs.map(function(v){return'<td>'+v+'</td>'}).join('')+'</tr>'}).join('');
+ $('droitsTete').innerHTML='<th scope="col"><span class="sr">Ce que chacun voit</span></th>'+ROLES.map(function(r){return'<th scope="col">'+esc(r.nom)+(AD.etiquette?'<small>'+esc(AD.etiquette(r))+'</small>':'')+'</th>'}).join('');return}
+ var c=contenu();
  [].forEach.call(document.querySelectorAll('#ecransGrille [data-angle]'),function(fig){var role=ROLES.filter(function(r){return r.angle===fig.getAttribute('data-angle')})[0],fr=fig.querySelector('iframe'),y=0;if(!role)return;
   try{y=fr.contentWindow?fr.contentWindow.scrollY:0}catch(_){}
   fr.onload=function(){try{if(y)fr.contentWindow.scrollTo(0,y)}catch(_){}};fr.srcdoc=page(c,role)});
@@ -108,7 +116,7 @@ function droits(c){var t=$('droitsCorps');if(!t)return;var total=(c.moments||[])
 
 /* le jour J : un imprévu, un retard ; chacun voit ce qui change pour lui */
 function filtre(r){var f='tout';((angleDe(r)||{}).sections||[]).forEach(function(s){if(s.type==='programme'&&s.filtre)f=s.filtre});return f}
-function direct(){var box=$('jourVues');if(!box||!Live||!J)return;var X=jourJ(),der=X.trace[X.trace.length-1];
+function direct(){var box=$('jourVues');if(AD||!box||!Live||!J)return;var X=jourJ(),der=X.trace[X.trace.length-1];
  box.innerHTML=ROLES.map(function(r){var v=X.vue(r.qui),f=filtre(r);v.moments=v.moments.filter(function(m){return f==='public'?m.public:f==='assigne'?(m.assigneeId===r.qui||(!m.public&&!m.assigneeId)):true});
   return'<article class="jj"><h3>'+esc(r.nom)+'</h3><ol>'+v.moments.slice(0,6).map(function(m){var change=m.decalage||m.planBActif;
    return'<li'+(change?' class="change"':'')+'><time>'+esc(m.debut)+'</time><span>'+esc(m.titre)+'<small>'+esc(m.espace)+(m.decalage?' · '+esc(Live.ecart(m.decalage)):'')+'</small></span></li>'}).join('')+
@@ -120,8 +128,10 @@ function tout(){if(!pret)return;ecrans();direct();teinter()}
 function plus_tard(){clearTimeout(minuterie);minuterie=setTimeout(tout,260)}
 
 /* les gestes */
-function champs(){var e=S.base.evenement,l=lieuDe(S.base);$('srcTitre').value=perso.titre||e.nom;$('srcDate').value=perso.date||e.date||'';$('srcLieu').value=perso.lieu||(l&&l.nom)||''}
+function champs(){if(CH){CH.forEach(function(c){var el=$('src-'+c.id);if(el)el.value=perso[c.id]!=null?perso[c.id]:(c.defaut!=null?c.defaut:'')});return}var e=S.base.evenement,l=lieuDe(S.base);$('srcTitre').value=perso.titre||e.nom;$('srcDate').value=perso.date||e.date||'';$('srcLieu').value=perso.lieu||(l&&l.nom)||''}
 ['srcTitre','srcDate','srcLieu'].forEach(function(id){var el=$(id);if(el)el.addEventListener('input',function(){var k={srcTitre:'titre',srcDate:'date',srcLieu:'lieu'}[id],v=this.value.trim();perso[k]=v;
+ $('srcEtat').textContent=v?'Les '+nombre(N).toLowerCase()+' écrans se recomposent depuis la même source.':'Champ vide : la valeur d\'origine revient.';plus_tard()})});
+if(CH)CH.forEach(function(c){var el=$('src-'+c.id);if(el)el.addEventListener('input',function(){var v=this.value.trim();if(v==='')delete perso[c.id];else perso[c.id]=v;
  $('srcEtat').textContent=v?'Les '+nombre(N).toLowerCase()+' écrans se recomposent depuis la même source.':'Champ vide : la valeur d\'origine revient.';plus_tard()})});
 if($('srcRetour'))$('srcRetour').addEventListener('click',function(){perso={};champs();$('srcEtat').textContent='Valeurs d\'origine rétablies.';tout()});
 if($('source'))$('source').addEventListener('submit',function(e){e.preventDefault()});
@@ -156,7 +166,7 @@ requestAnimationFrame(choregraphie);
 
 /* démarrage : seulement quand la section approche, pour garder le premier écran léger */
 var U=sc.univers;
-function demarrer(){if(S)return;S={};Promise.all([j('/vitrine/donnees/'+U+'.json'),j('/vitrine/acces/'+U+'.json'),j('/vitrine/perspectives/'+U+'.json'),j('/vitrine/modeles/'+(sc.modele||'editorial')+'.json'),j('/vitrine/presentation/ambiances.json')]).then(function(r){
+function demarrer(){if(S)return;S={};if(AD){AD.charger(sc).then(function(){pret=true;champs();echelle();tout()}).catch(function(){S=null;var e=$('ecransEtat');if(e)e.textContent='Les écrans n\'ont pas pu être chargés. Rechargez la page.'});return}Promise.all([j('/vitrine/donnees/'+U+'.json'),j('/vitrine/acces/'+U+'.json'),j('/vitrine/perspectives/'+U+'.json'),j('/vitrine/modeles/'+(sc.modele||'editorial')+'.json'),j('/vitrine/presentation/ambiances.json')]).then(function(r){
  var pr=r[4],m=r[3];S={base:r[0],acces:r[1],ps:r[2],modele:m,pol:{titre:(pr.polices[m.polices.titre]||{}).famille,texte:(pr.polices[m.polices.texte]||{}).famille}};
  teintes(sc,S.acces);pret=true;champs();echelle();tout()}).catch(function(){S=null;var e=$('ecransEtat');if(e)e.textContent='Les écrans n\'ont pas pu être chargés. Rechargez la page.'})}
 if('IntersectionObserver' in window){var io=new IntersectionObserver(function(en){if(en.some(function(e){return e.isIntersecting})){io.disconnect();demarrer()}},{rootMargin:'600px 0px'});io.observe($('arrivees')||$('ecrans'))}else demarrer();
@@ -166,7 +176,7 @@ return{projet:function(p){if(!p)return;perso={titre:p.titre||'',date:p.date||'',
 
 /* une seule instance par page ; le projet du visiteur peut arriver avant ou après le montage */
 var inst=null,attente=null;
-root.AIMECoeur={html:html,nombre:nombre,couleurs:COULEURS,
+root.AIMECoeur={html:html,nombre:nombre,couleurs:COULEURS,adaptateurs:{},
  monter:function(sc){inst=monter(sc);if(inst&&attente)inst.projet(attente);return inst},
  projet:function(p){if(inst)inst.projet(p);else attente=p}};
 if(typeof module==='object'&&module.exports)module.exports=root.AIMECoeur;

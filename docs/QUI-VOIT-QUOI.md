@@ -29,7 +29,7 @@ Décision de Matt (23/10/2026) : le principe de l'accueil (« un seul projet, ch
 1. ✅ Composant commun + scénarios ; accueil branché dessus.
 2. ✅ World (6 rôles) et Séminaire (6 rôles) sur `/exemples/`.
 3. ✅ (en partie) Live, Sites, Compte : la couleur du rôle (`coeur/roles.js`) sur « Rôle dans l'espace » (Live), « Voir comme » (Sites), les espaces et les membres (Compte). Reste : la charte noire de Sites (interface claire aujourd'hui).
-4. G44 : ses 4 identités branchées sur le composant (ses règles restent les siennes).
+4. ✅ G44 : ses 4 identités (agent, formateur, responsable, contrôleur) branchées sur le composant par un adaptateur (`g44/js/coeur-g44.js`) ; ses règles (`G44Acces.autoriser`) et sa simulation restent les siennes. `/exemples/?u=g44`. Un moteur qui n'est pas une vitrine apporte son adaptateur : `charger`, `page(rôle)`, `droits(rôles)`.
 5. Stitch : créatrice, boutique, brodeuse, visiteur modélisés (accès + règles), un écran chacun.
 6. Magazine / Publication, Studio, Régie : idem avec leurs rôles.
 7. Navigation : Accueil · Mon projet · Exemples · Lab.
