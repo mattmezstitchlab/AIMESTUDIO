@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exemples · AIME</title>
-<meta name="description" content="Les exemples AIME : un même principe, un seul projet, chacun son écran. Mariage, mariage à distance, séminaire : deux, quatre, six rôles ou plus.">
+<meta name="description" content="Les exemples AIME : un même principe, un seul projet, chacun son écran. Mariage, mariage à distance, séminaire, administration : deux, quatre, six rôles ou plus.">
 <meta name="theme-color" content="#0A0A0C">
 <link rel="icon" href="data:,">
 <script>try{if(localStorage.getItem('aime-zero-calme')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}catch(e){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}</script>
@@ -65,9 +65,10 @@
 var EX=[
  {u:'mariage',href:'/',genre:'Mariage',titre:'Léa & Marc',texte:'Le couple, le prestataire, l\'invitée, la coordination.',n:4},
  {u:'world',href:'/exemples/?u=world',genre:'Mariage à distance',titre:'Inès & Théo · Paris / New York',texte:'Le couple, l\'agence, le prestataire, l\'invitée, la contributrice, la coordination locale.',n:6},
- {u:'seminaire',href:'/exemples/?u=seminaire',genre:'Séminaire d\'entreprise',titre:'Maison Orée · Cap 2030',texte:'La direction, l\'intervenante, le participant, la logistique, le traiteur, l\'observateur.',n:6}];
+ {u:'seminaire',href:'/exemples/?u=seminaire',genre:'Séminaire d\'entreprise',titre:'Maison Orée · Cap 2030',texte:'La direction, l\'intervenante, le participant, la logistique, le traiteur, l\'observateur.',n:6},
+ {u:'g44',href:'/exemples/?u=g44',genre:'Administration · G44 LAB',titre:'Un dossier, quatre missions',texte:'L\'agent, le formateur, la responsable, le contrôleur : un dossier fictif, des habilitations, rien d\'exécuté.',n:4}];
 var $=function(i){return document.getElementById(i)},esc=function(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
-var u=(new URLSearchParams(location.search).get('u')||'').replace(/[^a-z]/g,''),ex=EX.filter(function(e){return e.u===u&&e.u!=='mariage'})[0];
+var u=(new URLSearchParams(location.search).get('u')||'').replace(/[^a-z0-9]/g,''),ex=EX.filter(function(e){return e.u===u&&e.u!=='mariage'})[0];
 $('exAutres').innerHTML=EX.filter(function(e){return!ex||e.u!==ex.u}).map(function(e){return'<li><a href="'+e.href+'">'+esc(e.genre)+' · '+esc(e.titre)+' · '+e.n+' rôles</a></li>'}).join('');
 function charger(srcs,fin){var i=0;(function suite(){if(i>=srcs.length)return fin();var s=document.createElement('script');s.src=srcs[i++];s.onload=suite;s.onerror=suite;document.body.appendChild(s)})()}
 var ORBE=['/zero/orbe.js','/zero/points.js','/zero/yeux.js','/zero/formes.js','/zero/zero.js'];
@@ -83,7 +84,7 @@ fetch('/vitrine/scenarios/'+ex.u+'.json',{cache:'no-cache'}).then(function(r){if
  $('exGenre').textContent='Exemple · '+(sc.genre||ex.genre);$('t-zero').textContent=sc.titre;
  $('exLead').textContent=AIMECoeur.nombre(N)+' personnes, un seul projet. Chacune voit ce qui la concerne.';
  $('exCorps').innerHTML=AIMECoeur.html(sc);
- charger(ORBE,function(){AIMECoeur.monter(sc);porte()})
+ charger((sc.scripts||[]).filter(function(s){return /^\/[a-z0-9\/-]+\.js$/.test(s)}).concat(ORBE),function(){AIMECoeur.monter(sc);porte()})
 }).catch(function(){$('exCorps').innerHTML='<p class="cx-note">Cet exemple n\'a pas pu être chargé. Rechargez la page.</p>';charger(ORBE,porte)});
 })();
 </script>

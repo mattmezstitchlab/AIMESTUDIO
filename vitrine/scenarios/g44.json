@@ -1,0 +1,217 @@
+{
+ "_": "Scénario G44 LAB : un dossier administratif fictif, quatre identités. Le dossier, la simulation, les perspectives et les règles restent ceux du laboratoire (g44/js) ; ce fichier ne décrit que les arrivées.",
+ "univers": "g44",
+ "moteur": "g44",
+ "titre": "Dossier fictif DOS-FICTIF-0001",
+ "genre": "Administration · G44 LAB",
+ "scripts": [
+  "/g44/js/dossier.js",
+  "/g44/js/moteur.js",
+  "/g44/js/acces.js",
+  "/g44/js/formation.js",
+  "/g44/js/coeur-g44.js"
+ ],
+ "arriveesTexte": "Une année de mariage est erronée et un enfant est déjà rattaché au dossier. Quatre personnes y travaillent, chacune avec sa mission ; l'orbe recueille ce que chacune apporte.",
+ "source": {
+  "champs": [
+   {
+    "id": "annee",
+    "label": "Année envisagée pour le mariage",
+    "type": "number",
+    "min": 2012,
+    "max": 2020,
+    "defaut": 2016
+   }
+  ]
+ },
+ "roles": [
+  {
+   "angle": "agent",
+   "nom": "L'agent",
+   "de": "de l'agent",
+   "resume": "Les identités, la chronologie, le plan.",
+   "arrivee": {
+    "titre": "L'agent instruit la correction.",
+    "texte": "L'année du mariage enregistrée ne concorde pas avec l'acte. L'agent ouvre le dossier sur sa mission : il voit les personnes, la chronologie et un plan qui ne s'exécute jamais seul.",
+    "fiche": [
+     {
+      "k": "Sa mission",
+      "chemins": [
+       [
+        "Instruire la correction",
+        "Sur ce dossier, jusqu'au 31/12/2026"
+       ],
+       [
+        "Habilitations",
+        "H1 accordée · H2 déclarée, à vérifier"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Dossier",
+        "DOS-FICTIF-0001"
+       ],
+       [
+        "Écart",
+        "Mariage 2015 → 2016"
+       ],
+       [
+        "Pièce",
+        "Acte de mariage (fictif)"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Agent fictif 3",
+     "agent",
+     "sur ce dossier"
+    ]
+   }
+  },
+  {
+   "angle": "formateur",
+   "nom": "Le formateur",
+   "de": "du formateur",
+   "resume": "Une copie anonymisée, la séance.",
+   "arrivee": {
+    "titre": "Le formateur prépare une séance.",
+    "texte": "Le même dossier sert à former, sur une copie anonymisée : le formateur voit l'enchaînement des étapes, jamais les identités.",
+    "fiche": [
+     {
+      "k": "Sa mission",
+      "chemins": [
+       [
+        "Former",
+        "Sur une copie anonymisée"
+       ],
+       [
+        "Habilitations",
+        "Aucune : il prépare, il n'exécute pas"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Copie",
+        "Anonymisée"
+       ],
+       [
+        "Exercice",
+        "Ordonner les étapes"
+       ],
+       [
+        "Identités",
+        "Jamais montrées"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Formateur fictif",
+     "formation",
+     "sur copie"
+    ]
+   }
+  },
+  {
+   "angle": "responsable",
+   "nom": "La responsable",
+   "de": "de la responsable",
+   "resume": "Le plan, le journal, la validation.",
+   "arrivee": {
+    "titre": "La responsable valide le plan.",
+    "texte": "Avant toute intervention réelle, un plan doit être validé par une personne habilitée. La responsable voit le plan, le journal et ce qui reste à vérifier.",
+    "fiche": [
+     {
+      "k": "Sa mission",
+      "chemins": [
+       [
+        "Valider le plan",
+        "Jusqu'au 30/11/2026"
+       ],
+       [
+        "Habilitation",
+        "H3 accordée"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Plan",
+        "Proposé, non exécuté"
+       ],
+       [
+        "Décision",
+        "Date d'effet du rattachement"
+       ],
+       [
+        "Validation",
+        "À sa main"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Responsable fictive",
+     "validation",
+     "du plan"
+    ]
+   }
+  },
+  {
+   "angle": "controleur",
+   "nom": "Le contrôleur",
+   "de": "du contrôleur",
+   "resume": "La provenance et les décisions, sans données personnelles.",
+   "arrivee": {
+    "titre": "Le contrôleur vérifie la provenance.",
+    "texte": "Le contrôle porte sur la provenance et les décisions : le contrôleur lit le journal et le plan, sans accès aux données personnelles du foyer.",
+    "fiche": [
+     {
+      "k": "Sa mission",
+      "chemins": [
+       [
+        "Contrôler",
+        "Provenance et décisions, jusqu'au 31/01/2027"
+       ],
+       [
+        "Données personnelles",
+        "Aucune"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Journal",
+        "Neuf étapes de simulation"
+       ],
+       [
+        "Plan",
+        "Ordre des contrôles"
+       ],
+       [
+        "Identités",
+        "Masquées"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Contrôleur fictif",
+     "contrôle",
+     "a posteriori"
+    ]
+   }
+  }
+ ]
+}
