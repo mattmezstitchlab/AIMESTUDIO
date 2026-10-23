@@ -7,7 +7,8 @@
   "lieux": "Lieux",
   "details": "Détails et objets",
   "fonds": "Fonds et textures",
-  "scene": "Scène et prestataires"
+  "scene": "Scène et prestataires",
+  "ecrans": "Écrans d'AIME"
  },
  "images": [
   {
@@ -1750,6 +1751,62 @@
    "source": {
     "depot": "WEDMAG",
     "chemin": "premium-wedding-editorial-experience/public/covers/009-videaste.jpg"
+   }
+  },
+  {
+   "id": "ecran-canevas-design-system",
+   "cat": "ecrans",
+   "fichier": "ecran-canevas-design-system.webp",
+   "vignette": "ecran-canevas-design-system.v.webp",
+   "l": 1440,
+   "h": 900,
+   "alt": "Le Canevas d'AIME avec le panneau Design System ouvert : quatre directions et l'apparence d'origine",
+   "source": {
+    "depot": "AIMESTUDIO",
+    "chemin": "scripts/magazine-captures.cjs",
+    "licence": "Création AIME, données fictives"
+   }
+  },
+  {
+   "id": "ecran-canevas-minisite",
+   "cat": "ecrans",
+   "fichier": "ecran-canevas-minisite.webp",
+   "vignette": "ecran-canevas-minisite.v.webp",
+   "l": 1440,
+   "h": 900,
+   "alt": "Le mini-site d'un projet de broderie ouvert dans le Canevas d'AIME, avec sa palette de fils DMC",
+   "source": {
+    "depot": "AIMESTUDIO",
+    "chemin": "scripts/magazine-captures.cjs",
+    "licence": "Création AIME, données fictives"
+   }
+  },
+  {
+   "id": "ecran-comparaison",
+   "cat": "ecrans",
+   "fichier": "ecran-comparaison.webp",
+   "vignette": "ecran-comparaison.v.webp",
+   "l": 1440,
+   "h": 900,
+   "alt": "La comparaison avant / après du Canevas : le même mini-site en Minimal Clair et en Éditorial Magazine",
+   "source": {
+    "depot": "AIMESTUDIO",
+    "chemin": "scripts/magazine-captures.cjs",
+    "licence": "Création AIME, données fictives"
+   }
+  },
+  {
+   "id": "ecran-point-zero",
+   "cat": "ecrans",
+   "fichier": "ecran-point-zero.webp",
+   "vignette": "ecran-point-zero.v.webp",
+   "l": 1440,
+   "h": 900,
+   "alt": "L'écran d'accueil du Point Zéro : un point au centre d'un écran sombre",
+   "source": {
+    "depot": "AIMESTUDIO",
+    "chemin": "scripts/magazine-captures.cjs",
+    "licence": "Création AIME, données fictives"
    }
   }
  ],

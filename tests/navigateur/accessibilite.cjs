@@ -3,7 +3,7 @@
    Échoue (code 1) si une page a une anomalie « critique » ou « sérieuse ». Usage comme parcours.cjs. */
 const { chromium } = require('playwright'); const fs = require('fs');
 const B = process.env.BASE || 'http://localhost:8771', AXE = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
-const PAGES = ['/', '/point-zero/', '/aime/', '/cube/', '/bureau/', '/bureau/espace/', '/canevas/', '/reseau/', '/compte/', '/regie/', '/sites/'];
+const PAGES = ['/', '/point-zero/', '/aime/', '/cube/', '/bureau/', '/bureau/espace/', '/canevas/', '/reseau/', '/compte/', '/regie/', '/sites/', '/canevas/?publication=exemple-aime-magazine', '/publication/?exemple=aime-magazine'];
 (async () => {
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}); let n = 0;
   for (const [nom, vp] of [['ordinateur', { width: 1440, height: 900 }], ['téléphone', { width: 390, height: 844 }]]) {

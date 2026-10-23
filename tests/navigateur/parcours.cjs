@@ -21,6 +21,16 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     await p.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
     const dock = await p.$$eval('#dockApps [data-app]', a => a.map(x => x.dataset.app));
     ok(dock.includes('reseau') && dock.includes('canevas'), 'dock : Réseau et Canevas'); ok(!dock.includes('sites'), 'dock : pas l\'ancien générateur');
+    // l'ancien Bureau (« aime-os ») survit à l'ouverture et à la fermeture d'une fenêtre
+    const ANCIEN = JSON.stringify({ folders: [{ id: 'f1', n: 'Mariage' }], memos: ['penser au sax'], me: { nom: 'Matt' } });
+    await p.evaluate(v => localStorage.setItem('aime-os', v), ANCIEN);
+    await p.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(500);
+    await p.click('#dockApps [data-app="canevas"]').catch(() => {}); await p.waitForTimeout(800);
+    await p.keyboard.press('Escape').catch(() => {}); await p.waitForTimeout(500);
+    const garde = await p.evaluate(() => ({ a: localStorage.getItem('aime-os'), v2: localStorage.getItem('aime-os-v2') }));
+    ok(garde.a === ANCIEN, 'ancien Bureau : « aime-os » intact après une fenêtre ouverte');
+    ok(!!garde.v2 && /fenetres/.test(garde.v2), 'OS : son état vit sous « aime-os-v2 »');
+    await p.evaluate(() => { localStorage.removeItem('aime-os'); localStorage.removeItem('aime-os-v2') });
     // Point Zéro : une photo devient un projet (image dessinée dans la page, déposée comme un fichier)
     await p.goto(B + '/point-zero/', { waitUntil: 'networkidle' });
     ok(await p.$eval('[data-donnees]', e => /ce navigateur/.test(e.textContent) && !!e.querySelector('a[href="/bureau/espace/"]')).catch(() => false), 'Point Zéro : la mention « où sont mes données » est visible');
@@ -35,6 +45,44 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     }
     const lien = await p.$('a:has-text("Modifier dans le Canevas"), button:has-text("Modifier dans le Canevas")'); ok(!!lien, 'Point Zéro : le projet propose « Modifier dans le Canevas »');
     if (lien) { await lien.evaluate(e => e.click()); await p.waitForURL(/\/canevas\/\?site=/, { timeout: 10000 }).catch(() => {}); await p.waitForTimeout(2500); ok(/Mini-site/.test(await p.textContent('body')), 'Canevas : le mini-site du projet est ouvert'); }
+    // Design System (démonstration) : une direction en un clic, contenu identique, annulation, puis l'aperçu du projet relit le choix
+    if (lien && await p.$('.cvs-ds-b')) {
+      const ds = await p.evaluate(async () => { const w = ms => new Promise(x => setTimeout(x, ms)); 
+        document.querySelector('.cvs-ds-b').click(); await w(500); const r = [...document.querySelectorAll('.cvs-ds input')].map(i => i.value);
+        const lu = () => (document.querySelector('.cvs-if').contentDocument.querySelector('style').textContent.match(/--c1:[^;]+/) || [''])[0];
+        const avant = lu(); document.querySelector('.cvs-ds input[value=aime-editorial]').click(); await w(1200); const apres = lu();
+        document.querySelector('[data-a=annuler]').click(); await w(1000); const annule = lu();
+        document.querySelector('.cvs-ds input[value=aime-editorial]').click(); await w(1000);
+        const b = [...document.querySelectorAll('.cvs-barre button')].find(x => /Enregistrer/.test(x.textContent)); if (b) b.click(); await w(400);
+        return { r, avant, apres, annule, dit: document.querySelector('.cvs-ds-dit').textContent }; });
+      ok(ds.r.length === 5 && ds.apres === '--c1:#99472C' && ds.annule === ds.avant, 'Canevas : Design System Éditorial appliqué puis annulé (' + ds.avant + ' → ' + ds.apres + ' → ' + ds.annule + ')');
+      ok(/contenu n'a pas changé/.test(ds.dit), 'Canevas : le contenu reste identique');
+      const pid = new URL(p.url()).searchParams.get('projet');
+      await p.goto(B + '/projet/?id=' + encodeURIComponent(pid), { waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
+      const c1 = await p.evaluate(() => { const f = document.getElementById('site'); return f && f.srcdoc ? (f.srcdoc.match(/--c1:[^;]+/) || [''])[0] : ''; });
+      ok(c1 === '--c1:#99472C', 'Projet : l\'aperçu montre le Design System enregistré (' + c1 + ')');
+    }
+    // Studio Publication (M1) : créer, appliquer un gabarit, modifier un titre, remplacer une image, ajouter et réordonner une page, enregistrer, recharger, lire
+    await p.goto(B + '/canevas/?publication=nouvelle', { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
+    ok(!!(await p.$('.pub-g')) && !!(await p.$('.pub-d')) && !!(await p.$('.pub-cf')) && !!(await p.$('.pub-scene')), 'Studio Publication : structure, propriétés, chemin de fer, composition');
+    const pubR = await p.evaluate(async () => { const w = ms => new Promise(x => setTimeout(x, ms)); const q = s => document.querySelector(s), qa = s => [...document.querySelectorAll(s)];
+      qa('.pub-cf-p')[1].click(); await w(700); q('#pub-tab-gabarits').click(); await w(200);
+      qa('.pub-gab').find(g => /Article/.test(g.textContent)).querySelector('button').click(); await w(900);
+      q('#pub-tab-pages').click(); await w(200); qa('.pub-bl').find(b => /Titraille/.test(b.textContent)).click(); await w(400);
+      const t = qa('.pub-d input').find(i => /Titre/.test(i.closest('label').textContent)); t.value = 'Un *catalogue* d\'atelier'; t.dispatchEvent(new Event('input', { bubbles: true })); await w(800);
+      const titre = q('.pub-if').contentDocument.querySelector('.pl-titraille .tt-t').innerHTML;
+      qa('.pub-bl').find(b => /Image/.test(b.textContent)).click(); await w(300); q('#pub-tab-medias').click(); await w(400); q('.pub-med').click(); await w(800);
+      const img = !!q('.pub-if').contentDocument.querySelector('.pl-image img');
+      qa('.pub-cf-p')[0].click(); await w(700); q('.pub-cf-a select').value = 'page-texte'; qa('.pub-cf-a button').find(b => /\+ Page/.test(b.textContent)).click(); await w(700); qa('.pub-cf-a button').find(b => b.getAttribute('aria-label') === 'Reculer la page').click(); await w(700);
+      const ordre = qa('.pub-cf-p').map(b => b.textContent), courant = q('.pub-cf-p.on').textContent;
+      qa('.pub-barre button').find(b => /Enregistrer/.test(b.textContent)).click(); await w(400);
+      const o = JSON.parse(localStorage.getItem('aime-sites')), id = Object.keys(o.sites).find(k => /^pub-/.test(k)); return { titre, img, ordre, courant, id, n: id && o.sites[id].pages.length }; });
+    ok(/<em>catalogue<\/em>/.test(pubR.titre) && pubR.img, 'Studio Publication : gabarit appliqué, titre et image modifiés');
+    ok(pubR.n === 3 && /Page de texte/.test(pubR.ordre.at(-1)) && /Page de texte/.test(pubR.courant) && /Ouverture/.test(pubR.ordre[1]), 'Studio Publication : page ajoutée puis réordonnée (' + pubR.ordre.join(' / ') + ')');
+    await p.goto(B + '/canevas/?publication=' + pubR.id, { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
+    ok(/Enregistré sur cet appareil/.test(await p.textContent('.pub-etat')) && (await p.$$('.pub-cf-p')).length === 3, 'Studio Publication : retrouvée à l\'identique après rechargement');
+    await p.goto(B + '/publication/?id=' + pubR.id + '&vue=tel', { waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
+    ok(await p.evaluate(() => { const f = document.getElementById('doc'); return /class="planche/.test(f.srcdoc) && document.querySelector('.lp-cadre').classList.contains('tel') && !/data-sec=/.test(f.srcdoc); }), 'Lecture : vue publique, aperçu téléphone');
     // Réseau : la carte du projet, puis un module ajouté après les sept vérifications
     await p.goto(B + '/reseau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
     ok((await p.$$('.rx-carte')).length > 0, 'Réseau : la carte du projet');

@@ -1,11 +1,12 @@
 /* AIME OS · la coque. Un bureau, des fenêtres, un dock, une recherche, une orbe système.
    Chaque app est une page du site ouverte dans une fenêtre (même origine). L'orbe système lit les réglages d'orbe de la
    Régie (regie/site.json, ou le brouillon si « Aperçu de mes réglages » est actif) pour l'app au premier plan.
-   Ce qui est gardé : la disposition des fenêtres et les apps épinglées (localStorage « aime-os »), rien d'autre. */
+   Ce qui est gardé : la disposition des fenêtres et les apps épinglées (localStorage « aime-os-v2 »), rien d'autre.
+   « aime-os » est la clé de l'ancien Bureau : jamais écrite ici (voir AIMEOSApps.etatInitial). */
 (function(){'use strict';
 var A=window.AIMEOSApps,N=window.AIMENav,R=window.AIMERegie,B=window.AIMEBureauSources;if(!A||!N||!document.getElementById('dock'))return;
 window.AIMEOS={version:1};
-var CLE='aime-os',ESC={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+var CLE=A.CLE_ETAT,ESC={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return ESC[c]})}
 function $(id){return document.getElementById(id)}
 function lire(k){try{var t=localStorage.getItem(k);return t?JSON.parse(t):null}catch(e){return null}}
@@ -17,7 +18,7 @@ function texte(id,t){var e=$(id);if(e)e.textContent=t}
 /* le propriétaire du site (droit décidé par le serveur, /api/identite) voit en plus la Régie et les démonstrateurs internes */
 var proprio=false,cat=A.catalogue(N.ENTREES),parId={};cat.forEach(function(a){parId[a.id]=a});
 function actionsVues(){return A.actions?A.actions({proprietaire:proprio}):A.ACTIONS}
-if(PAGE)CLE='aime-os-zero';var etat=A.etat(lire(CLE)),fen=[],z=10,focusId=null,seq=0,cfg=null;
+if(PAGE)CLE='aime-os-zero';var etat=PAGE?A.etat(lire(CLE)):A.etatInitial(lire(CLE),lire(A.CLE_ANCIENNE)),fen=[],z=10,focusId=null,seq=0,cfg=null;
 function annoncer(m){texte('annonce',m)}
 
 /* ---------- icônes ---------- */
