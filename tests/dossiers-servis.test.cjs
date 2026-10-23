@@ -16,3 +16,14 @@ test('aucune page ni fonction ne charge un dossier non déployé', () => {
   const fautifs = vus.filter(f => motif.test(fs.readFileSync(R(f), 'utf8')));
   assert.deepEqual(fautifs, []);
 });
+
+/* /v1/ et /mariage sont abandonnés (décision du 24/10/2026, ils gardent des allergies sans compte) : plus aucun lien n'y mène ;
+   les fichiers sont retirés au lot 5. */
+test('aucun lien vers /v1/ ni /mariage', () => {
+  const vus = [], parcourir = d => { for (const n of fs.readdirSync(R(d), { withFileTypes: true })) { const p = path.join(d, n.name);
+    if (n.isDirectory()) { if (['node_modules', '.git', 'tests', 'docs', 'v1', 'vendor'].includes(n.name)) continue; parcourir(p); }
+    else if (/\.(html|js|mjs|json)$/.test(n.name) && n.name !== 'mariage.html') vus.push(p); } };
+  parcourir('.');
+  const fautifs = vus.filter(f => /["'(]\/v1\/?["'#?)]|["'(]\/mariage(\.html)?["'#?)]/.test(fs.readFileSync(R(f), 'utf8')));
+  assert.deepEqual(fautifs, []);
+});
