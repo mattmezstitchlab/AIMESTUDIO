@@ -1,5 +1,5 @@
 {
-  "_": "Les quatre angles du même séminaire. Même moteur, mêmes types de sections que le mariage : seuls les choix, les filtres, les actions et les mots changent.",
+  "_": "Les angles du même séminaire (direction, intervenante, participant, logistique, traiteur, observateur). Même moteur, mêmes types de sections que le mariage : seuls les choix, les filtres, les actions et les mots changent.",
   "univers": "seminaire",
   "libelles": {
     "valeurs": {
@@ -325,6 +325,60 @@
         {
           "type": "documents",
           "titre": "Documents"
+        }
+      ]
+    },
+    {
+      "id": "prestataire",
+      "label": "Prestataire",
+      "regard": "u-saveurs",
+      "kicker": "Votre prestation",
+      "intro": "Vos créneaux de service, l'accès au site et vos contacts sur place, sans le reste.",
+      "sections": [
+        {
+          "type": "programme",
+          "titre": "Vos créneaux",
+          "filtre": "assigne",
+          "notes": true
+        },
+        {
+          "type": "lieu",
+          "titre": "Accès au site",
+          "planB": true
+        },
+        {
+          "type": "personnes",
+          "titre": "Vos contacts sur place",
+          "groupes": [
+            "coordination"
+          ],
+          "contacts": true
+        },
+        {
+          "type": "documents",
+          "titre": "Vos documents"
+        }
+      ]
+    },
+    {
+      "id": "observateur",
+      "label": "Observateur",
+      "regard": "u-eric",
+      "kicker": "Vous suivez",
+      "intro": "Le programme et les documents partagés, en lecture seule.",
+      "sections": [
+        {
+          "type": "programme",
+          "titre": "Le programme",
+          "filtre": "public"
+        },
+        {
+          "type": "lieu",
+          "titre": "Le lieu"
+        },
+        {
+          "type": "documents",
+          "titre": "Documents partagés"
         }
       ]
     }

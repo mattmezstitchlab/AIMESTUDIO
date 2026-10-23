@@ -58,4 +58,8 @@ $('acReprendreB').addEventListener('click',function(){projet=D.courant();if(!pro
 reprendreUI();
 /* au chargement, les scripts des démonstrations (chargés après celui-ci) doivent exister : on attend la fin du chargement */
 addEventListener('load',function(){brancher(D.courant())});
+/* ce que ce navigateur contient déjà : quelques liens, en lecture seule (bureau/sources.js), invisible s'il n'y a rien */
+(function(){var B=window.AIMEBureauSources,box=$('repriseLiens');if(!B||!box)return;try{var inv=B.inventaire(window.localStorage);if(!inv.projets||!inv.projets.length)return;
+ var l=B.reprendre(inv,4);if(!l.length)l=inv.projets.slice(0,3);var e=function(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+ box.innerHTML=l.map(function(p){return'<a href="'+e(p.lien)+'">'+e(p.titre)+' <small>('+e(p.detail||p.nom||'local')+')</small></a>'}).join('');$('repriseLocale').hidden=false}catch(_){}})();
 })();

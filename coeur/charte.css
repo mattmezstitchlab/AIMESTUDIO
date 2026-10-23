@@ -1,0 +1,96 @@
+/* AIME · la charte partagée des pages du cœur (exemples) : mêmes jetons, même barre, même orbe, mêmes points des « i »
+   que l'accueil (index.html la porte en ligne pour son premier rendu). Noir, structure, contraste ; l'orbe seule en couleur. */
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin.woff2") format("woff2")}
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin-ext.woff2") format("woff2");unicode-range:U+0100-024F,U+1E00-1EFF}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin-ext.woff2") format("woff2-variations");unicode-range:U+0100-024F,U+1E00-1EFF}
+/* l'identité AIME existante : les mêmes jetons que la grande landing */
+:root{color-scheme:dark;--desk:#0A0A0C;--ink:#EDEDF0;--soft:#9C9CA8;--faint:#7E7E8A;--line:#2B2B33;
+ --ui:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--display:"Cal Sans","Inter Variable",Inter,-apple-system,sans-serif;
+ --conic:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185)}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{margin:0;background:var(--desk);color:var(--ink);font:400 17px/1.55 var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
+.evite{position:absolute;left:-999px;top:10px;z-index:50;background:var(--ink);color:var(--desk);padding:10px 14px;border-radius:10px;text-decoration:none}.evite:focus{left:12px}
+.col{max-width:980px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));text-align:center}
+
+/* la barre : presque rien */
+.barre{position:fixed;inset:0 0 auto;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 14px max(20px,env(safe-area-inset-left,0px));pointer-events:none}
+.barre a{pointer-events:auto;text-decoration:none}
+.barre .mk{font:400 19px var(--display);letter-spacing:-.01em;opacity:0;transition:opacity .6s;padding-left:44px}
+.barre .mk sup{font-size:.5em}
+body.loin .barre .mk{opacity:1}
+.barre::before{content:"";position:absolute;inset:0 0 -24px;background:linear-gradient(var(--desk) 40%,transparent);opacity:0;transition:opacity .5s;z-index:-1}
+body.loin .barre::before{opacity:.92}
+.barre .droite{display:flex;align-items:center;gap:16px;pointer-events:auto}
+.barre .compte-d{font:500 12.5px var(--ui);color:var(--ink);opacity:.85;text-decoration:underline;text-underline-offset:3px}.barre .compte-d:hover{opacity:1}
+@media (max-width:620px){.barre .passer{display:none}.barre .mk{padding-left:0}}
+.barre .passer{font:500 13px var(--ui);color:var(--soft);padding:8px 2px;transition:color .2s}.barre .passer:hover{color:var(--ink)}
+
+/* l'orbe : un seul objet, qui suit des ancres posées dans la page */
+.flot{position:fixed;left:0;top:0;width:100px;height:100px;z-index:2;pointer-events:none;will-change:transform,opacity;transform-origin:0 0}
+.aime-orbe{position:relative;display:block;width:100%;height:100%}
+.ao-halo{position:absolute;inset:-30%;border-radius:50%;background:radial-gradient(closest-side,rgba(124,92,255,.34),rgba(34,211,238,.10) 52%,rgba(251,113,133,.05) 64%,transparent 74%);animation:halo 9s ease-in-out infinite;will-change:transform,opacity}
+.ao-def{position:absolute}
+.ao-peau,.ao-lumiere{position:absolute;inset:0;display:block}.ao-peau{overflow:hidden}
+.ao-cone{position:absolute;inset:-21%;display:block;background:var(--conic);animation:tourne 22s linear infinite;will-change:transform}
+.ao-lumiere{background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55),rgba(255,255,255,.08) 28%,transparent 46%),radial-gradient(circle at 70% 78%,rgba(10,10,12,.38),transparent 55%)}
+@keyframes tourne{to{transform:rotate(360deg)}}
+@keyframes halo{50%{transform:scale(1.08);opacity:.75}}
+.ancre{display:block;margin:0 auto;aspect-ratio:1;flex:none}
+
+/* le point zéro */
+.zero{min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(22px,3.6vh,38px);padding:calc(76px + env(safe-area-inset-top,0px)) 0 96px;position:relative}
+.zero .ancre{width:min(28vmin,220px)}
+.zero h1{margin:0;font:400 clamp(56px,9vw,112px)/.95 var(--display);letter-spacing:-.02em}
+.zero h1 sup{font-size:.28em;vertical-align:top;position:relative;top:.35em;margin-left:.04em}
+.zero .intention{margin:14px 0 0;font:400 clamp(22px,2.6vw,32px)/1.25 var(--ui);letter-spacing:-.015em}
+.zero .trois{margin:14px 0 0;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
+.descendre{position:absolute;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font:500 14px var(--ui);color:var(--soft);text-decoration:none;display:grid;justify-items:center;gap:8px;padding:6px 10px}
+.descendre i{width:1px;height:30px;background:linear-gradient(var(--soft),transparent);display:block;animation:fil 2.8s ease-in-out infinite;transform-origin:top}
+@keyframes fil{0%{transform:scaleY(0);opacity:0}40%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
+.apparait{opacity:0;transform:translateY(22px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.2,.7,.2,1)}
+.apparait.vu{opacity:1;transform:none}
+
+/* entrer */
+.entrer{min-height:80svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(24px,4vh,40px);padding:110px 0 100px;position:relative;border-top:1px solid var(--line)}
+.entrer h2{margin:0;font:400 clamp(44px,7.2vw,96px)/1 var(--display);letter-spacing:-.025em}
+.entrer p{margin:22px auto 0;max-width:600px;font-size:clamp(17px,1.7vw,21px);color:var(--soft);text-wrap:balance}
+.bouton{display:inline-flex;align-items:center;gap:12px;margin-top:10px;padding:17px 28px;border-radius:999px;background:var(--ink);color:var(--desk);font:600 16.5px var(--ui);text-decoration:none;transition:transform .2s,box-shadow .3s}
+.sorties{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin-top:34px}.sorties .bouton{margin-top:0}.bouton.second{background:transparent;color:var(--ink);border:1px solid var(--line);padding:16px 24px}.bouton.second:hover{border-color:var(--soft)}
+@media (max-width:420px){.sorties .bouton{width:100%;justify-content:center}}
+.bouton:hover{transform:translateY(-1px);box-shadow:0 0 0 6px rgba(237,237,240,.08)}
+.bouton span{transition:transform .25s}.bouton:hover span{transform:translateX(4px)}
+.sorties-note{font-size:14px!important}
+.pied{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;flex-wrap:wrap;gap:8px 22px;font:500 12.5px var(--ui);color:var(--soft);padding:0 20px}
+.pied button{border:0;background:none;color:var(--ink);font:inherit;cursor:pointer;padding:4px 2px;text-decoration:underline;text-underline-offset:3px}
+
+/* mouvement réduit */
+html.calme .apparait{opacity:1;transform:none;transition:none}
+html.calme .ao-cone,html.calme .ao-halo,html.calme .descendre i{animation:none}
+html.calme .bouton,html.calme .bouton span{transition:none}
+
+/* les points des « i » */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ii{position:relative}
+.pt{position:absolute;border-radius:50%;background:currentColor;transform-origin:50% 50%;pointer-events:none}
+.pt.vif{background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.75),rgba(255,255,255,0) 46%),conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);box-shadow:0 0 .32em rgba(124,92,255,.75),0 0 .9em rgba(34,211,238,.25);animation:ptTourne 6s linear infinite}
+.pt.plein{box-shadow:0 0 .5em rgba(124,92,255,.9),0 0 1.4em rgba(251,113,133,.45)}
+@keyframes ptTourne{to{filter:hue-rotate(360deg)}}
+.eclats{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.eclats i{position:absolute;left:0;top:0;display:block;will-change:transform,opacity}
+html.calme .pt.vif{animation:none}
+
+/* deux orbes qui regardent */
+.duo{display:flex;justify-content:center;gap:clamp(14px,3vw,26px);margin:0 auto clamp(18px,3vh,30px)}
+.duo-o{position:relative;width:clamp(78px,11vw,112px);aspect-ratio:1;transform:scale(.2);opacity:0;transition:transform .9s cubic-bezier(.3,1.5,.5,1),opacity .5s}
+.duo-o.duo-1{transition-delay:.12s}
+.duo.eveil .duo-o{transform:none;opacity:1}
+.duo-c{position:absolute;inset:0;display:block}
+.yeux{position:absolute;left:19%;right:19%;top:27%;height:34%;display:flex;justify-content:space-between;z-index:2}
+.oeil{position:relative;width:42%;height:100%;border-radius:50%;background:#F5F5F7;box-shadow:inset 0 -2px 4px rgba(0,0,0,.18);overflow:hidden;transition:transform .12s}
+.oeil i{position:absolute;left:28%;top:26%;width:44%;height:48%;border-radius:50%;background:#0A0A0C;box-shadow:inset 2px 2px 0 rgba(255,255,255,.55)}
+.duo-o.cligne .oeil{transform:scaleY(.08)}
+

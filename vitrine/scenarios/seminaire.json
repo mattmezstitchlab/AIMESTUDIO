@@ -1,0 +1,291 @@
+{
+ "_": "Scénario Maison Orée : un séminaire d'entreprise, six rôles. Aucune donnée métier ni aucun droit ici.",
+ "univers": "seminaire",
+ "titre": "Maison Orée · Cap 2030",
+ "genre": "Séminaire",
+ "source": {
+  "titre": "L'événement"
+ },
+ "arriveesTexte": "Un séminaire d'entreprise : la direction, une intervenante, un participant, la logistique, le traiteur, un administrateur. Six chemins, un seul projet.",
+ "roles": [
+  {
+   "angle": "organisateur",
+   "qui": "u-claire",
+   "nom": "La direction",
+   "de": "de la direction",
+   "resume": "Tout : programme, inscriptions, budget, décisions.",
+   "arrivee": {
+    "titre": "La directrice lance le séminaire.",
+    "texte": "Claire écrit l'intention : deux jours pour préparer 2030. AIME en tire le projet ; elle invite ensuite son équipe, les intervenants et les prestataires.",
+    "fiche": [
+     {
+      "k": "Claire écrit",
+      "phrase": "Cap 2030, le séminaire de Maison Orée, le 18 mars 2027 aux Docks Verrière à Lille"
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Projet",
+        "Maison Orée · Cap 2030"
+       ],
+       [
+        "Date",
+        "18 mars 2027"
+       ],
+       [
+        "Lieu",
+        "Les Docks Verrière"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Claire Morel",
+     "propriétaire",
+     "du projet"
+    ]
+   }
+  },
+  {
+   "angle": "intervenant",
+   "qui": "u-ines",
+   "nom": "L'intervenante",
+   "de": "de l'intervenante",
+   "resume": "Ses sessions, ses salles, ses supports.",
+   "arrivee": {
+    "titre": "L'intervenante prépare sa keynote.",
+    "texte": "Inès est invitée pour intervenir. Déjà sur AIME ou nouvelle, elle rejoint, dépose son support et ajuste sa session ; elle ne voit que ce qui la concerne.",
+    "fiche": [
+     {
+      "k": "Deux chemins, un même projet",
+      "chemins": [
+       [
+        "Déjà sur AIME",
+        "Invitée → elle accepte"
+       ],
+       [
+        "Nouvelle",
+        "Lien reçu → inscription → elle rejoint"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Sujet",
+        "Prospective et climat"
+       ],
+       [
+        "Session",
+        "Keynote d'ouverture"
+       ],
+       [
+        "Support",
+        "À déposer"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Inès Garnier",
+     "contribution",
+     "au programme"
+    ]
+   }
+  },
+  {
+   "angle": "participant",
+   "qui": "u-hugo",
+   "nom": "Le participant",
+   "de": "du participant",
+   "resume": "Le programme public, le lieu, son inscription.",
+   "arrivee": {
+    "titre": "Le participant s'inscrit.",
+    "texte": "Hugo reçoit l'invitation interne, s'inscrit et indique ses besoins. Son inscription reste privée : l'organisation n'en partage que les chiffres.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "L'invitation",
+        "Un lien de l'organisation"
+       ],
+       [
+        "L'inscription",
+        "Une étape, puis il rejoint"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Inscription",
+        "Confirmée"
+       ],
+       [
+        "Besoins",
+        "Repas, hébergement"
+       ],
+       [
+        "Rôle",
+        "Participant"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Hugo Lambert",
+     "invité",
+     "du séminaire"
+    ]
+   }
+  },
+  {
+   "angle": "logistique",
+   "qui": "u-julien",
+   "nom": "La logistique",
+   "de": "de la logistique",
+   "resume": "Le déroulé, les salles, les équipes, les urgences.",
+   "arrivee": {
+    "titre": "La logistique tient le déroulé.",
+    "texte": "Julien coordonne les salles, le matériel et les prestataires. Il voit tout le déroulé et les plans de repli, pas les budgets de la direction.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Invité par la direction",
+        "Comme coordination logistique"
+       ],
+       [
+        "Il rejoint",
+        "Avec son compte AIME"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Déroulé",
+        "9 moments"
+       ],
+       [
+        "Repli",
+        "Plénière en atelier"
+       ],
+       [
+        "Équipes",
+        "Traiteur, technique"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Julien Petit",
+     "coordination",
+     "logistique"
+    ]
+   }
+  },
+  {
+   "angle": "prestataire",
+   "qui": "u-saveurs",
+   "nom": "Le traiteur",
+   "de": "du traiteur",
+   "resume": "Ses créneaux, l'accès, ses contacts.",
+   "arrivee": {
+    "titre": "Le traiteur rejoint l'événement.",
+    "texte": "Saveurs du Nord est invité par la logistique. Il voit ses créneaux de service, l'accès livraison et ses contacts sur place, rien de plus.",
+    "fiche": [
+     {
+      "k": "Deux chemins, un même projet",
+      "chemins": [
+       [
+        "Déjà sur AIME",
+        "Invité → il accepte"
+       ],
+       [
+        "Nouveau",
+        "Lien reçu → inscription → il rejoint"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Métier",
+        "Traiteur"
+       ],
+       [
+        "Service",
+        "Café 8 h 45, déjeuner 12 h 30"
+       ],
+       [
+        "Accès",
+        "Entrée livraisons"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Saveurs du Nord",
+     "contribution",
+     "au séminaire"
+    ]
+   }
+  },
+  {
+   "angle": "observateur",
+   "qui": "u-eric",
+   "nom": "L'observateur",
+   "de": "de l'observateur",
+   "resume": "Le programme et les documents, en lecture seule.",
+   "arrivee": {
+    "titre": "Un administrateur suit sans intervenir.",
+    "texte": "Éric siège au conseil. Il suit le séminaire en lecture seule : le programme et les documents partagés, sans les inscriptions nominatives ni les décisions.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Invité par la direction",
+        "En lecture seule"
+       ],
+       [
+        "Il suit",
+        "Sans rien modifier"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Rôle",
+        "Lecture seule"
+       ],
+       [
+        "Accès",
+        "Programme, documents"
+       ],
+       [
+        "Gestes",
+        "Aucun"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Éric Vasseur",
+     "lecture seule",
+     "du séminaire"
+    ]
+   }
+  }
+ ]
+}

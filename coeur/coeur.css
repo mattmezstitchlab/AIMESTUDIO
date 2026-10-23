@@ -1,4 +1,5 @@
-/* AIME · le cœur sur l'accueil : sobre, monochrome, de haut en bas. Seule l'orbe garde ses couleurs. */
+/* AIME · le cœur (accueil et exemples) : sobre, monochrome, de haut en bas. Seule l'orbe garde ses couleurs.
+   --n = nombre de rôles du scénario : la grille des écrans, le tableau et la scène s'y adaptent. */
 .cx{padding:clamp(96px,15vh,170px) 0;border-top:1px solid var(--line)}
 .cx-in{max-width:1180px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 .cx-k{margin:0 0 22px;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
@@ -16,7 +17,7 @@
 .cx-trace{min-height:1.5em;margin:18px 0 0;font:500 14px/1.5 var(--ui);color:var(--soft)}
 
 /* 01 · les quatre écrans */
-.ecrans{list-style:none;max-width:1240px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-left,0px));display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.2vw,32px)}
+.ecrans{list-style:none;max-width:calc(var(--n,4) * 310px);margin:0 auto;padding:0 max(20px,env(safe-area-inset-left,0px));display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:clamp(14px,2vw,32px)}
 .tel{margin:0;display:grid;gap:18px;align-content:start;min-width:0}
 .tel-ecran{position:relative;aspect-ratio:390/844;border-radius:clamp(22px,2.6vw,36px);overflow:hidden;background:#111114;box-shadow:0 0 0 1px var(--line),0 0 0 7px #0F0F12,0 0 0 8px var(--line),0 30px 80px -30px rgba(0,0,0,.9)}
 .tel-ecran iframe{position:absolute;left:0;top:0;width:390px;height:844px;border:0;transform-origin:0 0;background:#F4F4F2}
@@ -57,7 +58,7 @@
 .geste-b:hover:not(:disabled){border-color:var(--soft)}
 .geste-b[aria-pressed=true]{background:var(--ink);color:var(--desk);border-color:var(--ink)}
 .geste-b:disabled{opacity:.4;cursor:default}
-.jours{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin-top:28px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.jours{display:grid;grid-template-columns:repeat(min(var(--n,4),4),minmax(0,1fr));gap:1px;margin-top:28px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}
 .jj{background:var(--desk);padding:20px 18px 22px;min-width:0}
 .jj h3{margin:0 0 14px;font:600 15px var(--ui)}
 .jj ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
@@ -119,7 +120,7 @@ html.calme .jj li{transition:none}
 @media (max-width:860px){.sc{min-height:0}.sc-in{grid-template-columns:minmax(0,1fr)}.fiche{margin-top:24px}.fiche .ancre-sc{right:auto;left:50%;top:-50px;transform:translateX(-50%)}}
 
 /* 02 · l'orbe compose les quatre écrans : la scène reste en place pendant son passage */
-.ecrans-scene{position:relative;height:calc(100svh + 260svh)}
+.ecrans-scene{position:relative;height:calc(100svh + var(--n,4) * 65svh)}
 .ecrans-collant{position:sticky;top:max(72px,calc(50svh - 380px));padding-bottom:20px}
 .ecrans{position:relative}
 .ancre-ecran{position:absolute;left:0;top:0;width:64px;pointer-events:none;transition:none}
@@ -134,4 +135,14 @@ html.calme .jj li{transition:none}
 body.ecrans-libres .ecrans-scene,html.calme .ecrans-scene{height:auto}
 body.ecrans-libres .ecrans-collant,html.calme .ecrans-collant{position:static}
 html.calme .tel iframe,html.calme .tel-attente,html.calme .tel figcaption,html.calme .fiche-l dd{transition:none}
-@media (max-width:900px){.ecrans-scene{height:calc(100svh + 220svh)}.ecrans-collant{top:64px}}
+.droits{min-width:calc(180px + var(--n,4) * 150px)}
+@media (max-width:900px){.ecrans-scene{height:calc(100svh + var(--n,4) * 55svh)}.ecrans-collant{top:64px}}
+
+/* une couleur par rôle (--role, posée par coeur.js) : la marque reste noire, la couleur désigne la personne */
+.sc-k::before,.tel figcaption b::before,.droits thead th[style]::before,.jj h3::before{content:"";display:inline-block;width:.62em;height:.62em;margin-right:.55em;border-radius:50%;background:var(--role,var(--soft));vertical-align:.02em}
+.droits thead th[style]::before{display:block;margin:0 0 8px}
+.sc.recueilli .fiche{border-color:var(--role,#4A4A55);box-shadow:inset 0 2px 0 var(--role,transparent)}
+.tel-ecran{box-shadow:0 0 0 1px var(--line),0 0 0 7px #0F0F12,0 0 0 8px var(--line),0 30px 80px -30px rgba(0,0,0,.9)}
+.tel.ne .tel-ecran{box-shadow:0 0 0 1px var(--line),0 0 0 7px #0F0F12,0 0 0 8px var(--role,var(--line)),0 30px 80px -30px rgba(0,0,0,.9)}
+.tel-attente::before{background:linear-gradient(90deg,transparent,var(--role,var(--line)),transparent);opacity:.6}
+.jj li.change{background:color-mix(in srgb,var(--role,#EDEDF0) 14%,transparent)}

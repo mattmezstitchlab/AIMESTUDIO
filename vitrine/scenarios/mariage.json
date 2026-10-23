@@ -1,0 +1,204 @@
+{
+ "_": "Scénario de l'accueil : les rôles du mariage de démonstration, leur arrivée et ce que l'orbe recueille. Aucune donnée métier ni aucun droit ici : le contenu vient de vitrine/donnees, les droits de vitrine/acces et synchroview/permissions.js.",
+ "univers": "mariage",
+ "titre": "Léa & Marc",
+ "genre": "Mariage",
+ "source": {
+  "titre": "Les mariés"
+ },
+ "jourJ": {
+  "qui": "u-camille",
+  "moment": "ceremonie",
+  "pluie": "Il pleut : cérémonie à l'Orangerie",
+  "heure": "14:45"
+ },
+ "roles": [
+  {
+   "angle": "couple",
+   "qui": "u-lea",
+   "nom": "Le couple",
+   "de": "du couple",
+   "resume": "Tout : programme, réponses, prestataires, paiements.",
+   "arrivee": {
+    "titre": "Le couple crée le projet.",
+    "texte": "Léa écrit une phrase sur l'accueil. AIME en tire le projet : qui, quand, où, combien. C'est la source que tout le reste lira.",
+    "fiche": [
+     {
+      "k": "Léa écrit",
+      "phrase": "Le mariage de Léa et Marc, le 14 juin 2027 au Domaine des Aulnes, 120 invités"
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Projet",
+        "Léa & Marc"
+       ],
+       [
+        "Date",
+        "14 juin 2027"
+       ],
+       [
+        "Lieu",
+        "Domaine des Aulnes"
+       ],
+       [
+        "Invités",
+        "120"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Léa",
+     "propriétaire",
+     "du projet"
+    ]
+   }
+  },
+  {
+   "angle": "prestataire",
+   "qui": "u-lumen",
+   "nom": "Le prestataire",
+   "de": "du prestataire",
+   "resume": "Ses créneaux, l'accès, son contrat. Rien d'autre.",
+   "arrivee": {
+    "titre": "Le photographe rejoint le mariage.",
+    "texte": "Déjà inscrit sur AIME, Studio Lumen est invité au projet en un geste. Nouveau, il s'inscrit avec le lien reçu, puis rejoint. Dans les deux cas, il apporte son créneau et son contrat, rien de plus.",
+    "fiche": [
+     {
+      "k": "Deux chemins, un même projet",
+      "chemins": [
+       [
+        "Déjà sur AIME",
+        "Léa l'invite → il accepte"
+       ],
+       [
+        "Nouveau",
+        "Lien reçu → inscription → il rejoint"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Métier",
+        "Photographie et film"
+       ],
+       [
+        "Créneau",
+        "17 h 30 · Séance photo"
+       ],
+       [
+        "Document",
+        "Contrat, 2 pages"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Studio Lumen",
+     "contribution",
+     "au projet"
+    ]
+   }
+  },
+  {
+   "angle": "invite",
+   "qui": "u-lucie",
+   "nom": "L'invitée",
+   "de": "de l'invitée",
+   "resume": "Le programme public, le lieu, sa réponse.",
+   "arrivee": {
+    "titre": "L'invitée reçoit son invitation.",
+    "texte": "Lucie reçoit un lien. Elle s'inscrit en une étape, rejoint le mariage et répond. Sa réponse n'est écrite qu'une fois : le couple la voit, le traiteur n'en reçoit que le régime.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "L'invitation",
+        "Un lien personnel, envoyé par le couple"
+       ],
+       [
+        "L'inscription",
+        "Une étape, puis elle rejoint le mariage"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Réponse",
+        "Oui, présente"
+       ],
+       [
+        "Régime",
+        "Végétarien"
+       ],
+       [
+        "Rôle",
+        "Témoin"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Lucie",
+     "invitée",
+     "du mariage"
+    ]
+   }
+  },
+  {
+   "angle": "coordinateur",
+   "qui": "u-camille",
+   "nom": "La coordination",
+   "de": "de la coordination",
+   "resume": "Le déroulé, l'équipe, le plan B, les urgences.",
+   "arrivee": {
+    "titre": "La coordinatrice prend le déroulé.",
+    "texte": "Camille est invitée par le couple pour coordonner le jour J. Elle tient le déroulé, le plan B et l'équipe ; elle ne voit ni les paiements privés ni ce qui ne la regarde pas.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Invitée par le couple",
+        "Comme coordinatrice du jour J"
+       ],
+       [
+        "Elle rejoint",
+        "Avec son compte AIME, ou en s'inscrivant"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Déroulé",
+        "9 moments, de 12 h 30 à 3 h 30"
+       ],
+       [
+        "Plan B",
+        "Orangerie couverte"
+       ],
+       [
+        "Équipe",
+        "4 prestataires"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Camille Roux",
+     "coordination",
+     "du jour J"
+    ]
+   }
+  }
+ ]
+}

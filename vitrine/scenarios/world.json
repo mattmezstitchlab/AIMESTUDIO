@@ -1,0 +1,295 @@
+{
+ "_": "Scénario World : un mariage parisien à New York, six rôles. Aucune donnée métier ni aucun droit ici.",
+ "univers": "world",
+ "titre": "Inès & Théo · Paris / New York",
+ "genre": "Mariage à distance",
+ "source": {
+  "titre": "Les mariés"
+ },
+ "arriveesTexte": "Un mariage organisé de Paris, célébré à New York. Six personnes arrivent par six chemins ; l'orbe recueille ce que chacune apporte dans le même projet.",
+ "roles": [
+  {
+   "angle": "couple",
+   "qui": "p-ines",
+   "nom": "Le couple",
+   "de": "du couple",
+   "resume": "Où en est tout : missions confiées, programme, budget.",
+   "arrivee": {
+    "titre": "Le couple confie son mariage.",
+    "texte": "Inès et Théo vivent à Paris et se marient à New York. Ils créent le projet, puis confient l'organisation à une agence sans perdre la vue d'ensemble.",
+    "fiche": [
+     {
+      "k": "Inès écrit",
+      "phrase": "Notre mariage à New York, le 18 septembre 2027, cinquante proches venus de Paris"
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Projet",
+        "Inès & Théo"
+       ],
+       [
+        "Date",
+        "18 septembre 2027"
+       ],
+       [
+        "Lieu",
+        "Jardin des Quais"
+       ],
+       [
+        "Voyageurs",
+        "50"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Inès et Théo",
+     "propriétaires",
+     "du projet"
+    ]
+   }
+  },
+  {
+   "angle": "agence",
+   "qui": "p-clara",
+   "nom": "L'agence",
+   "de": "de l'agence",
+   "resume": "Les missions, les affectations, les décisions.",
+   "arrivee": {
+    "titre": "L'agence prend le pilotage.",
+    "texte": "Clara dirige le projet pour le couple. Elle découpe le mariage en missions, les ouvre aux prestataires et propose les candidatures au couple, qui valide.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Invitée par le couple",
+        "Comme directrice de projet"
+       ],
+       [
+        "Elle structure",
+        "Douze missions, de la navette à la musique"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Missions",
+        "12"
+       ],
+       [
+        "Ouvertes",
+        "Fleurs, langues, son"
+       ],
+       [
+        "Décision",
+        "Toujours au couple"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Clara Benoît",
+     "coordination",
+     "du projet"
+    ]
+   }
+  },
+  {
+   "angle": "prestataire",
+   "qui": "p-petal",
+   "nom": "Le prestataire",
+   "de": "du prestataire",
+   "resume": "Sa mission, où, quand, à quelles conditions.",
+   "arrivee": {
+    "titre": "Le fleuriste candidate.",
+    "texte": "Petal & Stem découvre la mission « Installation florale ». Déjà sur AIME ou nouveau avec le lien de l'agence, il candidate ; s'il est retenu, il ne voit que sa mission.",
+    "fiche": [
+     {
+      "k": "Deux chemins, un même projet",
+      "chemins": [
+       [
+        "Déjà sur AIME",
+        "Il voit la mission ouverte → il candidate"
+       ],
+       [
+        "Nouveau",
+        "Lien de l'agence → inscription → il candidate"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Métier",
+        "Fleuriste"
+       ],
+       [
+        "Mission",
+        "Installation florale"
+       ],
+       [
+        "Étape",
+        "Candidature déposée"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Petal & Stem",
+     "contribution",
+     "au projet"
+    ]
+   }
+  },
+  {
+   "angle": "invite",
+   "qui": "p-alice",
+   "nom": "L'invitée",
+   "de": "de l'invitée",
+   "resume": "Répondre, voyager, dormir, le programme.",
+   "arrivee": {
+    "titre": "L'invitée traverse l'Atlantique.",
+    "texte": "Alice reçoit son invitation, s'inscrit et répond. Son vol, sa navette et sa chambre se rattachent à sa réponse : un seul fil jusqu'au jour J.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "L'invitation",
+        "Un lien personnel"
+       ],
+       [
+        "La réponse",
+        "Présente, vol groupé n° 2"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Réponse",
+        "Confirmée"
+       ],
+       [
+        "Vol",
+        "Paris → New York, groupe 2"
+       ],
+       [
+        "Arrivée",
+        "Navette JFK → hôtel"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Alice Morel",
+     "invitée",
+     "du mariage"
+    ]
+   }
+  },
+  {
+   "angle": "contributeur",
+   "qui": "p-sophie",
+   "nom": "La contributrice",
+   "de": "de la contributrice",
+   "resume": "Une aide bénévole, distincte des prestations.",
+   "arrivee": {
+    "titre": "Une amie propose son aide.",
+    "texte": "Sophie parle anglais et connaît New York. Elle propose une aide bénévole ; elle est distinguée des prestataires rémunérés et ne voit que ce qui sert sa mission.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Invitée par le couple",
+        "Comme contributrice"
+       ],
+       [
+        "Elle se propose",
+        "Sur une mission ouverte"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Aide",
+        "Assistance linguistique"
+       ],
+       [
+        "Statut",
+        "Bénévole"
+       ],
+       [
+        "Mission",
+        "Ouverte aux candidatures"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Sophie Laurent",
+     "contribution",
+     "bénévole"
+    ]
+   }
+  },
+  {
+   "angle": "coordinateur",
+   "qui": "p-maya",
+   "nom": "La coordination locale",
+   "de": "de la coordination locale",
+   "resume": "Sur place : navettes, équipes, incidents.",
+   "arrivee": {
+    "titre": "La coordinatrice tient New York.",
+    "texte": "Maya coordonne sur place. Elle voit le programme opérationnel, les navettes, les équipes et les plans de secours ; le budget du couple ne la regarde pas.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Invitée par l'agence",
+        "Comme coordination locale"
+       ],
+       [
+        "Elle rejoint",
+        "Depuis New York, avec son compte"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Jour J",
+        "18 septembre, Jardin des Quais"
+       ],
+       [
+        "Navettes",
+        "JFK → hôtel → Brooklyn"
+       ],
+       [
+        "Mission",
+        "Coordination du jour J"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Maya Johnson",
+     "coordination",
+     "sur place"
+    ]
+   }
+  }
+ ]
+}

@@ -141,7 +141,7 @@ html.calme .pt.vif{animation:none}
 @media (max-width:620px){.grille{grid-template-columns:minmax(0,1fr)}.envoi .bouton{width:100%;justify-content:center}}
 </style>
 <link rel="stylesheet" href="/accueil/accueil.css">
-<link rel="stylesheet" href="/accueil/coeur.css">
+<link rel="stylesheet" href="/coeur/coeur.css">
 </head>
 <body>
 <a class="evite" href="#acTexte">Aller au champ « Que préparez-vous ? »</a>
@@ -365,6 +365,7 @@ html.calme .pt.vif{animation:none}
   <div class="sorties">
    <a class="bouton" id="rejoindre" href="/aime/">Découvrir Le Monde AIME <span aria-hidden="true">→</span></a>
    <a class="bouton second" id="parler" href="#contact">Parler d'un projet</a>
+   <a class="bouton second" href="/exemples/">Voir les autres exemples</a>
   </div>
   <p class="sorties-note">Vos essais restent dans ce navigateur. Toutes les démonstrations sont au <a href="/lab/grande-partition/">Lab</a> · <a href="/sante/">état et garanties du système</a> · <a href="/confidentialite/">confidentialité</a>.</p>
  </div>
@@ -406,6 +407,7 @@ html.calme .pt.vif{animation:none}
 
 <script src="/contrats/projet.js"></script>
 <script src="/synchroview/permissions.js"></script>
+<script src="/synchroview/flux.js"></script>
 <script src="/vitrine/rendu.js"></script>
 <script src="/design/systemes.js"></script>
 <script src="/design/charger.js"></script>
@@ -429,7 +431,8 @@ html.calme .pt.vif{animation:none}
 <script src="/projets/intention.js"></script>
 <script src="/projets/projets.js"></script>
 <script src="/accueil/accueil.js"></script>
-<script src="/accueil/coeur.js"></script>
+<script src="/coeur/coeur.js"></script>
+<script>fetch('/vitrine/scenarios/mariage.json').then(function(r){return r.json()}).then(function(sc){AIMECoeur.monter(sc)}).catch(function(){var e=document.getElementById('ecransEtat');if(e)e.textContent='Les écrans n\'ont pas pu être chargés. Rechargez la page.'})</script>
 <script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'zero',position:'haut'})</script>
 </body>
 </html>
