@@ -26,6 +26,8 @@ test('aucun lien vers /v1/ ni /mariage', () => {
   parcourir('.');
   const fautifs = vus.filter(f => /["'(]\/v1\/?["'#?)]|["'(]\/mariage(\.html)?["'#?)]/.test(fs.readFileSync(R(f), 'utf8')));
   assert.deepEqual(fautifs, []);
+});
+
 /* Règle 12 : une démonstration ne promet pas une vérification serveur qu'un visiteur ne peut pas voir. */
 test('accueil : aucun lien vers une page fermée au public', () => {
   const h = fs.readFileSync(R('index.html'), 'utf8');
