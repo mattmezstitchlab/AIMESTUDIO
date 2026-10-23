@@ -10,7 +10,7 @@ function copie(o){return JSON.parse(JSON.stringify(o))}
 
 function versProjet(l,maintenant){
  var id=uid('pr'),quand=maintenant||new Date().toISOString(),p=C.creer({id:id,titre:l.titre||'Mon projet',module:'accueil',identifiant:id});
- p.contenus.push({id:'evenement',type:'evenement',titre:p.titre,date:l.date||'',lieu:l.lieu||'',invites:l.invites||null,genre:l.type||'autre'});
+ p.contenus.push({id:'evenement',type:'evenement',titre:p.titre,date:l.date||'',lieu:l.lieu||'',invites:l.invites||null,genre:l.type||'autre',categorie:l.categorie||'autre',schemaType:l.schemaType||'Event',mode:l.mode||'Sur place',acces:l.acces||'Ouvert au public'});
  (l.personnes||[]).forEach(function(n,i){p.contenus.push({id:'personne-'+(i+1),type:'personne',nom:n})});
  p.relations=(l.personnes||[]).map(function(_,i){return{id:'r-'+(i+1),type:'participe',de:'personne-'+(i+1),vers:'evenement'}});
  p.extensions={intention:{texte:l.texte||'',type:l.type||'autre',modele:l.modele||'libre'},creeLe:quand,majLe:quand};

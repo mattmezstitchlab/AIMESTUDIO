@@ -267,6 +267,8 @@ html.calme .mo{opacity:1}
   <div class="ac-grille">
    <label>Type de projet<select id="acType"><option value="mariage">Mariage</option><option value="seminaire">Séminaire ou conférence</option><option value="fete">Fête ou anniversaire</option><option value="association">Association</option><option value="portfolio">Portfolio ou créateur</option><option value="artisan">Artisan ou indépendant</option><option value="autre">Autre projet</option></select></label>
    <label>Nombre de personnes<input id="acInvites" type="number" min="0" max="100000" inputmode="numeric"></label>
+   <label>Catégorie<select id="acCategorie"><option value="celebrations">Mariages & célébrations</option><option value="famille">Enfants & famille</option><option value="musique">Musique & concerts</option><option value="spectacles">Spectacles & scène</option><option value="cinema">Cinéma & médias</option><option value="arts">Arts & expositions</option><option value="festivals">Festivals & grands événements</option><option value="sport">Sport & activités physiques</option><option value="ateliers">Ateliers & loisirs</option><option value="formation">Cours & formation</option><option value="pro">Conférences & professionnel</option><option value="gastronomie">Gastronomie & dégustations</option><option value="bienetre">Santé & bien-être</option><option value="sorties">Sorties & plein air</option><option value="communaute">Communauté & solidarité</option><option value="ecole">École & jeunesse</option><option value="spiritualite">Spiritualité & cérémonies</option><option value="autre">Autre événement</option></select></label>
+   <label>Qui peut venir<select id="acAcces"><option>Ouvert au public</option><option>Sur inscription</option><option>Sur invitation</option><option>Privé</option></select></label>
    <label class="large">Titre<input id="acTitre" type="text" maxlength="90"></label>
    <label>Date<input id="acDate" type="date"></label>
    <label>Lieu<input id="acLieu" type="text" maxlength="120"></label>
@@ -708,6 +710,7 @@ html.calme .mo{opacity:1}
 <script src="/porte/porte.js"></script>
 <script src="/porte/revelation.js"></script>
 <script src="/pointzero/analyse.js"></script>
+<script src="/projets/taxonomie.js"></script>
 <script src="/projets/intention.js"></script>
 <script src="/projets/projets.js"></script>
 <script src="/accueil/accueil.js"></script>

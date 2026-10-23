@@ -16,7 +16,7 @@ function montrer(etape){$('monProjet').hidden=false;$('acComprendre').hidden=eta
 
 /* 1 · lire la phrase et montrer ce qui a été compris */
 function comprendre(texte){var l=I.lire(texte);if(!l){dire('Écrivez d\'abord ce que vous préparez, en une phrase.');$('acTexte').focus();return}
- lecture=l;$('acType').value=l.type;$('acTitre').value=l.titre;$('acDate').value=l.date;$('acLieu').value=l.lieu;$('acInvites').value=l.invites||'';
+ lecture=l;$('acType').value=l.type;$('acTitre').value=l.titre;$('acDate').value=l.date;$('acLieu').value=l.lieu;$('acInvites').value=l.invites||'';$('acCategorie').value=l.categorie||'autre';$('acAcces').value=l.acces||'Ouvert au public';
  $('acPassee').hidden=!l.passee;montrer('comprendre')}
 $('acForm').addEventListener('submit',function(e){e.preventDefault();comprendre($('acTexte').value)});
 [].forEach.call(document.querySelectorAll('[data-ac-ex]'),function(b){b.addEventListener('click',function(){$('acTexte').value=b.textContent;comprendre(b.textContent)})});
@@ -26,8 +26,8 @@ $('acDate').addEventListener('input',function(){var j=new Date().toISOString().s
 /* 2 · « Oui, c'est ça » : le projet naît, il est enregistré, sa page est composée */
 $('acOui').addEventListener('click',function(){var b=this;b.disabled=true;
  moteur().then(function(){
-  var t=I.TYPES.filter(function(x){return x.id===$('acType').value})[0]||I.AUTRE;
-  var l={texte:lecture?lecture.texte:'',type:t.id,modele:t.modele,titre:$('acTitre').value.trim()||'Mon projet',date:$('acDate').value,lieu:$('acLieu').value.trim(),invites:+$('acInvites').value||null,personnes:lecture?lecture.personnes:[]};
+  var X=window.AIMETaxonomie,cat=X?X.categorie($('acCategorie').value):null,t=I.TYPES.filter(function(x){return x.id===$('acType').value})[0]||{id:'autre',modele:cat?cat.modele:'libre'};
+  var l={texte:lecture?lecture.texte:'',type:t.id,modele:t.modele,titre:$('acTitre').value.trim()||'Mon projet',date:$('acDate').value,lieu:$('acLieu').value.trim(),invites:+$('acInvites').value||null,personnes:lecture?lecture.personnes:[],categorie:cat?cat.id:'autre',schemaType:cat?cat.schemaType:'Event',mode:lecture?lecture.mode:'Sur place',acces:$('acAcces').value};
   var p=P.versProjet(l),m=MODELES.filter(function(x){return x.id===t.modele})[0],s=P.versSite(p,S,m),r=D.enregistrer(p,s);
   if(!r.ok){dire(r.raison);return}projet=r.projet;page();brancher(projet);dire('Projet « '+projet.titre+' » créé et enregistré dans ce navigateur.')})
  .catch(function(){dire('La page n\'a pas pu être composée (connexion ?). Réessayez.')}).then(function(){b.disabled=false})});
@@ -35,7 +35,7 @@ $('acOui').addEventListener('click',function(){var b=this;b.disabled=true;
 /* 3 · la page du projet, rendue par le moteur de pages ; l'apparence se change sans toucher au contenu */
 function page(){var s=D.site(projet);if(!s){dire('La page de ce projet est introuvable dans ce navigateur.');return}
  $('acPageT').textContent=projet.titre;$('acModifier').href='/sites/?site='+encodeURIComponent(s.id);
- var e=P.evenement(projet);$('acResume').textContent=[e.genre&&e.genre!=='autre'?(I.TYPES.filter(function(x){return x.id===e.genre})[0]||{}).nom:'',e.date?new Date(e.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}):'',e.lieu,e.invites?e.invites+' personnes':''].filter(Boolean).join(' · ');
+ var e=P.evenement(projet);$('acResume').textContent=[e.genre&&e.genre!=='autre'?(I.TYPES.filter(function(x){return x.id===e.genre})[0]||{}).nom:(window.AIMETaxonomie&&e.categorie&&e.categorie!=='autre'?window.AIMETaxonomie.categorie(e.categorie).nom:''),e.date?new Date(e.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}):'',e.lieu,e.invites?e.invites+' personnes':''].filter(Boolean).join(' · ');
  dsUI(s);afficher(s);montrer('page');reprendreUI()}
 function afficher(s){$('acApercu').srcdoc=sansScript(S.document(s,{presentation:PRES,visuels:null}).html)}
 function dsUI(s){var B=$('acDS');if(!DSCAT||!DSCAT.ids.length||!window.AIMEDesign){B.hidden=true;return}B.hidden=false;var cur=window.AIMEDesign.pointeur(s),id=cur?cur.id:'origine';

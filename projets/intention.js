@@ -2,8 +2,9 @@
    « Le mariage de Léa et Marc, le 14 juin 2027 à Chantilly, 120 invités »
      → { type:'mariage', modele:'mariage', titre:'Léa & Marc', date:'2027-06-14', lieu:'Chantilly', invites:120, personnes:['Léa','Marc'] }
    Ce qui n'est pas reconnu reste vide : la personne confirme ou corrige avant que rien ne soit créé.
-   Les dates passent par pointzero/analyse.js (mêmes règles que le Point Zéro). */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('../pointzero/analyse.js'));else root.AIMEIntention=factory(root.AIMEAnalyse)})(typeof self!=='undefined'?self:this,function(A){'use strict';
+   Les dates passent par pointzero/analyse.js (mêmes règles que le Point Zéro).
+   La catégorie, le mode et l'accès viennent de projets/taxonomie.js (reprise d'AIMEEVENT, alignée sur Schema.org). */
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('../pointzero/analyse.js'),require('./taxonomie.js'));else root.AIMEIntention=factory(root.AIMEAnalyse,root.AIMETaxonomie)})(typeof self!=='undefined'?self:this,function(A,X){'use strict';
 
 /* le type de projet décide du modèle de site (vitrine/modeles/sites.json) ; l'ordre compte : le premier qui correspond gagne */
 var TYPES=[
@@ -45,8 +46,10 @@ function titreDe(type,personnes,t){
 /* aujourd'hui : pour refuser une date passée sans le dire au hasard (une intention parle d'un projet à venir) */
 function lire(texte,aujourdhui){
  var t=propre(texte).slice(0,600);if(!t)return null;
- var type=typeDe(t),lieu=lieuDe(t),personnes=personnesDe(t,lieu),a=A?A.analyser(t):{dates:[]},jour=aujourdhui||new Date().toISOString().slice(0,10);
+ var type=typeDe(t),cat=X?X.categorieDe(t):null;if(type===AUTRE&&cat&&cat.id!=='autre')type={id:'autre',modele:cat.modele,nom:cat.nom};
+ var lieu=lieuDe(t),personnes=personnesDe(t,lieu),a=A?A.analyser(t):{dates:[]},jour=aujourdhui||new Date().toISOString().slice(0,10);
  var dates=(a.dates||[]).filter(function(d){return/^\d{4}-\d{2}-\d{2}$/.test(d)}),date=dates.filter(function(d){return d>=jour})[0]||dates[0]||'';
- return{texte:t,type:type.id,nomType:type.nom,modele:type.modele,titre:titreDe(type,personnes,t),date:date,lieu:lieu,invites:invitesDe(t),personnes:personnes,passee:!!date&&date<jour}}
+ return{texte:t,type:type.id,nomType:type.nom,modele:type.modele,titre:titreDe(type,personnes,t),date:date,lieu:lieu,invites:invitesDe(t),personnes:personnes,passee:!!date&&date<jour,
+  categorie:cat?cat.id:'autre',nomCategorie:cat?cat.nom:'Autre événement',schemaType:cat?cat.schemaType:'Event',mode:X?X.modeDe(t):'Sur place',acces:X?X.accesDe(t,cat):'Ouvert au public'}}
 
 return{lire:lire,TYPES:TYPES,AUTRE:AUTRE,typeDe:typeDe,lieuDe:lieuDe,personnesDe:personnesDe}});
