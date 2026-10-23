@@ -77,3 +77,54 @@ test('direct réel · la personne vient de la session, le rôle de l\'espace, l\
   r = await appel(journal, { passe: pn, depuis: 0 }); assert.equal(r.body.lignes.length, 1, 'l\'annonce d\'équipe ne sort pas vers l\'invitée');
   const acc = await appel(E.default, { action: 'acces', espace: esp }, nina); assert.equal(acc.body.modele, 'mariage'); assert.equal(Object.keys(acc.body.membres).length, 3); assert.ok(acc.body.personnes.every(p => !('email' in p)));
 });
+
+/* Refus par rôle × geste : chaque action de /api/espaces, pour chaque rôle et pour un non-membre.
+   Codes attendus : 200 permis ; 403 refusé par la règle ; 404 non-membre (rien n'est révélé) ; 400 rôle inconnu. */
+let M = null;
+async function espaceComplet(titre) {
+  const ids = {}; let r = await appel(E.default, { action: 'creer', titre }, M.owner); const id = r.body.id;
+  for (const role of ['editor', 'contributor', 'viewer', 'guest']) {
+    r = await appel(E.default, { action: 'inviter', espace: id, role }, M.owner); assert.equal(r.code, 200, 'inviter ' + role);
+    r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M[role]); assert.equal(r.body.role, role);
+  }
+  return id;
+}
+test('espaces · refus par rôle × geste (et un non-membre ne voit rien)', opts, async () => {
+  M = { owner: await connecter('o@exemple.test'), editor: await connecter('e@exemple.test'), contributor: await connecter('c@exemple.test'),
+        viewer: await connecter('v@exemple.test'), guest: await connecter('g@exemple.test'), dehors: await connecter('x@exemple.test') };
+  const id = await espaceComplet('Matrice');
+  const autre = (await appel(E.default, { action: 'membres', espace: id }, M.owner)).body.membres.find(m => m.role === 'guest').id;
+  const ATTENDU = {
+    // geste                       owner editor contributor viewer guest dehors
+    'membres':                     [200, 200, 200, 200, 200, 404],
+    'acces':                       [200, 200, 200, 200, 200, 404],
+    'inviter:editor':              [200, 403, 403, 403, 403, 404],
+    'inviter:contributor':         [200, 403, 403, 403, 403, 404],
+    'inviter:viewer':              [200, 200, 403, 403, 403, 404],
+    'inviter:guest':               [200, 200, 403, 403, 403, 404],
+    'inviter:owner':               [400, 400, 400, 400, 400, 400],
+    'retirer':                     [null, 403, 403, 403, 403, 404],
+    'annuler':                     [404, 403, 403, 403, 403, 404]
+  };
+  const QUI = ['owner', 'editor', 'contributor', 'viewer', 'guest', 'dehors'];
+  for (const [geste, codes] of Object.entries(ATTENDU)) for (let i = 0; i < QUI.length; i++) {
+    if (codes[i] === null) continue;
+    const [action, role] = geste.split(':');
+    const b = { action, espace: id }; if (role) b.role = role; if (action === 'retirer') b.membre = autre; if (action === 'annuler') b.invitation = '00000000-0000-0000-0000-000000000000';
+    const r = await appel(E.default, b, M[QUI[i]]);
+    assert.equal(r.code, codes[i], geste + ' par ' + QUI[i] + ' : ' + JSON.stringify(r.body));
+  }
+});
+
+test('espaces · deux projets : un membre du projet A ne lit ni ne touche rien du projet B', opts, async () => {
+  const A1 = await espaceComplet('Projet A');
+  let r = await appel(E.default, { action: 'creer', titre: 'Projet B' }, M.dehors); const B1 = r.body.id;
+  for (const qui of ['owner', 'editor', 'contributor', 'viewer', 'guest']) {
+    for (const action of ['membres', 'acces', 'annuler', 'retirer']) assert.equal((await appel(E.default, { action, espace: B1, membre: 'x', invitation: 'x' }, M[qui])).code, 404, qui + ' · ' + action + ' sur B');
+    assert.equal((await appel(E.default, { action: 'inviter', espace: B1, role: 'guest' }, M[qui])).code, 404, qui + ' · inviter sur B');
+    assert.equal((await appel(require('../api/live/passe.js'), { espace: B1 }, M[qui])).code, 403, qui + ' · direct de B');
+    const mes = (await appel(E.default, { action: 'mes' }, M[qui])).body.espaces.map(e => e.id);
+    assert.ok(mes.includes(A1) && !mes.includes(B1), qui + ' · « mes espaces »');
+  }
+  r = await appel(E.default, { action: 'membres', espace: A1 }, M.dehors); assert.equal(r.code, 404, 'le propriétaire de B ne voit pas A');
+});
