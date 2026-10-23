@@ -14,7 +14,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
-    for (const u of ['/', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
+    for (const u of ['/', '/exemples/', '/exemples/?u=world', '/exemples/?u=seminaire', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
     // le dock : Réseau et Canevas ; ni ancien générateur ni Régie pour le public
@@ -104,6 +104,10 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     ok((await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /Inès & Théo/.test(document.body.textContent))))).filter(Boolean).length === 4, 'Accueil : le nom écrit une fois apparaît sur les quatre écrans');
     await p.click('#jourPluie'); await p.waitForTimeout(400); ok(/plan B/.test(await p.textContent('#jourTrace')) && (await p.$$('#jourVues li.change')).length >= 3, 'Accueil : l\'averse recale le jour J pour chacun');
     ok(!(await deborde()), 'Accueil (cœur) : sans débordement horizontal');
+    // Les exemples : la même mécanique avec six rôles (World), six écrans composés par le moteur
+    await p.goto(B + '/exemples/?u=world', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(1200);
+    ok((await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /Inès &amp; Théo|Inès & Théo/.test(document.body.textContent))))).filter(Boolean).length === 6, 'Exemples : six écrans composés depuis la même source (World)');
+    ok((await p.$$('#droitsTete th')).length === 7, 'Exemples : le tableau des droits a une colonne par rôle');
     // Premier écran : une phrase → ce qui est compris → un projet enregistré → sa page, retrouvée après rechargement
     await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.fill('#acTexte', 'Le mariage de Léa et Marc, le 14 juin 2027 à Chantilly, 120 invités'); await p.click('.ac-go'); await p.waitForTimeout(500);
     ok(await p.inputValue('#acLieu') === 'Chantilly' && await p.inputValue('#acDate') === '2027-06-14', 'Accueil : l\'intention est comprise (date, lieu)');

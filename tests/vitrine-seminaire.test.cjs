@@ -11,10 +11,10 @@ const S = charge('seminaire');
 const rendu = (id, contenu, modele) => V.rendre({ contenu: contenu || S.contenu, acces: S.acces, perspective: S.persp.angles.find(a => a.id === id), libelles: S.persp.libelles, modele: modele || editorial, regles: P }).html;
 const ANGLES = S.persp.angles.map(a => a.id);
 
-test('quatre perspectives distinctes depuis une seule donnée', () => {
-  assert.deepEqual(ANGLES, ['organisateur', 'intervenant', 'participant', 'logistique']);
+test('six perspectives distinctes depuis une seule donnée', () => {
+  assert.deepEqual(ANGLES, ['organisateur', 'intervenant', 'participant', 'logistique', 'prestataire', 'observateur']);
   const sec = ANGLES.map(a => [...rendu(a).matchAll(/data-sv="sec-([a-z-]+)"/g)].map(m => m[1]).join(','));
-  assert.equal(new Set(sec).size, 4);
+  assert.equal(new Set(sec).size, 6);
 });
 
 test('propagation : un horaire, un lieu et un intervenant modifiés une fois se retrouvent partout où ils doivent apparaître', () => {
