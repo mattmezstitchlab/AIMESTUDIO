@@ -54,7 +54,7 @@ var dernier='';
 function afficher(force){if(!etat)return;var now=maintenantMin(),v=L.vue(etat,A,qui,Math.round(now)%1440,P),h=canal.horloge()||{};
  $('hHeure').textContent=v.heure;if(document.activeElement!==$('hCurseur'))$('hCurseur').value=Math.round(now/5)*5;
  [].forEach.call(document.querySelectorAll('.horloge [data-v]'),function(b){b.setAttribute('aria-pressed',String(+b.dataset.v===(h.vitesse||0)))});
- $('quiRole').textContent=SALLE?'':'Rôle dans l\'espace : '+(ROLES[v.qui.role]||'aucun');
+ $('quiRole').innerHTML=SALLE?'':(window.AIMERoles&&v.qui.role?AIMERoles.pastille(v.qui.role):'')+esc('Rôle dans l\'espace : '+(ROLES[v.qui.role]||'aucun'));
  var cle=JSON.stringify([v.heure,v.moments,v.annonces,trace.length,qui]);if(cle===dernier&&!force)return;dernier=cle;
  /* maintenant */
  $('mtn').innerHTML=v.maintenant.length?v.maintenant.map(function(m){var a=L.hm(m.debut),b=L.hm(m.fin),n=L.surAxe(L.hm(v.heure),etat.debutJour),aa=L.surAxe(a,etat.debutJour),bb=L.surAxe(b,etat.debutJour);if(bb<aa)bb+=1440;var pc=Math.max(0,Math.min(100,(n-aa)/(bb-aa)*100));

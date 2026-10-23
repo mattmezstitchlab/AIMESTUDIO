@@ -42,3 +42,14 @@ test('la page des exemples charge le cœur et ne propose que des exemples qui ex
   for (const u of ['world', 'seminaire']) { assert.ok(h.includes("u:'" + u + "'"), u); assert.ok(fs.existsSync(R('vitrine/scenarios/' + u + '.json'))) }
   assert.ok(h.indexOf('AIMECoeur.html(sc)') < h.indexOf("'/zero/zero.js'") || /charger\(ORBE,function\(\)\{AIMECoeur\.monter/.test(h), 'le balisage est posé avant l\'orbe');
 });
+
+test('une couleur par rôle technique, la même partout ; l\'encre posée dessus reste lisible (AA)', () => {
+  const Ro = require('../coeur/roles.js'), lum = h => { const c = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2] };
+  const cr = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05) };
+  assert.equal(new Set(Object.values(Ro.ROLES).map(r => r.c)).size, Object.keys(Ro.ROLES).length, 'couleurs distinctes');
+  for (const [k, r] of Object.entries(Ro.ROLES)) assert.ok(cr(r.c, r.e) >= 4.5, k + ' : contraste ' + cr(r.c, r.e).toFixed(2));
+  for (const k of C.couleurs) assert.ok(cr(k.c, k.e) >= 4.5, k.c);
+  for (const f of ['index.html', 'exemples/index.html', 'live/index.html', 'compte/index.html', 'sites/index.html']) {
+    const h = fs.readFileSync(R(f), 'utf8'), i = h.indexOf('/coeur/roles.js'); assert.ok(i > 0, f + ' charge les couleurs des rôles');
+  }
+});

@@ -19,8 +19,13 @@ var ROLE_FR={owner:'Propriétaire',editor:'Coordination',contributor:'Contributi
 var AMB={nom:'AIME · monochrome',c1:'#26262B',c2:'#C9C9CF',paper:'#F4F4F2',ink:'#141416',source:'AIME'};
 /* une couleur par rôle, prise dans l'orbe : chaque personne a la sienne, l'orbe les réunit toutes.
    c = la couleur, e = l'encre lisible dessus (contraste AA). Un scénario peut imposer la sienne (rôle.couleur). */
-var COULEURS=[{c:'#FB7185',e:'#141416'},{c:'#F59E0B',e:'#141416'},{c:'#22D3EE',e:'#141416'},{c:'#7C5CFF',e:'#FFFFFF'},{c:'#34D399',e:'#141416'},{c:'#E879F9',e:'#141416'},{c:'#FDE68A',e:'#141416'},{c:'#93C5FD',e:'#141416'}];
-function couleur(sc,i){var r=sc.roles[i]||{};return r.couleur?{c:r.couleur,e:r.encre||'#141416'}:COULEURS[i%COULEURS.length]}
+var COULEURS=[{c:'#FB7185',e:'#141416'},{c:'#F59E0B',e:'#141416'},{c:'#22D3EE',e:'#141416'},{c:'#6D4AFF',e:'#FFFFFF'},{c:'#34D399',e:'#141416'},{c:'#E879F9',e:'#141416'},{c:'#FDE68A',e:'#141416'},{c:'#93C5FD',e:'#141416'}];
+var TEINTES=null;
+function couleur(sc,i){var r=sc.roles[i]||{};if(r.couleur)return{c:r.couleur,e:r.encre||'#141416'};if(TEINTES&&TEINTES[i])return TEINTES[i];return COULEURS[i%COULEURS.length]}
+/* une fois l'accès connu : la couleur du rôle technique (coeur/roles.js), la même que dans Live, Sites et Compte ;
+   si deux personnes ont le même rôle dans l'exemple, la seconde prend une couleur libre de l'orbe */
+function teintes(sc,acces){var R=root.AIMERoles,pris={};TEINTES=sc.roles.map(function(r){var t=R&&R.ROLES[(acces.membres||{})[r.qui]];if(t&&!pris[t.c]){pris[t.c]=1;return{c:t.c,e:t.e}}return null});
+ TEINTES=TEINTES.map(function(k){if(k)return k;var libre=COULEURS.filter(function(x){return!pris[x.c]})[0]||COULEURS[0];pris[libre.c]=1;return libre})}
 
 /* ================= le balisage ================= */
 function fiche(f){var h='';(f||[]).forEach(function(b){h+='<p class="fiche-k">'+esc(b.k)+'</p>';
@@ -153,8 +158,8 @@ requestAnimationFrame(choregraphie);
 var U=sc.univers;
 function demarrer(){if(S)return;S={};Promise.all([j('/vitrine/donnees/'+U+'.json'),j('/vitrine/acces/'+U+'.json'),j('/vitrine/perspectives/'+U+'.json'),j('/vitrine/modeles/'+(sc.modele||'editorial')+'.json'),j('/vitrine/presentation/ambiances.json')]).then(function(r){
  var pr=r[4],m=r[3];S={base:r[0],acces:r[1],ps:r[2],modele:m,pol:{titre:(pr.polices[m.polices.titre]||{}).famille,texte:(pr.polices[m.polices.texte]||{}).famille}};
- pret=true;champs();echelle();tout()}).catch(function(){S=null;var e=$('ecransEtat');if(e)e.textContent='Les écrans n\'ont pas pu être chargés. Rechargez la page.'})}
-if('IntersectionObserver' in window){var io=new IntersectionObserver(function(en){if(en.some(function(e){return e.isIntersecting})){io.disconnect();demarrer()}},{rootMargin:'600px 0px'});io.observe($('ecrans'))}else demarrer();
+ teintes(sc,S.acces);pret=true;champs();echelle();tout()}).catch(function(){S=null;var e=$('ecransEtat');if(e)e.textContent='Les écrans n\'ont pas pu être chargés. Rechargez la page.'})}
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(en){if(en.some(function(e){return e.isIntersecting})){io.disconnect();demarrer()}},{rootMargin:'600px 0px'});io.observe($('arrivees')||$('ecrans'))}else demarrer();
 addEventListener('resize',echelle);if('ResizeObserver' in window)new ResizeObserver(echelle).observe($('ecransGrille'));
 
 return{projet:function(p){if(!p)return;perso={titre:p.titre||'',date:p.date||'',lieu:p.lieu||''};if(pret){champs();tout()}}}}

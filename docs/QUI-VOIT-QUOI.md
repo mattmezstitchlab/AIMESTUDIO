@@ -28,12 +28,12 @@ Décision de Matt (23/10/2026) : le principe de l'accueil (« un seul projet, ch
 
 1. ✅ Composant commun + scénarios ; accueil branché dessus.
 2. ✅ World (6 rôles) et Séminaire (6 rôles) sur `/exemples/`.
-3. Live, Sites, Compte : déjà sur les règles communes → « qui voit quoi » + charte.
+3. ✅ (en partie) Live, Sites, Compte : la couleur du rôle (`coeur/roles.js`) sur « Rôle dans l'espace » (Live), « Voir comme » (Sites), les espaces et les membres (Compte). Reste : la charte noire de Sites (interface claire aujourd'hui).
 4. G44 : ses 4 identités branchées sur le composant (ses règles restent les siennes).
 5. Stitch : créatrice, boutique, brodeuse, visiteur modélisés (accès + règles), un écran chacun.
 6. Magazine / Publication, Studio, Régie : idem avec leurs rôles.
 7. Navigation : Accueil · Mon projet · Exemples · Lab.
 
-Une couleur par rôle (prise dans l'orbe) : le héros de chaque écran, la pastille du rôle dans les arrivées, les écrans, le tableau et le jour J. La marque reste noire ; la couleur désigne la personne.
+Une couleur par rôle technique (`coeur/roles.js`, prise dans l'orbe : propriétaire rose, contribution ambre, invité cyan, coordination violet, lecture seule vert, public gris) : le héros de chaque écran, la pastille du rôle dans les arrivées, les écrans, le tableau et le jour J. La marque reste noire ; la couleur désigne la personne.
 
 Honnêteté : dans les exemples, les règles tournent dans le navigateur ; les droits réels sont vérifiés par le serveur dans les espaces partagés (`/api/sv`, `/compte/`).
