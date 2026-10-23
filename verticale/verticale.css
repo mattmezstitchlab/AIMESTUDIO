@@ -10,14 +10,14 @@
   --vt-border: #2B2B35;
   --vt-border-strong: #434354;
   --vt-ink: #EDEDF0;
-  --vt-soft: #A6A6B5;
-  --vt-muted: #9191A1;
+  --vt-soft: #B2B2C2;
+  --vt-muted: #A6A6B8;
   --vt-rose: #FDA4AF;
   --vt-amber: #FCD34D;
   --vt-mint: #6EE7B7;
   --vt-cyan: #67E8F9;
   --vt-violet: #C4B5FD;
-  --vt-accent: #7C5CFF;
+  --vt-accent: #9D85FF;
   --vt-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
   --vt-rul-w: 52px;
 }
@@ -562,6 +562,19 @@
   display: grid;
   place-items: center;
 }
+#cubeHote .cv3-f.pose {
+  background: radial-gradient(90% 80% at 22% 16%, rgba(124, 92, 255, .28) 0, transparent 62%), #0E0E14;
+  color: #FFFFFF;
+}
+#cubeHote .cv3-f small,
+#cubeHote .cv3-f b,
+#cubeHote .cv3-f .cv3-pub {
+  background: #0D0D14;
+  color: #FFFFFF;
+  opacity: 1;
+  padding: 2px 6px;
+  border-radius: 5px;
+}
 @media (max-width: 480px) {
   .cube-hote { --cv3: 158px; min-height: 210px; }
 }
@@ -745,7 +758,7 @@
   font-size: 13.5px;
 }
 .live-moments li.deplace { border-color: var(--vt-amber); }
-.live-moments li.fait { opacity: .68; }
+.live-moments li.fait { border-color: var(--vt-mint); }
 .live-h { font: 600 12.5px/1.2 var(--vt-mono); color: var(--vt-cyan); }
 .live-tag {
   font: 600 11px/1 var(--vt-mono);
@@ -922,6 +935,10 @@ html.calme .bloc-ret-in { transition: none; }
 .papier-cote {
   font: 600 11px/1 var(--vt-mono);
   color: var(--vt-amber);
+  background: #14141C;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
   margin-bottom: 6px;
 }
 

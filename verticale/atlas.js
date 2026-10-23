@@ -167,7 +167,7 @@
         '</div>' +
         '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
           '<a class="vt-btn" href="' + esc(e.href) + '" data-atelier="' + esc(e.href) + '" data-atelier-titre="' + esc(e.nom) + '">Ouvrir dans le tiroir</a>' +
-          '<a class="vt-btn" href="' + esc(e.href) + '" style="opacity:.8">Page dédiée →</a>' +
+          '<a class="vt-btn" href="' + esc(e.href) + '">Page dédiée →</a>' +
         '</div>' +
       '</article>';
     }).join('');

@@ -75,7 +75,8 @@
       var sys = (cat.compiles && cat.compiles[snap.etat.design]) || null;
       var surface = sys && sys.couleurs ? sys.couleurs.surface : '#161620';
       var encre = sys && sys.couleurs ? sys.couleurs.texte : '#EDEDF0';
-      var primaire = sys && sys.couleurs ? sys.couleurs.principale : snap.etat.palette[0];
+      var estClair = sys && sys.mode === 'clair';
+      var primaire = estClair ? '#7C2D12' : '#67E8F9';
       var rayon = sys && sys.rayons ? sys.rayons.surface + 'px' : '16px';
       var ratioAA = (window.AIMEDesign && window.AIMEDesign.contraste && sys && sys.couleurs)
         ? window.AIMEDesign.contraste(sys.couleurs.texte, sys.couleurs.surface).toFixed(2) + ':1'
@@ -92,7 +93,7 @@
           etiquette: 'Héros · 12 colonnes',
           visuel: '<span style="font:600 11.5px var(--vt-mono);text-transform:uppercase;letter-spacing:.16em;color:' + esc(primaire) + '">' + esc(snap.casInfo.etiquette) + ' · ' + esc(e.date) + '</span>' +
             '<h3 style="margin:6px 0 4px;font:400 clamp(26px,3.2vw,40px)/1.05 var(--display)">' + esc(e.titre) + '</h3>' +
-            '<p style="margin:0;opacity:.85;max-width:640px">' + esc(e.intention) + '</p>',
+            '<p style="margin:0;max-width:640px">' + esc(e.intention) + '</p>',
           code: '<header class="hero" data-regard="' + e.mode + '">\n  <p class="sur">' + e.date + ' · ' + e.lieu + '</p>\n  <h1>' + e.titre + '</h1>\n  <p>' + e.intention + '</p>\n</header>'
         },
         {
@@ -126,7 +127,7 @@
             '<div class="bloc-avant">' +
               '<div>' + b.visuel + '</div>' +
               '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px;border-top:1px solid rgba(150,150,170,.2)">' +
-                '<small style="opacity:.75;font:500 11.5px var(--vt-mono)">' + esc(b.etiquette) + '</small>' +
+                '<small style="font:500 11.5px var(--vt-mono)">' + esc(b.etiquette) + '</small>' +
                 '<button type="button" class="vt-btn" data-flip="' + i + '" style="padding:5px 11px;font-size:12px">Retourner vers le HTML ↻</button>' +
               '</div>' +
             '</div>' +
@@ -213,7 +214,7 @@
       '<div><div class="papier-cote">CARTE DE VISITE · 85 × 55 mm</div>' +
         '<article class="papier-objet" style="width:290px;min-height:188px;border-left:5px solid ' + esc(c0) + '">' +
           '<div><small>' + esc(e.roleAuteur) + '</small><h4>' + esc(e.titre) + '</h4></div>' +
-          '<p>' + esc(e.lieu) + '<br><span style="opacity:.75">' + esc(e.contact) + '</span></p>' +
+          '<p>' + esc(e.lieu) + '<br><span>' + esc(e.contact) + '</span></p>' +
         '</article></div>' +
       '<div><div class="papier-cote">CARTON D’INVITATION · 148 × 105 mm (A6)</div>' +
         '<article class="papier-objet" style="width:360px;min-height:255px;border-top:6px solid ' + esc(c2) + '">' +

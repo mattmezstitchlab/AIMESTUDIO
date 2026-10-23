@@ -313,7 +313,7 @@ html.calme .mo{opacity:1}
      <button type="button" class="vt-btn" id="btnVoirContrat" aria-expanded="false">Inspecter le contrat JSON live (v1)</button>
      <a class="vt-btn" href="/point-zero/" data-atelier="/point-zero/" data-atelier-titre="Point Zéro · Déposer une matière brute">Ouvrir le Point Zéro complet ↗</a>
     </div>
-    <pre class="imp-contrat" id="impContratJson" hidden></pre>
+    <pre class="imp-contrat" id="impContratJson" tabindex="0" aria-label="Contrat JSON aime-projet v1" hidden></pre>
    </div>
    <div class="vt-carte imp-timbre-zone">
     <div>
@@ -460,7 +460,7 @@ html.calme .mo{opacity:1}
      <button type="button" class="vt-btn" data-lact="fait">✓ Installation terminée</button>
      <button type="button" class="vt-btn" data-lact="annuler">↶ Annuler (rejeu n − 1)</button>
     </div>
-    <ul class="live-moments" id="liveMoments"></ul>
+    <ul class="live-moments" id="liveMoments" tabindex="0" aria-label="Moments et horaires du Jour J"></ul>
     <div class="vt-actions-bas">
      <a class="vt-btn" href="/live/" data-atelier="/live/" data-atelier-titre="AIME Live · Régie temps réel du Jour J">Ouvrir le poste AIME Live complet ↗</a>
     </div>
@@ -606,7 +606,7 @@ html.calme .mo{opacity:1}
      </div>
      <div>
       <p style="margin:0 0 8px;font:600 12px var(--vt-mono);color:var(--vt-soft)">ÉCHEVETTES DMC (CLIQUER POUR ISOLER)</p>
-      <div class="stitch-legende" id="stitchLegende"></div>
+      <div class="stitch-legende" id="stitchLegende" tabindex="0" role="region" aria-label="Liste des échevettes DMC"></div>
      </div>
     </div>
     <div class="vt-actions-bas">
@@ -637,7 +637,7 @@ html.calme .mo{opacity:1}
      <span class="vt-num">Gestion &amp; Facturation électronique</span>
      <h3 style="margin:8px 0 6px;font:400 24px/1.15 var(--display)">Devis Factur-X (EN 16931)</h3>
      <p style="margin:0 0 12px;font-size:13.5px;color:var(--vt-soft)">XML CrossIndustryInvoice généré en direct depuis les lignes du projet actif.</p>
-     <pre class="imp-contrat" id="facturXPre" style="margin-top:0;max-height:210px"></pre>
+     <pre class="imp-contrat" id="facturXPre" tabindex="0" aria-label="Aperçu XML Factur-X EN 16931" style="margin-top:0;max-height:210px"></pre>
      <div class="vt-actions-bas">
       <button type="button" class="vt-btn plein" id="btnTelechargerFacturX">↓ Télécharger le fichier XML EN 16931</button>
      </div>
@@ -671,7 +671,7 @@ html.calme .mo{opacity:1}
      <button type="button" class="vt-pilule" data-etat="prototype" aria-pressed="false">Prototypes (44)</button>
      <button type="button" class="vt-pilule" data-etat="maquette" aria-pressed="false">Maquettes (8)</button>
     </div>
-    <div class="atlas-repos" id="atlasReposListe"></div>
+    <div class="atlas-repos" id="atlasReposListe" tabindex="0" role="region" aria-label="Inventaire filtrable des dépôts AIME"></div>
    </div>
   </div>
  </div>
