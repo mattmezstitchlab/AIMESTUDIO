@@ -76,9 +76,12 @@ test('live serveur · en production : démonstrations dans le navigateur, et jam
   assert.equal((await appel(passe, { espace: 'mariage', qui: 'u-camille' })).code, 503, 'pas de journal public partagé en production');
   assert.equal(C.lirePasse(p), null, 'un ancien laissez-passer de démonstration est refusé');
   assert.equal(C.signer({ espace: '00000000-0000-4000-8000-000000000000', qui: 'x', exp: Date.now() + 1000 }), null, 'sans secret, rien n\'est signé en production');
-  process.env.BETTER_AUTH_SECRET = 'y'.repeat(40);
+  process.env.BETTER_AUTH_SECRET = 'y'.repeat(40); process.env.SV_DEMO_SECRET = 'z'.repeat(40);
+  assert.equal(C.signer({ espace: '00000000-0000-4000-8000-000000000000', qui: 'x', exp: Date.now() + 1000 }), null, 'jamais le secret des comptes ni celui d\'une démonstration');
+  process.env.LIVE_SECRET = 'court'; assert.equal(C.signer({ espace: '00000000-0000-4000-8000-000000000000', qui: 'x', exp: Date.now() + 1000 }), null, 'un secret trop court est refusé');
+  process.env.LIVE_SECRET = 'w'.repeat(40);
   const t = C.signer({ espace: '00000000-0000-4000-8000-000000000000', qui: 'x', exp: Date.now() + 1000 });
-  assert.ok(t && C.lirePasse(t), 'un espace réel est signé avec le secret du serveur');
-  delete process.env.VERCEL_ENV; delete process.env.BETTER_AUTH_SECRET;
+  assert.ok(t && C.lirePasse(t), 'un espace réel est signé avec le secret propre au direct');
+  delete process.env.VERCEL_ENV; delete process.env.BETTER_AUTH_SECRET; delete process.env.SV_DEMO_SECRET; delete process.env.LIVE_SECRET;
   if (sauve.a) process.env.BETTER_AUTH_SECRET = sauve.a; if (sauve.l) process.env.LIVE_DEMO_SECRET = sauve.l; if (sauve.s) process.env.SV_DEMO_SECRET = sauve.s;
 });

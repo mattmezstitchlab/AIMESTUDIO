@@ -21,5 +21,5 @@
 
 ## Ouvrir le direct entre appareils (à faire par vous, sur la base de preview d'abord)
 1. Exécuter `db/migrations/2026-10-21-live-journal.sql` dans la console SQL Neon de la base **de preview** (ajout d'une table, rien d'autre).
-2. Facultatif : `LIVE_DEMO_SECRET` (chaîne aléatoire) dans les variables Preview de Vercel ; à défaut, une clé dérivée du commit est utilisée.
+2. `LIVE_SECRET` (chaîne aléatoire de 32 caractères au moins, propre au direct) dans les variables de Vercel. **Obligatoire en production** : sans lui, le direct reste fermé (503). Hors production, une clé de travail dérivée du commit est utilisée.
 3. Redéployer la preview : le badge passe à « Entre appareils ».
