@@ -23,6 +23,7 @@ var E=[
  ['aime','Le Monde AIME','/aime/','La grande présentation, le cube, l\'orbe','monde','decouvrir','disponible'],
  ['reseau','Le Réseau','/reseau/','Découvrir, garder et réutiliser des facettes vivantes','monde','decouvrir','demonstration',true],
  ['tout','Tout voir','/tout/','Toutes les vues d\'un coup','monde','decouvrir','disponible'],
+ ['capacites','Atlas des capacités','/capacites/','Tout ce qui peut servir au site : 1 191 modules, 130 dépôts, leur état','monde','decouvrir','experimental',true],
  ['exemples','Les exemples','/exemples/','Un seul projet, chacun son écran : mariage, mariage à distance, séminaire','evenements','decouvrir','demonstration',true],
  ['world','AIME WORLD','/vitrine/world/','Paris · New York, six perspectives','evenements','decouvrir','demonstration'],
  ['live','AIME Live','/live/','Le jour J en direct : un retard, une annonce, chacun le voit','evenements','realiser','demonstration',true],
