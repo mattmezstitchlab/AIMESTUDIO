@@ -1,6 +1,6 @@
 # AIME · contrôles automatiques de chaque PR (et de chaque fusion dans integration).
 # Pour qu'un échec BLOQUE la fusion : GitHub → Settings → Branches → règle sur `integration` (et `main`),
-# « Require status checks to pass » avec les contrôles « Suites (node) », « Parcours navigateur » et « Accessibilité ».
+# « Require status checks to pass » avec les contrôles « Suites (node) », « Socle (base de test) », « Parcours navigateur » et « Accessibilité ».
 name: Tests AIME
 on:
   pull_request:
@@ -23,6 +23,28 @@ jobs:
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npm test
+  socle:
+    name: Socle (base de test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Une base PostgreSQL éphémère, créée pour ce seul contrôle : aucun compte réel, jamais la base de production, aucun secret.
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: test, POSTGRES_DB: aime_test }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 2s --health-timeout 5s --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:test@localhost:5432/aime_test?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Schéma et migrations
+        run: for f in db/schema.sql db/migrations/*.sql; do psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"; done
+      - run: node --test tests/comptes.test.cjs
   navigateur:
     name: Parcours navigateur
     needs: suites
