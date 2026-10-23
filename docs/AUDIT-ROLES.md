@@ -12,7 +12,7 @@ Un motif dans le code est un indice, pas un verdict. Aucun test n'a utilisé le 
 
 | Lot | Contenu | État |
 |---|---|---|
-| 1 | Inventaire, et la vérification de la Régie | **livré ici, à valider** |
+| 1 | Inventaire, et la vérification de la Régie | **validé le 24/10/2026** |
 | 2 | Grille des douze règles, les huit failles, avec preuves | à faire après validation |
 | 3 | Chaque rôle décrit avec les six dimensions | à faire |
 | 4 | Rapport complet (sections 1, 2, 9, 10) et `docs/ORBE-EXTENSION.md` | à faire |
@@ -76,13 +76,13 @@ Ce qui reste à noter :
 | `/reseau/` | Facettes et modules | `aime-point-zero`, `aime-sites` | optionnel | oui | démonstration |
 | `/publication/`, `/magazine/*` | Lecteur et magazine statique | Exemple livré | aucun | partiel | `/magazine/` : inconnu (aucun lien de navigation) |
 | `/infinity/`, `/lab/orb/`, `/lab/cartes/`, `/lab/grande-partition/`, `/sante/`, `/tout/` | Jeux et laboratoires | Locales ou fictives | aucun | oui pour les labs | en production (expérimental) |
-| `/v1/` | Ancienne app de planning | Invités, allergies (« privé »), paiements, pointages, avis : localStorage `jourj-plan-v5`, `aime-app-ev-*` | aucun | non | en production, **à statuer** (abandonné ?) |
-| `/mariage` | AIME Wedding en une page | Invités, tables, budget : `aime-wedding-ligne:v1` | aucun | non | **abandonné ou inconnu** (lié seulement du README) |
+| `/v1/` | Ancienne app de planning | Invités, allergies (« privé »), paiements, pointages, avis : localStorage `jourj-plan-v5`, `aime-app-ev-*` | aucun | non | **abandonné** (décision du 24/10) |
+| `/mariage` | AIME Wedding en une page | Invités, tables, budget : `aime-wedding-ligne:v1` | aucun | non | **abandonné** (décision du 24/10) |
 | `/stitch/outils/generer` | Génère le catalogue | `dmc.json` | aucun | — | abandonné (outil interne non lié) |
 | `/travaux/`, `/travaux/<projet>/` | Portfolio rendu au serveur depuis `regie/site.json` | La version publiée seulement | aucun | — | en production |
 | `/zero`, `/monde/*`, `/lab/site/*`, `/lab/socle/*`, `/lab/orb/naissance/*` | Redirections (`vercel.json`) | — | — | — | abandonné |
 
-**Contexte.** Le dépôt est public sur GitHub, et le site sert aussi `docs/`, `db/schema.sql`, `tests/` et `scripts/` (200 en production). Rien de neuf n'est donc exposé, mais **ce fichier d'audit sera public dès sa fusion** (voir les questions à la fin).
+**Contexte.** Le dépôt est public sur GitHub, et le site sert aussi `docs/`, `db/schema.sql`, `tests/` et `scripts/` (200 en production). Rien de neuf n'est donc exposé, et ce fichier d'audit est public : il ne donne que des statuts pour les constats ouverts.
 
 ### 3.2 Routes serveur (fonctions Vercel)
 
@@ -137,7 +137,7 @@ Toutes les routes répondent `Cache-Control: no-store`, sauf `/travaux/` (public
 
 **Fichiers servis** : tout le dépôt sauf `api/` (voir 3.1). Aucun fichier `.env`, `.pem` ou `.key` dans le dépôt.
 **Stockage navigateur** : la Régie, le Studio, `/v1/`, `/mariage`, les éditeurs de sites, Stitch, le Point Zéro sans compte. Données personnelles en local repérées : Régie (identité bancaire, clients), Studio (pointages, avis), `/v1/` (invités, allergies, paiements), `/mariage` (invités, budget).
-**Hébergement tiers du Studio** : quand le Studio tourne comme artefact avec base partagée (`window.claude`), la badgeuse et les avis passent par cette base, et un compte « responsable » lit les pointages et les avis de tous (`studio/index.html:4688`, `:4795`). Sur lemondeaime.com, ce chemin est inactif. Niveau : **à vérifier**.
+**Hébergement tiers du Studio** : quand le Studio tourne comme artefact avec base partagée (`window.claude`), la badgeuse et les avis passent par cette base, et un compte « responsable » lit les pointages et les avis de tous. Sur lemondeaime.com, ce chemin est inactif. Niveau : **à vérifier**.
 
 ### 3.5 Rôles présents dans le code
 
@@ -171,32 +171,39 @@ Le code d'AIMESTUDIO ne contient vers les autres projets que des **liens** (cata
 
 ---
 
-## Premiers indices relevés pendant l'inventaire (à instruire au lot 2)
+## Constats ouverts (statuts seulement)
 
-| Niveau | Indice | Preuve |
-|---|---|---|
-| priorité élevée | **Règle 11 :** la table `audit` existe mais n'est jamais écrite ; invitations, retraits et annulations ne laissent aucune trace | `db/schema.sql` ; aucun `insert into audit` |
-| priorité élevée | **Les tests du socle ne tournent pas en CI :** les 5 tests des espaces sont sautés sans `TEST_DATABASE_URL` | `tests/comptes.test.cjs:5-6` |
-| priorité élevée | **Règle 5 :** un seul propriétaire possible (on n'invite jamais à `owner`) ; s'il supprime son compte, l'espace est **supprimé** avec ses membres, sans transmission | `api/_auth/auth.mjs:78-86` ; `api/_auth/espaces.mjs:11` |
-| à vérifier | **Règle 8 :** l'invitation n'est liée à une personne que si une adresse est donnée ; sans adresse, le lien sert à qui l'ouvre en premier | `api/_auth/espaces.mjs:55`, `:69` |
-| à vérifier | **Règle 2 :** `/api/espaces` `membres` donne à tout membre, invité compris, les noms et les rôles de tous les membres | `api/_auth/espaces.mjs:80-84` |
-| à vérifier | **Règle 7 :** un rôle retiré perd l'accès aux API à la requête suivante (rôle relu à chaque appel) ; le laissez-passer du direct reste signé 12 h mais chaque appel revérifie l'appartenance | `api/_auth/espaces.mjs:21-26`, `api/_live/core.js:20-28`, `api/live/journal.js:11` |
-| à vérifier | Le secret du direct peut retomber sur `BETTER_AUTH_SECRET` (un secret pour deux usages) | `api/_live/core.js:32` |
-| contexte | Pages privées : les coquilles HTML sont `public, max-age=0` mais ne contiennent aucune donnée ; les données passent par des API `no-store` | essais en production |
-| contexte | Gestes « Je vois un accès inattendu » et « Demander une ouverture » : **n'existent nulle part** | recherche dans le dépôt |
-| contexte | Transmission de propriété (`generate_handover_token` d'aime-passport) : **aucun équivalent** dans AIMESTUDIO | recherche dans le dépôt |
+Le détail technique des constats ouverts (fichiers, lignes, chemins) n'est pas publié ici : il est dans un avis de sécurité GitHub privé, et rejoindra ce fichier une fois corrigé. Décision de Matt, 24/10/2026.
+
+| # | Niveau | Constat | Correction | État |
+|---|---|---|---|---|
+| A | priorité élevée | Règle 2 : la liste des membres d'un espace en dit plus que la portée de certains rôles | bloquant pour le dock | ouvert |
+| B | priorité élevée | Règle 11 : le journal des invitations, retraits et changements de rôle n'est pas tenu | bloquant pour le dock | ouvert |
+| C | priorité élevée | Durée : aucun rôle serveur n'a de date de fin | bloquant pour le dock | ouvert |
+| D | priorité élevée | Règle 5 : supprimer le compte du propriétaire efface l'espace et ce qu'y ont mis ses membres | PR dédiée | ouvert |
+| E | priorité élevée | Le site sert des dossiers du dépôt qui ne sont pas des pages (documentation, schéma, tests, scripts) | PR dédiée | ouvert |
+| F | priorité élevée | Les tests du socle ne tournent pas en intégration continue | PR dédiée | ouvert |
+| G | à vérifier | Règle 8 : une invitation sans adresse n'est liée à aucune personne | PR dédiée | ouvert |
+| H | à vérifier | Le direct partage un secret avec un autre usage | PR dédiée | ouvert |
+| I | à vérifier | Règle 7 : retrait d'un rôle et laissez-passer du direct | lot 2 | à instruire |
+| J | à vérifier | Studio hébergé avec base partagée : portée du rôle « responsable » sur les pointages et les avis | lot 2 | à instruire |
+| K | contexte | « Je vois un accès inattendu » et « Demander une ouverture » n'existent pas encore | bloquant pour le dock (le premier) | ouvert |
+| L | contexte | Aucune transmission de propriété (pas d'équivalent au défaut d'aime-passport) | — | constat |
+| M | contexte | Coquilles HTML publiques sans donnée ; données par des API `no-store` | — | conforme |
 
 ## Ce qui n'a pas pu être vérifié
 
 - La base Neon (contenu, droits du rôle de connexion, migrations réellement appliquées) : seul le code est lu.
-- Les variables d'environnement de production (présence de `AIME_PROPRIETAIRES`, `LIVE_DEMO_SECRET`) : jamais lues.
-- Les parcours avec session : aucun compte de test n'a été utilisé en production.
+- Les variables d'environnement de production : jamais lues.
+- Les parcours avec session en production : aucun compte n'y a été utilisé. Les tests avec session tournent sur une base de test éphémère, jamais sur la production.
 - Les projets liés au-delà des références dans ce dépôt.
 
-## Questions pour Matt avant le lot 2
+## Décisions de Matt (24/10/2026)
 
-1. **Ce fichier est public** (dépôt public, et `/docs/` servi par le site). Le lot 2 décrira les failles avec fichier et ligne. On garde tout dans le dépôt, ou la section des failles reste hors du dépôt jusqu'à leur correction ?
-2. L'audit peut-il utiliser une base de test (`TEST_DATABASE_URL`) pour faire tourner les tests du socle, et des comptes de test sur un aperçu Vercel ?
-3. `/v1/` et `/mariage` gardent des invités, des allergies et des paiements dans le navigateur, sans compte : on les classe « abandonné » (et on les retire au lot 5) ou « en production » ?
-4. Les questions ouvertes du rapport restent ouvertes : mariage de preuve réel ou fictif d'abord, accès Neon en lecture seule, aime-passport dans cet audit, empreinte de l'Orbe par rôle ou par personne, tutoiement ou vouvoiement.
-5. Le rapport nomme le fichier final tantôt `docs/AUDIT-ROLES.md`, tantôt `docs/AUDIT-ETAT.md` : je garde `docs/AUDIT-ROLES.md`.
+1. Rien de sensible dans le dépôt public avant correction : statuts et niveaux ici, détail dans un avis de sécurité privé, publié une fois corrigé.
+2. Base de test : une base dédiée et des comptes fictifs, jamais un compte réel ni la base de production.
+3. `/v1/` et `/mariage` : **abandonnés**. Liens coupés maintenant, retrait au lot 5.
+4. Mariage de preuve fictif d'abord, dans un espace de démonstration ; Neon par la branche de test seulement ; aime-passport hors de cet audit ; empreinte de l'Orbe **par rôle**, et c'est écrit ; **vouvoiement**.
+5. `docs/AUDIT-ROLES.md` reste le seul fichier d'état.
+6. Reclassements : la règle 2 et la règle 5 passent en priorité élevée ; les dossiers servis deviennent un constat de priorité élevée.
+7. Suite : les corrections d'abord (une PR chacune, quatre bloquantes avant le dock), puis le Dock par rôle (`docs/DOCK.md`, à venir).
