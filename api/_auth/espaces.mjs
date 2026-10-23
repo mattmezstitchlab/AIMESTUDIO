@@ -22,7 +22,7 @@ const refus = (code, raison) => { throw new Refus(code, raison); };
 const texte = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
 export const hacher = t => crypto.createHash('sha256').update(String(t)).digest('hex');
 
-/* la durée des rôles (db/migrations/2026-10-24-duree.sql) : tant que la colonne n'existe pas sur une base, aucun rôle n'expire */
+/* la durée des rôles (db/migrations/2026-10-24-02-duree.sql) : tant que la colonne n'existe pas sur une base, aucun rôle n'expire */
 let DUREE = null;
 export function _oublierDuree() { DUREE = null; }
 export async function duree(db) {

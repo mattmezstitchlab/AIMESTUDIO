@@ -42,9 +42,16 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
-      - name: Schéma et migrations
-        run: for f in db/schema.sql db/migrations/*.sql; do psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"; done
+      # comme la production : seulement les migrations, dans l'ordre des noms, deux fois (elles doivent être rejouables sans risque)
+      - name: Migrations (deux passages)
+        run: for passe in 1 2; do for f in $(ls db/migrations/*.sql | sort); do psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"; done; done
       - run: node --test tests/comptes.test.cjs
+      # l'état de la production tant que les dernières migrations ne sont pas passées : une seconde base sans les migrations du 24/10/2026
+      - name: Base « ancienne » (sans les dernières migrations)
+        run: |
+          psql "$TEST_DATABASE_URL" -q -c "create database aime_ancien"
+          for f in $(ls db/migrations/*.sql | sort | grep -v '2026-10-24'); do psql "${TEST_DATABASE_URL/aime_test/aime_ancien}" -v ON_ERROR_STOP=1 -q -f "$f"; done
+      - run: TEST_DATABASE_URL_ANCIEN="${TEST_DATABASE_URL/aime_test/aime_ancien}" node --test tests/socle-ancien.test.cjs
   navigateur:
     name: Parcours navigateur
     needs: suites
