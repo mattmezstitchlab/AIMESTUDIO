@@ -165,3 +165,13 @@ test('portfolio · les carrousels de vraies réalisations restent configurés da
   assert.match(fs.readFileSync('regie/scene.js', 'utf8'), /function attendre\(sel,cb\)[\s\S]*?mo\.disconnect\(\)/, 'une place absente ne bloque rien');
   const s = fs.readFileSync('regie/scene.js', 'utf8'); assert.match(s, /monterCarrousels/); assert.match(s, /RM&&!EDITION/, 'pas de défilement auto si animations réduites');
 });
+
+/* Tant qu'ils n'ont pas de compte, la Régie et le Studio le disent ; la badgeuse informe et dit sa conservation réelle (docs/ROLES.md). */
+test('Régie et Studio : « pas protégée par un compte » ; badgeuse : information, conservation, export', () => {
+  const fs = require('fs'), path = require('path'), lire = f => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
+  assert.match(lire('regie/index.html'), /n'est pas protégée par un compte/);
+  const st = lire('studio/index.html');
+  assert.match(st, /id="stAvert" role="note">Cette page n'est pas protégée par un compte/);
+  assert.match(st, /Information des personnes badgées/); assert.match(st, /aucune durée automatique n'est encore appliquée/);
+  assert.match(st, /Remettez-le au seul responsable de l'équipe : sur cet appareil, rien ne l'empêche techniquement/);
+});
