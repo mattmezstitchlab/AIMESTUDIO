@@ -81,16 +81,24 @@ if(window.AIMEYeux&&$('duo'))yeux=AIMEYeux.monter($('duo'));
 /* la régie remplace d'abord les textes ; dans l'édition de la régie, les textes restent simples (sans points) */
 var regie=window.AIMERegieScene;
 (regie?regie.textes:Promise.resolve()).then(function(){
-if(window.AIMEPoints&&!(regie&&regie.edition))AIMEPoints.preparer('.zero .intention,.phrase p,.meta h2,.meta .sous,.lien h2,.lien .sous,.promesse .grand:not(.grand+.grand),.exemples li,.autorisations,.entrer h2,.entrer p:not(.sorties-note)',function(){
+if(window.AIMEPoints&&!(regie&&regie.edition))AIMEPoints.preparer('.zero .intention,.phrase p,.meta h2,.meta .sous,.lien h2,.lien .sous,.promesse .grand:not(.grand+.grand),.exemples li,.autorisations,.entrer h2,.entrer p:not(.sorties-note),.cx-titre,.cx-tete h2',function(){
+ [].forEach.call(document.querySelectorAll('[aria-hidden="true"]'),function(s){if(s.querySelector(':scope>.ii'))insecable(s)});
  titre('.zero .intention',function(){return window.scrollY>40});
  [].forEach.call(document.querySelectorAll('.phrase:not(.comprendre) p'),function(p,i){titre('.phrase:not(.comprendre):nth-child('+(i+1)+') p')});
  titre('.meta h2',function(){return progres($('meta'))>.86});
  titre('.lien h2',function(){return progres($('lien'))>.88});
  titre('.promesse .grand');
+ [].forEach.call(document.querySelectorAll('.cx-titre,.cx-tete h2'),function(h){if(h.id)titre('#'+h.id)});
  titre('.entrer h2',null,true);
  if(calme()){AIMEPoints.tous().forEach(function(p){AIMEPoints.allumer(p)});if(yeux)yeux.reveiller()}});
 else if(yeux)yeux.reveiller();
 });
+
+/* un mot qui porte un point ne se coupe jamais à cet endroit : le point est hors du flux et ouvrirait une coupure */
+function insecable(s){var mot=null,out=document.createDocumentFragment();
+ function fin(){mot=null}function ajoute(n){if(!mot){mot=document.createElement('span');mot.style.whiteSpace='nowrap';out.appendChild(mot)}mot.appendChild(n)}
+ [].slice.call(s.childNodes).forEach(function(n){if(n.nodeType===3){n.nodeValue.split(/(\s+)/).forEach(function(p){if(!p)return;if(/^\s+$/.test(p)){fin();out.appendChild(document.createTextNode(p))}else ajoute(document.createTextNode(p))})}else if(n.nodeName==='BR'){fin();out.appendChild(n)}else ajoute(n)});
+ s.textContent='';s.appendChild(out)}
 
 /* ---------- réduire les animations : le choix du visiteur s'ajoute à la préférence du système ---------- */
 var b=$('calme');function etiquette(){b.setAttribute('aria-pressed',String(calme()));b.textContent=calme()?'Rétablir les animations':'Réduire les animations'}

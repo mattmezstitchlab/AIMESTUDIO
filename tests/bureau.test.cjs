@@ -85,9 +85,11 @@ test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
  const ATS=st.match(/const ATELIERS=\{([^\n]*?)\};/);for(const a of A){assert.ok(ATS&&new RegExp('\\b'+a+':\\{').test(ATS[1]),a+' est un atelier connu du Studio');
   assert.ok(!fs.existsSync(R(a+'/index.html')),a+'/index.html : copie revenue');for(const s of ['/'+a,'/'+a+'/'])assert.ok(rw.some(r=>r.source===s&&r.destination==='/studio/'),s+' réécrit vers le Studio')}
  assert.ok(fs.existsSync(R('docs/BUREAU.md')),'les documents de /docs/ restent servis')});
-test('Page Zéro · la vitrine est une scène pilotée par la régie, étiquetée démonstration, avant l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8');
- const v=z.indexOf('id="vitrine"'),p=z.indexOf('id="t-prom"'),e=z.indexOf('id="entrer"');assert.ok(p>0&&v>p&&e>v,'entre la promesse et « Et maintenant ? »');
- const sec=z.slice(v,e);assert.match(sec,/id="vitrine-scene"/);assert.match(sec,/Démonstration · données fictives/);
- for(const h of ['/canevas/','/reseau/','/g44/','/studio/'])assert.ok(sec.includes('href="'+h+'"'),'lien vers '+h);
- assert.ok(z.indexOf('/regie/scene.js')<z.indexOf('/zero/zero.js'),'la scène passe avant la page : les textes de la régie précèdent les points des « i »');
- const c=JSON.parse(fs.readFileSync(R('regie/site.json'),'utf8'));assert.ok(c.pages['/'].appareils.every(a=>a.ancre==='#vitrine-scene'))});
+test('Page Zéro · le cœur de haut en bas : quatre écrans composés par le moteur, puis l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8'),c=fs.readFileSync(R('accueil/coeur.js'),'utf8');
+ const ordre=['id="haut"','id="coeur"','id="ecrans"','id="droits"','id="jourj"','id="partout"','id="entrer"','id="contact"'].map(s=>z.indexOf(s));
+ assert.ok(ordre.every((x,i)=>x>0&&(i===0||x>ordre[i-1])),'les chapitres se suivent de haut en bas');
+ assert.equal((z.match(/<iframe [^>]*sandbox="allow-same-origin"/g)||[]).length,5,'quatre écrans + l\'aperçu du projet, tous sans script');assert.ok(!/allow-scripts/.test(z));
+ assert.match(z,/Démonstration · données fictives/);assert.match(z,/href="\/synchroview\/\?v=mariage\.couple\.pc,mariage\.coordinateur\.pc,mariage\.prestataire\.pc,mariage\.invite\.pc"/);
+ assert.ok(c.includes('Vit.rendre(')&&c.includes('Vit.politique(')&&c.includes('Live.rejouer('),'les vrais moteurs : pages, règles, journal du jour J');assert.ok(!/localStorage\.setItem|fetch\([^)]*method/.test(c),'rien n\'est écrit ni envoyé');
+ assert.ok(!/#7C5CFF|#22D3EE|#FB7185|#F59E0B/i.test(fs.readFileSync(R('accueil/coeur.css'),'utf8')),'le cœur reste monochrome');
+ assert.ok(z.indexOf('/regie/scene.js')<z.indexOf('/zero/zero.js'),'la scène passe avant la page : les textes de la régie précèdent les points des « i »')});

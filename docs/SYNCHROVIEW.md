@@ -118,3 +118,19 @@ Deux décisions vous reviennent :
 2. **Le contenu de la matrice** ci-dessus : à corriger ligne par ligne avant que je l'écrive.
 
 Une fois validée, la matrice devient du code testé (un test par case), et SynchroView affiche les vraies permissions et signale les incohérences du type « bouton Payer visible pour un rôle qui n'a pas le droit de payer ».
+
+---
+
+## 8. L'accueil présente le cœur (23/10/2026)
+
+La page d'accueil (`/`) présente désormais, de haut en bas, ce que SynchroView rend visible : **un seul projet, quatre écrans**.
+
+| Chapitre | Ce qui se passe | Moteurs |
+|---|---|---|
+| Ouverture | L'orbe, l'intention « Que préparez-vous ? » (inchangée) | `accueil/accueil.js` |
+| 01 · Quatre écrans, une seule source | Les quatre perspectives du mariage de démonstration (couple, coordination, prestataire, invitée), composées à l'instant dans quatre écrans sans script. Changer le nom, la date ou le lieu recompose les quatre. Le projet écrit en haut de page prend la place de l'exemple. | `vitrine/rendu.js` (`rendre`), `synchroview/permissions.js` |
+| 02 · Décidé avant l'affichage | Ce que les règles permettent à chacun : moments, documents, réponses, paiements, gestes. | `AIMEVitrine.politique` |
+| 03 · Le réel bouge, chacun le sait | Averse (plan B) et retard écrits au journal du jour J, rejoués pour les quatre ; annulable. | `live/modele.js` |
+| 04 · Sur chaque appareil | Liens vers SynchroView : quatre écrans, quatre formats. | `/synchroview/` |
+
+Sobre et monochrome : seule l'orbe garde ses couleurs. Rien n'est enregistré ni envoyé. Les anciens actes (supports, broderie, vitrine multi-écrans, catalogue d'ateliers, offres) restent au Lab (`/lab/grande-partition/`) ; la configuration des carrousels de la Régie est conservée mais n'a plus de place sur l'accueil.

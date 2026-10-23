@@ -98,6 +98,12 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     ok(/Moteurs/.test(await p.textContent('#mc-pan h2')), 'Cube Maître : au clavier, une face ouvre sa fiche');
     await p.goto(B + '/canevas/?maitre=sante&de=/maitre/', { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
     ok(/Cube Maître/.test(await p.textContent('.cv-titre')), 'Canevas : le Cube Maître s\'ouvre déplié');
+    // Le cœur : un seul projet, quatre écrans ; écrire une fois recompose les quatre, le jour J se recale pour chacun
+    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(800);
+    await p.fill('#srcTitre', 'Inès & Théo'); await p.waitForTimeout(1200);
+    ok((await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /Inès & Théo/.test(document.body.textContent))))).filter(Boolean).length === 4, 'Accueil : le nom écrit une fois apparaît sur les quatre écrans');
+    await p.click('#jourPluie'); await p.waitForTimeout(400); ok(/plan B/.test(await p.textContent('#jourTrace')) && (await p.$$('#jourVues li.change')).length >= 3, 'Accueil : l\'averse recale le jour J pour chacun');
+    ok(!(await deborde()), 'Accueil (cœur) : sans débordement horizontal');
     // Premier écran : une phrase → ce qui est compris → un projet enregistré → sa page, retrouvée après rechargement
     await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.fill('#acTexte', 'Le mariage de Léa et Marc, le 14 juin 2027 à Chantilly, 120 invités'); await p.click('.ac-go'); await p.waitForTimeout(500);
     ok(await p.inputValue('#acLieu') === 'Chantilly' && await p.inputValue('#acDate') === '2027-06-14', 'Accueil : l\'intention est comprise (date, lieu)');

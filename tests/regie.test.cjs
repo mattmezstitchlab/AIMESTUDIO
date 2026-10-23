@@ -154,12 +154,14 @@ test('portfolio · réalisations et carrousels assainis', () => {
   assert.deepEqual(R.vide().realisations, []);
 });
 
-test('portfolio · la Page Zéro publiée montre des carrousels de vraies réalisations', () => {
+test('portfolio · les carrousels de vraies réalisations restent configurés dans la Régie', () => {
   const c = R.config(JSON.parse(fs.readFileSync('regie/site.json', 'utf8')));
   assert.ok(c.realisations.length >= 6 && c.realisations.every(r => r.publie && r.titre && r.contenu.type !== 'vide'));
   assert.ok(c.carrousels.length >= 2 && c.carrousels.every(x => x.page === '/' && x.items.length >= 3));
+  /* depuis le 23/10/2026, l'accueil ne présente que le cœur (un projet, quatre écrans) : la configuration des carrousels
+     reste intacte dans la Régie ; sur cette page, la scène attend une place qui n'existe plus, sans rien bloquer */
   const page = fs.readFileSync('index.html', 'utf8');
-  c.carrousels.forEach(x => assert.ok(page.includes(x.apres.startsWith('#') ? 'id="' + x.apres.slice(1) + '"' : 'class="' + x.apres.slice(1)), 'la place existe : ' + x.apres));
-  assert.match(page, /id="offres"/);
+  assert.doesNotMatch(page, /id="offres"|id="meta"|class="promesse"/, 'l\'accueil reste sobre : ni carrousels ni offres');
+  assert.match(fs.readFileSync('regie/scene.js', 'utf8'), /function attendre\(sel,cb\)[\s\S]*?mo\.disconnect\(\)/, 'une place absente ne bloque rien');
   const s = fs.readFileSync('regie/scene.js', 'utf8'); assert.match(s, /monterCarrousels/); assert.match(s, /RM&&!EDITION/, 'pas de défilement auto si animations réduites');
 });
