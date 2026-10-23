@@ -163,3 +163,26 @@ test('espaces · règle 11 : journal en ajout seul, lisible par la personne conc
   await assert.rejects(pool.query("update audit set action = 'x' where space_id = $1", [id]), /ajout seul/);
   await assert.rejects(pool.query('delete from audit where space_id = $1', [id]), /ajout seul/);
 });
+
+/* Durée : un rôle peut avoir une date de fin ; après elle, il est refusé partout, et la fermeture est inscrite au journal. */
+test('espaces · durée des rôles : « jusqu\'au … », refus après échéance, fermeture au journal', opts, async () => {
+  let r = await appel(E.default, { action: 'creer', titre: 'Durée' }, M.owner); const id = r.body.id;
+  for (const j of ['pas une date', new Date(Date.now() - 864e5).toISOString(), new Date(Date.now() + 4 * 366 * 864e5).toISOString()])
+    assert.equal((await appel(E.default, { action: 'inviter', espace: id, role: 'viewer', jusquau: j }, M.owner)).code, 400, 'date refusée : ' + j);
+  const fin = new Date(Date.now() + 2 * 864e5).toISOString();
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'viewer', jusquau: fin }, M.owner); assert.equal(r.body.jusquau, fin);
+  r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M.viewer); assert.equal(r.body.role, 'viewer');
+  r = await appel(E.default, { action: 'membres', espace: id }, M.viewer); assert.equal(r.body.membres.find(m => m.role === 'viewer').jusquau, fin, 'il voit « jusqu\'au … »');
+  assert.equal((await appel(E.default, { action: 'acces', espace: id }, M.viewer)).body.moi.jusquau, fin);
+  /* le temps passe (on avance la date de fin dans la base de test) */
+  await pool.query("update space_members set jusqu_au = now() - interval '1 minute' where space_id = $1 and role = 'viewer'", [id]);
+  for (const action of ['membres', 'acces', 'journal']) assert.equal((await appel(E.default, { action, espace: id }, M.viewer)).code, 404, 'après échéance : ' + action);
+  assert.ok(!(await appel(E.default, { action: 'mes' }, M.viewer)).body.espaces.some(e => e.id === id), 'plus dans « mes espaces »');
+  assert.ok(!(await appel(E.default, { action: 'membres', espace: id }, M.owner)).body.membres.some(m => m.role === 'viewer'), 'plus dans la liste du propriétaire');
+  assert.equal((await appel(require('../api/live/passe.js'), { espace: id }, M.viewer)).code, 403, 'plus de direct');
+  const j = (await appel(E.default, { action: 'journal', espace: id }, M.owner)).body.journal;
+  assert.equal(j.filter(l => l.action === 'fermeture').length, 1, 'fermeture inscrite une seule fois'); assert.ok(j.some(l => l.action === 'acceptation' && l.detail.jusqu_au === fin), 'ouverture datée');
+  /* une nouvelle invitation remplace le rôle échu */
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'guest' }, M.owner);
+  r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M.viewer); assert.equal(r.body.role, 'guest');
+});

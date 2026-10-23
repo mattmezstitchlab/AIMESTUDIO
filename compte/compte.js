@@ -75,19 +75,20 @@ function chargerEspaces(ouvert){espaces('mes').then(function(r){var L=$('liste')
   var pan=el('div','pan pile');pan.hidden=true;c.appendChild(pan);m.onclick=function(){var o=pan.hidden;pan.hidden=!o;m.setAttribute('aria-expanded',String(o));if(o)chargerMembres(s,pan)};L.appendChild(c);if(s.id===ouvert)m.click()})}).catch(function(e){toast(e.message,true)})}
 
 function chargerMembres(s,pan,dernier){pan.textContent='';pan.appendChild(el('p','leg','Chargement…'));espaces('membres',{espace:s.id}).then(function(r){pan.textContent='';
- var pl=el('div','planche');pl.setAttribute('aria-label','Membres de l\'espace');r.membres.forEach(function(x){pl.appendChild(T.creer({id:x.id,nom:x.nom+(x.id===r.moi.id?' (vous)':''),role:x.role,image:x.image}))});pan.appendChild(pl);
+ var pl=el('div','planche');pl.setAttribute('aria-label','Membres de l\'espace');r.membres.forEach(function(x){pl.appendChild(T.creer({id:x.id,nom:x.nom+(x.id===r.moi.id?' (vous)':'')+(x.jusquau?' · jusqu\'au '+new Date(x.jusquau).toLocaleDateString('fr-FR'):''),role:x.role,image:x.image}))});pan.appendChild(pl);
  /* hors de sa portée, les autres membres ne sont pas envoyés : seulement des effectifs, sans noms, si le rôle y a droit */
  if(r.effectif)pan.appendChild(el('p','leg','Dans l\'espace : '+Object.keys(ROLES).filter(function(k){return r.effectif[k]}).map(function(k){return r.effectif[k]+' × '+ROLES[k].split(' (')[0].toLowerCase()}).join(', ')+'.'));
  /* inviter : seulement les rôles que les règles ouvrent à mon rôle (le serveur revérifie) */
  var possibles=['editor','contributor','viewer','guest'].filter(function(k){return P.can({id:r.moi.id,role:r.moi.role},'invite',{type:'space',role:k}).allow});
  if(possibles.length){var f=el('form','lgn inv');var sel=el('select');sel.setAttribute('aria-label','Rôle de la personne invitée');possibles.forEach(function(k){var o=el('option',null,ROLES[k]);o.value=k;sel.appendChild(o)});
   var em=el('input');em.type='email';em.placeholder='Son adresse e-mail (facultatif : réserve le lien à cette adresse)';em.setAttribute('aria-label','Adresse e-mail de la personne invitée');em.style.flex='1';em.style.minWidth='220px';
-  var ok=el('button','b b-p','Créer le lien d\'invitation');ok.type='submit';f.appendChild(sel);f.appendChild(em);f.appendChild(ok);pan.appendChild(f);var res=el('div','pile');pan.appendChild(res);
+  var ju=el('input');ju.type='date';ju.setAttribute('aria-label','Rôle valable jusqu\'au (facultatif)');ju.title='Rôle valable jusqu\'au (facultatif)';ju.min=new Date(Date.now()+864e5).toISOString().slice(0,10);
+  var ok=el('button','b b-p','Créer le lien d\'invitation');ok.type='submit';f.appendChild(sel);f.appendChild(em);f.appendChild(ju);f.appendChild(ok);pan.appendChild(f);var res=el('div','pile');pan.appendChild(res);
   function montrer(x){res.textContent='';var lg=el('div','lgn lien');var i=el('input');i.readOnly=true;i.value=x.lien;i.setAttribute('aria-label','Lien d\'invitation');i.style.flex='1';i.style.minWidth='0';
     var cp=el('button','b','Copier');cp.type='button';cp.onclick=function(){(navigator.clipboard?navigator.clipboard.writeText(x.lien):Promise.reject()).then(function(){toast('Lien copié.')}).catch(function(){i.select();toast('Sélectionné : copiez-le.')})};lg.appendChild(i);lg.appendChild(cp);res.appendChild(lg);
-    res.appendChild(el('p','leg','Lien à usage unique, valable '+x.jours+' jours, pour le rôle « '+ROLES[x.role]+' »'+(x.email?', réservé à '+x.email:'')+'. Envoyez-le par le moyen de votre choix.'))}
+    res.appendChild(el('p','leg','Lien à usage unique, valable '+x.jours+' jours, pour le rôle « '+ROLES[x.role]+' »'+(x.email?', réservé à '+x.email:'')+(x.jusquau?' ; le rôle prendra fin le '+new Date(x.jusquau).toLocaleDateString('fr-FR'):'')+'. Envoyez-le par le moyen de votre choix.'))}
   if(dernier)montrer(dernier);
-  f.onsubmit=function(e){e.preventDefault();espaces('inviter',{espace:s.id,role:sel.value,email:em.value.trim()||undefined}).then(function(x){if(r.gerer)chargerMembres(s,pan,x);else montrer(x)}).catch(function(err){toast(err.message,true)})}}
+  f.onsubmit=function(e){e.preventDefault();espaces('inviter',{espace:s.id,role:sel.value,email:em.value.trim()||undefined,jusquau:ju.value?new Date(ju.value+'T23:59:59').toISOString():undefined}).then(function(x){if(r.gerer)chargerMembres(s,pan,x);else montrer(x)}).catch(function(err){toast(err.message,true)})}}
  else pan.appendChild(el('p','leg','Votre rôle ne permet pas d\'inviter dans cet espace.'));
  /* gérer : le propriétaire voit les adresses, les invitations, et peut retirer quelqu'un */
  if(r.gerer){var g=el('div','pile gerer');g.appendChild(el('h4','k','Membres'));r.membres.forEach(function(x){var li=el('div','lgn ligne');li.appendChild(T.creer({id:x.id,nom:x.nom,role:x.role,image:x.image,mini:true}));var nm=el('span',null,x.nom+' · '+(ROLES[x.role]||x.role)+(x.email?' · '+x.email:''));nm.insertBefore(pastille(x.role),nm.firstChild);li.appendChild(nm);
