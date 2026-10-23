@@ -16,3 +16,9 @@ test('aucune page ni fonction ne charge un dossier non déployé', () => {
   const fautifs = vus.filter(f => motif.test(fs.readFileSync(R(f), 'utf8')));
   assert.deepEqual(fautifs, []);
 });
+
+/* Règle 12 : une démonstration ne promet pas une vérification serveur qu'un visiteur ne peut pas voir. */
+test('accueil : aucun lien vers une page fermée au public', () => {
+  const h = fs.readFileSync(R('index.html'), 'utf8');
+  assert.ok(!/href="\/synchroview\//.test(h), 'le démonstrateur SynchroView est réservé au propriétaire du site');
+});

@@ -89,7 +89,7 @@ test('Page Zéro · le cœur de haut en bas : quatre écrans composés par le mo
  const ordre=['id="haut"','id="coeur"','id="arrivees"','id="arr-couple"','id="arr-prestataire"','id="arr-invite"','id="arr-coord"','id="ecrans"','id="droits"','id="jourj"','id="partout"','id="entrer"','id="contact"'].map(s=>z.indexOf(s));
  assert.ok(ordre.every((x,i)=>x>0&&(i===0||x>ordre[i-1])),'les chapitres se suivent de haut en bas');
  assert.equal((z.match(/<iframe [^>]*sandbox="allow-same-origin"/g)||[]).length,5,'quatre écrans + l\'aperçu du projet, tous sans script');assert.ok(!/allow-scripts/.test(z));
- assert.match(z,/Démonstration · données fictives/);assert.match(z,/href="\/synchroview\/\?v=mariage\.couple\.pc,mariage\.coordinateur\.pc,mariage\.prestataire\.pc,mariage\.invite\.pc"/);
+ assert.match(z,/Démonstration · données fictives/);assert.ok(!/href="\/synchroview\//.test(z),'SynchroView est réservé au propriétaire du site : l\'accueil n\'y renvoie pas');
  assert.ok(c.includes('Vit.rendre(')&&c.includes('Vit.politique(')&&c.includes('Live.rejouer('),'les vrais moteurs : pages, règles, journal du jour J');assert.ok(!/localStorage\.setItem|fetch\([^)]*method/.test(c),'rien n\'est écrit ni envoyé');
  assert.equal((z.match(/class="ancre[^"]*" [^>]*data-orbe="1"/g)||[]).length,6,'l\'orbe part du point zéro, recueille chaque arrivée puis passe d\'écran en écran');assert.match(c,/function choregraphie\(/);
  assert.ok(!/#7C5CFF|#22D3EE|#FB7185|#F59E0B/i.test(fs.readFileSync(R('coeur/coeur.css'),'utf8')),'le cœur reste monochrome');

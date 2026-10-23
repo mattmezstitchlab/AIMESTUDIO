@@ -5,7 +5,7 @@
      rôle   : travailler (le Bureau) · decouvrir (présentation) · realiser (une application, une tâche) · experimenter (Lab)
      statut : disponible · demonstration (données fictives) · experimental (peut changer ou casser)
    interne : un démonstrateur de recherche (identités fictives) que la navigation publique ne propose pas ;
-   il reste listé ici (la Régie le voit) et sa page reste servie, réservée côté serveur en production. */
+   il reste listé ici (la Régie le voit) ; sa page est servie mais seulement masquée dans le navigateur, et ses routes /api/sv/* sont fermées au serveur en production (sauf au propriétaire du site). */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.AIMENav=factory()})(typeof self!=='undefined'?self:this,function(){'use strict';
 var STATUTS={disponible:'Disponible',demonstration:'Démonstration',experimental:'Expérimental'};
 var ROLES={travailler:'Travailler',decouvrir:'Découvrir',realiser:'Réaliser',experimenter:'Expérimenter'};
