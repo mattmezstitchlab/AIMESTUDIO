@@ -27,6 +27,7 @@ La liste des adresses, avec leur statut (disponible, démonstration, expériment
 | `/v1/` | Réaliser | **La Timeline Jour J**, l'ancienne application de planning. Elle est conservée parce qu'elle n'est pas remplacée. |
 | `/lab/orb/`, `/infinity/lab/` | Expérimenter | **Le Lab.** |
 | `/tout/` | Découvrir | Toutes les vues d'un coup. |
+| `/mariage` | Réaliser | **AIME Wedding** en une seule app : l'organisation et les supports sur une seule ligne du temps, données dans le navigateur. |
 
 L'ancien Bureau à fenêtres a été retiré le 20 octobre 2026. Ses réglages restent dans les navigateurs. Le nouveau Bureau les signale et les inclut dans la sauvegarde ; il ne les efface jamais.
 

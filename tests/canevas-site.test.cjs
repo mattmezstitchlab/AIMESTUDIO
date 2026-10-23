@@ -15,7 +15,7 @@ t('sélectionner, déplacer, dimensionner, régler : souris, doigt, clavier',()=
 t('droits : le contenu du projet validé reste protégé ; seule la forme et le titre se règlent',()=>{
  ['pz-motif','pz-fils','pz-mesures','pz-avancement','pz-actions','pz-decisions'].forEach(k=>assert.ok(ad.includes("'"+k+"'"),k));assert.ok(/k==='texte'&&!prot/.test(ad))});
 t('rien n\'est écrit sans confirmation ; Enregistrer range la page là où l\'aperçu la relit ; Annuler revient',()=>{
- const ecr=(ad.match(/ecrire\(/g)||[]).length;assert.equal(ecr,2,'une définition, un seul appel (dans enregistrer)');assert.ok(/function enregistrer\(D\)\{[^}]*ecrire\(e\)/.test(ad));
+ const ecr=(ad.match(/ecrire\(/g)||[]).length;assert.equal(ecr,2,'une définition, un seul appel (dans enregistrer)');assert.ok(ad.includes('if(!ecrire(e))'));
  assert.ok(ad.includes("CLE='aime-sites'")&&pj.includes("CLE='aime-sites'"),'même rangement que l\'aperçu');assert.ok(/function annuler\(D\)\{D\.site=copie\(D\.garde\)/.test(ad));assert.ok(ad.includes('beforeunload'))});
 t('parcours : « Voir mon mini-site » et « Modifier dans le Canevas » ; retour au projet selon l\'origine',()=>{
  assert.ok(pz.includes("'Voir mon mini-site'")&&pz.includes("'Modifier dans le Canevas'")&&pz.includes("&canevas=1"));

@@ -25,3 +25,11 @@ Un plan de travail neutre où ouvrir les projets AIME. Page : `/canevas/` (vide)
 ## Pas encore
 
 Superposition de plusieurs calques, autres adaptateurs (mini-site, relations, Metamorphose, PDF), notes sur le compte (lot de persistance), confirmation d'une proposition dans le projet.
+
+## Fiabilité de l'enregistrement local (22 octobre 2026)
+
+Pour l'adaptateur site, la barre existante indique dès l'ouverture que le site est sur cet appareil uniquement, sans synchronisation avec le compte, et la date du dernier enregistrement si elle existe. Aucun style ni disposition n'est modifié.
+
+Enregistrer sélectionne le site courant dans `aime-sites.cur`, conserve les autres projets et ne confirme le succès qu'après écriture. Un stockage illisible, un refus d'écriture ou un quota conserve les modifications ouvertes. Si la version stockée a changé depuis l'ouverture (autre éditeur/onglet) ou a été supprimée, l'écriture est refusée sans écrasement. Il faut garder l'onglet ouvert et comparer avec le Bureau ; aucune fusion automatique n'est proposée. Ce contrôle est optimiste, pas un verrou transactionnel entre onglets.
+
+Tests comportementaux : `tests/canevas-persistance.test.cjs` (reprise, conservation d'autres sites, écritures successives, quota, corruption, suppression et conflit). Ces tests ne remplacent pas une validation visuelle ni un test du parcours compte sur PostgreSQL.

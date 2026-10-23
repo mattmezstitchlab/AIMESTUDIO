@@ -14,7 +14,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
-    for (const u of ['/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/']) {
+    for (const u of ['/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
     // le dock : Réseau et Canevas ; ni ancien générateur ni Régie pour le public
@@ -90,6 +90,14 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     const r = await p.evaluate(async () => { const w = ms => new Promise(x => setTimeout(x, ms)); const c = document.querySelector('.rx-carte'); [...c.querySelectorAll('button')].find(b => /Ajouter/.test(b.innerText)).click(); await w(1200);
       const v = [...document.querySelectorAll('.rx-ver li')].map(l => l.className); const conf = [...document.querySelectorAll('.rx-voile button')].find(b => /Confirmer/.test(b.innerText)); if (conf) conf.click(); await w(800); return v; });
     ok(r.length === 7 && r.every(x => x === 'ok'), 'Réseau : sept vérifications au vert avant l\'ajout');
+    // Cube Maître : six facettes réelles ; le visiteur n'a ni la facette Comptes ni de lien vers la Régie ; le Canevas l'ouvre déplié
+    await p.goto(B + '/maitre/', { waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
+    const cm = await p.evaluate(() => ({ faces: document.querySelectorAll('#mc-cube .cv3-f').length, posees: document.querySelectorAll('#mc-cube .cv3-f.pose').length, regie: [...document.querySelectorAll('a')].some(a => /^\/regie/.test(a.getAttribute('href') || '')) }));
+    ok(cm.faces === 6 && cm.posees === 5 && !cm.regie, 'Cube Maître : six faces, cinq lues par le visiteur, aucun lien vers la Régie');
+    await p.focus('#mc-cube .cv3-f[data-f="moteurs"]'); await p.keyboard.press('Enter'); await p.waitForTimeout(500);
+    ok(/Moteurs/.test(await p.textContent('#mc-pan h2')), 'Cube Maître : au clavier, une face ouvre sa fiche');
+    await p.goto(B + '/canevas/?maitre=sante&de=/maitre/', { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
+    ok(/Cube Maître/.test(await p.textContent('.cv-titre')), 'Canevas : le Cube Maître s\'ouvre déplié');
     ok(err.length === 0, 'aucune erreur JavaScript' + (err.length ? ' : ' + err.slice(0, 3).join(' | ') : ''));
     await ctx.close();
   }
