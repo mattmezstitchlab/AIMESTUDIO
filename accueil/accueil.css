@@ -1,0 +1,61 @@
+/* AIME · le premier écran : une intention → un projet enregistré → sa page. Dans la langue de la page d'accueil (sombre, Inter, irisé réservé à l'orbe). */
+.ac-form{margin:26px auto 0;width:min(640px,100%);display:grid;gap:12px;text-align:left}
+.ac-l{font:600 13px var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--soft);text-align:center}
+.ac-champ{display:flex;gap:8px;padding:6px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04)}
+.ac-champ:focus-within{border-color:#7C5CFF;box-shadow:0 0 0 3px rgba(124,92,255,.25)}
+.ac-champ input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:400 17px/1.4 var(--ui);padding:10px 12px}
+.ac-champ input:focus{outline:none}
+.ac-champ input::placeholder{color:var(--faint)}
+.ac-go{flex:none;border:0;border-radius:11px;padding:0 18px;background:var(--ink);color:var(--desk);font:600 15px var(--ui);cursor:pointer}
+.ac-go:hover{background:#fff}
+.ac-ex{margin:0;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font:400 13px var(--ui);color:var(--soft)}
+.ac-ex button{border:1px solid var(--line);background:none;color:var(--ink);font:400 13px var(--ui);border-radius:999px;padding:5px 11px;cursor:pointer}
+.ac-ex button:hover{border-color:var(--soft)}
+.ac-reprendre{margin:4px 0 0;text-align:center;font:400 14px var(--ui);color:var(--soft)}
+.ac-reprendre button{border:0;background:none;color:var(--ink);font:600 14px var(--ui);text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:4px}
+
+.ac-projet{padding:48px max(16px,env(safe-area-inset-right,0px)) 72px max(16px,env(safe-area-inset-left,0px));border-top:1px solid var(--line)}
+.ac-projet>*{max-width:1100px;margin-left:auto;margin-right:auto}
+.ac-k{margin:0 0 6px;font:600 12px var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--soft)}
+.ac-projet h2{margin:0 0 18px;font:400 clamp(28px,3.6vw,40px)/1.1 var(--display);letter-spacing:-.01em;text-wrap:balance}
+.ac-carte{border:1px solid var(--line);border-radius:20px;padding:22px;background:rgba(255,255,255,.03);max-width:720px}
+.ac-grille{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.ac-grille label{display:grid;gap:6px;font:500 13px var(--ui);color:var(--soft)}
+.ac-grille .large{grid-column:1/-1}
+.ac-grille input,.ac-grille select{font:400 16px var(--ui);color:var(--ink);background:#141418;border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;color-scheme:dark}
+.ac-grille input:focus,.ac-grille select:focus{outline:2px solid #7C5CFF;outline-offset:1px}
+.ac-alerte{margin:12px 0 0;font:400 14px var(--ui);color:#FBBF24}
+.ac-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}
+.ac-b{border:1px solid var(--line);background:none;color:var(--ink);font:600 14.5px var(--ui);border-radius:999px;padding:10px 18px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.ac-b:hover{border-color:var(--soft)}
+.ac-b.p{background:var(--ink);color:var(--desk);border-color:var(--ink)}
+.ac-b.p:hover{background:#fff}
+
+.ac-tete{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between;margin-bottom:16px}
+.ac-tete h2{margin:0}
+.ac-etat{margin:0;font:500 13px var(--ui);color:#34D399}
+.ac-outils{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ac-seg{display:flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px}
+.ac-seg button{border:0;background:none;color:var(--soft);font:500 13.5px var(--ui);border-radius:9px;padding:7px 12px;cursor:pointer}
+.ac-seg button:hover{color:var(--ink)}
+.ac-seg button[aria-pressed=true]{background:var(--ink);color:var(--desk)}
+.ac-cadre{display:flex;justify-content:center;border:1px solid var(--line);border-radius:18px;background:#141418;padding:14px;overflow:hidden}
+.ac-cadre iframe{width:100%;max-width:100%;height:min(72vh,760px);border:0;border-radius:10px;background:#fff;transition:width .3s}
+.ac-cadre.tel iframe{width:390px}
+.ac-note{margin:14px 0 0;font:400 14px/1.55 var(--ui);color:var(--soft);max-width:72ch}
+.ac-suite{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.ac-suite a,.ac-suite button{display:grid;gap:4px;text-align:left;border:1px solid var(--line);border-radius:16px;padding:16px;background:none;color:var(--ink);text-decoration:none;font:600 15px var(--ui);cursor:pointer}
+.ac-suite a:hover,.ac-suite button:hover{border-color:var(--soft)}
+.ac-suite span{font:400 13.5px/1.45 var(--ui);color:var(--soft)}
+@media (max-width:640px){
+ .ac-champ{flex-direction:column}
+ .ac-go{padding:12px}
+ .ac-grille{grid-template-columns:minmax(0,1fr)}
+ .ac-cadre{padding:8px}
+ .ac-cadre iframe{height:62vh}
+ .ac-cadre.tel iframe{width:100%}
+ #acVues{display:none}
+}
+@media (prefers-reduced-motion:reduce){.ac-cadre iframe{transition:none}}
+#acT,#acPageT{scroll-margin-top:120px}
+#acComprendre,#acPage{scroll-margin-top:120px}

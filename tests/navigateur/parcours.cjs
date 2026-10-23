@@ -98,6 +98,14 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     ok(/Moteurs/.test(await p.textContent('#mc-pan h2')), 'Cube Maître : au clavier, une face ouvre sa fiche');
     await p.goto(B + '/canevas/?maitre=sante&de=/maitre/', { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
     ok(/Cube Maître/.test(await p.textContent('.cv-titre')), 'Canevas : le Cube Maître s\'ouvre déplié');
+    // Premier écran : une phrase → ce qui est compris → un projet enregistré → sa page, retrouvée après rechargement
+    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.fill('#acTexte', 'Le mariage de Léa et Marc, le 14 juin 2027 à Chantilly, 120 invités'); await p.click('.ac-go'); await p.waitForTimeout(500);
+    ok(await p.inputValue('#acLieu') === 'Chantilly' && await p.inputValue('#acDate') === '2027-06-14', 'Accueil : l\'intention est comprise (date, lieu)');
+    await p.click('#acOui'); await p.waitForSelector('#acPage:not([hidden])'); await p.waitForTimeout(600);
+    ok(await p.evaluate(() => { const o = JSON.parse(localStorage.getItem('aime-projets')); return !!o && Object.values(o.projets).some(x => x.format === 'aime-projet' && x.titre === 'Léa & Marc'); }), 'Accueil : un projet aime-projet v1 est enregistré');
+    ok(await p.evaluate(() => /Chantilly/.test(document.getElementById('acApercu').srcdoc)), 'Accueil : sa page est composée par le moteur de pages');
+    ok(!(await deborde()), 'Accueil : sans débordement horizontal');
+    await p.reload({ waitUntil: 'networkidle' }); ok(/Léa & Marc/.test(await p.textContent('#acReprendreB')), 'Accueil : le projet est retrouvé après rechargement');
     // Canevas universel · Site : ouvrir un projet, choisir un bloc, voir sa source, changer de Design System, garder après rechargement
     await p.goto(B + '/sites/', { waitUntil: 'networkidle' }); await p.waitForTimeout(800); if (await p.isVisible('#atelier')) await p.click('#nouveau'); await p.click('[data-demo="mariage"]'); await p.waitForTimeout(2500);
     ok(!(await deborde()), 'Canevas universel : sans débordement horizontal');
