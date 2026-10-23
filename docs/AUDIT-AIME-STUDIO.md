@@ -42,7 +42,7 @@ Services / offres, Produits, Réservation, Promotion / annonce, Avant / après, 
 
 | Étape | Ce que l'utilisateur pourra faire | Reprise d'AIME STUDIO | Où, ici |
 | --- | --- | --- | --- |
-| **1. Compléter le catalogue de sections** | Ajouter les 14 sections manquantes depuis `/sites/`, chacune avec sa vraie structure (colonnes, questions/réponses, portraits…), rangées par famille comme dans le Studio | `SECTIONS_SITE`, `STRUCTURES` (`src/lib/bureau/sectionEtiquettes.js`) | `bloc(...)` dans `vitrine/rendu.js` + modèles `vitrine/modeles/` ; test « un site existant rend à l'octet près » conservé |
+| **1. Compléter le catalogue de sections** ✅ livré le 23/10/2026 | Ajouter les 14 sections manquantes depuis `/sites/`, chacune avec sa vraie structure (colonnes, questions/réponses, portraits…), rangées par famille comme dans le Studio | `SECTIONS_SITE`, `STRUCTURES` (`src/lib/bureau/sectionEtiquettes.js`) | `bloc(...)` dans `vitrine/rendu.js` + modèles `vitrine/modeles/` ; test « un site existant rend à l'octet près » conservé |
 | **2. Ranger les sections par famille** | Retrouver les 6 familles (Socle, Événementiel, Commerce, Contenu, Confiance, Action) dans la liste « Ajouter une section » | groupes de `SECTIONS_SITE` | `sites/editeur.js` |
 | **3. Cartes réutilisables** | Enregistrer une section réglée comme carte et la reposer ailleurs | `capsule/cartes/` | `sites/` (bibliothèque) |
 | **4. Réglages dans l'ordre** | Typographie, couleurs, espacements, avec le contraste vérifié en direct | `Panneau*` + pipeline | onglet Style de `/sites/`, `design/systemes.js` |
