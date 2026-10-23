@@ -21,6 +21,16 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     await p.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
     const dock = await p.$$eval('#dockApps [data-app]', a => a.map(x => x.dataset.app));
     ok(dock.includes('reseau') && dock.includes('canevas'), 'dock : Réseau et Canevas'); ok(!dock.includes('sites'), 'dock : pas l\'ancien générateur');
+    // l'ancien Bureau (« aime-os ») survit à l'ouverture et à la fermeture d'une fenêtre
+    const ANCIEN = JSON.stringify({ folders: [{ id: 'f1', n: 'Mariage' }], memos: ['penser au sax'], me: { nom: 'Matt' } });
+    await p.evaluate(v => localStorage.setItem('aime-os', v), ANCIEN);
+    await p.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(500);
+    await p.click('#dockApps [data-app="canevas"]').catch(() => {}); await p.waitForTimeout(800);
+    await p.keyboard.press('Escape').catch(() => {}); await p.waitForTimeout(500);
+    const garde = await p.evaluate(() => ({ a: localStorage.getItem('aime-os'), v2: localStorage.getItem('aime-os-v2') }));
+    ok(garde.a === ANCIEN, 'ancien Bureau : « aime-os » intact après une fenêtre ouverte');
+    ok(!!garde.v2 && /fenetres/.test(garde.v2), 'OS : son état vit sous « aime-os-v2 »');
+    await p.evaluate(() => { localStorage.removeItem('aime-os'); localStorage.removeItem('aime-os-v2') });
     // Point Zéro : une photo devient un projet (image dessinée dans la page, déposée comme un fichier)
     await p.goto(B + '/point-zero/', { waitUntil: 'networkidle' });
     ok(await p.$eval('[data-donnees]', e => /ce navigateur/.test(e.textContent) && !!e.querySelector('a[href="/bureau/espace/"]')).catch(() => false), 'Point Zéro : la mention « où sont mes données » est visible');

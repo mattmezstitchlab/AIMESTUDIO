@@ -62,9 +62,14 @@ function etat(o){o=o||{};var f=(Array.isArray(o.fenetres)?o.fenetres:[]).slice(0
   var n=function(v,d){v=Number(v);return isFinite(v)?Math.round(v):d};return{app:w.app,href:adresseApp(w.href),x:n(w.x,40),y:n(w.y,40),l:n(w.l,900),h:n(w.h,600),reduite:w.reduite===true,agrandie:w.agrandie===true}}).filter(Boolean);
  var orbe=['discrete','attentive','active'].indexOf(o.orbe)>=0?o.orbe:null;
  var ep=Array.isArray(o.epingles)?o.epingles.filter(function(x){return typeof x==='string'&&/^[a-z0-9-]{2,40}$/.test(x)}).slice(0,16):null;return{version:1,fenetres:f,epingles:ep,orbe:orbe}}
+/* La clé « aime-os » appartient à l'ancien Bureau (dossiers, cartes, messages, mémos) : l'OS ne l'écrit plus jamais.
+   Son état vit sous CLE_ETAT. Une valeur « aime-os » au format de l'OS (avec « fenetres », 21-23/10/2026) est seulement relue une fois. */
+var CLE_ETAT='aime-os-v2',CLE_ANCIENNE='aime-os';
+function ancienBureau(o){return!!o&&typeof o==='object'&&!Array.isArray(o)&&!Array.isArray(o.fenetres)}
+function etatInitial(v2,ancienne){if(v2)return etat(v2);if(ancienne&&!ancienBureau(ancienne))return etat(ancienne);return etat(null)}
 /* l'autonomie de l'orbe : le choix du visiteur l'emporte sur celui du site ; sans choix, à la demande */
 function autonomie(site,visiteur){var ok=['discrete','attentive','active'];return ok.indexOf(visiteur)>=0?visiteur:ok.indexOf(site)>=0?site:'discrete'}
 
 function salutation(h){return h<5?'Bonne nuit':h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
-return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,actions:actions,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,autonomie:autonomie,adresseApp:adresseApp,etat:etat,sigle:sigle,salutation:salutation};
+return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,actions:actions,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,autonomie:autonomie,adresseApp:adresseApp,etat:etat,CLE_ETAT:CLE_ETAT,CLE_ANCIENNE:CLE_ANCIENNE,ancienBureau:ancienBureau,etatInitial:etatInitial,sigle:sigle,salutation:salutation};
 });

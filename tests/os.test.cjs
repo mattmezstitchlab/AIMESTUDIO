@@ -60,3 +60,18 @@ test('OS · autonomie de l\'orbe : le visiteur l\'emporte, à la demande par dé
   assert.equal(A.etat({ orbe: 'active' }).orbe, 'active'); assert.equal(A.etat({ orbe: 'tout' }).orbe, null);
   const h = fs.readFileSync('bureau/index.html', 'utf8'); assert.match(h, /id="orbePref"/); assert.match(h, /id="orbeBulle"/);
 });
+
+test('OS · la clé « aime-os » de l\'ancien Bureau n\'est jamais réécrite', () => {
+  const ancien = { folders: [{ id: 'f1', n: 'Mariage' }], cards: [], memos: ['penser au sax'], me: { nom: 'Matt' } };
+  assert.equal(A.CLE_ETAT, 'aime-os-v2'); assert.equal(A.CLE_ANCIENNE, 'aime-os');
+  assert.ok(A.ancienBureau(ancien), 'dossiers, cartes, mémos : format de l\'ancien Bureau');
+  assert.ok(!A.ancienBureau({ version: 1, fenetres: [] }), 'avec « fenetres » : format de l\'OS');
+  assert.deepEqual(A.etatInitial(null, ancien).fenetres, [], 'l\'ancien Bureau ne devient pas un état de fenêtres');
+  const os = { version: 1, fenetres: [{ app: 'canevas', href: '/canevas/' }], epingles: ['canevas'] };
+  assert.equal(A.etatInitial(null, os).fenetres[0].app, 'canevas', 'un état OS du 21-23/10 est relu une fois');
+  assert.equal(A.etatInitial({ version: 1, fenetres: [] }, os).fenetres.length, 0, 'la nouvelle clé l\'emporte');
+  // aucune page n'écrit la clé de l'ancien Bureau
+  const src = fs.readFileSync(require.resolve('../os/os.js'), 'utf8');
+  assert.ok(!/['"]aime-os['"]/.test(src), 'os.js ne nomme plus « aime-os »');
+  assert.match(src, /var CLE=A\.CLE_ETAT/);
+});
