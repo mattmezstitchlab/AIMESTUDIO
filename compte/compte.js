@@ -3,6 +3,8 @@
 (function(){'use strict';
 var T=window.AIMETimbre,P=window.AIMEPerms,W=window.SimpleWebAuthnBrowser;if(!T||!P)return;
 function $(id){return document.getElementById(id)}
+/* la couleur du rôle, la même que sur l'accueil et les exemples (coeur/roles.js) : une pastille, jamais un droit */
+function pastille(role){var s=document.createElement('span');s.setAttribute('aria-hidden','true');s.style.cssText='display:inline-block;width:.62em;height:.62em;border-radius:50%;margin-right:.45em;vertical-align:.02em;background:'+(window.AIMERoles?AIMERoles.couleur(role):'#9C9CA8');return s}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 var tt;function toast(m,ko){var t=$('toast');t.textContent=m;t.className='toast'+(ko?' ko':'');t.hidden=false;clearTimeout(tt);tt=setTimeout(function(){t.hidden=true},ko?6500:3200)}
 function requete(u,o){o=o||{};return fetch(u,{method:o.methode||(o.corps?'POST':'GET'),credentials:'same-origin',cache:'no-store',headers:o.corps?{'Content-Type':'application/json'}:{},body:o.corps?JSON.stringify(o.corps):undefined})
@@ -68,7 +70,7 @@ $('fEspace').onsubmit=function(e){e.preventDefault();espaces('creer',{titre:$('e
 function chargerEspaces(ouvert){espaces('mes').then(function(r){var L=$('liste');L.textContent='';
  var liste=r.espaces||[];
  if(!liste.length){L.appendChild(el('p','leg','Aucun espace pour l\'instant. Créez-en un, ou ouvrez le lien d\'invitation que l\'on vous a envoyé.'));return}
- liste.forEach(function(s){var c=el('article','carte-c esp');var h=el('div','lgn');h.style.justifyContent='space-between';var t=el('div');t.appendChild(el('h3',null,s.titre));t.appendChild(el('p','leg',(ROLES[s.role]||s.role)+(s.modele?' · programme : '+MODELES[s.modele]:'')));h.appendChild(t);
+ liste.forEach(function(s){var c=el('article','carte-c esp');var h=el('div','lgn');h.style.justifyContent='space-between';var t=el('div');t.appendChild(el('h3',null,s.titre));var lg=el('p','leg',(ROLES[s.role]||s.role)+(s.modele?' · programme : '+MODELES[s.modele]:''));lg.insertBefore(pastille(s.role),lg.firstChild);t.appendChild(lg);h.appendChild(t);
   var a=el('div','lgn');if(s.modele){var l=el('a','b b-s','Ouvrir le direct');l.href='/live/?espace='+encodeURIComponent(s.id);a.appendChild(l)}var m=el('button','b b-s','Membres et invitations');m.type='button';m.setAttribute('aria-expanded','false');a.appendChild(m);h.appendChild(a);c.appendChild(h);
   var pan=el('div','pan pile');pan.hidden=true;c.appendChild(pan);m.onclick=function(){var o=pan.hidden;pan.hidden=!o;m.setAttribute('aria-expanded',String(o));if(o)chargerMembres(s,pan)};L.appendChild(c);if(s.id===ouvert)m.click()})}).catch(function(e){toast(e.message,true)})}
 
@@ -86,7 +88,7 @@ function chargerMembres(s,pan,dernier){pan.textContent='';pan.appendChild(el('p'
   f.onsubmit=function(e){e.preventDefault();espaces('inviter',{espace:s.id,role:sel.value,email:em.value.trim()||undefined}).then(function(x){if(r.gerer)chargerMembres(s,pan,x);else montrer(x)}).catch(function(err){toast(err.message,true)})}}
  else pan.appendChild(el('p','leg','Votre rôle ne permet pas d\'inviter dans cet espace.'));
  /* gérer : le propriétaire voit les adresses, les invitations, et peut retirer quelqu'un */
- if(r.gerer){var g=el('div','pile gerer');g.appendChild(el('h4','k','Membres'));r.membres.forEach(function(x){var li=el('div','lgn ligne');li.appendChild(T.creer({id:x.id,nom:x.nom,role:x.role,image:x.image,mini:true}));li.appendChild(el('span',null,x.nom+' · '+(ROLES[x.role]||x.role)+(x.email?' · '+x.email:'')));
+ if(r.gerer){var g=el('div','pile gerer');g.appendChild(el('h4','k','Membres'));r.membres.forEach(function(x){var li=el('div','lgn ligne');li.appendChild(T.creer({id:x.id,nom:x.nom,role:x.role,image:x.image,mini:true}));var nm=el('span',null,x.nom+' · '+(ROLES[x.role]||x.role)+(x.email?' · '+x.email:''));nm.insertBefore(pastille(x.role),nm.firstChild);li.appendChild(nm);
    if(x.id!==r.moi.id){var b=el('button','b b-s','Retirer');b.type='button';b.onclick=function(){confirmer(b,'Confirmer le retrait',function(){espaces('retirer',{espace:s.id,membre:x.id}).then(function(){toast(x.nom+' a été retiré·e.');chargerMembres(s,pan)}).catch(function(e){toast(e.message,true)})})};li.appendChild(b)}g.appendChild(li)});
   var inv=(r.invitations||[]);if(inv.length){g.appendChild(el('h4','k','Invitations'));inv.forEach(function(v){var exp=new Date(v.expire),actif=!v.utilisee&&exp>new Date();var li=el('div','lgn ligne');li.appendChild(el('span',null,ROLES[v.role]+(v.email?' · '+v.email:'')+' · '+(v.utilisee?'utilisée':actif?'expire le '+exp.toLocaleDateString('fr-FR'):'expirée')));
    if(actif){var b=el('button','b b-s','Annuler');b.type='button';b.onclick=function(){espaces('annuler',{espace:s.id,invitation:v.id}).then(function(){chargerMembres(s,pan)}).catch(function(e){toast(e.message,true)})};li.appendChild(b)}g.appendChild(li)})}pan.appendChild(g)}

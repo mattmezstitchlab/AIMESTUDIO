@@ -327,7 +327,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('button');i
 
 /* ---------- démarrage ---------- */
 Promise.all([charger('/vitrine/modeles/sites.json'),charger('/vitrine/presentation/studio.json'),charger('/vitrine/perspectives/sites.json'),charger('/sites/bibliotheque/bibliotheque.json').catch(function(){return null})]).then(function(r){MODELES=r[0].modeles;PRES=r[1];VUES=r[2].vues;if(r[3]){BIB=r[3];BIBCAT=Object.keys(r[3].categories)[0];VIS=r[3].associations||null}
- chargerDS();$('persps').innerHTML=VUES.map(function(p){return'<button type="button" data-persp="'+esc(p.id)+'" aria-pressed="'+(p.id===persp)+'" title="'+esc(p.description)+'">'+esc(p.label)+'</button>'}).join('');catalogueUI();
+ chargerDS();$('persps').innerHTML=VUES.map(function(p){return'<button type="button" data-persp="'+esc(p.id)+'" aria-pressed="'+(p.id===persp)+'" title="'+esc(p.description)+'">'+(window.AIMERoles?AIMERoles.pastille(p.role||'public'):'')+esc(p.label)+'</button>'}).join('');catalogueUI();
  etat=lire();var q=new URLSearchParams(location.search).get('site'),rp=new URLSearchParams(location.search).get('retour');
  /* ouvert depuis le mini-site d'un projet (/projet/) : un lien de retour, seulement vers cette page */
  if(rp&&/^\/projet\/\?id=[A-Za-z0-9-]{1,60}(&de=\/(point-zero|bureau)\/)?$/.test(rp)&&$('retourProjet')){$('retourProjet').href=rp;$('retourProjet').hidden=false}if(q&&etat.sites[q])ouvrir(q);else if(etat.cur&&etat.sites[etat.cur])ouvrir(etat.cur);else accueil()})
