@@ -178,12 +178,12 @@ Le détail technique des constats ouverts (fichiers, lignes, chemins) n'est pas 
 | # | Niveau | Constat | Correction | État |
 |---|---|---|---|---|
 | A | priorité élevée | Règle 2 : la liste des membres d'un espace en dit plus que la portée de certains rôles | bloquant pour le dock | **corrigé** (#88) |
-| B | priorité élevée | Règle 11 : le journal des invitations, retraits et changements de rôle n'est pas tenu | bloquant pour le dock | **corrigé** (#89, migration à appliquer) |
-| C | priorité élevée | Durée : aucun rôle serveur n'a de date de fin | bloquant pour le dock | **corrigé** (#90, migration à appliquer) |
-| D | priorité élevée | Règle 5 : supprimer le compte du propriétaire efface l'espace et ce qu'y ont mis ses membres | PR dédiée | en cours (#94) |
+| B | priorité élevée | Règle 11 : le journal des invitations, retraits et changements de rôle n'est pas tenu | bloquant pour le dock | **corrigé** (#89 ; migration 2026-10-24-01) |
+| C | priorité élevée | Durée : aucun rôle serveur n'a de date de fin | bloquant pour le dock | **corrigé** (#90 ; migration 2026-10-24-02) |
+| D | priorité élevée | Règle 5 : supprimer le compte du propriétaire efface l'espace et ce qu'y ont mis ses membres | PR dédiée | **corrigé** (#94) |
 | E | priorité élevée | Le site sert des dossiers du dépôt qui ne sont pas des pages (documentation, schéma, tests, scripts) | PR dédiée | **corrigé** (#86) |
 | F | priorité élevée | Les tests du socle ne tournent pas en intégration continue | PR dédiée | **corrigé** (#87) |
-| G | à vérifier | Règle 8 : une invitation sans adresse n'est liée à aucune personne | PR dédiée | en cours (#96) |
+| G | à vérifier | Règle 8 : une invitation sans adresse n'est liée à aucune personne | PR dédiée | **corrigé** (#96) |
 | H | à vérifier | Le direct partage un secret avec un autre usage | PR dédiée | en cours (#95, attend `LIVE_SECRET`) |
 | I | à vérifier | Règle 7 : retrait d'un rôle et laissez-passer du direct | lot 2 | à instruire |
 | J | à vérifier | Studio hébergé avec base partagée : portée du rôle « responsable » sur les pointages et les avis | lot 2 | à instruire |

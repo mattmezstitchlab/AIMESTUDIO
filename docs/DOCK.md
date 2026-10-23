@@ -15,8 +15,8 @@ Le dock est composé au serveur, comme les écrans : il applique la grammaire de
 | Correction | Bloquant | PR |
 |---|---|---|
 | Règle 2 : les membres selon la portée (un invité ne reçoit que lui-même) | oui | #88 |
-| Durée des rôles : date de fin, refus après échéance | oui | #90 (migration à appliquer) |
-| Règle 11 : journal en ajout seul, lisible par la personne concernée | oui | #89 (migration à appliquer) |
+| Durée des rôles : date de fin, refus après échéance | oui | #90 (migration 2026-10-24-02) |
+| Règle 11 : journal en ajout seul, lisible par la personne concernée | oui | #89 (migration 2026-10-24-01) |
 | « Je vois un accès inattendu » | oui | #91 |
 | Tests du socle en intégration continue, refus rôle × geste, deux projets | — | #87 |
 | Dossiers servis (docs, db, tests, scripts) | — | #86 |
