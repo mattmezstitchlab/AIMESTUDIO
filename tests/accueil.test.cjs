@@ -24,4 +24,5 @@ t('un stockage illisible ne casse rien, et un stockage plein est dit',()=>{const
 t('le premier écran : un seul champ, des exemples, la page sans script, l\'enregistrement dit',()=>{const h=lire('index.html'),a=lire('accueil/accueil.js');
  assert.ok(h.includes('id="acForm"')&&h.includes('Que préparez-vous ?')&&h.includes('data-ac-ex'));assert.ok(/id="acApercu"[^>]*sandbox="allow-same-origin"/.test(h));assert.ok(h.includes('tout reste dans ce navigateur'));
  assert.ok(a.includes('sansScript(')&&a.includes('AIMEDesign.appliquer('));['/pointzero/analyse.js','/projets/intention.js','/projets/projets.js','/accueil/accueil.js'].forEach(f=>assert.ok(h.includes('src="'+f+'"'),f))});
+t('les scripts du premier écran se lisent sans erreur de syntaxe',()=>{const {execFileSync}=require('child_process');for(const f of ['accueil/accueil.js','projets/intention.js','projets/projets.js'])execFileSync(process.execPath,['--check',path.join(__dirname,'..',f)])});
 console.log('accueil : '+n+' vérifications');

@@ -50,7 +50,7 @@ function phrasesMaj(){if(calme())return;var V=vh();phrases.forEach(function(p){v
 /* les formes viennent de zero/formes.js, partagées avec le Point Zéro du Bureau */
 var F=window.AIMEFormes,NOMS=F.NOMS,N=F.N,etats=F.etats;
 var E=etats(),forme=$('forme'),pts=[],grp=[];
-function meta(){var defs=el('defs',{},forme),lg=el('linearGradient',{id:'irisZ',x1:0,y1:0,x2:1,y2:1},defs);[['0','#FB7185'],['.35','#F59E0B'],['.68','#7C5CFF'],['1','#22D3EE']].forEach(function(s){el('stop',{offset:s[0],'stop-color':s[1]},lg)});
+function meta(){if(!forme)return;var defs=el('defs',{},forme),lg=el('linearGradient',{id:'irisZ',x1:0,y1:0,x2:1,y2:1},defs);[['0','#FB7185'],['.35','#F59E0B'],['.68','#7C5CFF'],['1','#22D3EE']].forEach(function(s){el('stop',{offset:s[0],'stop-color':s[1]},lg)});
  var st={fill:'none',stroke:'#EDEDF0','stroke-width':1.2,'stroke-opacity':.55,'vector-effect':'non-scaling-stroke'};
  grp=E.map(function(){return el('g',{opacity:0},forme)});
  grp.forEach(function(g,e){F.traits(e,el,g,st,'irisZ')});
@@ -60,13 +60,13 @@ function meta(){var defs=el('defs',{},forme),lg=el('linearGradient',{id:'irisZ',
   P.forEach(function(p){el('circle',{cx:p[0],cy:p[1],r:e?5:12,fill:e?'#EDEDF0':'url(#irisS)'},sv)});if(!e){var d2=el('defs',{},sv),l2=el('linearGradient',{id:'irisS',x1:0,y1:0,x2:1,y2:1},d2);[['0','#FB7185'],['1','#22D3EE']].forEach(function(s){el('stop',{offset:s[0],'stop-color':s[1]},l2)})}
   f.appendChild(sv);var fc=document.createElement('figcaption');fc.textContent=(e+1)+' · '+NOMS[e];f.appendChild(fc);S.appendChild(f)})}
 var etapes=[].slice.call(document.querySelectorAll('#etapes li'));
-function metaMaj(){if(calme())return;var p=progres($('meta'))*1.12-.06,q=Math.max(0,Math.min(5,p*5)),k=Math.min(4,Math.floor(q)),f=lisse((q-k-.15)/.7);
+function metaMaj(){if(calme()||!forme||!$('meta'))return;var p=progres($('meta'))*1.12-.06,q=Math.max(0,Math.min(5,p*5)),k=Math.min(4,Math.floor(q)),f=lisse((q-k-.15)/.7);
  for(var i=0;i<N;i++){var a=E[k][i],b=E[k+1][i],x=a[0]+(b[0]-a[0])*f,y=a[1]+(b[1]-a[1])*f;pts[i].setAttribute('cx',x.toFixed(1));pts[i].setAttribute('cy',y.toFixed(1));pts[i].setAttribute('r',q<.5?(3.6+8*(1-q*2)).toFixed(2):3.6);pts[i].setAttribute('fill',q<.5?'url(#irisZ)':'#EDEDF0')}
  grp.forEach(function(g,e){g.setAttribute('opacity',Math.max(0,1-Math.abs(q-e)*1.5).toFixed(3))});var on=Math.round(q);etapes.forEach(function(li,e){li.classList.toggle('on',e===on)})}
 
 /* ---------- 4 · le lien : la ronde des orbes (zero/ronde.js) ---------- */
-var ronde=window.AIMERonde?AIMERonde.monter($('ronde')):null;
-function lienMaj(t){var p=calme()?1:progres($('lien'))*1.2;if(ronde)ronde.maj(t,p,calme());$('lienSous').classList.toggle('vu',p>.62)}
+var ronde=window.AIMERonde&&$('ronde')?AIMERonde.monter($('ronde')):null;
+function lienMaj(t){if(!$('lien'))return;var p=calme()?1:progres($('lien'))*1.2;if(ronde)ronde.maj(t,p,calme());$('lienSous').classList.toggle('vu',p>.62)}
 
 /* ---------- 5 · apparitions au fil du défilement ---------- */
 if('IntersectionObserver' in window){var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vu');io.unobserve(e.target)}})},{rootMargin:'0px 0px -18% 0px'});[].forEach.call(document.querySelectorAll('.apparait'),function(x){io.observe(x)})}
