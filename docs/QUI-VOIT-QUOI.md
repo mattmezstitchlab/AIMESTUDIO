@@ -30,7 +30,7 @@ Décision de Matt (23/10/2026) : le principe de l'accueil (« un seul projet, ch
 2. ✅ World (6 rôles) et Séminaire (6 rôles) sur `/exemples/`.
 3. ✅ (en partie) Live, Sites, Compte : la couleur du rôle (`coeur/roles.js`) sur « Rôle dans l'espace » (Live), « Voir comme » (Sites), les espaces et les membres (Compte). Reste : la charte noire de Sites (interface claire aujourd'hui).
 4. ✅ G44 : ses 4 identités (agent, formateur, responsable, contrôleur) branchées sur le composant par un adaptateur (`g44/js/coeur-g44.js`) ; ses règles (`G44Acces.autoriser`) et sa simulation restent les siennes. `/exemples/?u=g44`. Un moteur qui n'est pas une vitrine apporte son adaptateur : `charger`, `page(rôle)`, `droits(rôles)`.
-5. Stitch : créatrice, boutique, brodeuse, visiteur modélisés (accès + règles), un écran chacun.
+5. ✅ Stitch : la créatrice, la boutique, la brodeuse (qui a acquis le patron) et la visiteuse, par un adaptateur (`stitch/js/coeur-stitch.js`). Un seul patron canonique ; la grille et les fils ne sortent que pour la créatrice et la brodeuse, la boîte à fils pour la brodeuse seule ; le prix écrit une fois par la boutique est vu par toutes. Règles explicites du prototype, à vérifier côté serveur en production. `/exemples/?u=stitch`.
 6. Magazine / Publication, Studio, Régie : idem avec leurs rôles.
 7. Navigation : Accueil · Mon projet · Exemples · Lab.
 

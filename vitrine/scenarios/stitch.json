@@ -1,0 +1,222 @@
+{
+ "_": "Scénario AIME Stitch : un patron de point de croix, quatre personnes. Le patron, le produit et la boîte à fils restent ceux de stitch/data ; ce fichier ne décrit que les arrivées.",
+ "univers": "stitch",
+ "moteur": "stitch",
+ "titre": "Mésange et églantines",
+ "genre": "Création · AIME Stitch",
+ "scripts": [
+  "/stitch/js/patron.js",
+  "/stitch/js/coeur-stitch.js"
+ ],
+ "arriveesTexte": "Une créatrice dessine un patron, une boutique le vend, une brodeuse le brode, une visiteuse le découvre. Un seul patron ; l'orbe recueille ce que chacune apporte.",
+ "source": {
+  "champs": [
+   {
+    "id": "prix",
+    "label": "Le prix du patron (€)",
+    "type": "number",
+    "min": 1,
+    "max": 200,
+    "defaut": 9
+   }
+  ]
+ },
+ "roles": [
+  {
+   "angle": "creatrice",
+   "couleur": "#FB7185",
+   "encre": "#141416",
+   "nom": "La créatrice",
+   "de": "de la créatrice",
+   "resume": "La grille, les fils, les versions.",
+   "arrivee": {
+    "titre": "La créatrice dépose son patron.",
+    "texte": "Elle dessine une mésange sur une branche d'églantier, ou convertit une image. AIME en tire le patron canonique : la grille, les fils, les dimensions, une première version.",
+    "fiche": [
+     {
+      "k": "Deux chemins",
+      "chemins": [
+       [
+        "Dessiner",
+        "Dans l'atelier Stitch"
+       ],
+       [
+        "Convertir",
+        "Une image → une grille DMC"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Patron",
+        "Mésange et églantines"
+       ],
+       [
+        "Grille",
+        "86 × 52 points"
+       ],
+       [
+        "Fils",
+        "13 couleurs DMC"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "La créatrice",
+     "autrice",
+     "du patron"
+    ]
+   }
+  },
+  {
+   "angle": "boutique",
+   "couleur": "#6D4AFF",
+   "encre": "#FFFFFF",
+   "nom": "La boutique",
+   "de": "de la boutique",
+   "resume": "Le prix, la mise en vente, la licence.",
+   "arrivee": {
+    "titre": "La boutique le met en vente.",
+    "texte": "Atelier Linette présente le patron dans sa collection, fixe le prix et la licence. Elle vend le patron sans le modifier ni en lire toute la grille.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Déjà sur AIME",
+        "Elle ajoute le patron à sa collection"
+       ],
+       [
+        "Nouvelle",
+        "Elle ouvre sa boutique, puis l'ajoute"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Collection",
+        "Jardin de mai"
+       ],
+       [
+        "Prix",
+        "9 €"
+       ],
+       [
+        "Licence",
+        "Usage personnel"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "Atelier Linette",
+     "vente",
+     "du patron"
+    ]
+   }
+  },
+  {
+   "angle": "brodeuse",
+   "couleur": "#22D3EE",
+   "encre": "#141416",
+   "nom": "La brodeuse",
+   "de": "de la brodeuse",
+   "resume": "La grille, sa progression, ses fils manquants.",
+   "arrivee": {
+    "titre": "La brodeuse l'acquiert et brode.",
+    "texte": "Elle acquiert le patron, ouvre le lecteur et brode à son rythme. AIME compare les fils du patron à sa boîte à fils : elle sait ce qui lui manque, et personne d'autre.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Acquérir",
+        "Démonstration : aucun paiement"
+       ],
+       [
+        "Broder",
+        "Le lecteur garde sa progression"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Patron",
+        "Acquis"
+       ],
+       [
+        "Boîte à fils",
+        "La sienne, privée"
+       ],
+       [
+        "Progression",
+        "Gardée dans le lecteur"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "La brodeuse",
+     "acquéreuse",
+     "du patron"
+    ]
+   }
+  },
+  {
+   "angle": "visiteuse",
+   "couleur": "#9C9CA8",
+   "encre": "#141416",
+   "nom": "La visiteuse",
+   "de": "de la visiteuse",
+   "resume": "L'aperçu, le prix, les dimensions.",
+   "arrivee": {
+    "titre": "La visiteuse le découvre.",
+    "texte": "Sans compte, elle voit l'aperçu, le prix et les dimensions. La grille, les symboles et les fils restent réservés à qui acquiert le patron.",
+    "fiche": [
+     {
+      "k": "Son chemin",
+      "chemins": [
+       [
+        "Elle parcourt",
+        "La boutique, sans compte"
+       ],
+       [
+        "Elle choisit",
+        "Acquérir, ou continuer"
+       ]
+      ]
+     },
+     {
+      "k": "L'orbe recueille",
+      "liste": [
+       [
+        "Aperçu",
+        "Réduit"
+       ],
+       [
+        "Prix",
+        "Celui de la boutique"
+       ],
+       [
+        "Grille",
+        "Pas encore"
+       ]
+      ]
+     }
+    ],
+    "legende": [
+     "La visiteuse",
+     "public",
+     "de la boutique"
+    ]
+   }
+  }
+ ]
+}
