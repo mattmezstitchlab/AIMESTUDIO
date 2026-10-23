@@ -1,5 +1,7 @@
 # AIME — Constructeur universel par blocs (direction validée le 23 octobre 2026)
 
+> **23/10/2026, plus tard dans la journée :** Matt a retenu un Canevas à trois panneaux comme cible, construit sur les moteurs existants. Voir `docs/CANEVAS-UNIVERSEL.md`.
+
 ## Décision produit
 Page Zéro `/` → Le Monde AIME `/aime/` → **le constructeur existant** en bas de la page (`#build`, `#cnv5`, `#plus5`). C'est le seul langage d'édition visible à privilégier. On **ne crée pas un autre Bureau, un autre Canva ni un nouveau Studio de remplacement**.
 
