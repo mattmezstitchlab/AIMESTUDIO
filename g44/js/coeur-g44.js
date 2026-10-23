@@ -11,10 +11,11 @@ var BASE=null,ETATS={autorise:'Autorisé',refuse:'Refusé',nonverifie:'Non véri
 var SECTIONS={identites:'identités',chronologie:'chronologie',plan:'plan',journal:'journal',formation:'formation'};
 function annee(perso){var a=parseInt(perso&&perso.annee,10);return a>=2012&&a<=2020?a:2016}
 function simulation(perso){return M.simuler(BASE,{objet:'ev-mariage',valeur:annee(perso)+'-06-18'})}
-var CSS='@font-face{font-family:"Inter Variable";font-weight:100 900;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}'+
+/* la typographie de la marque, partagée par le cœur : titres en Cal Sans, texte en Inter */
+var CSS=root.AIMECoeur.FONTES+
  '*{box-sizing:border-box}html{scrollbar-width:none}html::-webkit-scrollbar{display:none}body{margin:0;background:#F4F4F2;color:#141416;font:400 15px/1.5 "Inter Variable",Inter,system-ui,sans-serif}'+
  '.h{min-height:420px;display:grid;align-content:end;padding:28px 24px 30px}.h .k{margin:0 0 10px;font:600 10px/1 "Inter Variable",sans-serif;letter-spacing:.2em;text-transform:uppercase}'+
- '.h h1{margin:0;font:600 46px/1 "Inter Variable",sans-serif;letter-spacing:-.03em}.h p{margin:12px 0 0;font-size:15px}'+
+ '.h h1{margin:0;font:400 46px/1 '+root.AIMECoeur.TITRE+';letter-spacing:-.02em}.h p{margin:12px 0 0;font-size:15px}'+
  '.s{padding:26px 24px;border-top:1px solid #DCDCE1}.s h2{margin:0 0 14px;font:600 11px/1 "Inter Variable",sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#55555E}'+
  '.l{list-style:none;margin:0;padding:0;display:grid;gap:10px}.l li{display:grid;gap:2px}.l b{font-weight:600}.l span{color:#55555E;font-size:13.5px}'+
  '.g li{grid-template-columns:auto 1fr;column-gap:10px;align-items:baseline}.e{font:600 11px/1 "Inter Variable",sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 7px;border-radius:6px;border:1px solid #141416}'+
