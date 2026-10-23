@@ -76,8 +76,8 @@ test('routes : /bureau/ est servi, Page Zéro y mène, aucune boucle, chaque ent
  const rw=(v.rewrites||[]);const fichier=p=>{const f=p.endsWith('/')?p+'index.html':p;return fs.existsSync(R(f.slice(1)))||fs.existsSync(R(p.slice(1)+'/index.html'))};
  const sert=u=>{const p=u.split(/[?#]/)[0];if(fichier(p))return true;const r=rw.find(r=>r.source===p);return !!r&&fichier(r.destination)};
  for(const e of N.ENTREES){const f=suivre(e.href.split('?')[0]).fin;assert.ok(sert(f),e.id+' → '+f+' : aucun fichier')}
- const z=fs.readFileSync(R('index.html'),'utf8');const b=z.indexOf('id="bureau" href="/bureau/"'),m=z.indexOf('id="rejoindre" href="/aime/"');
- assert.ok(b>0&&m>b,'Page Zéro : Ouvrir mon Bureau en principal, Le Monde AIME ensuite');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.ok(!/MON BUREAU|AIME STUDIO<\/a>/.test(z),'en haut, un seul accès : la porte irisée');assert.match(z,/id="porte"/);assert.match(z,/AIMEPorte\.monter/)});
+ const z=fs.readFileSync(R('index.html'),'utf8');const m=z.indexOf('id="rejoindre" href="/aime/"'),e=z.indexOf('id="entrer"');
+ assert.ok(m>e,'Page Zéro : Le Monde AIME est la sortie principale');assert.ok(!z.includes('id="bureau" href="/bureau/"'),'aucun bouton Bureau dans le parcours principal');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.ok(!/MON BUREAU|AIME STUDIO<\/a>/.test(z),'en haut, un seul accès : la porte irisée');assert.match(z,/id="porte"/);assert.match(z,/AIMEPorte\.monter/)});
 
 test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
  const v=JSON.parse(fs.readFileSync(R('vercel.json'))),rw=v.rewrites||[],A=['accessibilite','buro','docs','image','stitchlab','web'];
