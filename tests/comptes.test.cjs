@@ -186,3 +186,19 @@ test('espaces · durée des rôles : « jusqu\'au … », refus après échéanc
   r = await appel(E.default, { action: 'inviter', espace: id, role: 'guest' }, M.owner);
   r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M.viewer); assert.equal(r.body.role, 'guest');
 });
+
+/* « Je vois un accès inattendu » : tout membre peut le dire, sans preuve ; inscrit au journal, le propriétaire est prévenu. */
+test('espaces · « Je vois un accès inattendu » : au journal, propriétaire prévenu, sans le texte ni le nom', opts, async () => {
+  const id = await espaceComplet('Signalement'); liens = [];
+  let r = await appel(E.default, { action: 'signaler', espace: id, motif: 'Je vois le budget <b>du traiteur</b>' }, M.guest);
+  assert.equal(r.code, 200); assert.equal(r.body.journal, true); assert.equal(r.body.prevenu, true);
+  assert.equal(liens.length, 1, 'un e-mail, au seul propriétaire'); assert.equal(liens[0].to, 'o@exemple.test');
+  assert.ok(!/budget|traiteur|g@exemple/.test(liens[0].text + liens[0].html), 'ni le texte ni l\'auteur dans l\'e-mail');
+  const j = (await appel(E.default, { action: 'journal', espace: id }, M.owner)).body.journal.find(l => l.action === 'signalement');
+  assert.equal(j.detail.objet, 'acces_inattendu'); assert.equal(j.detail.role, 'guest');
+  assert.ok((await appel(E.default, { action: 'journal', espace: id }, M.guest)).body.journal.some(l => l.action === 'signalement'), 'la personne relit son signalement');
+  assert.ok(!(await appel(E.default, { action: 'journal', espace: id }, M.contributor)).body.journal.some(l => l.action === 'signalement'), 'un autre membre ne le lit pas');
+  assert.equal((await appel(E.default, { action: 'signaler', espace: id }, M.dehors)).code, 404, 'non-membre : rien');
+  for (let i = 0; i < 4; i++) await appel(E.default, { action: 'signaler', espace: id }, M.guest);
+  assert.equal((await appel(E.default, { action: 'signaler', espace: id }, M.guest)).code, 429, 'cinq par jour');
+});
