@@ -13,7 +13,9 @@ export const MODELES = ['mariage', 'seminaire'];
 export const ROLES_INVITES = ['editor', 'contributor', 'viewer', 'guest'];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const EMAIL = /^[^\s@<>"]{1,64}@[^\s@<>"]{1,190}\.[^\s@<>"]{2,24}$/;
-const JOURS_INVITATION = 7, MAX_ESPACES = 20, MAX_INVITATIONS = 50;
+/* règle 8 : une invitation nominative (réservée à une adresse) vaut 7 jours ; sans adresse, elle n'est liée à personne,
+   donc elle est courte : 48 heures. Toujours à usage unique. */
+const JOURS_INVITATION = 7, JOURS_SANS_ADRESSE = 2, MAX_ESPACES = 20, MAX_INVITATIONS = 50;
 
 export class Refus extends Error { constructor(code, raison) { super(raison); this.code = code; this.raison = raison; } }
 const refus = (code, raison) => { throw new Refus(code, raison); };
@@ -90,11 +92,11 @@ export async function inviter(db, u, b, base) {
   if (jusquau && !d) refus(503, 'La durée des rôles n\'est pas encore installée sur cette base (migration à exécuter).');
   const { rows: n } = await db.query('select count(*)::int as n from invitations where space_id = $1 and used_at is null and expires_at > now()', [b.espace]);
   if (n[0].n >= MAX_INVITATIONS) refus(429, 'Trop d\'invitations en attente pour cet espace.');
-  const jeton = crypto.randomBytes(32).toString('base64url');
-  const { rows: inv } = await db.query(`insert into invitations (space_id, role, token_hash, email, created_by, expires_at${d ? ', role_jusqu_au' : ''}) values ($1, $2, $3, $4, $5, now() + interval '${JOURS_INVITATION} days'${d ? ', $6' : ''}) returning id`,
+  const jeton = crypto.randomBytes(32).toString('base64url'), jours = email ? JOURS_INVITATION : JOURS_SANS_ADRESSE;
+  const { rows: inv } = await db.query(`insert into invitations (space_id, role, token_hash, email, created_by, expires_at${d ? ', role_jusqu_au' : ''}) values ($1, $2, $3, $4, $5, now() + interval '${jours} days'${d ? ', $6' : ''}) returning id`,
     [b.espace, cible, hacher(jeton), email, u.id].concat(d ? [jusquau] : []));
-  const journal = await inscrire(db, { qui: u.id, espace: b.espace, action: 'invitation', detail: Object.assign({ role: cible, invitation: inv[0].id, nominative: !!email, jours: JOURS_INVITATION }, jusquau ? { jusqu_au: jusquau } : {}) });
-  return { lien: base + '/compte/?invitation=' + jeton, role: cible, email, jours: JOURS_INVITATION, jusquau, journal };
+  const journal = await inscrire(db, { qui: u.id, espace: b.espace, action: 'invitation', detail: Object.assign({ role: cible, invitation: inv[0].id, nominative: !!email, jours }, jusquau ? { jusqu_au: jusquau } : {}) });
+  return { lien: base + '/compte/?invitation=' + jeton, role: cible, email, jours, jusquau, journal };
 }
 
 /* rejoindre : consommation atomique (une seule fois, avant expiration, et par la bonne adresse si l'invitation en nomme une) */
