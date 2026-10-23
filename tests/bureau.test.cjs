@@ -28,7 +28,7 @@ test('sources : tout est retrouvé, rien n\'est écrit, rien n\'est inventé',()
  assert.equal(par('carte')[0].titre,'Camille');assert.equal(par('studio').length,2);assert.equal(par('evenements')[0].titre,'Mariage Léa & Marc');
  assert.equal(par('stitch')[0].lien,'/stitch/atelier/?brouillon=pat-lavande');assert.match(par('broderies')[0].detail,/120 points faits/);
  assert.equal(par('compositions')[0].lien,'/synchroview/?v=a#s');assert.equal(par('compositions')[1].lien,'/synchroview/','un lien étranger est refusé');
- assert.match(par('infinity')[0].detail,/Niveau 7/);assert.ok(par('simulations')[0].demo,'une simulation est dite fictive');assert.equal(par('timeline').length,1);
+ assert.match(par('infinity')[0].detail,/Niveau 7/);assert.ok(par('simulations')[0].demo,'une simulation est dite fictive');assert.ok(!inv.sources.some(s=>s.id==='timeline'),'/v1/ abandonné : plus listé');
  assert.deepEqual(inv.ancienBureau,['aime-lang','aime-tlz','aime-wp']);
  {const o=B.inventaire(stock({'aime-os':JSON.stringify({folders:[],memos:['x']})}));assert.deepEqual(o.ancienBureau,['aime-os'],'l\'ancien Bureau sous « aime-os » est inventorié');
   const n=B.inventaire(stock({'aime-os':JSON.stringify({version:1,fenetres:[]})}));assert.deepEqual(n.ancienBureau,[],'un état de fenêtres n\'est pas l\'ancien Bureau')}

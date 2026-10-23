@@ -29,7 +29,6 @@ var E=[
  ['synchroview','SynchroView','/synchroview/','Comparer les perspectives côte à côte','evenements','realiser','demonstration',false,true],
  ['mariage','Mariage Léa & Marc','/vitrine/site/?u=mariage','Démonstrateur, données fictives','evenements','decouvrir','demonstration'],
  ['seminaire','Séminaire Maison Orée','/vitrine/site/?u=seminaire','Démonstrateur, entreprise fictive','evenements','decouvrir','demonstration'],
- ['timeline','Timeline Jour J','/v1/','L\'ancienne application de planning, conservée','evenements','realiser','disponible'],
  ['g44','G44 LAB','/g44/','Le laboratoire des dépendances administratives','institutions','realiser','demonstration',true],
  ['canevas','Le Canevas','/canevas/','Le plan de travail commun : modifier un mini-site, un cube, un patron','creation','realiser','experimental',true],
  ['sites','Canevas universel · Site','/sites/','Composer un site sur trois panneaux : pages et blocs, rendu réel, inspecteur (Design System, sources)','creation','realiser','disponible'],
