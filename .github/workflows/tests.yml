@@ -1,4 +1,4 @@
-# AIME · contrôles automatiques de chaque PR (et de chaque fusion dans integration).
+# AIME · contrôles automatiques de chaque PR et de chaque envoi sur integration ou main (travail direct en production).
 # Pour qu'un échec BLOQUE la fusion : GitHub → Settings → Branches → règle sur `integration` (et `main`),
 # « Require status checks to pass » avec les contrôles « Suites (node) », « Socle (base de test) », « Parcours navigateur » et « Accessibilité ».
 name: Tests AIME
@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [integration, main]
   push:
-    branches: [integration]
+    branches: [integration, main]
 permissions:
   contents: read
 concurrency:
@@ -19,6 +19,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
