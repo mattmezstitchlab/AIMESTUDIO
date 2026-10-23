@@ -1,4 +1,7 @@
 -- AIME · schéma Neon (PostgreSQL) — base dédiée à AIMESTUDIO, région UE.
+-- ATTENTION : ce fichier décrit le schéma visé, pas la production. La base réelle est construite par db/migrations/,
+-- appliquées dans l'ordre des noms (numérotées, rejouables). En production (24/10/2026), audit, items, user_data et vault
+-- n'existent pas : audit est créée par db/migrations/2026-10-24-01-journal.sql ; le code fonctionne sans elle.
 -- Les tables de comptes (user, session, account, verification, passkey) sont créées
 -- par les migrations de Better Auth : ne pas les écrire à la main ici.
 -- Accès uniquement par /api/* ; l'identité vient toujours de la session vérifiée.

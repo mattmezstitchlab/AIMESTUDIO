@@ -1,0 +1,37 @@
+// Le code tient sur une base où les migrations du 24/10/2026 (journal, durée) ne sont pas encore appliquées : c'est l'état
+// de la production tant que l'agent Neon ne les a pas passées. Lancé seulement si TEST_DATABASE_URL_ANCIEN est défini
+// (une base de test éphémère où seules les migrations antérieures au 24/10/2026 ont été jouées).
+const { test, before, after } = require('node:test');
+const assert = require('node:assert/strict');
+const URLT = process.env.TEST_DATABASE_URL_ANCIEN;
+const opts = { skip: !URLT && 'TEST_DATABASE_URL_ANCIEN absent' };
+const BASE = 'http://localhost:8773';
+let A, E, liens = [], pool, ipn = 0;
+async function appel(h, body, cookie) { let res; const p = new Promise(d => { res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, status(c) { this.statusCode = c; return this; }, json(o) { d({ code: this.statusCode, body: o }); }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; });
+  await h({ method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json', 'x-forwarded-for': '198.51.100.' + (++ipn % 250) }, cookie ? { cookie } : {}) }, res); return p; }
+async function connecter(email) {
+  const a = A.auth(); liens = [];
+  let r = await a.handler(new Request(BASE + '/api/auth/sign-in/magic-link', { method: 'POST', headers: { 'content-type': 'application/json', origin: BASE, 'x-forwarded-for': '192.0.2.' + (++ipn % 250) }, body: JSON.stringify({ email, callbackURL: '/compte/' }) }));
+  const url = liens[0].text.match(/https?:\/\/\S+/)[0];
+  r = await a.handler(new Request(url, { headers: { origin: BASE, 'x-forwarded-for': '192.0.2.' + (++ipn % 250) } }));
+  return r.headers.getSetCookie().map(x => x.split(';')[0]).join('; ');
+}
+before(async () => { if (!URLT) return;
+  Object.assign(process.env, { DATABASE_URL: URLT, BETTER_AUTH_SECRET: require('crypto').randomBytes(32).toString('hex'), BETTER_AUTH_URL: BASE }); delete process.env.VERCEL_ENV;
+  A = await import('../api/_auth/auth.mjs'); E = await import('../api/espaces.mjs'); A._envoyeur(m => { liens.push(m); }); A.auth(); pool = A._pool();
+});
+after(async () => { if (pool) await pool.end(); });
+
+test('base sans les migrations du 24/10 : les espaces marchent, le journal le dit, aucune durée n\'est inventée', opts, async () => {
+  const { rows } = await pool.query("select to_regclass('public.audit') as a, (select count(*)::int from information_schema.columns where table_name = 'space_members' and column_name = 'jusqu_au') as d");
+  assert.equal(rows[0].a, null, 'pas de table audit, comme en production'); assert.equal(rows[0].d, 0, 'pas de colonne de durée');
+  const o = await connecter('o-ancien@exemple.test'), g = await connecter('g-ancien@exemple.test');
+  let r = await appel(E.default, { action: 'creer', titre: 'Ancien' }, o); assert.equal(r.code, 200); assert.equal(r.body.journal, false); const id = r.body.id;
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'guest', jusquau: new Date(Date.now() + 5 * 864e5).toISOString() }, o); assert.equal(r.code, 503, 'une date de fin n\'est jamais ignorée en silence');
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'guest' }, o); assert.equal(r.code, 200); assert.equal(r.body.journal, false);
+  r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, g); assert.equal(r.code, 200);
+  r = await appel(E.default, { action: 'membres', espace: id }, g); assert.equal(r.code, 200); assert.equal(r.body.membres.length, 1, 'règle 2 : l\'invitée ne reçoit qu\'elle-même');
+  r = await appel(E.default, { action: 'journal', espace: id }, o); assert.equal(r.code, 200); assert.equal(r.body.journal, null, 'journal pas encore installé : dit, pas inventé');
+  liens = []; r = await appel(E.default, { action: 'signaler', espace: id }, g); assert.equal(r.code, 200); assert.equal(r.body.journal, false); assert.equal(r.body.prevenu, true, 'le propriétaire est prévenu même sans journal');
+  r = await appel(E.default, { action: 'mes' }, g); assert.ok(r.body.espaces.some(e => e.id === id));
+});
