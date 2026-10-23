@@ -31,7 +31,9 @@ async function espace(id, sql) {
 
 const enProd = () => process.env.VERCEL_ENV === 'production';
 /* jamais de secret devinable en production (le commit est public) : sans vrai secret, pas de laissez-passer */
-function secret() { const s = process.env.LIVE_DEMO_SECRET || process.env.SV_DEMO_SECRET || process.env.BETTER_AUTH_SECRET; if (s) return s; return enProd() ? null : ('live-demo:' + (process.env.VERCEL_GIT_COMMIT_SHA || 'local')); }
+/* le secret du direct lui est propre (LIVE_SECRET, 32 caractères au moins) : jamais celui des comptes ni d'une démonstration.
+   En production il est obligatoire ; sans lui, rien n'est signé et le direct reste fermé (503). Hors production, une clé de travail. */
+function secret() { const s = process.env.LIVE_SECRET || process.env.LIVE_DEMO_SECRET; if (s && s.length >= 32) return s; return enProd() ? null : ('live-demo:' + (process.env.VERCEL_GIT_COMMIT_SHA || 'local')); }
 function demoServeur() { return !enProd(); }
 function signer(o) { const k = secret(); if (!k) return null; const b = Buffer.from(JSON.stringify(o)).toString('base64url'); return b + '.' + crypto.createHmac('sha256', k).update(b).digest('base64url'); }
 function lirePasse(tok) {
