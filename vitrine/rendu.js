@@ -294,7 +294,7 @@ function decor(x,ratio,g,cles){var vl=null;[].concat(cles||[]).some(function(k){
  var a=x.amb;return V&&V.visuel?V.visuel(g||((x.site.id||'').length*7+3),{c1:a.c1,c2:a.c2,paper:a.fond,ink:a.encre},ratio||1.6):''}
 
 bloc('hero',{nom:'En-tête',cat:'structure',variantes:{plein:'Image pleine page',scinde:'Image à côté',affiche:'Affiche',minimal:'Typographique'},champs:['titre','texte'],
- rendre:function(x,s){var i=x.infos,t=titreSec(s,i.titre||(x.edition?x.site.nom:'')),sous=s.texte||i.sous,quand=[dateLongue(i.date),i.heure,i.lieu||i.ville].filter(Boolean).join(' · '),photo=img((x.listes.galerie[0]||{}).src);
+ rendre:function(x,s){var i=x.infos,t=titreSec(s,i.titre||(x.edition?x.site.nom:'')),sous=s.texte||i.sous,quand=[dateLongue(i.date),i.heure,i.lieu||i.ville].filter(Boolean).join(' · '),photo=img(s.src)||img((x.listes.galerie[0]||{}).src);
   var vis=photo?'<img src="'+esc(photo)+'" alt="">':decor(x,s.variante==='scinde'?1:1.7,(s.id||'').length,'hero');
   var cta=i.bouton?'<a class="btn" href="'+esc(lien(i.url)||(x.ancre('rsvp')||x.ancre('contact')||'#'))+'">'+esc(i.bouton)+'</a>':'';
   return'<header class="hero hero-'+esc(s.variante||'plein')+'">'+(s.variante==='minimal'?'':'<div class="hero-v">'+vis+'</div>')+'<div class="hero-t"><h1>'+esc(t)+'</h1>'+(sous?'<p class="hero-s">'+esc(sous)+'</p>':'')+(quand?'<p class="hero-q">'+esc(quand)+'</p>':'')+(i.pluie?'<p class="hero-q pb">Plan B prêt'+(i.planB?' : '+esc(i.planB):'')+'</p>':'')+cta+'</div></header>'}});

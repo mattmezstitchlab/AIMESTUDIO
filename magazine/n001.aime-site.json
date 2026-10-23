@@ -1,0 +1,446 @@
+{
+ "format": "aime-site",
+ "schema": 1,
+ "id": "aime-magazine-001",
+ "nom": "AIME Magazine",
+ "univers": "vierge",
+ "modele": "magazine:001",
+ "creeLe": null,
+ "majLe": null,
+ "infos": {
+  "titre": "AIME Magazine",
+  "sous": "N° 001 · L'encyclopédie visuelle d'AIME : ce que fait chaque outil, sur de vrais écrans, pour de vrais métiers.",
+  "date": "2026-10-22",
+  "heure": "",
+  "lieu": "",
+  "adresse": "",
+  "ville": "",
+  "acces": "",
+  "planB": "",
+  "pluie": false,
+  "email": "",
+  "tel": "",
+  "url": "",
+  "bouton": ""
+ },
+ "listes": {
+  "programme": [],
+  "faq": [],
+  "personnes": [],
+  "galerie": [],
+  "documents": [],
+  "cadeaux": [],
+  "hebergements": [],
+  "menu": [],
+  "tarifs": [],
+  "chiffres": [
+   {
+    "valeur": "47",
+    "libelle": "blocs dans le moteur de pages"
+   },
+   {
+    "valeur": "4",
+    "libelle": "directions artistiques"
+   },
+   {
+    "valeur": "1",
+    "libelle": "plan de travail : le Canevas"
+   },
+   {
+    "valeur": "0",
+    "libelle": "donnée réelle dans ce numéro"
+   }
+  ],
+  "etapes": [
+   {
+    "date": "00",
+    "titre": "Édito · Ce qui nous relie",
+    "detail": "Pourquoi AIME, et ce que veut dire Architecture Intelligente de la Mémoire Ensemble."
+   },
+   {
+    "date": "01",
+    "titre": "Point Zéro",
+    "detail": "Déposer une matière et la voir devenir un projet."
+   },
+   {
+    "date": "02",
+    "titre": "Le Canevas",
+    "detail": "Un seul plan de travail pour tous les projets. (à paraître)"
+   },
+   {
+    "date": "03",
+    "titre": "Les blocs",
+    "detail": "Les briques communes de toutes les pages. (à paraître)"
+   },
+   {
+    "date": "04",
+    "titre": "Les Design Systems",
+    "detail": "Le même contenu, quatre directions, un clic. (à paraître)"
+   },
+   {
+    "date": "05",
+    "titre": "Mon cube",
+    "detail": "Les facettes d'une personne ou d'un projet. (à paraître)"
+   },
+   {
+    "date": "06",
+    "titre": "Bureau et Dock",
+    "detail": "Les espaces de travail et la sauvegarde. (à paraître)"
+   },
+   {
+    "date": "07",
+    "titre": "Réseau et Carte",
+    "detail": "Relier des projets, publier avec consentement. (à paraître)"
+   },
+   {
+    "date": "08",
+    "titre": "L'Orbe",
+    "detail": "Une compagne qui explique ses règles. (à paraître)"
+   },
+   {
+    "date": "09",
+    "titre": "Métiers",
+    "detail": "Mêmes blocs, métiers différents."
+   },
+   {
+    "date": "10",
+    "titre": "Laboratoire",
+    "detail": "Infinity, G44, SynchroView : l'expérimental, dit comme tel. (à paraître)"
+   },
+   {
+    "date": "11",
+    "titre": "Coulisses",
+    "detail": "Tests, accessibilité, données sur l'appareil. (à paraître)"
+   }
+  ],
+  "liens": [
+   {
+    "nom": "Lire l'édito",
+    "url": "edito.html"
+   },
+   {
+    "nom": "01 · Point Zéro",
+    "url": "point-zero.html"
+   },
+   {
+    "nom": "09 · Métiers",
+    "url": "metiers.html"
+   }
+  ],
+  "partenaires": [],
+  "tables": [],
+  "messages": [],
+  "credits": [],
+  "allergenes": [],
+  "setlist": [],
+  "orientation": [],
+  "consignes": [],
+  "fils": [],
+  "avancement": []
+ },
+ "pages": [
+  {
+   "id": "index",
+   "titre": "Couverture",
+   "sections": [
+    {
+     "id": "m1",
+     "type": "hero",
+     "variante": "plein",
+     "audience": "public",
+     "src": "biblio:scene-001-saxophoniste",
+     "titre": "AIME Magazine",
+     "texte": "N° 001 · L'encyclopédie visuelle d'AIME"
+    },
+    {
+     "id": "m2",
+     "type": "citation",
+     "variante": "grande",
+     "audience": "public",
+     "texte": "Architecture Intelligente de la Mémoire Ensemble.",
+     "auteur": "Ce que veut dire AIME"
+    },
+    {
+     "id": "m3",
+     "type": "texte",
+     "variante": "colonnes",
+     "audience": "public",
+     "titre": "Dans ce numéro",
+     "texte": "Ce numéro traverse AIME outil par outil. Chaque rubrique suit le même chemin : à quoi ça sert, l'écran réel, un métier qui l'utilise, une comparaison, puis un lien pour essayer.\n\nTout ce qui est montré existe aujourd'hui. Ce qui viendra plus tard est signalé comme tel. Les écrans ont été capturés avec des données inventées pour l'occasion : aucun compte, aucune information personnelle."
+    },
+    {
+     "id": "m4",
+     "type": "etapes",
+     "variante": "verticale",
+     "audience": "public",
+     "titre": "Sommaire",
+     "texte": "Douze rubriques. Les trois premières pages sont ouvertes ; les autres paraissent dans ce même numéro au fil de sa fabrication."
+    },
+    {
+     "id": "m5",
+     "type": "liens",
+     "variante": "pastilles",
+     "audience": "public",
+     "titre": "Commencer la lecture"
+    },
+    {
+     "id": "m6",
+     "type": "image",
+     "variante": "large",
+     "audience": "public",
+     "src": "biblio:ecran-comparaison",
+     "texte": "Le même mini-site, avant et après un changement de Design System : à gauche Minimal Clair, à droite Éditorial Magazine. Le contenu est identique ; seule la présentation change."
+    },
+    {
+     "id": "m7",
+     "type": "chiffres",
+     "variante": "bande",
+     "audience": "public",
+     "titre": "AIME en quatre chiffres"
+    },
+    {
+     "id": "m8",
+     "type": "bouton",
+     "variante": "large",
+     "audience": "public",
+     "titre": "Lire l'édito",
+     "texte": "Pourquoi AIME, et pourquoi maintenant.",
+     "url": "edito.html"
+    }
+   ]
+  },
+  {
+   "id": "edito",
+   "titre": "Édito",
+   "sections": [
+    {
+     "id": "m9",
+     "type": "hero",
+     "variante": "scinde",
+     "audience": "public",
+     "src": "biblio:scene-musicien",
+     "titre": "Ce qui nous relie",
+     "texte": "Édito · Pourquoi AIME, et ce que veut dire Architecture Intelligente de la Mémoire Ensemble"
+    },
+    {
+     "id": "ma",
+     "type": "texte",
+     "variante": "lettrine",
+     "audience": "public",
+     "titre": "",
+     "texte": "Depuis dix-huit ans, presque chaque semaine, je joue du saxophone dans des mariages. J'ai vu des centaines de journées se dérouler depuis le même endroit : un peu en retrait, attentif au moment où il faudra entrer. Et j'ai appris une chose que personne ne m'avait enseignée : une journée n'est pas une liste de tâches. C'est un réseau.\n\nUne averse annoncée à midi déplace le cocktail sous la tente. La tente change le chemin des invités, donc le moment où le photographe peut les réunir, donc l'heure à laquelle la musique commence, donc le discours du témoin. Rien n'arrive seul. Tout ce qui compte est relié, et presque tout ce qui se passe mal vient d'un lien que personne n'avait vu.\n\nNos outils ignorent ces liens. Un tableur pour le budget, une application pour les invités, un site pour les annonces, des messages pour tout le reste. Chacun garde sa part de vérité, et c'est à nous de tenir l'ensemble en tête. Nous y arrivons, la plupart du temps. Au prix d'une fatigue que l'on ne voit pas.\n\nAIME est né d'une question simple : et si un système se souvenait des liens à notre place ?\n\nLe nom dit l'intention. Architecture, parce qu'il s'agit d'abord de structure : où se trouve chaque chose, et de quoi elle dépend. Intelligente, non parce qu'elle devinerait à notre place, mais parce qu'elle sait expliquer ce qu'elle fait : chaque proposition porte son « parce que ». Mémoire, parce qu'une information saisie une fois doit vivre partout où elle compte, sans être recopiée. Ensemble, enfin, parce que cette mémoire n'appartient à personne seul : un couple, une équipe, une association, des musiciens, des clients la partagent, chacun avec ses droits.\n\nTout commence au Point Zéro. Un point, au centre d'un écran vide. On y dépose une matière, une photo, un texte, un motif, et AIME la déplie dans ses formes : le point devient une ligne, la ligne une relation, la relation une grille, la grille une composition, la composition un projet. C'est une idée qui me suit depuis mes études à Saint-Luc : une forme n'est jamais isolée, elle naît de ce qui l'entoure. AIME en est, d'une certaine façon, l'aboutissement.\n\nLe projet ne reste pas enfermé. Il devient une page, rendue par le même moteur que toutes les autres. Il s'ouvre dans le Canevas, un plan de travail unique où l'on déplace les blocs, où l'on change de direction artistique sans toucher au contenu, où l'on compare avant de décider. Il se range dans un cube qui garde ses facettes. Il se relie à d'autres projets, à des personnes, à des lieux. Peu à peu, les matières, les personnes, les projets et les actions forment un seul tissu.\n\nCe magazine est une première traversée de ce tissu. Vous y verrez de vrais écrans, pas des maquettes. Des métiers très différents, une brodeuse, un couple, un musicien, un organisme de formation, servis par les mêmes blocs. Et chaque fois que quelque chose n'existe pas encore, nous le dirons. Il a été composé avec le moteur de pages qu'il décrit : il est lui-même une démonstration.\n\nAIME n'est pas fini. Il ne le sera sans doute jamais tout à fait, et c'est voulu : un système qui relie doit pouvoir grandir avec ce qu'il relie. Mais la direction est claire. Moins d'outils qui s'ignorent. Plus de liens visibles. Et une mémoire commune, qui travaille pour nous plutôt qu'à notre place.\n\nBonne lecture."
+    },
+    {
+     "id": "mb",
+     "type": "citation",
+     "variante": "encadree",
+     "audience": "public",
+     "texte": "Une journée n'est pas une liste de tâches. C'est un réseau.",
+     "auteur": "Matt, fondateur d'AIME"
+    },
+    {
+     "id": "mc",
+     "type": "bouton",
+     "variante": "centre",
+     "audience": "public",
+     "titre": "Rubrique 01 · Point Zéro",
+     "texte": "Là où tout commence.",
+     "url": "point-zero.html"
+    }
+   ]
+  },
+  {
+   "id": "point-zero",
+   "titre": "01 · Point Zéro",
+   "sections": [
+    {
+     "id": "md",
+     "type": "hero",
+     "variante": "minimal",
+     "audience": "public",
+     "titre": "Point Zéro",
+     "texte": "Rubrique 01 · Déposer une matière, la voir devenir un projet"
+    },
+    {
+     "id": "me",
+     "type": "texte",
+     "variante": "colonnes",
+     "audience": "public",
+     "titre": "À quoi ça sert",
+     "texte": "Le Point Zéro est l'entrée d'AIME. On n'y choisit pas une application : on y dépose une matière. Aujourd'hui, il accepte une image, un texte, une note Markdown ou un tableau CSV.\n\nUne image devient un projet de broderie : AIME propose une palette de fils DMC, des dimensions et une toile, et attend votre confirmation à chaque étape. Un texte est découpé en points, relations et composition. Rien n'est envoyé sur un serveur : le projet reste dans votre navigateur tant que vous ne l'enregistrez pas ailleurs."
+    },
+    {
+     "id": "mf",
+     "type": "image",
+     "variante": "encadree",
+     "audience": "public",
+     "src": "biblio:ecran-point-zero",
+     "texte": "L'écran d'accueil du Point Zéro : un point au centre, une mention qui dit où sont vos données, et rien d'autre à choisir."
+    },
+    {
+     "id": "mg",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "Ce que devient un projet",
+     "texte": "Une fois confirmé, le projet devient un mini-site privé, rendu par le même moteur de pages que tous les sites AIME. Ses blocs se déplacent dans le Canevas ; son contenu, le motif, la palette, les dimensions, reste protégé et ne se modifie qu'au Point Zéro."
+    },
+    {
+     "id": "mh",
+     "type": "image",
+     "variante": "large",
+     "audience": "public",
+     "src": "biblio:ecran-canevas-minisite",
+     "texte": "Le mini-site du projet fictif « Renard d'automne », ouvert dans le Canevas : la palette DMC, les dimensions, l'avancement et les prochaines actions sont de vrais blocs."
+    },
+    {
+     "id": "mi",
+     "type": "citation",
+     "variante": "grande",
+     "audience": "public",
+     "texte": "Le point devient une ligne, la ligne une relation, la relation une grille, la grille une composition, la composition un projet.",
+     "auteur": "La suite des formes du Point Zéro"
+    },
+    {
+     "id": "mj",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "Un métier : l'atelier de broderie",
+     "texte": "Une brodeuse dépose la photo d'un renard. Elle obtient un patron, une palette de fils DMC aux références exactes, la taille réelle sur sa toile, puis une page à montrer à ses clientes. Le même projet nourrit le patron, la page et le suivi d'avancement : elle ne recopie rien."
+    },
+    {
+     "id": "mk",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "À venir",
+     "texte": "D'autres matières (une date, un lieu, une liste d'invités) deviendront elles aussi des projets complets. Elles ne sont pas encore disponibles au Point Zéro : ce numéro les signalera quand elles le seront."
+    },
+    {
+     "id": "ml",
+     "type": "bouton",
+     "variante": "large",
+     "audience": "public",
+     "titre": "Essayer le Point Zéro",
+     "texte": "Sans compte, sur cet appareil.",
+     "url": "/point-zero/"
+    }
+   ]
+  },
+  {
+   "id": "metiers",
+   "titre": "09 · Métiers",
+   "sections": [
+    {
+     "id": "mm",
+     "type": "hero",
+     "variante": "minimal",
+     "audience": "public",
+     "titre": "Mêmes blocs, métiers différents",
+     "texte": "Rubrique 09 · Comment AIME s'adapte à des métiers qui ne se ressemblent pas"
+    },
+    {
+     "id": "mn",
+     "type": "texte",
+     "variante": "colonnes",
+     "audience": "public",
+     "titre": "Le principe",
+     "texte": "AIME ne construit pas une application par métier. Il propose un seul moteur de pages, des blocs communs, des modèles de départ, et les mêmes outils pour tous : Point Zéro, Canevas, Design Systems. Un bloc « Programme » sert aussi bien une cérémonie qu'une formation ; un bloc « Tarifs », un artisan comme un musicien.\n\nCe qui change d'un métier à l'autre, ce sont les blocs que l'on assemble et les documents que l'on imprime. Ci-dessous, ce qui est disponible aujourd'hui pour chacun. Les possibilités futures sont signalées comme telles."
+    },
+    {
+     "id": "mo",
+     "type": "image",
+     "variante": "large",
+     "audience": "public",
+     "src": "biblio:scene-001-saxophoniste",
+     "texte": "Musicien en concert dans un jardin. Photographie de la bibliothèque d'images d'AIME."
+    },
+    {
+     "id": "mp",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "Musicien et artiste",
+     "texte": "Disponible : un site à partir du modèle « Portfolio, créateur », les blocs Setlist, Tarifs, Galerie et Vidéo ; dans les supports imprimables, la setlist de scène, la fiche technique, le programme des œuvres, le devis et la facture.\n\nÀ venir : relier un même répertoire à plusieurs prestations."
+    },
+    {
+     "id": "mq",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "Prestataire événementiel et wedding planner",
+     "texte": "Disponible : le modèle « Mariage » sur plusieurs pages, les blocs Programme, Lieu, Hébergement, Réponse et Plan de table ; dans les supports, le devis, la facture, le relevé d'heures et la signalétique.\n\nÀ venir : un seul dossier partagé entre le couple et tous les prestataires."
+    },
+    {
+     "id": "mr",
+     "type": "image",
+     "variante": "large",
+     "audience": "public",
+     "src": "biblio:scene-003-traiteur",
+     "texte": "Traiteur au dressage pendant une réception. Photographie de la bibliothèque d'images d'AIME."
+    },
+    {
+     "id": "ms",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "Formateur et organisme de formation",
+     "texte": "Disponible : le modèle « Séminaire, conférence » (programme, intervenants, lieu, documents, inscription) ; dans les supports, le programme de formation, la convention, la convocation, la feuille d'émargement, le certificat de réalisation et le questionnaire de satisfaction.\n\nÀ venir : des parcours de formation guidés par l'Orbe, construits à partir des contenus de ce magazine."
+    },
+    {
+     "id": "mt",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "Atelier de broderie",
+     "texte": "Disponible : du Point Zéro au mini-site du projet, avec la palette DMC, les dimensions et l'avancement (voir la rubrique 01)."
+    },
+    {
+     "id": "mu",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "Couple",
+     "texte": "Disponible : le site du mariage avec programme, lieu, réponse et questions, et des pages réservées aux invités, à l'équipe ou à l'organisation."
+    },
+    {
+     "id": "mv",
+     "type": "texte",
+     "variante": "simple",
+     "audience": "public",
+     "titre": "Artisan, association, séminaire",
+     "texte": "Disponible : un modèle de départ pour chacun (« Artisan, indépendant », « Association », « Séminaire, conférence »), avec les mêmes blocs et les mêmes Design Systems."
+    },
+    {
+     "id": "mw",
+     "type": "image",
+     "variante": "encadree",
+     "audience": "public",
+     "src": "biblio:ecran-canevas-design-system",
+     "texte": "Le panneau Design System du Canevas : quatre directions pour un même contenu, quel que soit le métier."
+    },
+    {
+     "id": "mx",
+     "type": "bouton",
+     "variante": "large",
+     "audience": "public",
+     "titre": "Revenir au sommaire",
+     "texte": "Les autres rubriques paraissent au fil de la fabrication du numéro.",
+     "url": "index.html"
+    }
+   ]
+  }
+ ],
+ "presentation": {
+  "ambiance": "editorial",
+  "typo": null,
+  "rayon": null,
+  "densite": "aere",
+  "design": {
+   "id": "aime-editorial",
+   "revision": "1.0.0"
+  },
+  "historique": []
+ }
+}
