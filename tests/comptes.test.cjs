@@ -202,3 +202,13 @@ test('espaces · « Je vois un accès inattendu » : au journal, propriétaire p
   for (let i = 0; i < 4; i++) await appel(E.default, { action: 'signaler', espace: id }, M.guest);
   assert.equal((await appel(E.default, { action: 'signaler', espace: id }, M.guest)).code, 429, 'cinq par jour');
 });
+
+/* Règle 8 : un lien d'invitation sans adresse n'est lié à personne, il est donc court (48 h) ; nominatif, 7 jours. Toujours une seule fois. */
+test('espaces · règle 8 : invitation sans adresse courte (48 h), nominative 7 jours', opts, async () => {
+  let r = await appel(E.default, { action: 'creer', titre: 'Règle 8' }, M.owner); const id = r.body.id;
+  const sans = await appel(E.default, { action: 'inviter', espace: id, role: 'guest' }, M.owner), avec = await appel(E.default, { action: 'inviter', espace: id, role: 'guest', email: 'g@exemple.test' }, M.owner);
+  assert.equal(sans.body.jours, 2); assert.equal(avec.body.jours, 7);
+  const { rows } = await pool.query("select email, extract(epoch from (expires_at - now())) / 3600 as h from invitations where space_id = $1", [id]);
+  const h = e => rows.find(x => (x.email || null) === e).h;
+  assert.ok(Math.abs(h(null) - 48) <= 1.01, 'sans adresse : 48 h (à un changement d\'heure près)'); assert.ok(Math.abs(h('g@exemple.test') - 168) <= 1.01, 'nominative : 7 jours');
+});
