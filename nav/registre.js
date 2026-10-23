@@ -31,7 +31,7 @@ var E=[
  ['timeline','Timeline Jour J','/v1/','L\'ancienne application de planning, conservée','evenements','realiser','disponible'],
  ['g44','G44 LAB','/g44/','Le laboratoire des dépendances administratives','institutions','realiser','demonstration',true],
  ['canevas','Le Canevas','/canevas/','Le plan de travail commun : modifier un mini-site, un cube, un patron','creation','realiser','experimental',true],
- ['sites','Générateur de site (ancien)','/sites/','Créer, importer ou exporter un site ; pour le modifier, le Canevas','creation','realiser','disponible'],
+ ['sites','Canevas universel · Site','/sites/','Composer un site sur trois panneaux : pages et blocs, rendu réel, inspecteur (Design System, sources)','creation','realiser','disponible'],
  ['studio','Le Studio','/studio/','Le studio complet : tous vos supports','creation','realiser','disponible'],
  ['stitch','AIME Stitch','/stitch/','Patrons de point de croix vivants','creation','realiser','disponible',true],
  ['stitchlab','Atelier Broderie','/stitchlab/','Le studio, côté broderie','creation','realiser','disponible'],

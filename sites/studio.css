@@ -1,0 +1,115 @@
+/* AIME · Canevas universel, mode Site : l'habillage « éditorial lumineux » (trois panneaux, rail d'outils, bande des pages).
+   Chargé après theme-monde-aime.css ; il ne touche que l'interface de l'éditeur, jamais les sites rendus (ils gardent
+   leur ambiance ou leur Design System). Accent bleu pour la sélection, irisé réservé à l'Orbe de la marque. */
+body.gen{--st-fond:#F3F4F6;--st-panneau:#FFFFFF;--st-ligne:#E4E6EB;--st-encre:#14161A;--st-doux:#5B616B;--st-bleu:#2459D6;--st-bleu-p:#EAF0FD;
+ --st-iris:conic-gradient(from 210deg,#7FD3E8,#B79CFF,#FFB4D6,#FFE3A3,#9EE6C6,#7FD3E8);background:var(--st-fond)}
+
+/* ---- barre du haut ---- */
+body.gen .st-top{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:18px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));background:#fff;border-bottom:1px solid var(--st-ligne);-webkit-backdrop-filter:none;backdrop-filter:none}
+body.gen .st-mk{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--st-encre)}
+.st-orbe{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.95),rgba(255,255,255,0) 42%),var(--st-iris);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),0 4px 14px rgba(120,110,200,.25);flex:none}
+.st-nom{display:grid;line-height:1.1}.st-nom b{font:700 17px var(--ft);letter-spacing:.14em}.st-nom>span{font:300 17px var(--ft);letter-spacing:.14em;margin-left:4px}
+.st-nom{grid-template-columns:auto auto}.st-nom small{grid-column:1/-1;font:500 11.5px var(--fb);color:var(--st-doux);letter-spacing:.02em}
+.st-modes{display:flex;gap:4px;padding:4px;background:#F1F2F5;border:1px solid var(--st-ligne);border-radius:12px}
+.st-mode{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:0;border-radius:9px;background:none;color:var(--st-encre);font:600 13.5px var(--fb);text-decoration:none;cursor:pointer;white-space:nowrap}
+.st-mode svg,.st-rail svg,.st-ico svg,.st-dev svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.st-mode:hover{background:#fff}
+.st-mode[aria-current=page]{background:var(--st-bleu);color:#fff}
+body.gen .st-top .gen-titre{min-width:0;gap:8px}
+.st-page{color:var(--st-doux);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.gen .st-ico{display:inline-grid;place-items:center;width:38px;height:38px;padding:0}
+
+/* ---- l'atelier : rail · structure · canevas · inspecteur ---- */
+body.gen .st-main{grid-template-columns:76px 250px minmax(0,1fr) 320px;gap:12px;padding:12px max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px));height:calc(100dvh - 66px)}
+.st-rail{display:flex;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--st-ligne);border-radius:14px;padding:8px 6px;overflow:auto}
+.st-rail button{display:grid;justify-items:center;gap:5px;padding:10px 4px;border:0;border-radius:10px;background:none;color:var(--st-doux);font:500 11.5px var(--fb);cursor:pointer}
+.st-rail button svg{width:21px;height:21px}
+.st-rail button:hover{background:var(--st-bleu-p);color:var(--st-bleu)}
+body.gen .gen-g,body.gen .gen-d{background:#fff;border:1px solid var(--st-ligne);border-radius:14px;padding:14px}
+body.gen .st-h{margin:4px 0 10px;font:700 13px var(--fb);letter-spacing:0;text-transform:none;color:var(--st-encre)}
+body.gen .st-h small{font-weight:400;color:var(--st-doux)}
+body.gen .gen-g .gen-pages{display:grid;gap:2px}
+body.gen .gen-g .gen-pages button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;border-radius:8px;background:none;padding:8px 10px;color:var(--st-encre);font:500 14px var(--fb)}
+body.gen .gen-g .gen-pages button::before{content:"";width:13px;height:15px;border:1.5px solid currentColor;border-radius:2px;opacity:.55;flex:none}
+body.gen .gen-g .gen-pages button:hover{background:#F4F5F7}
+body.gen .gen-g .gen-pages button[aria-selected=true]{background:var(--st-bleu-p);color:var(--st-bleu)}
+body.gen .gen-g .gen-pact{margin:8px 0 18px}
+
+/* ---- le canevas ---- */
+body.gen .gen-c{grid-template-rows:auto minmax(0,1fr) auto auto;gap:10px}
+body.gen .gen-barre{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#fff;border:1px solid var(--st-ligne);border-radius:14px;padding:8px 10px}
+.st-sel{font:600 13.5px var(--fb);color:var(--st-encre);margin-right:auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40%}
+.st-dev button{display:inline-grid;place-items:center;padding:6px 9px}
+.st-zoom{display:inline-flex;align-items:center}.st-zoom output{min-width:56px;text-align:center;font:600 13px var(--fb)}
+.st-plus{position:relative}.st-plus summary{cursor:pointer;list-style:none;font:600 13px var(--fb);padding:7px 10px;border-radius:9px;border:1px solid var(--st-ligne)}
+.st-plus summary::-webkit-details-marker{display:none}
+.st-plus-c{position:absolute;right:0;top:calc(100% + 6px);z-index:30;display:grid;gap:8px;background:#fff;border:1px solid var(--st-ligne);border-radius:12px;padding:10px;box-shadow:0 18px 40px rgba(20,22,26,.14);width:max-content;max-width:min(520px,80vw)}
+.st-plus-c .seg{flex-wrap:wrap}
+body.gen .gen-cadre{background:#E9EBEF;border:1px solid var(--st-ligne);border-radius:14px;padding:16px;overflow:auto;display:flex;justify-content:center;align-items:flex-start;gap:16px}
+body.gen .gen-cadre iframe{box-shadow:0 12px 40px rgba(20,22,26,.12);border-radius:8px;flex:none;max-width:none}
+.st-duo{justify-content:flex-start}
+.st-duo>iframe,.st-duo .st-avant{flex:1 1 0;min-width:0}
+.st-duo>iframe{width:auto!important;transform:none!important;height:100%!important}
+.st-avant{display:grid;grid-template-rows:auto 1fr;gap:6px;height:100%}
+.st-avant iframe{width:100%;height:100%;min-height:420px;border:0;background:#fff;border-radius:8px;opacity:.96}
+.st-avant-t{margin:0;font:600 12px var(--fb);color:var(--st-doux)}
+
+/* ---- la bande des pages ---- */
+.st-bande{background:#fff;border:1px solid var(--st-ligne);border-radius:14px;padding:10px;overflow-x:auto}
+.st-bande ol{list-style:none;margin:0;padding:0;display:flex;gap:12px}
+.st-vg{display:grid;gap:6px;width:132px;padding:6px;border:1px solid transparent;border-radius:10px;background:none;cursor:pointer;text-align:left;color:var(--st-doux);font:500 12px var(--fb)}
+.st-vg:hover{background:#F4F5F7}
+.st-vg[aria-current=page]{border-color:var(--st-bleu);background:var(--st-bleu-p);color:var(--st-bleu)}
+.st-vgi{display:block;position:relative;width:118px;height:74px;overflow:hidden;border-radius:6px;background:#F1F2F5;border:1px solid var(--st-ligne);pointer-events:none}
+.st-vgi iframe{position:absolute;left:0;top:0;width:1280px;height:800px;border:0;transform:scale(.0922);transform-origin:0 0;background:#fff}
+.st-vg-plus .st-vgi{display:grid;place-items:center;font:300 26px var(--fb);color:var(--st-doux);border-style:dashed}
+.st-vgt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---- l'inspecteur ---- */
+body.gen .st-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:0;background:none;border:0;border-bottom:1px solid var(--st-ligne);border-radius:0;margin:-4px -4px 12px}
+body.gen .st-tabs button{border:0;border-radius:0;background:none;padding:10px 4px;font:600 13px var(--fb);color:var(--st-doux);border-bottom:2px solid transparent}
+body.gen .st-tabs button[aria-selected=true]{background:none;color:var(--st-bleu);border-bottom-color:var(--st-bleu)}
+.st-ds{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.st-dsc{display:grid;gap:6px;padding:8px;border:1px solid var(--st-ligne);border-radius:12px;background:#fff;cursor:pointer;text-align:left;font:600 12.5px var(--fb);color:var(--st-encre)}
+.st-dsc:hover{border-color:#B9C3D6}
+.st-dsc[aria-pressed=true]{border-color:var(--st-bleu);box-shadow:0 0 0 2px var(--st-bleu-p)}
+.st-dsv{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:20px 14px;gap:4px;padding:6px;border-radius:8px;background:var(--df,#F4F5F7)}
+.st-dsv i:nth-child(1){grid-row:span 2;border-radius:5px;background:linear-gradient(140deg,var(--d1,#C9CED8),var(--d2,#E4E6EB))}
+.st-dsv i:nth-child(2){border-radius:4px;background:var(--de,#14161A);opacity:.85}.st-dsv i:nth-child(3){border-radius:4px;background:var(--d2,#E4E6EB)}
+.st-dso .st-dsv{background:repeating-linear-gradient(135deg,#F1F2F5 0 6px,#E7E9EE 6px 12px)}
+.st-mode-src{display:grid;gap:4px;margin:0 0 12px;padding:10px 12px;border-radius:10px;background:#F4F5F7;color:var(--st-doux);font-size:13px}
+.st-mode-src b{color:var(--st-encre);font-size:13.5px}
+.st-mode-src.ref{background:var(--st-bleu-p)}.st-mode-src.ref b{color:var(--st-bleu)}
+.st-src{display:grid;gap:4px;padding:10px 0;border-bottom:1px solid var(--st-ligne)}
+.st-src span{color:var(--st-doux);font-size:12.5px}.st-src .mini{justify-self:start}
+.st-srcs{list-style:none;margin:0 0 10px;padding:0;display:grid}
+.st-srcs li{display:grid;gap:2px;padding:9px 0;border-bottom:1px solid var(--st-ligne)}.st-srcs span{color:var(--st-doux);font-size:12.5px}
+
+body.gen .st-main .gen-dock{bottom:146px}
+.st-duo .st-avant{order:-1}
+
+/* ---- écrans moyens et téléphone ---- */
+@media (max-width:1280px){body.gen .st-main{grid-template-columns:68px 220px minmax(0,1fr) 290px}}
+@media (max-width:1100px){
+ body.gen .st-top{grid-template-columns:auto minmax(0,1fr);row-gap:10px}
+ body.gen .st-top .gen-act{grid-column:1/-1}
+ body.gen .st-main{grid-template-columns:68px minmax(0,1fr);height:auto}
+ body.gen .st-main .gen-g{grid-column:2}body.gen .st-main .gen-c{grid-column:2}body.gen .st-main .gen-d{grid-column:2}
+ .st-rail{grid-row:1/span 3;align-self:start;position:sticky;top:12px}}
+@media (max-width:720px){
+ body.gen .st-top{grid-template-columns:minmax(0,1fr);position:static}
+ .st-nom small{display:none}
+ .st-modes{overflow-x:auto;max-width:100%}
+ body.gen .st-main{grid-template-columns:minmax(0,1fr)}
+ body.gen .st-main .gen-g,body.gen .st-main .gen-c,body.gen .st-main .gen-d{grid-column:1}
+ .st-rail{grid-row:auto;position:static;flex-direction:row;overflow-x:auto}
+ .st-rail{order:0}body.gen .st-main .gen-c{order:1}body.gen .st-main .gen-g{order:2}body.gen .st-main .gen-d{order:3}
+ body.gen .st-main .gen-cadre iframe#apercu{height:68vh}
+ .st-rail button{min-width:64px}
+ .st-sel{max-width:100%;flex-basis:100%}
+ .st-duo{flex-direction:column}
+}
+@media (prefers-reduced-motion:reduce){body.gen .gen-cadre iframe{transition:none}}
+
+body.gen .vivant{border-radius:14px}
+body.gen .amb{background:#fff;color:var(--st-doux)}body.gen .amb[aria-pressed=true]{border-color:var(--st-bleu);color:var(--st-bleu)}

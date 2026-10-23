@@ -31,7 +31,7 @@ function listeSites(){var ids=Object.keys(etat.sites).sort(function(a,b){return 
 function ambi(id){return(PRES.ambiances.filter(function(a){return a.id===id})[0])||PRES.ambiances[0]}
 
 /* ---------- tout redessiner (structure, réglages, aperçu) ---------- */
-function tout(){if(!site)return;$('comparer').href='/synchroview/?v='+['public','proche','pro','coord'].map(function(c){return site.id+'.'+c+'.pc.ici'}).join(',');pagesUI();sectionsUI();reglages();apercu()}
+function tout(){if(!site)return;$('comparer').href='/synchroview/?v='+['public','proche','pro','coord'].map(function(c){return site.id+'.'+c+'.pc.ici'}).join(',');pagesUI();sectionsUI();reglages();apercu();etiquettes();bande()}
 function pagesUI(){var G=pageCour().mode==='grille';$('pageMode').setAttribute('aria-pressed',String(G));$('pageMode').textContent=G?'Grille ✓':'Grille';[].forEach.call(document.querySelectorAll('[data-meteo]'),function(b){b.setAttribute('aria-pressed',String((b.getAttribute('data-meteo')==='1')===!!site.infos.pluie))});$('pages').innerHTML=site.pages.map(function(p){return'<button type="button" role="tab" data-page="'+esc(p.id)+'" aria-selected="'+(p.id===page)+'">'+esc(p.titre)+'</button>'}).join('');$('pageSuppr').disabled=site.pages.length<2||page==='index'}
 function sectionsUI(){var l=pageCour().sections;
  $('sections').innerHTML=l.length?l.map(function(s,i){var b=S.BLOCS[s.type]||{nom:s.type,variantes:{}},org=s.audience&&s.audience!=='public';return'<li class="'+(s.id===sel?'on':'')+'"><button type="button" class="sec-n" data-sel="'+esc(s.id)+'"><b>'+esc(b.nom)+'</b><span>'+esc(s.titre||(pageCour().mode==='grille'?(S.FORMES[s.type]?b.variantes[S.formeDe(s.type,s.w)]+' · ':'')+s.w+' col.':b.variantes[s.variante])||'')+(org?' · '+S.AUDIENCES[s.audience]:'')+'</span></button><span class="sec-a"><button type="button" class="mini" data-monter="'+esc(s.id)+'" aria-label="Monter '+esc(b.nom)+'"'+(i?'':' disabled')+'>↑</button><button type="button" class="mini" data-descendre="'+esc(s.id)+'" aria-label="Descendre '+esc(b.nom)+'"'+(i<l.length-1?'':' disabled')+'>↓</button><button type="button" class="mini" data-dupliquer="'+esc(s.id)+'" aria-label="Dupliquer '+esc(b.nom)+'">⧉</button><button type="button" class="mini" data-retirer="'+esc(s.id)+'" aria-label="Retirer '+esc(b.nom)+'">×</button></span></li>'}).join(''):'<li class="vide">Cette page est vide : ajoutez une section.</li>'}
@@ -71,7 +71,7 @@ function palette(on,vue){var P=$('catalogue');if(vue!=null)VUEPAL=vue;if(on){cat
 var ONGLET='section';
 function champ(lbl,html){return'<label class="ch"><span>'+esc(lbl)+'</span>'+html+'</label>'}
 function inp(k,v,o){o=o||{};return o.multi?'<textarea data-k="'+esc(k)+'" rows="'+(o.rows||4)+'">'+esc(v)+'</textarea>':'<input data-k="'+esc(k)+'" value="'+esc(v)+'"'+(o.type?' type="'+o.type+'"':'')+(o.ph?' placeholder="'+esc(o.ph)+'"':'')+'>'}
-function reglages(){$('o-section').innerHTML=regSection();$('o-contenu').innerHTML=regContenu();$('o-style').innerHTML=regStyle()}
+function reglages(){$('o-section').innerHTML=regSection();$('o-contenu').innerHTML=regContenu();$('o-style').innerHTML=regStyle();$('o-source').innerHTML=regSource()}
 function regSection(){var s=secCour();if(!s)return'<p class="aide">Choisissez une section dans la liste, ou cliquez-la dans l\'aperçu.</p>';var b=S.BLOCS[s.type];
  var h='<h2 class="gen-h">'+esc(b.nom)+'</h2>';
  if(Object.keys(b.variantes).length>1)h+=champ('Forme','<select data-sk="variante">'+Object.keys(b.variantes).map(function(v){return'<option value="'+esc(v)+'"'+(v===s.variante?' selected':'')+'>'+esc(b.variantes[v])+'</option>'}).join('')+'</select>');
@@ -89,14 +89,14 @@ function regContenu(){var h='<label class="ch"><span>Nom du site (pour vous)</sp
  Object.keys(S.LISTES).forEach(function(k){var cols=S.LISTES[k],l=site.listes[k];
   h+='<details class="bloc-c" data-liste="'+k+'"'+(OUVERTE===k?' open':'')+'><summary>'+esc(LIBL[k])+' <small>'+l.length+'</small></summary><ol class="lignes">'+l.map(function(r,i){return'<li>'+cols.map(function(c){return k==='galerie'&&c==='src'?(S.img(r.src)?'<img class="vign" src="'+esc(r.src)+'" alt="">':'<input data-l="'+k+'" data-i="'+i+'" data-c="src" value="'+esc(r.src||'')+'" placeholder="https://…">'):'<input data-l="'+k+'" data-i="'+i+'" data-c="'+c+'" value="'+esc(r[c]||'')+'" placeholder="'+esc(LIBC[c]||c)+'" aria-label="'+esc(LIBC[c]||c)+' '+(i+1)+'">'}).join('')+'<select data-l="'+k+'" data-i="'+i+'" data-c="audience" aria-label="Qui voit la ligne '+(i+1)+'" title="Qui voit cette ligne">'+Object.keys(S.AUDIENCES).map(function(a){return'<option value="'+a+'"'+((r.audience||'public')===a?' selected':'')+'>'+esc({public:'Tous',membres:'Membres',equipe:'Équipe',organisation:'Orga'}[a])+'</option>'}).join('')+'</select><button type="button" class="mini" data-lsuppr="'+k+'" data-i="'+i+'" aria-label="Retirer la ligne '+(i+1)+'">×</button></li>'}).join('')+'</ol><button type="button" class="mini" data-lajout="'+k+'">+ Ajouter</button>'+(k==='galerie'?' <button type="button" class="mini" data-img-gal="1">Importer des photos</button>':'')+'</details>'});
  return h}
-function regStyle(){var p=site.presentation;return'<h2 class="gen-h">Ambiance <small>36, reprises d\'AIME Studio</small></h2><div class="ambs">'+PRES.ambiances.map(function(a){return'<button type="button" class="amb" data-amb="'+esc(a.id)+'" aria-pressed="'+(a.id===p.ambiance)+'" title="'+esc(a.nom)+'" style="--a1:'+a.c1+';--a2:'+a.c2+';--af:'+a.fond+';--ae:'+a.encre+'"><i></i><span>'+esc(a.nom)+'</span></button>'}).join('')+'</div>'+
+function regStyle(){var p=site.presentation;return regDS()+'<h2 class="gen-h">Ambiance <small>36, reprises d\'AIME Studio</small></h2><div class="ambs">'+PRES.ambiances.map(function(a){return'<button type="button" class="amb" data-amb="'+esc(a.id)+'" aria-pressed="'+(a.id===p.ambiance)+'" title="'+esc(a.nom)+'" style="--a1:'+a.c1+';--a2:'+a.c2+';--af:'+a.fond+';--ae:'+a.encre+'"><i></i><span>'+esc(a.nom)+'</span></button>'}).join('')+'</div>'+
  '<label class="cc vis-cc"><input type="checkbox" data-visuels'+(p.visuels!==false?' checked':'')+'> Visuels de la bibliothèque, accordés à l\'univers du site, tant qu\'aucune photo n\'est posée</label>'+champ('Typographie','<select data-pres="typo"><option value="">Celle de l\'ambiance</option>'+Object.keys(PRES.typographies).map(function(k){return'<option value="'+esc(k)+'"'+(k===p.typo?' selected':'')+'>'+esc(PRES.typographies[k].nom)+'</option>'}).join('')+'</select>')+
  champ('Arrondis','<input type="range" min="0" max="32" step="2" data-pres="rayon" value="'+(p.rayon!=null?p.rayon:ambi(p.ambiance).rayon)+'">')+
  champ('Espacement','<select data-pres="densite"><option value="aere"'+(p.densite!=='compact'?' selected':'')+'>Aéré</option><option value="compact"'+(p.densite==='compact'?' selected':'')+'>Compact</option></select>')+
  '<p class="aide">Contraste : le texte posé sur la couleur principale choisit tout seul le plus lisible du fond ou de l\'encre.</p>'}
 
 /* ---------- l'aperçu : le moteur, dans un cadre ---------- */
-function apercu(){var f=$('apercu'),y=0;try{y=f.contentWindow.scrollY}catch(e){}var d=S.document(site,{page:page,vue:vueDe(persp),regles:window.AIMEPerms,presentation:PRES,visuels:VIS,edition:true});f.srcdoc=d.html;
+function apercu(){setTimeout(avant,0);var f=$('apercu'),y=0;try{y=f.contentWindow.scrollY}catch(e){}var d=S.document(site,{page:page,vue:vueDe(persp),regles:window.AIMEPerms,presentation:PRES,visuels:VIS,edition:true});f.srcdoc=d.html;
  f.onload=function(){try{var doc=f.contentDocument;doc.documentElement.style.scrollBehavior='auto';f.contentWindow.scrollTo(0,y);doc.addEventListener('click',function(e){var a=e.target.closest('a');if(a){e.preventDefault()}if(glisse){glisse=false;e.stopPropagation();return}var s=e.target.closest('[data-sec]');if(s){choisir(s.getAttribute('data-sec'),true)}},true);marquer();onde(doc);grilleEdition(doc)}catch(e){}};
  var V=vueInfo(persp),m=d.bilan.masquees;$('noteP').textContent='Vue « '+V.label+' »'+(V.role?' (rôle '+V.role+')':' (sans compte)')+' : '+d.bilan.sections+' section'+(d.bilan.sections>1?'s':'')+(m.length?', '+m.length+' masquée'+(m.length>1?'s':'')+' ('+m.map(function(x){return x.titre||x.nom}).join(', ')+')':'')+(d.bilan.lignesMasquees?', '+d.bilan.lignesMasquees+' ligne'+(d.bilan.lignesMasquees>1?'s':'')+' masquée'+(d.bilan.lignesMasquees>1?'s':''):'')+'. Les liens ne s\'ouvrent pas dans l\'aperçu.'}
 /* ---------- l'onde : une info change, les blocs qui l'affichent s'allument, avec « Annuler » ---------- */
@@ -153,8 +153,8 @@ document.addEventListener('pointerdown',function(e){var b=e.target.closest('[dat
 function vueInfo(id){return VUES.filter(function(v){return v.id===id})[0]||VUES[0]}
 function vueDe(id){var v=vueInfo(id);return v.role?{id:'apercu-'+v.id,role:v.role}:null}
 function marquer(){try{var doc=$('apercu').contentDocument;[].forEach.call(doc.querySelectorAll('[data-sec]'),function(e){e.classList.toggle('sel',e.getAttribute('data-sec')===sel)});if(sel){var e=doc.querySelector('[data-sec="'+sel+'"]');if(e){var r=e.getBoundingClientRect();if(r.top<0||r.top>doc.defaultView.innerHeight*.7)e.scrollIntoView({block:'start'})}}}catch(e){}}
-function choisir(id,depuisApercu){sel=id;sectionsUI();ONG('section');$('o-section').innerHTML=regSection();if(grilleEdition.barre)try{grilleEdition.barre()}catch(e){}if(depuisApercu){var b=document.querySelector('[data-sel="'+id+'"]');b&&b.scrollIntoView({block:'nearest'})}marquer()}
-function ONG(o){ONGLET=o;[].forEach.call(document.querySelectorAll('[data-onglet]'),function(b){b.setAttribute('aria-selected',String(b.getAttribute('data-onglet')===o))});['section','contenu','style'].forEach(function(k){$('o-'+k).hidden=k!==o})}
+function choisir(id,depuisApercu){sel=id;sectionsUI();if(ONGLET!=='source')ONG('section');$('o-section').innerHTML=regSection();$('o-source').innerHTML=regSource();etiquettes();if(grilleEdition.barre)try{grilleEdition.barre()}catch(e){}if(depuisApercu){var b=document.querySelector('[data-sel="'+id+'"]');b&&b.scrollIntoView({block:'nearest'})}marquer()}
+function ONG(o){ONGLET=o;[].forEach.call(document.querySelectorAll('[data-onglet]'),function(b){b.setAttribute('aria-selected',String(b.getAttribute('data-onglet')===o))});['section','contenu','style','source'].forEach(function(k){$('o-'+k).hidden=k!==o})}
 
 /* ---------- images importées : réduites, en JPEG, gardées dans le site ---------- */
 function reduire(file,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var M=1600,k=Math.min(1,M/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.82))};im.onerror=function(){dire('Image illisible.')};im.src=r.result};r.readAsDataURL(file)}
@@ -185,7 +185,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('button');i
  if(d.allerListe){OUVERTE=d.allerListe;$('o-contenu').innerHTML=regContenu();ONG('contenu');var dl=document.querySelector('[data-liste="'+d.allerListe+'"]');dl&&dl.scrollIntoView({block:'start'});return}
  if(d.imgGal){cibleImg='gal';$('fichierImg').multiple=true;$('fichierImg').click();return}
  if(d.imgSec){cibleImg='sec';$('fichierImg').multiple=false;$('fichierImg').click();return}
- if(d.taille){[].forEach.call(document.querySelectorAll('[data-taille]'),function(x){x.setAttribute('aria-pressed',String(x===b))});$('apercu').style.width=d.taille;return}
+ if(d.taille){[].forEach.call(document.querySelectorAll('[data-taille]'),function(x){x.setAttribute('aria-pressed',String(x===b))});TAILLE=d.taille;zoomer();return}
  if(d.persp){persp=d.persp;[].forEach.call(document.querySelectorAll('[data-persp]'),function(x){x.setAttribute('aria-pressed',String(x===b))});apercu();return}
  if(d.exp){menuExp(false);exporter(d.exp);return}
  if(d.meteo!=null){var on=d.meteo==='1';vague(S.DEPS.pluie);changer(function(s){s.infos.pluie=on});return}
@@ -202,7 +202,7 @@ document.addEventListener('input',function(e){var t=e.target,d=t.dataset;if(!sit
  else if(d.pres)appliquer=function(s){s.presentation[d.pres]=d.pres==='rayon'?+t.value:(t.value||null)};
  if(!appliquer)return;
  if(premier!==t){premier=t;passe.push(JSON.stringify(site));futur=[];boutons()}
- appliquer(site);site.majLe=new Date().toISOString();etat.sites[site.id]=site;clearTimeout(tIn);tIn=setTimeout(function(){ecrire();apercu();if(d.nom!=null)listeSites();sectionsUI()},220)});
+ appliquer(site);site.majLe=new Date().toISOString();etat.sites[site.id]=site;clearTimeout(tIn);tIn=setTimeout(function(){ecrire();apercu();bande();if(d.nom!=null)listeSites();sectionsUI()},220)});
 document.addEventListener('change',function(e){var t=e.target,d=t.dataset;if(!site)return;
  if(d.sk==='variante'||d.sk==='audience'||d.pres||d.c==='audience'){premier=null;tout()}});
 document.addEventListener('focusout',function(){premier=null});
@@ -272,9 +272,62 @@ function exporter(k){var base=S.slug(site.infos.titre||site.nom);
   return Promise.all(Object.keys(ids).map(function(i){return fetch('/sites/bibliotheque/'+i+'.webp').then(function(r){if(!r.ok)throw new Error(i);return r.blob()}).then(function(b){z.file('medias/'+i+'.webp',b)})})).then(function(){return z.generateAsync({type:'blob'})}).then(function(b){return{b:b,n:F.length-1}})})
   .then(function(r){if(r){telecharger(base+'.publication.zip',r.b);dire('Prêt à publier : '+r.n+' page'+(r.n>1?'s':'')+' publique'+(r.n>1?'s':'')+', sans le réservé ni le fichier de projet ('+base+'.publication.zip).')}}).catch(function(){dire('Export .zip impossible (bibliothèque non chargée). Essayez « Une seule page ».')})}
 
+
+/* ---------- Canevas universel : Design Systems, Source, zoom, bande des pages, rail ----------
+   Rien n'est redessiné à la main : le Design System ne change que le pointeur presentation.design (design/systemes.js),
+   et le moteur de pages le lit s'il est dans le catalogue chargé ; sinon l'ambiance d'origine reste. */
+var DSCAT=null,DSAVANT=false,TAILLE='100%',ZOOM=1,tBande=0,bandeCle='';
+function chargerDS(){if(!window.AIMEDesignCharger)return;window.AIMEDesignCharger().then(function(c){DSCAT=c;if(c&&c.ids.length){PRES.systemes=c.compiles;if(site)tout()}})}
+function dsCourant(){return window.AIMEDesign&&site?window.AIMEDesign.pointeur(site):null}
+function regDS(){if(!DSCAT||!DSCAT.ids.length)return'<h2 class="gen-h">Design System</h2><p class="aide">Les Design Systems ne sont pas chargés : le site garde son ambiance ci-dessous.</p>';
+ var cur=dsCourant(),id=cur?cur.id:null;
+ return'<h2 class="gen-h" id="dsTitre">Design System <small>le contenu ne change pas</small></h2><div class="st-ds" role="group" aria-labelledby="dsTitre">'+
+  DSCAT.ids.map(function(k){var c=DSCAT.compiles[k],a=c.a||{};return'<button type="button" class="st-dsc" data-ds="'+esc(k)+'" aria-pressed="'+(k===id)+'" style="--d1:'+esc(a.c1||'#111')+';--d2:'+esc(a.c2||'#ddd')+';--df:'+esc(a.fond||'#fff')+';--de:'+esc(a.encre||'#111')+'"><span class="st-dsv" aria-hidden="true"><i></i><i></i><i></i></span><b>'+esc(c.nom)+'</b></button>'}).join('')+
+  '<button type="button" class="st-dsc st-dso" data-ds="origine" aria-pressed="'+(!id)+'"><span class="st-dsv" aria-hidden="true"><i></i><i></i><i></i></span><b>Ambiance du site</b></button></div>'+
+  (id?'<p class="aide">Appliqué : <b>'+esc(DSCAT.compiles[id]?DSCAT.compiles[id].nom:id)+'</b>. Il remplace l\'ambiance, la typographie et les arrondis ci-dessous, qui restent en réserve (valeurs héritées) et reviennent avec « Ambiance du site ».</p><button type="button" class="mini" data-ds-avant="1" aria-pressed="'+DSAVANT+'">'+(DSAVANT?'Masquer l\'avant':'Comparer avant / après')+'</button>':'<p class="aide">Aucun Design System : l\'ambiance ci-dessous s\'applique. « Annuler » en haut défait chaque changement.</p>')}
+function appliquerDS(v){if(!window.AIMEDesign||!DSCAT)return;var r=window.AIMEDesign.appliquer(site,v==='origine'?null:v,DSCAT);if(!r.change){dire(r.message);return}
+ changer(function(s){s.presentation=r.site.presentation});dire(r.message)}
+/* l'avant : la même page, avec l'apparence précédente (dernier pointeur de l'historique), côte à côte */
+function avant(){var B=$('avantBox');if(!B)return;var cur=dsCourant();if(!DSAVANT||!cur){B.hidden=true;$('cadre').classList.remove('st-duo');return}
+ var h=site.presentation.historique||[],prec=h.length?h[h.length-1].design:null,c=JSON.parse(JSON.stringify(site));c.presentation.design=prec;
+ $('avantT').textContent='Avant : '+(prec&&DSCAT.compiles[prec.id]?DSCAT.compiles[prec.id].nom:'ambiance du site');
+ $('apercuAvant').srcdoc=sansScript(S.document(c,{page:page,vue:vueDe(persp),regles:window.AIMEPerms,presentation:PRES,visuels:VIS}).html);B.hidden=false;$('cadre').classList.add('st-duo')}
+/* Source : d'où vient ce que montre le bloc. Écrit dans le bloc (fixe) ou lu dans les informations du site (référence interne). */
+var NOMS_INFOS={};INFOS.forEach(function(f){NOMS_INFOS[f[0]]=f[1]});
+function lecteurs(k){var T=S.DEPS[k]||[],n=0;site.pages.forEach(function(p){p.sections.forEach(function(x){if(T.indexOf(x.type)>=0)n++})});return n}
+function regSource(){if(!site)return'';var s=secCour(),maj=site.majLe?new Date(site.majLe).toLocaleString('fr-FR',{dateStyle:'medium',timeStyle:'short'}):'—';
+ var intro='<p class="aide">Une information écrite une fois peut être montrée par plusieurs blocs. Modifiez-la ici : chaque bloc qui la lit se met à jour, sur toutes les pages.</p>';
+ if(!s){var L=Object.keys(S.DEPS).filter(function(k){return lecteurs(k)>0});
+  return'<h2 class="gen-h">Sources du site</h2>'+intro+(L.length?'<ul class="st-srcs">'+L.map(function(k){var li=S.LISTES[k],n=lecteurs(k);return'<li><b>'+esc(li?etiquetteListe(k):NOMS_INFOS[k]||k)+'</b><span>'+(li?site.listes[k].length+' ligne'+(site.listes[k].length>1?'s':''):esc(String(site.infos[k]||'(vide)')).slice(0,60))+' · lue par '+n+' bloc'+(n>1?'s':'')+'</span></li>'}).join('')+'</ul>':'<p class="aide">Aucun bloc ne lit encore les informations du site.</p>')+'<p class="aide">Choisissez un bloc pour voir sa source.</p>'}
+ var b=S.BLOCS[s.type]||{nom:s.type},K=Object.keys(S.DEPS).filter(function(k){return S.DEPS[k].indexOf(s.type)>=0});
+ var h='<h2 class="gen-h">'+esc(b.nom)+' <small>source</small></h2>';
+ if(!K.length)return h+'<p class="st-mode-src"><b>Contenu fixe</b> Le texte et les images sont écrits dans ce bloc. Les modifier ne change rien ailleurs.</p>';
+ h+='<p class="st-mode-src ref"><b>Référence interne</b> Ce bloc lit '+K.length+' information'+(K.length>1?'s':'')+' du site. Origine : ce projet. Dernière modification : '+esc(maj)+'.</p>'+intro;
+ K.forEach(function(k){var n=lecteurs(k);if(S.LISTES[k]){h+='<div class="st-src"><b>'+esc(etiquetteListe(k))+'</b><span>Liste · '+site.listes[k].length+' ligne'+(site.listes[k].length>1?'s':'')+' · lue par '+n+' bloc'+(n>1?'s':'')+'</span><button type="button" class="mini" data-aller-liste="'+esc(k)+'">Modifier la liste</button></div>';return}
+  if(k==='pluie'){h+='<div class="st-src"><b>Météo</b><span>Plan B '+(site.infos.pluie?'actif':'inactif')+' · lu par '+n+' bloc'+(n>1?'s':'')+'</span></div>';return}
+  h+=champ((NOMS_INFOS[k]||k)+' · lue par '+n+' bloc'+(n>1?'s':''),'<input data-info="'+esc(k)+'" value="'+esc(site.infos[k]||'')+'">')});
+ return h+'<p class="aide">Les instantanés figés (une valeur datée qui ne bouge plus, pour un devis ou un contrat) ne sont pas encore disponibles.</p>'}
+/* le zoom : l'aperçu garde sa vraie largeur (ordinateur, tablette, téléphone), réduite ou agrandie à l'écran */
+function zoomer(){var f=$('apercu'),z=ZOOM,k=z===1?'':(100/z)+'%';f.style.width=TAILLE==='100%'?k:TAILLE;f.style.height=k;f.style.transform=z===1?'':'scale('+z+')';f.style.transformOrigin=TAILLE==='100%'?'top left':'top center';$('cadre').style.justifyContent=TAILLE==='100%'?'flex-start':'';
+ $('zoomVal').textContent=Math.round(z*100)+' %'}
+function etiquettes(){if(!site)return;var s=secCour(),pg=pageCour();$('stPage').textContent='/ '+pg.titre;$('stSel').textContent=s?(S.BLOCS[s.type]||{nom:s.type}).nom+(s.titre?' · '+s.titre:''):'Page entière'}
+/* la bande des pages : de vraies miniatures, rendues par le même moteur ; un toucher ouvre la page */
+/* miniatures et « avant » : images figées, sans script (le cadre les interdit) */
+function sansScript(h){return String(h).replace(/<script\b[\s\S]*?<\/script>/gi,'')}
+function bande(){var B=$('bande');if(!B||!site)return;var cle=site.id+'|'+site.majLe+'|'+page+'|'+(site.presentation.design&&site.presentation.design.id);if(cle===bandeCle)return;bandeCle=cle;clearTimeout(tBande);
+ tBande=setTimeout(function(){B.innerHTML=site.pages.map(function(p,i){return'<li><button type="button" class="st-vg" data-page="'+esc(p.id)+'" aria-current="'+(p.id===page?'page':'false')+'"><span class="st-vgi" aria-hidden="true"><iframe tabindex="-1" title="" sandbox="allow-same-origin" loading="lazy"></iframe></span><span class="st-vgt">'+String(i+1).padStart(2,'0')+' '+esc(p.titre)+'</span></button></li>'}).join('')+'<li><button type="button" class="st-vg st-vg-plus" id="bandeAjout"><span class="st-vgi" aria-hidden="true">+</span><span class="st-vgt">Ajouter une page</span></button></li>';
+  [].forEach.call(B.querySelectorAll('iframe'),function(f,i){try{f.srcdoc=sansScript(S.document(site,{page:site.pages[i].id,presentation:PRES,visuels:VIS}).html)}catch(e){}})},300)}
+document.addEventListener('click',function(e){var b=e.target.closest('button');if(!b||!site)return;var d=b.dataset;
+ if(d.ds){appliquerDS(d.ds);return}
+ if(d.dsAvant){DSAVANT=!DSAVANT;$('o-style').innerHTML=regStyle();avant();return}
+ if(d.zoom){ZOOM=Math.max(.25,Math.min(2,Math.round((ZOOM+(d.zoom==='+'?.25:-.25))*100)/100));zoomer();return}
+ if(b.id==='bandeAjout'){$('pageAjout').click();return}
+ if(b.id==='modeDS'){ONG('style');var t=$('dsTitre');t&&t.scrollIntoView({block:'start'});var f=document.querySelector('.st-dsc');f&&f.focus();return}
+ if(d.rail){var r=d.rail;if(r==='pages'){var x=document.querySelector('#pages [aria-selected=true]');x&&x.focus();return}if(r==='blocs'){palette(true,0);return}if(r==='medias'){palette(true,'biblio');return}if(r==='donnees'){palette(true,'info');return}if(r==='styles'){ONG('style');return}if(r==='source'){ONG('source');return}}});
+
 /* ---------- démarrage ---------- */
 Promise.all([charger('/vitrine/modeles/sites.json'),charger('/vitrine/presentation/studio.json'),charger('/vitrine/perspectives/sites.json'),charger('/sites/bibliotheque/bibliotheque.json').catch(function(){return null})]).then(function(r){MODELES=r[0].modeles;PRES=r[1];VUES=r[2].vues;if(r[3]){BIB=r[3];BIBCAT=Object.keys(r[3].categories)[0];VIS=r[3].associations||null}
- $('persps').innerHTML=VUES.map(function(p){return'<button type="button" data-persp="'+esc(p.id)+'" aria-pressed="'+(p.id===persp)+'" title="'+esc(p.description)+'">'+esc(p.label)+'</button>'}).join('');catalogueUI();
+ chargerDS();$('persps').innerHTML=VUES.map(function(p){return'<button type="button" data-persp="'+esc(p.id)+'" aria-pressed="'+(p.id===persp)+'" title="'+esc(p.description)+'">'+esc(p.label)+'</button>'}).join('');catalogueUI();
  etat=lire();var q=new URLSearchParams(location.search).get('site'),rp=new URLSearchParams(location.search).get('retour');
  /* ouvert depuis le mini-site d'un projet (/projet/) : un lien de retour, seulement vers cette page */
  if(rp&&/^\/projet\/\?id=[A-Za-z0-9-]{1,60}(&de=\/(point-zero|bureau)\/)?$/.test(rp)&&$('retourProjet')){$('retourProjet').href=rp;$('retourProjet').hidden=false}if(q&&etat.sites[q])ouvrir(q);else if(etat.cur&&etat.sites[etat.cur])ouvrir(etat.cur);else accueil()})

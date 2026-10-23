@@ -98,6 +98,20 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     ok(/Moteurs/.test(await p.textContent('#mc-pan h2')), 'Cube Maître : au clavier, une face ouvre sa fiche');
     await p.goto(B + '/canevas/?maitre=sante&de=/maitre/', { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
     ok(/Cube Maître/.test(await p.textContent('.cv-titre')), 'Canevas : le Cube Maître s\'ouvre déplié');
+    // Canevas universel · Site : ouvrir un projet, choisir un bloc, voir sa source, changer de Design System, garder après rechargement
+    await p.goto(B + '/sites/', { waitUntil: 'networkidle' }); await p.waitForTimeout(800); if (await p.isVisible('#atelier')) await p.click('#nouveau'); await p.click('[data-demo="mariage"]'); await p.waitForTimeout(2500);
+    ok(!(await deborde()), 'Canevas universel : sans débordement horizontal');
+    ok((await p.$$('#bande .st-vg[data-page]')).length >= 2, 'Canevas universel : la bande montre les pages du site');
+    await p.click('#sections [data-sel]'); await p.click('[data-onglet="source"]');
+    ok(/Référence interne/.test(await p.textContent('#o-source')), 'Canevas universel : l\'en-tête lit les informations du site (référence interne)');
+    await p.click('[data-onglet="style"]'); await p.click('[data-ds="aime-editorial"]'); await p.waitForTimeout(900);
+    ok(await p.getAttribute('[data-ds="aime-editorial"]', 'aria-pressed') === 'true', 'Canevas universel : Design System appliqué');
+    await p.click('[data-zoom="-"]'); ok(/75 %/.test(await p.textContent('#zoomVal')), 'Canevas universel : zoom');
+    await p.click('[data-taille="390px"]'); ok(await p.evaluate(() => document.getElementById('apercu').style.width === '390px'), 'Canevas universel : aperçu téléphone');
+    await p.waitForTimeout(400); await p.reload({ waitUntil: 'networkidle' }); await p.waitForTimeout(1800); await p.click('[data-onglet="style"]');
+    ok(await p.getAttribute('[data-ds="aime-editorial"]', 'aria-pressed') === 'true', 'Canevas universel : le Design System est gardé après rechargement');
+    await p.click('#exporter'); const [dl] = await Promise.all([p.waitForEvent('download'), p.click('[data-exp="json"]')]);
+    ok(/\.json$/.test(dl.suggestedFilename()), 'Canevas universel : sauvegarde .json');
     ok(err.length === 0, 'aucune erreur JavaScript' + (err.length ? ' : ' + err.slice(0, 3).join(' | ') : ''));
     await ctx.close();
   }

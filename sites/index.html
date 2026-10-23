@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="theme-color" content="#F7F8F8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Générateur de site · AIME</title>
+<title>Canevas universel · Site · AIME</title>
 <meta name="description" content="Composer un site complet, page par page, avec le moteur partagé d'AIME : une information saisie une fois, partout où elle sert.">
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="/bureau/bureau.css">
@@ -12,17 +12,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/sites/theme-monde-aime.css">
+<link rel="stylesheet" href="/sites/studio.css">
 </head>
 <body class="gen">
 <a class="evite" href="#apercu">Aller à l'aperçu</a>
-<header class="top gen-top">
- <a class="mk" href="/bureau/" aria-label="AIME, retour au Bureau">AIME<sup>®</sup></a>
- <div class="gen-titre"><span class="e-k">Générateur de site</span><label class="gen-site"><span class="sr">Site ouvert</span><select id="choixSite"></select></label></div>
+<header class="top gen-top st-top">
+ <a class="mk st-mk" href="/bureau/" aria-label="AIME, retour au Bureau"><span class="st-orbe" aria-hidden="true"></span><span class="st-nom"><b>AIME</b> <span>Studio</span><small>Canevas universel</small></span></a>
+ <div class="st-modes" role="group" aria-label="Modes du Canevas"><a class="st-mode" href="/sites/" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 9h16"/></svg>Site</a><a class="st-mode" href="/canevas/?publication=nouvelle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v14H4zM13 5h7v14h-7z"/></svg>Publication</a><button type="button" class="st-mode" id="modeDS"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><circle cx="8" cy="16" r="3"/><rect x="13" y="13" width="6" height="6" rx="1"/></svg>Design System</button></div>
+ <div class="gen-titre"><span class="e-k">Site</span><label class="gen-site"><span class="sr">Site ouvert</span><select id="choixSite"></select></label><span class="st-page" id="stPage"></span></div>
  <nav class="gen-act" aria-label="Actions">
   <a class="pill p" id="retourProjet" href="/projet/" hidden>← Retour au projet</a>
+  <button type="button" class="pill st-ico" id="annuler" disabled aria-label="Annuler"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
+  <button type="button" class="pill st-ico" id="retablir" disabled aria-label="Rétablir"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
   <button type="button" class="pill" id="nouveau">Nouveau</button>
-  <button type="button" class="pill" id="annuler" disabled>Annuler</button>
-  <button type="button" class="pill" id="retablir" disabled>Rétablir</button>
   <button type="button" class="pill" id="importer">Importer</button>
   <a class="pill" id="comparer" href="/synchroview/" title="Voir le site par rôle, côte à côte, dans SynchroView">Comparer les rôles</a>
   <div class="gen-exp"><button type="button" class="pill p" id="exporter" aria-expanded="false" aria-controls="menuExp">Exporter</button>
@@ -31,7 +33,7 @@
 </header>
 
 <div class="gen-accueil" id="accueil" hidden>
- <header class="e-entete"><span class="e-k">Générateur de site</span><h1>Un site complet, <span class="e-acc">écrit une fois.</span></h1>
+ <header class="e-entete"><span class="e-k">Canevas universel · Site</span><h1>Un site complet, <span class="e-acc">écrit une fois.</span></h1>
   <p>Choisissez un point de départ. La date, le lieu, le programme ou le contact s'écrivent une seule fois, puis se retrouvent partout où ils servent : en-tête, compte à rebours, plan, réponse. Tout reste dans ce navigateur jusqu'à l'export.</p></header>
  <ul class="modeles" id="modeles"></ul>
  <h2 class="gen-h" style="margin-top:34px">Partir d'un démonstrateur <small>les mêmes faits, rôles et accès, devenus un site à modifier</small></h2>
@@ -47,23 +49,37 @@
  <div class="studio-l" id="studioListe" hidden></div>
 </div>
 
-<main class="gen-main" id="atelier" hidden>
+<main class="gen-main st-main" id="atelier" hidden>
+ <nav class="st-rail" aria-label="Outils">
+  <button type="button" data-rail="pages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg>Pages</button>
+  <button type="button" data-rail="blocs"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><path d="M16.5 13v7M13 16.5h7"/></svg>Blocs</button>
+  <button type="button" data-rail="medias"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 8"/></svg>Médias</button>
+  <button type="button" data-rail="donnees"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg>Données</button>
+  <button type="button" data-rail="styles"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="9" r="1.3"/><circle cx="15" cy="9" r="1.3"/><circle cx="8.5" cy="14" r="1.3"/><path d="M14 15.5a2 2 0 0 0 3 1.5"/></svg>Styles</button>
+  <button type="button" data-rail="source"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/></svg>Sources</button>
+ </nav>
  <aside class="gen-g" aria-label="Structure">
-  <div class="gen-pages" role="tablist" aria-label="Pages" id="pages"></div>
-  <div class="gen-pact"><button type="button" class="mini" id="pageMode" aria-pressed="false" title="Grille libre : poser les blocs sur 12 colonnes">Grille</button><button type="button" class="mini" id="pageAjout">+ Page</button><button type="button" class="mini" id="pageRenommer">Renommer</button><button type="button" class="mini" id="pageSuppr">Supprimer</button></div>
-  <h2 class="gen-h">Sections</h2>
+  <h2 class="gen-h st-h">Pages</h2>
+  <div class="gen-pages" role="tablist" aria-label="Pages" aria-orientation="vertical" id="pages"></div>
+  <div class="gen-pact"><button type="button" class="mini" id="pageAjout">+ Page</button><button type="button" class="mini" id="pageRenommer">Renommer</button><button type="button" class="mini" id="pageSuppr">Supprimer</button></div>
+  <h2 class="gen-h st-h">Calques <small>de la page</small></h2>
   <ol class="gen-secs" id="sections"></ol>
   <button type="button" class="gen-ajout" id="ajout" aria-expanded="false" aria-controls="catalogue">+ Ajouter un bloc</button>
  </aside>
 
  <section class="gen-c" aria-label="Aperçu">
   <div class="gen-barre">
-   <div class="seg" role="group" aria-label="Taille de l'aperçu"><button type="button" data-taille="100%" aria-pressed="true">Ordinateur</button><button type="button" data-taille="820px" aria-pressed="false">Tablette</button><button type="button" data-taille="390px" aria-pressed="false">Téléphone</button></div>
-   <div class="seg" role="group" aria-label="Météo" id="meteo"><button type="button" data-meteo="0" aria-pressed="true">Soleil</button><button type="button" data-meteo="1" aria-pressed="false">Pluie · plan B</button></div>
-   <div class="seg" role="group" aria-label="Voir comme" id="persps"></div>
+   <span class="st-sel" id="stSel">Page entière</span>
+   <div class="seg st-dev" role="group" aria-label="Taille de l'aperçu"><button type="button" data-taille="100%" aria-pressed="true" title="Ordinateur"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/></svg><span class="sr">Ordinateur</span></button><button type="button" data-taille="820px" aria-pressed="false" title="Tablette"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M11 18h2"/></svg><span class="sr">Tablette</span></button><button type="button" data-taille="390px" aria-pressed="false" title="Téléphone"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg><span class="sr">Téléphone</span></button></div>
+   <button type="button" class="mini" id="pageMode" aria-pressed="false" title="Grille libre : poser les blocs sur 12 colonnes">Grille</button>
+   <div class="seg st-zoom" role="group" aria-label="Zoom"><button type="button" data-zoom="-" aria-label="Dézoomer">−</button><output id="zoomVal" aria-live="polite">100 %</output><button type="button" data-zoom="+" aria-label="Zoomer">+</button></div>
+   <details class="st-plus"><summary>Voir comme · météo</summary><div class="st-plus-c">
+    <div class="seg" role="group" aria-label="Météo" id="meteo"><button type="button" data-meteo="0" aria-pressed="true">Soleil</button><button type="button" data-meteo="1" aria-pressed="false">Pluie · plan B</button></div>
+    <div class="seg" role="group" aria-label="Voir comme" id="persps"></div></div></details>
   </div>
-  <div class="gen-cadre"><iframe id="apercu" title="Aperçu du site" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe></div>
+  <div class="gen-cadre" id="cadre"><iframe id="apercu" title="Aperçu du site" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe><div class="st-avant" id="avantBox" hidden><p class="st-avant-t" id="avantT">Avant</p><iframe id="apercuAvant" title="Aperçu avant le changement de Design System" tabindex="-1" sandbox="allow-same-origin"></iframe></div></div>
   <p class="gen-note" id="noteP"></p>
+  <nav class="st-bande" aria-label="Pages du site"><ol id="bande"></ol></nav>
   <div class="gen-dock">
    <div class="gen-pop" id="catalogue" role="dialog" aria-label="Vos informations et les blocs" hidden>
     <div class="gp-tabs" id="ptabs" role="group" aria-label="Familles de blocs"></div>
@@ -74,11 +90,12 @@
   <div class="gen-onde" id="onde" role="status" hidden><span></span><button type="button" class="mini" id="ondeAnnuler">Annuler</button></div>
  </section>
 
- <aside class="gen-d" aria-label="Réglages">
-  <div class="seg tabs" role="tablist" aria-label="Réglages"><button type="button" role="tab" data-onglet="section" aria-selected="true">Section</button><button type="button" role="tab" data-onglet="contenu" aria-selected="false">Contenu</button><button type="button" role="tab" data-onglet="style" aria-selected="false">Style</button></div>
+ <aside class="gen-d" aria-label="Inspecteur">
+  <div class="seg tabs st-tabs" role="tablist" aria-label="Inspecteur"><button type="button" role="tab" data-onglet="section" aria-selected="true">Bloc</button><button type="button" role="tab" data-onglet="contenu" aria-selected="false">Contenu</button><button type="button" role="tab" data-onglet="style" aria-selected="false">Style</button><button type="button" role="tab" data-onglet="source" aria-selected="false">Source</button></div>
   <div class="gen-onglet" id="o-section" role="tabpanel"></div>
   <div class="gen-onglet" id="o-contenu" role="tabpanel" hidden></div>
   <div class="gen-onglet" id="o-style" role="tabpanel" hidden></div>
+  <div class="gen-onglet" id="o-source" role="tabpanel" hidden></div>
  </aside>
 </main>
 <input type="file" id="fichierSite" accept="application/json,.json,.zip,.html,.htm" hidden>
@@ -90,6 +107,8 @@
 <script src="/nav/registre.js"></script>
 <script src="/synchroview/permissions.js"></script>
 <script src="/vitrine/rendu.js"></script>
+<script src="/design/systemes.js"></script>
+<script src="/design/charger.js"></script>
 <script src="/sites/importer.js"></script>
 <script src="/sites/editeur.js"></script>
 <script src="/menu/menu.js"></script>
