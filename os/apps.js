@@ -9,7 +9,8 @@ var SYSTEME=[
  {id:'cube',nom:'Mon cube',href:'/cube/',phrase:'Ma Régie personnelle : mes six facettes, mon timbre, mon orbe',cat:'systeme',statut:'experimental',sigle:'Cu'},
  {id:'pointzero',nom:'Point Zéro',href:'/point-zero/',phrase:'Déposer une matière : intention, notes, fichiers ; le système la distribue',cat:'systeme',statut:'experimental',sigle:'P0'},
  {id:'espace',nom:'Mon espace',href:'/bureau/espace/',phrase:'Reprendre ses projets, sauvegarder ce navigateur',cat:'systeme',statut:'disponible',sigle:'Es'},
- {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré',reserve:true}];
+ {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré',reserve:true},
+ {id:'maitre',nom:'Cube Maître',href:'/maitre/',phrase:'Le site AIME en six facettes, sur ses données réelles : pages, orbe, contenu, moteurs, santé, comptes',cat:'systeme',statut:'experimental',sigle:'CM'}];
 /* réservé : seulement pour le propriétaire du site, droit décidé par le serveur (/api/identite → proprietaire) ;
    l'interface ne fait que montrer ou masquer, elle ne protège rien. */
 /* sigles choisis quand le calcul automatique tromperait (« Le Réseau » donnerait « Lr », trop proche d'une lettre au hasard) */
@@ -20,6 +21,7 @@ var ACTIONS=[
  {id:'deposer',nom:'Déposer une matière au point zéro',app:'pointzero',href:'/point-zero/',mots:'deposer importer note intention demande fichier trier classer point zero'},
  {id:'nouveau-devis',nom:'Nouveau devis',app:'regie',href:'/regie/#nouveau-devis',mots:'devis facture client'},
  {id:'canevas',nom:'Modifier un mini-site dans le Canevas',app:'canevas',href:'/canevas/',mots:'canevas modifier site mini-site page bloc disposition'},
+ {id:'cube-maitre',nom:'Parcourir le site en six facettes (Cube Maître)',app:'maitre',href:'/maitre/',mots:'cube maitre site facettes pages orbe moteurs sante comptes'},
  {id:'reseau',nom:'Découvrir le Réseau des facettes',app:'reseau',href:'/reseau/',mots:'reseau facettes decouvrir bibliotheque module'},
  {id:'nouveau-site',nom:'Créer un site (ancien générateur)',app:'sites',href:'/sites/',mots:'site générateur créer importer exporter page web'},
  {id:'sites-clients',nom:'Voir les sites clients (trois écrans, par rôle)',app:'regie',href:'/regie/#sites',mots:'site client aperçu rôle perspective générateur'},
