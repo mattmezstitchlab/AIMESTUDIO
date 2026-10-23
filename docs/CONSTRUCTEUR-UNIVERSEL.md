@@ -31,3 +31,8 @@ Les tests verrouillent les points d'ancrage du constructeur, ses états déclar�
 - Ne plus développer la Carte Postale ; préserver ses éventuelles données historiques.
 - Aucune promesse de publication ou de persistance serveur avant vérification du chemin effectif.
 - Pas de modification de `main` sans revue, tests GitHub et validation du parcours navigateur.
+
+## Prototype technique ajouté — modèle de blocs V1
+`constructeur/blocs.js` définit un format `aime-page-blocs` version 1 pour l'échange de blocs typés (`id,type,x,y,w,h,donnees`). Tests : aller-retour JSON, collision des identifiants, rejet d'une version inconnue et projection géométrique sans mutation. Ce module **n'est pas chargé par le site**, n'enregistre rien et n'a pas vocation à remplacer directement les formes complexes de `aime/index.html`.
+
+La fonction `depuisGrille` ne conserve volontairement que positions et dimensions ; la propriété `donnees` est vide. Elle est **une démonstration de forme, pas un export sans perte**. Avant tout branchement réel : définir identifiants persistants, dimensions exactes, typages des contenus, licences médias, undo/redo et vérification fidèle des exports. Ne pas la présenter comme un bouton « Exporter projet » utilisable.
