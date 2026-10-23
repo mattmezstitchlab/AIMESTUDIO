@@ -89,3 +89,49 @@
 .reprise-liens small{color:var(--faint)}
 
 html.calme .jj li{transition:none}
+
+/* 01 · quatre arrivées : une scène par rôle, l'orbe recueille la fiche */
+.arrivees{border-top:1px solid var(--line);padding-top:clamp(96px,15vh,170px)}
+.arr-tete .cx-tete{margin-bottom:0}
+.sc{min-height:88svh;display:grid;align-items:center;padding:clamp(40px,8vh,80px) 0}
+.sc-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(32px,6vw,96px);align-items:center}
+.sc-k{margin:0 0 18px;font:600 12px var(--ui);letter-spacing:.24em;text-transform:uppercase;color:var(--faint)}
+.sc h3{margin:0;font:400 clamp(30px,4.2vw,54px)/1.04 var(--display);letter-spacing:-.022em;text-wrap:balance}
+.sc-texte p:last-child{margin:20px 0 0;max-width:520px;font-size:clamp(16px,1.45vw,18.5px);color:var(--soft);text-wrap:pretty}
+.fiche{position:relative;margin:0;border:1px solid var(--line);border-radius:22px;padding:clamp(22px,2.6vw,32px);background:linear-gradient(180deg,rgba(237,237,240,.035),transparent 60%);transition:border-color 1s}
+.fiche .ancre-sc{position:absolute;right:-22px;top:-22px;width:56px}
+.fiche-k{margin:0 0 10px;font:600 11.5px var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.fiche-k~.fiche-k{margin-top:26px}
+.fiche-phrase{margin:0;font:400 clamp(17px,1.6vw,20px)/1.45 var(--ui);color:var(--ink)}
+.fiche-chemins{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:ch}
+.fiche-chemins li{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;font-size:15px;counter-increment:ch}
+.fiche-chemins li::before{content:counter(ch);grid-row:span 2;width:22px;height:22px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font:600 11.5px var(--ui);color:var(--soft)}
+.fiche-chemins span{color:var(--soft);font-size:14px}
+.fiche-l{margin:0;display:grid;border-top:1px solid var(--line)}
+.fiche-l div{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.fiche-l dt{font-size:14px;color:var(--soft)}
+.fiche-l dd{margin:0;font-weight:500;opacity:.28;transform:translateX(-6px);transition:opacity .7s,transform .7s cubic-bezier(.2,.7,.2,1)}
+.fiche-l div:nth-child(2) dd{transition-delay:.12s}.fiche-l div:nth-child(3) dd{transition-delay:.24s}.fiche-l div:nth-child(4) dd{transition-delay:.36s}
+.sc.recueilli .fiche{border-color:#4A4A55}
+.sc.recueilli .fiche-l dd{opacity:1;transform:none}
+.fiche figcaption{margin-top:18px;font-size:13.5px;color:var(--soft)}
+.fiche figcaption b{color:var(--ink);font-weight:600}
+@media (max-width:860px){.sc{min-height:0}.sc-in{grid-template-columns:minmax(0,1fr)}.fiche{margin-top:24px}.fiche .ancre-sc{right:auto;left:50%;top:-50px;transform:translateX(-50%)}}
+
+/* 02 · l'orbe compose les quatre écrans : la scène reste en place pendant son passage */
+.ecrans-scene{position:relative;height:calc(100svh + 260svh)}
+.ecrans-collant{position:sticky;top:max(72px,calc(50svh - 380px));padding-bottom:20px}
+.ecrans{position:relative}
+.ancre-ecran{position:absolute;left:0;top:0;width:64px;pointer-events:none;transition:none}
+.ecrans-etat{min-height:1.5em;margin:22px 0 0;text-align:center;font:500 14px var(--ui);color:var(--soft)}
+.tel-attente{position:absolute;inset:0;z-index:1;display:grid;place-items:center;background:#0E0E11;transition:opacity .9s ease}
+.tel-attente::before{content:"";width:44%;height:2px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.tel iframe{opacity:0;transition:opacity .9s ease .15s}
+.tel.ne iframe{opacity:1}
+.tel.ne .tel-attente{opacity:0;pointer-events:none}
+.tel figcaption{opacity:.35;transition:opacity .6s}
+.tel.ne figcaption{opacity:1}
+body.ecrans-libres .ecrans-scene,html.calme .ecrans-scene{height:auto}
+body.ecrans-libres .ecrans-collant,html.calme .ecrans-collant{position:static}
+html.calme .tel iframe,html.calme .tel-attente,html.calme .tel figcaption,html.calme .fiche-l dd{transition:none}
+@media (max-width:900px){.ecrans-scene{height:calc(100svh + 220svh)}.ecrans-collant{top:64px}}
