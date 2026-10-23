@@ -5,6 +5,7 @@ import { createRequire } from 'module';
 import crypto from 'crypto';
 const require = createRequire(import.meta.url);
 import { inscrire, lire } from './journal.mjs';
+import { envoyer, envoiPret } from './auth.mjs';
 const P = require('../../synchroview/permissions.js');
 
 export const KINDS = ['evenement', 'projet', 'atelier'];
@@ -175,4 +176,24 @@ export async function journal(db, u, b) {
   return { tout, journal: lignes === null ? null : lignes };
 }
 
-export const ACTIONS = { mes, creer, inviter, rejoindre, membres, retirer, annuler, acces, journal };
+/* « Je vois un accès inattendu » : tout membre, invité compris, peut le dire, sans fournir de preuve.
+   Le signalement est inscrit au journal (visible du propriétaire et de la personne qui signale) et le propriétaire est prévenu
+   par e-mail, sans le texte du signalement ni le nom de la personne : il lit le journal, connecté. Cinq par jour et par personne. */
+const MAX_SIGNALEMENTS = 5;
+export async function signaler(db, u, b) {
+  const r = await exiger(db, u, b.espace, 'read');
+  const motif = texte(b.motif, 280);
+  const { rows: n } = await db.query("select count(*)::int as n from audit where space_id = $1 and user_id = $2 and action = 'signalement' and at > now() - interval '1 day'", [b.espace, u.id]).catch(() => ({ rows: [{ n: 0 }] }));
+  if (n[0].n >= MAX_SIGNALEMENTS) refus(429, 'Vous avez déjà signalé plusieurs fois aujourd\'hui : le propriétaire de l\'espace a été prévenu.');
+  const journal = await inscrire(db, { qui: u.id, espace: b.espace, action: 'signalement', cible: u.id, detail: Object.assign({ role: r, objet: 'acces_inattendu' }, motif ? { motif } : {}) });
+  let prevenu = false;
+  if (envoiPret()) {
+    const d = await duree(db);
+    const { rows: o } = await db.query(`select u.email, s.title from space_members m join "user" u on u.id = m.user_id join spaces s on s.id = m.space_id where m.space_id = $1 and m.role = 'owner' ${d ? ACTIF : ''}`, [b.espace]);
+    for (const x of o) { try { await envoyer({ to: x.email, subject: 'AIME · un accès inattendu est signalé', text: 'Bonjour,\n\nUn membre de votre espace « ' + x.title + ' » signale un accès inattendu.\nConnectez-vous à AIME et ouvrez le journal de l\'espace pour en savoir plus.\n', html: '<p>Bonjour,</p><p>Un membre de votre espace « ' + x.title.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]) + ' » signale un accès inattendu.</p><p>Connectez-vous à AIME et ouvrez le journal de l\'espace pour en savoir plus.</p>' }); prevenu = true; } catch { /* le signalement reste au journal */ } }
+  }
+  if (!journal && !prevenu) refus(503, 'Le signalement n\'a pas pu être enregistré : réessayez plus tard, ou écrivez à AIME.');
+  return { signale: true, journal, prevenu };
+}
+
+export const ACTIONS = { mes, creer, inviter, rejoindre, membres, retirer, annuler, acces, journal, signaler };
