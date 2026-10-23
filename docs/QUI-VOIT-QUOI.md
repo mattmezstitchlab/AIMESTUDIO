@@ -21,8 +21,8 @@ Décision de Matt (23/10/2026) : le principe de l'accueil (« un seul projet, ch
 | G44 | agent, formateur, responsable, contrôleur (+ H1–H3) | usager | module propre (`g44/js/acces.js`) | claire saumon |
 | Stitch | créatrice, brodeuse, boutiques (non reliées à des règles) | acheteuse, visiteur | non | claire « Apple » |
 | Magazine / Publication | « public » seulement | rédaction, rédacteur en chef, lecteur, abonné | non | claire chaude |
-| Studio | aucun (des formats) | auteur, client, équipe, public | non | claire |
-| Régie | propriétaire, visiteur, clients, 6 vues | délégué, comptable | partiel | sombre iris |
+| Studio | 9 rôles décrits (docs/ROLES.md), exemple `/exemples/?u=studio` | à brancher sur un espace `kind 'studio'` | règles écrites (exemple) | claire |
+| Régie | 6 rôles décrits (docs/ROLES.md), exemple `/exemples/?u=regie` | mono-utilisateur, le dit | règles écrites (exemple) | sombre iris |
 
 ## Les lots
 
@@ -32,7 +32,8 @@ Décision de Matt (23/10/2026) : le principe de l'accueil (« un seul projet, ch
 4. ✅ G44 : ses 4 identités (agent, formateur, responsable, contrôleur) branchées sur le composant par un adaptateur (`g44/js/coeur-g44.js`) ; ses règles (`G44Acces.autoriser`) et sa simulation restent les siennes. `/exemples/?u=g44`. Un moteur qui n'est pas une vitrine apporte son adaptateur : `charger`, `page(rôle)`, `droits(rôles)`.
 5. ✅ Stitch : la créatrice, la boutique, la brodeuse (qui a acquis le patron) et la visiteuse, par un adaptateur (`stitch/js/coeur-stitch.js`). Un seul patron canonique ; la grille et les fils ne sortent que pour la créatrice et la brodeuse, la boîte à fils pour la brodeuse seule ; le prix écrit une fois par la boutique est vu par toutes. Règles explicites du prototype, à vérifier côté serveur en production. `/exemples/?u=stitch`.
 6. ✅ Magazine : l'autrice, la rédactrice en chef, le maquettiste et la lectrice sur le même numéro (`publication/coeur-magazine.js`) ; la lectrice voit la vraie page publiée (AIMESite.document), seule la rédaction en chef publie. `/exemples/?u=magazine`.
-   Restent Studio et Régie : idem avec leurs rôles.
+   Studio et Régie : ✅ voir le lot 6 bis.
+6 bis. ✅ Régie (6 rôles) et Studio (9 rôles), d'après la référence des rôles (`docs/ROLES.md`). Ces produits n'ont pas encore de moteur de partage : le moteur `regles` (`coeur/coeur-regles.js`) lit, dans le scénario, les six dimensions de chaque rôle (famille, portée, gestes, durée, preuve) et un projet fictif en blocs. Un bloc hors de la portée n'est pas dans l'écran, sans compte de ce qui manque ; une portée « sa part » montre la variante écrite pour ce rôle ; un agent IA propose, ne décide jamais. Au-delà de six rôles, les écrans défilent en rangée. Chaque écran le dit : données fictives, pas encore de compte.
 7. Navigation : Accueil · Mon projet · Exemples · Lab.
 
 Une couleur par rôle technique (`coeur/roles.js`, prise dans l'orbe : propriétaire rose, contribution ambre, invité cyan, coordination violet, lecture seule vert, public gris) : le héros de chaque écran, la pastille du rôle dans les arrivées, les écrans, le tableau et le jour J. La marque reste noire ; la couleur désigne la personne.

@@ -153,3 +153,6 @@ h3{margin:0;font:600 15px var(--ui)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 .vign-t{display:grid;place-items:center;font:600 10px var(--mono);color:var(--pale);border:1px solid var(--ligne);background:var(--fond)}
+
+/* docs/ROLES.md : tant que la Régie n'a pas de connexion, elle le dit */
+.avert{margin:0;padding:10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--ligne);font-size:13.5px;color:var(--encre);background:#16161B}
