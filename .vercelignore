@@ -1,0 +1,8 @@
+# Ce qui n'est pas une page du site ne part pas en production (constat E de docs/AUDIT-ROLES.md).
+# Le dépôt reste public ; le site, lui, ne sert que les pages et ce qu'elles chargent.
+/docs
+/db
+/tests
+/scripts
+/.github
+/README.md
