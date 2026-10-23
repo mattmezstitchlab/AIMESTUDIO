@@ -13,7 +13,7 @@ function personne(){if(demo)return Promise.resolve({id:'demo-camille',name:'Cami
 function bulle(u){var b=document.createElement('div');b.className='rv-bulle';b.setAttribute('role','status');b.innerHTML='<i aria-hidden="true"></i>';
  var p=document.createElement('p');p.textContent=u.demo?'Démonstration : voici comment le timbre d\'une personne rejoint Le Monde AIME.':'Bienvenue, '+u.name+'. Votre timbre a rejoint Le Monde AIME : le cube du titre est le vôtre, il se construira avec vous.';
  if(u.demo){var d=document.createElement('span');d.className='rv-demo';d.textContent='Démonstration';p.appendChild(d)}b.appendChild(p);
- var a=document.createElement('a');a.href=u.demo?'/point-zero/?intention=identite':'/bureau/';a.textContent=u.demo?'Créer mon timbre':'Aller au Bureau';b.appendChild(a);
+ var a=document.createElement('a');a.href=u.demo?'/point-zero/?intention=identite':'/aime/#story2';a.textContent=u.demo?'Créer mon timbre':'Découvrir Le Monde AIME';b.appendChild(a);
  var x=document.createElement('button');x.type='button';x.textContent='Fermer';x.onclick=function(){b.remove()};b.appendChild(x);document.body.appendChild(b)}
 function arriver(u){var T=window.AIMETimbre,cube=document.getElementById('hcube'),face=document.querySelector('#hc3 .hf');nettoyer();if(!T||!cube||!face){bulle(u);return}
  var t=T.creer({id:u.id,nom:u.name||'Vous',image:u.image,mini:false,legende:false});t.tabIndex=-1;t.setAttribute('aria-hidden','true');
