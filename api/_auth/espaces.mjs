@@ -4,6 +4,7 @@
 import { createRequire } from 'module';
 import crypto from 'crypto';
 const require = createRequire(import.meta.url);
+import { inscrire, lire } from './journal.mjs';
 const P = require('../../synchroview/permissions.js');
 
 export const KINDS = ['evenement', 'projet', 'atelier'];
@@ -44,7 +45,8 @@ export async function creer(db, u, b) {
   if (n[0].n >= MAX_ESPACES) refus(429, 'Vous avez atteint le nombre maximal d\'espaces.');
   const { rows } = await db.query('insert into spaces (kind, title, owner_id, data) values ($1, $2, $3, $4::jsonb) returning id', [kind, titre, u.id, JSON.stringify(modele ? { modele } : {})]);
   await db.query('insert into space_members (space_id, user_id, role) values ($1, $2, \'owner\')', [rows[0].id, u.id]);
-  return { id: rows[0].id, titre, kind, modele, role: 'owner' };
+  const journal = await inscrire(db, { qui: u.id, espace: rows[0].id, action: 'creation', cible: u.id, detail: { role: 'owner' } });
+  return { id: rows[0].id, titre, kind, modele, role: 'owner', journal };
 }
 
 /* inviter : un jeton aléatoire, dont seule l'empreinte est gardée ; rôle fixé ici ; usage unique ; 7 jours */
@@ -57,9 +59,10 @@ export async function inviter(db, u, b, base) {
   const { rows: n } = await db.query('select count(*)::int as n from invitations where space_id = $1 and used_at is null and expires_at > now()', [b.espace]);
   if (n[0].n >= MAX_INVITATIONS) refus(429, 'Trop d\'invitations en attente pour cet espace.');
   const jeton = crypto.randomBytes(32).toString('base64url');
-  await db.query(`insert into invitations (space_id, role, token_hash, email, created_by, expires_at) values ($1, $2, $3, $4, $5, now() + interval '${JOURS_INVITATION} days')`,
+  const { rows: inv } = await db.query(`insert into invitations (space_id, role, token_hash, email, created_by, expires_at) values ($1, $2, $3, $4, $5, now() + interval '${JOURS_INVITATION} days') returning id`,
     [b.espace, cible, hacher(jeton), email, u.id]);
-  return { lien: base + '/compte/?invitation=' + jeton, role: cible, email, jours: JOURS_INVITATION };
+  const journal = await inscrire(db, { qui: u.id, espace: b.espace, action: 'invitation', detail: { role: cible, invitation: inv[0].id, nominative: !!email, jours: JOURS_INVITATION } });
+  return { lien: base + '/compte/?invitation=' + jeton, role: cible, email, jours: JOURS_INVITATION, journal };
 }
 
 /* rejoindre : consommation atomique (une seule fois, avant expiration, et par la bonne adresse si l'invitation en nomme une) */
@@ -67,13 +70,14 @@ export async function rejoindre(db, u, b) {
   const jeton = String(b.jeton || ''); if (!/^[A-Za-z0-9_-]{20,100}$/.test(jeton)) refus(400, 'Invitation invalide, expirée ou déjà utilisée.');
   const { rows } = await db.query(`update invitations set used_at = now(), used_by = $1
     where token_hash = $2 and used_at is null and expires_at > now() and (email is null or lower(email) = lower($3))
-    returning space_id, role`, [u.id, hacher(jeton), u.email || '']);
+    returning id, space_id, role`, [u.id, hacher(jeton), u.email || '']);
   if (!rows[0]) refus(410, 'Invitation invalide, expirée, déjà utilisée ou destinée à une autre adresse.');
   /* déjà membre : on garde le rôle existant (une invitation n'abaisse ni n'élève personne) */
   await db.query('insert into space_members (space_id, user_id, role) values ($1, $2, $3) on conflict (space_id, user_id) do nothing', [rows[0].space_id, u.id, rows[0].role]);
   const r = await role(db, rows[0].space_id, u.id);
+  const journal = await inscrire(db, { qui: u.id, espace: rows[0].space_id, action: 'acceptation', cible: u.id, detail: { role: r, invitation: rows[0].id } });
   const { rows: s } = await db.query('select title from spaces where id = $1', [rows[0].space_id]);
-  return { espace: rows[0].space_id, titre: s[0] ? s[0].title : '', role: r };
+  return { espace: rows[0].space_id, titre: s[0] ? s[0].title : '', role: r, journal };
 }
 
 /* les membres : chacun selon sa portée (règle 2, synchroview/permissions.js « member.read ») ; les adresses e-mail et les invitations,
@@ -98,14 +102,16 @@ export async function retirer(db, u, b) {
   if (!rows[0]) refus(404, 'Ce membre n\'est pas dans l\'espace.');
   if (rows[0].role === 'owner') { const { rows: o } = await db.query('select count(*)::int as n from space_members where space_id = $1 and role = \'owner\'', [b.espace]); if (o[0].n <= 1) refus(409, 'L\'espace doit garder au moins un propriétaire.'); }
   await db.query('delete from space_members where space_id = $1 and user_id = $2', [b.espace, cible]);
-  return { retire: cible };
+  const journal = await inscrire(db, { qui: u.id, espace: b.espace, action: 'retrait', cible, detail: { role: rows[0].role } });
+  return { retire: cible, journal };
 }
 
 export async function annuler(db, u, b) {
   await exiger(db, u, b.espace, 'manage_members');
   const { rows } = await db.query('update invitations set expires_at = now() where id = $1 and space_id = $2 and used_at is null returning id', [String(b.invitation || ''), b.espace]);
   if (!rows[0]) refus(404, 'Invitation introuvable ou déjà utilisée.');
-  return { annulee: rows[0].id };
+  const journal = await inscrire(db, { qui: u.id, espace: b.espace, action: 'annulation', detail: { invitation: rows[0].id } });
+  return { annulee: rows[0].id, journal };
 }
 
 /* pour le direct : le modèle de l'espace et la carte membres → rôles, sans adresses.
@@ -124,4 +130,12 @@ export async function acces(db, u, b) {
   return { titre: e[0].title, modele: e[0].modele || null, moi: { id: u.id, role: r }, membres: M, personnes: vus.map(x => ({ id: x.user_id, nom: x.name || (x.email || '').split('@')[0], image: x.image || null })) };
 }
 
-export const ACTIONS = { mes, creer, inviter, rejoindre, membres, retirer, annuler, acces };
+/* le journal : le propriétaire lit celui de l'espace ; chaque membre, les lignes où il agit ou est concerné (jamais modifiable) */
+export async function journal(db, u, b) {
+  const r = await exiger(db, u, b.espace, 'read');
+  const tout = P.can({ id: u.id, role: r }, 'manage_members', { type: 'space' }).allow;
+  const lignes = await lire(db, { espace: b.espace, moi: u.id, tout });
+  return { tout, journal: lignes === null ? null : lignes };
+}
+
+export const ACTIONS = { mes, creer, inviter, rejoindre, membres, retirer, annuler, acces, journal };

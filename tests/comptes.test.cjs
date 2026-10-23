@@ -143,3 +143,23 @@ test('espaces · règle 2 : membres selon la portée (un invité ne reçoit que 
   for (const q of ['owner', 'editor']) { r = await lire(q); assert.equal(r.membres.length, 5, q + ' voit tout le monde'); assert.equal(r.effectif, undefined); }
   r = (await appel(E.default, { action: 'acces', espace: id }, M.guest)).body; assert.equal(r.personnes.length, 1); assert.deepEqual(Object.values(r.membres), ['guest']);
 });
+
+/* Règle 11 : chaque décision laisse une trace, en ajout seul ; le propriétaire lit le journal de l'espace, chacun ce qui le concerne. */
+test('espaces · règle 11 : journal en ajout seul, lisible par la personne concernée', opts, async () => {
+  let r = await appel(E.default, { action: 'creer', titre: 'Journal' }, M.owner); const id = r.body.id; assert.equal(r.body.journal, true);
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'guest', email: 'g@exemple.test' }, M.owner); assert.equal(r.body.journal, true);
+  r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M.guest); assert.equal(r.body.journal, true);
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'viewer' }, M.owner);
+  await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, M.viewer);
+  const membres = (await appel(E.default, { action: 'membres', espace: id }, M.owner)).body.membres, idv = membres.find(m => m.role === 'viewer').id, idg = membres.find(m => m.role === 'guest').id;
+  r = await appel(E.default, { action: 'retirer', espace: id, membre: idv }, M.owner); assert.equal(r.body.journal, true);
+  const tout = (await appel(E.default, { action: 'journal', espace: id }, M.owner)).body;
+  assert.equal(tout.tout, true); assert.deepEqual(tout.journal.map(l => l.action).reverse(), ['creation', 'invitation', 'acceptation', 'invitation', 'acceptation', 'retrait']);
+  assert.ok(!JSON.stringify(tout).includes('@'), 'aucune adresse e-mail au journal');
+  const g = (await appel(E.default, { action: 'journal', espace: id }, M.guest)).body;
+  assert.equal(g.tout, false); assert.ok(g.journal.length >= 1 && g.journal.every(l => l.qui === idg || l.detail.cible === idg), 'l\'invitée ne lit que ce qui la concerne');
+  assert.ok(!g.journal.some(l => l.action === 'retrait'), 'pas le retrait d\'un autre');
+  assert.equal((await appel(E.default, { action: 'journal', espace: id }, M.viewer)).code, 404, 'retirée : plus rien');
+  await assert.rejects(pool.query("update audit set action = 'x' where space_id = $1", [id]), /ajout seul/);
+  await assert.rejects(pool.query('delete from audit where space_id = $1', [id]), /ajout seul/);
+});
