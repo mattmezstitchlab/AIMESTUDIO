@@ -47,7 +47,7 @@ test('lecture seule : aucun stockage, aucune donnée de la Régie hors version p
  assert.ok(!/regie\/regie\.js|regie\/scene\.js/.test(lire('maitre/index.html')+code('maitre/sources.js')+code('canevas/adaptateurs/maitre.js')),'la Régie maîtresse n\'est pas chargée')});
 
 test('la Régie maîtresse et le cube-personne restent intacts (fichiers inchangés)',()=>{let d='';
- try{d=execSync('git diff --name-only origin/integration -- regie/ cube/modele.js cube/stock.js cube/regie.js cube/composition.js cube/cartes.js cube/assemblage.js canevas/adaptateurs/cube.js canevas/plan.js canevas/scene.js api/_auth/',{cwd:R('.'),encoding:'utf8'}).trim()}catch(e){return}
+ try{d=execSync('git diff --name-only '+require('./_base.cjs')()+' -- regie/ cube/modele.js cube/stock.js cube/regie.js cube/composition.js cube/cartes.js cube/assemblage.js canevas/adaptateurs/cube.js canevas/plan.js canevas/scene.js api/_auth/',{cwd:R('.'),encoding:'utf8'}).trim()}catch(e){return}
  assert.equal(d,'','aucun de ces fichiers n\'est modifié par le Cube Maître')});
 
 test('la vue 3D partagée : modèle facultatif, cube-personne inchangé par défaut, miniature du dock réservée au cube-personne',()=>{const v=lire('cube/vue3d.js');
