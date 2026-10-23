@@ -128,9 +128,10 @@ La page d'accueil (`/`) présente désormais, de haut en bas, ce que SynchroView
 | Chapitre | Ce qui se passe | Moteurs |
 |---|---|---|
 | Ouverture | L'orbe, l'intention « Que préparez-vous ? » (inchangée) | `accueil/accueil.js` |
-| 01 · Quatre écrans, une seule source | Les quatre perspectives du mariage de démonstration (couple, coordination, prestataire, invitée), composées à l'instant dans quatre écrans sans script. Changer le nom, la date ou le lieu recompose les quatre. Le projet écrit en haut de page prend la place de l'exemple. | `vitrine/rendu.js` (`rendre`), `synchroview/permissions.js` |
-| 02 · Décidé avant l'affichage | Ce que les règles permettent à chacun : moments, documents, réponses, paiements, gestes. | `AIMEVitrine.politique` |
-| 03 · Le réel bouge, chacun le sait | Averse (plan B) et retard écrits au journal du jour J, rejoués pour les quatre ; annulable. | `live/modele.js` |
-| 04 · Sur chaque appareil | Liens vers SynchroView : quatre écrans, quatre formats. | `/synchroview/` |
+| 01 · Quatre arrivées, une seule mémoire | Une scène par rôle : le couple crée le projet, le prestataire rejoint (déjà inscrit ou nouveau), l'invitée reçoit son invitation, la coordinatrice prend le déroulé. L'orbe se pose sur chaque fiche et recueille ce que la personne apporte. | `zero/zero.js` (ancres `[data-orbe]`), `accueil/coeur.js` |
+| 02 · Quatre écrans, une seule source | La scène reste en place pendant que l'orbe passe d'un téléphone à l'autre : à son passage, l'écran de cette personne se compose. En mouvement réduit, tout est déjà là. Les quatre perspectives du mariage de démonstration (couple, coordination, prestataire, invitée), composées à l'instant dans quatre écrans sans script. Changer le nom, la date ou le lieu recompose les quatre. Le projet écrit en haut de page prend la place de l'exemple. | `vitrine/rendu.js` (`rendre`), `synchroview/permissions.js` |
+| 03 · Décidé avant l'affichage | Ce que les règles permettent à chacun : moments, documents, réponses, paiements, gestes. | `AIMEVitrine.politique` |
+| 04 · Le réel bouge, chacun le sait | Averse (plan B) et retard écrits au journal du jour J, rejoués pour les quatre ; annulable. | `live/modele.js` |
+| 05 · Sur chaque appareil | Liens vers SynchroView : quatre écrans, quatre formats. | `/synchroview/` |
 
 Sobre et monochrome : seule l'orbe garde ses couleurs. Rien n'est enregistré ni envoyé. Les anciens actes (supports, broderie, vitrine multi-écrans, catalogue d'ateliers, offres) restent au Lab (`/lab/grande-partition/`) ; la configuration des carrousels de la Régie est conservée mais n'a plus de place sur l'accueil.

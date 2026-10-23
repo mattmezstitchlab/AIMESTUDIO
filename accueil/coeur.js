@@ -13,10 +13,10 @@ function j(u){return fetch(u,{cache:'no-cache'}).then(function(r){if(!r.ok)throw
 
 /* les quatre personnes, dans l'ordre de la page : une perspective du mariage + une identité de la couche d'accès */
 var ROLES=[
- {angle:'couple',qui:'u-lea',nom:'Le couple',court:'Couple'},
- {angle:'coordinateur',qui:'u-camille',nom:'La coordination',court:'Coordination'},
- {angle:'prestataire',qui:'u-lumen',nom:'Le prestataire',court:'Prestataire'},
- {angle:'invite',qui:'u-lucie',nom:'L\'invitée',court:'Invitée'}];
+ {angle:'couple',qui:'u-lea',nom:'Le couple',court:'Couple',de:'du couple'},
+ {angle:'prestataire',qui:'u-lumen',nom:'Le prestataire',court:'Prestataire',de:'du prestataire'},
+ {angle:'invite',qui:'u-lucie',nom:'L\'invitée',court:'Invitée',de:'de l\'invitée'},
+ {angle:'coordinateur',qui:'u-camille',nom:'La coordination',court:'Coordination',de:'de la coordination'}];
 /* une ambiance sans couleur : l'accueil reste sobre, les écrans aussi */
 var ROLE_FR={owner:'Propriétaire',editor:'Coordination',contributor:'Contribution',guest:'Invité',viewer:'Lecture seule'};
 var AMB={nom:'AIME · monochrome',c1:'#26262B',c2:'#C9C9CF',paper:'#F4F4F2',ink:'#141416',source:'AIME (accueil)'};
@@ -94,6 +94,25 @@ $('source').addEventListener('submit',function(e){e.preventDefault()});
 
 /* le projet de la personne (écrit en haut de page) prend la place de l'exemple : nom, date, lieu */
 window.AIMECoeur={projet:function(p){if(!p)return;perso={titre:p.titre||'',date:p.date||'',lieu:p.lieu||''};if(pret){champs();tout()}}};
+
+/* ---------- la chorégraphie de l'orbe (zero/zero.js suit les ancres [data-orbe]) ----------
+   1 · chaque arrivée : quand sa scène passe au milieu de l'écran, l'orbe se pose sur la fiche et la recueille.
+   2 · les quatre écrans : la scène reste en place pendant que l'orbe passe d'un téléphone à l'autre ;
+       à son passage, l'écran de cette personne se compose. En mouvement réduit, tout est déjà là. */
+var calme=function(){return document.documentElement.classList.contains('calme')||matchMedia('(prefers-reduced-motion: reduce)').matches};
+var SC=[].slice.call(document.querySelectorAll('.sc')),scene=$('ecransScene'),ancre=$('ancreEcran'),TELS=[].slice.call(document.querySelectorAll('#ecransGrille .tel')),actif=-2;
+function nes(n){TELS.forEach(function(f,i){f.classList.toggle('ne',i<=n)});}
+function placer(i){var f=TELS[Math.max(0,i)];if(!f||!ancre)return;var g=$('ecransGrille').getBoundingClientRect(),r=f.querySelector('.tel-ecran').getBoundingClientRect();
+ ancre.style.left=(r.left-g.left+$('ecransGrille').scrollLeft+r.width/2-ancre.offsetWidth/2)+'px';ancre.style.top=(r.top-g.top+r.height*.17-ancre.offsetHeight/2)+'px'}
+function choregraphie(){var V=innerHeight;
+ SC.forEach(function(s){var r=s.getBoundingClientRect();if(r.top<V*.5&&r.bottom>V*.3)s.classList.add('recueilli')});
+ if(!scene)return;if(calme()){if(actif!==3){actif=3;nes(3);document.body.classList.add('ecrans-libres')}return}
+ var r=scene.getBoundingClientRect(),course=r.height-V,p=course>0?-r.top/course:1,i=p<.04?-1:Math.min(3,Math.floor((p-.04)/.2));
+ if(i!==actif){actif=i;nes(i);var pas=$('ecransPas');if(pas)pas.textContent=i<0?'L\'orbe arrive avec tout ce qu\'elle a recueilli.':i<3?'L\'orbe compose l\'écran '+ROLES[i].de+'.':'Quatre écrans, composés depuis la même source.';
+  var tel=TELS[Math.max(0,i)];if(tel&&innerWidth<=900){var g=$('ecransGrille');g.scrollTo({left:tel.offsetLeft-20,behavior:'smooth'})}}
+ placer(actif);requestAnimationFrame(choregraphie)}
+if(calme()){nes(3);document.body.classList.add('ecrans-libres');SC.forEach(function(s){s.classList.add('recueilli')})}
+requestAnimationFrame(choregraphie);
 
 /* ---------- démarrage : seulement quand la section approche, pour garder le premier écran léger ---------- */
 function demarrer(){if(S)return;S={};Promise.all([j('/vitrine/donnees/mariage.json'),j('/vitrine/acces/mariage.json'),j('/vitrine/perspectives/mariage.json'),j('/vitrine/modeles/editorial.json'),j('/vitrine/presentation/ambiances.json')]).then(function(r){
