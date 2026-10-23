@@ -76,12 +76,16 @@ export async function rejoindre(db, u, b) {
   return { espace: rows[0].space_id, titre: s[0] ? s[0].title : '', role: r };
 }
 
-/* les membres : tout membre voit les noms et les rôles ; les adresses e-mail et les invitations, seulement le propriétaire */
+/* les membres : chacun selon sa portée (règle 2, synchroview/permissions.js « member.read ») ; les adresses e-mail et les invitations,
+   seulement le propriétaire ; les effectifs (sans noms), à qui en a le droit (« summary.read »). Hors portée = absent de la réponse. */
+function effectif(rows) { const n = {}; rows.forEach(x => { n[x.role] = (n[x.role] || 0) + 1; }); return n; }
 export async function membres(db, u, b) {
-  const r = await exiger(db, u, b.espace, 'read');
-  const gerer = P.can({ id: u.id, role: r }, 'manage_members', { type: 'space' }).allow;
+  const r = await exiger(db, u, b.espace, 'read'), s = { id: u.id, role: r };
+  const gerer = P.can(s, 'manage_members', { type: 'space' }).allow;
   const { rows } = await db.query(`select m.user_id, m.role, u.name, u.email, u.image from space_members m join "user" u on u.id = m.user_id where m.space_id = $1 order by m.added_at`, [b.espace]);
-  const out = { moi: { id: u.id, role: r }, gerer, membres: rows.map(x => ({ id: x.user_id, role: x.role, nom: x.name || (x.email || '').split('@')[0], image: x.image || null, email: gerer || x.user_id === u.id ? x.email : undefined })) };
+  const vus = rows.filter(x => P.can(s, 'read', { type: 'member', subjectId: x.user_id, role: x.role }).allow);
+  const out = { moi: { id: u.id, role: r }, gerer, membres: vus.map(x => ({ id: x.user_id, role: x.role, nom: x.name || (x.email || '').split('@')[0], image: x.image || null, email: gerer || x.user_id === u.id ? x.email : undefined })) };
+  if (vus.length < rows.length && P.can(s, 'read', { type: 'summary' }).allow) out.effectif = effectif(rows);
   if (gerer) { const { rows: inv } = await db.query('select id, role, email, expires_at, used_at from invitations where space_id = $1 order by expires_at desc limit 50', [b.espace]);
     out.invitations = inv.map(i => ({ id: i.id, role: i.role, email: i.email, expire: i.expires_at, utilisee: !!i.used_at })); }
   return out;
@@ -104,13 +108,20 @@ export async function annuler(db, u, b) {
   return { annulee: rows[0].id };
 }
 
-/* pour le direct : le modèle de l'espace et la carte membres → rôles, sans adresses */
+/* pour le direct : le modèle de l'espace et la carte membres → rôles, sans adresses.
+   Les noms suivent la même portée que « membres ». La carte des rôles ne garde que les personnes visibles et celles dont
+   les actions arrivent dans le journal de cette personne (il faut leur rôle pour rejouer) : identifiants seulement, aucun nom. */
+async function acteurs(db, espace) {
+  const t = await db.query("select to_regclass('public.live_journal') as t"); if (!(t.rows[0] && t.rows[0].t)) return [];
+  const { rows } = await db.query('select distinct qui from live_journal where espace = $1', [espace]); return rows.map(x => x.qui);
+}
 export async function acces(db, u, b) {
-  const r = await exiger(db, u, b.espace, 'read');
-  const { rows: s } = await db.query('select title, data->>\'modele\' as modele from spaces where id = $1', [b.espace]);
+  const r = await exiger(db, u, b.espace, 'read'), s = { id: u.id, role: r };
+  const { rows: e } = await db.query('select title, data->>\'modele\' as modele from spaces where id = $1', [b.espace]);
   const { rows } = await db.query(`select m.user_id, m.role, u.name, u.email, u.image from space_members m join "user" u on u.id = m.user_id where m.space_id = $1`, [b.espace]);
-  const M = {}; rows.forEach(x => { M[x.user_id] = x.role; });
-  return { titre: s[0].title, modele: s[0].modele || null, moi: { id: u.id, role: r }, membres: M, personnes: rows.map(x => ({ id: x.user_id, nom: x.name || (x.email || '').split('@')[0], image: x.image || null })) };
+  const vus = rows.filter(x => P.can(s, 'read', { type: 'member', subjectId: x.user_id, role: x.role }).allow), act = new Set(await acteurs(db, b.espace));
+  const M = {}; rows.forEach(x => { if (vus.includes(x) || act.has(x.user_id)) M[x.user_id] = x.role; });
+  return { titre: e[0].title, modele: e[0].modele || null, moi: { id: u.id, role: r }, membres: M, personnes: vus.map(x => ({ id: x.user_id, nom: x.name || (x.email || '').split('@')[0], image: x.image || null })) };
 }
 
 export const ACTIONS = { mes, creer, inviter, rejoindre, membres, retirer, annuler, acces };

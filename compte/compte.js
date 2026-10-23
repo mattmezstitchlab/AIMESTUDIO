@@ -76,6 +76,8 @@ function chargerEspaces(ouvert){espaces('mes').then(function(r){var L=$('liste')
 
 function chargerMembres(s,pan,dernier){pan.textContent='';pan.appendChild(el('p','leg','Chargement…'));espaces('membres',{espace:s.id}).then(function(r){pan.textContent='';
  var pl=el('div','planche');pl.setAttribute('aria-label','Membres de l\'espace');r.membres.forEach(function(x){pl.appendChild(T.creer({id:x.id,nom:x.nom+(x.id===r.moi.id?' (vous)':''),role:x.role,image:x.image}))});pan.appendChild(pl);
+ /* hors de sa portée, les autres membres ne sont pas envoyés : seulement des effectifs, sans noms, si le rôle y a droit */
+ if(r.effectif)pan.appendChild(el('p','leg','Dans l\'espace : '+Object.keys(ROLES).filter(function(k){return r.effectif[k]}).map(function(k){return r.effectif[k]+' × '+ROLES[k].split(' (')[0].toLowerCase()}).join(', ')+'.'));
  /* inviter : seulement les rôles que les règles ouvrent à mon rôle (le serveur revérifie) */
  var possibles=['editor','contributor','viewer','guest'].filter(function(k){return P.can({id:r.moi.id,role:r.moi.role},'invite',{type:'space',role:k}).allow});
  if(possibles.length){var f=el('form','lgn inv');var sel=el('select');sel.setAttribute('aria-label','Rôle de la personne invitée');possibles.forEach(function(k){var o=el('option',null,ROLES[k]);o.value=k;sel.appendChild(o)});

@@ -78,3 +78,11 @@ test('cagnotte · l\'invité paie pour lui avec autorisation', () => assert.equa
 test('cagnotte · le propriétaire ne paie pas à la place d\'un invité', () => assert.equal(P.can(S.owner, 'pay', cagnotte, { tx: tx('owner', cagnotte) }).allow, false));
 test('rôle inconnu · refusé', () => assert.equal(P.can({ id: 'x', role: 'admin' }, 'read', space).allow, false));
 test('aucun rôle envoyé · refusé', () => assert.equal(P.can({ id: 'x' }, 'read', space).allow, false));
+
+test('règle 2 · member.read : l\'organisation voit tout le monde, un contributeur l\'organisation, un invité lui-même', () => {
+  const P = require('../synchroview/permissions.js'), voit = (role, cible) => P.can({ id: 'moi', role }, 'read', { type: 'member', subjectId: 'autre', role: cible }).allow;
+  for (const r of ['owner', 'editor']) for (const c of P.ROLES) assert.ok(voit(r, c), r + ' voit ' + c);
+  for (const r of ['contributor', 'viewer']) { assert.ok(voit(r, 'owner') && voit(r, 'editor')); for (const c of ['contributor', 'viewer', 'guest']) assert.ok(!voit(r, c), r + ' ne voit pas ' + c); }
+  for (const c of P.ROLES) assert.ok(!voit('guest', c), 'un invité ne voit pas ' + c);
+  assert.ok(P.can({ id: 'moi', role: 'guest' }, 'read', { type: 'member', subjectId: 'moi', role: 'guest' }).allow, 'chacun se voit');
+});

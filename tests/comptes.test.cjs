@@ -75,7 +75,9 @@ test('direct réel · la personne vient de la session, le rôle de l\'espace, l\
   r = await appel(act, { passe: pn, action: 'retarder', p: { moment: 'bal', minutes: 30 } }); assert.equal(r.code, 403, 'une invitée ne décale rien');
   await appel(act, { passe: pc.passe, action: 'annoncer', p: { texte: 'Équipe seulement', audience: 'equipe' } });
   r = await appel(journal, { passe: pn, depuis: 0 }); assert.equal(r.body.lignes.length, 1, 'l\'annonce d\'équipe ne sort pas vers l\'invitée');
-  const acc = await appel(E.default, { action: 'acces', espace: esp }, nina); assert.equal(acc.body.modele, 'mariage'); assert.equal(Object.keys(acc.body.membres).length, 3); assert.ok(acc.body.personnes.every(p => !('email' in p)));
+  const acc = await appel(E.default, { action: 'acces', espace: esp }, nina); assert.equal(acc.body.modele, 'mariage'); assert.ok(acc.body.personnes.every(p => !('email' in p)));
+  /* règle 2 : l'invitée ne reçoit que son nom ; la carte des rôles garde elle-même et qui agit dans son journal (sans nom) */
+  assert.deepEqual(acc.body.personnes.map(p => p.id), [acc.body.moi.id]); assert.equal(Object.keys(acc.body.membres).length, 2, 'elle-même + la coordination qui a agi');
 });
 
 /* Refus par rôle × geste : chaque action de /api/espaces, pour chaque rôle et pour un non-membre.
@@ -127,4 +129,17 @@ test('espaces · deux projets : un membre du projet A ne lit ni ne touche rien d
     assert.ok(mes.includes(A1) && !mes.includes(B1), qui + ' · « mes espaces »');
   }
   r = await appel(E.default, { action: 'membres', espace: A1 }, M.dehors); assert.equal(r.code, 404, 'le propriétaire de B ne voit pas A');
+});
+
+/* Règle 2 : chacun ne reçoit des membres que ce que sa portée permet ; hors portée = absent de la réponse, même le nom. */
+test('espaces · règle 2 : membres selon la portée (un invité ne reçoit que lui-même)', opts, async () => {
+  const id = await espaceComplet('Portée');
+  const noms = { owner: 'o', editor: 'e', contributor: 'c', viewer: 'v', guest: 'g' };
+  const lire = async q => (await appel(E.default, { action: 'membres', espace: id }, M[q])).body;
+  let r = await lire('guest'); assert.deepEqual(r.membres.map(m => m.role), ['guest']); assert.equal(r.effectif, undefined, 'aucun total pour un destinataire');
+  const brut = JSON.stringify(r); for (const q of ['owner', 'editor', 'contributor', 'viewer']) assert.ok(!brut.includes('"nom":"' + noms[q] + '"'), 'aucun autre nom : ' + q);
+  for (const q of ['contributor', 'viewer']) { r = await lire(q); assert.deepEqual(r.membres.map(m => m.role).sort(), ['editor', 'owner', q].sort(), q + ' : lui-même et l\'organisation');
+    assert.deepEqual(r.effectif, { owner: 1, editor: 1, contributor: 1, viewer: 1, guest: 1 }, q + ' : effectifs sans noms'); }
+  for (const q of ['owner', 'editor']) { r = await lire(q); assert.equal(r.membres.length, 5, q + ' voit tout le monde'); assert.equal(r.effectif, undefined); }
+  r = (await appel(E.default, { action: 'acces', espace: id }, M.guest)).body; assert.equal(r.personnes.length, 1); assert.deepEqual(Object.values(r.membres), ['guest']);
 });
