@@ -72,7 +72,7 @@ t('le moteur de pages : sans pointeur, rendu identique ; pointeur inconnu, retou
  IDS.forEach(i=>{const c=CAT.compiles[i],h=S.document(D.appliquer(site,i,CAT).site,{presentation:P}).html;
   assert.ok(h.includes('--c1:'+c.a.c1+';')&&h.includes('--fond:'+c.a.fond+';')&&h.includes('--encre:'+c.a.encre+';'),i+' couleurs');
   assert.ok(h.includes('.btn{border-radius:'+c.rayons.controle+'px}'),i+' rayon des contrôles');assert.ok(h.includes(c.fonts.replace(/&/g,'&amp;'))||h.includes(c.fonts),i+' polices');
-  assert.ok(h.includes('--esp:'+(c.densite==='compact'?0.7:1)+'}'),i+' densité');
+  assert.ok(new RegExp('--esp:'+(c.densite==='compact'?'0\\.7':'1')+'[;}]').test(h),i+' densité');
   ['Renard','310','Noir'].forEach(m=>assert.ok(h.includes(m),i+' contenu « '+m+' »'))})});
 
 t('garde du moteur : un système compilé altéré n\'entre jamais dans la feuille',()=>{

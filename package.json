@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "dev": "PORT=3000 HOST=0.0.0.0 node scripts/serveur-test.cjs",
+    "start": "PORT=3000 HOST=0.0.0.0 node scripts/serveur-test.cjs",
     "test": "node --test tests/*.test.cjs"
   },
   "dependencies": {

@@ -9,7 +9,8 @@ var SYSTEME=[
  {id:'cube',nom:'Mon cube',href:'/cube/',phrase:'Ma Régie personnelle : mes six facettes, mon timbre, mon orbe',cat:'systeme',statut:'experimental',sigle:'Cu'},
  {id:'pointzero',nom:'Point Zéro',href:'/point-zero/',phrase:'Déposer une matière : intention, notes, fichiers ; le système la distribue',cat:'systeme',statut:'experimental',sigle:'P0'},
  {id:'espace',nom:'Mon espace',href:'/bureau/espace/',phrase:'Reprendre ses projets, sauvegarder ce navigateur',cat:'systeme',statut:'disponible',sigle:'Es'},
- {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré',reserve:true}];
+ {id:'regie',nom:'AIME Régie',href:'/regie/',phrase:'Pages, appareils, orbe, devis et factures',cat:'systeme',statut:'disponible',sigle:'Ré',reserve:true},
+ {id:'maitre',nom:'Cube Maître',href:'/maitre/',phrase:'Le site AIME en six facettes, sur ses données réelles : pages, orbe, contenu, moteurs, santé, comptes',cat:'systeme',statut:'experimental',sigle:'CM'}];
 /* réservé : seulement pour le propriétaire du site, droit décidé par le serveur (/api/identite → proprietaire) ;
    l'interface ne fait que montrer ou masquer, elle ne protège rien. */
 /* sigles choisis quand le calcul automatique tromperait (« Le Réseau » donnerait « Lr », trop proche d'une lettre au hasard) */
@@ -20,6 +21,7 @@ var ACTIONS=[
  {id:'deposer',nom:'Déposer une matière au point zéro',app:'pointzero',href:'/point-zero/',mots:'deposer importer note intention demande fichier trier classer point zero'},
  {id:'nouveau-devis',nom:'Nouveau devis',app:'regie',href:'/regie/#nouveau-devis',mots:'devis facture client'},
  {id:'canevas',nom:'Modifier un mini-site dans le Canevas',app:'canevas',href:'/canevas/',mots:'canevas modifier site mini-site page bloc disposition'},
+ {id:'cube-maitre',nom:'Parcourir le site en six facettes (Cube Maître)',app:'maitre',href:'/maitre/',mots:'cube maitre site facettes pages orbe moteurs sante comptes'},
  {id:'reseau',nom:'Découvrir le Réseau des facettes',app:'reseau',href:'/reseau/',mots:'reseau facettes decouvrir bibliotheque module'},
  {id:'nouveau-site',nom:'Créer un site (ancien générateur)',app:'sites',href:'/sites/',mots:'site générateur créer importer exporter page web'},
  {id:'sites-clients',nom:'Voir les sites clients (trois écrans, par rôle)',app:'regie',href:'/regie/#sites',mots:'site client aperçu rôle perspective générateur'},
@@ -62,9 +64,14 @@ function etat(o){o=o||{};var f=(Array.isArray(o.fenetres)?o.fenetres:[]).slice(0
   var n=function(v,d){v=Number(v);return isFinite(v)?Math.round(v):d};return{app:w.app,href:adresseApp(w.href),x:n(w.x,40),y:n(w.y,40),l:n(w.l,900),h:n(w.h,600),reduite:w.reduite===true,agrandie:w.agrandie===true}}).filter(Boolean);
  var orbe=['discrete','attentive','active'].indexOf(o.orbe)>=0?o.orbe:null;
  var ep=Array.isArray(o.epingles)?o.epingles.filter(function(x){return typeof x==='string'&&/^[a-z0-9-]{2,40}$/.test(x)}).slice(0,16):null;return{version:1,fenetres:f,epingles:ep,orbe:orbe}}
+/* La clé « aime-os » appartient à l'ancien Bureau (dossiers, cartes, messages, mémos) : l'OS ne l'écrit plus jamais.
+   Son état vit sous CLE_ETAT. Une valeur « aime-os » au format de l'OS (avec « fenetres », 21-23/10/2026) est seulement relue une fois. */
+var CLE_ETAT='aime-os-v2',CLE_ANCIENNE='aime-os';
+function ancienBureau(o){return!!o&&typeof o==='object'&&!Array.isArray(o)&&!Array.isArray(o.fenetres)}
+function etatInitial(v2,ancienne){if(v2)return etat(v2);if(ancienne&&!ancienBureau(ancienne))return etat(ancienne);return etat(null)}
 /* l'autonomie de l'orbe : le choix du visiteur l'emporte sur celui du site ; sans choix, à la demande */
 function autonomie(site,visiteur){var ok=['discrete','attentive','active'];return ok.indexOf(visiteur)>=0?visiteur:ok.indexOf(site)>=0?site:'discrete'}
 
 function salutation(h){return h<5?'Bonne nuit':h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir'}
-return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,actions:actions,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,autonomie:autonomie,adresseApp:adresseApp,etat:etat,sigle:sigle,salutation:salutation};
+return{TEINTES:TEINTES,SYSTEME:SYSTEME,EPINGLES:EPINGLES,ACTIONS:ACTIONS,actions:actions,MIN:MIN,catalogue:catalogue,epingles:epingles,plier:plier,chercher:chercher,pertinence:pertinence,contraindre:contraindre,cascade:cascade,autonomie:autonomie,adresseApp:adresseApp,etat:etat,CLE_ETAT:CLE_ETAT,CLE_ANCIENNE:CLE_ANCIENNE,ancienBureau:ancienBureau,etatInitial:etatInitial,sigle:sigle,salutation:salutation};
 });

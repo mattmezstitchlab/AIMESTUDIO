@@ -30,6 +30,8 @@ test('sources : tout est retrouvé, rien n\'est écrit, rien n\'est inventé',()
  assert.equal(par('compositions')[0].lien,'/synchroview/?v=a#s');assert.equal(par('compositions')[1].lien,'/synchroview/','un lien étranger est refusé');
  assert.match(par('infinity')[0].detail,/Niveau 7/);assert.ok(par('simulations')[0].demo,'une simulation est dite fictive');assert.equal(par('timeline').length,1);
  assert.deepEqual(inv.ancienBureau,['aime-lang','aime-tlz','aime-wp']);
+ {const o=B.inventaire(stock({'aime-os':JSON.stringify({folders:[],memos:['x']})}));assert.deepEqual(o.ancienBureau,['aime-os'],'l\'ancien Bureau sous « aime-os » est inventorié');
+  const n=B.inventaire(stock({'aime-os':JSON.stringify({version:1,fenetres:[]})}));assert.deepEqual(n.ancienBureau,[],'un état de fenêtres n\'est pas l\'ancien Bureau')}
  const rep=B.reprendre(inv,3);assert.equal(rep[0].enCours,true,'ce qui est en cours passe d\'abord');assert.ok(!rep.some(p=>p.source==='carte'));
  const v=B.inventaire(stock({}));assert.equal(v.projets.length,0);assert.equal(v.total,0);
  const abime=B.inventaire(stock({'echos:v2':'{pas du json','aime-carte':'"autre"','sv-compositions':'{}'}));assert.equal(abime.projets.length,0,'des données abîmées ne cassent rien');
@@ -74,8 +76,8 @@ test('routes : /bureau/ est servi, Page Zéro y mène, aucune boucle, chaque ent
  const rw=(v.rewrites||[]);const fichier=p=>{const f=p.endsWith('/')?p+'index.html':p;return fs.existsSync(R(f.slice(1)))||fs.existsSync(R(p.slice(1)+'/index.html'))};
  const sert=u=>{const p=u.split(/[?#]/)[0];if(fichier(p))return true;const r=rw.find(r=>r.source===p);return !!r&&fichier(r.destination)};
  for(const e of N.ENTREES){const f=suivre(e.href.split('?')[0]).fin;assert.ok(sert(f),e.id+' → '+f+' : aucun fichier')}
- const z=fs.readFileSync(R('index.html'),'utf8');const b=z.indexOf('id="bureau" href="/bureau/"'),m=z.indexOf('id="rejoindre" href="/aime/"');
- assert.ok(b>0&&m>b,'Page Zéro : Ouvrir mon Bureau en principal, Le Monde AIME ensuite');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.ok(!/MON BUREAU|AIME STUDIO<\/a>/.test(z),'en haut, un seul accès : la porte irisée');assert.match(z,/id="porte"/);assert.match(z,/AIMEPorte\.monter/)});
+ const z=fs.readFileSync(R('index.html'),'utf8');const m=z.indexOf('id="rejoindre" href="/aime/"'),e=z.indexOf('id="entrer"');
+ assert.ok(m>e,'Page Zéro : Le Monde AIME est la sortie principale');assert.ok(!z.includes('id="bureau" href="/bureau/"'),'aucun bouton Bureau dans le parcours principal');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.ok(!/MON BUREAU|AIME STUDIO<\/a>/.test(z),'en haut, un seul accès : la porte irisée');assert.match(z,/id="porte"/);assert.match(z,/AIMEPorte\.monter/)});
 
 test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
  const v=JSON.parse(fs.readFileSync(R('vercel.json'))),rw=v.rewrites||[],A=['accessibilite','buro','docs','image','stitchlab','web'];

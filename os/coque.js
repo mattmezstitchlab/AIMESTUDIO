@@ -1,8 +1,9 @@
 /* AIME OS sur la Page Zéro : pose la coque (dock, fenêtres, recherche, toutes les apps, orbe système) par-dessus la page.
    Le balisage est fixe (aucune donnée extérieure) ; os/os.js s'en sert ensuite en mode « page ». */
 (function(){'use strict';if(document.querySelector('.os-coque'))return;
-/* dans un cadre (fenêtre de l'OS, édition de la Régie, écran d'un appareil) : pas d'OS dans l'OS */
-if(window.parent!==window)return;document.body.classList.add('os-page');
+/* dans un cadre (fenêtre de l'OS, édition de la Régie, écran d'un appareil) : pas d'OS dans l'OS ;
+   en Mode Site par défaut (consolidation), la coque ne recouvre la page que si ?coque=1 est demandé */
+if(window.parent!==window||!/[?&]coque=1\b/.test(location.search))return;document.body.classList.add('os-page');
 var c=document.createElement('div');c.className='os-coque';
 c.innerHTML=
  '<div class="fenetres" id="fenetres"></div>'+

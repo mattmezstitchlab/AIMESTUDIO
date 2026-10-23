@@ -14,7 +14,8 @@ function studioLien(h,id,re){return re.test(String(id))?'/studio/#'+h+'.'+id:'/s
 function nb(n,un,plusieurs){return n+' '+(n>1?plusieurs:un)}
 
 /* les données de l'ancien Bureau à fenêtres (retiré le 20/10/2026) : plus lues par aucune page, gardées telles quelles */
-var ANCIEN_BUREAU=['aime-a11y','aime-lang','aime-m4','aime-orb-intro','aime-tld','aime-tlh2','aime-tlp','aime-tlz','aime-tour','aime-uv','aime-wp','aime-wps'];
+/* « aime-os » n'y figure que s'il garde le format de l'ancien Bureau (sans « fenetres ») */
+var ANCIEN_BUREAU=['aime-os','aime-a11y','aime-lang','aime-m4','aime-orb-intro','aime-tld','aime-tlh2','aime-tlp','aime-tlz','aime-tour','aime-uv','aime-wp','aime-wps'];
 
 var SOURCES=[
  {id:'carte',outil:'zero',nom:'Ma Carte',lister:function(S){var c=lire(S,'aime-carte');if(!c||c.format!=='aime-carte')return[];
@@ -41,7 +42,8 @@ var SOURCES=[
 
 function inventaire(S){var out={sources:[],projets:[],ancienBureau:[],total:cles(S).length};
  SOURCES.forEach(function(src){var l=[];try{l=src.lister(S)||[]}catch(e){l=[]}l.forEach(function(p){p.source=src.id;p.outil=src.outil;if(src.demo)p.demo=true});out.sources.push({id:src.id,nom:src.nom,outil:src.outil,demo:!!src.demo,projets:l});out.projets=out.projets.concat(l)});
- out.ancienBureau=ANCIEN_BUREAU.filter(function(k){try{return S.getItem(k)!=null}catch(e){return false}});return out}
+ out.ancienBureau=ANCIEN_BUREAU.filter(function(k){try{if(S.getItem(k)==null)return false}catch(e){return false}
+  if(k!=='aime-os')return true;var v=lire(S,k);return!!v&&typeof v==='object'&&!Array.isArray(v.fenetres)});return out}
 /* reprendre : d'abord ce qui est marqué « en cours », puis le plus récent daté ; jamais de projet fictif sauf s'il est dit fictif */
 function reprendre(inv,n){var l=inv.projets.filter(function(p){return p.source!=='carte'});
  return l.slice().sort(function(a,b){return(b.enCours?1:0)-(a.enCours?1:0)||(b.quand||0)-(a.quand||0)||(a.demo?1:0)-(b.demo?1:0)}).slice(0,n||3)}
