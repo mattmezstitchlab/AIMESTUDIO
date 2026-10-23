@@ -17,6 +17,10 @@ function nombre(n){return NOMBRES[n]||String(n)}
 var ROLE_FR={owner:'Propriétaire',editor:'Coordination',contributor:'Contribution',guest:'Invité',viewer:'Lecture seule'};
 /* une ambiance sans couleur : les écrans restent dans la charte de la marque */
 var AMB={nom:'AIME · monochrome',c1:'#26262B',c2:'#C9C9CF',paper:'#F4F4F2',ink:'#141416',source:'AIME'};
+/* une couleur par rôle, prise dans l'orbe : chaque personne a la sienne, l'orbe les réunit toutes.
+   c = la couleur, e = l'encre lisible dessus (contraste AA). Un scénario peut imposer la sienne (rôle.couleur). */
+var COULEURS=[{c:'#FB7185',e:'#141416'},{c:'#F59E0B',e:'#141416'},{c:'#22D3EE',e:'#141416'},{c:'#7C5CFF',e:'#FFFFFF'},{c:'#34D399',e:'#141416'},{c:'#E879F9',e:'#141416'},{c:'#FDE68A',e:'#141416'},{c:'#93C5FD',e:'#141416'}];
+function couleur(sc,i){var r=sc.roles[i]||{};return r.couleur?{c:r.couleur,e:r.encre||'#141416'}:COULEURS[i%COULEURS.length]}
 
 /* ================= le balisage ================= */
 function fiche(f){var h='';(f||[]).forEach(function(b){h+='<p class="fiche-k">'+esc(b.k)+'</p>';
@@ -66,9 +70,11 @@ function jourJ(){var b=Live.base(S.base);b.evenement.nom=perso.titre||S.base.eve
  return{trace:r.trace,vue:function(qui){return Live.vue(r.etat,S.acces,qui,Live.hm(J.heure||'14:45'),Perms)}}}
 
 /* les écrans : de vraies pages, composées pour celui qui regarde */
-function page(c,role){var out=Vit.rendre({contenu:c,acces:S.acces,perspective:angleDe(role),libelles:S.ps.libelles||{},modele:S.modele,presentation:{ambiance:AMB,polices:S.pol},regles:Perms,flux:flux()});
+function page(c,role){var k=couleur(sc,ROLES.indexOf(role)),out=Vit.rendre({contenu:c,acces:S.acces,perspective:angleDe(role),libelles:S.ps.libelles||{},modele:S.modele,presentation:{ambiance:AMB,polices:S.pol},regles:Perms,flux:flux()});
  return'<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=390"><title>'+esc(role.nom)+'</title>'+
-  '<link rel="stylesheet" href="/vitrine/site/vitrine.css"><style>'+out.css+'</style><style>html{scrollbar-width:none}html::-webkit-scrollbar{display:none}.v-hero,.hero{min-height:420px!important}</style></head><body><div id="app">'+
+  '<link rel="stylesheet" href="/vitrine/site/vitrine.css"><style>'+out.css+'</style><style>html{scrollbar-width:none}html::-webkit-scrollbar{display:none}.v-hero,.hero{min-height:420px!important}'+
+  '.v-hero .v-img,.hero .v-img{background:'+k.c+'!important}.v-hero .v-img>*,.hero .v-img>*{display:none!important}.v-hero .v-img::after,.hero-plein::after,.hero .v-img::after{display:none!important}'+
+  '.v-hero,.v-hero *,.hero-plein,.hero-plein *{color:'+k.e+'!important;text-shadow:none!important}</style></head><body><div id="app">'+
   String(out.html).replace(/<script\b[\s\S]*?<\/script>/gi,'')+'</div></body></html>'}
 function ecrans(){var c=contenu();
  [].forEach.call(document.querySelectorAll('#ecransGrille [data-angle]'),function(fig){var role=ROLES.filter(function(r){return r.angle===fig.getAttribute('data-angle')})[0],fr=fig.querySelector('iframe'),y=0;if(!role)return;
@@ -105,7 +111,7 @@ function direct(){var box=$('jourVues');if(!box||!Live||!J)return;var X=jourJ(),
  $('jourTrace').textContent=der?(der.ok?'Écrit une fois au journal, rejoué pour les '+nombre(N).toLowerCase()+' : '+({planB:'plan B',retarder:'retard en cascade',fait:'étape terminée'}[der.a.action]||der.a.action)+'.':'Refusé par les règles : '+der.raison):'Rien n\'a encore bougé. Déclenchez un imprévu ou un retard.';
  $('jourAnnuler').disabled=!journal.length;$('jourPluie').setAttribute('aria-pressed',String(journal.some(function(a){return a.action==='planB'&&a.p.actif})))}
 
-function tout(){if(!pret)return;ecrans();direct()}
+function tout(){if(!pret)return;ecrans();direct();teinter()}
 function plus_tard(){clearTimeout(minuterie);minuterie=setTimeout(tout,260)}
 
 /* les gestes */
@@ -138,6 +144,9 @@ function choregraphie(){var V=innerHeight;
  placer(actif);requestAnimationFrame(choregraphie)}
 if(calme()){nes(DER);document.body.classList.add('ecrans-libres');SC.forEach(function(s){s.classList.add('recueilli')})}
 if(scene)scene.style.setProperty('--n',N);
+function teinter(){var poser=function(sel,dec){[].forEach.call(document.querySelectorAll(sel),function(el,i){var k=couleur(sc,i-(dec||0));if(i-(dec||0)<0||i-(dec||0)>=N)return;el.style.setProperty('--role',k.c);el.style.setProperty('--role-encre',k.e)})};
+ poser('.sc');poser('#ecransGrille .tel');poser('#droitsTete th',1);poser('#jourVues .jj')}
+teinter();
 requestAnimationFrame(choregraphie);
 
 /* démarrage : seulement quand la section approche, pour garder le premier écran léger */
@@ -152,7 +161,7 @@ return{projet:function(p){if(!p)return;perso={titre:p.titre||'',date:p.date||'',
 
 /* une seule instance par page ; le projet du visiteur peut arriver avant ou après le montage */
 var inst=null,attente=null;
-root.AIMECoeur={html:html,nombre:nombre,
+root.AIMECoeur={html:html,nombre:nombre,couleurs:COULEURS,
  monter:function(sc){inst=monter(sc);if(inst&&attente)inst.projet(attente);return inst},
  projet:function(p){if(inst)inst.projet(p);else attente=p}};
 if(typeof module==='object'&&module.exports)module.exports=root.AIMECoeur;

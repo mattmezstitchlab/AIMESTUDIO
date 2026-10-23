@@ -34,4 +34,6 @@ Décision de Matt (23/10/2026) : le principe de l'accueil (« un seul projet, ch
 6. Magazine / Publication, Studio, Régie : idem avec leurs rôles.
 7. Navigation : Accueil · Mon projet · Exemples · Lab.
 
+Une couleur par rôle (prise dans l'orbe) : le héros de chaque écran, la pastille du rôle dans les arrivées, les écrans, le tableau et le jour J. La marque reste noire ; la couleur désigne la personne.
+
 Honnêteté : dans les exemples, les règles tournent dans le navigateur ; les droits réels sont vérifiés par le serveur dans les espaces partagés (`/api/sv`, `/compte/`).
