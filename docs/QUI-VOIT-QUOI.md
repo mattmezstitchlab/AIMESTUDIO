@@ -38,3 +38,11 @@ Décision de Matt (23/10/2026) : le principe de l'accueil (« un seul projet, ch
 Une couleur par rôle technique (`coeur/roles.js`, prise dans l'orbe : propriétaire rose, contribution ambre, invité cyan, coordination violet, lecture seule vert, public gris) : le héros de chaque écran, la pastille du rôle dans les arrivées, les écrans, le tableau et le jour J. La marque reste noire ; la couleur désigne la personne.
 
 Honnêteté : dans les exemples, les règles tournent dans le navigateur ; les droits réels sont vérifiés par le serveur dans les espaces partagés (`/api/sv`, `/compte/`).
+
+## Typographie des écrans
+
+Chaque écran composé par le cœur (vitrine ou adaptateur) prend la typographie de la marque : titres en **Cal Sans** (comme les titres d'AIME), texte en **Inter** (`AIMECoeur.FONTES`, `AIMECoeur.TITRES`, `AIMECoeur.TITRE`). Les adaptateurs ne déclarent plus leurs propres polices.
+
+## L'Orbe, matière des permissions (concept de Matt, en cours)
+
+Référence : maquette Arena « L'Orbe · la matière des permissions » (concept v0.9, pour revue). Le volume est le périmètre, la réfraction est la lecture, l'absence est une preuve ; une facette par domaine autorisé ; trois régimes d'absence (silencieux, compté, justifié) ; jumeau textuel pour l'accessibilité. Le tableau « Décidé avant l'affichage » du cœur calcule déjà, par rôle, ce qui est rendu et ce qui est omis : c'est la donnée que l'Orbe de chaque rôle doit rendre visible.

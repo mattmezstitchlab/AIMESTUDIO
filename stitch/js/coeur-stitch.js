@@ -22,10 +22,11 @@ function j(u){return fetch(u,{cache:'no-cache'}).then(function(r){if(!r.ok)throw
 /* l'image du patron, dessinée une fois depuis la grille (une case = un pixel) ; l'aperçu public est volontairement grossier */
 function image(p,pas){var c=document.createElement('canvas'),l=Math.ceil(p.l/pas),h=Math.ceil(p.h/pas);c.width=l;c.height=h;var g=c.getContext('2d'),m=P.matrice(p),cols=p.palette.map(function(z){return(X.dmc[z.dmc]||{}).hex||'#999'});
  g.fillStyle='#F4F4F2';g.fillRect(0,0,l,h);for(var y=0;y<h;y++)for(var x=0;x<l;x++){var v=m[(y*pas)*p.l+x*pas];if(v){g.fillStyle=cols[v-1];g.fillRect(x,y,1,1)}}return c.toDataURL('image/png')}
-var CSS='@font-face{font-family:"Inter Variable";font-weight:100 900;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}'+
+/* la typographie de la marque, partagée par le cœur : titres en Cal Sans, texte en Inter */
+var CSS=root.AIMECoeur.FONTES+
  '*{box-sizing:border-box}html{scrollbar-width:none}html::-webkit-scrollbar{display:none}body{margin:0;background:#F4F4F2;color:#141416;font:400 15px/1.5 "Inter Variable",Inter,system-ui,sans-serif}'+
  '.h{min-height:420px;display:grid;align-content:end;padding:28px 24px 30px}.h .k{margin:0 0 10px;font:600 10px/1 "Inter Variable",sans-serif;letter-spacing:.2em;text-transform:uppercase}'+
- '.h h1{margin:0;font:600 40px/1.02 "Inter Variable",sans-serif;letter-spacing:-.03em}.h p{margin:12px 0 0;font-size:15px}'+
+ '.h h1{margin:0;font:400 40px/1.02 '+root.AIMECoeur.TITRE+';letter-spacing:-.02em}.h p{margin:12px 0 0;font-size:15px}'+
  '.s{padding:24px;border-top:1px solid #DCDCE1}.s h2{margin:0 0 14px;font:600 11px/1 "Inter Variable",sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#55555E}'+
  '.l{list-style:none;margin:0;padding:0;display:grid;gap:10px}.l li{display:grid;gap:2px}.l b{font-weight:600}.l span{color:#55555E;font-size:13.5px}'+
  '.g li{grid-template-columns:auto 1fr;column-gap:10px;align-items:baseline}.e{font:600 11px/1 "Inter Variable",sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 7px;border-radius:6px;border:1px solid #141416}.e.non{border-color:#C9C9CF;color:#55555E}'+
