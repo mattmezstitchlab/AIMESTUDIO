@@ -146,3 +146,13 @@ html.calme .tel iframe,html.calme .tel-attente,html.calme .tel figcaption,html.c
 .tel.ne .tel-ecran{box-shadow:0 0 0 1px var(--line),0 0 0 7px #0F0F12,0 0 0 8px var(--role,var(--line)),0 30px 80px -30px rgba(0,0,0,.9)}
 .tel-attente::before{background:linear-gradient(90deg,transparent,var(--role,var(--line)),transparent);opacity:.6}
 .jj li.change{background:color-mix(in srgb,var(--role,#EDEDF0) 14%,transparent)}
+
+/* démonstration et architecture visée, côte à côte (docs/ROLES.md, règle 12) */
+.demo-cible{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin:0 0 28px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.demo-cible div{background:var(--desk);padding:16px 18px}
+.demo-cible dt{font:600 11.5px var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.demo-cible dd{margin:0;font-size:14.5px;color:var(--soft)}
+@media (max-width:640px){.demo-cible{grid-template-columns:minmax(0,1fr)}}
+/* au-delà de six rôles : les écrans restent lisibles et défilent en rangée, l'orbe fait défiler jusqu'au suivant */
+.ecrans.nombreux{display:flex;max-width:none;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 20px;padding-bottom:14px;scrollbar-width:thin}
+.ecrans.nombreux .tel{flex:0 0 clamp(200px,17vw,250px);scroll-snap-align:start}

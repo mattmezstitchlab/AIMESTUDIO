@@ -1,0 +1,102 @@
+{
+ "_": "Scénario AIME Régie : un site d'entreprise et sa gestion, six rôles (docs/ROLES.md, « Les rôles de la Régie »). Entreprise, client et chiffres fictifs. Aujourd'hui la Régie est mono-utilisateur : ces écrans montrent l'architecture visée, pas un partage actif.",
+ "univers": "regie",
+ "moteur": "regles",
+ "demo": "Les écrans sont composés dans votre navigateur, à partir de données fictives, par des règles écrites pour cet exemple. Aujourd'hui, la Régie n'a pas de compte : elle reste mono-utilisateur.",
+ "titre": "Atelier Lumen",
+ "genre": "Site et gestion · AIME Régie",
+ "scripts": ["/coeur/coeur-regles.js"],
+ "arriveesTexte": "Un site d'entreprise, sa comptabilité, ses clients et son orbe. Six rôles ; l'orbe recueille ce que chacun apporte, puis compose six écrans depuis le même projet.",
+ "source": {
+  "champs": [
+   {"id": "montant", "label": "Le montant du devis (€ HT)", "type": "number", "min": 100, "max": 50000, "defaut": 2400, "format": "euros"}
+  ]
+ },
+ "regles": {
+  "entete": "AIME Régie · Atelier Lumen (fictif)",
+  "note": "Démonstration : entreprise et chiffres fictifs. Aujourd'hui la Régie n'a pas de compte : elle reste mono-utilisateur, et ces rôles décrivent l'architecture visée.",
+  "calculs": {"ttc": {"de": "montant", "fois": 1.2, "format": "euros"}},
+  "ecrans": {
+   "proprietaire": {"titre": "Mon site, ma gestion", "texte": "Les pages, les réalisations, les devis et l'orbe."},
+   "collaborateur": {"titre": "Les réalisations", "texte": "Textes et médias, jusqu'au 31/12/2026."},
+   "comptable": {"titre": "Exercice 2026", "texte": "En lecture, jusqu'à la clôture."},
+   "client": {"titre": "Votre devis", "texte": "D-2026-031 · {montant} HT"},
+   "visiteur": {"titre": "Atelier Lumen", "texte": "Photographie et identité visuelle, à Nantes."},
+   "orbe": {"titre": "Mes suggestions", "texte": "Je propose ; le propriétaire décide."}
+  },
+  "blocs": [
+   {"id": "site", "titre": "Le site", "voient": {"proprietaire": "tout", "collaborateur": "sien", "visiteur": "sien", "orbe": "sien"},
+    "lignes": [["4 pages", "Accueil, réalisations, à propos, contact"], ["12 réalisations", "dont 2 en brouillon"], ["Publié le 14/10/2026", "Version 9 ; les 8 précédentes restent restaurables"]],
+    "sien": {
+     "collaborateur": {"titre": "Les réalisations", "lignes": [["12 réalisations", "Textes et médias modifiables"], ["2 brouillons", "Il propose la publication ; le propriétaire publie"]], "note": "La comptabilité et les clients ne font pas partie de sa délégation : ils ne sont pas dans cet écran."},
+     "visiteur": {"titre": "Le site publié", "lignes": [["Réalisations", "10 projets publiés"], ["Contact", "Un formulaire, aucune donnée affichée"]]},
+     "orbe": {"titre": "Le site, page par page", "lignes": [["Accueil", "Suggestion : raccourcir l'introduction"], ["Réalisations", "Suggestion : ajouter un texte alternatif à 3 images"]], "note": "Niveau d'autonomie réglé par le propriétaire : « proposer seulement »."}
+    }},
+   {"id": "gestion", "titre": "La gestion de l'entreprise", "tout": "Tout", "voient": {"proprietaire": "tout", "comptable": "sien", "client": "sien"},
+    "lignes": [["Devis D-2026-031", "Montant {montant} HT, {ttc} TTC · en attente"], ["7 factures en 2026", "Dont 1 à relancer"], ["1 avoir", "Sur la facture F-2026-004"]],
+    "sien": {
+     "comptable": {"titre": "La comptabilité 2026", "lignes": [["Factures et avoirs", "En lecture"], ["Export", "Le fichier des écritures, jusqu'à la clôture"]], "note": "Les devis en cours et les fiches clients ne relèvent pas du contrôle : ils ne sont pas dans cet écran."},
+     "client": {"titre": "Votre devis", "lignes": [["D-2026-031", "{montant} HT · {ttc} TTC"], ["Valable jusqu'au 30/11/2026", "Vous pouvez l'accepter ici"]]}
+    }},
+   {"id": "clients", "titre": "Les clients", "voient": {"proprietaire": "tout"},
+    "lignes": [["9 fiches clients", "Coordonnées gardées dans la gestion, jamais sur le site"], ["Studio Bergamote (fictif)", "Destinataire du devis D-2026-031"]]},
+   {"id": "orbe", "titre": "L'orbe", "voient": {"proprietaire": "tout", "visiteur": "sien"},
+    "lignes": [["Autonomie", "Proposer seulement, sur ce site"], ["3 suggestions", "Chacune avec son « ? » : pourquoi elle est faite"]],
+    "sien": {"visiteur": {"titre": "L'orbe du site", "lignes": [["Elle guide la visite", "Vous pouvez la faire taire à tout moment"]]}}},
+   {"id": "journal", "titre": "Le journal", "voient": {"proprietaire": "tout"},
+    "lignes": [["14/10 · Publication", "Version 9, par le propriétaire"], ["13/10 · Proposition", "Réalisation « Maison Fabre », par le collaborateur"], ["12/10 · Export", "Écritures de septembre, par l'expert-comptable"]]}
+  ],
+  "gestes": [
+   {"id": "modifier", "nom": "Modifier les réalisations", "qui": {"proprietaire": "oui", "collaborateur": "oui", "orbe": "propose"},
+    "raisons": {"oui": "Dans sa portée.", "propose": "Un agent IA propose ; le propriétaire valide.", "non": "Hors de sa portée."}},
+   {"id": "publier", "nom": "Publier le site", "qui": {"proprietaire": "oui", "collaborateur": "propose"},
+    "raisons": {"oui": "Seul le propriétaire publie ; l'ancienne version reste restaurable.", "propose": "Il propose la publication ; le propriétaire publie.", "non": "Réservé au propriétaire."}},
+   {"id": "emettre", "nom": "Émettre un devis ou une facture", "qui": {"proprietaire": "oui"},
+    "raisons": {"oui": "La gestion appartient au propriétaire.", "non": "La gestion est un espace séparé."}},
+   {"id": "exporter", "nom": "Exporter la comptabilité", "qui": {"proprietaire": "oui", "comptable": "oui"},
+    "raisons": {"oui": "Chaque export est inscrit au journal.", "non": "Réservé au propriétaire et au contrôle."}},
+   {"id": "accepter", "nom": "Accepter le devis", "qui": {"client": "oui"},
+    "raisons": {"oui": "Son devis, et lui seul ; l'acceptation est datée.", "non": "Seul le client destinataire accepte."}},
+   {"id": "taire", "nom": "Faire taire l'orbe", "qui": {"proprietaire": "oui", "visiteur": "oui"},
+    "raisons": {"oui": "Chacun garde la main sur l'orbe qu'il voit.", "non": "Sans objet pour ce rôle."}}
+  ]
+ },
+ "roles": [
+  {"angle": "proprietaire", "couleur": "#FB7185", "encre": "#141416", "nom": "Le propriétaire", "de": "du propriétaire", "resume": "Le site, la gestion, l'orbe, le journal.",
+   "famille": "Propriétaire", "portee": "Tout : le site et la gestion de l'entreprise", "duree": "Permanente", "preuve": "Chaque publication et chaque export au journal",
+   "arrivee": {"titre": "Le propriétaire ouvre sa Régie.", "texte": "Il construit son site, présente ses réalisations et tient sa gestion : devis, factures, avoirs. La gestion reste un espace à part, que le site ne voit jamais.",
+    "fiche": [{"k": "Deux espaces", "chemins": [["Le site", "Pages, réalisations, orbe"], ["La gestion", "Devis, factures, clients"]]},
+     {"k": "L'orbe recueille", "liste": [["Entreprise", "Atelier Lumen (fictif)"], ["Site", "4 pages, 12 réalisations"], ["Gestion", "Séparée du site"]]}],
+    "legende": ["Le propriétaire", "tout", "le projet"]}},
+  {"angle": "collaborateur", "couleur": "#6D4AFF", "encre": "#FFFFFF", "nom": "Le collaborateur", "de": "du collaborateur", "resume": "Les réalisations, jamais la comptabilité.",
+   "famille": "Délégué", "portee": "Les réalisations, les textes, les médias", "duree": "Jusqu'au 31/12/2026", "preuve": "Délégation datée, donnée par le propriétaire",
+   "arrivee": {"titre": "Un graphiste reçoit une délégation.", "texte": "Le propriétaire lui confie les réalisations jusqu'à la fin de l'année. Il modifie et propose une publication ; il ne publie pas, et la gestion n'existe pas dans son écran.",
+    "fiche": [{"k": "Son chemin", "chemins": [["Invité", "Un lien à usage unique, à son nom"], ["Délégué", "Jusqu'au 31/12/2026"]]},
+     {"k": "L'orbe recueille", "liste": [["Portée", "Réalisations, textes, médias"], ["Publier", "Il propose seulement"], ["Comptabilité", "Jamais"]]}],
+    "legende": ["Le collaborateur", "délégué", "sur les réalisations"]}},
+  {"angle": "comptable", "couleur": "#34D399", "encre": "#141416", "nom": "L'expert-comptable", "de": "de l'expert-comptable", "resume": "La comptabilité, en lecture, jusqu'à la clôture.",
+   "famille": "Contrôleur", "portee": "Factures et avoirs de l'exercice", "duree": "Jusqu'à la clôture de l'exercice", "preuve": "Chaque export au journal",
+   "arrivee": {"titre": "L'expert-comptable contrôle l'exercice.", "texte": "Il lit les factures et les avoirs, exporte les écritures, et rien d'autre. Son accès se referme à la clôture.",
+    "fiche": [{"k": "Son chemin", "chemins": [["Aujourd'hui", "Un fichier exporté"], ["Visé", "Une lecture bornée dans le temps"]]},
+     {"k": "L'orbe recueille", "liste": [["Exercice", "2026"], ["Gestes", "Lire, exporter"], ["Fin", "À la clôture"]]}],
+    "legende": ["L'expert-comptable", "contrôle", "en lecture"]}},
+  {"angle": "client", "couleur": "#22D3EE", "encre": "#141416", "nom": "Le client", "de": "du client", "resume": "Son devis, et l'accepter.",
+   "famille": "Destinataire", "portee": "Son devis et sa facture", "duree": "Jusqu'au paiement", "preuve": "L'acceptation est datée",
+   "arrivee": {"titre": "Le client reçoit son devis.", "texte": "Studio Bergamote (fictif) ouvre son devis, le lit et l'accepte. Il ne voit ni les autres clients ni les autres devis, et rien ne lui dit qu'ils existent.",
+    "fiche": [{"k": "Son chemin", "chemins": [["Aujourd'hui", "Un PDF envoyé"], ["Visé", "Un lien à son nom, pour accepter"]]},
+     {"k": "L'orbe recueille", "liste": [["Devis", "D-2026-031"], ["Geste", "Accepter"], ["Le reste", "Silence"]]}],
+    "legende": ["Le client", "destinataire", "de son devis"]}},
+  {"angle": "visiteur", "couleur": "#9C9CA8", "encre": "#141416", "nom": "Le visiteur", "de": "du visiteur", "resume": "Le site publié, sans compte.",
+   "famille": "Public", "portee": "Ce qui est publié", "duree": "—", "preuve": "Aucune donnée personnelle",
+   "arrivee": {"titre": "Un visiteur découvre le site.", "texte": "Sans compte, il parcourt les réalisations publiées. L'orbe le guide, et il peut la faire taire. Aucune donnée de la gestion n'est envoyée à son navigateur.",
+    "fiche": [{"k": "Son chemin", "chemins": [["Il parcourt", "Le site, sans compte"], ["Il écrit", "Le formulaire de contact"]]},
+     {"k": "L'orbe recueille", "liste": [["Site", "Version publiée"], ["Gestion", "Rien"], ["Orbe", "Il peut la faire taire"]]}],
+    "legende": ["Le visiteur", "public", "du site"]}},
+  {"angle": "orbe", "couleur": "#E879F9", "encre": "#141416", "nom": "L'orbe", "de": "de l'orbe", "resume": "Elle propose, site par site ; elle ne décide pas.",
+   "famille": "Agent IA", "portee": "Les pages du site, une suggestion à la fois", "duree": "Tant que le propriétaire la laisse active", "preuve": "Chaque suggestion a son « ? »",
+   "arrivee": {"titre": "L'orbe propose.", "texte": "Agent IA du propriétaire, elle n'a jamais plus de droits que lui, et bien moins : elle lit le site, propose, explique. Elle ne publie pas, n'émet rien et ne lit pas la gestion.",
+    "fiche": [{"k": "Ses limites", "chemins": [["Proposer", "Oui, avec son pourquoi"], ["Décider", "Jamais seule"]]},
+     {"k": "L'orbe recueille", "liste": [["Autonomie", "Proposer seulement"], ["Gestion", "Hors de portée"], ["Signalée", "Comme IA"]]}],
+    "legende": ["L'orbe", "agent IA", "du propriétaire"]}}
+ ]
+}
