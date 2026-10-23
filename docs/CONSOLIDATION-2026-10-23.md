@@ -2,6 +2,16 @@
 
 Statut : **audit et plan d'exécution**, aucune migration de données ni changement produit appliqué.
 
+## Décision produit actualisée — 23 octobre 2026
+
+**Direction : MODE SITE, pas MODE BUREAU.**
+- Conserver les **Timbres** et les créations correspondantes.
+- **Abandonner la Carte Postale** comme fonctionnalité et parcours à développer ; ne supprimer aucune donnée historique sans inventaire et validation.
+- Présenter AIME d'abord comme un **site à parcourir**, avec les pages, sections, animations et exemples réels ; ne pas imposer une interface de Bureau/OS au visiteur.
+- Garder Studio, Canevas et les outils utilisables en tant que fonctionnalités accessibles depuis le site. L'existence de `/bureau/` ne doit pas conditionner la navigation publique.
+- Préserver les contenus historiques Timbre, Enveloppe et autres supports, sans supposer que tous les formats doivent rester mis en avant.
+- **À préciser avant modification des routes :** la page d'accueil publique visée (`/` Page Zéro ou `/aime/` Le Monde AIME) et l'étendue de la mise à l'écart du Bureau (simple dépriorisation ou masquage dans la navigation). Aucun changement destructif par défaut.
+
 ## Périmètre et état constaté sur `main`
 - `README.md` : Page Zéro, Bureau, Monde AIME, Studio et ateliers, applications autonomes et Lab ; navigation pilotée par `nav/registre.js`.
 - `vitrine/rendu.js` : `rendre()` (événements) et `composer()` (espaces de travail), extension plutôt qu'un nouveau moteur.
