@@ -58,7 +58,7 @@ test('verticale · une modification unique met à jour contrat, jalons, initiale
   assert.match(n.briefContact(), /Claire & Hugo/);
 });
 
-test('verticale · la Grande Partition complète vit au Lab ; l\'accueil garde les capacités utiles sur le projet du visiteur', () => {
+test('verticale · la Grande Partition complète vit au Lab ; l\'accueil présente le cœur : un projet, quatre écrans', () => {
   const lab = lire('lab/grande-partition/index.html');
   for (const id of [
     'rul', 'filBarre', 'repriseLocale',
@@ -69,10 +69,10 @@ test('verticale · la Grande Partition complète vit au Lab ; l\'accueil garde l
     assert.match(lab, new RegExp('id="' + id + '"'), 'Lab, section présente : #' + id);
   }
   const accueil = lire('index.html');
-  for (const id of ['haut', 'monProjet', 'capacites', 'regards', 'story3', 'build', 'vitrine', 'entrer', 'offres', 'contact', 'tiroirAtelier']) {
+  for (const id of ['haut', 'monProjet', 'coeur', 'ecrans', 'droits', 'jourj', 'partout', 'entrer', 'contact']) {
     assert.match(accueil, new RegExp('id="' + id + '"'), 'accueil, section présente : #' + id);
   }
-  for (const id of ['naiss', 'story2', 'atlas', 'lien', 'geste', 'pan-g44']) {
+  for (const id of ['naiss', 'story2', 'atlas', 'lien', 'geste', 'pan-g44', 'regards', 'story3', 'build', 'vitrine', 'offres', 'tiroirAtelier']) {
     assert.doesNotMatch(accueil, new RegExp('id="' + id + '"'), 'accueil, gardé au Lab : #' + id);
   }
   assert.match(accueil, /href="\/lab\/grande-partition\/"/, 'un lien mène au Lab');

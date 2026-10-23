@@ -48,7 +48,7 @@ $('acNouveau').addEventListener('click',function(){$('monProjet').hidden=true;$(
 
 /* les démonstrations plus bas (regards, jour J, supports) lisent le projet de la personne, pas un exemple */
 var CAS={mariage:'mariage',fete:'mariage',seminaire:'seminaire',association:'institution',portfolio:'createur',artisan:'createur',autre:'createur'};
-function brancher(p){var V=window.AIMEVerticale;if(!V||!p)return;try{var n=V.instance(),e=P.evenement(p);if(n.CAS[CAS[e.genre]||'createur'])n.choisirCas(CAS[e.genre]||'createur');
+function brancher(p){if(p&&window.AIMECoeur){var e0=P.evenement(p);window.AIMECoeur.projet({titre:p.titre,date:e0.date,lieu:e0.lieu})}var V=window.AIMEVerticale;if(!V||!p)return;try{var n=V.instance(),e=P.evenement(p);if(n.CAS[CAS[e.genre]||'createur'])n.choisirCas(CAS[e.genre]||'createur');
  n.modifier({titre:p.titre,date:e.date||n.lire().etat.date,lieu:e.lieu||n.lire().etat.lieu,intention:p.extensions.intention&&p.extensions.intention.texte||n.lire().etat.intention},'projet');
  var note=$('acCapNote');if(note)note.textContent='Les démonstrations ci-dessous reprennent le titre, la date et le lieu de votre projet « '+p.titre+' ». Les personnes, missions et montants qu\'elles montrent restent des exemples.'}catch(err){}}
 [].forEach.call(document.querySelectorAll('[data-ac-sup]'),function(a){a.addEventListener('click',function(){var b=document.querySelector('#supOnglets [data-sup="'+a.getAttribute('data-ac-sup')+'"]');if(b)setTimeout(function(){b.click()},0)})});
