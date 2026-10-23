@@ -5,6 +5,7 @@ import { betterAuth } from 'better-auth';
 import { magicLink } from 'better-auth/plugins/magic-link';
 import { passkey } from '@better-auth/passkey';
 import pg from 'pg';
+import { APIError } from 'better-auth/api';
 
 /* l'adresse publique : fixée par l'environnement, sinon l'adresse de la branche Vercel, sinon le local */
 export function adresse(env = process.env) {
@@ -74,11 +75,18 @@ export function auth(env = process.env) {
   return instance;
 }
 
+/* règle 5 : un espace garde toujours un propriétaire. Tant qu'un espace dont la personne est propriétaire compte d'autres membres,
+   son compte n'est pas supprimé : elle retire d'abord ces membres (la transmission viendra avec le co-propriétaire).
+   Rien n'est donc jamais effacé de ce que d'autres ont mis dans un espace partagé. */
+export const PARTAGES = `select s.id::text as id, s.title from spaces s where s.owner_id = $1 and exists (select 1 from space_members m where m.space_id = s.id and m.user_id <> $1)`;
+export class EspacesPartages extends Error { constructor(titres) { super('espaces partagés'); this.titres = titres; } }
 /* ce que la personne laisse hors des tables de Better Auth : ses espaces (et leur direct), ses adhésions, les invitations à son adresse, sa matière du Point Zéro */
 export async function effacerTraces(db, u) {
   const c = await db.connect();
   try {
     await c.query('begin');
+    const partages = (await c.query(PARTAGES, [u.id])).rows;
+    if (partages.length) throw new EspacesPartages(partages.map(x => x.title));
     const possedes = (await c.query('select id::text as id from spaces where owner_id = $1', [u.id])).rows.map(r => r.id);
     if (possedes.length) {
       const j = await c.query("select to_regclass('public.live_journal') as t");
@@ -92,7 +100,11 @@ export async function effacerTraces(db, u) {
     const id = await c.query("select to_regclass('public.identite') as t");
     if (id.rows[0] && id.rows[0].t) await c.query('delete from identite where user_id = $1', [u.id]);
     await c.query('commit');
-  } catch (e) { await c.query('rollback').catch(() => {}); throw e; }
+  } catch (e) {
+    await c.query('rollback').catch(() => {});
+    if (e instanceof EspacesPartages) throw new APIError('BAD_REQUEST', { code: 'ESPACES_PARTAGES', message: 'Vous êtes propriétaire d\'espaces où d\'autres personnes sont membres (' + e.titres.slice(0, 3).join(', ') + (e.titres.length > 3 ? '…' : '') + ') : retirez-les d\'abord, rien de ce qu\'elles y ont mis ne sera effacé.' });
+    throw e;
+  }
   finally { c.release(); }
 }
 

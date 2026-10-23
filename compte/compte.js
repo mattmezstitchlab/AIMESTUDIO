@@ -43,7 +43,8 @@ $('supprNon').onclick=function(){$('suppr2').hidden=true;$('suppr1').hidden=fals
 $('supprOui').onclick=function(){var b=this;b.disabled=true;requete('/api/auth/delete-user',{corps:{}}).then(function(r){b.disabled=false;
   if(r.statut===200){location.href='/compte/?supprime=1';return}
   var expire=r.j&&/SESSION_EXPIRED|fresh|expired/i.test(String(r.j.code||'')+' '+String(r.j.message||''));
-  toast(expire?'Par sécurité, reconnectez-vous (lien e-mail ou clé d\'accès), puis supprimez votre compte dans la foulée.':'Suppression impossible pour le moment : réessayez.',true)}).catch(function(){b.disabled=false;toast('Serveur injoignable : réessayez.',true)})};
+  var partage=r.j&&String(r.j.code||'')==='ESPACES_PARTAGES';
+  toast(expire?'Par sécurité, reconnectez-vous (lien e-mail ou clé d\'accès), puis supprimez votre compte dans la foulée.':partage?String(r.j.message):'Suppression impossible pour le moment : réessayez.',true)}).catch(function(){b.disabled=false;toast('Serveur injoignable : réessayez.',true)})};
 $('sortir').onclick=function(){requete('/api/auth/sign-out',{corps:{}}).then(function(){location.href='/compte/'})};
 
 /* ---------- profil en timbre ---------- */
