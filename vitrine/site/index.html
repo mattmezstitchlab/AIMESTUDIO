@@ -19,7 +19,7 @@
 (function(){"use strict";
 /* Le mini-site public : ?u=univers &mode=perspective &m=modèle &amb=ambiance. Il ne fait qu'assembler les couches.
    Démonstration des missions : chaque action est un JOURNAL d'actions (jamais une copie de données), rejoué et revérifié
-   par les règles ; le serveur de démonstration revérifie aussi quand il est joignable. Toutes les vues ouvertes
+   par les règles dans la page ; hors production, le serveur de démonstration revérifie aussi (en production, ses routes sont fermées). Toutes les vues ouvertes
    (SynchroView, autres onglets) relisent le même journal : une information écrite une fois apparaît partout. */
 var Q=new URLSearchParams(location.search),U=(Q.get('u')||'mariage').replace(/[^a-z]/g,''),M=(Q.get('m')||'editorial').replace(/[^a-z]/g,'');
 var $=function(s){return document.querySelector(s)},app=$('#app');
@@ -54,7 +54,7 @@ function rendu(signaler){var avant={};if(signaler)[].forEach.call(document.query
  /* les sections existent maintenant : SynchroView reçoit les repères à jour */
  setTimeout(function(){dispatchEvent(new Event('resize'))},60)}
 
-/* une action : décidée par les règles (serveur de démonstration si joignable, sinon le même code dans la page) */
+/* une action : décidée par les règles (serveur de démonstration hors production, sinon le même code dans la page) */
 function decider(qui,action,p){var jr=journal();
  var local=function(){var t=AIMEFlux.transition(etat(),S.acces,AIMEPerms,qui,action,p);t.proof='code';return t};
  if(U!=='world')return Promise.resolve(local());

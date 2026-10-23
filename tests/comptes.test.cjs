@@ -203,6 +203,22 @@ test('espaces · « Je vois un accès inattendu » : au journal, propriétaire p
   assert.equal((await appel(E.default, { action: 'signaler', espace: id }, M.guest)).code, 429, 'cinq par jour');
 });
 
+/* Règle 5 : un espace garde toujours un propriétaire ; supprimer son compte ne détruit jamais ce que d'autres ont mis dans un espace. */
+test('comptes · règle 5 : le propriétaire d\'un espace partagé ne supprime pas son compte sans retirer les membres', opts, async () => {
+  const proprio = await connecter('p5@exemple.test'), invite = await connecter('i5@exemple.test');
+  let r = await appel(E.default, { action: 'creer', titre: 'Règle 5' }, proprio); const id = r.body.id;
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'guest' }, proprio);
+  await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, invite);
+  const supprimer = c => A.auth().handler(new Request(BASE + '/api/auth/delete-user', { method: 'POST', headers: { 'content-type': 'application/json', origin: BASE, cookie: c, 'x-forwarded-for': '203.0.113.' + (++ipn) }, body: '{}' }));
+  let x = await supprimer(proprio); assert.equal(x.status, 400); const j = await x.json(); assert.equal(j.code, 'ESPACES_PARTAGES'); assert.match(j.message, /Règle 5/);
+  assert.equal((await pool.query('select count(*)::int as n from space_members where space_id = $1', [id])).rows[0].n, 2, 'l\'espace et ses membres sont intacts');
+  assert.equal((await appel(E.default, { action: 'membres', espace: id }, invite)).code, 200, 'l\'invitée y est toujours');
+  const idInv = (await appel(E.default, { action: 'membres', espace: id }, proprio)).body.membres.find(m => m.role === 'guest').id;
+  await appel(E.default, { action: 'retirer', espace: id, membre: idInv }, proprio);
+  x = await supprimer(proprio); assert.equal(x.status, 200, 'seul dans ses espaces : il peut partir');
+  assert.equal((await pool.query('select count(*)::int as n from spaces where id = $1', [id])).rows[0].n, 0);
+});
+
 /* Règle 8 : un lien d'invitation sans adresse n'est lié à personne, il est donc court (48 h) ; nominatif, 7 jours. Toujours une seule fois. */
 test('espaces · règle 8 : invitation sans adresse courte (48 h), nominative 7 jours', opts, async () => {
   let r = await appel(E.default, { action: 'creer', titre: 'Règle 8' }, M.owner); const id = r.body.id;

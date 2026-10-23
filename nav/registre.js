@@ -5,7 +5,7 @@
      rôle   : travailler (le Bureau) · decouvrir (présentation) · realiser (une application, une tâche) · experimenter (Lab)
      statut : disponible · demonstration (données fictives) · experimental (peut changer ou casser)
    interne : un démonstrateur de recherche (identités fictives) que la navigation publique ne propose pas ;
-   il reste listé ici (la Régie le voit) et sa page reste servie, réservée côté serveur en production. */
+   il reste listé ici (la Régie le voit) ; sa page est servie mais seulement masquée dans le navigateur, et ses routes /api/sv/* sont fermées au serveur en production (sauf au propriétaire du site). */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.AIMENav=factory()})(typeof self!=='undefined'?self:this,function(){'use strict';
 var STATUTS={disponible:'Disponible',demonstration:'Démonstration',experimental:'Expérimental'};
 var ROLES={travailler:'Travailler',decouvrir:'Découvrir',realiser:'Réaliser',experimenter:'Expérimenter'};
@@ -29,7 +29,6 @@ var E=[
  ['synchroview','SynchroView','/synchroview/','Comparer les perspectives côte à côte','evenements','realiser','demonstration',false,true],
  ['mariage','Mariage Léa & Marc','/vitrine/site/?u=mariage','Démonstrateur, données fictives','evenements','decouvrir','demonstration'],
  ['seminaire','Séminaire Maison Orée','/vitrine/site/?u=seminaire','Démonstrateur, entreprise fictive','evenements','decouvrir','demonstration'],
- ['timeline','Timeline Jour J','/v1/','L\'ancienne application de planning, conservée','evenements','realiser','disponible'],
  ['g44','G44 LAB','/g44/','Le laboratoire des dépendances administratives','institutions','realiser','demonstration',true],
  ['canevas','Le Canevas','/canevas/','Le plan de travail commun : modifier un mini-site, un cube, un patron','creation','realiser','experimental',true],
  ['sites','Canevas universel · Site','/sites/','Composer un site sur trois panneaux : pages et blocs, rendu réel, inspecteur (Design System, sources)','creation','realiser','disponible'],
