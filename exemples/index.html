@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Exemples · AIME</title>
-<meta name="description" content="Les exemples AIME : un même principe, un seul projet, chacun son écran. Mariage, mariage à distance, séminaire, administration, création : deux, quatre, six rôles ou plus.">
+<meta name="description" content="Les exemples AIME : un même principe, un seul projet, chacun son écran. Mariage, mariage à distance, séminaire, administration, création, édition : deux, quatre, six rôles ou plus.">
 <meta name="theme-color" content="#0A0A0C">
 <link rel="icon" href="data:,">
 <script>try{if(localStorage.getItem('aime-zero-calme')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}catch(e){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}</script>
@@ -67,6 +67,7 @@ var EX=[
  {u:'world',href:'/exemples/?u=world',genre:'Mariage à distance',titre:'Inès & Théo · Paris / New York',texte:'Le couple, l\'agence, le prestataire, l\'invitée, la contributrice, la coordination locale.',n:6},
  {u:'seminaire',href:'/exemples/?u=seminaire',genre:'Séminaire d\'entreprise',titre:'Maison Orée · Cap 2030',texte:'La direction, l\'intervenante, le participant, la logistique, le traiteur, l\'observateur.',n:6},
  {u:'stitch',href:'/exemples/?u=stitch',genre:'Création · AIME Stitch',titre:'Un patron, quatre regards',texte:'La créatrice, la boutique, la brodeuse, la visiteuse : la grille ne sort que pour qui y a droit.',n:4},
+ {u:'magazine',href:'/exemples/?u=magazine',genre:'Édition · AIME Magazine',titre:'Un numéro, quatre postes',texte:'L\'autrice, la rédactrice en chef, le maquettiste, la lectrice : un seul fichier, une page publiée.',n:4},
  {u:'g44',href:'/exemples/?u=g44',genre:'Administration · G44 LAB',titre:'Un dossier, quatre missions',texte:'L\'agent, le formateur, la responsable, le contrôleur : un dossier fictif, des habilitations, rien d\'exécuté.',n:4}];
 var $=function(i){return document.getElementById(i)},esc=function(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var u=(new URLSearchParams(location.search).get('u')||'').replace(/[^a-z0-9]/g,''),ex=EX.filter(function(e){return e.u===u&&e.u!=='mariage'})[0];
