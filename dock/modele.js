@@ -207,9 +207,50 @@ function pourScenario(univers,role,acces){
  return{famille:'Public',nom:role.nom};
 }
 
+/* ---------- Le dock d'un vrai espace (docs/GABARITS.md § 4 et § 7) ----------
+   Chaque lieu ouvre l'un des sept gabarits. Un domaine renomme un lieu, il n'en invente pas. */
+var GABARIT_DE={
+ mareponse:'acces',acces:'acces',monavis:'acces',consentements:'acces',reglages:'acces',compte:'acces',
+ notifications:'journal',journal:'journal',signalements:'journal',controle:'journal',
+ personnes:'personnes',equipe:'personnes',effectif:'personnes',designation:'personnes',
+ projet:'projet',mapart:'projet',mission:'projet',surprise:'projet',realisations:'projet',pages:'projet',textes:'projet',medias:'projet',contenus:'projet',supports:'projet',monsupport:'projet',entreprise:'projet',
+ calendrier:'deroule',programme:'deroule',deroule:'deroule',horaires:'deroule',planb:'deroule',taches:'deroule',quantites:'deroule',pointages:'deroule',pointagesgroupe:'deroule',lieu:'deroule',
+ documents:'documents',justificatifs:'documents',devis:'documents',facture:'documents',bat:'documents',arelire:'documents',fichiers:'documents',exports:'documents',comptabilite:'documents',budget:'documents',budgetfinance:'documents',
+ messages:'messages',
+ orbe:null,coeur:null,exemples:null,lab:null   /* l'Orbe n'est pas un lieu ; la navigation publique est hors gabarit */
+};
+var NOM_GABARIT={acces:'Mon accès',journal:'Journal',personnes:'Personnes',projet:'Projet',deroule:'Déroulé',documents:'Documents',messages:'Messages'};
+var ICONE_GABARIT={acces:'consentement',journal:'journal',personnes:'personnes',projet:'projet',deroule:'deroule',documents:'document',messages:'bulle'};
+
+/* composerReel(demande) : le dock d'une personne dans un vrai espace. Les droits ne viennent JAMAIS de la table par défaut :
+   demande.gestes est obligatoire et calculé par le serveur avec synchroview/permissions.js
+   ({ lire, inviter: [rôles], signaler }). demande.servis : les gabarits que le serveur sait composer pour ce projet.
+   Un lieu dont le gabarit n'est pas servi n'existe pas ; « Mon accès » est toujours là (il ne se masque jamais) ;
+   « Personnes » n'apparaît que si la famille y a un lieu ou si la personne peut inviter (c'est là qu'on invite). */
+function composerReel(d){
+ d=d||{};if(d.ancien)return null;
+ var g=d.gestes;if(!g||typeof g!=='object'||!Array.isArray(g.inviter))throw new Error('gestes calculés par le serveur requis');
+ if(!g.lire)return null;
+ var servis=d.servis||[],inst=d.instance?INSTANCES[d.instance]:null;
+ if(d.instance&&!inst)throw new Error('instance inconnue : '+d.instance);
+ var fam=(inst&&inst.famille)||familleDe(d.famille)||(d.roleServeur?SERVEUR[d.roleServeur]:null);
+ if(!fam)throw new Error('rôle inconnu');var F=FAMILLES[fam];if(!F||F.aucun)return null;
+ var vus={},lieux=[];
+ function poser(id,nom,icone,gab){if(vus[gab]||servis.indexOf(gab)<0)return;vus[gab]=1;lieux.push({id:id,nom:nom,icone:icone,gabarit:gab,href:null})}
+ poser('acces',NOM_GABARIT.acces,ICONE_GABARIT.acces,'acces');
+ ((inst&&inst.lieux)||F.lieux||[]).map(lieu).forEach(function(e){var gab=GABARIT_DE[e.id];if(!gab)return;if(gab==='acces')return;poser(e.id,e.nom,e.icone,gab)});
+ if(g.inviter.length)poser('personnes',NOM_GABARIT.personnes,ICONE_GABARIT.personnes,'personnes');
+ lieux=lieux.slice(0,MAX_LIEUX);
+ var plus=[];
+ if(g.inviter.length&&vus.personnes)plus.push({id:'inviter',nom:'Inviter',geste:'inviter',sensible:true,roles:g.inviter.slice(),gabarit:'personnes'});
+ var notes=(d.notifications||[]).filter(function(n){return n&&n.a==='moi'}).length;
+ var mention=[];if(d.fin){var f=new Date(d.fin);if(!isNaN(f))mention.push((fam==='Contrôleur'?'Accès':'Rôle')+' jusqu\'au '+f.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}))}
+ return{famille:fam,nom:(inst&&inst.nom)||d.nom||fam,lieux:lieux,plus:plus,inattendu:!!g.signaler,pastille:vus.journal?notes:0,mention:mention,garde:F.garde,public:false,reel:true};
+}
+
 /* Tous les mots qu'une composition expose : utile pour vérifier qu'aucun nom d'entrée interdite n'y figure, même en texte. */
 function mots(c){if(!c)return'';return JSON.stringify(c)}
 
-return{ENTREES:ENTREES,ACTIONS:ACTIONS,FAMILLES:FAMILLES,SERVEUR:SERVEUR,GESTES:GESTES,INSTANCES:INSTANCES,SENSIBLES:SENSIBLES,
+return{GABARIT_DE:GABARIT_DE,NOM_GABARIT:NOM_GABARIT,composerReel:composerReel,ENTREES:ENTREES,ACTIONS:ACTIONS,FAMILLES:FAMILLES,SERVEUR:SERVEUR,GESTES:GESTES,INSTANCES:INSTANCES,SENSIBLES:SENSIBLES,
  MAX_LIEUX:MAX_LIEUX,MAX_PLUS:MAX_PLUS,composer:composer,pourScenario:pourScenario,familleDe:familleDe,mots:mots};
 });
