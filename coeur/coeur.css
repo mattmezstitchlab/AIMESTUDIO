@@ -127,14 +127,15 @@ html.calme .jj li{transition:none}
 .ecrans-etat{min-height:1.5em;margin:22px 0 0;text-align:center;font:500 14px var(--ui);color:var(--soft)}
 .tel-attente{position:absolute;inset:0;z-index:1;display:grid;place-items:center;background:#0E0E11;transition:opacity .9s ease}
 .tel-attente::before{content:"";width:44%;height:2px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
-.tel iframe{opacity:0;transition:opacity .9s ease .15s}
-.tel.ne iframe{opacity:1}
+/* seulement les téléphones du cœur (figure.tel) : jamais un autre aperçu de la page */
+figure.tel iframe{opacity:0;transition:opacity .9s ease .15s}
+figure.tel.ne iframe{opacity:1}
 .tel.ne .tel-attente{opacity:0;pointer-events:none}
 .tel figcaption{opacity:.35;transition:opacity .6s}
 .tel.ne figcaption{opacity:1}
 body.ecrans-libres .ecrans-scene,html.calme .ecrans-scene{height:auto}
 body.ecrans-libres .ecrans-collant,html.calme .ecrans-collant{position:static}
-html.calme .tel iframe,html.calme .tel-attente,html.calme .tel figcaption,html.calme .fiche-l dd{transition:none}
+html.calme figure.tel iframe,html.calme .tel-attente,html.calme .tel figcaption,html.calme .fiche-l dd{transition:none}
 .droits{min-width:calc(180px + var(--n,4) * 150px)}
 @media (max-width:900px){.ecrans-scene{height:calc(100svh + var(--n,4) * 55svh)}.ecrans-collant{top:64px}}
 
