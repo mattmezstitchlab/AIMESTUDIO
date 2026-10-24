@@ -14,9 +14,19 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
-    for (const u of ['/', '/exemples/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
+    for (const u of ['/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
+    // la mosaïque (démonstration) : aucun son avant le premier geste ; « Activer » lance les téléphones, sans erreur
+    { const m = await ctx.newPage(), em = []; m.on('pageerror', e => em.push(e.message));
+      await m.addInitScript(() => { window.__sons = 0; const A = window.AudioContext || window.webkitAudioContext; if (!A) return; const W = function (...a) { window.__sons++; return new A(...a) }; W.prototype = A.prototype; window.AudioContext = W; window.webkitAudioContext = W; });
+      await m.goto(B + '/exemples/mosaique/', { waitUntil: 'networkidle' }); await m.waitForTimeout(1200);
+      ok(await m.evaluate(() => window.__sons === 0), 'mosaïque : aucun son avant le premier geste');
+      ok(await m.evaluate(() => /Démonstration · données fictives/.test(document.body.innerText)), 'mosaïque : la mention de démonstration est visible');
+      await m.getByRole('button', { name: /Activer/ }).first().click(); await m.waitForTimeout(1500);
+      ok(await m.evaluate(() => window.__sons >= 1), 'mosaïque : « Activer » ouvre le son');
+      ok(!(await m.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)), 'mosaïque : sans débordement après activation');
+      ok(em.length === 0, 'mosaïque : aucune erreur JavaScript' + (em.length ? ' (' + em[0] + ')' : '')); await m.close(); }
     // le dock : Réseau et Canevas ; ni ancien générateur ni Régie pour le public
     await p.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
     const dock = await p.$$eval('#dockApps [data-app]', a => a.map(x => x.dataset.app));
