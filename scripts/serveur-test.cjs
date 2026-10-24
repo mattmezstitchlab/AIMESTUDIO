@@ -7,7 +7,7 @@ const REWRITES = new Map((VERCEL.rewrites || []).filter(r => !r.source.includes(
 const T = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.pdf': 'application/pdf', '.xml': 'application/xml', '.mp4': 'video/mp4', '.vtt': 'text/vtt; charset=utf-8' };
 /* les écrans gardés (middleware.js sur Vercel) : la même fonction garder(), mais le « propriétaire » est ici un cookie de test,
    aime_test_proprietaire=oui, que seuls les tests navigateur posent. Ce serveur ne part jamais en production (.vercelignore : /scripts). */
-const ECRANS = import(require('url').pathToFileURL(path.join(ROOT, 'api/_auth/ecrans.mjs')).href);
+const ECRANS = Promise.resolve(require(path.join(ROOT, 'api/_auth/ecrans.cjs')));
 const proprietaireDeTest = r => /(?:^|;\s*)aime_test_proprietaire=oui(?:;|$)/.test(r.headers.get('cookie') || '');
 http.createServer((req, res) => {
   const u0 = new URL(req.url, 'http://x');
