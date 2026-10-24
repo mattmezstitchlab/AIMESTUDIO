@@ -7,7 +7,10 @@ import { auth, personne, _pool } from './_auth/auth.mjs';
 import { createRequire } from 'module';
 import { Refus, role } from './_auth/espaces.mjs';
 import { projeter, gestes, SERVIS } from './_auth/pages.mjs';
-const D = createRequire(import.meta.url)('../dock/modele.js');
+/* deux lignes, pas une : @vercel/nft (le traçage des fichiers de la fonction) ne voit que require('…') appelé par son nom.
+   En une seule expression, dock/modele.js n'était pas emporté et /api/page tombait en production (FUNCTION_INVOCATION_FAILED). */
+const require = createRequire(import.meta.url);
+const D = require('../dock/modele.js');
 function json(res, code, o) { res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify(o)); }
 let db = null; export function _db(d) { db = d; }
 export default async function page(req, res) {
