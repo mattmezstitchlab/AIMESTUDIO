@@ -48,7 +48,7 @@ jobs:
       # comme la production : seulement les migrations, dans l'ordre des noms, deux fois (elles doivent être rejouables sans risque)
       - name: Migrations (deux passages)
         run: for passe in 1 2; do for f in $(ls db/migrations/*.sql | sort); do psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"; done; done
-      - run: node --test --test-concurrency=1 tests/comptes.test.cjs tests/pages.test.cjs tests/parcours-reel.test.cjs tests/inscription.test.cjs
+      - run: node --test --test-concurrency=1 tests/comptes.test.cjs tests/pages.test.cjs tests/parcours-reel.test.cjs tests/inscription.test.cjs tests/dock-pages.test.cjs
       # l'état de la production tant que les dernières migrations ne sont pas passées : une seconde base sans les migrations du 24/10/2026
       - name: Base « ancienne » (sans les dernières migrations)
         run: |
