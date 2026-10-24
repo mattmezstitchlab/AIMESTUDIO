@@ -2,34 +2,9 @@
    La langue de l'accueil : fond nuit, encre claire, Inter ; l'irisé reste réservé à l'orbe et au + du Dock. */
 .js-choix{margin:28px auto 0;width:min(420px,100%);display:grid;gap:10px;text-align:left}
 .js-l{font:600 13px var(--ui);letter-spacing:.14em;text-transform:uppercase;color:var(--soft);text-align:center}
-/* la liste « Je suis… » dessinée (accueil/liste.js), comme dans le film (0:12) */
-.jl{position:relative}
-.jl-champ{display:flex;align-items:center;gap:10px;min-height:52px;padding:0 14px 0 16px;background:#16161B;border:1px solid #2B2B33;border-radius:16px;color:#9C9CA8;font:500 17px/1.3 var(--ui);cursor:pointer;user-select:none;-webkit-user-select:none}
-.jl-champ:hover{border-color:#3A3A44}
-.jl-champ:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-.jl-v{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.jl-champ.choisi .jl-v{color:#fff}
-.jl-coche{display:none;width:20px;height:20px;fill:none;stroke:#6EE7B7;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.jl-champ.choisi .jl-coche{display:block}
-.jl-fl{width:18px;height:18px;fill:none;stroke:#EDEDF0;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;transition:transform .2s}
-.jl-champ.ouvert{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-color:transparent}
-.jl-champ.ouvert .jl-fl{transform:rotate(180deg)}
-.jl-liste{position:absolute;left:0;right:0;top:100%;z-index:35;margin:0;padding:6px;list-style:none;background:#16161B;border:1px solid #2B2B33;border-top:1px solid #2B2B33;border-radius:0 0 16px 16px;box-shadow:0 24px 60px rgba(0,0,0,.6);overflow-y:auto;overscroll-behavior:contain;text-align:left}
-.jl-liste[hidden]{display:none}
-.jl-liste.entre{animation:jlEntre .16s ease-out}
-@keyframes jlEntre{from{opacity:0;transform:translateY(-4px)}}
-.jl-liste ul{list-style:none;margin:0;padding:0}
-.jl-o,.jl-g{display:flex;align-items:center;gap:12px;min-height:44px;padding:8px 12px;border-radius:10px;color:#EDEDF0;font:500 15.5px/1.25 var(--ui)}
-.jl-o{cursor:pointer}
-.jl-o.actif{background:#22222A;color:#fff}
-.jl-o[aria-selected="true"] .jl-t{color:#fff;font-weight:600}
-.jl-pt{width:9px;height:9px;border-radius:50%;background:var(--pt);flex:none}
-.jl-g{flex-wrap:wrap;column-gap:12px;row-gap:2px;cursor:default;padding-bottom:4px}
-.jl-g small{flex-basis:100%;padding-left:21px;font:400 12.5px/1.35 var(--ui);color:#9C9CA8}
-.jl-m{padding-left:33px}
-.jl-badge{margin-left:auto;padding:2px 8px;border-radius:999px;border:1px solid #3A3A44;background:#1C1C22;color:#B4B4BE;font:600 11px/1.4 var(--ui);letter-spacing:.02em;white-space:nowrap}
-html.calme .jl-liste.entre,html.calme .jl-fl{animation:none;transition:none}
-@media (prefers-reduced-motion:reduce){.jl-liste.entre{animation:none}.jl-fl{transition:none}}
+.js-choix select{appearance:none;-webkit-appearance:none;width:100%;font:500 17px/1.3 var(--ui);color:var(--ink);background:#141418 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23EDEDF0' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center/18px;border:1px solid var(--line);border-radius:14px;padding:14px 44px 14px 16px;color-scheme:dark;cursor:pointer}
+.js-choix select:hover{border-color:var(--soft)}
+.js-choix select:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 
 /* la démo, dans le hero */
 .dm{width:100%;max-width:none;margin:6px auto 0;display:grid;gap:14px;justify-items:center;text-align:center}
@@ -75,7 +50,9 @@ html.calme .jl-liste.entre,html.calme .jl-fl{animation:none;transition:none}
 .dm-tel.sonne .dm-ecran{animation:dmSonne .6s ease}
 @keyframes dmSonne{15%{transform:rotate(-2.4deg)}30%{transform:rotate(2.4deg)}45%{transform:rotate(-1.6deg)}60%{transform:rotate(1.6deg)}75%{transform:none}}
 .dm .dock{position:absolute;left:14px;right:14px;bottom:14px;height:86px;border-radius:30px;background:#0F0F12;box-shadow:0 0 0 1px #2B2B33;display:grid;grid-template-columns:1fr 1fr 86px 1fr 1fr;align-items:center;padding:0 6px}
-.dm .dk{position:relative;display:grid;justify-items:center;gap:6px;color:#9C9CA8;font:500 12.5px var(--ui)}.dm .dk.on{color:#EDEDF0}
+.dm .dk{position:relative;display:grid;justify-items:center;gap:6px;color:#9C9CA8;font:500 12.5px var(--ui)}.dm .dk.on{color:#fff}
+/* téléphones réduits : les icônes seules, sauf sur le téléphone mis en avant */
+.dm-tel:not(.choisi) .dk>span:not(.badge){display:none}
 .dm .dk svg{width:28px;height:28px;fill:none;stroke:#EDEDF0;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .dm .badge{position:absolute;top:-6px;left:50%;margin-left:6px;min-width:24px;height:24px;padding:0 7px;border-radius:12px;background:var(--role);color:#141416;font:700 14px/24px var(--ui);text-align:center;transform:scale(0);transition:transform .3s}
 .dm .badge.vu{transform:scale(1)}
