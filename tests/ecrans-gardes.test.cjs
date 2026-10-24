@@ -1,10 +1,10 @@
 /* /regie/ et /maitre/ : servis au seul propriétaire du site, 404 sinon, comme /api/maitre (audit Vercel, PR 1, point 3).
-   middleware.js (Routing Middleware Vercel, avant les fichiers statiques) appelle garder() d'api/_auth/ecrans.mjs, qui demande
+   middleware.js (Routing Middleware Vercel, avant les fichiers statiques) appelle garder() d'api/_auth/ecrans.cjs, qui demande
    « oui / non » à /api/identite avec le seul cookie. Les scripts et styles de regie/ et maitre/ restent publics.
    La dernière partie tourne contre une vraie base de test (TEST_DATABASE_URL) : la vraie session, le vrai /api/identite. */
 const test = require('node:test'), assert = require('node:assert/strict'), fs = require('fs'), path = require('path');
 const R = f => path.join(__dirname, '..', f), lire = f => fs.readFileSync(R(f), 'utf8');
-const E = () => import('../api/_auth/ecrans.mjs');
+const E = async () => require('../api/_auth/ecrans.cjs');
 const req = (p, cookie) => new Request('https://www.lemondeaime.com' + p, { headers: cookie ? { cookie } : {} });
 const json = (code, o) => new Response(JSON.stringify(o), { status: code, headers: { 'content-type': 'application/json' } });
 
@@ -13,8 +13,9 @@ test('middleware.js : le matcher littéral est exactement la liste ECRANS ; aucu
   const m = s.match(/matcher:\s*(\[[^\]]*\])/); assert.ok(m, 'un matcher littéral');
   assert.deepEqual(JSON.parse(m[1].replace(/'/g, '"')), ECRANS);
   assert.match(s, /runtime:\s*'nodejs'/);
-  assert.deepEqual([...s.matchAll(/\bimport\b[^'"]*['"]([^'"]+)['"]/g)].map(x => x[1]), ['./api/_auth/ecrans.mjs'], 'un seul import');
-  assert.ok(!/pg|better-auth|process\.env/.test(lire('api/_auth/ecrans.mjs').replace(/\/\/.*$/gm, '')), 'ecrans.mjs ne lit ni base ni variable');
+  assert.deepEqual([...s.matchAll(/\bimport\b[^'"]*['"]([^'"]+)['"]/g)].map(x => x[1]), ['./api/_auth/ecrans.cjs'], 'un seul import');
+  assert.ok(!/\.mjs['"]/.test(s), 'pas de .mjs : Vercel compile le middleware en CommonJS (Node 20 : ERR_REQUIRE_ESM)');
+  assert.ok(!/pg|better-auth|process\.env/.test(lire('api/_auth/ecrans.cjs').replace(/\/\/.*$/gm, '')), 'ecrans.cjs ne lit ni base ni variable');
   assert.ok(!/middleware/.test(lire('.vercelignore')), 'middleware.js part bien en production');
 });
 
