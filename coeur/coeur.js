@@ -1,5 +1,5 @@
 /* AIME · le cœur : un seul projet, N personnes, chacune son écran.
-   Un SCÉNARIO (vitrine/scenarios/<u>.json) décrit les rôles d'un exemple : leur arrivée (ce que l'orbe recueille)
+   Un SCÉNARIO (vitrine/scenarios/<u>.json) décrit les rôles d'un exemple : leur arrivée (ce que chacun apporte, écrit une fois)
    et leur perspective. Le contenu, la couche d'accès et les perspectives restent ceux de la vitrine
    (vitrine/donnees, vitrine/acces, vitrine/perspectives) : le scénario ne contient AUCUNE donnée métier ni AUCUN droit.
 
@@ -41,12 +41,12 @@ function fiche(f){var h='';(f||[]).forEach(function(b){h+='<p class="fiche-k">'+
  if(b.liste)h+='<dl class="fiche-l">'+b.liste.map(function(l){return'<div><dt>'+esc(l[0])+'</dt><dd>'+esc(l[1])+'</dd></div>'}).join('')+'</dl>'});return h}
 function html(sc,o){o=o||{};var N=sc.roles.length,n0=o.premier||1,num=function(k){var v=n0+k;return(v<10?'0':'')+v};
  var a='<div class="arrivees" id="arrivees">'+
-  '<div class="cx-in arr-tete"><div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">'+num(0)+'</p><h2 id="t-arrivees">'+esc(sc.arrivees||(nombre(N)+' arrivées, une seule mémoire.'))+'</h2><p>'+esc(sc.arriveesTexte||'Chacun arrive par son propre chemin. L\'orbe recueille ce qu\'il apporte, une seule fois, dans le même projet.')+'</p></div></div>'+
+  '<div class="cx-in arr-tete"><div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">'+num(0)+'</p><h2 id="t-arrivees">'+esc(sc.arrivees||(nombre(N)+' arrivées, une seule mémoire.'))+'</h2><p>'+esc(sc.arriveesTexte||'Chacun arrive par son propre chemin. Ce qu\'il apporte est écrit une seule fois, dans le même projet.')+'</p></div></div>'+
   sc.roles.map(function(r,i){var ar=r.arrivee||{},id='arr-'+r.angle,lg=ar.legende||[];
    return'<section class="sc" id="'+id+'" aria-labelledby="t-'+id+'"><div class="cx-in sc-in"><div class="sc-texte"><p class="sc-k">'+(i+1)+' / '+N+' · '+esc(r.nom)+'</p><h3 id="t-'+id+'">'+esc(ar.titre)+'</h3><p>'+esc(ar.texte)+'</p></div>'+
     '<figure class="fiche"><span class="ancre ancre-sc" data-orbe="1" aria-hidden="true"></span>'+fiche(ar.fiche)+(lg.length?'<figcaption>'+esc(lg[0])+' · <b>'+esc(lg[1])+'</b> '+esc(lg[2]||'')+'</figcaption>':'')+'</figure></div></section>'}).join('')+'</div>';
- var e='<section class="cx cx-ecrans" id="ecrans" aria-labelledby="t-ecrans"><div class="cx-in"><div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">'+num(1)+'</p><h2 id="t-ecrans">'+esc(nombre(N))+' écrans, une seule source.</h2><p>L\'orbe compose une page pour chacun, à partir de tout ce qu\'elle a recueilli : '+esc(nombre(N).toLowerCase())+' vraies pages, composées à l\'instant par le moteur de pages. Faites défiler chaque écran.</p></div></div>'+
-  '<section class="ecrans-scene" id="ecransScene" aria-label="L\'orbe compose un écran pour chacun"><div class="ecrans-collant"><div class="ecrans'+(N>6?' nombreux':'')+'" id="ecransGrille" role="list" aria-label="'+esc(sc.titre)+', vu par '+esc(nombre(N).toLowerCase())+' personnes" style="--n:'+N+'"><span class="ancre ancre-ecran" id="ancreEcran" data-orbe="1" aria-hidden="true"></span>'+
+ var e='<section class="cx cx-ecrans" id="ecrans" aria-labelledby="t-ecrans"><div class="cx-in"><div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">'+num(1)+'</p><h2 id="t-ecrans">'+esc(nombre(N))+' écrans, une seule source.</h2><p>Dans un vrai projet, le serveur compose la page de chacun selon son rôle, à partir de la même source. Ici, '+esc(nombre(N).toLowerCase())+' vraies pages, composées par les mêmes règles. L\'Orbe, elle, explique les droits et propose les gestes. Faites défiler chaque écran.</p></div></div>'+
+  '<section class="ecrans-scene" id="ecransScene" aria-label="Une page pour chacun, composée selon son rôle"><div class="ecrans-collant"><div class="ecrans'+(N>6?' nombreux':'')+'" id="ecransGrille" role="list" aria-label="'+esc(sc.titre)+', vu par '+esc(nombre(N).toLowerCase())+' personnes" style="--n:'+N+'"><span class="ancre ancre-ecran" id="ancreEcran" data-orbe="1" aria-hidden="true"></span>'+
   sc.roles.map(function(r){return'<figure class="tel" role="listitem" data-angle="'+esc(r.angle)+'"><div class="tel-ecran"><span class="tel-attente" aria-hidden="true"></span><iframe title="Écran '+esc(r.de)+'" sandbox="allow-same-origin" loading="lazy" tabindex="0"></iframe><div class="tel-dock"></div></div><figcaption><b>'+esc(r.nom)+'</b><span>'+esc(r.resume||'')+'</span></figcaption></figure>'}).join('')+
   '</div><p class="ecrans-etat" id="ecransPas" aria-hidden="true"></p></div></section>'+
   '<div class="cx-in"><form class="source" id="source" aria-labelledby="t-source"><p class="source-t" id="t-source">Écrivez une fois, les '+esc(nombre(N).toLowerCase())+' écrans suivent</p><div class="source-champs">'+
@@ -171,7 +171,7 @@ function choregraphie(){var V=innerHeight;
  SC.forEach(function(s){var r=s.getBoundingClientRect();if(r.top<V*.5&&r.bottom>V*.3)s.classList.add('recueilli')});
  if(!scene)return;if(calme()){if(actif!==DER){actif=DER;nes(DER);document.body.classList.add('ecrans-libres')}return}
  var r=scene.getBoundingClientRect(),course=r.height-V,p=course>0?-r.top/course:1,i=p<.04?-1:Math.min(DER,Math.floor((p-.04)/(.8/N)));
- if(i!==actif){actif=i;nes(i);var pas=$('ecransPas');if(pas)pas.textContent=i<0?'L\'orbe arrive avec tout ce qu\'elle a recueilli.':i<DER?'L\'orbe compose l\'écran '+ROLES[i].de+'.':nombre(N)+' écrans, composés depuis la même source.';
+ if(i!==actif){actif=i;nes(i);var pas=$('ecransPas');if(pas)pas.textContent=i<0?'Tout ce qui a été écrit, une seule fois.':i<DER?'La page '+ROLES[i].de+', composée selon son rôle.':nombre(N)+' écrans, composés depuis la même source.';
   var tel=TELS[Math.max(0,i)],g=$('ecransGrille');if(tel&&g.scrollWidth>g.clientWidth+4)g.scrollTo({left:tel.offsetLeft-20,behavior:'smooth'})}
  placer(actif);requestAnimationFrame(choregraphie)}
 if(calme()){nes(DER);document.body.classList.add('ecrans-libres');SC.forEach(function(s){s.classList.add('recueilli')})}
