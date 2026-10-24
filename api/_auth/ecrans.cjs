@@ -27,11 +27,28 @@ async function estProprietaire(request, f = fetch) {
   } catch { return false; }
 }
 
+/* le chemin tel que le serveur de fichiers le comprendra : décodé (jusqu'à trois fois, pour %2572…), en minuscules,
+   barres obliques inverses et doublées ramenées à une seule, segments « . » et « .. » résolus. Un encodage invalide
+   rend null : la requête est alors traitée comme gardée (fermé par défaut). Revue de Matt sur #123 : /%72egie/ servait la Régie. */
+function normaliser(brut) {
+  let s = String(brut == null ? '' : brut);
+  for (let i = 0; i < 3; i++) { let d; try { d = decodeURIComponent(s); } catch { return null; } if (d === s) break; s = d; }
+  s = s.split(/[?#]/)[0].replace(/;[^/]*/g, '');   /* « ? » ou « # » encodés : ce qui suit n'est plus le chemin ; « ;x » : paramètres de chemin */
+  s = s.toLowerCase().replace(/\\/g, '/').replace(/[\u0000-\u001f\u007f]/g, '').replace(/\/{2,}/g, '/');
+  const sortie = [];
+  for (const seg of s.split('/')) { if (seg === '.' ) continue; if (seg === '..') { if (sortie.length > 1) sortie.pop(); continue; } sortie.push(seg); }
+  s = sortie.join('/'); if (!s.startsWith('/')) s = '/' + s;
+  return s;
+}
+/* gardé : ce que la normalisation ramène à l'un des écrans (avec ou sans « / » final, « index », « index.html ») */
+const GARDE = /^\/(regie|maitre)(\/|\/index|\/index\.html?)?\/?$/;
+function estGarde(brut) { const n = normaliser(brut); return n === null ? /regie|maitre|%/i.test(String(brut)) : GARDE.test(n); }
+
 /* undefined : la requête continue (le fichier statique est servi) ; sinon, la réponse 404 */
 async function garder(request, verifier = estProprietaire) {
   let p; try { p = new URL(request.url).pathname; } catch { return introuvable(); }
-  if (!ECRANS.includes(p)) return undefined;
+  if (!estGarde(p)) return undefined;
   let ok = false; try { ok = (await verifier(request)) === true; } catch { ok = false; }
   return ok ? undefined : introuvable();
 }
-module.exports = { ECRANS, introuvable, estProprietaire, garder };
+module.exports = { ECRANS, normaliser, estGarde, introuvable, estProprietaire, garder };
