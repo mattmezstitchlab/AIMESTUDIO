@@ -226,7 +226,7 @@ var ICONE_GABARIT={acces:'consentement',journal:'journal',personnes:'personnes',
    demande.gestes est obligatoire et calculé par le serveur avec synchroview/permissions.js
    ({ lire, inviter: [rôles], signaler }). demande.servis : les gabarits que le serveur sait composer pour ce projet.
    Un lieu dont le gabarit n'est pas servi n'existe pas ; « Mon accès » est toujours là (il ne se masque jamais) ;
-   « Personnes » n'apparaît que si la famille y a un lieu ou si la personne peut inviter (c'est là qu'on invite). */
+   chaque page servie a son lieu (demande.servis vient de pagesDe() : la page et le Dock suivent la même règle). */
 function composerReel(d){
  d=d||{};if(d.ancien)return null;
  var g=d.gestes;if(!g||typeof g!=='object'||!Array.isArray(g.inviter))throw new Error('gestes calculés par le serveur requis');
@@ -240,7 +240,8 @@ function composerReel(d){
  poser('acces',NOM_GABARIT.acces,ICONE_GABARIT.acces,'acces');
  /* dans un vrai projet, un lieu porte le nom de la page servie (Journal, Personnes…), pas le mot de la démonstration */
  ((inst&&inst.lieux)||F.lieux||[]).map(lieu).forEach(function(e){var gab=GABARIT_DE[e.id];if(!gab)return;if(gab==='acces')return;poser(e.id,NOM_GABARIT[gab]||e.nom,e.icone,gab)});
- if(g.inviter.length)poser('personnes',NOM_GABARIT.personnes,ICONE_GABARIT.personnes,'personnes');
+ /* toute page que le serveur sert à ce rôle a sa place dans le Dock (la même règle décide de la page et du lieu : pagesDe, api/_auth/pages.mjs) */
+ servis.forEach(function(gab){if(ICONE_GABARIT[gab])poser(gab,NOM_GABARIT[gab]||gab,ICONE_GABARIT[gab],gab)});
  lieux=lieux.slice(0,MAX_LIEUX);
  var plus=[];
  if(g.inviter.length&&vus.personnes)plus.push({id:'inviter',nom:'Inviter',geste:'inviter',sensible:true,roles:g.inviter.slice(),gabarit:'personnes'});

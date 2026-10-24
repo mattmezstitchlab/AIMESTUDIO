@@ -26,6 +26,12 @@
  <div class="cpt-titre"><h1 id="tTitre">Mon compte</h1><p class="leg" id="tSous">Votre adresse, votre Timbre, vos clés d'accès</p></div>
  <p class="alerte" id="ferme" hidden></p>
  <p class="bandeau" id="depuisAccueil" hidden>Connectez-vous avec votre adresse : ce que vous avez choisi sur l'accueil sera créé à l'ouverture du lien.</p>
+ <!-- à la première connexion, une invitation discrète à donner son nom : jamais un passage obligé (test réel du 24/10, point 4) -->
+ <form class="carte-c lgn nom-invite" id="nomInvite" hidden aria-labelledby="nomInviteT">
+  <label id="nomInviteT" for="nomInviteChamp" style="flex-basis:100%">Comment voulez-vous qu'on vous appelle ?</label>
+  <input id="nomInviteChamp" maxlength="80" autocomplete="name" placeholder="Votre prénom, ou votre nom" style="flex:1;min-width:180px">
+  <button class="b b-p" type="submit">Enregistrer</button><button class="b b-s" type="button" id="nomPlusTard">Plus tard</button>
+ </form>
  <p class="bandeau" id="invite" hidden>Vous avez reçu une invitation dans un espace AIME. Connectez-vous avec l'adresse qui l'a reçue pour la rejoindre.</p>
 
  <section class="carte-c" id="connexion" hidden aria-labelledby="t-cnx">

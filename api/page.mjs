@@ -6,7 +6,7 @@
 import { auth, personne, _pool } from './_auth/auth.mjs';
 import { createRequire } from 'module';
 import { Refus, role } from './_auth/espaces.mjs';
-import { projeter, gestes, SERVIS } from './_auth/pages.mjs';
+import { projeter, gestes, pagesDe } from './_auth/pages.mjs';
 /* deux lignes, pas une : @vercel/nft (le traçage des fichiers de la fonction) ne voit que require('…') appelé par son nom.
    En une seule expression, dock/modele.js n'était pas emporté et /api/page tombait en production (FUNCTION_INVOCATION_FAILED). */
 const require = createRequire(import.meta.url);
@@ -23,7 +23,7 @@ export default async function page(req, res) {
   try {
     const base = db || _pool(), p = await projeter(base, u, { espace, gabarit });   /* projeter vérifie le rôle (404 sinon) avant tout */
     const r = await role(base, espace, u.id);
-    p.dock = r ? D.composerReel({ roleServeur: r, gestes: gestes({ id: u.id, role: r }), servis: SERVIS }) : null;
+    p.dock = r ? D.composerReel({ roleServeur: r, gestes: gestes({ id: u.id, role: r }), servis: pagesDe({ id: u.id, role: r }) }) : null;   /* les pages du Dock = les pages servies */
     return json(res, 200, Object.assign({ ok: true }, p));
   }
   catch (e) { if (e instanceof Refus) return json(res, e.code, { ok: false, raison: e.raison }); return json(res, 500, { ok: false, raison: 'Erreur du serveur : réessayez.' }); }

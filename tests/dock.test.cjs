@@ -105,9 +105,10 @@ test('dock réel : aucun lieu dont le gabarit n\'est pas servi, aucun geste non 
  assert.ok(D.composerReel({roleServeur:'owner',gestes:GESTES.owner,servis:servisTous}).lieux.some(l=>l.gabarit==='messages'),'servi plus tard, il apparaîtra');
 });
 
-test('dock réel : l\'invitée n\'a que Mon accès ; le propriétaire invite depuis Personnes ; la coordination n\'invite que lecteurs et invités',()=>{
- const g=D.composerReel({roleServeur:'guest',gestes:GESTES.guest,servis:SERVIS});assert.deepEqual(g.lieux.map(l=>l.gabarit),['acces']);
- assert.ok(!D.mots(g).includes('Personnes')&&!D.mots(g).includes('Inviter'));
+test('dock réel : chaque page servie a sa place (la même règle que la page) ; le propriétaire invite depuis Personnes ; la coordination n\'invite que lecteurs et invités',()=>{
+ const g=D.composerReel({roleServeur:'guest',gestes:GESTES.guest,servis:SERVIS});assert.deepEqual(g.lieux.map(l=>l.gabarit),['acces','journal','personnes']);
+ assert.ok(!D.mots(g).includes('Inviter'),'aucun geste interdit');
+ assert.deepEqual(D.composerReel({roleServeur:'guest',gestes:GESTES.guest,servis:['acces']}).lieux.map(l=>l.gabarit),['acces'],'une page non servie n\'a pas de lieu');
  const o=D.composerReel({roleServeur:'owner',gestes:GESTES.owner,servis:SERVIS});assert.deepEqual(o.lieux.map(l=>l.gabarit),['acces','journal','personnes']);
  assert.ok(o.plus[0].sensible,'inviter demande confirmation');
  const e=D.composerReel({roleServeur:'editor',gestes:GESTES.editor,servis:SERVIS});assert.deepEqual(e.plus[0].roles,['viewer','guest']);

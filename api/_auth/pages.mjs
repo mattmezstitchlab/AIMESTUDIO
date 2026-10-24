@@ -12,15 +12,22 @@ const P = require('../../synchroview/permissions.js');
 export const GABARITS = ['acces', 'journal', 'personnes', 'projet', 'deroule', 'documents', 'messages'];
 /* lot 1 : seuls ces gabarits sont servis dans un vrai espace ; les autres répondent 404 (leur bouton n'apparaît pas) */
 export const SERVIS = ['acces', 'journal', 'personnes'];
+/* les pages d'un rôle : UNE règle, lue à la fois par la page (projeter : 404 sinon) et par le Dock (api/page.mjs → composerReel).
+   docs/GABARITS.md § 5 : chaque rôle a Mon accès, son Journal et sa page Personnes (réduite pour contributor et viewer :
+   lui-même, l'organisation, des effectifs sans noms ; pour guest : lui-même seulement). Ce qu'elles contiennent reste décidé bloc par bloc. */
+export function pagesDe(s) {
+  if (!P.can(s, 'read', { type: 'space' }).allow) return [];
+  return SERVIS.slice();
+}
 export const TITRES = { acces: 'Mon accès', journal: 'Journal', personnes: 'Personnes' };
 
 /* les mots d'un domaine (§ 8) : un mot par rôle serveur ; un modèle n'accorde aucun droit, il nomme.
    Le témoin et le prestataire partagent le rôle contributor : la relation enregistrée pour le membre (space_members.relation,
    choisie à l'invitation) les distingue ; sans elle, le mot est celui du rôle dans le domaine. */
 export const MOTS = {
-  mariage: { owner: 'le couple', editor: 'la coordination', contributor: 'prestataire', viewer: 'parent', guest: 'invité', projet: 'du mariage' },
-  seminaire: { owner: 'l\'organisation', editor: 'l\'agence', contributor: 'intervenant', viewer: 'direction', guest: 'participant', projet: 'du séminaire' },
-  _: { owner: 'propriétaire', editor: 'coordination', contributor: 'contributeur', viewer: 'lecture seule', guest: 'invité', projet: 'du projet' }
+  mariage: { owner: 'le couple', editor: 'la coordination', contributor: 'prestataire', viewer: 'parent', guest: 'invité', projet: 'du mariage', anonyme: 'une personne' },
+  seminaire: { owner: 'l\'organisation', editor: 'l\'agence', contributor: 'intervenant', viewer: 'direction', guest: 'participant', projet: 'du séminaire', anonyme: 'une personne' },
+  _: { owner: 'propriétaire', editor: 'coordination', contributor: 'contributeur', viewer: 'lecture seule', guest: 'invité', projet: 'du projet', anonyme: 'une personne de l\'organisation' }
 };
 /* des relations proposées à l'invitation (un mot libre reste possible) : elles nomment, elles n'accordent rien */
 export const SUGGESTIONS = {
@@ -83,20 +90,30 @@ async function relations(db, espace) {
   const { rows } = await db.query('select user_id, relation from space_members where space_id = $1 and relation is not null', [espace]);
   const r = {}; rows.forEach(x => { r[x.user_id] = x.relation; }); return r;
 }
-const ANONYME = 'une personne de l\'organisation';
+/* un nom qu'on ne peut pas voir : « une personne » dans les domaines mariage et séminaire (test réel du 24/10), sinon « une personne de l'organisation » */
+/* la relation choisie à chaque invitation (pour les phrases du journal) : jamais un droit, seulement un mot */
+async function relationsInvitations(db, espace) {
+  if (!(await relationPrete(db))) return {};
+  const { rows } = await db.query('select id, relation from invitations where space_id = $1 and relation is not null', [espace]);
+  const r = {}; rows.forEach(x => { r[x.id] = x.relation; }); return r;
+}
+const ANONYME = 'une personne de l\'organisation', anonyme = mots => (mots && mots.anonyme) || ANONYME;
 
 /* ---------- Journal ---------- */
-function phrase(l, moi, nom, mots) {
-  const qui = l.qui === moi ? 'Vous' : (l.qui ? nom(l.qui) : 'AIME'), cible = l.detail.cible, vous = cible === moi;
-  const role = l.detail.role ? (mots[l.detail.role] || l.detail.role) : '', fin = l.detail.jusqu_au ? ', jusqu\'au ' + dateFr(l.detail.jusqu_au, true) : '';
+/* chaque phrase commence par « Le 24 octobre, » : les noms gardent leur casse, « une personne » reste en minuscules */
+function phrase(l, moi, nom, mots, rel) {
+  const qui = l.qui === moi ? 'vous' : (l.qui ? nom(l.qui) : 'AIME'), cible = l.detail.cible, vous = cible === moi;
+  /* la relation (« photographe ») quand elle existe : celle de l'invitation, sinon celle du membre ; sinon le mot du rôle dans le domaine */
+  const relation = rel ? (rel.invitations[l.detail.invitation] || (l.action === 'acceptation' && rel.membres[cible]) || '') : '';
+  const role = relation || (l.detail.role ? (mots[l.detail.role] || l.detail.role) : ''), fin = l.detail.jusqu_au ? ', jusqu\'au ' + dateFr(l.detail.jusqu_au, true) : '';
   const le = 'Le ' + dateFr(l.le) + ', ';
   switch (l.action) {
-    case 'creation': return le + (l.qui === moi ? 'vous avez créé le projet.' : premierMot(qui) + ' a créé le projet.');
-    case 'invitation': return le + (l.qui === moi ? 'vous avez préparé une invitation (' + role + ')' : premierMot(qui) + ' a préparé une invitation (' + role + ')') + fin + '.';
-    case 'acceptation': return le + (vous ? 'vous avez rejoint le projet comme ' + role : premierMot(nom(cible)) + ' a rejoint le projet comme ' + role) + fin + '.';
-    case 'retrait': return le + (vous ? premierMot(qui) + ' vous a retiré du projet.' : premierMot(qui) + ' a retiré ' + nom(cible) + ' du projet.');
-    case 'annulation': return le + premierMot(qui) + ' a annulé une invitation.';
-    case 'changement_role': return le + premierMot(qui) + ' a changé un rôle (' + role + ').';
+    case 'creation': return le + (l.qui === moi ? 'vous avez créé le projet.' : qui + ' a créé le projet.');
+    case 'invitation': return le + (l.qui === moi ? 'vous avez préparé une invitation (' + role + ')' : qui + ' a préparé une invitation (' + role + ')') + fin + '.';
+    case 'acceptation': return le + (vous ? 'vous avez rejoint le projet comme ' + role : nom(cible) + ' a rejoint le projet comme ' + role) + fin + '.';
+    case 'retrait': return le + (vous ? qui + ' vous a retiré du projet.' : l.qui === moi ? 'vous avez retiré ' + nom(cible) + ' du projet.' : qui + ' a retiré ' + nom(cible) + ' du projet.');
+    case 'annulation': return le + qui + ' a annulé une invitation.';
+    case 'changement_role': return le + qui + ' a changé un rôle (' + role + ').';
     case 'ouverture': return le + 'un accès a été ouvert' + fin + '.';
     case 'fermeture': return le + (vous ? 'votre accès a pris fin (' + (l.detail.raison || 'fin du rôle') + ').' : 'un accès a pris fin.');
     case 'signalement': return le + (l.qui === moi ? 'vous avez signalé un accès inattendu.' : 'un accès inattendu a été signalé.');
@@ -107,12 +124,13 @@ async function pageJournal(db, c, espace) {
   const tout = P.can(c.s, 'manage_members', { type: 'space' }).allow;
   const lignes = await lire(db, { espace, moi: c.s.id, tout });
   if (lignes === null) return { blocs: [], vide: 'Le journal n\'est pas encore installé sur cette base.' };
-  const { noms } = await annuaire(db, c.s, espace), nom = id => (id === c.s.id ? 'vous' : (noms[id] || ANONYME));
+  const { noms } = await annuaire(db, c.s, espace), nom = id => (id === c.s.id ? 'vous' : (noms[id] || anonyme(c.mots)));
+  const rel = { membres: await relations(db, espace), invitations: await relationsInvitations(db, espace) };
   const blocs = lignes.map((l, i) => {
     const signal = l.action === 'signalement', mienne = l.qui === c.s.id;
     /* l'auteur d'un signalement est protégé (décision de Matt) : pour tout autre que lui, ni identifiant, ni rôle, ni heure exacte */
     const le = signal && !mienne ? jour(l.le) : l.le;
-    const b = { id: 'journal-' + i, type: 'ligne', action: l.action, le, texte: phrase(signal && !mienne ? { le: l.le, action: l.action, qui: null, detail: {} } : l, c.s.id, nom, c.mots) };
+    const b = { id: 'journal-' + i, type: 'ligne', action: l.action, le, texte: phrase(signal && !mienne ? { le: l.le, action: l.action, qui: null, detail: {} } : l, c.s.id, nom, c.mots, rel) };
     if (signal && l.detail.motif) b.motif = l.detail.motif;
     if (mienne) b.moi = true;
     return b;
@@ -142,7 +160,7 @@ async function pageAcces(db, c, espace) {
     let par = null;
     if (ac && ac.detail.invitation) {
       const { rows: inv } = await db.query("select user_id, at from audit where space_id = $1 and action = 'invitation' and detail->>'invitation' = $2 limit 1", [espace, String(ac.detail.invitation)]).catch(() => ({ rows: [] }));
-      if (inv[0]) par = { nom: noms[inv[0].user_id] || ANONYME, le: iso(inv[0].at) };
+      if (inv[0]) par = { nom: noms[inv[0].user_id] || anonyme(mots), le: iso(inv[0].at) };
     }
     blocs.push({ id: 'acces-origine', type: 'origine', texte: par ? premierMot(par.nom) + ' vous a invité le ' + dateFr(par.le, true) + (ac ? ' ; vous avez rejoint le ' + dateFr(ac.le, true) + '.' : '.') : (ac ? 'Vous avez rejoint ce projet le ' + dateFr(ac.le, true) + '.' : 'Vous avez rejoint ce projet le ' + dateFr(moi.added_at, true) + '.') });
   }
@@ -192,7 +210,7 @@ export async function projeter(db, u, { espace, gabarit }) {
   if (!GABARITS.includes(gabarit)) refus(400, 'Gabarit inconnu.');
   if (!u) return { gabarit, domaine: null, mots: { titre: TITRES[gabarit] || gabarit }, visuel: null, blocs: [], dock: null, vide: null, public: true };
   const c = await contexte(db, u, espace);
-  if (!SERVIS.includes(gabarit)) refus(404, 'Cette page n\'existe pas encore dans ce projet.');
+  if (!pagesDe(c.s).includes(gabarit)) refus(404, 'Cette page n\'existe pas encore dans ce projet.');   /* la même règle que le Dock */
   const p = await PAGES[gabarit](db, c, espace), maRelation = (await relations(db, espace))[u.id];
   return { gabarit, domaine: c.domaine, mots: { titre: TITRES[gabarit], projet: c.titre, role: premierMot(maRelation || c.mots[c.s.role] || RELATION[c.s.role]) }, visuel: null, blocs: p.blocs, dock: null, vide: p.vide || null };
 }

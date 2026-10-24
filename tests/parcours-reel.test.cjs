@@ -107,6 +107,6 @@ test('réel · une date de fin dépassée : 404, fermeture au journal ; le nom d
   const jA = await page(projet, 'journal', S.a);
   assert.ok(jA.body.blocs.some(b => b.action === 'fermeture'), 'la fermeture est au journal');
   const tg = textes(await page(projet, 'acces', S.g));
-  assert.ok(!/Emma/.test(tg), 'le parent ne voit plus le nom d\'Emma'); assert.match(tg, /Une personne de l'organisation vous a invité/);
+  assert.ok(!/Emma/.test(tg), 'le parent ne voit plus le nom d\'Emma'); assert.match(tg, /Une personne vous a invité/);
   assert.match(textes(jA), /Emma/, 'le propriétaire, lui, garde les noms');
 });
