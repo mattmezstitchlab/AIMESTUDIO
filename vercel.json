@@ -1,0 +1,210 @@
+{
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/sup/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self' https://www.lemondeaime.com https://lemondeaime.com https://ai-x-me.com https://www.ai-x-me.com"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/travaux",
+      "destination": "/api/travaux"
+    },
+    {
+      "source": "/travaux/",
+      "destination": "/api/travaux"
+    },
+    {
+      "source": "/travaux/:p",
+      "destination": "/api/travaux?p=:p"
+    },
+    {
+      "source": "/travaux/:p/",
+      "destination": "/api/travaux?p=:p"
+    },
+    {
+      "source": "/api/auth/:chemin*",
+      "destination": "/api/comptes?__chemin=:chemin*"
+    },
+    {
+      "source": "/accessibilite",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/accessibilite/",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/buro",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/buro/",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/docs",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/docs/",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/image",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/image/",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/stitchlab",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/stitchlab/",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/web",
+      "destination": "/studio/"
+    },
+    {
+      "source": "/web/",
+      "destination": "/studio/"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/zero",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/zero/",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/monde",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/monde/",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/monde/:path*",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/monde/:path*/",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/site",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/site/",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/site/:path*",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/site/:path*/",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/socle",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/socle/",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/socle/:path*",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/socle/:path*/",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/orb/naissance",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/orb/naissance/",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/orb/naissance/:path*",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/lab/orb/naissance/:path*/",
+      "destination": "/aime/",
+      "permanent": false
+    },
+    {
+      "source": "/v1",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/v1/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/v1/:chemin*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/mariage",
+      "destination": "/exemples/",
+      "permanent": true
+    },
+    {
+      "source": "/mariage.html",
+      "destination": "/exemples/",
+      "permanent": true
+    }
+  ]
+}
