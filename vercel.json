@@ -88,6 +88,14 @@
     {
       "source": "/web/",
       "destination": "/studio/"
+    },
+    {
+      "source": "/projets",
+      "destination": "/compte/"
+    },
+    {
+      "source": "/projets/",
+      "destination": "/compte/"
     }
   ],
   "redirects": [
