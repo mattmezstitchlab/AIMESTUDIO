@@ -229,7 +229,7 @@ var GABARIT_DE={
  messages:'messages',
  orbe:null,coeur:null,exemples:null,lab:null   /* l'Orbe n'est pas un lieu ; la navigation publique est hors gabarit */
 };
-var NOM_GABARIT={acces:'Mon accès',journal:'Journal',personnes:'Personnes',projet:'Projet',deroule:'Déroulé',documents:'Documents',messages:'Messages'};
+var NOM_GABARIT={acces:'Mon accès',journal:'Journal',personnes:'Personnes',projet:'Projet',deroule:'Programme',documents:'Documents',messages:'Messages'};
 var ICONE_GABARIT={acces:'consentement',journal:'journal',personnes:'personnes',projet:'projet',deroule:'deroule',documents:'document',messages:'bulle'};
 
 /* composerReel(demande) : le dock d'une personne dans un vrai espace. Les droits ne viennent JAMAIS de la table par défaut :

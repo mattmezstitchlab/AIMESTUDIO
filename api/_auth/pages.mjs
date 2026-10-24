@@ -8,18 +8,26 @@ import { role, membres, ROLES_INVITES, duree, relationPrete, Refus } from './esp
 import { lire } from './journal.mjs';
 const require = createRequire(import.meta.url);
 const P = require('../../synchroview/permissions.js');
+const REG = require('../../modules/registre.js');     /* le registre des modules : la seule liste des pages servies (et donc du Dock) */
 
 export const GABARITS = ['acces', 'journal', 'personnes', 'projet', 'deroule', 'documents', 'messages'];
 /* lot 1 : seuls ces gabarits sont servis dans un vrai espace ; les autres répondent 404 (leur bouton n'apparaît pas) */
-export const SERVIS = ['acces', 'journal', 'personnes'];
+export const SERVIS = REG.servis({});      /* ['acces', 'journal', 'personnes'] : sans module activé, exactement les pages d'avant */
 /* les pages d'un rôle : UNE règle, lue à la fois par la page (projeter : 404 sinon) et par le Dock (api/page.mjs → composerReel).
    docs/GABARITS.md § 5 : chaque rôle a Mon accès, son Journal et sa page Personnes (réduite pour contributor et viewer :
    lui-même, l'organisation, des effectifs sans noms ; pour guest : lui-même seulement). Ce qu'elles contiennent reste décidé bloc par bloc. */
-export function pagesDe(s) {
+/* actifs : les modules activés dans CE projet ({ temps: true } quand son programme est importé) ; le registre dit lesquels ajoutent une page */
+export function pagesDe(s, actifs) {
   if (!P.can(s, 'read', { type: 'space' }).allow) return [];
-  return SERVIS.slice();
+  return REG.servis(actifs || {});
 }
-export const TITRES = { acces: 'Mon accès', journal: 'Journal', personnes: 'Personnes' };
+export const TITRES = { acces: 'Mon accès', journal: 'Journal', personnes: 'Personnes', deroule: REG.module('temps').nom };
+/* les modules activés dans un projet : une ligne dans temps_espaces (migration 2026-10-24-07) ; sans la table, aucun */
+export async function actifsDe(db, espace) {
+  try { const { rows } = await db.query("select to_regclass('public.temps_espaces') as t"); if (!rows[0] || !rows[0].t) return {};
+    const { rows: r } = await db.query('select 1 from temps_espaces where space_id = $1', [espace]); return r.length ? { temps: true } : {}; }
+  catch { return {}; }
+}
 
 /* les mots d'un domaine (§ 8) : un mot par rôle serveur ; un modèle n'accorde aucun droit, il nomme.
    Le témoin et le prestataire partagent le rôle contributor : la relation enregistrée pour le membre (space_members.relation,
@@ -119,6 +127,7 @@ function phrase(l, moi, nom, mots, rel, proprio) {
     case 'changement_role': return le + qui + ' a changé un rôle (' + role + ').';
     case 'ouverture': return le + 'un accès a été ouvert' + fin + '.';
     case 'fermeture': return le + (vous ? 'votre accès a pris fin (' + (l.detail.raison || 'fin du rôle') + ').' : proprio && cible ? 'l\'accès ' + (/^[aeiouyhâàéèêîïôû]/i.test(qui_part()) ? 'd\'' : 'de ') + qui_part() + ' a pris fin.' : 'un accès a pris fin.');
+    case 'programme': return le + (l.qui === moi ? 'vous avez ' : qui + ' a ') + (l.detail.geste === 'importer' ? 'importé le programme.' : 'modifié le programme.');
     case 'signalement': return le + (l.qui === moi ? 'vous avez signalé un accès inattendu.' : 'un accès inattendu a été signalé.');
     default: return le + 'une action a été inscrite.';
   }
@@ -212,14 +221,20 @@ async function pagePersonnes(db, c, espace) {
   return { blocs, vide: seul && g.gerer ? 'Invitez les personnes de votre projet.' : null };
 }
 
-const PAGES = { acces: pageAcces, journal: pageJournal, personnes: pagePersonnes };
+/* ---------- Programme (module Temps) ---------- */
+/* la page ne porte qu'un bloc : le module, que l'écran charge depuis /api/temps (vue calculée pour cette personne, au serveur) */
+async function pageDeroule(db, c, espace) {
+  return { blocs: [{ id: 'deroule-module', type: 'module', module: 'temps', api: REG.module('temps').api + '?espace=' + encodeURIComponent(espace) }], vide: null };
+}
+
+const PAGES = { acces: pageAcces, journal: pageJournal, personnes: pagePersonnes, deroule: pageDeroule };
 
 /* la projection : personne, projet, gabarit → page. Sans personne (visiteur), rien du lot 1 n'est publié : aucun bloc. */
 export async function projeter(db, u, { espace, gabarit }) {
   if (!GABARITS.includes(gabarit)) refus(400, 'Gabarit inconnu.');
   if (!u) return { gabarit, domaine: null, mots: { titre: TITRES[gabarit] || gabarit }, visuel: null, blocs: [], dock: null, vide: null, public: true };
   const c = await contexte(db, u, espace);
-  if (!pagesDe(c.s).includes(gabarit)) refus(404, 'Cette page n\'existe pas encore dans ce projet.');   /* la même règle que le Dock */
+  if (!pagesDe(c.s, await actifsDe(db, espace)).includes(gabarit)) refus(404, 'Cette page n\'existe pas encore dans ce projet.');   /* la même règle que le Dock */
   const p = await PAGES[gabarit](db, c, espace), maRelation = (await relations(db, espace))[u.id];
   return { gabarit, domaine: c.domaine, mots: { titre: TITRES[gabarit], projet: c.titre, role: premierMot(maRelation || c.mots[c.s.role] || RELATION[c.s.role]) }, visuel: null, blocs: p.blocs, dock: null, vide: p.vide || null };
 }

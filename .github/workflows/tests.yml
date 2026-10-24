@@ -61,6 +61,8 @@ jobs:
       - run: node --test --test-concurrency=1 tests/attente.test.cjs
       # les quotas partagés entre instances et la garde des écritures (migration 2026-10-24-06)
       - run: node --test --test-concurrency=1 tests/quotas.test.cjs
+      # le module Temps (phase fondatrice, migration 2026-10-24-07) : six comptes, propagation, refus, conflits entre deux instances, atomicité, Comparaison, isolation de la démonstration
+      - run: node --test --test-concurrency=1 tests/temps.test.cjs
   navigateur:
     name: Parcours navigateur
     needs: suites

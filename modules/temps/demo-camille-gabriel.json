@@ -1,0 +1,24 @@
+{
+  "_": "Projet de démonstration de la phase fondatrice (module Temps). Personnes et données entièrement fictives ; les adresses sont sur le domaine réservé demo.aime.test, qui ne peut recevoir aucun courrier. Utilisé seulement par scripts/temps-demo.mjs et par les tests, jamais par un vrai projet.",
+  "titre": "Mariage Camille & Gabriel",
+  "modele": "mariage",
+  "personnes": [
+    { "cle": "camille", "nom": "Camille", "email": "camille@demo.aime.test", "role": "owner", "relation": null },
+    { "cle": "gabriel", "nom": "Gabriel", "email": "gabriel@demo.aime.test", "role": "editor", "relation": "marié" },
+    { "cle": "lea", "nom": "Léa", "email": "lea@demo.aime.test", "role": "editor", "relation": "coordinatrice" },
+    { "cle": "alex", "nom": "Alex", "email": "alex@demo.aime.test", "role": "contributor", "relation": "musicien" },
+    { "cle": "sarah", "nom": "Sarah", "email": "sarah@demo.aime.test", "role": "contributor", "relation": "traiteur" },
+    { "cle": "emma", "nom": "Emma", "email": "emma@demo.aime.test", "role": "guest", "relation": "invitée" }
+  ],
+  "moments": [
+    { "id": "installation", "titre": "Installation des prestataires", "lieu": "Grange et jardin", "debut": "12:30", "fin": "14:30", "audience": "equipe", "note": "Livraisons par l'entrée nord ; balances son à 14 h." },
+    { "id": "ceremonie", "titre": "Cérémonie laïque", "lieu": "Jardin des tilleuls", "debut": "15:00", "fin": "15:45", "audience": "public", "planB": "Orangerie" },
+    { "id": "cocktail", "titre": "Cocktail", "lieu": "Terrasse", "debut": "16:00", "fin": "18:30", "audience": "public", "responsable": "sarah", "note": "Bars ouverts à 15 h 50 ; 120 verres." },
+    { "id": "set-cocktail", "titre": "Set acoustique du cocktail", "lieu": "Terrasse", "debut": "16:15", "fin": "17:45", "audience": "equipe", "responsable": "alex", "note": "Une prise 16 A au pied de l'escalier." },
+    { "id": "brief-traiteur", "titre": "Point coordination et traiteur", "lieu": "Office", "debut": "17:45", "fin": "18:00", "audience": "organisation" },
+    { "id": "diner", "titre": "Dîner", "lieu": "Grange", "debut": "18:30", "fin": "21:30", "audience": "public", "responsable": "sarah", "note": "Service à l'assiette, 3 temps." },
+    { "id": "discours", "titre": "Discours des témoins", "lieu": "Grange", "debut": "21:00", "fin": "21:20", "audience": "public" },
+    { "id": "bal", "titre": "Ouverture du bal", "lieu": "Grange", "debut": "22:00", "fin": "01:30", "audience": "public", "responsable": "alex" },
+    { "id": "demontage", "titre": "Démontage", "lieu": "Grange et jardin", "debut": "02:00", "fin": "03:00", "audience": "equipe" }
+  ]
+}

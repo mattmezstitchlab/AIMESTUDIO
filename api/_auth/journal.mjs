@@ -1,7 +1,7 @@
 // AIME · le journal des espaces (règle 11) : qui a fait quoi, sur quel espace, envers qui. En ajout seul (db/migrations/2026-10-24-01-journal.sql).
 // Jamais de contenu sensible : des identifiants, un rôle, un nombre de jours ; ni adresse e-mail, ni jeton, ni nom.
 // Tant que la migration n'est pas appliquée sur une base, rien n'est écrit et la réponse le dit (journal: false) ; l'action, elle, se fait.
-export const ACTIONS_JOURNAL = ['creation', 'invitation', 'acceptation', 'retrait', 'annulation', 'changement_role', 'ouverture', 'fermeture', 'signalement'];
+export const ACTIONS_JOURNAL = ['creation', 'invitation', 'acceptation', 'retrait', 'annulation', 'changement_role', 'ouverture', 'fermeture', 'signalement', 'programme'];
 let pret = null;
 async function table(db) {
   if (pret !== null) return pret;

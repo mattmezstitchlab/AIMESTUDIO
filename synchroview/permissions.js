@@ -24,6 +24,8 @@ var RULES={
   read:function(s){return ROLES.indexOf(s.role)>=0?yes('space.read : tout membre'):no('space.read','pas membre de cet espace')},
   /* 6 · suppression réservée au propriétaire */
   delete:function(s){return s.role==='owner'?yes('space.delete : propriétaire'):no('space.delete','réservé au propriétaire')},
+  /* comparer les vues (module Temps) : le propriétaire seulement, et jamais au-delà de ce qu'il peut lire lui-même (intersection, au serveur) */
+  compare:function(s){return s.role==='owner'?yes('space.compare : propriétaire'):no('space.compare','comparer les vues est réservé au propriétaire')},
   /* 5 · membres et invitations limités aux rôles autorisés */
   manage_members:function(s){return s.role==='owner'?yes('space.manage_members : propriétaire'):no('space.manage_members','réservé au propriétaire')},
   invite:function(s,r){var target=r.role;if(['editor','contributor','viewer','guest'].indexOf(target)<0)return no('space.invite','rôle invité inconnu');
@@ -39,6 +41,8 @@ var RULES={
   /* 2 · un contributeur ne modifie que ses contenus ou ceux qui lui sont attribués */
   edit:function(s,r){if(ORGA[s.role])return yes('event.edit : organisation');if(s.role==='contributor'&&(r.assigneeId===s.id||r.authorId===s.id))return yes('event.edit : contributeur, moment attribué ou créé par lui');
    return no('event.edit',s.role==='contributor'?'ce moment ne lui est pas attribué':'lecture seule pour ce rôle')},
+  /* confirmer avoir vu un nouvel horaire : la personne responsable du moment, et elle seule (un accusé de lecture, pas un droit de modifier) */
+  confirm:function(s,r){return r.assigneeId&&r.assigneeId===s.id?yes('event.confirm : responsable du moment'):no('event.confirm','seule la personne responsable de ce moment le confirme')},
   delete:function(s,r){if(s.role==='owner')return yes('event.delete : propriétaire');if(s.role==='contributor'&&r.authorId===s.id)return yes('event.delete : contributeur, son propre moment');return no('event.delete','réservé au propriétaire (ou à l\'auteur contributeur)')}
  },
  /* ---- 1 · les documents : seulement les personnes explicitement autorisées ---- */
