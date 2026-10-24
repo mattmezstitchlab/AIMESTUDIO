@@ -79,3 +79,10 @@ textarea{width:100%;font:13px/1.55 ui-monospace,Menlo,monospace;color:var(--encr
 #copier{margin-top:12px}
 footer{border-top:1px solid var(--trait);padding:26px 0 60px;font-size:13px;color:var(--doux)}
 .noscript{padding:20px}
+/* les modules d'AIME (capacites/modules.js, lus dans modules/registre.js) */
+.modules-aime{list-style:none;margin:0;padding:0;display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.mod-aime{border:1px solid var(--trait);background:var(--surface);border-radius:16px;padding:16px;display:grid;gap:8px;align-content:start}
+.mod-aime h3{margin:0;font-size:18px}.mod-aime p{margin:0}
+.mod-tete{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.mod-dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:0;font-size:13px}.mod-dl dt{font-weight:600}.mod-dl dd{margin:0;overflow-wrap:anywhere}
+.mod-aime .b{justify-self:start;min-height:44px;display:inline-flex;align-items:center;font-size:14px;border:1px solid var(--encre);border-radius:24px;padding:9px 16px;background:var(--encre);color:#0b0b0e;text-decoration:none}

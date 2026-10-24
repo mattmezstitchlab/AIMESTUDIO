@@ -3,7 +3,9 @@
    chaque geste repart au serveur (POST /api/espaces), qui revérifie tout. Les textes venus de la base passent par textContent.
    AIMEProjet.ouvrir(espace, gabarit)   → affiche la page dans #projet et le Dock du projet dans #dock-site */
 (function(){'use strict';
-var GAB=['acces','journal','personnes'];
+/* les pages qu'un projet peut servir : celles du registre des modules (modules/registre.js) ; le serveur décide lesquelles CE projet sert */
+var GAB=window.AIMEModules?AIMEModules.servis({temps:true}):['acces','journal','personnes'];
+var module_=null;   /* le module monté dans la page en cours (Temps), arrêté quand on change de page */
 function $(id){return document.getElementById(id)}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function date(d){return d?new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}):''}
@@ -20,10 +22,10 @@ function dock(){var z=$('dock-site');if(!z||!window.AIMEDockVue)return;
  var lieu=(rep.dock.lieux||[]).filter(function(l){return l.gabarit===courant})[0];
  AIMEDockVue.poser(z,rep.dock,{mode:'page',id:'dock-site',actif:lieu?lieu.id:null});document.body.classList.add('avec-dock');
  if(dockPose)return;dockPose=true;
- z.addEventListener('aime:dock-lieu',function(e){var l=(rep&&rep.dock&&rep.dock.lieux||[]).filter(function(x){return x.id===e.detail.id})[0];if(!l||!l.gabarit)return;e.preventDefault();ouvrir(espace,l.gabarit)});
+ z.addEventListener('aime:dock-lieu',function(e){var l=(rep&&rep.dock&&rep.dock.lieux||[]).filter(function(x){return x.id===e.detail.id})[0];if(!l||!l.gabarit)return;e.preventDefault();ouvrir(espace,l.gabarit,{pousser:true})});
  z.addEventListener('aime:dock-geste',function(e){var id=e.detail.id;
-  if(id==='inviter'){e.preventDefault();ouvrir(espace,'personnes').then(function(){var f=$('pInviter');if(f){f.scrollIntoView({block:'center'});var s=f.querySelector('select,input');if(s)s.focus()}})}
-  else if(id==='inattendu'){e.preventDefault();ouvrir(espace,'acces').then(function(){var d=$('pSignaler');if(d){d.open=true;d.scrollIntoView({block:'center'});var t=d.querySelector('textarea');if(t)t.focus()}})}})}
+  if(id==='inviter'){e.preventDefault();ouvrir(espace,'personnes',{pousser:true}).then(function(){var f=$('pInviter');if(f){f.scrollIntoView({block:'center'});var s=f.querySelector('select,input');if(s)s.focus()}})}
+  else if(id==='inattendu'){e.preventDefault();ouvrir(espace,'acces',{pousser:true}).then(function(){var d=$('pSignaler');if(d){d.open=true;d.scrollIntoView({block:'center'});var t=d.querySelector('textarea');if(t)t.focus()}})}})}
 
 /* ---------- les blocs ---------- */
 var RENDU={
@@ -33,6 +35,10 @@ var RENDU={
  fin:function(b){var p=el('p','p-fin',b.texte);if(b.jusquau)p.classList.add('a-fin');return p},
  compte:function(b){return el('p','leg',b.texte)},
  ligne:function(b){var li=el('li','p-ligne'+(b.moi?' moi':''));li.appendChild(el('span',null,b.texte));if(b.motif){var q=el('q','p-motif',b.motif);li.appendChild(q)}return li},
+ activer:function(b){var c=el('div','carte-c');c.appendChild(el('p',null,b.texte));if(b.aide)c.appendChild(el('p','leg',b.aide));var bt=el('button','b b-p','Importer le programme type');bt.type='button';
+  bt.onclick=function(){bt.disabled=true;fetch('/api/temps',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'activer',espace:espace})}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){
+   if(r.status===200&&j.ok){dire('Programme ajouté : '+j.moments+' moments.');ouvrir(espace,'deroule',{pousser:true})}else{bt.disabled=false;dire(j.raison||'Import refusé.',true)}})}).catch(function(){bt.disabled=false;dire('Serveur injoignable.',true)})};c.appendChild(bt);return c},
+ module:function(b){var z=el('div','p-module');if(module_){module_.arreter();module_=null}if(b.module==='temps'&&window.AIMETemps)module_=AIMETemps.monter(z,{espace:espace,dire:dire});else z.appendChild(el('p','leg','Ce module n\'est pas disponible dans cette page.'));return z},
  personne:function(b){var d=el('div','carte-c');d.appendChild(el('p',null,b.nom+(b.moi?' (vous)':'')+(b.relation?' · '+b.relation:'')));return d},
  liste:function(b){var c=el('div','carte-c');c.appendChild(el('h2','k','Les personnes du projet'));var u=el('ul','p-liste p-personnes');
   (b.personnes||[]).forEach(function(x){var li=el('li','lgn');var t=el('span',null,x.nom+(x.moi?' (vous)':'')+' · '+x.relation+(x.jusquau?' · jusqu\'au '+date(x.jusquau):'')+(x.email?' · '+x.email:''));li.appendChild(t);
@@ -70,19 +76,23 @@ function inviter(b){var c=el('form','carte-c pile');c.id='pInviter';c.appendChil
 
 /* garder : le formulaire d'invitation déjà affiché (avec le lien qu'il vient de produire), reposé tel quel au lieu d'être recréé */
 function composerPage(garder){var C=$('pCorps');C.textContent='';
- var nav=el('nav','p-onglets');nav.setAttribute('aria-label','Pages du projet');
- (rep.dock&&rep.dock.lieux||[]).forEach(function(l){if(GAB.indexOf(l.gabarit)<0)return;var a=el('a','b b-s',l.nom);a.href='/projets/?espace='+encodeURIComponent(espace)+'&page='+l.gabarit;if(l.gabarit===courant)a.setAttribute('aria-current','page');a.onclick=function(e){e.preventDefault();ouvrir(espace,l.gabarit)};nav.appendChild(a)});
- C.appendChild(nav);
+ /* une seule navigation générale : le Dock. La rangée d'onglets ne sert que de repli, quand le Dock universel n'est pas posé
+    (script absent, réponse sans Dock) : aucune page ne perd alors son accès */
+ var avecDock=!!(rep.dock&&window.AIMEDockVue&&$('dock-site'));
+ var nav=el('nav','p-onglets');nav.setAttribute('aria-label','Pages du projet');if(avecDock)nav.hidden=true;
+ (rep.dock&&rep.dock.lieux||[]).forEach(function(l){if(GAB.indexOf(l.gabarit)<0)return;var a=el('a','b b-s',l.nom);a.href='/projets/?espace='+encodeURIComponent(espace)+'&page='+l.gabarit;if(l.gabarit===courant)a.setAttribute('aria-current','page');a.onclick=function(e){e.preventDefault();ouvrir(espace,l.gabarit,{pousser:true})};nav.appendChild(a)});
+ if(!avecDock)C.appendChild(nav);
  var h=el('h2','p-titre',(rep.mots&&rep.mots.titre)||'');h.tabIndex=-1;h.id='pTitre';C.appendChild(h);
  var lignes=null;(rep.blocs||[]).forEach(function(b){var f=RENDU[b.type];if(!f)return;var n=garder&&b.id==='personnes-inviter'?garder:f(b);if(!n)return;if(b.type==='ligne'){if(!lignes){lignes=el('ol','p-journal');C.appendChild(lignes)}lignes.appendChild(n)}else C.appendChild(n)});
  if(rep.vide)C.appendChild(el('p','leg',rep.vide))}
 
-function ouvrir(id,g){espace=id;courant=GAB.indexOf(g)>=0?g:'acces';var P=$('projet');if(!P)return Promise.resolve();
- P.hidden=false;if($('espaces'))$('espaces').hidden=true;
+function ouvrir(id,g,o){o=o||{};if(module_){module_.arreter();module_=null}espace=id;courant=GAB.indexOf(g)>=0?g:'acces';var P=$('projet');if(!P)return Promise.resolve();
+ P.hidden=false;document.body.classList.add('en-projet');if($('espaces'))$('espaces').hidden=true;
  return lire(courant).then(function(j){
   if(j._code!==200||!j.ok){rep=null;dock();$('pCorps').textContent='';$('pCorps').appendChild(el('p','alerte',j._code===404?'Ce projet est introuvable, ou votre accès a pris fin.':(j.raison||'Le projet n\'a pas pu être chargé.')));return}
   rep=j;$('tTitre').textContent=(j.mots&&j.mots.projet)||'Projet';$('tSous').textContent=(j.mots&&j.mots.role)||'';document.title=((j.mots&&j.mots.projet)||'Projet')+' · AIME';
-  try{history.replaceState(null,'','/projets/?espace='+encodeURIComponent(espace)+(courant!=='acces'?'&page='+courant:''))}catch(_){}
+  /* le retour du navigateur revient à la page précédente du projet : chaque passage d'une page à l'autre (Dock, repli) est une entrée d'historique */
+  try{var adr='/projets/?espace='+encodeURIComponent(espace)+(courant!=='acces'?'&page='+courant:'');if(o.pousser&&location.pathname+location.search!==adr)history.pushState({espace:espace,page:courant},'',adr);else history.replaceState({espace:espace,page:courant},'',adr)}catch(_){}
   composerPage();dock();var t=$('pTitre');if(t)t.focus({preventScroll:true})})
  .catch(function(){$('pCorps').textContent='';$('pCorps').appendChild(el('p','alerte','Serveur injoignable. Réessayez dans un instant.'))})}
 
@@ -92,5 +102,6 @@ function rafraichir(){if(!espace)return Promise.resolve();var f=document.activeE
  return lire(courant).then(function(j){if(j._code!==200||!j.ok)return ouvrir(espace,courant);rep=j;var y=window.scrollY;composerPage(garder);dock();window.scrollTo(0,y);
   if(f&&document.body.contains(f))f.focus({preventScroll:true});else{var t=$('pTitre');if(t)t.focus({preventScroll:true})}}).catch(function(){})}
 
+window.addEventListener('popstate',function(){var q=new URLSearchParams(location.search),id=q.get('espace');if(espace&&id===espace)ouvrir(espace,q.get('page')||'acces')});
 window.AIMEProjet={ouvrir:ouvrir,rafraichir:rafraichir,RENDU:RENDU};
 })();
