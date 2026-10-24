@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Chacun son écran · Exemples · AIME</title>
+<meta name="description" content="Sept personnes, sept téléphones, un seul mariage : quand quelque chose arrive, seuls les écrans concernés sonnent.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin.woff2") format("woff2")}
+@font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin-ext.woff2") format("woff2");unicode-range:U+0100-024F,U+1E00-1EFF}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2")}
+@font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin-ext.woff2") format("woff2");unicode-range:U+0100-024F,U+1E00-1EFF}
+</style>
+<style>
+  /* Le design system de lemondeaime.com : fond nuit, encre claire, Cal Sans pour les titres, Inter pour le texte */
+  :root {
+    --desk: #0A0A0C; --ink: #EDEDF0; --soft: #9C9CA8; --faint: #7E7E8A; --line: #2B2B33;
+    --ui: "Inter Variable", Inter, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --display: "Cal Sans", "Inter Variable", Inter, -apple-system, sans-serif;
+    --conic: conic-gradient(#FB7185, #F59E0B, #7C5CFF, #22D3EE, #FB7185);
+    --paper: #F4F4F2; --encre: #141416;
+  }
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --desk: #0A0A0C; } }
+  :root[data-theme="light"] { --desk: #0A0A0C; }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body { background: var(--desk); color: var(--ink); font: 400 17px/1.55 var(--ui); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  button { font: inherit; color: inherit; }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1360px; margin: 0 auto; padding: clamp(18px, 3vh, 28px) max(20px, env(safe-area-inset-left, 0px)) 0; }
+  .logo { font: 600 19px/1 var(--ui); letter-spacing: -.01em; }
+  .logo sup { font-size: 9px; font-weight: 500; }
+  .nav { display: flex; align-items: center; gap: 22px; font: 500 15px var(--ui); color: var(--soft); }
+  .nav button { border: 0; background: none; padding: 0; color: var(--soft); cursor: pointer; }
+  .nav button:hover, .nav button:focus-visible { color: var(--ink); outline: none; }
+  .nav .u { text-decoration: underline; text-underline-offset: 4px; color: var(--ink); }
+
+  .cx-tete { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: clamp(18px, 3vw, 40px); align-items: baseline; max-width: 1180px; margin: clamp(36px, 7vh, 72px) auto clamp(28px, 5vh, 48px); padding: 0 max(20px, env(safe-area-inset-left, 0px)); }
+  .cx-n { grid-row: 1 / span 2; margin: 0; font: 500 13px var(--ui); letter-spacing: .2em; color: var(--faint); }
+  .cx-tete h1 { margin: 0; font: 400 clamp(34px, 5vw, 64px)/1.03 var(--display); letter-spacing: -.024em; text-wrap: balance; }
+  .cx-tete p { grid-column: 2; margin: 20px 0 0; max-width: 640px; font-size: clamp(16px, 1.5vw, 19px); color: var(--soft); text-wrap: pretty; }
+
+  /* ---------- Les téléphones, comme sur l'accueil ---------- */
+  .ecrans { list-style: none; max-width: 1360px; margin: 0 auto; padding: 0 max(20px, env(safe-area-inset-left, 0px)); display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 22px); }
+  .tel { margin: 0; display: grid; gap: 16px; align-content: start; min-width: 0; transition: opacity .5s; }
+  .tel-ecran { position: relative; aspect-ratio: 390 / 780; border-radius: clamp(20px, 2.2vw, 30px); overflow: hidden; background: #111114;
+    box-shadow: 0 0 0 1px var(--line), 0 0 0 6px #0F0F12, 0 0 0 7px var(--line), 0 30px 80px -30px rgba(0,0,0,.9); transition: box-shadow .5s, transform .3s; }
+  .tel.ne .tel-ecran { box-shadow: 0 0 0 1px var(--line), 0 0 0 6px #0F0F12, 0 0 0 7px var(--role), 0 30px 80px -30px rgba(0,0,0,.9); }
+  .tel-attente { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; background: #0E0E11; transition: opacity .9s; }
+  .tel-attente::before { content: ""; width: 44%; height: 2px; background: linear-gradient(90deg, transparent, var(--role), transparent); opacity: .6; }
+  .tel.ne .tel-attente { opacity: 0; pointer-events: none; }
+  .tel figcaption { display: grid; gap: 4px; padding: 0 2px; text-align: center; opacity: .85; transition: opacity .6s; }
+  .tel.ne figcaption { opacity: 1; }
+  .tel figcaption b { font: 600 15px var(--ui); white-space: nowrap; }
+  .tel figcaption b::before { content: ""; display: inline-block; width: .62em; height: .62em; margin-right: .5em; border-radius: 50%; background: var(--role); vertical-align: .02em; }
+  .tel figcaption span { font-size: 12.5px; line-height: 1.4; color: var(--soft); }
+  .tel figcaption em { font-style: normal; font: 500 11.5px var(--ui); color: var(--faint); min-height: 1.3em; }
+  body.event .tel.idle { opacity: .32; }
+
+  /* La page d'un rôle, dessinée à 390 px puis mise à l'échelle, comme les écrans du site */
+  .page { position: absolute; left: 0; top: 0; width: 390px; height: 780px; transform-origin: 0 0; background: var(--paper); color: var(--encre); font-family: var(--ui); overflow: hidden; }
+  .hero { height: 330px; background: var(--role); padding: 0 30px 34px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; }
+  .hero .k { font: 600 11px var(--ui); letter-spacing: .24em; text-transform: uppercase; opacity: .72; margin-bottom: 12px; }
+  .hero h2 { margin: 0; font: 400 58px/1 var(--display); letter-spacing: -.03em; }
+  .hero p { margin: 10px 0 0; font: italic 400 16px var(--ui); letter-spacing: -.01em; }
+  .p-body { padding: 34px 30px 0; }
+  .lead { margin: 0; font: 400 25px/1.2 var(--display); letter-spacing: -.02em; text-align: center; text-wrap: balance; }
+  .rule { height: 1px; background: rgba(20,20,22,.12); margin: 34px 0 26px; }
+  .count { display: flex; align-items: flex-end; gap: 14px; margin: 0; }
+  .count b { font: 400 66px/.9 var(--display); letter-spacing: -.03em; }
+  .count em { font: italic 400 17px/1.15 var(--ui); padding-bottom: 6px; }
+  .live { margin: 0; font: 500 15px/1.4 var(--ui); color: #55555c; }
+  .live b { display: block; font: 600 11px var(--ui); letter-spacing: .2em; text-transform: uppercase; color: #8a8a92; margin-bottom: 6px; }
+
+  /* Les notifications : des bannières qui descendent sur l'écran, comme sur un vrai téléphone */
+  .notifs { position: absolute; left: 14px; right: 14px; top: 18px; z-index: 2; display: grid; gap: 10px; }
+  .nt { border-radius: 24px; padding: 16px 18px; font: 500 16.5px/1.35 var(--ui); background: rgba(20,20,22,.94); color: #fff; box-shadow: 0 18px 40px -18px rgba(0,0,0,.55); animation: drop .55s cubic-bezier(.2,.85,.3,1.15); }
+  .nt b { display: flex; align-items: center; gap: 8px; font: 600 12px var(--ui); letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); margin-bottom: 6px; }
+  .nt b::before { content: ""; width: 16px; height: 16px; border-radius: 50%; background: var(--conic); }
+  .nt.sent { background: rgba(255,255,255,.92); color: var(--encre); }
+  .nt.sent b { color: rgba(20,20,22,.55); }
+  .nt.old { opacity: .55; transform: scale(.96); transform-origin: top center; transition: opacity .4s, transform .4s; }
+  @keyframes drop { from { opacity: 0; transform: translateY(-24px) scale(.96); } }
+  .tel.ring .tel-ecran { animation: ring .6s ease; }
+  @keyframes ring { 15% { transform: rotate(-2.4deg); } 30% { transform: rotate(2.4deg); } 45% { transform: rotate(-1.6deg); } 60% { transform: rotate(1.6deg); } 75% { transform: none; } }
+
+  /* L'orbe porte chaque message d'un écran à l'autre */
+  .orbe { position: fixed; z-index: 50; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; pointer-events: none; opacity: 0;
+    transition: transform .55s cubic-bezier(.4,.1,.2,1), opacity .4s; }
+  .orbe::before { content: ""; position: absolute; inset: -16px; border-radius: 50%; background: var(--conic); filter: blur(16px); opacity: .5; }
+  .orbe i { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; box-shadow: inset -4px -5px 10px rgba(0,0,0,.25), inset 3px 3px 7px rgba(255,255,255,.45); }
+  .orbe i::before { content: ""; position: absolute; inset: -25%; background: var(--conic); animation: spin 5s linear infinite; }
+  @keyframes spin { to { transform: rotate(1turn); } }
+
+  .ecrans-etat { min-height: 3em; max-width: 760px; margin: 26px auto 0; padding: 0 20px; text-align: center; font: 500 16px/1.5 var(--ui); color: var(--ink); transition: opacity .3s; }
+  .ecrans-etat.fade { opacity: 0; }
+  .ctrl { display: grid; justify-items: center; gap: 14px; padding: 6px 20px 30px; }
+  .go { position: relative; z-index: 0; border: 0; border-radius: 999px; background: var(--ink); color: var(--desk); padding: 14px 28px; font: 600 15px var(--ui); cursor: pointer; }
+  .go::before { content: ""; position: absolute; inset: -3px; z-index: -1; border-radius: inherit; background: var(--conic); }
+  .go:focus-visible { outline: 2px solid var(--ink); outline-offset: 5px; }
+  .evs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 900px; }
+  .ev { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 9px 16px; font: 500 14px var(--ui); color: var(--ink); cursor: pointer; transition: border-color .2s, background-color .2s; }
+  .ev:hover, .ev:focus-visible { border-color: var(--ink); outline: none; }
+  .ev.done { background: #1A1A1F; border-color: var(--soft); }
+  .ev:disabled { opacity: .35; cursor: default; }
+
+  /* ---------- Le dock du rôle : quatre lieux, et le + irisé qui porte les gestes ---------- */
+  .dock { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 4; height: 86px; border-radius: 30px; background: #0F0F12; box-shadow: 0 0 0 1px #2B2B33, 0 18px 40px -16px rgba(0,0,0,.6);
+    display: grid; grid-template-columns: 1fr 1fr 86px 1fr 1fr; align-items: center; padding: 0 6px; }
+  .dk { position: relative; display: grid; justify-items: center; gap: 6px; border: 0; background: none; padding: 8px 0; cursor: pointer; color: #9C9CA8; font: 500 12.5px var(--ui); }
+  .dk svg { width: 28px; height: 28px; fill: none; stroke: #EDEDF0; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .dk.on { color: #EDEDF0; }
+  .dk .badge { position: absolute; top: 2px; left: 50%; margin-left: 6px; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: var(--role); color: #141416; font: 700 14px/24px var(--ui); text-align: center; transform: scale(0); transition: transform .3s cubic-bezier(.34,1.6,.64,1); }
+  .dk .badge.show { transform: scale(1); }
+  .dk .badge.pop { animation: pop .45s ease; }
+  @keyframes pop { 40% { transform: scale(1.35); } }
+  .plus { justify-self: center; position: relative; z-index: 0; width: 66px; height: 66px; border: 0; border-radius: 50%; background: #141418; cursor: pointer; display: grid; place-items: center; }
+  .plus::before { content: ""; position: absolute; inset: -3px; z-index: -1; border-radius: 50%; background: var(--conic); }
+  .plus::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 50%; background: #141418; }
+  .plus svg { width: 30px; height: 30px; stroke: #EDEDF0; stroke-width: 2; stroke-linecap: round; transition: transform .35s cubic-bezier(.34,1.4,.64,1); }
+  .tel.open .plus svg { transform: rotate(45deg); }
+  .radial { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+  .radial::before { content: ""; position: absolute; inset: 0; background: rgba(10,10,12,.35); opacity: 0; transition: opacity .3s; }
+  .tel.open .radial { pointer-events: auto; }
+  .tel.open .radial::before { opacity: 1; }
+  .rd { position: absolute; width: 156px; min-height: 52px; margin: -26px 0 0 -78px; border: 0; border-radius: 26px; padding: 10px 14px; background: #0F0F12; color: #EDEDF0; box-shadow: 0 0 0 1px #2B2B33, 0 14px 30px -12px rgba(0,0,0,.6);
+    font: 600 15px/1.2 var(--ui); cursor: pointer; transform: translate(var(--dx), var(--dy)) scale(.4); opacity: 0; transition: transform .4s cubic-bezier(.34,1.4,.64,1), opacity .25s; }
+  .tel.open .rd { transform: none; opacity: 1; }
+  .tel.open .rd:nth-child(2) { transition-delay: .04s; } .tel.open .rd:nth-child(3) { transition-delay: .08s; }
+  .rd.hit { box-shadow: 0 0 0 3px var(--role), 0 14px 30px -12px rgba(0,0,0,.6); }
+  .toast { position: absolute; left: 50%; bottom: 112px; z-index: 6; transform: translate(-50%, 10px); opacity: 0; max-width: 330px; padding: 10px 16px; border-radius: 18px; background: rgba(20,20,22,.94); color: #fff; font: 500 14px/1.3 var(--ui); text-align: center; transition: opacity .3s, transform .3s; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .cx-note { margin: 4px 0 28px; padding: 0 20px; font: 500 12.5px/1.5 var(--ui); letter-spacing: .04em; color: var(--faint); text-align: center; }
+
+  @media (max-width: 1180px) { .ecrans { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 960px; row-gap: 30px; } }
+  @media (max-width: 680px) {
+    .ecrans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cx-tete { grid-template-columns: 1fr; } .cx-n { grid-row: auto; margin-bottom: 10px; } .cx-tete p { grid-column: 1; }
+    .nav .hide-s { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tel.ring .tel-ecran, .nt, .orbe i::before { animation: none; }
+    .orbe { transition: opacity .2s; }
+  }
+</style>
+
+</head>
+<body>
+<header>
+  <a class="logo" href="/" style="color:inherit;text-decoration:none">AIME<sup>®</sup></a>
+  <nav class="nav"><a class="hide-s" href="/exemples/" style="color:inherit;text-decoration:none">Les exemples</a><button class="u" id="reset" type="button">Recommencer</button></nav>
+</header>
+<section class="cx-tete">
+  <p class="cx-n">Exemple</p>
+  <h1>Le réel bouge, chacun le sait.</h1>
+  <p>Sept personnes, sept téléphones, un seul mariage. Quand quelque chose arrive, seuls les écrans concernés sonnent. Celui qui reste muet est la preuve.</p>
+</section>
+<ul class="ecrans" id="ecrans" aria-label="Le même mariage, vu par sept personnes"></ul>
+<p class="ecrans-etat" id="etat" aria-live="polite">Touchez « Activer » : chaque téléphone naît, puis la partie commence.</p>
+<section class="ctrl">
+  <button class="go" id="go" type="button">Activer les sept téléphones</button>
+  <div class="evs" id="evs" aria-label="Les événements, à déclencher à la main"></div>
+</section>
+<p class="cx-note">Démonstration · données fictives · tout tourne dans ce navigateur. En vrai, chaque téléphone rejoint la partie par un QR code, et le serveur n’envoie à chacun que ce qui le concerne.</p>
+<div class="orbe" id="orbe" aria-hidden="true"><i></i></div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const DAYS = Math.max(1, Math.ceil((new Date(2027, 5, 14) - new Date()) / 86400000));
+
+  /* ---------- Les sept téléphones : une couleur, une personne (palette du site) ---------- */
+  const PH = [
+    { id: 'mariee', name: 'La mariée', desc: 'Tout : programme, réponses, prestataires.', c: '#FB7185', k: 'Notre mariage', lead: 'Tout votre jour, en un seul endroit.', count: true, note: 67 },
+    { id: 'temoin', name: 'Le témoin', desc: 'Sa mission, et la surprise.', c: '#34D399', k: 'Votre mission', lead: 'Ce qui vous concerne, et ce qu’on prépare en secret.', note: 74 },
+    { id: 'invite', name: 'L’invité', desc: 'Le programme public, le lieu, sa réponse.', c: '#22D3EE', k: 'Vous êtes invité', lead: 'Le programme, le lieu, votre réponse.', count: true, note: 79 },
+    { id: 'coord', name: 'La coordination', desc: 'Le déroulé, l’équipe, le plan B.', c: '#7C5CFF', k: 'Votre jour J, coordonné', lead: 'Le déroulé minute par minute, l’équipe, le plan B.', note: 62 },
+    { id: 'traiteur', name: 'Le traiteur', desc: 'Son service, l’effectif sans noms.', c: '#F59E0B', k: 'Votre mission', lead: 'Votre service, l’accès, l’effectif. Rien d’autre.', live: ['Effectif', '86 couverts, sans noms'], note: 57 },
+    { id: 'dj', name: 'Le DJ', desc: 'Ses horaires, et ce qui les touche.', c: '#E879F9', k: 'Votre mission', lead: 'Vos horaires, la salle, la sono. Rien d’autre.', note: 71 },
+    { id: 'photo', name: 'Le photographe', desc: 'Ses créneaux, l’accès, son contrat.', c: '#60A5FA', k: 'Votre mission', lead: 'Vos créneaux, l’accès, votre contrat. Rien d’autre.', note: 64 }
+  ];
+  const ix = id => PH.findIndex(p => p.id === id);
+
+
+  /* ---------- Le dock de chaque rôle (brief « Dock par rôle ») ---------- */
+  const IC = {
+    bell: '<path d="M6 17h12l-1.5-2.5V10a4.5 4.5 0 0 0-9 0v4.5z"/><path d="M10 19.5a2 2 0 0 0 4 0"/>',
+    chat: '<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4 3.5V16H6.5A2.5 2.5 0 0 1 4 13.5z"/>',
+    grid: '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+    cal: '<rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+    list: '<path d="M9 7h11M9 12h11M9 17h11"/><circle cx="5" cy="7" r=".8"/><circle cx="5" cy="12" r=".8"/><circle cx="5" cy="17" r=".8"/>',
+    gift: '<rect x="4" y="9" width="16" height="11" rx="2"/><path d="M4 13h16M12 9v11M12 9c-1.5-3.5-5-3.5-5-1s5 1 5 1zM12 9c1.5-3.5 5-3.5 5-1s-5 1-5 1z"/>',
+    prog: '<path d="M8 4v16M8 8h9M8 12h7M8 16h10"/>',
+    check: '<circle cx="12" cy="12" r="8"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/>',
+    pin: '<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/>',
+    time: '<circle cx="6" cy="6" r="1.6"/><circle cx="6" cy="12" r="1.6"/><circle cx="6" cy="18" r="1.6"/><path d="M6 7.6v2.8M6 13.6v2.8M10 6h10M10 12h7M10 18h9"/>',
+    team: '<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15.5 14.2a4.6 4.6 0 0 1 5.5 4.8"/>',
+    umb: '<path d="M3.5 12a8.5 8.5 0 0 1 17 0z"/><path d="M12 12v6a2 2 0 0 1-4 0"/>',
+    case: '<rect x="4" y="7.5" width="16" height="12" rx="2.5"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M4 12.5h16"/>',
+    count: '<path d="M5 19V9M10 19V5M15 19v-7M20 19V8"/>',
+    doc: '<path d="M7 3.5h7l4.5 4.5V20a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z"/><path d="M14 3.5V8h4.5M9.5 13h6M9.5 16.5h6"/>',
+    clock: '<circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/>',
+    key: '<circle cx="8.5" cy="12" r="4"/><path d="M12.5 12H20M17 12v3M20 12v2.5"/>'
+  };
+  const DOCK = {
+    mariee: { e: [['bell', 'Alertes'], ['chat', 'Messages'], ['grid', 'Projet'], ['cal', 'Calendrier']], a: [['Inviter'], ['Écrire'], ['Ajouter une tâche']] },
+    temoin: { e: [['bell', 'Alertes'], ['list', 'Ma part'], ['chat', 'Messages'], ['gift', 'Surprise']], a: [['Écrire aux témoins'], ['Lancer la surprise', 'surprise'], ['Ajouter une tâche']] },
+    invite: { e: [['prog', 'Programme'], ['check', 'Ma réponse'], ['pin', 'Lieu'], ['chat', 'Messages']], a: [['Écrire aux mariés'], ['Confirmer ma présence', 'rsvp'], ['Accès inattendu ?']] },
+    coord: { e: [['bell', 'Alertes'], ['time', 'Déroulé'], ['team', 'Équipe'], ['umb', 'Plan B']], a: [['Modifier le déroulé'], ['Activer le plan B', 'rain'], ['Valider un remplaçant']] },
+    traiteur: { e: [['bell', 'Alertes'], ['case', 'Mission'], ['count', 'Effectif'], ['doc', 'Documents']], a: [['Déposer un document'], ['Signaler un retard', 'late'], ['Écrire']] },
+    dj: { e: [['bell', 'Alertes'], ['case', 'Mission'], ['clock', 'Horaires'], ['doc', 'Documents']], a: [['Déposer la playlist'], ['Signaler un retard'], ['Écrire']] },
+    photo: { e: [['bell', 'Alertes'], ['case', 'Mission'], ['key', 'Accès'], ['doc', 'Documents']], a: [['Signaler un retard'], ['Annuler la prestation', 'cancel'], ['Écrire']] }
+  };
+  const svg = k => '<svg viewBox="0 0 24 24" aria-hidden="true">' + IC[k] + '</svg>';
+  const RAD = [[-150, 115], [-90, 118], [-30, 115]];
+  function dockHTML(p) {
+    const d = DOCK[p.id], cell = (x, k) => '<button type="button" class="dk' + (k === 0 ? ' on' : '') + '" data-k="' + k + '" aria-label="' + esc(x[1]) + '">' + svg(x[0]) + '<span>' + esc(x[1]) + '</span>' + (k === 0 ? '<span class="badge" aria-hidden="true"></span>' : '') + '</button>';
+    return '<div class="radial" role="menu" aria-label="Actions de ' + esc(p.name.toLowerCase()) + '">' + d.a.map((a, k) => {
+      const [deg, r] = RAD[k], x = 195 + Math.cos(deg * Math.PI / 180) * 120, y = 683 + Math.sin(deg * Math.PI / 180) * 110;
+      return '<button type="button" class="rd" role="menuitem" data-a="' + k + '" style="left:' + x.toFixed(0) + 'px;top:' + y.toFixed(0) + 'px;--dx:' + (195 - x).toFixed(0) + 'px;--dy:' + (723 - y).toFixed(0) + 'px">' + esc(a[0]) + '</button>';
+    }).join('') + '</div><div class="toast" aria-live="polite"></div>'
+      + '<nav class="dock" aria-label="Navigation de ' + esc(p.name.toLowerCase()) + '">' + cell(d.e[0], 0) + cell(d.e[1], 1)
+      + '<button type="button" class="plus" aria-haspopup="menu" aria-expanded="false" aria-label="Actions"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>'
+      + cell(d.e[2], 2) + cell(d.e[3], 3) + '</nav>';
+  }
+
+  /* ---------- Les événements : qui sonne, qui reste muet ---------- */
+  const EV = [
+    { id: 'surprise', label: 'Les témoins préparent une surprise', from: 'temoin',
+      say: 'Une surprise se prépare. La mariée n’entend rien : c’est voulu.',
+      to: { temoin: ['Envoyé', 'Surprise lancée : flash mob à 22 h 30.', 'sent'], coord: ['Surprise', 'Flash mob à 22 h 30 : prévoir la piste dégagée.'] } },
+    { id: 'rsvp', label: 'Un invité confirme sa présence', from: 'invite',
+      say: 'Un invité confirme. Seule la mariée est prévenue. Le traiteur voit l’effectif changer, sans nom et sans sonnerie.',
+      to: { invite: ['Envoyé', 'Présence confirmée. Merci !', 'sent'], mariee: ['Réponse', 'Thomas confirme sa présence. 87 invités sur 120.'], traiteur: ['Effectif', '87 couverts, sans noms', 'quiet'] } },
+    { id: 'late', label: 'Le traiteur annonce 30 minutes de retard', from: 'traiteur',
+      say: 'Un retard. Ceux qu’il touche sont prévenus ; l’invité n’est pas dérangé.',
+      to: { traiteur: ['Envoyé', 'Retard de 30 min transmis à la coordination.', 'sent'], coord: ['Retard', 'Traiteur : +30 min. Vin d’honneur prolongé.'], mariee: ['Retard', 'Le dîner commence à 20 h 30. Rien à faire.'], dj: ['Horaires', 'Ouverture du bal décalée à 22 h 45.'] } },
+    { id: 'cancel', label: 'Le photographe annule', from: 'photo',
+      say: 'Une annulation. L’orbe propose un remplaçant ; la coordination décide.',
+      to: { photo: ['Envoyé', 'Votre annulation est transmise.', 'sent'], coord: ['Proposition', 'Studio Lumière est libre ce jour-là. À valider.'], mariee: ['Prestataire', 'Le photographe annule. Une solution est en cours.'] } },
+    { id: 'rain', label: 'Il pleut : cérémonie à l’Orangerie', from: 'coord',
+      say: 'Il pleut. Le lieu public change : cette fois, tout le monde sonne.',
+      to: { coord: ['Envoyé', 'Plan B activé : Orangerie, installer à 13 h 30.', 'sent'], mariee: ['Plan B', 'La cérémonie passe à l’Orangerie, 15 h.'], temoin: ['Plan B', 'Cérémonie à l’Orangerie, 15 h.'], invite: ['Changement', 'La cérémonie a lieu à l’Orangerie, 15 h.'], traiteur: ['Plan B', 'Vin d’honneur sous l’Orangerie.'], dj: ['Plan B', 'Sono de la cérémonie à l’Orangerie.'], photo: ['Plan B', 'Photos de groupe sous l’Orangerie.'] } }
+  ];
+
+  /* ---------- Construire ---------- */
+  const list = $('ecrans'), etat = $('etat'), evsEl = $('evs'), goBtn = $('go'), orbe = $('orbe');
+  list.innerHTML = PH.map(p => '<li class="tel" data-p="' + p.id + '" style="--role:' + p.c + '"><div class="tel-ecran"><span class="tel-attente" aria-hidden="true"></span>'
+    + '<div class="page"><div class="notifs"></div><header class="hero"><span class="k">' + esc(p.k) + '</span><h2>Léa &amp; Marc</h2><p>14 juin 2027 · Domaine des Aulnes</p></header>'
+    + '<div class="p-body"><p class="lead">' + esc(p.lead) + '</p><div class="rule"></div>'
+    + (p.count ? '<p class="count"><b>' + DAYS + '</b><em>jours avant le 14 juin 2027</em></p>' : p.live ? '<p class="live"><b>' + esc(p.live[0]) + '</b><span>' + esc(p.live[1]) + '</span></p>' : '<p class="live"><b>Aujourd’hui</b>Rien de nouveau pour vous.</p>')
+    + '</div>' + dockHTML(p) + '</div></div><figcaption><b>' + esc(p.name) + '</b><span>' + esc(p.desc) + '</span><em></em></figcaption></li>').join('');
+  evsEl.innerHTML = EV.map(e => '<button type="button" class="ev" data-ev="' + e.id + '" disabled>' + esc(e.label) + '</button>').join('');
+  const tels = [...list.querySelectorAll('.tel')];
+  const got = {}, calm = {};
+
+  // Chaque écran est dessiné à 390 px de large, puis mis à l'échelle de son cadre
+  function scale() {
+    tels.forEach(t => {
+      const w = t.querySelector('.tel-ecran').clientWidth;
+      t.querySelector('.page').style.transform = 'scale(' + (w / 390).toFixed(4) + ')';
+    });
+  }
+  addEventListener('resize', scale);
+  scale();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(scale);
+
+  /* ---------- Le son : une sonnerie par rôle ---------- */
+  let ctx = null, master = null, verb = null;
+  function audio() {
+    if (ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    ctx = new AC();
+    master = ctx.createGain(); master.gain.value = 0.8;
+    const comp = ctx.createDynamicsCompressor(); master.connect(comp); comp.connect(ctx.destination);
+    const len = ctx.sampleRate * 2.2, b = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
+    verb = ctx.createConvolver(); verb.buffer = b; const vg = ctx.createGain(); vg.gain.value = 0.35; verb.connect(vg); vg.connect(master);
+  }
+  const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+  function bell(m, t, v, pan) {
+    if (!ctx) return;
+    const out = ctx.createGain();
+    let node = out;
+    if (ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = pan; out.connect(p); node = p; }
+    node.connect(master); node.connect(verb);
+    [[1, 1, 1.4], [2, .18, .5], [3.01, .1, .3]].forEach(([r, a, d]) => {
+      const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = hz(m) * r;
+      const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v * a * 0.3, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(g); g.connect(out); o.start(t); o.stop(t + d + 0.05);
+    });
+  }
+  const pan = i => -0.8 + i * (1.6 / (PH.length - 1));
+  function ringtone(i) { if (!ctx) return; const b = PH[i].note, t = ctx.currentTime + 0.01; bell(b, t, .6, pan(i)); bell(b + 7, t + .14, .45, pan(i)); bell(b + 12, t + .28, .3, pan(i)); }
+  function soft(i) { if (ctx) bell(PH[i].note + 12, ctx.currentTime + 0.01, .14, pan(i)); }
+
+  /* ---------- L'orbe ---------- */
+  function orbeTo(i) {
+    const r = tels[i].querySelector('.tel-ecran').getBoundingClientRect();
+    orbe.style.opacity = '1';
+    orbe.style.transform = 'translate(' + (r.left + r.width / 2).toFixed(1) + 'px,' + (r.top + r.height * 0.18).toFixed(1) + 'px)';
+  }
+
+  /* ---------- Jouer ---------- */
+  const wait = ms => new Promise(r => setTimeout(r, reduced.matches ? Math.min(ms, 300) : ms));
+  function say(t) { etat.classList.add('fade'); setTimeout(() => { etat.textContent = t; etat.classList.remove('fade'); }, 200); }
+  function notify(i, title, text, kind) {
+    const box = tels[i].querySelector('.notifs');
+    box.querySelectorAll('.nt').forEach(n => n.classList.add('old'));
+    const n = document.createElement('div'); n.className = 'nt' + (kind === 'sent' ? ' sent' : '');
+    n.innerHTML = '<b>' + esc(title) + '</b>' + esc(text);
+    box.insertBefore(n, box.firstChild);
+    const all = box.querySelectorAll('.nt'); if (all.length > 2) all[all.length - 1].remove();
+  }
+  function quietUpdate(i, title, text) {
+    const live = tels[i].querySelector('.live');
+    if (live) live.innerHTML = '<b>' + esc(title) + '</b><span>' + esc(text) + '</span>';
+  }
+  const badges = {};
+  function badge(i, n) {
+    const b = tels[i].querySelector('.badge');
+    badges[i] = n;
+    b.textContent = n; b.classList.toggle('show', n > 0);
+    b.classList.remove('pop'); void b.offsetWidth; if (n) b.classList.add('pop');
+  }
+  function toast(i, text) {
+    const t = tels[i].querySelector('.toast');
+    t.textContent = text; t.classList.add('show');
+    clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+  function openRadial(i, on) {
+    tels.forEach((t, k) => { if (k !== i || !on) { t.classList.remove('open'); t.querySelector('.plus').setAttribute('aria-expanded', 'false'); } });
+    if (on) { tels[i].classList.add('open'); tels[i].querySelector('.plus').setAttribute('aria-expanded', 'true'); }
+  }
+  function ring(i) {
+    badge(i, (badges[i] || 0) + 1);
+    const t = tels[i];
+    t.classList.remove('ring'); void t.offsetWidth; t.classList.add('ring');
+    ringtone(i);
+    if (navigator.vibrate) { try { navigator.vibrate(60); } catch (e) {} }
+  }
+  function tally() {
+    tels.forEach((t, i) => {
+      const id = PH[i].id, g = got[id] || 0, q = calm[id] || 0;
+      t.querySelector('figcaption em').textContent = (g || q) ? g + ' sonnerie' + (g > 1 ? 's' : '') + ' · ' + q + ' en silence' : '';
+    });
+  }
+  let busy = false;
+  async function play(e) {
+    if (busy) return;
+    busy = true;
+    evsEl.querySelectorAll('.ev').forEach(b => { b.disabled = true; });
+    document.body.classList.add('event');
+    say(e.say);
+    tels.forEach(t => t.classList.add('idle'));
+    const fromI = ix(e.from);
+    tels[fromI].classList.remove('idle');
+    orbeTo(fromI);
+    await wait(500);
+    const ak = DOCK[e.from].a.findIndex(a => a[1] === e.id);
+    if (ak >= 0) {
+      openRadial(fromI, true);
+      await wait(650);
+      const rd = tels[fromI].querySelectorAll('.rd')[ak];
+      rd.classList.add('hit'); soft(fromI);
+      await wait(450);
+      rd.classList.remove('hit'); openRadial(fromI, false);
+      await wait(200);
+    }
+    const [t0, x0] = e.to[e.from];
+    notify(fromI, t0, x0, 'sent'); soft(fromI);
+    await wait(600);
+    for (const id of Object.keys(e.to)) {
+      if (id === e.from) continue;
+      const i = ix(id), [t, x, kind] = e.to[id];
+      tels[i].classList.remove('idle');
+      orbeTo(i);
+      await wait(420);
+      if (kind === 'quiet') { quietUpdate(i, t, x); calm[id] = (calm[id] || 0) + 1; }
+      else { notify(i, t, x, 'hot'); ring(i); got[id] = (got[id] || 0) + 1; }
+      await wait(240);
+    }
+    PH.forEach(p => { if (!e.to[p.id]) calm[p.id] = (calm[p.id] || 0) + 1; });
+    tally();
+    orbe.style.opacity = '0';
+    await wait(2300);
+    tels.forEach(t => t.classList.remove('idle'));
+    document.body.classList.remove('event');
+    evsEl.querySelector('[data-ev="' + e.id + '"]').classList.add('done');
+    evsEl.querySelectorAll('.ev').forEach(b => { b.disabled = false; });
+    busy = false;
+  }
+
+  let token = 0;
+  async function birth() {
+    // L'orbe passe d'écran en écran : chacun naît, composé pour la personne qui le tient
+    for (let i = 0; i < tels.length; i++) {
+      orbeTo(i);
+      await wait(260);
+      tels[i].classList.add('ne');
+      soft(i);
+      await wait(140);
+    }
+    orbe.style.opacity = '0';
+  }
+  async function auto() {
+    const my = ++token;
+    for (const e of EV) {
+      if (my !== token) return;
+      await play(e);
+      await wait(1300);
+    }
+    if (my === token) say('Fin de la partie. Chaque téléphone n’a reçu que ce qui le concernait.');
+  }
+  goBtn.addEventListener('click', async () => {
+    audio();
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+    goBtn.hidden = true;
+    say('L’orbe compose chaque écran pour la personne qui le tient.');
+    await birth();
+    evsEl.querySelectorAll('.ev').forEach(b => { b.disabled = false; });
+    say('La partie commence. Écoutez qui sonne… et qui reste muet.');
+    setTimeout(auto, 1500);
+  });
+  list.addEventListener('click', ev => {
+    const tel = ev.target.closest('.tel');
+    if (!tel || !tel.classList.contains('ne')) return;
+    const i = tels.indexOf(tel), p = PH[i];
+    const plus = ev.target.closest('.plus'), rd = ev.target.closest('.rd'), dk = ev.target.closest('.dk');
+    if (plus) { openRadial(i, !tel.classList.contains('open')); return; }
+    if (rd) {
+      const a = DOCK[p.id].a[Number(rd.dataset.a)];
+      openRadial(i, false);
+      const e = a[1] && EV.find(x => x.id === a[1]);
+      if (e) { if (busy) { toast(i, 'Un instant…'); return; } token++; play(e); }
+      else toast(i, 'Démonstration · ' + a[0]);
+      return;
+    }
+    if (dk) {
+      tel.querySelectorAll('.dk').forEach(x => x.classList.toggle('on', x === dk));
+      if (dk.dataset.k === '0') badge(i, 0);
+      toast(i, DOCK[p.id].e[Number(dk.dataset.k)][1]);
+      return;
+    }
+    if (tel.classList.contains('open') && ev.target.closest('.radial')) openRadial(i, false);
+  });
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape') openRadial(-1, false); });
+  evsEl.addEventListener('click', e => {
+    const b = e.target.closest('.ev');
+    if (!b || b.disabled) return;
+    token++;
+    play(EV.find(x => x.id === b.dataset.ev));
+  });
+  $('reset').addEventListener('click', () => {
+    token++; busy = false;
+    Object.keys(got).forEach(k => delete got[k]); Object.keys(calm).forEach(k => delete calm[k]);
+    tels.forEach((t, i) => {
+      t.classList.remove('idle', 'ring');
+      t.querySelector('.notifs').innerHTML = '';
+      badge(i, 0); t.classList.remove('open');
+      const p = PH[i]; if (p.live) quietUpdate(i, p.live[0], p.live[1]);
+    });
+    document.body.classList.remove('event');
+    orbe.style.opacity = '0';
+    evsEl.querySelectorAll('.ev').forEach(b => { b.classList.remove('done'); b.disabled = !goBtn.hidden; });
+    tally();
+    if (goBtn.hidden) { say('Nouvelle partie. Écoutez qui sonne… et qui reste muet.'); setTimeout(auto, 1200); }
+    else say('Touchez « Activer » : chaque téléphone naît, puis la partie commence.');
+  });
+})();
+</script>
+</body>
+</html>
