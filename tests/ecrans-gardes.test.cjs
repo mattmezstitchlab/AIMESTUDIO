@@ -76,12 +76,12 @@ test('estProprietaire : seul le cookie part vers /api/identite (même origine) ;
   assert.equal(await estProprietaire(req('/maitre/', 'c=1'), async () => { throw new Error('réseau'); }), false);
 });
 
-test('vercel.json : les deux écrans ne sont jamais mis en cache ni indexés ; aucune réécriture ne les contourne', async () => {
+test('vercel.json : les écrans gardés ne sont jamais mis en cache ni indexés ; aucune réécriture ne les contourne', async () => {
   const { ECRANS } = await E(), v = JSON.parse(lire('vercel.json'));   /* les en-têtes visent les adresses directes ; les détours reçoivent 404 (no-store) */
-  const h = v.headers.find(x => x.source === '/(regie|maitre|maitre/attente)(/|/index|/index\\.html)?'); assert.ok(h);
+  const h = v.headers.find(x => x.source === '/(regie|maitre|maitre/attente|atlas)(/|/index|/index\\.html)?'); assert.ok(h);
   const re = new RegExp('^' + h.source + '$'); for (const p of ECRANS) assert.ok(re.test(p), p); assert.ok(!re.test('/regie/regie.js'));
   assert.deepEqual(h.headers, [{ key: 'Cache-Control', value: 'private, no-store' }, { key: 'X-Robots-Tag', value: 'noindex' }]);
-  for (const r of [...v.rewrites, ...v.redirects]) assert.ok(!/regie\/index|maitre\/index|^\/(regie|maitre)\/?$/.test(r.destination), 'aucune autre adresse ne mène aux pages : ' + r.source);
+  for (const r of [...v.rewrites, ...v.redirects]) assert.ok(!/regie\/index|maitre\/index|atlas\/index|^\/(regie|maitre|atlas)\/?$/.test(r.destination), 'aucune autre adresse ne mène aux pages : ' + r.source);
 });
 
 /* ---------- contre une vraie base : la vraie session, le vrai /api/identite ---------- */

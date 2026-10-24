@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atlas AIME</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<style>
+/* Layout : une table de travail — en-tête sobre, onglets, puis une planche (mosaïque) et une fiche latérale. Noir sur blanc, l'irisé réservé au repère AIME. */
+@font-face{font-family:"Cal Sans";src:url("/fonts/CalSans-latin.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Inter Variable";src:url("/fonts/InterVariable-latin.woff2") format("woff2");font-weight:100 900;font-display:swap}
+:root{
+ --papier:#F6F6F4; --carte:#FFFFFF; --encre:#111113; --gris:#5E5E66; --trait:#DEDDE3; --doux:#ECEBEF;
+ --ok:#127A4B; --ok-f:#E3F4EB; --ko:#B42318; --ko-f:#FDEBE9; --att:#9A5B00; --att-f:#FDF1DC; --info:#3B3B8F; --info-f:#ECECFA;
+ --irise:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);
+ --titre:"Cal Sans","Inter Variable",ui-sans-serif,system-ui,sans-serif; --texte:"Inter Variable",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--papier:#0D0D10;--carte:#16161B;--encre:#F2F2F4;--gris:#A2A2AD;--trait:#2A2A32;--doux:#1E1E25;--ok:#5AD39A;--ok-f:#0F2A1E;--ko:#FF8A80;--ko-f:#3A1512;--att:#F5B54A;--att-f:#33240B;--info:#A9A9FF;--info-f:#1C1C3A;color-scheme:dark}}
+:root[data-theme="dark"]{--papier:#0D0D10;--carte:#16161B;--encre:#F2F2F4;--gris:#A2A2AD;--trait:#2A2A32;--doux:#1E1E25;--ok:#5AD39A;--ok-f:#0F2A1E;--ko:#FF8A80;--ko-f:#3A1512;--att:#F5B54A;--att-f:#33240B;--info:#A9A9FF;--info-f:#1C1C3A;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--papier);color:var(--encre);font:15px/1.5 var(--texte);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.cadre{max-width:1440px;margin:0 auto}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--encre);outline-offset:2px}
+header.tete{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;padding-block:32px 20px;border-bottom:1px solid var(--trait)}
+.marque{display:flex;align-items:center;gap:14px}
+.marque i{width:34px;height:34px;border-radius:50%;background:var(--irise);flex:none}
+h1{font:400 clamp(28px,4vw,40px)/1 var(--titre);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sous{color:var(--gris);font-size:13px;margin:6px 0 0}
+.chiffres{display:flex;flex-wrap:wrap;gap:24px;font-variant-numeric:tabular-nums}
+.chiffres div{display:flex;flex-direction:column}
+.chiffres b{font:400 26px/1 var(--titre)}
+.chiffres span{font-size:12px;color:var(--gris)}
+.legende{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--gris);padding-block:14px}
+.pastille{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:550;white-space:nowrap}
+.pastille::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.s-verifie{color:var(--ok);background:var(--ok-f)} .s-inaccessible{color:var(--info);background:var(--info-f)}
+.s-non-implemente{color:var(--ko);background:var(--ko-f)} .s-a-tester{color:var(--att);background:var(--att-f)}
+.g-haute{color:var(--ko);background:var(--ko-f)} .g-moyenne{color:var(--att);background:var(--att-f)} .g-basse{color:var(--gris);background:var(--doux)}
+nav.onglets{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--papier);display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--trait);padding-block:8px;scrollbar-width:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--papier)}
+nav.onglets button{font:550 14px var(--texte);color:var(--gris);background:none;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;white-space:nowrap}
+nav.onglets button[aria-selected="true"]{color:var(--encre);background:var(--doux)}
+nav.onglets button span{font-variant-numeric:tabular-nums;color:var(--gris);font-weight:450;margin-left:4px}
+section.vue{padding-top:24px}
+h2{font:400 24px/1.15 var(--titre);margin:0 0 6px;text-wrap:balance}
+.intro{color:var(--gris);max-width:72ch;margin:0 0 20px}
+/* filtres */
+.filtres{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:16px}
+.filtres label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--gris);min-width:0}
+.filtres select,.filtres input{font:14px var(--texte);color:var(--encre);background:var(--carte);border:1px solid var(--trait);border-radius:8px;padding:7px 10px;min-width:150px;max-width:100%}
+.filtres input{min-width:200px}
+.compte{font-size:13px;color:var(--gris);margin-left:auto;font-variant-numeric:tabular-nums;padding-bottom:8px}
+button.lien{font:550 13px var(--texte);background:none;border:1px solid var(--trait);border-radius:8px;padding:7px 12px;color:var(--encre);cursor:pointer}
+/* mosaïque */
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.vign{display:flex;flex-direction:column;gap:6px;background:var(--carte);border:1px solid var(--trait);border-radius:10px;padding:8px;text-align:left;cursor:pointer;font:inherit;color:inherit;min-width:0}
+.vign:hover{border-color:var(--gris)}
+.vign .img{aspect-ratio:4/3;max-width:100%;border-radius:6px;background:var(--doux);overflow:hidden;display:flex;justify-content:center}
+.vign img{width:100%;height:100%;object-fit:cover;object-position:top}
+.vign.mob .img img{object-fit:contain}
+.vign b{font-size:13px;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.vign small{font-size:12px;color:var(--gris);line-height:1.35}
+.vign .lig{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.puce{font-size:11px;border:1px solid var(--trait);border-radius:4px;padding:0 5px;color:var(--gris);white-space:nowrap}
+.puce.a{color:var(--ko);border-color:currentColor}
+/* fiche */
+dialog.fiche{width:min(1180px,100%);max-height:calc(100% - 32px);border:1px solid var(--trait);border-radius:14px;padding:0;background:var(--carte);color:var(--encre)}
+dialog.fiche::backdrop{background:rgba(10,10,14,.55)}
+.fiche-in{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);min-height:0}
+.fiche-img{background:var(--doux);overflow:auto;max-height:calc(100vh - 34px);padding:16px;display:flex;justify-content:center;align-items:flex-start}
+.fiche-img img{max-width:100%;height:auto;border-radius:6px;box-shadow:0 0 0 1px var(--trait)}
+.fiche-txt{padding:22px;overflow:auto;max-height:calc(100vh - 34px);display:flex;flex-direction:column;gap:16px;min-width:0}
+.fiche-txt h3{font:400 22px/1.2 var(--titre);margin:0;text-wrap:balance}
+.fiche-txt h4{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gris);margin:0 0 6px;font-weight:600}
+.fiche-txt ol,.fiche-txt ul{margin:0;padding-left:20px}
+.fiche-txt li{margin:2px 0}
+.fichier{font:12px var(--mono);color:var(--gris);overflow-wrap:anywhere}
+.fermer{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:1px solid var(--trait);background:var(--carte);color:var(--encre);font-size:18px;cursor:pointer}
+.nav-fiche{display:flex;gap:8px;flex-wrap:wrap}
+.anom-mini{border-left:3px solid var(--ko);padding:4px 0 4px 10px;font-size:13px}
+.anom-mini b{display:block}
+/* tables */
+.tab{overflow-x:auto;border:1px solid var(--trait);border-radius:10px;background:var(--carte);margin-bottom:24px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--trait)}
+th{font-size:12px;color:var(--gris);font-weight:600;background:var(--doux);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.mono{font:12px var(--mono)}
+/* rôles */
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.role{background:var(--carte);border:1px solid var(--trait);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.role header{display:flex;align-items:center;gap:10px}
+.role header i{width:12px;height:12px;border-radius:50%;flex:none}
+.role h3{font:400 20px/1.1 var(--titre);margin:0}
+.role dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;margin:0;font-size:13px}
+.role dt{color:var(--gris)}
+.role dd{margin:0}
+.role .act{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+/* parcours */
+.etapes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.etape{display:grid;grid-template-columns:44px minmax(0,1fr) 220px;gap:16px;padding:16px 0;border-bottom:1px solid var(--trait);align-items:start}
+.etape .n{font:400 22px/1 var(--titre);color:var(--gris);font-variant-numeric:tabular-nums}
+.etape h3{font-size:15px;margin:0 0 4px;font-weight:650}
+.etape p{margin:0 0 6px;color:var(--gris);font-size:14px}
+.etape button{padding:0;border:1px solid var(--trait);border-radius:8px;overflow:hidden;cursor:pointer;background:var(--doux);aspect-ratio:16/10;width:100%}
+.etape button img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.etape .vide{aspect-ratio:16/10;border:1px dashed var(--trait);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gris);text-align:center;padding:8px}
+/* anomalies */
+.anoms{display:flex;flex-direction:column;gap:12px}
+.anom{background:var(--carte);border:1px solid var(--trait);border-radius:12px;padding:16px 18px;display:grid;grid-template-columns:60px minmax(0,1fr);gap:4px 16px}
+.anom .id{font:400 20px/1 var(--titre);color:var(--gris)}
+.anom h3{margin:0;font-size:16px;font-weight:650}
+.anom p{margin:4px 0;font-size:14px;max-width:80ch}
+.anom .preuve{font:12px var(--mono);color:var(--gris);overflow-wrap:anywhere}
+.anom .lig{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}
+.anom > div{min-width:0}
+.ok-oui{color:var(--ok);font-weight:650}.ok-non{color:var(--ko);font-weight:650}.ok-q{color:var(--att);font-weight:650}
+.note{font-size:13px;color:var(--gris);max-width:80ch}
+.encart{background:var(--carte);border:1px solid var(--trait);border-radius:12px;padding:16px 18px;margin-bottom:20px;max-width:900px}
+.encart p{margin:4px 0}
+@media (max-width:860px){.fiche-in{grid-template-columns:1fr}.fiche-img,.fiche-txt{max-height:none}.etape{grid-template-columns:32px minmax(0,1fr)}.etape>:last-child{grid-column:2}.role dl{grid-template-columns:96px minmax(0,1fr)}.anom{grid-template-columns:1fr}}
+@media (max-width:480px){.grille{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.filtres select,.filtres input{min-width:0;width:100%}.filtres label{flex:1 1 140px}.roles{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="cadre">
+<header class="tete">
+ <div>
+  <div class="marque"><i aria-hidden="true"></i><h1>Atlas AIME</h1></div>
+  <p class="sous" id="sous">Audit des parcours, rôles et écrans du Dock · www.lemondeaime.com</p>
+ </div>
+ <div class="chiffres" id="chiffres"></div>
+</header>
+<div class="legende" aria-label="Légende des statuts">
+ <span class="pastille s-verifie">Vérifié</span><span class="pastille s-inaccessible">Inaccessible</span><span class="pastille s-non-implemente">Non implémenté</span><span class="pastille s-a-tester">À tester</span>
+ <span>· Réservé au propriétaire du site. Captures de démonstration (données fictives) et pages publiques uniquement. <a href="/etude/">Dossier de conception</a></span>
+</div>
+<nav class="onglets" role="tablist" aria-label="Sections de l'Atlas" id="onglets"></nav>
+
+<section class="vue" id="v-mosaique" role="tabpanel">
+ <h2>Mosaïque des écrans</h2>
+ <p class="intro">Chaque capture est un écran réellement affiché sur le site, sans retouche. Nom de fichier : RÔLE__DOCK__ÉCRAN__ÉTAT__APPAREIL. Cliquez une vignette pour sa fiche.</p>
+ <div class="filtres">
+  <label for="f-role">Rôle<select id="f-role"></select></label>
+  <label for="f-dock">Bouton du Dock<select id="f-dock"></select></label>
+  <label for="f-dev">Appareil<select id="f-dev"></select></label>
+  <label for="f-etat">État<select id="f-etat"></select></label>
+  <label for="f-statut">Statut<select id="f-statut"></select></label>
+  <label for="f-q">Recherche<input id="f-q" type="search" placeholder="écran, page, anomalie…"></label>
+  <button class="lien" type="button" id="f-raz">Tout afficher</button>
+  <span class="compte" id="f-compte" aria-live="polite"></span>
+ </div>
+ <div class="grille" id="grille"></div>
+</section>
+
+<section class="vue" id="v-roles" role="tabpanel" hidden>
+ <h2>Les onze rôles</h2>
+ <p class="intro">Ce que chaque place de « Je suis… » ouvre réellement : la démo, le Dock montré, le résultat du bouton, et ce que le rôle obtiendrait dans un vrai projet.</p>
+ <div class="roles" id="roles"></div>
+</section>
+
+<section class="vue" id="v-parcours" role="tabpanel" hidden>
+ <h2>Chronologie des parcours</h2>
+ <p class="intro">Le parcours d'un rôle, de l'arrivée sur le site jusqu'à l'écran réel, dans l'ordre des clics.</p>
+ <div class="filtres"><label for="p-role">Rôle<select id="p-role"></select></label></div>
+ <ol class="etapes" id="etapes"></ol>
+</section>
+
+<section class="vue" id="v-dock" role="tabpanel" hidden>
+ <h2>Inventaire du Dock</h2>
+ <p class="intro">Les entrées réellement affichées, par contexte. Les lieux mènent quelque part ; le + porte les gestes.</p>
+ <div id="dock"></div>
+</section>
+
+<section class="vue" id="v-controle" role="tabpanel" hidden>
+ <h2>Contrôle fonctionnel</h2>
+ <p class="intro">Propagation d'une modification vers les autres rôles, et cloisonnement des données. Essais faits uniquement dans les démonstrations (données fictives, rien envoyé au serveur de production).</p>
+ <div id="controle"></div>
+</section>
+
+<section class="vue" id="v-anomalies" role="tabpanel" hidden>
+ <h2>Anomalies</h2>
+ <p class="intro">UX, responsive, fonctionnelles et de données. Chaque ligne cite sa preuve : une capture ou un fichier du dépôt.</p>
+ <div class="filtres">
+  <label for="a-grav">Gravité<select id="a-grav"><option value="">Toutes</option><option value="haute">Haute</option><option value="moyenne">Moyenne</option><option value="basse">Basse</option></select></label>
+  <label for="a-type">Type<select id="a-type"></select></label>
+  <label for="a-statut">Statut<select id="a-statut"></select></label>
+ </div>
+ <div class="anoms" id="anoms"></div>
+</section>
+
+<section class="vue" id="v-manques" role="tabpanel" hidden>
+ <h2>Fonctions présentes, écrans manquants</h2>
+ <p class="intro">Ce qui existe, ce qui est déclaré sans être construit, et ce qui n'a pas pu être vu.</p>
+ <div id="manques"></div>
+</section>
+</div>
+
+<dialog class="fiche" id="fiche" aria-labelledby="fiche-t">
+ <button class="fermer" type="button" id="fiche-x" aria-label="Fermer la fiche">×</button>
+ <div class="fiche-in">
+  <div class="fiche-img"><img id="fiche-img" alt=""></div>
+  <div class="fiche-txt" id="fiche-txt"></div>
+ </div>
+</dialog>
+
+<script>
+(function(){'use strict';
+var D=null,$=function(i){return document.getElementById(i)};
+var ST={verifie:'Vérifié',inaccessible:'Inaccessible','non-implemente':'Non implémenté','a-tester':'À tester'};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function pst(s){return'<span class="pastille s-'+esc(s)+'">'+esc(ST[s]||s)+'</span>'}
+function grav(g){return'<span class="pastille g-'+esc(g)+'">'+esc(g.charAt(0).toUpperCase()+g.slice(1))+'</span>'}
+var VUES=[['mosaique','Mosaïque'],['roles','Rôles'],['parcours','Parcours'],['dock','Dock'],['controle','Contrôle'],['anomalies','Anomalies'],['manques','Manques']];
+function onglet(id){VUES.forEach(function(v){var on=v[0]===id;$('v-'+v[0]).hidden=!on;var b=$('o-'+v[0]);if(b)b.setAttribute('aria-selected',on?'true':'false')});try{history.replaceState(null,'','#'+id)}catch(e){}}
+function store(k,v){try{if(v===undefined)return localStorage.getItem('atlas-'+k);localStorage.setItem('atlas-'+k,v)}catch(e){return null}}
+
+fetch('data.json').then(function(r){return r.json()}).then(function(d){D=d;init()}).catch(function(){$('grille').innerHTML='<p class="note">Les données de l\'Atlas n\'ont pas pu être chargées. Rechargez la page.</p>'});
+
+function init(){
+ var anH=D.anomalies.filter(function(a){return a.gravite==='haute'}).length;
+ $('sous').textContent='Audit des parcours, rôles et écrans du Dock · www.lemondeaime.com · '+D.date+' · dépôt aimestudio, commit '+D.commit;
+ $('chiffres').innerHTML=[[D.stats.captures,'captures'],[D.stats.pages,'pages servies'],[D.stats.roles,'rôles'],[D.anomalies.length,'anomalies'],[anH,'haute gravité']].map(function(x){return'<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>'}).join('');
+ var cnt={mosaique:D.ecrans.length,roles:D.roles.length,anomalies:D.anomalies.length};
+ $('onglets').innerHTML=VUES.map(function(v){return'<button type="button" role="tab" id="o-'+v[0]+'" aria-controls="v-'+v[0]+'">'+v[1]+(cnt[v[0]]?'<span>'+cnt[v[0]]+'</span>':'')+'</button>'}).join('');
+ $('onglets').onclick=function(e){var b=e.target.closest('button');if(b)onglet(b.id.slice(2))};
+ mosaique();roles();parcours();dock();controle();anomalies();manques();
+ var h=(location.hash||'').slice(1);onglet(VUES.some(function(v){return v[0]===h})?h:'mosaique');
+}
+
+/* ---------- mosaïque */
+var F={role:'',dock:'',dev:'',etat:'',statut:'',q:''},LISTE=[];
+function opts(sel,pairs,tous){sel.innerHTML='<option value="">'+tous+'</option>'+pairs.map(function(p){return'<option value="'+esc(p[0])+'">'+esc(p[1])+'</option>'}).join('')}
+function uniq(k,kn){var m={};D.ecrans.forEach(function(e){m[e[k]]=e[kn]});return Object.keys(m).map(function(x){return[x,m[x]]})}
+function mosaique(){
+ var ordreR=['PUBLIC'].concat(D.roles.map(function(r){return r.id}));
+ var rs=uniq('role','roleNom').sort(function(a,b){var i=ordreR.indexOf(a[0]),j=ordreR.indexOf(b[0]);return(i<0?99:i)-(j<0?99:j)||a[1].localeCompare(b[1])});
+ opts($('f-role'),rs,'Tous les rôles');opts($('f-dock'),uniq('dock','dockNom'),'Tous');opts($('f-dev'),uniq('dev','devNom'),'Tous');
+ opts($('f-etat'),uniq('etat','etatNom').sort(function(a,b){return a[1].localeCompare(b[1])}),'Tous');opts($('f-statut'),Object.keys(ST).map(function(k){return[k,ST[k]]}),'Tous');
+ ['role','dock','dev','etat','statut'].forEach(function(k){var s=$('f-'+k),v=store('f-'+k);if(v&&[].some.call(s.options,function(o){return o.value===v})){s.value=v;F[k]=v}s.onchange=function(){F[k]=s.value;store('f-'+k,s.value);dessiner()}});
+ $('f-q').oninput=function(){F.q=this.value.trim().toLowerCase();dessiner()};
+ $('f-raz').onclick=function(){['role','dock','dev','etat','statut'].forEach(function(k){$('f-'+k).value='';F[k]='';store('f-'+k,'')});$('f-q').value='';F.q='';dessiner()};
+ $('grille').onclick=function(e){var b=e.target.closest('[data-i]');if(b)ouvrir(+b.dataset.i,LISTE)};
+ dessiner();
+}
+function filtre(e){if(F.role&&e.role!==F.role)return false;if(F.dock&&e.dock!==F.dock)return false;if(F.dev&&e.dev!==F.dev)return false;if(F.etat&&e.etat!==F.etat)return false;if(F.statut&&e.statut!==F.statut)return false;
+ if(F.q){var t=(e.id+' '+e.titre+' '+e.quoi+' '+e.roleNom+' '+e.anomalies.join(' ')+' '+e.url).toLowerCase();if(t.indexOf(F.q)<0)return false}return true}
+function dessiner(){
+ LISTE=D.ecrans.filter(filtre);
+ $('f-compte').textContent=LISTE.length+' écran'+(LISTE.length>1?'s':'')+' sur '+D.ecrans.length;
+ $('grille').innerHTML=LISTE.length?LISTE.map(function(e,i){return'<button type="button" class="vign'+(e.dev==='IPHONE'?' mob':'')+'" data-i="'+i+'"><span class="img"><img loading="lazy" src="'+esc(e.img)+'" alt="'+esc(e.titre+' · '+e.roleNom+' · '+e.devNom)+'"></span><b>'+esc(e.titre)+'</b><small>'+esc(e.roleNom)+' · '+esc(e.etatNom)+'</small><span class="lig"><span class="puce">'+esc(e.devNom)+'</span><span class="puce">'+esc(e.dockNom)+'</span>'+(e.statut!=='verifie'?pst(e.statut):'')+(e.anomalies.length?'<span class="puce a">'+e.anomalies.length+' anomalie'+(e.anomalies.length>1?'s':'')+'</span>':'')+'</span></button>'}).join(''):'<p class="note">Aucun écran ne correspond à ces filtres. « Tout afficher » les retire.</p>';
+}
+
+/* ---------- fiche */
+var COURANTE=null,IDX=0;
+function ouvrir(i,liste){COURANTE=liste;IDX=i;remplir();var d=$('fiche');if(!d.open){if(d.showModal)d.showModal();else d.setAttribute('open','')}}
+function remplir(){var e=COURANTE[IDX];$('fiche-img').src=e.img;$('fiche-img').alt=e.titre+' · '+e.roleNom+' · '+e.devNom;
+ var an=e.anomalies.map(function(id){var a=D.anomalies.filter(function(x){return x.id===id})[0];return a?'<div class="anom-mini"><b>'+esc(a.id)+' · '+esc(a.titre)+'</b>'+grav(a.gravite)+' '+pst(a.statut)+'</div>':''}).join('');
+ $('fiche-txt').innerHTML='<div><h3 id="fiche-t">'+esc(e.titre)+'</h3><p class="note">'+esc(e.roleNom)+' · '+esc(e.etatNom)+' · '+esc(e.devNom)+'</p></div>'+
+  '<div class="lig">'+pst(e.statut)+(e.fonction?' <span class="puce">'+esc(e.fonction)+'</span>':'')+'</div>'+
+  (e.quoi?'<div><h4>Ce que montre l\'écran</h4><p>'+esc(e.quoi)+'</p></div>':'')+
+  '<div><h4>Chemin de navigation</h4>'+(e.chemin&&e.chemin.length?'<ol>'+e.chemin.map(function(c){return'<li>'+esc(c)+'</li>'}).join('')+'</ol>':'<p class="note">—</p>')+'</div>'+
+  (e.actions.length?'<div><h4>Actions possibles</h4><ul>'+e.actions.map(function(a){return'<li>'+esc(a)+'</li>'}).join('')+'</ul></div>':'')+
+  (e.perm?'<div><h4>Permissions et données</h4><p>'+esc(e.perm)+'</p></div>':'')+
+  (e.notes.length?'<div><h4>Relevé pendant la capture</h4><ul>'+e.notes.map(function(n){return'<li>'+esc(n)+'</li>'}).join('')+'</ul></div>':'')+
+  '<div><h4>Anomalies</h4>'+(an||'<p class="note">Aucune anomalie rattachée.</p>')+'</div>'+
+  '<div><h4>Interface réelle</h4><p><a href="'+esc(e.url)+'" target="_blank" rel="noopener noreferrer">'+esc(e.url.replace('https://',''))+'</a></p></div>'+
+  '<p class="fichier">'+esc(e.id)+'.png</p>'+
+  '<div class="nav-fiche"><button class="lien" type="button" data-n="-1"'+(IDX?'':' disabled')+'>← Précédent</button><button class="lien" type="button" data-n="1"'+(IDX<COURANTE.length-1?'':' disabled')+'>Suivant →</button><span class="note">'+(IDX+1)+' / '+COURANTE.length+'</span></div>';
+ $('fiche-txt').scrollTop=0}
+$('fiche-txt').onclick=function(e){var b=e.target.closest('[data-n]');if(!b)return;IDX=Math.max(0,Math.min(COURANTE.length-1,IDX+(+b.dataset.n)));remplir()};
+$('fiche-x').onclick=function(){$('fiche').close()};
+$('fiche').addEventListener('click',function(e){if(e.target===this)this.close()});
+$('fiche').addEventListener('keydown',function(e){if(e.key==='ArrowRight'&&IDX<COURANTE.length-1){IDX++;remplir()}else if(e.key==='ArrowLeft'&&IDX>0){IDX--;remplir()}});
+function ouvrirId(id){var i=-1;D.ecrans.some(function(e,k){if(e.id===id){i=k;return true}});if(i>=0)ouvrir(i,D.ecrans)}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-cap]');if(b){e.preventDefault();ouvrirId(b.dataset.cap)}var f=e.target.closest('[data-voir]');if(f){F.role=f.dataset.voir;$('f-role').value=F.role;store('f-role',F.role);dessiner();onglet('mosaique');scrollTo(0,0)}var p=e.target.closest('[data-parc]');if(p){$('p-role').value=p.dataset.parc;etapes();onglet('parcours');scrollTo(0,0)}});
+
+/* ---------- rôles */
+function roles(){$('roles').innerHTML=D.roles.map(function(r){var n=D.ecrans.filter(function(e){return e.role===r.id}).length;
+ var an=D.anomalies.filter(function(a){return a.roles.indexOf(r.id)>=0}).map(function(a){return a.id}).join(', ');
+ return'<article class="role"><header><i style="background:'+esc(r.couleur)+'" aria-hidden="true"></i><h3>'+esc(r.nom)+'</h3></header>'+
+ '<dl><dt>Rôle serveur</dt><dd>'+esc(r.serveur)+'</dd><dt>Dock (démo)</dt><dd>'+esc(r.demo_dock)+'</dd><dt>+ (démo)</dt><dd>'+esc(r.demo_plus)+'</dd><dt>Instance</dt><dd>'+esc(r.instance)+'</dd>'+
+ '<dt>Bouton</dt><dd>'+esc(r.bouton)+'</dd><dt>Résultat</dt><dd>'+esc(r.resultat)+'</dd><dt>Projet réel</dt><dd>'+esc(r.reel)+' '+pst('inaccessible')+'</dd>'+
+ '<dt>Mosaïque</dt><dd>'+esc(r.mosaique)+'</dd><dt>AIME Live</dt><dd>'+esc(r.live)+'</dd><dt>Orbe</dt><dd>'+esc(r.orbe)+'</dd><dt>Manque</dt><dd>'+esc(r.manque)+'</dd>'+(an?'<dt>Anomalies</dt><dd>'+esc(an)+'</dd>':'')+'</dl>'+
+ '<div class="act"><button class="lien" type="button" data-voir="'+esc(r.id)+'">Voir ses '+n+' écrans</button><button class="lien" type="button" data-parc="'+esc(r.id)+'">Son parcours</button></div></article>'}).join('')}
+
+/* ---------- parcours */
+function parcours(){opts($('p-role'),D.roles.map(function(r){return[r.id,r.nom]}),'Choisir');$('p-role').querySelector('option').remove();$('p-role').onchange=etapes;etapes()}
+function etapes(){var R=$('p-role').value||D.roles[0].id,L=D.parcours[R]||[];
+ $('etapes').innerHTML=L.map(function(s,i){var e=s.capture?D.ecrans.filter(function(x){return x.id===s.capture})[0]:null;
+  return'<li class="etape"><span class="n">'+String(i+1).padStart(2,'0')+'</span><div><h3>'+esc(s.etape)+'</h3><p>'+esc(s.detail)+'</p>'+pst(s.statut)+'</div>'+
+  (e?'<button type="button" data-cap="'+esc(e.id)+'" aria-label="Ouvrir la fiche : '+esc(s.etape)+'"><img loading="lazy" src="'+esc(e.img)+'" alt=""></button>':'<div class="vide">'+(s.statut==='inaccessible'?'Inaccessible sans compte de test':s.statut==='non-implemente'?'Rôle absent de cette démonstration':'Non exécuté pendant l\'audit')+'</div>')+'</li>'}).join('')}
+
+/* ---------- dock */
+function table(th,rows){return'<div class="tab"><table><thead><tr>'+th.map(function(t){return'<th>'+esc(t)+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return'<tr>'+r.map(function(c){return'<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'}
+function dock(){var d=D.dock;
+ var h='<h3 class="note" style="margin:0 0 8px;font-weight:650;color:var(--encre)">Dock public (composant AIMEDockVue, dock/plus.js)</h3>'+table(['Entrée','Destination','Nature','Statut'],d.public.map(function(x){return[esc(x[0]),'<span class="mono">'+esc(x[1])+'</span>',esc(x[2]),pst(x[3])]}));
+ h+='<div class="encart"><p><b>Pages qui affichent le Dock unifié (8) :</b> '+d.pages.map(esc).join(' · ')+'.</p><p class="note">Toutes les autres pages servies gardent leur propre en-tête ou n\'ont aucune navigation (anomalie A04).</p></div>';
+ h+='<h3 class="note" style="margin:0 0 8px;font-weight:650;color:var(--encre)">Dock du rôle dans les démonstrations</h3>'+table(['Rôle','Accueil · Dock','Accueil · +','Instance du modèle'],D.roles.map(function(r){return[esc(r.nom),esc(r.demo_dock),esc(r.demo_plus),esc(r.instance)]}));
+ h+='<h3 class="note" style="margin:0 0 8px;font-weight:650;color:var(--encre)">Dock d\'un vrai projet (composerReel, calculé au serveur)</h3>'+table(['Rôle serveur','Lieux','+','Statut'],d.reel.map(function(x){return['<span class="mono">'+esc(x[0])+'</span>',esc(x[1]),esc(x[2]),pst('inaccessible')]}));
+ h+='<p class="note">Lu dans le code (dock/modele.js, api/_auth/pages.mjs) ; non capturé, faute de comptes de test autorisés.</p>';
+ $('dock').innerHTML=h}
+
+/* ---------- contrôle */
+function controle(){$('controle').innerHTML=table(['Essai','Attendu','Obtenu','Résultat'],D.phase4.map(function(t){return[esc(t.test),esc(t.attendu),esc(t.obtenu),(t.ok===true?'<span class="ok-oui">Conforme</span>':t.ok===false?'<span class="ok-non">Écart</span>':'<span class="ok-q">À arbitrer</span>')+'<br>'+pst(t.statut)]}))+
+ '<div class="encart"><p><b>Captures liées :</b> <a href="#" data-cap="COORDINATION__HORS-DOCK__live-jour-j__apres-annonces-coordination__ORDINATEUR">coordination</a> · <a href="#" data-cap="FLEURISTE__HORS-DOCK__live-jour-j__apres-annonces-coordination__ORDINATEUR">fleuriste</a> · <a href="#" data-cap="INVITE__HORS-DOCK__live-jour-j__apres-annonces-coordination__ORDINATEUR">invitée</a> · <a href="#" data-cap="WORLD-COUPLE__HORS-DOCK__vitrine-world-perspective__apres-action-prestataire__ORDINATEUR">World · couple</a> · <a href="#" data-cap="WORLD-INVITE__HORS-DOCK__vitrine-world-perspective__apres-action-prestataire__ORDINATEUR">World · invitée</a></p></div>'}
+
+/* ---------- anomalies */
+function anomalies(){var types={},sts={};D.anomalies.forEach(function(a){types[a.type]=1;sts[a.statut]=1});
+ opts($('a-type'),Object.keys(types).sort().map(function(t){return[t,t]}),'Tous');opts($('a-statut'),Object.keys(sts).map(function(s){return[s,ST[s]]}),'Tous');
+ ['a-grav','a-type','a-statut'].forEach(function(i){$(i).onchange=dessinerA});dessinerA()}
+function dessinerA(){var g=$('a-grav').value,t=$('a-type').value,s=$('a-statut').value;
+ var L=D.anomalies.filter(function(a){return(!g||a.gravite===g)&&(!t||a.type===t)&&(!s||a.statut===s)});
+ $('anoms').innerHTML=(D.note_securite?'<p class="note">'+esc(D.note_securite)+'</p>':'')+(L.length?L.map(function(a){var lies=D.ecrans.filter(function(e){return e.anomalies.indexOf(a.id)>=0});
+  var cap=a.captures.map(function(c){var e=D.ecrans.filter(function(x){return x.id===c||x.id.indexOf(c+'__')===0})[0];return e?'<button class="lien" type="button" data-cap="'+esc(e.id)+'">Voir la capture</button>':''}).join('');
+  return'<article class="anom"><span class="id">'+esc(a.id)+'</span><div><h3>'+esc(a.titre)+'</h3><div class="lig">'+grav(a.gravite)+pst(a.statut)+'<span class="puce">'+esc(a.type)+'</span>'+(lies.length?'<span class="puce">'+lies.length+' écran'+(lies.length>1?'s':'')+' concerné'+(lies.length>1?'s':'')+'</span>':'')+'</div><p>'+esc(a.constat)+'</p><p class="preuve">Preuve : '+esc(a.preuve)+'</p>'+(cap?'<div class="lig">'+cap+'</div>':'')+'</div></article>'}).join(''):'<p class="note">Aucune anomalie pour ces filtres.</p>')}
+
+/* ---------- manques */
+function manques(){$('manques').innerHTML=table(['Fonction','Présent','Manquant','Statut'],D.manques.map(function(m){return[esc(m[0]),esc(m[1]),esc(m[2]),pst(m[3])]}))+
+ '<div class="encart"><p><b>Ce que l\'audit n\'a pas pu voir.</b> Aucun écran connecté n\'a été capturé : la création de comptes en production n\'a pas été faite. Pour compléter l\'Atlas sur les rôles réels, il faut des comptes de test (un par rôle) invités dans un même projet de test.</p><p><b>Dossier de conception.</b> L\'étude qui s\'appuie sur cet Atlas est publiée en <a href="/etude/">/etude/</a> (texte seul en <a href="/etude/dossier.md">/etude/dossier.md</a>).</p></div>'}
+})();
+</script>
+</body>
+</html>

@@ -11,12 +11,30 @@
       ]
     },
     {
-      "source": "/(regie|maitre|maitre/attente)(/|/index|/index\\.html)?",
+      "source": "/(regie|maitre|maitre/attente|atlas)(/|/index|/index\\.html)?",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "private, no-store"
         },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/etude/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/atlas/(.*)",
+      "headers": [
         {
           "key": "X-Robots-Tag",
           "value": "noindex"
