@@ -16,7 +16,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
-    for (const u of ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
+    for (const u of ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/tarifs/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
     // Exemples : la mosaïque d'abord, plus de liste répétée en bas, aucune case vide dans la grille
@@ -67,6 +67,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       await t.click('#jsChoix'); await t.waitForTimeout(250);
       ok(await t.evaluate(() => { const l = document.getElementById('jsOptions').getBoundingClientRect(), d = document.querySelector('#dock-site .dock').getBoundingClientRect(), L = document.getElementById('jsOptions'); return !L.hidden && l.bottom <= d.top + 1 && l.top >= 0 && L.scrollHeight >= L.clientHeight; }), 'Je suis… (393×659) : la liste ouverte reste au-dessus du Dock et défile à l\'intérieur');
       ok(await t.evaluate(() => [...document.querySelectorAll('#jsOptions [role=option]')].every(o => o.getBoundingClientRect().height >= 44)), 'Je suis… (393×659) : chaque ligne fait au moins 44 px');
+      ok(await t.evaluate(() => [...document.querySelectorAll('#jsOptions [role=option]')].every(o => { o.scrollIntoView({ block: 'nearest' }); const r = o.getBoundingClientRect(), e = document.elementFromPoint(r.left + 20, r.top + r.height / 2); return !!(e && e.closest('#jsOptions')); })), 'Je suis… (393×659) : chaque ligne est au premier plan (ni la photo, ni la démo, ni les vidéos ne la couvrent)');
       await t.keyboard.press('Escape');
       // les mots du Dock en 393 px : une ligne chacun, rien ne déborde, pour le Dock public (sans compte, connecté) et le Dock d'un projet
       const mots = await t.evaluate(() => { const el = document.getElementById('dock-site'), D = window.AIMEDock, V = window.AIMEDockVue, R = [];
@@ -85,11 +86,15 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       ok(await dessus('#jsLien button'), 'accueil (393×659) : « Recevoir le lien » reste au-dessus du Dock');
       ok(!api.some(x => /espaces|sign-in/.test(x)), 'accueil : rien n\'est créé ni envoyé avant l\'adresse');
       // pied légal (393×659) : en bas de chaque page publique, la ligne reste au-dessus du Dock, lisible et cliquable ; Speed Insights chargé sans erreur
-      for (const u of ['/', '/exemples/', '/exemples/mosaique/', '/contact/', '/compte/', '/projets/', '/confidentialite/', '/mentions-legales/']) {
+      for (const u of ['/', '/exemples/', '/exemples/mosaique/', '/contact/', '/compte/', '/projets/', '/confidentialite/', '/mentions-legales/', '/tarifs/']) {
         await t.goto(B + u, { waitUntil: 'networkidle' }); await t.waitForTimeout(300); await t.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await t.waitForTimeout(300);
-        ok(await t.evaluate(() => { const n = document.querySelector('.pied-legal'), d = document.querySelector('#dock-site .dock'); if (!n) return false; const r = n.getBoundingClientRect(), bas = d ? d.getBoundingClientRect().top : innerHeight; const liens = [...n.querySelectorAll('a')]; return r.height > 0 && r.bottom <= bas + 1 && r.left >= 0 && r.right <= innerWidth && liens.length === 3 && liens.every(a => { const q = a.getBoundingClientRect(), x = q.left + q.width / 2, y = q.top + q.height / 2; return document.elementFromPoint(x, y) === a; }); }), u + ' (393×659) : « Mentions légales · Confidentialité · Contact » au-dessus du Dock, chaque lien cliquable');
+        ok(await t.evaluate(() => { const n = document.querySelector('.pied-legal'), d = document.querySelector('#dock-site .dock'); if (!n) return false; const r = n.getBoundingClientRect(), bas = d ? d.getBoundingClientRect().top : innerHeight; const liens = [...n.querySelectorAll('a')]; return r.height > 0 && r.bottom <= bas + 1 && r.left >= 0 && r.right <= innerWidth && liens.length === 4 && liens.every(a => { const q = a.getBoundingClientRect(), x = q.left + q.width / 2, y = q.top + q.height / 2; return document.elementFromPoint(x, y) === a; }); }), u + ' (393×659) : « Tarifs · Mentions légales · Confidentialité · Contact » au-dessus du Dock, chaque lien cliquable');
         ok(await t.evaluate(() => typeof window.si === 'function' && !!document.querySelector('script[src="/_vercel/speed-insights/script.js"]')), u + ' : Speed Insights présent');
       }
+      /* Compte : la photo de fond reste derrière, sans déplacer l'en-tête collant, le lien d'évitement ni le toast */
+      await t.goto(B + '/compte/', { waitUntil: 'networkidle' });
+      ok(await t.evaluate(() => { const st = s => getComputedStyle(document.querySelector(s)).position; const e = document.querySelector('.cpt h1') || document.querySelector('.cpt'), r = e.getBoundingClientRect();
+        return st('.cpt-fond') === 'fixed' && st('.tete') === 'sticky' && st('.evite') === 'absolute' && st('.toast') === 'fixed' && document.querySelector('.tete').getBoundingClientRect().top === 0 && !document.elementFromPoint(r.left + 4, r.top + 4).closest('.cpt-fond'); }), '/compte/ (393×659) : fond derrière, en-tête collant en haut, lien d\'évitement et toast à leur place');
       await t.goto(B + '/mentions-legales/', { waitUntil: 'networkidle' });
       ok(await t.evaluate(() => /798 582 342 00035/.test(document.body.innerText) && /Vercel Inc\./.test(document.body.innerText) && /Francfort/.test(document.body.innerText)), '/mentions-legales/ : éditeur, hébergeur, stockage');
       await q.close(); }
