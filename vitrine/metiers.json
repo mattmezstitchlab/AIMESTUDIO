@@ -1,0 +1,81 @@
+{
+  "format": "aime-metiers",
+  "version": 1,
+  "note": "Les métiers du prestataire, en un seul fichier (brief unique du 24/10, PR C). Ils nomment un gabarit (prestataire) et ses mots ; ils n'accordent aucun droit. Le serveur n'accepte une activité que pour un identifiant listé ici.",
+  "gabarit": "prestataire",
+  "metiers": [
+    {
+      "id": "fleuriste", "nom": "fleuriste", "titre": "Le fleuriste", "c": "#F472B6", "note": 76,
+      "desc": "Ses livraisons, l'accès, les compositions.",
+      "lead": "Vos livraisons, l'accès au lieu, les compositions. Rien d'autre.",
+      "live": ["Aujourd'hui", "Livraison à 11 h, entrée des fournisseurs."],
+      "dock": [["bell", "Alertes"], ["case", "Mission"], ["pin", "Accès"], ["doc", "Documents"]],
+      "gestes": ["Déposer le devis", "Signaler un retard", "Écrire"],
+      "messages": { "pluie": ["Plan B", "Arche florale à installer sous l'Orangerie."] }
+    },
+    {
+      "id": "traiteur", "nom": "traiteur", "titre": "Le traiteur", "c": "#F59E0B", "note": 57,
+      "desc": "Son service, l'effectif sans noms.",
+      "lead": "Votre service, l'accès, l'effectif. Rien d'autre.",
+      "live": ["Effectif", "86 couverts, sans noms"],
+      "dock": [["bell", "Alertes"], ["case", "Mission"], ["count", "Effectif"], ["doc", "Documents"]],
+      "gestes": ["Déposer un document", "Signaler un retard", "Écrire"],
+      "messages": { "effectif": ["Effectif", "87 couverts, sans noms"], "pluie": ["Plan B", "Vin d'honneur sous l'Orangerie."] }
+    },
+    {
+      "id": "musicien", "nom": "musicien", "titre": "Le musicien", "c": "#A78BFA", "note": 69,
+      "desc": "Ses sets, la scène, ce qui les touche.",
+      "lead": "Vos sets, la scène, la balance. Rien d'autre.",
+      "live": ["Aujourd'hui", "Balance à 14 h 30."],
+      "dock": [["bell", "Alertes"], ["case", "Mission"], ["clock", "Horaires"], ["doc", "Documents"]],
+      "gestes": ["Déposer le répertoire", "Signaler un retard", "Écrire"],
+      "messages": { "pluie": ["Plan B", "Cérémonie à l'Orangerie : set acoustique, sans sono extérieure."] }
+    },
+    {
+      "id": "musicien-intermittent", "nom": "musicien intermittent", "titre": "Le musicien intermittent", "c": "#C4B5FD", "note": 72,
+      "desc": "Ses sets, et bientôt ses cachets.",
+      "lead": "Vos sets, la scène, la balance. Rien d'autre.",
+      "live": ["Module intermittent", "En préparation : cachets et déclarations."],
+      "preparation": "Le module intermittent (cachets, déclarations) est en préparation. Votre espace de musicien existe déjà ; ce module s'y ajoutera.",
+      "dock": [["bell", "Alertes"], ["case", "Mission"], ["clock", "Horaires"], ["doc", "Documents"]],
+      "gestes": ["Déposer le répertoire", "Signaler un retard", "Écrire"],
+      "messages": { "pluie": ["Plan B", "Cérémonie à l'Orangerie : set acoustique, sans sono extérieure."] }
+    },
+    {
+      "id": "videaste", "nom": "vidéaste", "titre": "Le vidéaste", "c": "#38BDF8", "note": 66,
+      "desc": "Ses plans, l'accès, son contrat.",
+      "lead": "Vos plans, l'accès, votre contrat. Rien d'autre.",
+      "live": ["Aujourd'hui", "Repérage du lieu à 12 h."],
+      "dock": [["bell", "Alertes"], ["case", "Mission"], ["key", "Accès"], ["doc", "Documents"]],
+      "gestes": ["Déposer le contrat", "Signaler un retard", "Écrire"],
+      "messages": { "pluie": ["Plan B", "Plans de la cérémonie sous l'Orangerie."] }
+    },
+    {
+      "id": "photographe", "nom": "photographe", "titre": "Le photographe", "c": "#60A5FA", "note": 64,
+      "desc": "Ses créneaux, l'accès, son contrat.",
+      "lead": "Vos créneaux, l'accès, votre contrat. Rien d'autre.",
+      "live": ["Aujourd'hui", "Séance photo à 17 h 30."],
+      "dock": [["bell", "Alertes"], ["case", "Mission"], ["key", "Accès"], ["doc", "Documents"]],
+      "gestes": ["Déposer le contrat", "Signaler un retard", "Écrire"],
+      "messages": { "pluie": ["Plan B", "Photos de groupe sous l'Orangerie."] }
+    },
+    {
+      "id": "dj", "nom": "DJ", "titre": "Le DJ", "c": "#E879F9", "note": 71,
+      "desc": "Ses horaires, et ce qui les touche.",
+      "lead": "Vos horaires, la salle, la sono. Rien d'autre.",
+      "live": ["Aujourd'hui", "Installation à 19 h."],
+      "dock": [["bell", "Alertes"], ["case", "Mission"], ["clock", "Horaires"], ["doc", "Documents"]],
+      "gestes": ["Déposer la playlist", "Signaler un retard", "Écrire"],
+      "messages": { "retard": ["Horaires", "Ouverture du bal décalée à 22 h 45."], "pluie": ["Plan B", "Sono de la cérémonie à l'Orangerie."] }
+    },
+    {
+      "id": "lieu", "nom": "lieu", "titre": "Le lieu", "c": "#34D399", "note": 60,
+      "desc": "Les salles, les horaires, l'effectif.",
+      "lead": "Vos salles, les horaires, l'effectif. Rien d'autre.",
+      "live": ["Effectif", "86 personnes attendues"],
+      "dock": [["bell", "Alertes"], ["case", "Mission"], ["count", "Effectif"], ["doc", "Documents"]],
+      "gestes": ["Déposer le plan", "Signaler un incident", "Écrire"],
+      "messages": { "effectif": ["Effectif", "87 personnes attendues"], "pluie": ["Plan B", "Ouvrir l'Orangerie à 13 h 30."] }
+    }
+  ]
+}
