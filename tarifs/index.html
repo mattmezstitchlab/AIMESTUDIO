@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tarifs · AIME</title>
+<meta name="description" content="Ce que coûte AIME : gratuit pour les invités et les prestataires invités, un paiement unique par projet, ou une offre Pro pour les professionnels. Gratuit pendant la bêta.">
+<meta name="theme-color" content="#0A0A0C">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/travaux/travaux.css">
+<style>
+/* Tarifs : trois offres côte à côte, la gratuité des invités au-dessus, les règles en dessous. Mêmes jetons que les pages légales (travaux.css). */
+.beta{display:flex;gap:12px;align-items:flex-start;max-width:760px;margin:0 0 34px;padding:16px 18px;border:1px solid var(--ligne);border-radius:16px;background:var(--carte)}
+.beta .pt{flex:none;width:10px;height:10px;margin-top:7px;border-radius:50%;background:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185)}
+.beta p{margin:0;color:var(--doux)}.beta strong{color:var(--encre);font-weight:600}
+.offres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+.offre{display:flex;flex-direction:column;gap:14px;padding:26px 24px;border:1px solid var(--ligne);border-radius:20px;background:var(--carte);min-width:0}
+.offre.mise{border-color:#5c5c69;box-shadow:0 0 0 1px #5c5c69,0 40px 90px -50px rgba(124,92,255,.55)}
+.offre .qui{margin:0;font:600 12px var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--doux)}
+.offre h2{margin:0;font:600 26px/1.1 var(--titre)}
+.prix{margin:0;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.prix b{font:600 44px/1 var(--titre);letter-spacing:-.02em}
+.prix span{color:var(--doux);font-size:15px}
+.lance{margin:-6px 0 0;font-size:14px;color:var(--doux)}
+.lance strong{color:var(--encre)}
+.offre ul{margin:0;padding:0;list-style:none;display:grid;gap:9px;flex:1}
+.offre li{position:relative;padding-left:22px;color:var(--doux);line-height:1.5}
+.offre li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--doux)}
+.offre .b{justify-content:center;margin-top:6px}
+.gratuit{margin-top:clamp(40px,6vh,64px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:clamp(24px,5vw,64px);align-items:center}
+.gratuit img{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:20px;display:block}
+.gratuit h2,.regles h2,.questions h2{margin:0 0 12px;font:600 28px/1.15 var(--titre)}
+.gratuit p{margin:0 0 10px;color:var(--doux);max-width:560px}
+.regles,.questions{margin-top:clamp(44px,7vh,72px);max-width:760px}
+.regles ul{margin:0;padding-left:20px;display:grid;gap:8px;color:var(--doux)}
+.regles strong{color:var(--encre);font-weight:600}
+.questions details{border-top:1px solid var(--ligne);padding:14px 0}
+.questions details:last-child{border-bottom:1px solid var(--ligne)}
+.questions summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.questions summary::after{content:"+";color:var(--doux)}.questions details[open] summary::after{content:"−"}
+.questions summary::-webkit-details-marker{display:none}
+.questions p{margin:10px 0 0;color:var(--doux)}
+.ht{margin:22px 0 0;font-size:13.5px;color:var(--doux)}
+@media (max-width:900px){.offres{grid-template-columns:minmax(0,1fr)}.gratuit{grid-template-columns:minmax(0,1fr)}}
+</style>
+<script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+<link rel="stylesheet" href="/nav/pied-legal.css">
+</head>
+<body>
+<a class="evite" href="#contenu">Aller au contenu</a>
+<header class="tete"><a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup></a><nav aria-label="Compte"><a href="/compte/">Mon compte</a><a class="b" href="/contact/">Nous écrire</a></nav></header>
+<main id="contenu" tabindex="-1">
+<section class="intro"><p class="k">Tarifs</p><h1>Un projet se paie une fois.</h1><p>Celui qui organise paie, une seule fois, ou son professionnel le lui offre. Les invités et les prestataires invités ne paient jamais.</p></section>
+
+<div class="beta" role="note"><span class="pt" aria-hidden="true"></span><p><strong>AIME est gratuit pendant la bêta.</strong> Les prix ci-dessous s'appliqueront à la fin de la bêta. Les projets ouverts pendant la bêta restent gratuits jusqu'à leur date.</p></div>
+
+<div class="offres">
+ <article class="offre" aria-labelledby="o1">
+  <p class="qui">Pour essayer</p>
+  <h2 id="o1">Découverte</h2>
+  <p class="prix"><b>0 €</b><span>sans limite de durée</span></p>
+  <ul>
+   <li>Un projet</li>
+   <li>Jusqu'à 10 personnes invitées</li>
+   <li>Chacun sa vue, son accès, sa fin d'accès</li>
+   <li>Le journal du projet</li>
+  </ul>
+  <a class="b" href="/compte/">Commencer</a>
+ </article>
+ <article class="offre mise" aria-labelledby="o2">
+  <p class="qui">Pour les mariés</p>
+  <h2 id="o2">Projet</h2>
+  <p class="prix"><b>79 €</b><span>TTC, une seule fois</span></p>
+  <p class="lance"><strong>59 €</strong> pour les 50 premiers projets</p>
+  <ul>
+   <li>Personnes invitées sans limite</li>
+   <li>Tous les modules disponibles</li>
+   <li>24 mois de préparation, puis 3 mois après le jour J</li>
+   <li>Export de tout le projet</li>
+  </ul>
+  <a class="b b-p" href="/compte/">Créer mon projet</a>
+ </article>
+ <article class="offre" aria-labelledby="o3">
+  <p class="qui">Pour les professionnels</p>
+  <h2 id="o3">Pro</h2>
+  <p class="prix"><b>390 €</b><span>HT par an</span></p>
+  <p class="lance">ou <strong>39 €</strong> HT par mois</p>
+  <ul>
+   <li>Jusqu'à 5 projets actifs en même temps</li>
+   <li>Offerts à vos couples : ils ne paient rien</li>
+   <li>Tous vos projets sur un seul écran</li>
+   <li>Planners, lieux, prestataires</li>
+  </ul>
+  <a class="b" href="/contact/">Nous écrire</a>
+ </article>
+</div>
+<p class="ht">Prix en euros. Pas de commission sur vos prestations, pas de publicité.</p>
+
+<section class="gratuit" aria-labelledby="tGratuit">
+ <img src="/media/visuels/traiteur.webp" alt="Un traiteur consulte son téléphone devant les desserts dressés" width="1200" height="675" loading="lazy" decoding="async">
+ <div>
+  <h2 id="tGratuit">Invité, toujours gratuit.</h2>
+  <p>Le traiteur, la photographe, la fleuriste ou l'invitée reçoivent un lien à leur nom. Ils voient ce qui les concerne, sans payer, sans mot de passe.</p>
+  <p>Un prestataire paie seulement s'il veut ouvrir lui-même les projets de ses clients.</p>
+ </div>
+</section>
+
+<section class="regles" aria-labelledby="tRegles">
+ <h2 id="tRegles">Ce qui ne change jamais</h2>
+ <ul>
+  <li><strong>La sécurité n'est pas une option.</strong> Retirer un accès, lire le journal, exporter ou effacer vos données : toujours inclus.</li>
+  <li><strong>Un projet n'est payé qu'une fois</strong>, par les mariés ou par leur professionnel.</li>
+  <li><strong>Un mariage en cours n'est jamais fermé</strong>, même si un abonnement Pro s'arrête.</li>
+  <li><strong>Aucune commission</strong> sur ce que vous facturez à vos clients.</li>
+ </ul>
+</section>
+
+<section class="questions" aria-labelledby="tQuestions">
+ <h2 id="tQuestions">Questions</h2>
+ <details><summary>Que se passe-t-il à la fin de la bêta ?</summary><p>Vous êtes prévenus par e-mail un mois avant. Les projets ouverts pendant la bêta restent gratuits jusqu'à leur date.</p></details>
+ <details><summary>Un séminaire ou une formation, c'est le même prix ?</summary><p>Oui pour l'instant : un projet, c'est un projet. Une offre dédiée aux organisateurs viendra plus tard.</p></details>
+ <details><summary>Je suis prestataire, dois-je payer pour rejoindre un mariage ?</summary><p>Non. Être invité est toujours gratuit. L'offre Pro sert à créer vous-même des projets pour vos clients.</p></details>
+ <details><summary>Comment payer ?</summary><p>Pendant la bêta, il n'y a rien à payer. Ensuite, par carte, depuis Mon compte.</p></details>
+</section>
+</main>
+<nav class="pied-legal" aria-label="Informations légales"><a href="/tarifs/" aria-current="page">Tarifs</a><span aria-hidden="true">·</span><a href="/mentions-legales/">Mentions légales</a><span aria-hidden="true">·</span><a href="/confidentialite/">Confidentialité</a><span aria-hidden="true">·</span><a href="/contact/">Contact</a></nav>
+<footer class="pied"><a href="/">← Page Zéro</a><span>AIME®</span></footer>
+</body>
+</html>
