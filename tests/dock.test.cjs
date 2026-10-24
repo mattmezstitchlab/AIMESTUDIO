@@ -103,7 +103,7 @@ test('dock réel : aucun lieu dont le gabarit n\'est pas servi, aucun geste non 
   assert.equal(c.plus.length>0,GESTES[r].inviter.length>0,r+' : Inviter seulement si permissions.js l\'accorde');
   assert.equal(c.inattendu,true,r+' : signaler un accès inattendu, toujours');
   assert.ok(!c.mention.includes('Démonstration'),r+' : un vrai espace n\'est pas une démonstration');
-  for(const mot of ['Messages','Projet','Calendrier','Déroulé','Documents','Mission'])assert.ok(!c.lieux.some(l=>l.nom===mot),r+' : '+mot+' n\'est pas encore servi')}
+  for(const mot of ['Messages','Projet','Agenda','Déroulé','Documents','Mission'])assert.ok(!c.lieux.some(l=>l.nom===mot),r+' : '+mot+' n\'est pas encore servi')}
  const servisTous=['acces','journal','personnes','projet','deroule','documents','messages'];
  assert.ok(D.composerReel({roleServeur:'owner',gestes:GESTES.owner,servis:servisTous}).lieux.some(l=>l.gabarit==='messages'),'servi plus tard, il apparaîtra');
 });
@@ -149,4 +149,15 @@ test('« J\'ai reçu une invitation » : un lien collé mène à son invitation,
 test('l\'OS restant (coque de la Page Zéro) garde ses classes préfixées : jamais de collision avec le Dock (.dock)',()=>{
  for(const f of ['os/os.js','os/coque.js'])assert.ok(!/class="dock/.test(lire(f)),f);
  assert.ok(!/(^|[^-\w])\.dock[-\s{,:.\[)]/.test(lire('os/coque.css')),'os/coque.css');
+});
+
+test('les mots du Dock (24/10) : un mot court par icône, le nom en aria-label, masqués dans les téléphones réduits sauf celui mis en avant',()=>{
+ const V=require('../dock/dock.js').AIMEDockVue,c=lire('dock/dock.css');
+ assert.equal(D.ENTREES.mareponse.nom,'Réponse');assert.equal(D.ENTREES.calendrier.nom,'Agenda');
+ const h=V.html(D.composer({famille:'Public connecté'}),{id:'m',actif:'coeur'});
+ for(const n of ['Le cœur','Exemples','Mes projets','Mon compte'])assert.ok(h.includes('aria-label="'+n+'"'),n+' : le nom, tel qu\'on l\'écrit');
+ assert.match(c,/\.dock-zone \.dock-t\{font:500 11px/);assert.match(c,/\.dock-zone \.dock-e\[aria-current\] \.dock-t[^{]*\{color:#fff/);assert.match(c,/\.dock-ecran \.dock-t\{position:absolute;width:1px/,'téléphone réduit : icônes seules');
+ assert.ok(!/\.dock-page \.dock-t\{white-space:normal/.test(c),'jamais de retour à la ligne');
+ assert.match(lire('exemples/mosaique/index.html'),/\.dk > span:not\(\.badge\) \{ position: absolute; width: 1px/);assert.match(lire('accueil/je-suis.css'),/\.dm-tel:not\(\.choisi\) \.dk>span:not\(\.badge\)\{display:none\}/);
+ for(const f of ['accueil/demo.js','exemples/mosaique/index.html'])assert.ok(!/Ma réponse|'Calendrier'/.test(lire(f)),f);
 });
