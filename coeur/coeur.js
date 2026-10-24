@@ -47,7 +47,7 @@ function html(sc,o){o=o||{};var N=sc.roles.length,n0=o.premier||1,num=function(k
     '<figure class="fiche"><span class="ancre ancre-sc" data-orbe="1" aria-hidden="true"></span>'+fiche(ar.fiche)+(lg.length?'<figcaption>'+esc(lg[0])+' · <b>'+esc(lg[1])+'</b> '+esc(lg[2]||'')+'</figcaption>':'')+'</figure></div></section>'}).join('')+'</div>';
  var e='<section class="cx cx-ecrans" id="ecrans" aria-labelledby="t-ecrans"><div class="cx-in"><div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">'+num(1)+'</p><h2 id="t-ecrans">'+esc(nombre(N))+' écrans, une seule source.</h2><p>L\'orbe compose une page pour chacun, à partir de tout ce qu\'elle a recueilli : '+esc(nombre(N).toLowerCase())+' vraies pages, composées à l\'instant par le moteur de pages. Faites défiler chaque écran.</p></div></div>'+
   '<section class="ecrans-scene" id="ecransScene" aria-label="L\'orbe compose un écran pour chacun"><div class="ecrans-collant"><div class="ecrans'+(N>6?' nombreux':'')+'" id="ecransGrille" role="list" aria-label="'+esc(sc.titre)+', vu par '+esc(nombre(N).toLowerCase())+' personnes" style="--n:'+N+'"><span class="ancre ancre-ecran" id="ancreEcran" data-orbe="1" aria-hidden="true"></span>'+
-  sc.roles.map(function(r){return'<figure class="tel" role="listitem" data-angle="'+esc(r.angle)+'"><div class="tel-ecran"><span class="tel-attente" aria-hidden="true"></span><iframe title="Écran '+esc(r.de)+'" sandbox="allow-same-origin" loading="lazy" tabindex="0"></iframe></div><figcaption><b>'+esc(r.nom)+'</b><span>'+esc(r.resume||'')+'</span></figcaption></figure>'}).join('')+
+  sc.roles.map(function(r){return'<figure class="tel" role="listitem" data-angle="'+esc(r.angle)+'"><div class="tel-ecran"><span class="tel-attente" aria-hidden="true"></span><iframe title="Écran '+esc(r.de)+'" sandbox="allow-same-origin" loading="lazy" tabindex="0"></iframe><div class="tel-dock"></div></div><figcaption><b>'+esc(r.nom)+'</b><span>'+esc(r.resume||'')+'</span></figcaption></figure>'}).join('')+
   '</div><p class="ecrans-etat" id="ecransPas" aria-hidden="true"></p></div></section>'+
   '<div class="cx-in"><form class="source" id="source" aria-labelledby="t-source"><p class="source-t" id="t-source">Écrivez une fois, les '+esc(nombre(N).toLowerCase())+' écrans suivent</p><div class="source-champs">'+
   (sc.source&&sc.source.champs?sc.source.champs.map(function(c){return'<label>'+esc(c.label)+'<input id="src-'+esc(c.id)+'" type="'+esc(c.type||'text')+'"'+(c.min!=null?' min="'+c.min+'"':'')+(c.max!=null?' max="'+c.max+'"':'')+' autocomplete="off"></label>'}).join(''):
@@ -102,7 +102,7 @@ function ecrans(){if(AD){[].forEach.call(document.querySelectorAll('#ecransGrill
   try{y=fr.contentWindow?fr.contentWindow.scrollY:0}catch(_){}
   fr.onload=function(){try{if(y)fr.contentWindow.scrollTo(0,y)}catch(_){}};fr.srcdoc=page(c,role)});
  droits(c)}
-function echelle(){[].forEach.call(document.querySelectorAll('#ecransGrille .tel-ecran'),function(e){var fr=e.querySelector('iframe');fr.style.transform='scale('+(e.clientWidth/390).toFixed(4)+')'})}
+function echelle(){[].forEach.call(document.querySelectorAll('#ecransGrille .tel-ecran'),function(e){var k='scale('+(e.clientWidth/390).toFixed(4)+')',fr=e.querySelector('iframe'),d=e.querySelector('.tel-dock');fr.style.transform=k;if(d)d.style.transform=k})}
 
 /* ce que chacun peut voir et faire, décidé par les règles avant la mise en page */
 function droits(c){var t=$('droitsCorps');if(!t)return;var total=(c.moments||[]).length,docs=(c.documents||[]).length,F=flux();
@@ -133,7 +133,15 @@ function direct(){var box=$('jourVues');if(AD||!box||!Live||!J)return;var X=jour
  $('jourTrace').textContent=der?(der.ok?'Écrit une fois au journal, rejoué pour les '+nombre(N).toLowerCase()+' : '+({planB:'plan B',retarder:'retard en cascade',fait:'étape terminée'}[der.a.action]||der.a.action)+'.':'Refusé par les règles : '+der.raison):'Rien n\'a encore bougé. Déclenchez un imprévu ou un retard.';
  $('jourAnnuler').disabled=!journal.length;$('jourPluie').setAttribute('aria-pressed',String(journal.some(function(a){return a.action==='planB'&&a.p.actif})))}
 
-function tout(){if(!pret)return;ecrans();direct();teinter()}
+/* le dock de chaque écran (dock/modele.js + dock/dock.js) : composé pour ce rôle, rien d'autre ; démonstration */
+var DEMO_NOTES={'Propriétaire':3,'Co-propriétaire':3,'Délégué':2,'Contributeur':1,'Équipe':1};
+function docks(){var Dk=root.AIMEDock,Dv=root.AIMEDockVue;if(!Dk||!Dv||docks.fait)return;docks.fait=true;
+ [].forEach.call(document.querySelectorAll('#ecransGrille [data-angle]'),function(fig){var i=-1;ROLES.forEach(function(r,k){if(r.angle===fig.getAttribute('data-angle'))i=k});if(i<0)return;
+  var box=fig.querySelector('.tel-dock'),ec=fig.querySelector('.tel-ecran');if(!box&&ec){box=document.createElement('div');box.className='tel-dock';ec.appendChild(box)}if(!box)return;var d=Dk.pourScenario(U,ROLES[i],S&&S.acces),c;
+  try{var f=d.instance?Dk.INSTANCES[d.instance].famille:(d.famille||Dk.SERVEUR[d.roleServeur]);d.notifications=[];for(var n=0;n<(DEMO_NOTES[f]||0);n++)d.notifications.push({a:'moi'});c=Dk.composer(d)}catch(_){c=null}
+  if(!c){box.innerHTML='<p class="tel-sans-dock">Pas de dock : ce rôle vit dans le + de sa personne.</p>';return}
+  echelle();var z=Dv.poser(box,c,{mode:'ecran',id:'dock-'+U+'-'+ROLES[i].angle,actif:c.lieux[0]&&c.lieux[0].id});var k=couleur(sc,i);if(z)z.style.setProperty('--role',k.c)})}
+function tout(){if(!pret)return;ecrans();direct();teinter();docks()}
 function plus_tard(){clearTimeout(minuterie);minuterie=setTimeout(tout,260)}
 
 /* les gestes */

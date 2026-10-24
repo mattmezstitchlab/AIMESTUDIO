@@ -156,3 +156,7 @@ html.calme .tel iframe,html.calme .tel-attente,html.calme .tel figcaption,html.c
 /* au-delà de six rôles : les écrans restent lisibles et défilent en rangée, l'orbe fait défiler jusqu'au suivant */
 .ecrans.nombreux{display:flex;max-width:none;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 20px;padding-bottom:14px;scrollbar-width:thin}
 .ecrans.nombreux .tel{flex:0 0 clamp(200px,17vw,250px);scroll-snap-align:start}
+/* le dock de chaque écran (dock/dock.css), à l'échelle du téléphone comme l'iframe ; sans dock, une phrase */
+.tel-dock{position:absolute;left:0;bottom:0;width:390px;height:844px;transform-origin:0 100%;pointer-events:none}
+.tel-dock>*{pointer-events:auto}
+.tel-sans-dock{position:absolute;left:14px;right:14px;bottom:20px;margin:0;padding:8px 10px;border-radius:14px;background:#0F0F12;border:1px solid #2B2B33;color:#9C9CA8;font:500 13px/1.35 "Inter Variable",Inter,sans-serif;text-align:center}
