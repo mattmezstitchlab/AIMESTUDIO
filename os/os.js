@@ -91,7 +91,7 @@ addEventListener('resize',function(){var zz=zone();fen.forEach(function(w){var c
 function epinglees(){return A.epingles(cat,etat.epingles)}
 function majDock(){var ep=epinglees(),ids=ep.map(function(a){return a.id}),ouvertes=fen.map(function(w){return w.app}).filter(function(a,i,l){return ids.indexOf(a.id)<0&&l.indexOf(a)===i});
  $('dockApps').innerHTML=ep.concat(ouvertes).map(function(a){var w=fen.filter(function(x){return x.app.id===a.id})[0],f=w&&w.id===focusId;
-  return'<button class="dock-app'+(w?' ouverte':'')+(f?' focus':'')+'" type="button" data-app="'+esc(a.id)+'" aria-label="'+esc(a.nom+(w?(w.reduite?', réduite':', ouverte'):''))+'">'+ico(a)+'<span class="dock-bulle" aria-hidden="true">'+esc(a.nom)+'</span></button>'}).join('');}
+  return'<button class="os-dock-app'+(w?' ouverte':'')+(f?' focus':'')+'" type="button" data-app="'+esc(a.id)+'" aria-label="'+esc(a.nom+(w?(w.reduite?', réduite':', ouverte'):''))+'">'+ico(a)+'<span class="os-dock-bulle" aria-hidden="true">'+esc(a.nom)+'</span></button>'}).join('');}
 $('dockApps').addEventListener('click',function(e){var b=e.target.closest('[data-app]');if(!b)return;var w=fen.filter(function(x){return x.app.id===b.dataset.app})[0];
  if(!w)return ouvrir(b.dataset.app);if(w.reduite){w.reduite=false;w.el.hidden=false;focaliser(w);accueilVisible();enregistrer()}else if(w.id===focusId)reduire(w);else focaliser(w)});
 

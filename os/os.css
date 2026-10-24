@@ -91,21 +91,21 @@ body.os-geste .fen-voile{display:block}body.os-geste{cursor:grabbing}
 .fen.agrandie .fen-poignee{display:none}
 
 /* le dock */
-.dock{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:6px;padding:8px;border-radius:22px;background:var(--verre);-webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4);box-shadow:0 20px 60px -20px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.1);max-width:calc(100vw - 20px)}
-.dock-apps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.dock-apps::-webkit-scrollbar{display:none}
-.dock-sep{width:1px;height:36px;background:var(--line2);flex:none}
-.dock-app{position:relative;flex:none;width:48px;height:48px;border:0;padding:0;background:none;cursor:pointer;border-radius:14px;transition:transform .18s cubic-bezier(.2,.8,.2,1)}
-.dock-app:hover{transform:translateY(-4px) scale(1.06)}
-.dock-app .ico{width:48px;height:48px}
-.dock-app.ouverte::after{content:"";position:absolute;left:50%;bottom:-6px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--ink)}
-.dock-app.focus::after{background:#22D3EE;box-shadow:0 0 8px #22D3EE}
-.dock-app.toutes .ico{display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line2)}
-.dock-app.toutes svg{width:20px;height:20px;fill:var(--soft)}
-.dock-bulle{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);white-space:nowrap;padding:5px 10px;border-radius:8px;background:#1E1E24;border:1px solid var(--line2);font:500 12.5px var(--ui);color:var(--ink);pointer-events:none;opacity:0;transition:opacity .15s}
-.dock-app:hover .dock-bulle,.dock-app:focus-visible .dock-bulle{opacity:1}
-.dock-orbe{flex:none;width:48px;height:48px;border:0;padding:0;border-radius:50%;background:none;cursor:pointer;display:grid;place-items:center}
+.os-dock{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:6px;padding:8px;border-radius:22px;background:var(--verre);-webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4);box-shadow:0 20px 60px -20px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.1);max-width:calc(100vw - 20px)}
+.os-dock-apps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.os-dock-apps::-webkit-scrollbar{display:none}
+.os-dock-sep{width:1px;height:36px;background:var(--line2);flex:none}
+.os-dock-app{position:relative;flex:none;width:48px;height:48px;border:0;padding:0;background:none;cursor:pointer;border-radius:14px;transition:transform .18s cubic-bezier(.2,.8,.2,1)}
+.os-dock-app:hover{transform:translateY(-4px) scale(1.06)}
+.os-dock-app .ico{width:48px;height:48px}
+.os-dock-app.ouverte::after{content:"";position:absolute;left:50%;bottom:-6px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--ink)}
+.os-dock-app.focus::after{background:#22D3EE;box-shadow:0 0 8px #22D3EE}
+.os-dock-app.toutes .ico{display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line2)}
+.os-dock-app.toutes svg{width:20px;height:20px;fill:var(--soft)}
+.os-dock-bulle{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);white-space:nowrap;padding:5px 10px;border-radius:8px;background:#1E1E24;border:1px solid var(--line2);font:500 12.5px var(--ui);color:var(--ink);pointer-events:none;opacity:0;transition:opacity .15s}
+.os-dock-app:hover .os-dock-bulle,.os-dock-app:focus-visible .os-dock-bulle{opacity:1}
+.os-dock-orbe{flex:none;width:48px;height:48px;border:0;padding:0;border-radius:50%;background:none;cursor:pointer;display:grid;place-items:center}
 .mini-orbe{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55),rgba(255,255,255,.08) 28%,transparent 46%),var(--conic);box-shadow:0 8px 24px -6px rgba(124,92,255,.8);animation:respire 5s ease-in-out infinite}
-.dock-orbe[aria-expanded="true"] .mini-orbe{box-shadow:0 0 0 3px rgba(255,255,255,.2),0 8px 24px -6px rgba(124,92,255,.9)}
+.os-dock-orbe[aria-expanded="true"] .mini-orbe{box-shadow:0 0 0 3px rgba(255,255,255,.2),0 8px 24px -6px rgba(124,92,255,.9)}
 @keyframes respire{50%{transform:scale(1.06)}}
 
 /* les icônes d'apps : un carré doux, une teinte par famille, un sigle */
@@ -166,11 +166,11 @@ body.os-geste .fen-voile{display:block}body.os-geste{cursor:grabbing}
  .fen{left:0!important;top:0!important;width:100%!important;height:calc(100% - var(--dock) - 14px - env(safe-area-inset-bottom,0px))!important;border-radius:0}
  .fen-poignee,.fen-b [data-f="agrandir"]{display:none}
  .cherche span,.cherche kbd,.lanceur kbd{display:none}
- .dock{left:10px;right:10px;transform:none;justify-content:flex-start}
- .dock-app,.dock-app .ico,.dock-orbe{width:44px;height:44px}
+ .os-dock{left:10px;right:10px;transform:none;justify-content:flex-start}
+ .os-dock-app,.os-dock-app .ico,.os-dock-orbe{width:44px;height:44px}
  .accueil{justify-content:flex-start;padding-top:8vh}
  .lanceur input{padding-right:22px}
  .heure .j{display:none}
 }
-@media (prefers-reduced-motion:reduce){.fen,.mini-orbe,.fen-charge span{animation:none}.dock-app{transition:none}.dock-app:hover{transform:none}}
-@media (forced-colors:active){.fen,.dock,.palette,.orbe-pan{border:1px solid CanvasText}}
+@media (prefers-reduced-motion:reduce){.fen,.mini-orbe,.fen-charge span{animation:none}.os-dock-app{transition:none}.os-dock-app:hover{transform:none}}
+@media (forced-colors:active){.fen,.os-dock,.palette,.orbe-pan{border:1px solid CanvasText}}

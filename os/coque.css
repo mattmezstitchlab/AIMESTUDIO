@@ -38,22 +38,22 @@ body.os-geste .os-coque{cursor:grabbing}
 .os-coque .fen-poignee{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;touch-action:none}
 .os-coque .fen-poignee::after{content:"";position:absolute;right:4px;bottom:4px;width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);border-radius:0 0 3px 0}
 .os-coque .fen.agrandie .fen-poignee{display:none}
-.os-coque .dock{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:6px;padding:8px;border-radius:22px;background:var(--verre);-webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4);box-shadow:0 20px 60px -20px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.1);max-width:calc(100vw - 20px)}
-.os-coque .dock-apps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
-.os-coque .dock-apps::-webkit-scrollbar{display:none}
-.os-coque .dock-sep{width:1px;height:36px;background:var(--line2);flex:none}
-.os-coque .dock-app{position:relative;flex:none;width:48px;height:48px;border:0;padding:0;background:none;cursor:pointer;border-radius:14px;transition:transform .18s cubic-bezier(.2,.8,.2,1)}
-.os-coque .dock-app:hover{transform:translateY(-4px) scale(1.06)}
-.os-coque .dock-app .ico{width:48px;height:48px}
-.os-coque .dock-app.ouverte::after{content:"";position:absolute;left:50%;bottom:-6px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--ink)}
-.os-coque .dock-app.focus::after{background:#22D3EE;box-shadow:0 0 8px #22D3EE}
-.os-coque .dock-app.toutes .ico{display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line2)}
-.os-coque .dock-app.toutes svg{width:20px;height:20px;fill:var(--soft)}
-.os-coque .dock-bulle{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);white-space:nowrap;padding:5px 10px;border-radius:8px;background:#1E1E24;border:1px solid var(--line2);font:500 12.5px var(--ui);color:var(--ink);pointer-events:none;opacity:0;transition:opacity .15s}
-.os-coque .dock-app:hover .dock-bulle,.os-coque .dock-app:focus-visible .dock-bulle{opacity:1}
-.os-coque .dock-orbe{flex:none;width:48px;height:48px;border:0;padding:0;border-radius:50%;background:none;cursor:pointer;display:grid;place-items:center}
+.os-coque .os-dock{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:6px;padding:8px;border-radius:22px;background:var(--verre);-webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4);box-shadow:0 20px 60px -20px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.1);max-width:calc(100vw - 20px)}
+.os-coque .os-dock-apps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.os-coque .os-dock-apps::-webkit-scrollbar{display:none}
+.os-coque .os-dock-sep{width:1px;height:36px;background:var(--line2);flex:none}
+.os-coque .os-dock-app{position:relative;flex:none;width:48px;height:48px;border:0;padding:0;background:none;cursor:pointer;border-radius:14px;transition:transform .18s cubic-bezier(.2,.8,.2,1)}
+.os-coque .os-dock-app:hover{transform:translateY(-4px) scale(1.06)}
+.os-coque .os-dock-app .ico{width:48px;height:48px}
+.os-coque .os-dock-app.ouverte::after{content:"";position:absolute;left:50%;bottom:-6px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--ink)}
+.os-coque .os-dock-app.focus::after{background:#22D3EE;box-shadow:0 0 8px #22D3EE}
+.os-coque .os-dock-app.toutes .ico{display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid var(--line2)}
+.os-coque .os-dock-app.toutes svg{width:20px;height:20px;fill:var(--soft)}
+.os-coque .os-dock-bulle{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);white-space:nowrap;padding:5px 10px;border-radius:8px;background:#1E1E24;border:1px solid var(--line2);font:500 12.5px var(--ui);color:var(--ink);pointer-events:none;opacity:0;transition:opacity .15s}
+.os-coque .os-dock-app:hover .os-dock-bulle,.os-coque .os-dock-app:focus-visible .os-dock-bulle{opacity:1}
+.os-coque .os-dock-orbe{flex:none;width:48px;height:48px;border:0;padding:0;border-radius:50%;background:none;cursor:pointer;display:grid;place-items:center}
 .os-coque .mini-orbe{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55),rgba(255,255,255,.08) 28%,transparent 46%),var(--conic);box-shadow:0 8px 24px -6px rgba(124,92,255,.8);animation:os-respire 5s ease-in-out infinite}
-.os-coque .dock-orbe[aria-expanded="true"] .mini-orbe{box-shadow:0 0 0 3px rgba(255,255,255,.2),0 8px 24px -6px rgba(124,92,255,.9)}
+.os-coque .os-dock-orbe[aria-expanded="true"] .mini-orbe{box-shadow:0 0 0 3px rgba(255,255,255,.2),0 8px 24px -6px rgba(124,92,255,.9)}
 @keyframes os-respire{50%{transform:scale(1.06)}
 }
 .os-coque .ico{position:relative;display:grid;place-items:center;border-radius:14px;overflow:hidden;background:linear-gradient(150deg,color-mix(in srgb,var(--t) 92%,#fff 8%),color-mix(in srgb,var(--t) 55%,#0A0A0C 45%));box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 0 1px rgba(255,255,255,.08)}
@@ -111,14 +111,14 @@ body.os-geste .os-coque{cursor:grabbing}
 @media (max-width:760px){.os-coque{--dock:72px}
 .os-coque .fen{left:0!important;top:0!important;width:100%!important;height:calc(100% - var(--dock) - 14px - env(safe-area-inset-bottom,0px))!important;border-radius:0}
 .os-coque .fen-poignee,.os-coque .fen-b [data-f="agrandir"]{display:none}
-.os-coque .dock{left:10px;right:10px;transform:none;justify-content:flex-start}
-.os-coque .dock-app,.os-coque .dock-app .ico,.os-coque .dock-orbe{width:44px;height:44px}
+.os-coque .os-dock{left:10px;right:10px;transform:none;justify-content:flex-start}
+.os-coque .os-dock-app,.os-coque .os-dock-app .ico,.os-coque .os-dock-orbe{width:44px;height:44px}
 }
 @media (prefers-reduced-motion:reduce){.os-coque .fen,.os-coque .mini-orbe,.os-coque .fen-charge span{animation:none}
-.os-coque .dock-app{transition:none}
-.os-coque .dock-app:hover{transform:none}
+.os-coque .os-dock-app{transition:none}
+.os-coque .os-dock-app:hover{transform:none}
 }
-@media (forced-colors:active){.os-coque .fen,.os-coque .dock,.os-coque .palette,.os-coque .orbe-pan{border:1px solid CanvasText}
+@media (forced-colors:active){.os-coque .fen,.os-coque .os-dock,.os-coque .palette,.os-coque .orbe-pan{border:1px solid CanvasText}
 }
 
 /* la Page Zéro est le bureau : les fenêtres flottent au-dessus d'elle, le dock reste en bas */
@@ -128,8 +128,8 @@ body.os-geste .os-coque{cursor:grabbing}
 .os-coque{--barre:0px;color:var(--ink);font-family:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 .os-coque .fenetres{position:fixed;inset:0 0 calc(var(--dock) + 24px + env(safe-area-inset-bottom,0px)) 0;z-index:900;pointer-events:none}
 .os-coque .fen{pointer-events:auto}
-.os-coque .dock,.os-coque .voile,.os-coque .palette,.os-coque .tout,.os-coque .orbe-pan,.os-coque .orbe-bulle{z-index:1000}
+.os-coque .os-dock,.os-coque .voile,.os-coque .palette,.os-coque .tout,.os-coque .orbe-pan,.os-coque .orbe-bulle{z-index:1000}
 .os-coque .tout{inset:24px max(16px,4vw) calc(var(--dock) + 24px)}
-.os-coque .dock-accueil{width:46px;height:46px;border-radius:14px;border:1px solid var(--line2);background:transparent;color:var(--ink);font:700 13px/1 "Inter Variable",sans-serif;cursor:pointer}
-.os-coque .dock-accueil:hover{border-color:var(--ink)}
+.os-coque .os-dock-accueil{width:46px;height:46px;border-radius:14px;border:1px solid var(--line2);background:transparent;color:var(--ink);font:700 13px/1 "Inter Variable",sans-serif;cursor:pointer}
+.os-coque .os-dock-accueil:hover{border-color:var(--ink)}
 body.os-page{padding-bottom:calc(var(--dock-h,72px) + 30px)}
