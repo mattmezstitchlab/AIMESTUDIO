@@ -8,15 +8,39 @@ const E = async () => require('../api/_auth/ecrans.cjs');
 const req = (p, cookie) => new Request('https://www.lemondeaime.com' + p, { headers: cookie ? { cookie } : {} });
 const json = (code, o) => new Response(JSON.stringify(o), { status: code, headers: { 'content-type': 'application/json' } });
 
-test('middleware.js : le matcher littéral est exactement la liste ECRANS ; aucune base ni secret chargés', async () => {
-  const { ECRANS } = await E(), s = lire('middleware.js');
-  const m = s.match(/matcher:\s*(\[[^\]]*\])/); assert.ok(m, 'un matcher littéral');
-  assert.deepEqual(JSON.parse(m[1].replace(/'/g, '"')), ECRANS);
+/* les adresses détournées (revue de Matt sur #123 : /%72egie/ servait la Régie en production) */
+const DETOURS = ['/%72egie/', '/%6daitre/', '//regie/', '/REGIE/', '/%72egie', '/%6Daitre/', '///maitre/', '/Maitre/Index.HTML', '/regie%2f', '/regie%2F',
+  '/%2572egie/', '/r%65gie/index.html', '/regie/%2e%2e/regie/', '/x/../regie/', '/regie/./', '/regie/index.html%3F.js', '/regie%3Bx/', '/regie%00/'];
+/* le matcher tel que Vercel le compile (vercel build : « ^(?:<matcher>)[\/#\?]?$ ») */
+const matcher = () => { const m = lire('middleware.js').match(/matcher:\s*\['((?:[^'\\]|\\.)*)'\]/); assert.ok(m, 'un matcher littéral, une seule entrée'); return new RegExp('^(?:' + eval("'" + m[1] + "'") + ')[/#?]?$'); };
+
+test('middleware.js : le matcher prend toute adresse qui peut mener aux écrans, même encodée ; aucune base ni secret chargés', async () => {
+  const { ECRANS, estGarde } = await E(), s = lire('middleware.js'), re = matcher();
+  for (const p of [...ECRANS, ...DETOURS]) { assert.ok(re.test(p), 'le middleware est appelé : ' + p); assert.ok(estGarde(p), 'et la garde reconnaît : ' + p); }
+  for (const p of ['/regie/regie.js', '/maitre/maitre.css', '/fonts/InterVariable-latin.woff2', '/media/aime-film.mp4', '/api/identite', '/_vercel/speed-insights/script.js'])
+    assert.ok(!re.test(p), 'ressource ou API, sans middleware : ' + p);
+  assert.ok(re.test('/%72egie/regie.js'), 'un « % » dans le chemin : le middleware décide, toujours');
   assert.match(s, /runtime:\s*'nodejs'/);
   assert.deepEqual([...s.matchAll(/\bimport\b[^'"]*['"]([^'"]+)['"]/g)].map(x => x[1]), ['./api/_auth/ecrans.cjs'], 'un seul import');
   assert.ok(!/\.mjs['"]/.test(s), 'pas de .mjs : Vercel compile le middleware en CommonJS (Node 20 : ERR_REQUIRE_ESM)');
   assert.ok(!/pg|better-auth|process\.env/.test(lire('api/_auth/ecrans.cjs').replace(/\/\/.*$/gm, '')), 'ecrans.cjs ne lit ni base ni variable');
   assert.ok(!/middleware/.test(lire('.vercelignore')), 'middleware.js part bien en production');
+});
+
+test('normaliser : décodé (même deux fois), minuscules, « // » réduits, « . » et « .. » résolus ; encodage invalide = gardé', async () => {
+  const { normaliser, estGarde } = await E();
+  assert.deepEqual(['/%72egie/', '/%6daitre/', '//regie/', '/REGIE/', '/%2572egie/', '/regie%2F', '/x/../regie/', '/regie/%2e/', '\\regie\\'].map(normaliser), ['/regie/', '/maitre/', '/regie/', '/regie/', '/regie/', '/regie/', '/regie/', '/regie/', '/regie/']);
+  assert.equal(normaliser('/regie/index.html%3F.js'), '/regie/index.html', '« ? » encodé : la suite n\'est plus le chemin');
+  assert.equal(normaliser('/%E0%A4%A'), null); assert.equal(estGarde('/%E0%A4%A'), true, 'invalide : fermé par défaut');
+  for (const p of ['/regies/', '/maitre-x/', '/regie/regie.js', '/%72egie/regie.js', '/', '/exemples/']) assert.equal(estGarde(p), false, p);
+});
+
+test('garder : /%72egie/, /%6daitre/, //regie/, /REGIE/ et les autres détours répondent 404 sans propriétaire', async () => {
+  const { garder } = await E();
+  for (const p of DETOURS) {
+    const r = await garder(req(p), async () => false); assert.ok(r, p); assert.equal(r.status, 404, p); assert.equal(r.headers.get('cache-control'), 'no-store', p);
+    assert.equal(await garder(req(p, 'x=1'), async () => true), undefined, p + ' : le propriétaire passe');
+  }
 });
 
 test('garder : 404 sans propriétaire, sur chaque forme d\'adresse des deux écrans', async () => {
@@ -36,9 +60,9 @@ test('garder : les scripts, styles et autres pages ne passent jamais par la gard
     assert.equal(await garder(req(p), v), undefined, p);
   assert.equal(appels, 0);
   /* ce que les pages publiques chargent sous regie/ et maitre/ reste hors de la liste */
-  const { ECRANS } = await E();
+  const { estGarde } = await E();
   for (const f of ['index.html', 'sites/index.html', 'vitrine/world/index.html', 'live/index.html', 'canevas/adaptateurs/maitre.js', 'api/travaux.js'])
-    for (const x of lire(f).matchAll(/["'](\/(?:regie|maitre)\/[^"'?#]+)["']/g)) assert.ok(!ECRANS.includes(x[1]), f + ' : ' + x[1]);
+    for (const x of lire(f).matchAll(/["'](\/(?:regie|maitre)\/[^"'?#]+)["']/g)) assert.ok(!estGarde(x[1]), f + ' : ' + x[1]);
 });
 
 test('estProprietaire : seul le cookie part vers /api/identite (même origine) ; seul « connecté et propriétaire » ouvre', async () => {
@@ -53,7 +77,7 @@ test('estProprietaire : seul le cookie part vers /api/identite (même origine) ;
 });
 
 test('vercel.json : les deux écrans ne sont jamais mis en cache ni indexés ; aucune réécriture ne les contourne', async () => {
-  const { ECRANS } = await E(), v = JSON.parse(lire('vercel.json'));
+  const { ECRANS } = await E(), v = JSON.parse(lire('vercel.json'));   /* les en-têtes visent les adresses directes ; les détours reçoivent 404 (no-store) */
   const h = v.headers.find(x => x.source === '/(regie|maitre)(/|/index|/index\\.html)?'); assert.ok(h);
   const re = new RegExp('^' + h.source + '$'); for (const p of ECRANS) assert.ok(re.test(p), p); assert.ok(!re.test('/regie/regie.js'));
   assert.deepEqual(h.headers, [{ key: 'Cache-Control', value: 'private, no-store' }, { key: 'X-Robots-Tag', value: 'noindex' }]);
