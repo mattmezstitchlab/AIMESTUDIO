@@ -120,8 +120,10 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     console.log('Circle : la même ressource sur un cadran de 24 heures');
     const arcs = async k => page[k].locator('.tp-arc').count(), arc = (k, id) => page[k].locator('.tp-arc[data-id="' + id + '"]');
     /* toucher un arc comme un doigt : au milieu de son tracé (le centre de sa boîte tombe à l'intérieur du cercle) */
-    const toucher = async (k, id) => { const pt = await page[k].evaluate(i => { const p = document.querySelector('.tp-arc[data-id="' + i + '"] .tp-trait-m'), L = p.getTotalLength(), q = p.getPointAtLength(L / 2), m = p.getScreenCTM();
-      p.closest('svg').scrollIntoView({ block: 'center' }); const q2 = p.getPointAtLength(L / 2), m2 = p.getScreenCTM(); return { x: m2.a * q2.x + m2.c * q2.y + m2.e, y: m2.b * q2.x + m2.d * q2.y + m2.f }; }, id); await page[k].mouse.click(pt.x, pt.y); };
+    /* le milieu d'un moment à l'écran : son tracé, ou sa pastille quand il est très court */
+    const MILIEU = `window.__milieu = i => { const n = document.querySelector('.tp-arc[data-id="' + i + '"] .tp-trait-m, .tp-arc[data-id="' + i + '"] .tp-pastille'), m = n.getScreenCTM();
+      const q = n.tagName === 'circle' ? { x: +n.getAttribute('cx'), y: +n.getAttribute('cy') } : n.getPointAtLength(n.getTotalLength() / 2); return { x: m.a * q.x + m.c * q.y + m.e, y: m.b * q.x + m.d * q.y + m.f }; };`;
+    const toucher = async (k, id) => { await page[k].addScriptTag({ content: MILIEU }); const pt = await page[k].evaluate(i => { document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' }); return window.__milieu(i); }, id); await page[k].mouse.click(pt.x, pt.y); };
     for (const k of ['emma', 'alex', 'lea']) { await page[k].getByRole('button', { name: 'Circle', exact: true }).click(); await page[k].waitForSelector('.tp-arc'); }
     ok(await arcs('emma') === 5 && await arcs('alex') === 8 && await arcs('lea') === 9, 'Circle : 5 arcs pour Emma, 8 pour Alex, 9 pour Léa : exactement leurs vues');
     ok((await page.emma.locator('.tp-zone').count()) === 0 && (await page.lea.locator('.tp-zone').count()) === 1, 'la conséquence à décider (ambre) seulement chez qui peut décider');
@@ -133,7 +135,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(/vue=cercle/.test(page.lea.url()) && /moment=cocktail/.test(page.lea.url()), 'Léa : le mode et le moment sont dans l\'adresse');
     await toucher('emma', 'cocktail'); await page.emma.waitForSelector('.tp-detail .tp-m');
     ok((await page.emma.locator('.tp-detail button').count()) === 0, 'Emma : le même panneau, sans aucun geste');
-    await capture('lea', 'TEMPS__LEA__programme__cercle-cocktail'); await capture('emma', 'TEMPS__EMMA__programme__cercle-cocktail'); await capture('alex', 'TEMPS__ALEX__programme__cercle');
+    await capture('lea', 'TEMPS__LEA__programme__cercle-cocktail'); if (CAP) { await page.lea.evaluate(() => document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' })); await page.lea.screenshot({ path: path.join(CAP, 'TEMPS__LEA__cercle__ordinateur__cadran.png') }); } await capture('emma', 'TEMPS__EMMA__programme__cercle-cocktail'); await capture('alex', 'TEMPS__ALEX__programme__cercle');
     /* changer de mode garde le moment ; recharger garde tout */
     await page.lea.getByRole('button', { name: 'Liste', exact: true }).click(); await page.lea.waitForSelector('.tp-m.choisi');
     ok((await page.lea.locator('.tp-m.choisi').getAttribute('data-id')) === 'cocktail' && /moment=cocktail/.test(page.lea.url()) && !/vue=/.test(page.lea.url()), 'Léa : en Liste, le cocktail reste choisi');
@@ -160,9 +162,10 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     }
     /* un doigt un peu à côté d'un arc court (le discours : 20 min, couloir intérieur) */
     await em.evaluate(() => document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' })); await em.waitForTimeout(100);   /* le cadran à l'écran avant de viser */
-    const pres = await em.evaluate(() => { const p = document.querySelector('.tp-arc[data-id="discours"] .tp-trait-m'), L = p.getTotalLength(), q = p.getPointAtLength(L / 2), m = p.getScreenCTM(), x = m.a * q.x + m.c * q.y + m.e, y = m.b * q.x + m.d * q.y + m.f, c = document.querySelector('.tp-cadran').getBoundingClientRect(), cx = c.left + c.width / 2, cy = c.top + c.height / 2, d = Math.hypot(x - cx, y - cy);
+    await em.addScriptTag({ content: MILIEU });
+    const pres = await em.evaluate(() => { const o = window.__milieu('discours'), x = o.x, y = o.y, c = document.querySelector('.tp-cadran').getBoundingClientRect(), cx = c.left + c.width / 2, cy = c.top + c.height / 2, d = Math.hypot(x - cx, y - cy);
       /* on vise 14 px à côté, du côté où aucun autre moment ne se trouve : vers l'extérieur s'il est dans le couloir extérieur, sinon vers l'intérieur */
-      const rayons = [...document.querySelectorAll('.tp-arc .tp-trait-m')].map(t => { const L2 = t.getTotalLength(), q2 = t.getPointAtLength(L2 / 2), m2 = t.getScreenCTM(); return Math.round(Math.hypot(m2.a * q2.x + m2.c * q2.y + m2.e - cx, m2.b * q2.x + m2.d * q2.y + m2.f - cy)); });
+      const rayons = [...document.querySelectorAll('.tp-arc')].map(g => { const o2 = window.__milieu(g.getAttribute('data-id')); return Math.round(Math.hypot(o2.x - cx, o2.y - cy)); });
       const sens = Math.round(d) >= Math.max(...rayons) - 1 ? 1 : -1;
       return { x: x + sens * (x - cx) / d * 14, y: y + sens * (y - cy) / d * 14 }; });
     await em.mouse.click(pres.x, pres.y); await em.waitForTimeout(150);

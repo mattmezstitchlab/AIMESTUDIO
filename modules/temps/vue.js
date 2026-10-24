@@ -98,8 +98,13 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
   var narrow=window.matchMedia&&window.matchMedia('(max-width: 560px)').matches,M=narrow?K.modele(v,{couloirs:3,epaisseur:60,rayon:366,ecart:8}):K.modele(v,{couloirs:4}),C=M.centre;
   if(etat.selection&&!v.moments.some(function(m){return m.id===etat.selection}))etat.selection=null;   /* un moment devenu invisible : rien n'en est dit */
   var s=svg('svg',{viewBox:'0 0 1000 1000',class:'tp-cadran',role:'group','aria-label':'Cadran de 24 heures, minuit en haut : '+M.arcs.length+' moment'+(M.arcs.length>1?'s':'')+'. Flèches pour passer d\'un moment à l\'autre, Entrée pour ouvrir son détail.'});
+  var defs=svg('defs'),grad=svg('radialGradient',{id:'tp-face',cx:'50%',cy:'45%',r:'55%'});
+  grad.appendChild(svg('stop',{offset:'0%','stop-color':'#1A1A20'}));grad.appendChild(svg('stop',{offset:'100%','stop-color':'#0B0B0E'}));defs.appendChild(grad);s.appendChild(defs);
   var fond=svg('g',{'aria-hidden':'true',class:'tp-fond'});
+  var trait=Math.round(M.epaisseur*.6);   /* des anneaux plus fins que la place qu'ils occupent : de l'air entre les couloirs */
+  fond.appendChild(svg('circle',{cx:C,cy:C,r:M.rayon+M.epaisseur/2+8,class:'tp-face'}));
   fond.appendChild(svg('circle',{cx:C,cy:C,r:M.rayon+M.epaisseur/2+8,class:'tp-anneau'}));
+  for(var k=0;k<M.couloirs;k++)fond.appendChild(svg('circle',{cx:C,cy:C,r:M.rayon-k*(M.epaisseur+M.ecart),class:'tp-piste',style:'stroke-width:'+trait+'px'}));   /* les pistes, comme les anneaux d'une montre */
   M.graduations.forEach(function(g){fond.appendChild(svg('line',{x1:g.x1,y1:g.y1,x2:g.x2,y2:g.y2,class:g.cardinale?'tp-trait fort':'tp-trait'}));if(g.texte){var t=svg('text',{x:g.lx,y:g.ly+12,class:'tp-heure-c','text-anchor':g.ancre});t.textContent=g.texte;fond.appendChild(t)}});
   s.appendChild(fond);
   var arcs=svg('g',{class:'tp-arcs'}),focusable=etat.selection&&M.ordre.indexOf(etat.selection)>=0?etat.selection:M.ordre[0];
@@ -107,8 +112,11 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
    var ti=svg('title');ti.textContent=a.nom;g.appendChild(ti);
    if(a.dPrevu)g.appendChild(svg('path',{d:a.dPrevu,class:'tp-prevu-c'}));
    if(a.dMoi)g.appendChild(svg('path',{d:a.dMoi,class:'tp-moi-c'}));
-   g.appendChild(svg('path',{d:a.d,class:'tp-trait-m'}));
-   if(a.etat.indexOf('a-confirmer')>=0){var pc=K.polarXY(C,C,a.rayon,a.a0);g.appendChild(svg('circle',{cx:pc.x,cy:pc.y,r:14,class:'tp-point'}))}
+   /* bouts arrondis rentrés dans l'arc : le trait commence et finit aux heures exactes */
+   var cap=trait/2/a.rayon*180/Math.PI,span=Math.max(a.a1-a.a0,2);
+   if(span>2*cap+0.5)g.appendChild(svg('path',{d:K.arcPathAt(C,C,a.rayon,a.a0+cap,a.a0+span-cap),class:'tp-trait-m',style:'stroke-width:'+trait+'px'}));
+   else{var pm=K.polarXY(C,C,a.rayon,a.a0+span/2);g.appendChild(svg('circle',{cx:pm.x,cy:pm.y,r:trait/2,class:'tp-pastille'}))}
+   if(a.etat.indexOf('a-confirmer')>=0){var pc=K.polarXY(C,C,a.rayon,a.a0);g.appendChild(svg('circle',{cx:pc.x,cy:pc.y,r:11,class:'tp-point'}))}
    g.addEventListener('keydown',function(e){var i=M.ordre.indexOf(a.id),k=e.key,cible=null;
     if(k==='Enter'||k===' '){e.preventDefault();choisir(a.id,true);return}
     if(k==='Escape'){e.preventDefault();choisir(null);return}
@@ -119,15 +127,15 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
   /* toucher au doigt : le moment le plus proche du point touché, dans un rayon de 24 px à l'écran (même un arc étroit ou serré) */
   s.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.tp-plus'))return;var ctm=s.getScreenCTM();if(!ctm)return;var p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;var q=p.matrixTransform(ctm.inverse());
    var id=K.toucher(M,q.x,q.y,24/ctm.a);if(id)choisir(id,true,true)});
-  var zones=svg('g',{class:'tp-zones','aria-hidden':'true'});M.zones.forEach(function(zn){zones.appendChild(svg('path',{d:zn.d,class:'tp-zone'}))});s.appendChild(zones);
+  var zones=svg('g',{class:'tp-zones','aria-hidden':'true'});M.zones.forEach(function(zn){zones.appendChild(svg('path',{d:zn.d,class:'tp-zone',style:'stroke-width:'+trait+'px'}))});s.appendChild(zones);
   /* au-delà des couloirs visibles : une pastille « +N » par moment, qui ouvre la Liste sur lui */
   M.debordements.forEach(function(d){var p=K.polarXY(C,C,M.rayon+M.epaisseur/2+36,d.angle),g=svg('g',{class:'tp-plus',role:'button',tabindex:'0','aria-label':'Moment de plus, à voir dans la Liste : '+d.nom});
    g.appendChild(svg('circle',{cx:p.x,cy:p.y,r:26}));var t=svg('text',{x:p.x,y:p.y+9,'text-anchor':'middle'});t.textContent='+1';g.appendChild(t);
    var ouvrir=function(){etat.selection=d.id;changerMode('liste')};g.addEventListener('click',ouvrir);g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();ouvrir()}});s.appendChild(g)});
   /* le centre résume le moment choisi (idée de RIPPLECIRCLE v9) ; décoratif : le panneau dit la même chose en texte */
   var ch=etat.selection&&v.moments.filter(function(m){return m.id===etat.selection})[0],cen=svg('g',{'aria-hidden':'true',class:'tp-centre'});
-  var l1=svg('text',{x:C,y:C-14,'text-anchor':'middle',class:'tp-c1'}),l2=svg('text',{x:C,y:C+36,'text-anchor':'middle',class:'tp-c2'});
-  l1.textContent=ch?ch.titre:(dateDe(v)||'Jour J');l2.textContent=ch?(ch.debut+' – '+ch.fin):(M.arcs.length+M.debordements.length)+' moments · 24 h';cen.appendChild(l1);cen.appendChild(l2);s.appendChild(cen);
+  var l0=svg('text',{x:C,y:C-62,'text-anchor':'middle',class:'tp-c0'}),l1=svg('text',{x:C,y:C-6,'text-anchor':'middle',class:'tp-c1'}),l2=svg('text',{x:C,y:C+42,'text-anchor':'middle',class:'tp-c2'});
+  l0.textContent=(dateDe(v)||'Jour J').toUpperCase();l1.textContent=ch?ch.titre:'24 heures';l2.textContent=ch?(ch.debut+' – '+ch.fin):(M.arcs.length+M.debordements.length)+' moments';cen.appendChild(l0);cen.appendChild(l1);cen.appendChild(l2);s.appendChild(cen);
   z.appendChild(s);
   /* le panneau de détail : la carte de la Liste elle-même, donc les mêmes gestes autorisés */
   var det=el('section','tp-detail');det.setAttribute('aria-label','Moment choisi');
