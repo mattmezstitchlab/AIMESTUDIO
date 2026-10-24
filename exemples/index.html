@@ -14,7 +14,11 @@
 <link rel="stylesheet" href="/coeur/coeur.css">
 <link rel="stylesheet" href="/dock/dock.css">
 <style>
-.ex-liste{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+/* jamais de case vide : 3 colonnes (9 exemples = 3 rangées pleines) ; 2 colonnes, la dernière carte seule prend la rangée ; 1 colonne sur téléphone */
+.ex-liste li:last-child:nth-child(3n+1){grid-column:1/-1}.ex-liste li:last-child:nth-child(3n+2){grid-column:span 2}
+@media (max-width:980px){.ex-liste{grid-template-columns:repeat(2,minmax(0,1fr))!important}.ex-liste li:last-child:nth-child(3n+1),.ex-liste li:last-child:nth-child(3n+2){grid-column:auto}.ex-liste li:last-child:nth-child(odd){grid-column:1/-1}}
+@media (max-width:620px){.ex-liste{grid-template-columns:minmax(0,1fr)!important}.ex-liste li:last-child:nth-child(odd){grid-column:auto}}
+.ex-liste{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:22px;overflow:hidden}
 .ex-liste a{display:grid;gap:10px;align-content:start;height:100%;padding:28px 26px 30px;background:var(--desk);text-decoration:none;transition:background .3s}
 .ex-liste a:hover{background:#111114}
 .ex-liste .k{font:600 11.5px var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
@@ -65,18 +69,20 @@
    pour qu'elle connaisse toutes ses ancres. */
 (function(){'use strict';
 var EX=[
+ {u:'mosaique',href:'/exemples/mosaique/',genre:'Mariage',titre:'Chacun son écran',texte:'Sept téléphones, un seul mariage : quand quelque chose arrive, seuls les écrans concernés sonnent. Démonstration.',n:7},
  {u:'mariage',href:'/',genre:'Mariage',titre:'Léa & Marc',texte:'Le couple, le prestataire, l\'invitée, la coordination.',n:4},
- {u:'mosaique',href:'/exemples/mosaique/',genre:'Mariage · le jour J',titre:'Chacun son écran',texte:'Sept téléphones, un seul mariage : quand quelque chose arrive, seuls les écrans concernés sonnent. Démonstration.',n:7},
  {u:'world',href:'/exemples/?u=world',genre:'Mariage à distance',titre:'Inès & Théo · Paris / New York',texte:'Le couple, l\'agence, le prestataire, l\'invitée, la contributrice, la coordination locale.',n:6},
  {u:'seminaire',href:'/exemples/?u=seminaire',genre:'Séminaire d\'entreprise',titre:'Maison Orée · Cap 2030',texte:'La direction, l\'intervenante, le participant, la logistique, le traiteur, l\'observateur.',n:6},
- {u:'stitch',href:'/exemples/?u=stitch',genre:'Création · AIME Stitch',titre:'Un patron, quatre regards',texte:'La créatrice, la boutique, la brodeuse, la visiteuse : la grille ne sort que pour qui y a droit.',n:4},
- {u:'magazine',href:'/exemples/?u=magazine',genre:'Édition · AIME Magazine',titre:'Un numéro, quatre postes',texte:'L\'autrice, la rédactrice en chef, le maquettiste, la lectrice : un seul fichier, une page publiée.',n:4},
- {u:'regie',href:'/exemples/?u=regie',genre:'Site et gestion · AIME Régie',titre:'Un site, six rôles',texte:'Le propriétaire, le collaborateur, l\'expert-comptable, le client, le visiteur, l\'orbe : la gestion ne sort jamais du propriétaire.',n:6},
- {u:'studio',href:'/exemples/?u=studio',genre:'Supports imprimés · AIME Studio',titre:'Un festival, neuf rôles',texte:'L\'auteur, le client, le relecteur, l\'imprimeur, la bénévole, la personne badgée, le responsable, l\'auteur d\'un avis, l\'écriture assistée.',n:9},
- {u:'g44',href:'/exemples/?u=g44',genre:'Administration · G44 LAB',titre:'Un dossier, quatre missions',texte:'L\'agent, le formateur, la responsable, le contrôleur : un dossier fictif, des habilitations, rien d\'exécuté.',n:4}];
+ {u:'stitch',href:'/exemples/?u=stitch',genre:'Création · broderie',titre:'Un patron, quatre regards',texte:'La créatrice, la boutique, la brodeuse, la visiteuse : la grille ne sort que pour qui y a droit.',n:4},
+ {u:'magazine',href:'/exemples/?u=magazine',genre:'Édition',titre:'Un numéro, quatre postes',texte:'L\'autrice, la rédactrice en chef, le maquettiste, la lectrice : un seul fichier, une page publiée.',n:4},
+ {u:'regie',href:'/exemples/?u=regie',genre:'Site et gestion',titre:'Un site, six rôles',texte:'Le propriétaire, le collaborateur, l\'expert-comptable, le client, le visiteur, l\'orbe : la gestion ne sort jamais du propriétaire.',n:6},
+ {u:'studio',href:'/exemples/?u=studio',genre:'Supports imprimés',titre:'Un festival, neuf rôles',texte:'L\'auteur, le client, le relecteur, l\'imprimeur, la bénévole, la personne badgée, le responsable, l\'auteur d\'un avis, l\'écriture assistée.',n:9},
+ {u:'g44',href:'/exemples/?u=g44',genre:'Administration',titre:'Un dossier, quatre missions',texte:'L\'agent, le formateur, la responsable, le contrôleur : un dossier fictif, des habilitations, rien d\'exécuté.',n:4}];
 var $=function(i){return document.getElementById(i)},esc=function(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var u=(new URLSearchParams(location.search).get('u')||'').replace(/[^a-z0-9]/g,''),ex=EX.filter(function(e){return e.u===u&&e.u!=='mariage'&&e.u!=='mosaique'})[0];
-$('exAutres').innerHTML=EX.filter(function(e){return!ex||e.u!==ex.u}).map(function(e){return'<li><a href="'+e.href+'">'+esc(e.genre)+' · '+esc(e.titre)+' · '+e.n+' rôles</a></li>'}).join('');
+/* la liste du bas répétait les cartes : elle n'existe plus sur la page des exemples ; sur un exemple, elle mène aux autres */
+if(!ex){var pied=$('exAutres').closest('.col');pied.remove()}else $('t-autres').textContent='Les autres exemples';
+if(ex)$('exAutres').innerHTML=EX.filter(function(e){return!ex||e.u!==ex.u}).map(function(e){return'<li><a href="'+e.href+'">'+esc(e.genre)+' · '+esc(e.titre)+' · '+e.n+' rôles</a></li>'}).join('');
 function charger(srcs,fin){var i=0;(function suite(){if(i>=srcs.length)return fin();var s=document.createElement('script');s.src=srcs[i++];s.onload=suite;s.onerror=suite;document.body.appendChild(s)})()}
 var ORBE=['/zero/orbe.js','/zero/points.js','/zero/yeux.js','/zero/formes.js','/zero/zero.js'];
 function porte(){}
