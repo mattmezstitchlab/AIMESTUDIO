@@ -4,11 +4,11 @@ const fs=require('node:fs');
 const path=require('node:path');
 const lire=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const Porte=require('../porte/porte.js');
-test('Page Zéro ouvre librement Le Monde AIME, sans imposer le Bureau ni la connexion',()=>{
- const z=lire('index.html');
- assert.match(z,/id="rejoindre" href="\/aime\/"/);
+test('Page Zéro : une seule entrée par intention, sans imposer le Bureau ni la connexion ; Le Monde AIME reste libre, au Lab',()=>{
+ const z=lire('index.html'),P=require('../dock/plus.js');
+ assert.ok(require('../nav/registre.js').ENTREES.some(e=>e.href==='/aime/'&&e.cat==='jeux'));
  assert.doesNotMatch(z,/id="bureau" href="\/bureau\/"/);
- assert.match(z,/AIMEPorte\.monter/);
+ assert.match(z,/AIMEPlus\.brancher/);assert.equal(P.etat({connecte:false}).items[0].href,'/?commencer=1');
  assert.equal(Porte.etat({connecte:false}).href,'/point-zero/?intention=identite');
 });
 test('Le Timbre confirmé rejoint la facette du Monde AIME et non le Bureau',()=>{

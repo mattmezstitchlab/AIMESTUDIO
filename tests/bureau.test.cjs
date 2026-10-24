@@ -76,8 +76,9 @@ test('routes : /bureau/ est servi, Page Zéro y mène, aucune boucle, chaque ent
  const rw=(v.rewrites||[]);const fichier=p=>{const f=p.endsWith('/')?p+'index.html':p;return fs.existsSync(R(f.slice(1)))||fs.existsSync(R(p.slice(1)+'/index.html'))};
  const sert=u=>{const p=u.split(/[?#]/)[0];if(fichier(p))return true;const r=rw.find(r=>r.source===p);return !!r&&fichier(r.destination)};
  for(const e of N.ENTREES){const f=suivre(e.href.split('?')[0]).fin;assert.ok(sert(f),e.id+' → '+f+' : aucun fichier')}
- const z=fs.readFileSync(R('index.html'),'utf8');const m=z.indexOf('id="rejoindre" href="/aime/"'),e=z.indexOf('id="entrer"');
- assert.ok(m>e,'Page Zéro : Le Monde AIME est la sortie principale');assert.ok(!z.includes('id="bureau" href="/bureau/"'),'aucun bouton Bureau dans le parcours principal');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.ok(!/MON BUREAU|AIME STUDIO<\/a>/.test(z),'en haut, un seul accès : la porte irisée');assert.match(z,/id="porte"/);assert.match(z,/AIMEPorte\.monter/)});
+ const z=fs.readFileSync(R('index.html'),'utf8');
+ assert.ok(!z.includes('id="entrer"')&&!/Et maintenant \?/.test(z),'« Et maintenant ? » a disparu : une seule entrée, par intention');assert.ok(!z.includes('/#entrer'),'plus de destination /#entrer');
+ assert.ok(N.ENTREES.some(e=>e.id==='aime'&&e.href==='/aime/'&&e.cat==='jeux'),'Le Monde AIME passe au Lab, toujours servi');assert.ok(!z.includes('id="bureau" href="/bureau/"'),'aucun bouton Bureau dans le parcours principal');assert.ok(!/data-carte-ouvrir|zero-carte/.test(z),'la Page Zéro ne crée plus de Carte');assert.ok(!/MON BUREAU|AIME STUDIO<\/a>/.test(z),'en haut, seulement le logo');assert.doesNotMatch(z,/id="porte"/);assert.match(z,/AIMEPlus\.brancher/)});
 
 test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
  const v=JSON.parse(fs.readFileSync(R('vercel.json'))),rw=v.rewrites||[],A=['accessibilite','buro','docs','image','stitchlab','web'];
@@ -86,7 +87,7 @@ test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
   assert.ok(!fs.existsSync(R(a+'/index.html')),a+'/index.html : copie revenue');for(const s of ['/'+a,'/'+a+'/'])assert.ok(rw.some(r=>r.source===s&&r.destination==='/studio/'),s+' réécrit vers le Studio')}
  assert.ok(fs.existsSync(R('docs/BUREAU.md')),'les documents de /docs/ restent servis')});
 test('Page Zéro · le cœur de haut en bas : quatre écrans composés par le moteur, puis l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8'),c=fs.readFileSync(R('coeur/coeur.js'),'utf8');
- const ordre=['id="haut"','id="coeur"','id="arrivees"','id="arr-couple"','id="arr-prestataire"','id="arr-invite"','id="arr-coord"','id="ecrans"','id="droits"','id="jourj"','id="partout"','id="entrer"','id="contact"'].map(s=>z.indexOf(s));
+ const ordre=['id="haut"','id="coeur"','id="arrivees"','id="arr-couple"','id="arr-prestataire"','id="arr-invite"','id="arr-coord"','id="ecrans"','id="droits"','id="jourj"','id="partout"','id="contact"'].map(s=>z.indexOf(s));
  assert.ok(ordre.every((x,i)=>x>0&&(i===0||x>ordre[i-1])),'les chapitres se suivent de haut en bas');
  assert.equal((z.match(/<iframe [^>]*sandbox="allow-same-origin"/g)||[]).length,5,'quatre écrans + l\'aperçu du projet, tous sans script');assert.ok(!/allow-scripts/.test(z));
  assert.match(z,/Démonstration · données fictives/);assert.ok(!/href="\/synchroview\//.test(z),'SynchroView est réservé au propriétaire du site : l\'accueil n\'y renvoie pas');
