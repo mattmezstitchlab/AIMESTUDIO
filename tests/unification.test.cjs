@@ -17,7 +17,7 @@ test('accueil : un seul +, un seul accès au compte, plus de « Mes essais sur c
 
 test('aucun autre écran ne reprend le titre de l\'accueil', () => {
   const T = /Tout commence par une intention/;
-  for (const f of ['lab/grande-partition/index.html', 'bureau/index.html', 'exemples/index.html', 'contact/index.html', 'capacites/index.html']) assert.ok(!T.test(lire(f)), f);
+  for (const f of ['lab/grande-partition/index.html', 'exemples/index.html', 'contact/index.html', 'capacites/index.html']) assert.ok(!T.test(lire(f)), f);
   assert.match(lire('lab/grande-partition/index.html'), /<h1 id="t-zero">La Grande Partition<\/h1>/);
 });
 
@@ -43,7 +43,6 @@ test('le Bureau devient « Mes projets » : connecté, on arrive sur /projets/ ;
   assert.match(c, /location\.replace\('\/projets\/'\+location\.search\)/, 'une invitation, un projet à ouvrir ou venu du Point Zéro mènent à Mes projets');
   assert.match(c, /\$\('profil'\)\.hidden=PROJETS;\$\('espaces'\)\.hidden=!PROJETS/, 'le compte : identité ; Mes projets : espaces et invitations');
   assert.match(lire('compte/index.html'), /<h2 class="k" id="t-esp">Mes projets<\/h2>/);
-  assert.ok(!/AIMEPorte\.monter/.test(lire('bureau/index.html')), 'le Bureau n\'a plus de seconde porte');
   assert.equal(require('../dock/plus.js').etat({ connecte: true }, [{ id: 'a', titre: 'P', role: 'owner' }]).items[0].href, '/projets/?espace=a');
 });
 

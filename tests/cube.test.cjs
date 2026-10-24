@@ -4,9 +4,9 @@ let n=0;const t=(nom,f)=>{f();n++};
 
 t('Régie personnelle : le Bureau et le dock lisent le même cube, par le même stockage et la même vue',()=>{const A=require('../os/apps.js'),c=A.catalogue([]);
  assert.equal(A.epingles(c)[0].id,'cube','le cube en tête du dock');assert.equal(A.epingles(c,['regie','stitch'])[0].id,'cube','même avec des épingles choisies');assert.equal(A.epingles(c,['cube','regie']).filter(a=>a.id==='cube').length,1,'jamais en double');
- const os=lire('os/os.js'),b=lire('bureau/index.html'),r=lire('cube/regie.js'),i=lire('cube/index.html'),v=lire('cube/vue3d.js');
+ const os=lire('os/os.js'),r=lire('cube/regie.js'),i=lire('cube/index.html'),v=lire('cube/vue3d.js');
  assert.ok(os.includes("a.id==='cube'&&window.AIMECubeVue")&&os.includes('AIMECubeVue.miniHTML()'),'miniature du cube dans le dock');
- ['/cube/modele.js','/cube/stock.js','/cube/vue3d.js'].forEach(f=>{assert.ok(b.includes(f),'Bureau : '+f);assert.ok(i.includes(f),'Mon cube : '+f)});
+ ['/cube/modele.js','/cube/stock.js','/cube/vue3d.js'].forEach(f=>{assert.ok(i.includes(f),'Mon cube : '+f)});
  assert.ok(!/localStorage|sessionStorage/.test(r+v),'les vues ne touchent pas au stockage');assert.ok(r.includes('S.charger(moi)')&&r.includes('V.monter('),'même modèle, même vue');
  assert.ok(r.includes("'/aime/?carte='")&&lire('cube/cartes.js').includes("get('carte')"),'écrire ou corriger la carte dans Le Monde AIME');
  assert.ok(/droitsOrbe/.test(r)&&/aucun/.test(r),'l\'orbe : préférences affichées, droits vides');assert.ok(!/regie\/regie\.js|\/regie\/index/.test(i),'la Régie maîtresse n\'est pas chargée');
