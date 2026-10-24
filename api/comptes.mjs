@@ -2,7 +2,9 @@
 // Vercel n'achemine pas les chemins à plusieurs segments vers une fonction simple : vercel.json réécrit
 // /api/auth/<chemin> vers /api/comptes?__chemin=<chemin>, et l'adresse d'origine est reconstruite ici.
 import { toNodeHandler } from 'better-auth/node';
-import { auth, envoiPret, oublier, schemaManquant } from './_auth/auth.mjs';
+import { auth, envoiPret, oublier, schemaManquant, _pool } from './_auth/auth.mjs';
+import R from './_auth/requete.cjs';     /* même origine et corps JSON sur toute écriture (audit Vercel, PR 2) */
+import Q from './_auth/quotas.cjs';      /* liens de connexion (des e-mails) : 10 par adresse IP et par heure, partagé entre instances */
 let gestion = null;
 function json(res, code, o) { res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify(o)); }
 export function adresseOrigine(url) {
@@ -15,8 +17,13 @@ export function adresseOrigine(url) {
 export default async function comptes(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   const origine = adresseOrigine(req.url); if (!origine) return json(res, 404, { ok: false }); req.url = origine;
+  const refus = R.ecriture(req); if (refus) return json(res, ...refus);   /* avant tout : même origine et JSON pour toute écriture */
   const a = auth();
   if (!a) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
+  if (/\/sign-in\/magic-link$/.test((req.url || '').split('?')[0]) && req.method === 'POST') {
+    const q = await Q.quota('lien:ip', Q.ipDe(req), { db: _pool() || undefined });
+    if (!q.ok) { res.setHeader('Retry-After', String(q.attente)); return json(res, 429, { ok: false, raison: 'Trop de liens de connexion demandés depuis cette connexion : réessayez dans un moment.' }); }
+  }
   if (/\/sign-in\/magic-link$/.test((req.url || '').split('?')[0]) && !envoiPret()) return json(res, 503, { ok: false, raison: 'L\'envoi des e-mails n\'est pas encore configuré : utilisez une clé d\'accès, ou réessayez plus tard.' });
   gestion = gestion || toNodeHandler(a);
   try { return await gestion(req, res); }

@@ -30,6 +30,7 @@ before(async () => {
   AU = await import('../api/_auth/auth.mjs'); AU._envoyeur(() => {}); AU.auth(); pool = AU._pool();
   A._envoyeur(m => { courriers.push(m); });
   await pool.query('truncate liste_attente restart identity');
+  await pool.query('truncate quotas').catch(() => {});   /* les quotas partagés (migration 06) */
 });
 after(async () => { if (pool) await pool.end(); });
 
@@ -113,6 +114,18 @@ test('désinscription en un clic : la ligne est effacée (GET depuis la page, PO
   const u = new URL(courriers[0].retraitApi);
   assert.equal((await appel('List-Unsubscribe=One-Click', { method: 'POST', url: u.pathname + u.search, headers: { origin: undefined, 'content-type': 'application/x-www-form-urlencoded' } })).code, 200);
   assert.equal(await ligne('part2@exemple.test'), undefined);
+});
+
+test('quotas d\'envoi partagés : 3 e-mails par adresse et par jour ; au-delà, même réponse, aucun envoi, et le lien déjà reçu reste valable', opts, async () => {
+  courriers = []; A._reinitialiser(); const e = 'boite.visee@exemple.test', recul = () => pool.query("update liste_attente set jeton_expire = jeton_expire - interval '11 minutes' where email = $1", [e]);
+  for (let i = 0; i < 3; i++) { assert.deepEqual((await appel(bon({ email: e, place: 'invite' }))).body, { ok: true }); await recul(); }
+  assert.equal(courriers.length, 3);
+  const avant = (await ligne(e)).jeton_hash;
+  assert.deepEqual((await appel(bon({ email: e, place: 'invite' }))).body, { ok: true }, 'même réponse, rien ne se voit');
+  assert.equal(courriers.length, 3, 'pas de 4ᵉ e-mail dans la journée');
+  assert.equal((await ligne(e)).jeton_hash, avant, 'le jeton n\'est pas remplacé : le dernier lien reçu marche toujours');
+  assert.equal((await get('jeton=' + jetonDe(courriers[2]))).body.ok, true);
+  const { rows } = await pool.query("select cle from quotas where cle like 'attente:%'"); assert.ok(rows.length >= 2 && rows.every(r => !/@|exemple/.test(r.cle)), 'aucune adresse en clair dans les quotas');
 });
 
 test('5 envois par adresse IP et par heure', opts, async () => {

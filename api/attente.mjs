@@ -3,8 +3,9 @@
 //   GET  ?jeton=…        → confirmation (lien de l'e-mail, valable 7 jours) ; renvoie le rang parmi les confirmés
 //   GET  ?retrait=…      → désinscription en un clic : la ligne est effacée (POST accepté aussi, pour List-Unsubscribe-Post)
 //   GET  ?stats=1        → compteurs sans adresses, pour le propriétaire du site seulement (même règle que /api/maitre : 404 sinon)
-// Protections reprises du formulaire de contact (api/contact.js) : même origine, JSON seulement, taille bornée, champ piège
-// « site_web », 3 secondes au moins, consentement obligatoire, 5 envois par adresse IP et par heure. Une adresse déjà
+// Protections reprises du formulaire de contact : même origine et JSON (api/_auth/requete.cjs), taille bornée, champ piège
+// « site_web », 3 secondes au moins, consentement obligatoire ; quotas partagés entre instances (api/_auth/quotas.cjs) :
+// 5 inscriptions par adresse IP et par heure, 3 e-mails par adresse et par jour, 300 e-mails par heure pour le site. Une adresse déjà
 // inscrite reçoit la même réponse qu'une nouvelle (on ne révèle pas qui est inscrit) et pas de second e-mail avant 10 minutes.
 // Jetons de confirmation : aléatoires, gardés seulement en empreinte sha256, comme les liens magiques. Le lien de
 // désinscription est signé (HMAC de l'identifiant) : rien à stocker, et il reste valable pour les e-mails suivants.
@@ -13,22 +14,23 @@ import crypto from 'crypto';
 import { createRequire } from 'module';
 import { auth, _pool, adresse, expediteur } from './_auth/auth.mjs';
 import { proprietaire as proprietaireReel } from './_auth/proprietaire.mjs';
+import Q from './_auth/quotas.cjs';      /* quotas partagés entre instances (PR 2) : inscriptions par IP, e-mails par adresse et pour le site */
+import R from './_auth/requete.cjs';     /* même origine et corps JSON (PR 2) */
 const require = createRequire(import.meta.url);
 const SOUHAITS = require('../attente/souhaits.json').souhaits;
 const METIERS = require('../vitrine/metiers.json').metiers;
 
 export const IDS_SOUHAITS = SOUHAITS.map(s => s.id);
 export const PLACES = ['maries', 'coordination', ...METIERS.map(m => 'metier:' + m.id), 'invite'];
-const LIMITE_OCTETS = 8 * 1024, DELAI_MIN_MS = 3000, MAX_PAR_IP = 5, FENETRE_MS = 3600e3, JOURS = 7, RENVOI_MIN = 10, LIBRE = 140, UTM = 40;
+const LIMITE_OCTETS = 8 * 1024, DELAI_MIN_MS = 3000, JOURS = 7, RENVOI_MIN = 10, LIBRE = 140, UTM = 40;
 const EMAIL = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[A-Za-z]{2,}$/;
 const JETON = /^[A-Za-z0-9_-]{43}$/, RETRAIT = /^[0-9a-z]{1,13}\.[A-Za-z0-9_-]{32}$/;
 
 let db = null, envoyeur = null, verifier = proprietaireReel;
-const parIp = new Map();
 export function _db(d) { db = d; }
 export function _envoyeur(f) { envoyeur = f; }
 export function _proprietaire(f) { verifier = f || proprietaireReel; }
-export function _reinitialiser() { parIp.clear(); }
+export function _reinitialiser() { Q._oublier(); }
 
 const propre = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001F\u007F\u2028\u2029]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max + 1);
 const court = (v, max) => { const t = propre(v, max).slice(0, max); return t || null; };   /* utm : gardé tel quel, tronqué à 40 */
@@ -52,20 +54,6 @@ export function valider(b) {
   if (Object.keys(e).length) return { ok: false, erreurs: e };
   return { ok: true, valeurs: { email, place, souhaits, souhait_libre: libre || null, source: court(b.utm_source, UTM), campagne: court(b.utm_campaign, UTM) } };
 }
-
-function limiter(ip, t = Date.now()) {
-  const l = (parIp.get(ip) || []).filter(x => t - x < FENETRE_MS);
-  if (l.length >= MAX_PAR_IP) return Math.ceil((FENETRE_MS - (t - l[0])) / 1000);
-  l.push(t); parIp.set(ip, l); if (parIp.size > 5000) parIp.clear();
-  return 0;
-}
-function origineAutorisee(req) {
-  let u; try { u = new URL(req.headers.origin); } catch { return false; }
-  const hote = String(req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase();
-  if (u.host.toLowerCase() === hote && (u.protocol === 'https:' || /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(hote))) return true;
-  return String(process.env.CONTACT_ORIGINS || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean).includes(String(req.headers.origin).toLowerCase());
-}
-const ipDe = req => String(req.headers['x-real-ip'] || String(req.headers['x-forwarded-for'] || '').split(',')[0] || (req.socket && req.socket.remoteAddress) || 'inconnue').trim().slice(0, 64);
 
 /* le lien de désinscription : l'identifiant signé ; aucun jeton à garder, valable pour tous les e-mails suivants */
 const secret = () => { const s = process.env.ATTENTE_SECRET || process.env.BETTER_AUTH_SECRET || ''; return s.length >= 32 ? s : null; };
@@ -107,11 +95,22 @@ const envoiPret = () => !!(envoyeur || (process.env.RESEND_API_KEY && (process.e
 async function inscrire(req, b) {
   const r = valider(b);
   if (!r.ok) return [422, { ok: false, erreur: 'champs', champs: r.erreurs }];
-  const attente = limiter(ipDe(req));
-  if (attente) return [429, { ok: false, erreur: 'limite', attente }];
   const d = await base(), s = secret();
   if (!d || !s || !envoiPret()) return [503, { ok: false, erreur: 'indisponible' }];
+  const qi = await Q.quota('attente:ip', Q.ipDe(req), { db: d });   /* 5 inscriptions par adresse IP et par heure, toutes instances */
+  if (!qi.ok) return [429, { ok: false, erreur: 'limite', attente: qi.attente }];
   const v = r.valeurs, jeton = crypto.randomBytes(32).toString('base64url');
+  /* un e-mail partirait-il ? (nouvelle adresse, ou non confirmée et dernier envoi il y a plus de 10 minutes) ; si oui, les quotas
+     d'envoi d'abord : 3 par adresse et par jour (personne ne peut inonder la boîte d'un autre), 300 par heure pour tout le site.
+     Vérifié AVANT d'écrire : un envoi refusé ne remplace pas le jeton du lien déjà reçu. */
+  const { rows: ex } = await d.query(`select (confirme_le is null and (jeton_expire is null or jeton_expire - interval '${JOURS} days' < now() - interval '${RENVOI_MIN} minutes')) as renvoi
+    from liste_attente where lower(email) = lower($1)`, [v.email]);
+  if (!ex[0] || ex[0].renvoi) {
+    const qa = await Q.quota('attente:adresse', v.email.toLowerCase(), { db: d });
+    if (!qa.ok) return [200, { ok: true }];   /* même réponse : on ne révèle rien de l'adresse */
+    const qs = await Q.quota('attente:envois', 'site', { db: d });
+    if (!qs.ok) return [429, { ok: false, erreur: 'limite', attente: qs.attente }];
+  }
   /* une seule requête : nouvelle adresse → une ligne ; adresse non confirmée et dernier envoi il y a plus de 10 minutes →
      nouveau jeton et réponses mises à jour ; adresse confirmée, ou envoi récent → rien (aucune ligne rendue, aucun e-mail) */
   const { rows } = await d.query(`insert into liste_attente (email, place, source, campagne, souhaits, souhait_libre, jeton_hash, jeton_expire)
@@ -192,8 +191,7 @@ export default async function attente(req, res) {
       return json(res, 404, { ok: false });
     }
     if (req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return json(res, 405, { ok: false, erreur: 'methode' }); }
-    if (!origineAutorisee(req)) return json(res, 403, { ok: false, erreur: 'origine' });
-    if (!/^application\/json\b/i.test(String(req.headers['content-type'] || ''))) return json(res, 415, { ok: false, erreur: 'format' });
+    const refus = R.ecriture(req); if (refus) return json(res, refus[0], { ok: false, erreur: refus[1].erreur });   /* la désinscription un clic (plus haut) n'en dépend pas : jeton signé, effet idempotent */
     if (Number(req.headers['content-length'] || 0) > LIMITE_OCTETS) return json(res, 413, { ok: false, erreur: 'taille' });
     let b = await corps(req);
     if (b === null) return json(res, 413, { ok: false, erreur: 'taille' });

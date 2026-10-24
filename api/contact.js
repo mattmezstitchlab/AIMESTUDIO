@@ -3,8 +3,10 @@
 // (RESEND_API_KEY, CONTACT_TO, CONTACT_FROM) ; rien de tout cela n'atteint le navigateur.
 // L'adresse du visiteur n'est utilisée qu'en Reply-To : l'expéditeur est toujours celui du domaine vérifié.
 // Protections : même origine, JSON seulement, taille bornée, champs validés, piège à robots, délai minimal de saisie,
-// limitation des envois par adresse IP. Les journaux ne contiennent jamais de données personnelles.
+// limitation des envois par adresse IP, partagée entre instances (api/_auth/quotas.cjs). Les journaux ne contiennent jamais de données personnelles.
 const crypto = require('crypto');
+const Q = require('./_auth/quotas.cjs');      /* quotas partagés entre instances (audit Vercel, PR 2) */
+const R = require('./_auth/requete.cjs');     /* même origine et corps JSON, comme toutes les écritures */
 
 const LIMITE_OCTETS = 16 * 1024;
 const PROJETS = {
@@ -14,13 +16,8 @@ const PROJETS = {
   projet: 'Parler d\'un projet',
   autre: 'Autre demande',
 };
-const FENETRE_MS = 10 * 60 * 1000; // 10 minutes
-const MAX_PAR_IP = 3; // envois par adresse IP et par fenêtre
-const MAX_GLOBAL = 30; // envois par instance et par heure
 const DELAI_MIN_MS = 3000; // un humain met plus de 3 s à remplir le formulaire
 
-const parIp = new Map();
-let globaux = [];
 
 function propre(v, max) {
   return String(v == null ? '' : v)
@@ -69,29 +66,8 @@ function valider(corps, maintenant) {
   return Object.keys(e).length ? { ok: false, erreurs: e } : { ok: true, valeurs: v };
 }
 
-// Limitation des envois. Mémoire de l'instance seulement : elle freine les rafales, mais une limite stricte
-// sur toutes les instances demande un stockage partagé (non activé pour l'instant).
-function limiter(ip, maintenant) {
-  const t = maintenant || Date.now();
-  globaux = globaux.filter((x) => t - x < 3600000);
-  const l = (parIp.get(ip) || []).filter((x) => t - x < FENETRE_MS);
-  if (l.length >= MAX_PAR_IP) return Math.ceil((FENETRE_MS - (t - l[0])) / 1000);
-  if (globaux.length >= MAX_GLOBAL) return Math.ceil((3600000 - (t - globaux[0])) / 1000);
-  l.push(t); parIp.set(ip, l); globaux.push(t);
-  if (parIp.size > 5000) parIp.clear();
-  return 0;
-}
-
-function origineAutorisee(req) {
-  const o = req.headers.origin;
-  if (!o) return false;
-  let u;
-  try { u = new URL(o); } catch { return false; }
-  const hote = String(req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase();
-  if (u.host.toLowerCase() === hote && (u.protocol === 'https:' || /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(hote))) return true;
-  const liste = String(process.env.CONTACT_ORIGINS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
-  return liste.includes(o.toLowerCase());
-}
+// Les quotas (3 envois par adresse IP et par 10 minutes, 30 par heure pour tout le site) sont partagés entre les instances :
+// api/_auth/quotas.cjs (table « quotas » ; en mémoire tant que la migration n'est pas appliquée).
 
 function ipDe(req) {
   return String(req.headers['x-real-ip'] || String(req.headers['x-forwarded-for'] || '').split(',')[0] || (req.socket && req.socket.remoteAddress) || 'inconnue').trim().slice(0, 64);
@@ -121,8 +97,7 @@ async function handler(req, res) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   const repondre = (code, corps) => res.status(code).json(corps);
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return repondre(405, { ok: false, erreur: 'methode' }); }
-  if (!origineAutorisee(req)) return repondre(403, { ok: false, erreur: 'origine' });
-  if (!/^application\/json\b/i.test(String(req.headers['content-type'] || ''))) return repondre(415, { ok: false, erreur: 'format' });
+  const refus = R.ecriture(req); if (refus) return repondre(refus[0], { ok: false, erreur: refus[1].erreur });
   const taille = Number(req.headers['content-length'] || 0);
   let corps = req.body;
   if (typeof corps === 'string') { if (corps.length > LIMITE_OCTETS) return repondre(413, { ok: false, erreur: 'taille' }); try { corps = JSON.parse(corps); } catch { return repondre(400, { ok: false, erreur: 'format' }); } }
@@ -138,8 +113,8 @@ async function handler(req, res) {
   const cle = process.env.RESEND_API_KEY, a = process.env.CONTACT_TO, de = process.env.CONTACT_FROM;
   if (!cle || !a || !de) { console.error('contact: configuration incomplète'); return repondre(503, { ok: false, erreur: 'indisponible' }); }
 
-  const attente = limiter(ipDe(req));
-  if (attente) { res.setHeader('Retry-After', String(attente)); return repondre(429, { ok: false, erreur: 'limite', attente }); }
+  const q = await Q.quota('contact:ip', ipDe(req)), qt = q.ok ? await Q.quota('contact:tous', 'site') : q;
+  if (!q.ok || !qt.ok) { const attente = q.ok ? qt.attente : q.attente; res.setHeader('Retry-After', String(attente)); return repondre(429, { ok: false, erreur: 'limite', attente }); }
 
   const m = message(r.valeurs);
   // Même demande renvoyée deux fois (double clic, réseau) : Resend ne l'envoie qu'une fois.
@@ -161,4 +136,4 @@ async function handler(req, res) {
 module.exports = handler;
 module.exports.valider = valider;
 module.exports.PROJETS = PROJETS;
-module.exports._reinitialiser = () => { parIp.clear(); globaux = []; };
+module.exports._reinitialiser = () => { Q._oublier(); };

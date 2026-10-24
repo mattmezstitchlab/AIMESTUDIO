@@ -12,7 +12,7 @@ function fausseBase() {
 }
 function appel(h, body, method) {
   return new Promise(done => { const res = { code: 200, headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(c) { this.code = c; return this; }, json(o) { done({ code: this.code, body: o, headers: this.headers }); } };
-    Promise.resolve(h({ method: method || 'POST', body, headers: { 'x-forwarded-for': '203.0.113.' + Math.floor(Math.random() * 250) } }, res)); });
+    Promise.resolve(h({ method: method || 'POST', body, headers: { 'x-forwarded-for': '203.0.113.' + Math.floor(Math.random() * 250), 'content-type': 'application/json', origin: 'http://localhost', host: 'localhost' } }, res)); });
 }
 const pp = async (espace, qui) => (await appel(passe, { espace, qui })).body.passe;
 beforeEach(() => { lignes = []; C._base(fausseBase); C._reinitialiser(); delete process.env.VERCEL_ENV; });

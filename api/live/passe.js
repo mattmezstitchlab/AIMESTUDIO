@@ -5,7 +5,7 @@
 const C = require('../_live/core.js');
 module.exports = async function passe(req, res) {
   const b = C.debut(req, res); if (!b) return;
-  if (C.freiner(req, 20)) return res.status(429).json({ ok: false });
+  if (!(await C.quota(req, 'live:passe')).ok) return res.status(429).json({ ok: false });
   if (C.UUID.test(String(b.espace || ''))) {
     const sql = C.base(); if (!sql) return C.ferme(res);
     let u = null; try { u = await (await import('../_auth/auth.mjs')).personne(req); } catch { u = null; }
