@@ -17,25 +17,32 @@ var MODELES={mariage:'Mariage',seminaire:'Séminaire'};
 /* deux écrans, un seul moteur : /compte/ (l'identité : adresse, Timbre, clés, suppression) et /projets/ (Mes projets : espaces, invitations).
    Une invitation, un projet à ouvrir ou un projet venu du Point Zéro mènent toujours à Mes projets. */
 var PROJETS=/^\/projets\/?$/.test(location.pathname);
-if(!PROJETS&&/[?&](invitation|espace|nouvel)=/.test(location.search)){location.replace('/projets/'+location.search);return}
-var Q=new URLSearchParams(location.search),INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(Q.get('invitation')||'')?Q.get('invitation'):null,OUVRIR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(Q.get('espace')||'')?Q.get('espace'):null,moi=null;
+if(!PROJETS&&/[?&](invitation|espace|nouvel|creer|activite)=/.test(location.search)){location.replace('/projets/'+location.search);return}
+var Q=new URLSearchParams(location.search),
+ /* venus de l'accueil (« Je suis… ») : créer le mariage, ou enregistrer l'activité d'un prestataire, une fois la session ouverte */
+ CREER=Q.get('creer')==='mariage'&&/^[A-Za-z0-9_-]{6,80}$/.test(Q.get('origine')||'')?Q.get('origine'):null,ACTIVITE=/^[a-z][a-z-]{1,39}$/.test(Q.get('activite')||'')?Q.get('activite'):null,BIENVENUE=/^[a-z][a-z-]{1,39}$/.test(Q.get('bienvenue')||'')?Q.get('bienvenue'):null,INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(Q.get('invitation')||'')?Q.get('invitation'):null,OUVRIR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(Q.get('espace')||'')?Q.get('espace'):null,moi=null;
 if(INVIT)$('invite').hidden=false;
 if(PROJETS){document.title='Mes projets · AIME';$('tTitre').textContent='Mes projets';$('tSous').textContent='Vos projets, vos invitations'}
 if(Q.get('supprime'))toast('Votre compte a été supprimé. Merci d\'être passé par AIME.');
 else if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
-function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime','nouvel'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
+function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime','nouvel','creer','origine','activite','bienvenue'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
 
 /* ---------- au chargement : la session ---------- */
 requete('/api/auth/get-session').then(function(r){
- if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=(r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.';return}
- if(!r.j||!r.j.user){$('connexion').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
+ if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=(r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.';if(PROJETS)surCetAppareil(false);return}
+ if(!r.j||!r.j.user){$('connexion').hidden=false;if(PROJETS&&!OUVRIR&&!INVIT&&!CREER&&!ACTIVITE)surCetAppareil(false);if(CREER||ACTIVITE)$('depuisAccueil').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
  moi=r.j.user;afficherProfil();$('profil').hidden=PROJETS;$('espaces').hidden=!PROJETS;$('zoneSuppr').hidden=PROJETS;
  (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' ».');$('invite').hidden=true;if(x.espace)OUVRIR=x.espace}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
-  .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();if(PROJETS&&OUVRIR&&PJ)PJ.ouvrir(OUVRIR,Q.get('page'));else if(PROJETS){chargerEspaces();if(/[?&]nouveau=1\b/.test(location.search)){var t=$('eTitre');if(t){t.scrollIntoView({block:'center'});t.focus()}}}else chargerCles()})
-}).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.'});
+  .then(function(){
+   /* « Créer notre mariage » : la seule fonction de création, sans doublon (l'origine vient de l'accueil) ; puis l'écran du projet */
+   if(PROJETS&&CREER&&C)return C.creer({titre:'Notre mariage',modele:'mariage',origine:CREER}).then(function(x){OUVRIR=x.id;C.oublier('accueil');if(!x.existant)toast('Votre mariage est créé : vous en êtes propriétaire.')}).catch(function(e){toast(e.message,true)});
+   /* « Créer mon espace [métier] » : une activité, non publiée ; aucun projet, aucun droit */
+   if(PROJETS&&ACTIVITE&&C)return C.activite(ACTIVITE).then(function(){BIENVENUE=ACTIVITE}).catch(function(e){toast(e.message,true)})})
+  .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();if(PROJETS&&OUVRIR&&PJ)PJ.ouvrir(OUVRIR,Q.get('page'));else if(PROJETS){chargerEspaces();chargerActivites();surCetAppareil(true);if(/[?&]nouveau=1\b/.test(location.search)){var t=$('eTitre');if(t){t.scrollIntoView({block:'center'});t.focus()}}}else chargerCles()})
+}).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.';if(PROJETS)surCetAppareil(false)});
 
 /* ---------- se connecter ---------- */
-$('fLien').onsubmit=function(e){e.preventDefault();var b=this.querySelector('button');b.disabled=true;var cb='/projets/'+(INVIT?'?invitation='+encodeURIComponent(INVIT):OUVRIR?'?espace='+OUVRIR:'');
+$('fLien').onsubmit=function(e){e.preventDefault();var b=this.querySelector('button');b.disabled=true;var cb='/projets/'+(INVIT?'?invitation='+encodeURIComponent(INVIT):OUVRIR?'?espace='+OUVRIR:CREER?'?creer=mariage&origine='+encodeURIComponent(CREER):ACTIVITE?'?activite='+encodeURIComponent(ACTIVITE):'');
  requete('/api/auth/sign-in/magic-link',{corps:{email:$('cEmail').value.trim(),callbackURL:cb,newUserCallbackURL:cb,errorCallbackURL:'/compte/?erreur=lien'}}).then(function(r){b.disabled=false;
   if(r.statut===200){$('lienEnvoye').hidden=false;$('lienEnvoye').textContent='Lien envoyé à '+$('cEmail').value.trim()+'. Ouvrez-le sur cet appareil ; il est valable 15 minutes.'}
   else toast((r.j&&(r.j.raison||r.j.message))||(r.statut===429?'Trop de demandes : patientez une minute.':'Envoi impossible.'),true)})};
@@ -79,5 +86,25 @@ function chargerEspaces(){espaces('mes').then(function(r){var L=$('liste');L.tex
  if(!liste.length){L.appendChild(el('p','leg','Aucun projet pour l\'instant. Créez-en un, ou ouvrez le lien d\'invitation que l\'on vous a envoyé.'));return}
  liste.forEach(function(s){var c=el('article','carte-c esp');var h=el('div','lgn');h.style.justifyContent='space-between';var t=el('div');t.appendChild(el('h3',null,s.titre));var lg=el('p','leg',(ROLES[s.role]||s.role)+(s.modele?' · '+MODELES[s.modele]:'')+(s.jusquau?' · jusqu\'au '+new Date(s.jusquau).toLocaleDateString('fr-FR'):''));lg.insertBefore(pastille(s.role),lg.firstChild);t.appendChild(lg);h.appendChild(t);
   var a=el('div','lgn');var o=el('a','b b-p','Ouvrir');o.href='/projets/?espace='+encodeURIComponent(s.id);o.setAttribute('aria-label','Ouvrir « '+s.titre+' »');a.appendChild(o);if(s.modele){var l=el('a','b b-s','Le direct');l.href='/live/?espace='+encodeURIComponent(s.id);a.appendChild(l)}h.appendChild(a);c.appendChild(h);L.appendChild(c)})}).catch(function(e){toast(e.message,true)})}
+
+/* ---------- mes activités (prestataire) : un métier, non publié ; les missions arrivent par invitation ---------- */
+var NOMS_METIERS={};
+function chargerActivites(){espaces('activites').then(function(r){var L=r.activites||[],z=$('activites');if(!L.length){z.hidden=true;return}
+ z.hidden=false;var ul=$('mesActivites');ul.textContent='';
+ L.forEach(function(a){var li=el('li','lgn');li.appendChild(el('b',null,a.nom.charAt(0).toUpperCase()+a.nom.slice(1)));li.appendChild(el('span','leg',a.publiee?'publiée':'non publiée'));ul.appendChild(li)});
+ var m=$('invitezMoi'),site=location.origin;
+ m.href='mailto:?subject='+encodeURIComponent('Invitez-moi sur AIME')+'&body='+encodeURIComponent('Bonjour,\n\nPour préparer votre mariage ensemble, invitez-moi dans votre projet AIME : créez-le sur '+site+'/ (« Futurs mariés »), puis Personnes → Inviter, avec mon adresse.\n\nÀ bientôt !');
+ if(BIENVENUE){var n=(L.filter(function(a){return a.metier===BIENVENUE})[0]||{}).nom;if(n)toast('Votre espace '+n+' est créé.')}}).catch(function(){})}
+
+/* ---------- sur cet appareil : les anciens essais de ce navigateur (accueil d'avant le 24/10) ----------
+   Rien n'est perdu ni envoyé : ils restent dans ce navigateur, et ne partent au serveur que par un geste explicite (« Créer dans mon compte »). */
+function surCetAppareil(connecte){var Pj=window.AIMEProjets,z=$('local');if(!Pj||!z)return;var L=[];try{L=Pj.Depot(window.localStorage).lister()}catch(e){L=[]}
+ if(!L.length){z.hidden=true;return}z.hidden=false;var box=$('localListe');box.textContent='';$('localNote').textContent=connecte?'Ils restent dans ce navigateur. Pour les partager, créez-les dans votre compte : rien ne part sans ce geste.':'Ils restent dans ce navigateur. Connectez-vous pour les créer dans votre compte, si vous le souhaitez.';
+ L.forEach(function(p){var e=Pj.evenement(p),c=el('article','carte-c esp'),h=el('div','lgn');h.style.justifyContent='space-between';var t=el('div');t.appendChild(el('h3',null,p.titre));
+  var d=[e.date?new Date(e.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}):'',e.lieu||'','sur cet appareil'].filter(Boolean).join(' · ');t.appendChild(el('p','leg',d));h.appendChild(t);
+  if(connecte&&C){var b=el('button','b b-s','Créer dans mon compte');b.type='button';b.setAttribute('aria-label','Créer « '+p.titre+' » dans mon compte');
+   b.onclick=function(){confirmer(b,'Confirmer : créer',function(){b.disabled=true;var g=e.genre==='mariage'||e.genre==='seminaire'?e.genre:undefined,o=('essai-'+String(p.id).replace(/[^A-Za-z0-9_-]/g,'')).slice(0,80);
+    C.creer({titre:p.titre,modele:g,origine:o}).then(function(x){location.href='/projets/?espace='+encodeURIComponent(x.id)}).catch(function(err){b.disabled=false;toast(err.message,true)})})};h.appendChild(b)}
+  c.appendChild(h);box.appendChild(c)})}
 
 })();
