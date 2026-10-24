@@ -11,7 +11,7 @@ var maitre=cube===null&&q.has('maitre')?String(q.get('maitre')||'').replace(/[^a
 var site=String(q.get('site')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80)||null;
 /* ?publication=<id> | nouvelle | exemple-<nom> : le Studio Publication (adaptateur publication) */
 var pub=q.has('publication')?(String(q.get('publication')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,80)||'nouvelle'):null;
-var ORIGINES={'/point-zero/':'Point Zéro','/bureau/':'Bureau','/projet/':'Mini-site','/cube/':'Mon cube','/maitre/':'Cube Maître'};if(!ORIGINES[de])de=cube!==null?'/cube/':maitre!==null?'/maitre/':id?'/projet/':'/bureau/';
+var ORIGINES={'/point-zero/':'Point Zéro','/projets/':'Mes projets','/projet/':'Mini-site','/cube/':'Mon cube','/maitre/':'Cube Maître'};if(!ORIGINES[de])de=cube!==null?'/cube/':maitre!==null?'/maitre/':id?'/projet/':'/projets/';
 var r=document.getElementById('retour');r.href=de==='/projet/'?'/projet/?id='+encodeURIComponent(id):de+(id&&cube===null?'?projet='+encodeURIComponent(id):'');r.textContent='← '+ORIGINES[de];
 if(site&&id){r.textContent='← Retour au projet';r.href=(de==='/projet/'||de==='/cube/'?'/point-zero/':de)+(id?'?projet='+encodeURIComponent(id):'')}
 function lire(){try{var o=JSON.parse(localStorage.getItem(CLE)||'null');if(o&&o.scenes)return o}catch(e){}return{scenes:{}}}
