@@ -11,7 +11,7 @@
       ]
     },
     {
-      "source": "/(regie|maitre)(/|/index|/index\\.html)?",
+      "source": "/(regie|maitre|maitre/attente)(/|/index|/index\\.html)?",
       "headers": [
         {
           "key": "Cache-Control",

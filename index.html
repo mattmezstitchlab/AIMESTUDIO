@@ -120,6 +120,7 @@ html.calme .zero-photo img{opacity:.5}
 </style>
 <link rel="stylesheet" href="/accueil/accueil.css">
 <link rel="stylesheet" href="/accueil/je-suis.css">
+<link rel="stylesheet" href="/attente/attente.css">
 <link rel="stylesheet" href="/coeur/coeur.css">
 <link rel="stylesheet" href="/dock/dock.css">
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
@@ -183,6 +184,17 @@ html.calme .zero-photo img{opacity:.5}
   </form>
   <p class="vivant" id="jsVivant" role="status" aria-live="polite"></p>
  </section>
+ <!-- la liste d'attente de la bêta, en bref : la place vient du « Je suis… » au-dessus ; le formulaire complet est sur /beta/ (attente/attente.js) -->
+ <aside class="at-bloc" aria-labelledby="atBlocT">
+  <form id="atBloc" class="at-bloc-f" novalidate>
+   <p class="at-titre" id="atBlocT"><b>La bêta ouvre bientôt.</b> Soyez prévenu en premier.</p>
+   <div class="js-champ"><label class="sr" for="atBlocEmail">Adresse e-mail</label><input id="atBlocEmail" type="email" name="email" autocomplete="email" inputmode="email" placeholder="vous@exemple.fr" required maxlength="254"><button type="submit">Me prévenir</button></div>
+   <label class="at-ok"><input type="checkbox" name="consentement"> <span>J'accepte de recevoir un e-mail à l'ouverture de la bêta.</span></label>
+   <div class="piege" aria-hidden="true"><label for="atBlocSite">Ne pas remplir</label><input id="atBlocSite" name="site_web" tabindex="-1" autocomplete="off"></div>
+   <p class="at-etat" role="status" aria-live="polite"></p>
+  </form>
+  <a class="at-plus" href="/beta/">Dire ce que vous attendez d'AIME</a>
+ </aside>
  <!-- deux vidéos, à la place des exemples : rien en lecture automatique, sous-titres par défaut (media/) -->
  <ul class="vg" aria-label="Vidéos">
   <li><button type="button" class="vg-b" data-video="aime-film" data-vtt data-titre="AIME en 2 minutes"><span class="vg-img"><img src="/media/aime-film.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">AIME en 2 minutes</span><span class="vg-d">2 min 22 · sous-titrée</span></button></li>
@@ -400,6 +412,8 @@ html.calme .zero-photo img{opacity:.5}
 <script src="/projets/projets.js"></script>
 <script src="/compte/creer.js"></script>
 <script src="/accueil/liste.js"></script>
+<script src="/attente/attente.js"></script>
+<script>(function(){var f=document.getElementById('atBloc');if(f&&window.AIMEAttente)AIMEAttente.bloc(f)})();</script>
 <script src="/accueil/demo.js"></script>
 <script src="/accueil/je-suis.js"></script>
 <script src="/coeur/roles.js"></script>
