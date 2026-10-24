@@ -79,7 +79,8 @@ Un métier précis n'a pas son propre dock : il prend celui de sa famille, avec 
 | Équipe | Notifications · Ma part · + · Messages · Calendrier | Ajouter une tâche · Écrire · Déposer | Aucun accès aux paiements par défaut |
 | Contributeur, prestataire | Notifications · Mission · + · Documents · Messages | Déposer un document · Signaler un retard · Écrire à la coordination | Effectifs seulement, jamais la liste nominative |
 | Destinataire | Programme · Ma réponse · + · Lieu · Messages | Confirmer ma présence · Écrire aux organisateurs · Signaler un accès inattendu | Ne voit que sa propre réponse ; aucun compteur de ce qui existe ailleurs |
-| Public | Le cœur · Exemples · + · Lab · J'ai un compte | Commencer un projet | Aucune donnée personnelle ; c'est la navigation actuelle, mise en dock |
+| Public (sans compte) | Le cœur · Exemples · + · J'ai un compte | Créer un projet · J'ai reçu une invitation | Aucune donnée personnelle ; asymétrique, sans bouton fictif, en attendant la page Modules |
+| Public connecté (hors projet) | Le cœur · Exemples · + · Mes projets · Mon compte | Nouveau projet · J'ai reçu une invitation | Aucune donnée d'un projet hors du projet ; symétrique |
 | Financeur | Notifications · Budget financé · + · Justificatifs | Déposer un justificatif · Écrire au propriétaire | Voit des montants, pas les invités ; AIME ne garde que le statut des paiements |
 | Contrôleur, observateur | Ce qu'il contrôle · + · Exports · Journal | Exporter · Demander une pièce | Lecture seule ; affiche « accès jusqu'au … » |
 | Garant, modérateur | Signalements · + · Contenus publics · Journal | Masquer un contenu public · Répondre à un signalement | N'accède pas aux contenus privés par confort |
@@ -101,7 +102,8 @@ Le dock se branche sur les rôles lus dans `space_members` (`api/_auth/espaces.m
 | contributor | Contributeur | Notifications · Mission · + · Documents · Messages | Portée par mission partielle |
 | viewer | Contrôleur | Ce qu'il contrôle · + · Exports · Journal | Ne pas en faire une lecture générique ; durée : faite (#90) |
 | guest | Destinataire | Programme · Ma réponse · + · Lieu · Messages | — |
-| (sans session) | Public | Le cœur · Exemples · + · Lab · J'ai un compte | Navigation actuelle du site |
+| (sans session) | Public | Le cœur · Exemples · + · J'ai un compte | Navigation du site |
+| (connecté, hors projet) | Public connecté | Le cœur · Exemples · + · Mes projets · Mon compte | Dans un projet, le Dock que le serveur compose (`/api/page`) remplace celui-ci |
 
 « Propriétaire du site » (`api/_auth/proprietaire.mjs`) est distinct d'un owner d'espace : il reçoit le dock de la Régie, jamais celui d'un projet client.
 
@@ -189,11 +191,30 @@ Décisions de Matt : **sur ordinateur, le dock flotte en bas au centre** ; **le 
 
 - `dock/modele.js` (`AIMEDock`) : le modèle **pur**, le même au navigateur et, demain, au serveur. Les tables de ce document y sont écrites telles quelles : vocabulaire des entrées (chacune avec son droit), actions du + (chacune avec son geste), dock des 14 familles, rôle serveur → famille, instances (mariage, Régie, Studio). `composer(demande)` rend la composition ; une entrée ou une action non permise n'y figure pas, même en texte. `pourScenario(univers, rôle, accès)` choisit l'instance écrite, sinon la famille du scénario, sinon le rôle serveur.
 - `dock/dock.js` (`AIMEDockVue`) et `dock/dock.css` : le composant. Il affiche la composition, ne décide de rien. Accessibilité : `nav` nommée, `aria-current`, + en `aria-haspopup="menu"`, menu aux flèches, Échap, focus rendu, cibles de 44 px, texte sous chaque icône, pastille annoncée. Gestes sensibles : confirmation lisible, annulation. Un seul élément irisé : le +.
-- Posé sur **l'accueil** et **les exemples** (dock Public : Le cœur · Exemples · + · Lab · J'ai un compte ; le + porte « Commencer un projet ») et **dans chaque écran du cœur** (`coeur/coeur.js`) : chaque rôle de chaque exemple a son dock, dessiné à la taille d'un téléphone puis réduit avec l'écran, marqué « Démonstration ». L'orbe de la Régie et l'écriture assistée du Studio n'ont pas de dock (famille Agent IA).
+- Posé sur **l'accueil** et **les exemples** (dock Public ; voir « Le Dock public et le + » plus bas, qui remplace la première version : Lab et « Commencer » sont retirés) et **dans chaque écran du cœur** (`coeur/coeur.js`) : chaque rôle de chaque exemple a son dock, dessiné à la taille d'un téléphone puis réduit avec l'écran, marqué « Démonstration ». L'orbe de la Régie et l'écriture assistée du Studio n'ont pas de dock (famille Agent IA).
 - **Familles proposées, à confirmer** (aucun dock écrit pour ces rôles) : G44 agent et formateur → Équipe, responsable → Délégué, contrôleur → Contrôleur ; Stitch créatrice → Propriétaire, boutique → Délégué, brodeuse → Destinataire, visiteuse → Public ; Magazine autrice → Équipe, rédactrice en chef → Propriétaire, maquettiste → Contributeur, lectrice → Public. Le dock l'affiche (« Famille proposée »).
 - Tests : `tests/dock.test.cjs` (instantané par rôle serveur, invitée sans Budget ni Personnes, Surprise du témoin, pastille, limites, gestes sensibles, rôle retiré, date de fin, chaque rôle de chaque scénario).
 
 Reste : l'étape 2 (le contrat serveur, `GET /api/dock` composé depuis `space_members` avec ce même modèle), puis l'étape 4 (le mariage de preuve dans un vrai espace), et le dock Public sur les autres pages publiques.
+
+## Le Dock public et le + (décision de Matt du 24/10/2026, #115)
+
+**Le Dock garde les lieux, le + garde les actions.** Aucune destination du Dock dans le + (ni compte, ni exemples, ni Mes projets), aucune entrée en double.
+
+| Situation | Dock | Le + |
+|---|---|---|
+| Sans compte | Le cœur · Exemples · + · J'ai un compte | Créer un projet · J'ai reçu une invitation |
+| Connecté, hors projet | Le cœur · Exemples · + · Mes projets · Mon compte | Nouveau projet · J'ai reçu une invitation |
+| Dans un projet | Le Dock composé par le serveur pour le rôle (`/api/page`, `composerReel`) : Mon accès · Journal · Personnes | Les seuls gestes accordés au rôle (Inviter, s'il est permis) |
+| Plus tard, avec la page Modules (pas maintenant) | Le cœur · Exemples · + · Modules · Compte | La place de Mes projets sera décidée à ce moment-là |
+
+- **Plus de « Commencer » seul** : il faisait doublon et paraissait posé là. Le + public est une petite carte au-dessus du Dock : fond sombre, coins arrondis, léger contour, deux gestes côte à côte. C'est un groupe de boutons et un champ (`role="group"`), pas un menu ; dans un projet, le menu des gestes reste un `role="menu"` parcourable aux flèches.
+- **Créer un projet** fait défiler jusqu'à « Je suis… » et ouvre la liste quand le navigateur le permet ; ailleurs, mène à `/?commencer=1`.
+- **Nouveau projet** ouvre la création de Mes projets (`/projets/?nouveau=1`), avec la seule fonction de création (`compte/creer.js`, `AIMECreer`).
+- **J'ai reçu une invitation** ouvre un champ : « Ouvrez le lien reçu par e-mail ou par message. » Seul un lien `/projets/` ou `/compte/` portant un jeton valide (ou le jeton seul) est suivi, vers `/projets/?invitation=…` ; sans session, la personne se connecte et le parcours reprend sur l'invitation. Le serveur vérifie tout.
+- **Fermeture** : Échap (le focus revient au +), retoucher le +, toucher ailleurs, ou quitter la carte au clavier. Ouverture douce, sans animation en mouvement réduit. Rien ne passe sous le Dock en 393×659.
+- **Se déconnecter** vit dans Mon compte, plus dans le +.
+- Fichiers : `dock/modele.js` (familles « Public » et « Public connecté », actions `creerProjet`, `nouveauProjet`, `invitationRecue`), `dock/dock.js` (la carte et son champ), `dock/plus.js` (lit `/api/identite`, repose le Dock une fois connecté, rend les deux gestes vivants). Tests : `tests/dock.test.cjs`, `tests/navigateur/parcours.cjs`.
 
 ## Ce qui se construit, dans l'ordre (une petite PR par étape)
 

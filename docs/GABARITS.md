@@ -184,6 +184,25 @@ Chaque modèle déclare :
 
 Formation, association, création et transmission suivent le même gabarit de modèle, en démonstration seulement jusqu'à la validation du mariage.
 
+## 8 bis. Les quatre places (décision de Matt, 24/10)
+
+Ce qui est universel, ce n'est pas le type de projet, mais **la manière dont les personnes y participent**. Quatre places, que tout le monde comprend, posées sur les cinq rôles serveur **sans changer les autorisations** :
+
+| Place | En une phrase | Rôle serveur | Mot par défaut (hors domaine, `MOTS._`) | Mariage | Séminaire |
+|---|---|---|---|---|---|
+| **Organisateur** | J'organise : je porte le projet | owner | l'organisation | le couple | l'organisation |
+| **Coordinateur** | Je coordonne : je relie et j'organise | editor | la coordination | la coordination | l'agence |
+| **Contributeur** | Je contribue : j'apporte quelque chose | contributor | contributeur | prestataire (témoin, fleuriste…) | intervenant |
+| **Participant** | Je participe : je prends part | guest | participant | invité | participant |
+| Participant, **consultation seule** | une variante de Participant | viewer | un proche | parent | direction |
+
+- **Cinq rôles techniques, quatre places compréhensibles.** `viewer` reste un rôle technique distinct (lecture seule, sa page Personnes réduite, § 5.3), présenté comme une variante de Participant. Aucun droit ne change : les droits viennent toujours de `synchroview/permissions.js` et du rôle lu dans `space_members`.
+- **Une place n'est ni un rôle technique rigide, ni une identité.** Elle se joue projet par projet : la même personne peut être contributrice (photographe) dans un mariage et organisatrice d'un concert, sans que son identité AIME change.
+- **La relation nomme, elle n'accorde rien.** Le mot métier (« photographe », « témoin ») est la relation (`space_members.relation`, choisie à l'invitation) ; la place et le rôle restent ceux du serveur. Aujourd'hui, une seule relation par personne et par projet ; plusieurs relations dans un même projet (festivalier et bénévole) demanderaient une table à part et une migration : **pas maintenant** (décision du 24/10).
+- **Dans le code** : `MOTS` de `api/_auth/pages.mjs` porte les mots par domaine ; hors mariage et séminaire, `MOTS._` parle déjà la langue commune (#114). Un nom qu'on ne peut pas voir s'écrit « une personne » dans les domaines mariage et séminaire, « une personne de l'organisation » ailleurs.
+- **Transpositions possibles** (illustration, rien à construire) : festival (association · régisseur · artiste · festivalier), concert (producteur · régisseur · musicien · spectateur), formation (organisme · responsable pédagogique · formateur · apprenant).
+- **L'accueil n'en est pas changé.** Les deux questions de l'accueil (le domaine, puis la place : J'organise · Je coordonne · Je contribue · Je participe) viendront après le mariage de preuve. Aujourd'hui, « Je suis… » ne propose que le mariage.
+
 ## 9. Évolution A · Le co-propriétaire (non implémentée)
 
 **Décision de Matt** : le second membre du couple devient co-propriétaire après avoir accepté explicitement son invitation, avec des protections pour les deux.
