@@ -50,8 +50,19 @@ test('lecture seule : aucun stockage, aucune donnée de la Régie hors version p
    (auth, propriétaire du site, journal en ajout seul) ne changent pas. espaces.mjs et pages.mjs évoluent (décision de Matt, PR B),
    mais role() et exiger() restent identiques, mot pour mot, à la branche visée. */
 test('la Régie maîtresse, le cube-personne, la source des droits et le socle des comptes restent intacts (fichiers inchangés)',()=>{let d='';
- try{d=execSync('git diff --name-only --diff-filter=MDR '+require('./_base.cjs')()+' -- regie/ cube/modele.js cube/stock.js cube/regie.js cube/composition.js cube/cartes.js cube/assemblage.js canevas/adaptateurs/cube.js canevas/plan.js canevas/scene.js synchroview/permissions.js api/_auth/auth.mjs api/_auth/proprietaire.mjs api/_auth/journal.mjs',{cwd:R('.'),encoding:'utf8'}).trim()}catch(e){return}
+ try{d=execSync('git diff --name-only --diff-filter=MDR '+require('./_base.cjs')()+' -- regie/ cube/modele.js cube/stock.js cube/regie.js cube/composition.js cube/cartes.js cube/assemblage.js canevas/adaptateurs/cube.js canevas/plan.js canevas/scene.js synchroview/permissions.js api/_auth/proprietaire.mjs api/_auth/journal.mjs',{cwd:R('.'),encoding:'utf8'}).trim()}catch(e){return}
  assert.equal(d,'','aucun de ces fichiers n\'est modifié')});
+
+/* auth.mjs : le socle des comptes reste intact, sauf UNE ligne autorisée par Matt (24/10) : l'adresse passée à pg.Pool sans « sslmode »
+   (l'avertissement de pg comptait comme une erreur dans les journaux de Vercel). Toute autre ligne modifiée fait échouer ce test. */
+test('auth.mjs : seule la ligne du pool (adresse sans sslmode) peut changer',()=>{let d='';
+ try{d=execSync('git diff -U0 '+require('./_base.cjs')()+' -- api/_auth/auth.mjs',{cwd:R('.'),encoding:'utf8'})}catch(e){return}
+ const lignes=d.split('\n').filter(l=>/^[+-]/.test(l)&&!/^(\+\+\+|---) /.test(l));
+ const POOL=/^[+-]  pool = new pg\.Pool\(\{ connectionString: /;
+ for(const l of lignes)assert.ok(POOL.test(l),'ligne modifiée hors de la ligne du pool : '+l.slice(0,120));
+ const plus=lignes.filter(l=>l[0]==='+');assert.ok(plus.length<=1,'une seule ligne');
+ if(plus[0]){assert.match(plus[0],/u\.searchParams\.delete\('sslmode'\)/);assert.match(plus[0],/ssl: \/sslmode=disable\|localhost\|127\\\.0\\\.0\\\.1\/\.test\(env\.DATABASE_URL\) \? false : \{ rejectUnauthorized: true \}/,'la règle TLS ne change pas')}
+});
 
 test('espaces.mjs : role() et exiger() sont identiques à la branche visée',()=>{let avant='';
  try{avant=execSync('git show '+require('./_base.cjs')()+':api/_auth/espaces.mjs',{cwd:R('.'),encoding:'utf8'})}catch(e){return}
