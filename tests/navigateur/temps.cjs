@@ -126,6 +126,12 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     const toucher = async (k, id) => { await page[k].addScriptTag({ content: MILIEU }); const pt = await page[k].evaluate(i => { document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' }); return window.__milieu(i); }, id); await page[k].mouse.click(pt.x, pt.y); };
     for (const k of ['emma', 'alex', 'lea']) { await page[k].getByRole('button', { name: 'Circle', exact: true }).click(); await page[k].waitForSelector('.tp-arc'); }
     ok(await arcs('emma') === 5 && await arcs('alex') === 8 && await arcs('lea') === 9, 'Circle : 5 arcs pour Emma, 8 pour Alex, 9 pour Léa : exactement leurs vues');
+    /* non-régression du noyau radial (PR A) : le cadran dessiné est identique, au caractère près, à celui figé sur la tête de #131
+       (iPhone pour Emma et Alex, ordinateur pour Léa). Régénérer : REFERENCE=ecrire, seulement sur un cadran validé. */
+    { const F = path.join(__dirname, '..', 'references', 'temps-cadran-dom.json'), dom = {};
+      for (const k of ['emma', 'alex', 'lea']) dom[k] = await page[k].locator('.tp-cadran').evaluate(e => e.outerHTML);
+      if (process.env.REFERENCE === 'ecrire') { fs.writeFileSync(F, JSON.stringify(dom, null, 1) + '\n'); ok(true, 'référence du cadran écrite'); }
+      else { const ref = JSON.parse(fs.readFileSync(F, 'utf8')); for (const k of Object.keys(ref)) ok(dom[k] === ref[k], k + ' : le cadran est identique à la référence d\'avant l\'extraction (' + ref[k].length + ' caractères)'); } }
     ok((await page.emma.locator('.tp-zone').count()) === 0 && (await page.lea.locator('.tp-zone').count()) === 1, 'la conséquence à décider (ambre) seulement chez qui peut décider');
     ok(/décalé de 15 min, prévu 16:00/.test(await arc('emma', 'cocktail').getAttribute('aria-label')), 'Emma : l\'arc du cocktail dit son décalage en mots');
     ok((await page.emma.locator('.tp-cadran').evaluate(e => e.getAttribute('role'))) === 'group' && !(await page.emma.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)), 'Emma (iPhone) : cadran interactif (pas une image), sans défilement horizontal');
