@@ -10,7 +10,7 @@ test('dock : chaque rôle serveur a un instantané stable (entrées et gestes du
  assert.equal(inst('contributor'),'notifications,mission,documents,messages | deposer,retard,ecrireCoordination');
  assert.equal(inst('viewer'),'controle,exports,journal | exporter,demanderPiece');
  assert.equal(inst('guest'),'programme,mareponse,lieu,messages | confirmer,ecrireOrganisateurs');
- assert.equal(inst(undefined),'coeur,exemples,lab,compte | commencer');
+ assert.equal(inst(undefined),'coeur,exemples,compte | commencer','le Lab sort de la navigation publique (brief du 24/10)');
 });
 
 test('dock : la réponse d\'une invitée ne contient ni Budget, ni Personnes, ni aucun nom d\'entrée interdite, même en texte',()=>{

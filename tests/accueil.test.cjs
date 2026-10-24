@@ -21,9 +21,9 @@ t('enregistrer : le projet et sa page s\'ajoutent, les sites existants restent, 
  const sites=JSON.parse(m.get('aime-sites')).sites;assert.ok(sites.ancien&&sites[s.id],'ancien site intact, nouveau ajouté');assert.equal(D.courant().id,p.id);assert.equal(D.site(D.courant()).id,s.id);assert.equal(D.lister().length,1)});
 t('un stockage illisible ne casse rien, et un stockage plein est dit',()=>{const D=P.Depot({getItem:()=>'{pas du json',setItem:()=>{throw new Error('plein')}});assert.equal(D.courant(),null);assert.deepEqual(D.lister(),[]);
  const l=I.lire('Notre association de quartier',J),p=P.versProjet(l),r=D.enregistrer(p,P.versSite(p,S,M.find(x=>x.id===l.modele)));assert.equal(r.ok,false);assert.ok(r.raison)});
-t('le premier écran : un seul champ, des exemples, la page sans script, l\'enregistrement dit',()=>{const h=lire('index.html'),a=lire('accueil/accueil.js');
- assert.ok(h.includes('id="acForm"')&&h.includes('Que préparez-vous ?')&&h.includes('data-ac-ex'));assert.ok(/id="acApercu"[^>]*sandbox="allow-same-origin"/.test(h));assert.ok(h.includes('tout reste dans ce navigateur'));
- assert.ok(a.includes('sansScript(')&&a.includes('AIMEDesign.appliquer('));['/pointzero/analyse.js','/projets/taxonomie.js','/projets/intention.js','/projets/projets.js','/accueil/accueil.js'].forEach(f=>assert.ok(h.includes('src="'+f+'"'),f))});
+t('le premier écran : un seul champ, des exemples, l\'enregistrement dit ; plus d\'aperçu de mini-site, de choix d\'apparence ni de lien vers le Canevas',()=>{const h=lire('index.html'),a=lire('accueil/accueil.js');
+ assert.ok(h.includes('id="acForm"')&&h.includes('Que préparez-vous ?')&&h.includes('data-ac-ex'));assert.ok(!/id="acApercu"|id="acDS"|id="acModifier"|repriseLocale/.test(h),'mis de côté (brief du 24/10)');
+ assert.ok(a.includes('enregistré dans ce navigateur')&&!a.includes('AIMEDesign.appliquer('));['/pointzero/analyse.js','/projets/taxonomie.js','/projets/intention.js','/projets/projets.js','/accueil/accueil.js'].forEach(f=>assert.ok(h.includes('src="'+f+'"'),f))});
 t('taxonomie d\'AIMEEVENT : catégorie, type Schema.org, mode et accès lus dans la phrase',()=>{const X=require('../projets/taxonomie.js');
  const c=I.lire('Un concert de jazz le 21 juin 2027 à Lille',J);assert.deepEqual([c.categorie,c.schemaType,c.modele,c.acces],['musique','MusicEvent','libre','Ouvert au public']);
  const w=I.lire('Un webinaire sur la broderie le 5 mars 2027',J);assert.deepEqual([w.categorie,w.mode,w.modele],['formation','En ligne','seminaire']);

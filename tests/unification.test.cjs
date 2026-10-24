@@ -4,12 +4,12 @@ const { test } = require('node:test'); const assert = require('node:assert/stric
 const R = p => path.join(__dirname, '..', p), lire = p => fs.readFileSync(R(p), 'utf8');
 const N = require('../nav/registre.js'), D = require('../dock/modele.js');
 
-test('accueil : un seul +, un seul accès au compte, « Mes essais sur cet appareil », aucun lien vers /#entrer', () => {
+test('accueil : un seul +, un seul accès au compte, plus de « Mes essais sur cet appareil », aucun lien vers /#entrer', () => {
   const z = lire('index.html'), haut = z.match(/<header class="barre">[\s\S]*?<\/header>/)[0];
   assert.ok(!/porte|compte/.test(haut), 'en haut, seulement le logo');
   assert.equal(D.composer({}).plus.length, 1, 'un seul geste au + public : Commencer');
   assert.equal(D.composer({}).lieux.filter(e => e.href === '/compte/').length, 1, 'un seul accès au compte, dans le Dock');
-  assert.match(z, /Mes essais sur cet appareil/); assert.ok(!/Déjà sur cet appareil/.test(z));
+  assert.ok(!/Mes essais sur cet appareil|Déjà sur cet appareil/.test(z), 'retiré de l\'accueil (brief du 24/10)');
   assert.ok(!z.includes('/#entrer') && !z.includes('id="entrer"'));
   assert.ok(!/href="\/aime\/"/.test(z), 'le lien vers /aime/ part au Lab');
   assert.match(z, /href="\/contact\/"/, 'le formulaire a déménagé vers /contact/, lien en pied de page');
