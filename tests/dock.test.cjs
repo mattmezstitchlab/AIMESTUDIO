@@ -124,7 +124,7 @@ test('le + unique (docs/IDENTITE.md) : sans compte « Commencer », connecté se
  assert.deepEqual(P.etat({connecte:false}).items.map(x=>x.nom),['Commencer']);assert.deepEqual(P.etat(null).items.map(x=>x.href),['/?commencer=1']);
  const e=P.etat({connecte:true,timbre:null},[{id:'11111111-1111-4111-8111-111111111111',titre:'Mariage Léa & Marc',role:'owner'},{id:'22222222-2222-4222-8222-222222222222',titre:'Séminaire',role:'guest'}]);
  assert.equal(e.mode,'projets');assert.deepEqual(e.items.map(x=>x.nom),['Mariage Léa & Marc','Séminaire','Nouveau projet']);
- assert.equal(e.items[0].href,'/compte/?espace=11111111-1111-4111-8111-111111111111');assert.equal(e.items[1].sous,'invité');
+ assert.equal(e.items[0].href,'/projets/?espace=11111111-1111-4111-8111-111111111111');assert.equal(e.items[1].sous,'invité');
  assert.equal(P.etat({connecte:true},Array.from({length:9},(_,i)=>({id:'x'+i,titre:'P'+i,role:'viewer'}))).items.length,6,'cinq projets au plus, puis « Nouveau projet »');
  const j=lire('dock/plus.js');assert.ok(!/timbre|Timbre\./.test(j.replace(/\/\*[\s\S]*?\*\//g,'')),'le + ne dépend pas du Timbre');assert.ok(!/#entrer/.test(j));assert.ok(!/localStorage|sessionStorage/.test(j));
  assert.equal(require('../dock/modele.js').ACTIONS.commencer.href,'/?commencer=1');
