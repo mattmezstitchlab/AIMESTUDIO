@@ -61,7 +61,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
         titre: document.querySelector('#tTitre').textContent, role: document.querySelector('#tSous').textContent, module: (document.querySelector('#pTitre') || {}).textContent,
         fond: getComputedStyle(document.querySelector('.cpt-fond')).display, modes: [...document.querySelectorAll('.tp-modes button')].map(b => b.textContent) }));
       ok(r.onglets === 0 && r.navs === 0 && r.dock, k + ' : aucune rangée d\'onglets, le Dock seul');
-      ok(r.titre === DEMO.titre && r.role && r.module === 'Programme' && r.modes.includes('Liste') && r.modes.includes('Chronologie'), k + ' : projet « ' + r.titre + ' », participation « ' + r.role + ' », module et ses modes');
+      ok(r.titre === DEMO.titre && r.role && r.module === 'Programme' && r.modes.includes('Liste') && r.modes.includes('Circle') && !r.modes.includes('Chronologie'), k + ' : projet « ' + r.titre + ' », participation « ' + r.role + ' », module et ses modes');
       ok(r.fond === 'none', k + ' : pas de photo derrière la zone de travail');
     }
     /* clavier, retour du navigateur, lien direct */
@@ -117,9 +117,42 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await page.emma.reload({ waitUntil: 'networkidle' }); await page.emma.waitForSelector('.tp-m');
     ok(/16:15 – 18:45/.test(await texte('emma')), 'Emma recharge : la modification est toujours là');
 
-    console.log('Chronologie, Comparaison, historique');
-    await page.alex.getByRole('button', { name: 'Chronologie' }).click(); await page.alex.waitForSelector('.tp-bloc');
-    ok((await page.alex.locator('.tp-bloc').count()) === 8, 'Alex : la même ressource en chronologie'); await capture('alex', 'TEMPS__ALEX__programme__chronologie');
+    console.log('Circle : la même ressource sur un cadran de 24 heures');
+    const arcs = async k => page[k].locator('.tp-arc').count(), arc = (k, id) => page[k].locator('.tp-arc[data-id="' + id + '"]');
+    /* toucher un arc comme un doigt : au milieu de son tracé (le centre de sa boîte tombe à l'intérieur du cercle) */
+    const toucher = async (k, id) => { const pt = await page[k].evaluate(i => { const p = document.querySelector('.tp-arc[data-id="' + i + '"] .tp-trait-m'), L = p.getTotalLength(), q = p.getPointAtLength(L / 2), m = p.getScreenCTM();
+      p.closest('svg').scrollIntoView({ block: 'center' }); const q2 = p.getPointAtLength(L / 2), m2 = p.getScreenCTM(); return { x: m2.a * q2.x + m2.c * q2.y + m2.e, y: m2.b * q2.x + m2.d * q2.y + m2.f }; }, id); await page[k].mouse.click(pt.x, pt.y); };
+    for (const k of ['emma', 'alex', 'lea']) { await page[k].getByRole('button', { name: 'Circle', exact: true }).click(); await page[k].waitForSelector('.tp-arc'); }
+    ok(await arcs('emma') === 5 && await arcs('alex') === 8 && await arcs('lea') === 9, 'Circle : 5 arcs pour Emma, 8 pour Alex, 9 pour Léa : exactement leurs vues');
+    ok((await page.emma.locator('.tp-zone').count()) === 0 && (await page.lea.locator('.tp-zone').count()) === 1, 'la conséquence à décider (ambre) seulement chez qui peut décider');
+    ok(/décalé de 15 min, prévu 16:00/.test(await arc('emma', 'cocktail').getAttribute('aria-label')), 'Emma : l\'arc du cocktail dit son décalage en mots');
+    ok((await page.emma.locator('.tp-cadran').evaluate(e => e.getAttribute('role'))) === 'group' && !(await page.emma.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)), 'Emma (iPhone) : cadran interactif (pas une image), sans défilement horizontal');
+    /* un arc ouvre le même panneau que la Liste, avec les mêmes gestes */
+    await toucher('lea', 'cocktail'); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="cocktail"]');
+    ok((await page.lea.locator('.tp-detail').getByRole('button', { name: 'Décaler « Cocktail » de 15 minutes' }).count()) === 1, 'Léa : l\'arc ouvre le panneau de la Liste, avec ses gestes');
+    ok(/vue=cercle/.test(page.lea.url()) && /moment=cocktail/.test(page.lea.url()), 'Léa : le mode et le moment sont dans l\'adresse');
+    await toucher('emma', 'cocktail'); await page.emma.waitForSelector('.tp-detail .tp-m');
+    ok((await page.emma.locator('.tp-detail button').count()) === 0, 'Emma : le même panneau, sans aucun geste');
+    await capture('lea', 'TEMPS__LEA__programme__cercle-cocktail'); await capture('emma', 'TEMPS__EMMA__programme__cercle-cocktail'); await capture('alex', 'TEMPS__ALEX__programme__cercle');
+    /* changer de mode garde le moment ; recharger garde tout */
+    await page.lea.getByRole('button', { name: 'Liste', exact: true }).click(); await page.lea.waitForSelector('.tp-m.choisi');
+    ok((await page.lea.locator('.tp-m.choisi').getAttribute('data-id')) === 'cocktail' && /moment=cocktail/.test(page.lea.url()) && !/vue=/.test(page.lea.url()), 'Léa : en Liste, le cocktail reste choisi');
+    await page.lea.getByRole('button', { name: 'Circle', exact: true }).click(); await page.lea.reload({ waitUntil: 'networkidle' }); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="cocktail"]');
+    ok(true, 'Léa recharge : Circle et le cocktail sont rouverts depuis l\'adresse');
+    /* clavier : flèches de moment en moment, Entrée ouvre */
+    await arc('lea', 'cocktail').focus(); await page.lea.keyboard.press('ArrowRight');
+    const suivant = await page.lea.evaluate(() => document.activeElement && document.activeElement.getAttribute('data-id'));
+    await page.lea.keyboard.press('Enter'); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="' + suivant + '"]');
+    ok(suivant === 'set-cocktail', 'Léa au clavier : flèche droite → « ' + suivant + ' », Entrée ouvre son détail');
+    /* un geste dans Circle se voit dans la Liste d'une autre personne, et l'inverse */
+    await toucher('lea', 'bal'); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="bal"]');
+    await page.lea.locator('.tp-detail').getByRole('button', { name: 'Décaler « Ouverture du bal » de 5 minutes' }).click();
+    await page.camille.waitForFunction(() => /22:05 – 01:35/.test((document.querySelector('[data-id="bal"]') || {}).innerText || ''), null, { timeout: 6000 }).then(() => ok(true, 'geste dans Circle (Léa) → Liste de Camille : 22:05'), () => ok(false, 'geste dans Circle non propagé'));
+    await page.camille.locator('[data-id="discours"]').getByRole('button', { name: 'Décaler « Discours des témoins » de 5 minutes' }).click();
+    await page.emma.waitForFunction(() => /21:05 à 21:25/.test((document.querySelector('.tp-arc[data-id="discours"]') || { getAttribute: () => '' }).getAttribute('aria-label') || ''), null, { timeout: 6000 }).then(() => ok(true, 'geste dans la Liste (Camille) → Circle d\'Emma : 21:05'), () => ok(false, 'geste dans la Liste non propagé au cercle'));
+    await capture('camille', 'TEMPS__CAMILLE__programme__liste-apres-gestes');
+
+    console.log('Comparaison, historique');
     ok((await page.lea.getByRole('button', { name: 'Comparer les vues' }).count()) === 0, 'Léa : pas de Comparaison');
     await page.camille.getByRole('button', { name: 'Comparer les vues' }).click(); await page.camille.waitForSelector('.tp-comp select option:nth-child(2)', { state: 'attached' });
     const val = await page.camille.locator('.tp-comp select option', { hasText: 'Emma' }).getAttribute('value');

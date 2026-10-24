@@ -27,3 +27,32 @@
 @media (max-width:720px){.tp-cols{grid-template-columns:1fr}}
 .tp-hist summary{cursor:pointer;min-height:32px}
 .tp-hist-l{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13.5px;color:var(--doux)}.tp-hist-l .moi{color:var(--encre)}.tp-quand{font-variant-numeric:tabular-nums;color:var(--doux)}
+
+/* ---------- Circle : le cadran de 24 heures (modules/temps/cercle.js) ---------- */
+.tp-m.choisi{border-color:var(--encre);box-shadow:0 0 0 1px var(--encre) inset}
+.tp-cercle{display:grid;gap:14px;justify-items:center}
+.tp-cadran{width:100%;max-width:560px;height:auto;display:block;touch-action:manipulation;overflow:visible}
+.tp-anneau{fill:none;stroke:var(--ligne);stroke-width:2}
+.tp-trait{stroke:var(--pale);stroke-width:3}.tp-trait.fort{stroke:var(--doux);stroke-width:5}
+.tp-heure-c{fill:var(--doux);font:600 34px var(--ui)}
+.tp-arc{cursor:pointer;outline:none}
+.tp-touche{fill:none;stroke:transparent;stroke-width:78;pointer-events:stroke}
+.tp-trait-m{fill:none;stroke:#8E8E9C;stroke-width:44;pointer-events:none}
+.tp-arc.e-decale .tp-trait-m{stroke:var(--cyan)}
+.tp-arc.e-fait .tp-trait-m{stroke-opacity:.45}
+.tp-arc.choisi .tp-trait-m,.tp-arc:hover .tp-trait-m{stroke:var(--encre)}
+.tp-arc:focus-visible .tp-trait-m{stroke:var(--encre);filter:drop-shadow(0 0 6px rgba(237,237,240,.7))}
+.tp-prevu-c{fill:none;stroke:var(--cyan);stroke-width:4;stroke-dasharray:10 10;pointer-events:none}
+.tp-zone{fill:none;stroke:var(--ambre);stroke-width:54;stroke-opacity:.9;pointer-events:none}
+.tp-point{fill:var(--ambre);stroke:var(--fond);stroke-width:5;pointer-events:none}
+.tp-plus{cursor:pointer}.tp-plus circle{fill:var(--carte);stroke:var(--doux);stroke-width:3}.tp-plus text{fill:var(--encre);font:700 26px var(--ui)}
+.tp-plus:focus-visible circle{stroke:var(--encre);stroke-width:6}
+.tp-c1{fill:var(--encre);font:600 40px var(--titre)}.tp-c2{fill:var(--doux);font:500 30px var(--ui);font-variant-numeric:tabular-nums}
+.tp-detail{width:100%}
+.tp-cle{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--doux);justify-content:center}
+.tp-cle li{display:inline-flex;align-items:center;gap:6px}
+.tp-k{display:inline-block;width:18px;height:8px;border-radius:2px;background:#8E8E9C}
+.tp-k-prevu{height:0;border-top:2px dashed var(--cyan);background:none}.tp-k-propose{background:var(--ambre)}.tp-k-confirmer{width:10px;height:10px;border-radius:50%;background:var(--ambre)}
+@media (prefers-reduced-motion:no-preference){.tp-trait-m{transition:stroke .15s}}
+.tp-moi-c{fill:none;stroke:var(--encre);stroke-width:5;pointer-events:none}
+.tp-k-moi{height:0;border-top:3px solid var(--encre);background:none}

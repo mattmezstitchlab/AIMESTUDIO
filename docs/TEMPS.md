@@ -32,6 +32,24 @@ Dock (dock/modele.js composerReel)   Atlas (/capacites/, capacites/modules.js)  
 - **Retour et avance du navigateur** : chaque passage d'une page à l'autre est une entrée d'historique. Les liens directs (`/projets/?espace=…&page=deroule`) ouvrent la bonne page. Le focus va au titre de la page ouverte, et le Dock marque la page en cours (`aria-current`).
 - **La photo** n'est plus derrière la zone de travail : elle est cadrée et voilée dans le bandeau d'identité. La zone de travail est sur fond plein.
 
+### Circle (PR temps-circle, 24/10)
+
+- **Modes du module Programme** : Liste et Circle, plus Comparer les vues pour le propriétaire. Circle remplace la Chronologie à l'écran (décision D1). Le code de la Chronologie reste, joignable par `vue=chrono`, pour éviter toute régression.
+- **Un calculateur pur**, `modules/temps/cercle.js`, transforme la vue serveur en cadran. Il ne lit ni la base ni les règles : il place ce que la vue contient. Géométrie reprise de RIPPLECIRCLE (`polarXY`, `arcPathAt`), complétée pour l'arc nul et le tour complet.
+- **Le cadran** fait 24 heures, minuit en haut, sens horaire. Un moment qui passe minuit reste un arc continu. Les moments simultanés vont dans des couloirs concentriques : 4 au plus sur ordinateur, 3 sur téléphone. Au-delà, une pastille « +1 » ouvre la Liste sur le moment.
+- **Le futur zoom** : le cadran est une fenêtre de temps (`fenetre({ debut, fin })`). Une plage plus courte s'affichera sans rien changer d'autre ; elle est testée, mais pas encore exposée à l'écran.
+- **Un arc est un bouton.** Il ouvre le même panneau que la carte de la Liste, donc les mêmes gestes autorisés. Au clavier : les flèches passent d'un moment à l'autre, Entrée ouvre, Échap ferme. Chaque arc porte un nom accessible complet : heures, décalage, à confirmer, proposition, « vous portez ce moment ».
+- **États** :
+  - horaire en vigueur : arc plein ;
+  - horaire prévu : trait fin pointillé ;
+  - conséquence à décider : zone ambre ;
+  - à confirmer : point ;
+  - vos moments : liseré.
+  La couleur n'est jamais seule à porter un état.
+- **Le contexte dans l'adresse** : `vue` et `moment`. Changer de mode garde le moment, et recharger la page rouvre la même vue.
+- **Idées reprises des branches v8 et v9 de RIPPLECIRCLE** : le centre qui résume le moment choisi, une large zone de toucher invisible, des arcs focusables au clavier, et aucune animation sous `prefers-reduced-motion`.
+- **Non repris** : la musique, les anneaux par phase, le vocabulaire métier.
+
 ## 2. Source de vérité
 
 | | Rôle | Écrit par |

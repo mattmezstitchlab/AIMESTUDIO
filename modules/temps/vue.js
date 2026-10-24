@@ -1,7 +1,10 @@
 /* AIME · module Temps, la présentation dans l'écran de projet (page « Programme », compte/projet.js → bloc { type: 'module' }).
    Le navigateur ne décide d'AUCUN droit : il affiche la vue que /api/temps a calculée pour la personne connectée, propose les gestes
    que cette vue contient, et renvoie chaque geste au serveur avec la révision qu'il avait sous les yeux (409 : il reçoit la version à jour).
-   Trois présentations d'une même ressource : Liste (préparer), Chronologie (le jour J), Comparer (le propriétaire vérifie les perspectives).
+   Présentations d'une même ressource : Liste et Circle (le cadran de 24 heures, modules/temps/cercle.js), et Comparer pour le propriétaire.
+   La Chronologie reste dans le code (vue=chrono dans l'adresse) mais n'est plus proposée : Circle la remplace (décision D1).
+   Le contexte (mode, moment choisi) vit dans l'adresse : changer de mode garde le moment ; un lien le rouvre.
+   Un arc du cercle ouvre le MÊME panneau que la carte de la Liste (carteMoment), donc les mêmes gestes autorisés.
    Relecture toutes les 2 s (« depuis » la révision connue : rien ne repart si rien n'a changé). Textes venus du serveur : textContent.
    AIMETemps.monter(zone, { espace, dire }) → { arreter() } */
 (function(){'use strict';
@@ -10,9 +13,15 @@ function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null
 function bouton(txt,cls,aria){var b=el('button','b '+(cls||'b-s'),txt);b.type='button';if(aria)b.setAttribute('aria-label',aria);return b}
 function api(espace,q){return fetch('/api/temps?espace='+encodeURIComponent(espace)+(q||''),{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){j._code=r.status;return j})})}
 function envoyer(b){return fetch('/api/temps',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){j._code=r.status;return j})})}
-var MOTS={owner:'organisation',editor:'coordination',contributor:'contribution',viewer:'lecture',guest:'invité'};
+var MOTS={owner:'organisation',editor:'coordination',contributor:'contribution',viewer:'lecture',guest:'participation'};
 
-function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},etat={rev:null,vue:null,mode:'liste',actif:null,cible:null,comparaison:null,personnes:null,occupe:false},minuterie=null,fini=false;
+var MODES={liste:1,cercle:1,chrono:1,comparer:1};
+/* le contexte du module dans l'adresse : vue (mode) et moment ; le reste de l'adresse (espace, page) n'est pas touché */
+function lireContexte(){try{var q=new URLSearchParams(location.search),v=q.get('vue'),m=q.get('moment');return{mode:MODES[v]?v:'liste',moment:/^[a-z0-9-]{1,60}$/.test(m||'')?m:null}}catch(_){return{mode:'liste',moment:null}}}
+function ecrireContexte(mode,moment){try{var u=new URL(location.href);if(mode&&mode!=='liste')u.searchParams.set('vue',mode);else u.searchParams.delete('vue');
+ if(moment)u.searchParams.set('moment',moment);else u.searchParams.delete('moment');var a=u.pathname+u.search;if(a!==location.pathname+location.search)history.replaceState(history.state,'',a)}catch(_){}}
+
+function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireContexte(),etat={rev:null,vue:null,mode:cx.mode,selection:cx.moment,actif:null,cible:null,comparaison:null,personnes:null,occupe:false},minuterie=null,fini=false;
  zone.textContent='';zone.classList.add('tp');
  var vivant=el('p','sr');vivant.setAttribute('aria-live','polite');vivant.setAttribute('role','status');
  var tete=el('div','tp-tete'),modes=el('div','tp-modes'),corps=el('div','tp-corps'),hist=el('details','tp-hist carte-c');
@@ -22,8 +31,13 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},etat={rev:
  tete.appendChild(modes);zone.appendChild(vivant);zone.appendChild(tete);zone.appendChild(corps);zone.appendChild(hist);
  function annoncer(t){vivant.textContent='';setTimeout(function(){vivant.textContent=t},30)}
 
- function poserModes(){modes.textContent='';var L=[['liste','Liste'],['chrono','Chronologie']];if(etat.vue&&etat.vue.peutComparer)L.push(['comparer','Comparer les vues']);
-  L.forEach(function(m){var b=bouton(m[1],'b-s');b.setAttribute('aria-pressed',etat.mode===m[0]?'true':'false');b.onclick=function(){etat.mode=m[0];poserModes();afficher();if(m[0]==='comparer')chargerPersonnes()};modes.appendChild(b)})}
+ function poserModes(){modes.textContent='';var L=[['liste','Liste'],['cercle','Circle']];if(etat.vue&&etat.vue.peutComparer)L.push(['comparer','Comparer les vues']);
+  L.forEach(function(m){var b=bouton(m[1],'b-s');b.setAttribute('aria-pressed',etat.mode===m[0]?'true':'false');b.onclick=function(){changerMode(m[0])};modes.appendChild(b)})}
+ /* changer de mode garde le moment choisi (et le reste du contexte) */
+ function changerMode(mo){etat.mode=mo;ecrireContexte(mo,etat.selection);poserModes();afficher();if(mo==='comparer')chargerPersonnes();
+  if(etat.selection&&mo==='liste'){var c=corps.querySelector('[data-id="'+etat.selection+'"]');if(c){c.scrollIntoView({block:'center'});var t=c.querySelector('.tp-t strong');if(t){t.tabIndex=-1;t.focus({preventScroll:true})}}}}
+ function choisir(id,annonce){etat.selection=id||null;ecrireContexte(etat.mode,etat.selection);afficher();
+  var m=id&&etat.vue&&etat.vue.moments.filter(function(x){return x.id===id})[0];if(m&&annonce)annoncer(m.titre+', '+m.debut+' à '+m.fin+' : détail ouvert.')}
 
  /* ---------- ce qui a changé entre deux vues : annoncé, jamais seulement montré ---------- */
  function changements(av,ap){if(!av)return[];var M={};av.moments.forEach(function(m){M[m.id]=m});var out=[];
@@ -36,7 +50,7 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},etat={rev:
    var t2=j.raison||('Refusé ('+j._code+').');annoncer(t2);dire(t2,true);if(j._code===404||j._code===403)relire(true)}).catch(function(){etat.occupe=false;dire('Serveur injoignable : rien n\'a été enregistré.',true)})}
 
  /* ---------- un moment, en liste ---------- */
- function carteMoment(m,lecture){var li=el('li','tp-m'+(m.fait?' fait':'')+(m.decalage?' decale':''));li.dataset.id=m.id;
+ function carteMoment(m,lecture){var li=el('li','tp-m'+(m.fait?' fait':'')+(m.decalage?' decale':'')+(m.id===etat.selection?' choisi':''));li.dataset.id=m.id;
   var h=el('div','tp-h');var heure=el('span','tp-heure',m.debut+' – '+m.fin);h.appendChild(heure);
   if(m.decalage){var p=el('span','tp-prevu','prévu '+m.prevu+' ('+(m.decalage>0?'+':'−')+Math.abs(m.decalage)+' min)');h.appendChild(p)}
   li.appendChild(h);
@@ -46,6 +60,8 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},etat={rev:
   if(tags.childNodes.length)li.appendChild(tags);
   if(m.note)li.appendChild(el('p','tp-note',m.note));
   if(lecture)return li;
+  /* choisir un moment depuis la Liste : il le reste en passant dans Circle (un clic hors des boutons) */
+  li.addEventListener('click',function(e){if(e.target.closest('button,input,label,a'))return;if(etat.selection!==m.id){etat.selection=m.id;ecrireContexte(etat.mode,m.id);[].forEach.call(corps.querySelectorAll('.tp-m.choisi'),function(x){x.classList.remove('choisi')});li.classList.add('choisi')}});
   var g=m.gestes||{},act=el('div','tp-act');
   if(m.aConfirmer){var c=bouton('J\'ai vu le nouvel horaire','b-p','Confirmer le nouvel horaire de « '+m.titre+' » : '+m.debut);c.onclick=function(){geste('confirmer',{moment:m.id},'Nouvel horaire de « '+m.titre+' » confirmé')};act.appendChild(c)}
   if(g.retarder){var casc=el('label','tp-casc');var cb=el('input');cb.type='checkbox';cb.id='casc-'+m.id;casc.appendChild(cb);casc.appendChild(el('span',null,'et la suite'));
@@ -69,6 +85,53 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},etat={rev:
    b.style.left='calc(52px + (100% - 52px) * '+(m._c/n)+')';b.style.width='calc((100% - 52px) / '+n+' - 4px)';
    b.appendChild(el('strong',null,m.titre));b.appendChild(el('span',null,m.debut+' – '+m.fin+(m.decalage?' (prévu '+m.prevu+')':'')));axe.appendChild(b)});
   return axe}
+
+ /* ---------- Circle : la même vue, sur un cadran de 24 heures (modèle calculé par modules/temps/cercle.js) ---------- */
+ var NS='http://www.w3.org/2000/svg';
+ function svg(t,a){var e=document.createElementNS(NS,t);for(var k in a)if(a[k]!=null)e.setAttribute(k,a[k]);return e}
+ function cercle(v){var K=window.AIMECercle,z=el('div','tp-cercle');if(!K){z.appendChild(el('p','alerte','Le cadran n\'a pas pu être chargé : la Liste reste disponible.'));return z}
+  if(!v.moments.length){z.appendChild(el('p','leg','Aucun moment à afficher.'));return z}
+  var narrow=window.matchMedia&&window.matchMedia('(max-width: 560px)').matches,M=K.modele(v,{couloirs:narrow?3:4,epaisseur:narrow?52:44}),C=M.centre;
+  if(etat.selection&&!v.moments.some(function(m){return m.id===etat.selection}))etat.selection=null;   /* un moment devenu invisible : rien n'en est dit */
+  var s=svg('svg',{viewBox:'0 0 1000 1000',class:'tp-cadran',role:'group','aria-label':'Cadran de 24 heures, minuit en haut : '+M.arcs.length+' moment'+(M.arcs.length>1?'s':'')+'. Flèches pour passer d\'un moment à l\'autre, Entrée pour ouvrir son détail.'});
+  var fond=svg('g',{'aria-hidden':'true',class:'tp-fond'});
+  fond.appendChild(svg('circle',{cx:C,cy:C,r:M.rayon+M.epaisseur/2+8,class:'tp-anneau'}));
+  M.graduations.forEach(function(g){fond.appendChild(svg('line',{x1:g.x1,y1:g.y1,x2:g.x2,y2:g.y2,class:g.cardinale?'tp-trait fort':'tp-trait'}));if(g.texte){var t=svg('text',{x:g.lx,y:g.ly+12,class:'tp-heure-c','text-anchor':g.ancre});t.textContent=g.texte;fond.appendChild(t)}});
+  s.appendChild(fond);
+  var arcs=svg('g',{class:'tp-arcs'}),focusable=etat.selection&&M.ordre.indexOf(etat.selection)>=0?etat.selection:M.ordre[0];
+  M.arcs.forEach(function(a){var g=svg('g',{class:'tp-arc '+a.etat.map(function(e){return'e-'+e}).join(' ')+(a.id===etat.selection?' choisi':''),role:'button',tabindex:a.id===focusable?'0':'-1','aria-label':a.nom,'aria-pressed':a.id===etat.selection?'true':'false','data-id':a.id});
+   var ti=svg('title');ti.textContent=a.nom;g.appendChild(ti);
+   if(a.dPrevu)g.appendChild(svg('path',{d:a.dPrevu,class:'tp-prevu-c'}));
+   if(a.dMoi)g.appendChild(svg('path',{d:a.dMoi,class:'tp-moi-c'}));
+   g.appendChild(svg('path',{d:a.d,class:'tp-touche'}));     /* une large zone invisible pour le doigt (idée de RIPPLECIRCLE v9) */
+   g.appendChild(svg('path',{d:a.d,class:'tp-trait-m'}));
+   if(a.etat.indexOf('a-confirmer')>=0){var pc=K.polarXY(C,C,a.rayon,a.a0);g.appendChild(svg('circle',{cx:pc.x,cy:pc.y,r:14,class:'tp-point'}))}
+   g.addEventListener('click',function(){choisir(a.id,true)});
+   g.addEventListener('keydown',function(e){var i=M.ordre.indexOf(a.id),k=e.key,cible=null;
+    if(k==='Enter'||k===' '){e.preventDefault();choisir(a.id,true);return}
+    if(k==='Escape'){e.preventDefault();choisir(null);return}
+    if(k==='ArrowRight'||k==='ArrowDown')cible=M.ordre[(i+1)%M.ordre.length];else if(k==='ArrowLeft'||k==='ArrowUp')cible=M.ordre[(i-1+M.ordre.length)%M.ordre.length];else if(k==='Home')cible=M.ordre[0];else if(k==='End')cible=M.ordre[M.ordre.length-1];
+    if(cible){e.preventDefault();[].forEach.call(arcs.querySelectorAll('.tp-arc'),function(x){x.setAttribute('tabindex',x.getAttribute('data-id')===cible?'0':'-1')});var n=arcs.querySelector('.tp-arc[data-id="'+cible+'"]');if(n)n.focus()}});
+   arcs.appendChild(g)});
+  s.appendChild(arcs);
+  var zones=svg('g',{class:'tp-zones','aria-hidden':'true'});M.zones.forEach(function(zn){zones.appendChild(svg('path',{d:zn.d,class:'tp-zone'}))});s.appendChild(zones);
+  /* au-delà des couloirs visibles : une pastille « +N » par moment, qui ouvre la Liste sur lui */
+  M.debordements.forEach(function(d){var p=K.polarXY(C,C,M.rayon+M.epaisseur/2+36,d.angle),g=svg('g',{class:'tp-plus',role:'button',tabindex:'0','aria-label':'Moment de plus, à voir dans la Liste : '+d.nom});
+   g.appendChild(svg('circle',{cx:p.x,cy:p.y,r:26}));var t=svg('text',{x:p.x,y:p.y+9,'text-anchor':'middle'});t.textContent='+1';g.appendChild(t);
+   var ouvrir=function(){etat.selection=d.id;changerMode('liste')};g.addEventListener('click',ouvrir);g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();ouvrir()}});s.appendChild(g)});
+  /* le centre résume le moment choisi (idée de RIPPLECIRCLE v9) ; décoratif : le panneau dit la même chose en texte */
+  var ch=etat.selection&&v.moments.filter(function(m){return m.id===etat.selection})[0],cen=svg('g',{'aria-hidden':'true',class:'tp-centre'});
+  var l1=svg('text',{x:C,y:C-14,'text-anchor':'middle',class:'tp-c1'}),l2=svg('text',{x:C,y:C+36,'text-anchor':'middle',class:'tp-c2'});
+  l1.textContent=ch?ch.titre:'24 heures';l2.textContent=ch?(ch.debut+' – '+ch.fin):(M.arcs.length+M.debordements.length)+' moments';cen.appendChild(l1);cen.appendChild(l2);s.appendChild(cen);
+  z.appendChild(s);
+  /* le panneau de détail : la carte de la Liste elle-même, donc les mêmes gestes autorisés */
+  var det=el('section','tp-detail');det.setAttribute('aria-label','Moment choisi');
+  if(ch){var ol=el('ol','tp-liste');ol.appendChild(carteMoment(ch,false));det.appendChild(ol)}
+  else det.appendChild(el('p','leg','Touchez un arc, ou utilisez les flèches, pour voir le moment et ses actions.'));
+  z.appendChild(det);
+  var cle=el('ul','tp-cle');[['tp-k-normal','horaire en vigueur'],['tp-k-moi','vos moments (liseré)'],['tp-k-prevu','horaire prévu (trait fin)'],['tp-k-propose','conséquence à décider (ambre)'],['tp-k-confirmer','à confirmer (point)']].forEach(function(k){var li=el('li');li.appendChild(el('span','tp-k '+k[0]));li.appendChild(el('span',null,k[1]));cle.appendChild(li)});
+  z.appendChild(cle);
+  return z}
 
  /* ---------- comparer : le propriétaire voit la vue d'une autre personne, coupée par le serveur à la sienne ---------- */
  function chargerPersonnes(){if(etat.personnes)return afficher();api(espace,'&comparer=').then(function(j){if(j._code!==200){dire(j.raison||'Comparaison indisponible.',true);return}etat.personnes=j.personnes;afficher()})}
@@ -100,8 +163,9 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},etat={rev:
     pr.appendChild(el('p','leg','AIME ne décide pas à votre place : rien ne bouge sans votre geste.'));corps.appendChild(pr)}
    if(v.aConfirmer.length){var ac=el('p','bandeau tp-confirmer','Nouvel horaire à confirmer : '+v.moments.filter(function(m){return m.aConfirmer}).map(function(m){return m.titre+' ('+m.debut+')'}).join(', ')+'.');corps.appendChild(ac)}
   }
-  corps.appendChild(etat.mode==='chrono'?chrono(v):etat.mode==='comparer'?comparer(v):liste(v,false));
-  if(cle){var n=[].slice.call(corps.querySelectorAll('[data-id] button')).filter(function(x){return x.closest('[data-id]').dataset.id+'|'+(x.getAttribute('aria-label')||x.textContent)===cle})[0];if(n)n.focus({preventScroll:true})}}
+  corps.appendChild(etat.mode==='chrono'?chrono(v):etat.mode==='comparer'?comparer(v):etat.mode==='cercle'?cercle(v):liste(v,false));
+  if(cle){var n=[].slice.call(corps.querySelectorAll('[data-id] button, [data-id][role=button]')).filter(function(x){var d=x.closest('[data-id]');return d.dataset.id+'|'+(x.getAttribute('aria-label')||x.textContent)===cle})[0];
+   if(!n&&f&&f.getAttribute&&f.getAttribute('role')==='button'&&f.dataset&&f.dataset.id)n=corps.querySelector('.tp-arc[data-id="'+f.dataset.id+'"]');if(n)n.focus({preventScroll:true})}}
 
  function chargerHistorique(){api(espace,'&journal=1').then(function(j){histL.textContent='';if(j._code!==200)return;
   if(!j.lignes.length){histL.appendChild(el('li','leg','Aucun changement.'));return}
