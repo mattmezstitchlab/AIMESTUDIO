@@ -1,8 +1,8 @@
 # Formulaire de contact (Page Zéro → e-mail)
 
 Le formulaire en bas de la Page Zéro (`/#contact`) envoie une demande de devis ou de projet à une fonction serveur
-Vercel (`api/contact.js`), qui la transmet **par e-mail via Resend**. Rien n'est stocké : ni base, ni fichier, ni
-navigateur.
+Vercel (`api/contact.js`). La demande est **enregistrée** (table `demandes`), puis transmise **par e-mail via Resend**.
+Rien n'est gardé dans le navigateur. Enregistrement, statuts, droits et conservation : voir `docs/DEMANDES.md`.
 
 ## Variables d'environnement (Vercel → Settings → Environment Variables)
 

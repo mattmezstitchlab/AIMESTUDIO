@@ -60,3 +60,15 @@ test('base sans la migration Temps : /api/temps répond 503 (dit), le projet et 
   assert.deepEqual(p.body.dock.lieux.map(l => l.gabarit).sort(), ['acces', 'journal', 'personnes']);
   assert.equal((await get(PG.default, '/api/page?espace=' + r.body.id + '&gabarit=deroule')).code, 404, 'pas de page Programme sans le module');
 });
+
+test('base sans la migration des demandes : le formulaire Contact envoie l\'e-mail comme avant, sans erreur', opts, async () => {
+  const { rows } = await pool.query("select to_regclass('public.demandes') as d"); assert.equal(rows[0].d, null, 'pas de table demandes, comme en production avant la migration 09');
+  const H = require('../api/contact.js'), envois = [];
+  Object.assign(process.env, { RESEND_API_KEY: 're_test_fictif', CONTACT_TO: 'boite@exemple.test', CONTACT_FROM: 'AIME <contact@exemple.test>' });
+  H._reinitialiser(); H.fetch = async (u, o) => { envois.push(o); return { ok: true, status: 200 }; };
+  const corps = { prenom: 'Camille', nom: 'Fictif', email: 'ancien.contact@exemple.test', projet: 'site', message: 'Un site vitrine pour un atelier fictif, avec une galerie.', consentement: true, site_web: '', duree: 8000 };
+  const r = await appel(H, corps); assert.equal(r.code, 200); assert.deepEqual(r.body, { ok: true }); assert.equal(envois.length, 1);
+  H.fetch = async () => ({ ok: false, status: 500 });
+  const r2 = await appel(H, Object.assign({}, corps, { message: corps.message + ' Deuxième essai.' })); assert.equal(r2.code, 502, 'sans table ni e-mail : erreur visible, le texte reste dans la page');
+  const p = require('../api/_demandes/depot.cjs').base(); if (p) await p.end();
+});
