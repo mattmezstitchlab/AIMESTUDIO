@@ -17,6 +17,11 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     for (const u of ['/', '/contact/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
+    // Exemples : la mosaïque d'abord, plus de liste répétée en bas, aucune case vide dans la grille
+    await p.goto(B + '/exemples/', { waitUntil: 'networkidle' }); await p.waitForTimeout(300);
+    const ex = await p.evaluate(() => { const L = [...document.querySelectorAll('.ex-liste > li')], u = document.querySelector('.ex-liste').getBoundingClientRect(), aire = L.reduce((s, x) => { const r = x.getBoundingClientRect(); return s + r.width * r.height; }, 0);
+      return { n: L.length, premier: L[0] && L[0].textContent, autres: !!document.getElementById('exAutres'), plein: Math.abs(aire - u.width * u.height) < u.width * 4 + u.height * 4 + 50 }; });
+    ok(ex.n === 9 && /Chacun son écran/.test(ex.premier) && !ex.autres && ex.plein, 'Exemples : la mosaïque en premier, plus de liste en bas, grille sans case vide');
     // le Dock unique (docs/IDENTITE.md) : en haut seulement le logo
     await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.waitForTimeout(500);
     ok(await p.evaluate(() => !document.querySelector('.barre #porte, .barre .compte-d') && !document.getElementById('entrer')), 'accueil : en haut seulement le logo, plus de « Et maintenant ? »');
