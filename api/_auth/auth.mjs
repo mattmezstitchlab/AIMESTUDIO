@@ -50,7 +50,7 @@ export function auth(env = process.env) {
   if (instance) return instance;
   if (!pret(env)) return null;
   const base = adresse(env), hote = new URL(base).hostname;
-  pool = new pg.Pool({ connectionString: env.DATABASE_URL, max: 3, ssl: /sslmode=disable|localhost|127\.0\.0\.1/.test(env.DATABASE_URL) ? false : { rejectUnauthorized: true } });
+  pool = new pg.Pool({ connectionString: (u => { u.searchParams.delete('sslmode'); return u.toString(); })(new URL(env.DATABASE_URL)), max: 3, ssl: /sslmode=disable|localhost|127\.0\.0\.1/.test(env.DATABASE_URL) ? false : { rejectUnauthorized: true } });   /* sans sslmode (avertissement de pg) : ssl est réglé ici, rejectUnauthorized = verify-full */
   instance = betterAuth({
     appName: 'AIME',
     baseURL: base,
