@@ -132,5 +132,5 @@ function poser(el,c,o){if(!el)return;el._dockOpts=o||{};el.innerHTML=html(c,o);m
  if(!el._ajuste&&typeof addEventListener==='function'){el._ajuste=true;addEventListener('resize',function(){ajuster(el.querySelector('.dock-zone'))});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){ajuster(el.querySelector('.dock-zone'))})}
  return z}
 
-root.AIMEDockVue={html:html,poser:poser,monter:monter,ajuster:ajuster,ICONES:Object.keys(P)};
+root.AIMEDockVue={html:html,poser:poser,monter:monter,ajuster:ajuster,icone:icone,ICONES:Object.keys(P)};   /* icone : aussi pour la grille « Qu'attendez-vous d'AIME ? » (attente/attente.js) */
 })(typeof self!=='undefined'?self:this);

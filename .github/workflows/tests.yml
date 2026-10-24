@@ -57,6 +57,8 @@ jobs:
       - run: TEST_DATABASE_URL_ANCIEN="${TEST_DATABASE_URL/aime_test/aime_ancien}" node --test tests/socle-ancien.test.cjs
       # creer() et rejoindre() : tout ou rien (transactions), pannes simulées contre la base de test migrée
       - run: node --test --test-concurrency=1 tests/transactions.test.cjs
+      # la liste d'attente de la bêta : inscription, double inscription, jeton expiré, désinscription, compteurs (migration 2026-10-24-05)
+      - run: node --test --test-concurrency=1 tests/attente.test.cjs
       # les quotas partagés entre instances et la garde des écritures (migration 2026-10-24-06)
       - run: node --test --test-concurrency=1 tests/quotas.test.cjs
   navigateur:

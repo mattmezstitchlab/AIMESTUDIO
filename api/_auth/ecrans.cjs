@@ -4,7 +4,8 @@
 // pour le cookie de la requête. Toute erreur, toute absence de session, toute réponse inattendue = 404 (fermé par défaut).
 // Seules les pages HTML sont gardées : les scripts et styles de regie/ et maitre/ restent publics (l'accueil, Sites, Live,
 // le monde et le Canevas les chargent). Utilisé par middleware.js (Routing Middleware Vercel, avant les fichiers statiques).
-const ECRANS = ['/regie', '/regie/', '/regie/index', '/regie/index.html', '/maitre', '/maitre/', '/maitre/index', '/maitre/index.html'];
+const ECRANS = ['/regie', '/regie/', '/regie/index', '/regie/index.html', '/maitre', '/maitre/', '/maitre/index', '/maitre/index.html',
+  '/maitre/attente', '/maitre/attente/', '/maitre/attente/index', '/maitre/attente/index.html'];   /* + les compteurs de la liste d'attente de la bêta */
 
 const PAGE_404 = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
   + '<meta name="robots" content="noindex"><title>Page introuvable · AIME</title>'
@@ -41,7 +42,7 @@ function normaliser(brut) {
   return s;
 }
 /* gardé : ce que la normalisation ramène à l'un des écrans (avec ou sans « / » final, « index », « index.html ») */
-const GARDE = /^\/(regie|maitre)(\/|\/index|\/index\.html?)?\/?$/;
+const GARDE = /^\/(regie|maitre|maitre\/attente)(\/|\/index|\/index\.html?)?\/?$/;
 function estGarde(brut) { const n = normaliser(brut); return n === null ? /regie|maitre|%/i.test(String(brut)) : GARDE.test(n); }
 
 /* undefined : la requête continue (le fichier statique est servi) ; sinon, la réponse 404 */

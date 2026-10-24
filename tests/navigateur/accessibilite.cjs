@@ -6,6 +6,7 @@ const B = process.env.BASE || 'http://localhost:8771', AXE = fs.readFileSync(req
 const PAGES = ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/tarifs/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/point-zero/', '/aime/', '/cube/', '/bureau/espace/', '/canevas/', '/reseau/', '/compte/', '/projets/', '/regie/', '/sites/', '/canevas/?publication=exemple-aime-magazine', '/publication/?exemple=aime-magazine', '/maitre/', '/magazine/', '/magazine/edito.html', '/magazine/point-zero.html', '/magazine/metiers.html'];
 (async () => {
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}); let n = 0;
+  PAGES.push('/beta/', '/maitre/attente/');   /* la liste d'attente de la bêta : la page publique et les compteurs du propriétaire */
   for (const [nom, vp] of [['ordinateur', { width: 1440, height: 900 }], ['téléphone', { width: 390, height: 844 }]]) {
     const ctx = await b.newContext({ viewport: vp });
     await ctx.addCookies([{ name: 'aime_test_proprietaire', value: 'oui', url: B }]);   /* /regie/ et /maitre/ : réservés au propriétaire (middleware.js) ; le serveur de test reconnaît ce cookie */

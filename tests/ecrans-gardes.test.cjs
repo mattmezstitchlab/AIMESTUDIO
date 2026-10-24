@@ -9,7 +9,7 @@ const req = (p, cookie) => new Request('https://www.lemondeaime.com' + p, { head
 const json = (code, o) => new Response(JSON.stringify(o), { status: code, headers: { 'content-type': 'application/json' } });
 
 /* les adresses détournées (revue de Matt sur #123 : /%72egie/ servait la Régie en production) */
-const DETOURS = ['/%72egie/', '/%6daitre/', '//regie/', '/REGIE/', '/%72egie', '/%6Daitre/', '///maitre/', '/Maitre/Index.HTML', '/regie%2f', '/regie%2F',
+const DETOURS = ['/maitre/%61ttente/', '//maitre//attente/', '/MAITRE/Attente/index.html', '/%72egie/', '/%6daitre/', '//regie/', '/REGIE/', '/%72egie', '/%6Daitre/', '///maitre/', '/Maitre/Index.HTML', '/regie%2f', '/regie%2F',
   '/%2572egie/', '/r%65gie/index.html', '/regie/%2e%2e/regie/', '/x/../regie/', '/regie/./', '/regie/index.html%3F.js', '/regie%3Bx/', '/regie%00/'];
 /* le matcher tel que Vercel le compile (vercel build : « ^(?:<matcher>)[\/#\?]?$ ») */
 const matcher = () => { const m = lire('middleware.js').match(/matcher:\s*\['((?:[^'\\]|\\.)*)'\]/); assert.ok(m, 'un matcher littéral, une seule entrée'); return new RegExp('^(?:' + eval("'" + m[1] + "'") + ')[/#?]?$'); };
@@ -78,7 +78,7 @@ test('estProprietaire : seul le cookie part vers /api/identite (même origine) ;
 
 test('vercel.json : les deux écrans ne sont jamais mis en cache ni indexés ; aucune réécriture ne les contourne', async () => {
   const { ECRANS } = await E(), v = JSON.parse(lire('vercel.json'));   /* les en-têtes visent les adresses directes ; les détours reçoivent 404 (no-store) */
-  const h = v.headers.find(x => x.source === '/(regie|maitre)(/|/index|/index\\.html)?'); assert.ok(h);
+  const h = v.headers.find(x => x.source === '/(regie|maitre|maitre/attente)(/|/index|/index\\.html)?'); assert.ok(h);
   const re = new RegExp('^' + h.source + '$'); for (const p of ECRANS) assert.ok(re.test(p), p); assert.ok(!re.test('/regie/regie.js'));
   assert.deepEqual(h.headers, [{ key: 'Cache-Control', value: 'private, no-store' }, { key: 'X-Robots-Tag', value: 'noindex' }]);
   for (const r of [...v.rewrites, ...v.redirects]) assert.ok(!/regie\/index|maitre\/index|^\/(regie|maitre)\/?$/.test(r.destination), 'aucune autre adresse ne mène aux pages : ' + r.source);

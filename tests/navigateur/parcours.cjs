@@ -103,6 +103,18 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
         return st('.cpt-fond') === 'fixed' && st('.tete') === 'sticky' && st('.evite') === 'absolute' && st('.toast') === 'fixed' && document.querySelector('.tete').getBoundingClientRect().top === 0 && !document.elementFromPoint(r.left + 4, r.top + 4).closest('.cpt-fond'); }), '/compte/ (393×659) : fond derrière, en-tête collant en haut, lien d\'évitement et toast à leur place');
       await t.goto(B + '/mentions-legales/', { waitUntil: 'networkidle' });
       ok(await t.evaluate(() => /798 582 342 00035/.test(document.body.innerText) && /Vercel Inc\./.test(document.body.innerText) && /Francfort/.test(document.body.innerText)), '/mentions-legales/ : éditeur, hébergeur, stockage');
+      /* la liste d'attente de la bêta (393×659) : /beta/ sans débordement, la grille en trois colonnes au style du Dock, rien de coupé ;
+         consentement non coché ; sans place, le message le dit ; et le bloc court de l'accueil */
+      await t.goto(B + '/beta/', { waitUntil: 'networkidle' }); await t.waitForSelector('.at-g .at-e'); await t.waitForTimeout(200);
+      ok(!(await t.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)), '/beta/ (393×659) : sans débordement horizontal');
+      ok(await t.evaluate(() => { const e = [...document.querySelectorAll('.at-g .at-e')], xs = new Set(e.slice(0, 6).map(x => Math.round(x.getBoundingClientRect().left)));
+        return e.length === 15 && xs.size === 3 && e.every(x => x.getBoundingClientRect().height >= 44) && [...document.querySelectorAll('.at-t')].every(x => x.scrollWidth <= x.clientWidth + 1); }), '/beta/ (393×659) : quinze fonctions, trois colonnes, 44 px au moins, aucun mot coupé');
+      await t.click('.at-g .at-e:nth-child(2)'); ok(await t.evaluate(() => document.querySelector('.at-g .at-e:nth-child(2) input').checked && !document.querySelector('[name=consentement]').checked), '/beta/ : une fonction se coche au toucher ; le consentement reste à cocher');
+      await t.fill('#atEmail', 'lea@exemple.fr'); await t.click('.at-envoyer'); await t.waitForTimeout(200);
+      ok(/Choisissez votre place/.test(await t.textContent('#atForm .at-etat')), '/beta/ : sans « Je suis… », le message le dit et rien ne part');
+      ok(await t.evaluate(() => { const b = document.querySelector('.at-envoyer'); b.scrollIntoView({ block: 'center' }); const r = b.getBoundingClientRect(), d = document.querySelector('#dock-site .dock').getBoundingClientRect(); return r.bottom <= d.top; }), '/beta/ (393×659) : « Me prévenir » au-dessus du Dock');
+      await t.goto(B + '/', { waitUntil: 'networkidle' });
+      ok(await t.evaluate(() => { const a = document.querySelector('.at-bloc'); a.scrollIntoView({ block: 'center' }); const r = a.getBoundingClientRect(); return r.width > 0 && r.left >= 0 && r.right <= innerWidth && !document.querySelector('.at-bloc [name=consentement]').checked; }), 'accueil (393×659) : le bloc « La bêta ouvre bientôt » tient dans l\'écran, case non cochée');
       await q.close(); }
     // la mosaïque (démonstration) : aucun son avant le premier geste ; « Activer » lance les téléphones, sans erreur
     { const m = await ctx.newPage(), em = []; m.on('pageerror', e => em.push(e.message));
