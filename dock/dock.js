@@ -47,6 +47,11 @@ var P={
 function icone(n){return'<svg class="dock-i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="'+(P[n]||P.projet)+'"/></svg>'}
 
 var compteur=0;
+/* le champ « J'ai reçu une invitation » du + public : un lien collé, que dock/plus.js conduit à /projets/?invitation=… (le serveur vérifie tout) */
+function invitation(c,id){if(!c.plus.some(function(a){return a.id==='invitationRecue'}))return'';
+ return'<form class="dock-inv" data-invitation hidden novalidate><p id="'+esc(id)+'-inv">Ouvrez le lien reçu par e-mail ou par message.</p>'+
+  '<div><label class="dock-sr" for="'+esc(id)+'-lien">Lien d\'invitation</label><input id="'+esc(id)+'-lien" type="url" inputmode="url" autocomplete="off" placeholder="Collez le lien ici" aria-describedby="'+esc(id)+'-inv"><button type="submit">Ouvrir</button></div>'+
+  '<p class="dock-inv-e" role="alert"></p></form>'}
 function html(c,o){
  o=o||{};if(!c)return'';var id=o.id||('dock'+(++compteur)),mode=o.mode==='ecran'?'ecran':'page';
  var moitie=Math.ceil(c.lieux.length/2),gauche=c.lieux.slice(0,moitie),droite=c.lieux.slice(moitie);
@@ -54,7 +59,8 @@ function html(c,o){
    pas=e.id==='notifications'&&c.pastille>0?'<span class="dock-p" aria-label="'+c.pastille+' notification'+(c.pastille>1?'s':'')+'">'+c.pastille+'</span>':'',
    corps=icone(e.icone)+'<span class="dock-t">'+esc(e.nom)+'</span>'+pas;
   return'<li>'+(e.href?'<a class="dock-e" href="'+esc(e.href)+'" data-lieu="'+esc(e.id)+'"'+cur+'>'+corps+'</a>':'<button type="button" class="dock-e" data-lieu="'+esc(e.id)+'"'+cur+'>'+corps+'</button>')+'</li>'};
- var item=function(a){var attrs=' role="menuitem" tabindex="-1" data-geste="'+esc(a.id)+'" data-type="'+esc(a.geste)+'"'+(a.sensible?' data-sensible="1"':'');
+ /* le + public est une carte (deux gestes et un champ) : des boutons ordinaires dans un groupe, pas un menu ; dans un projet, un vrai menu */
+ var item=function(a){var attrs=(c.public?'':' role="menuitem" tabindex="-1"')+' data-geste="'+esc(a.id)+'" data-type="'+esc(a.geste)+'"'+(a.sensible?' data-sensible="1"':'');
   var t=esc(a.nom)+(a.sensible?'<small>Confirmation demandée</small>':'');
   return a.href?'<a class="dock-g" href="'+esc(a.href)+'"'+attrs+'>'+t+'</a>':'<button type="button" class="dock-g"'+attrs+'>'+t+'</button>'};
  var menu=c.plus.map(item).join('')+(c.inattendu?'<span class="dock-sep" role="separator"></span><button type="button" class="dock-g dock-g-alerte" role="menuitem" tabindex="-1" data-geste="inattendu" data-type="repondre">Je vois un accès inattendu</button>':'');
@@ -63,8 +69,8 @@ function html(c,o){
   (c.mention.length?'<p class="dock-m">'+c.mention.map(esc).join(' · ')+'</p>':'')+
   '<nav class="dock" aria-label="'+(c.public?'Navigation du site':'Navigation · '+esc(c.nom))+'">'+
   '<ul class="dock-l">'+gauche.map(entree).join('')+
-  '<li class="dock-c">'+(vide?'':'<button type="button" class="dock-plus" aria-haspopup="menu" aria-expanded="false" aria-controls="'+esc(id)+'-menu" aria-label="Gestes possibles"><span aria-hidden="true"></span></button>'+
-  '<div class="dock-menu" id="'+esc(id)+'-menu" role="menu" aria-label="Gestes de '+esc(c.nom)+'" hidden>'+menu+'</div>')+'</li>'+
+  '<li class="dock-c">'+(vide?'':'<button type="button" class="dock-plus"'+(c.public?'':' aria-haspopup="menu"')+' aria-expanded="false" aria-controls="'+esc(id)+'-menu" aria-label="Gestes possibles"><span aria-hidden="true"></span></button>'+
+  '<div class="dock-menu'+(c.public?' dock-carte':'')+'" id="'+esc(id)+'-menu" role="'+(c.public?'group':'menu')+'" aria-label="'+(c.public?'Actions':'Gestes de '+esc(c.nom))+'" hidden>'+menu+invitation(c,id)+'</div>')+'</li>'+
   droite.map(entree).join('')+'</ul></nav>'+
   '<div class="dock-conf" role="alertdialog" aria-modal="false" aria-labelledby="'+esc(id)+'-ct" hidden><p id="'+esc(id)+'-ct"></p><div><button type="button" data-conf="oui">Confirmer</button><button type="button" data-conf="non">Annuler</button></div></div>'+
   '<p class="dock-s" role="status" aria-live="polite"></p></div>';
@@ -74,7 +80,7 @@ function zone(el){return el.closest('.dock-zone')}
 function fermer(z,rendre){var b=z.querySelector('.dock-plus'),m=z.querySelector('.dock-menu');if(!b||!m||m.hidden)return;m.hidden=true;b.setAttribute('aria-expanded','false');if(rendre)b.focus()}
 function ouvrir(z){var b=z.querySelector('.dock-plus'),m=z.querySelector('.dock-menu');if(!b||!m)return;
  document.querySelectorAll('.dock-zone').forEach(function(o){if(o!==z)fermer(o)});
- m.hidden=false;b.setAttribute('aria-expanded','true');var p=m.querySelector('[role=menuitem]');if(p)p.focus()}
+ m.hidden=false;b.setAttribute('aria-expanded','true');var p=m.querySelector('[role=menuitem],.dock-g');if(p)p.focus()}
 function dire(z,t){var s=z.querySelector('.dock-s');if(!s)return;s.textContent='';setTimeout(function(){s.textContent=t},30)}
 function emettre(z,nom,detail){var nav=z.querySelector('.dock');var ev=new CustomEvent(nom,{bubbles:true,cancelable:true,detail:detail});return nav.dispatchEvent(ev)}
 
@@ -106,16 +112,18 @@ function monter(el){
   if(e.key==='Escape'){var c=z.querySelector('.dock-conf');if(c&&!c.hidden){c.hidden=true;c._d=null;dire(z,'Annulé. Rien n\'a été fait.');z.querySelector('.dock-plus').focus();e.preventDefault();return}
    if(m&&!m.hidden){fermer(z,true);e.preventDefault()}return}
   if(!m||m.hidden||!m.contains(e.target))return;
-  var it=[].slice.call(m.querySelectorAll('[role=menuitem]')),i=it.indexOf(e.target);
+  var it=[].slice.call(m.querySelectorAll('[role=menuitem]')),i=it.indexOf(e.target);if(i<0)return;   /* dans le champ d'invitation, les flèches restent au champ */
   if(e.key==='ArrowDown'||e.key==='ArrowRight'){it[(i+1)%it.length].focus();e.preventDefault()}
   else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){it[(i-1+it.length)%it.length].focus();e.preventDefault()}
   else if(e.key==='Home'){it[0].focus();e.preventDefault()}else if(e.key==='End'){it[it.length-1].focus();e.preventDefault()}
-  else if(e.key==='Tab'){fermer(z)}
  });
+ /* le focus quitte le menu (Tab, clic ailleurs) : il se referme ; il reste ouvert tant qu'on passe d'un geste au champ d'invitation */
+ el.addEventListener('focusout',function(e){var z=zone(e.target);if(!z)return;var m=z.querySelector('.dock-menu');if(!m||m.hidden||!m.contains(e.target))return;
+  var vers=e.relatedTarget;if(vers&&(m.contains(vers)||vers===z.querySelector('.dock-plus')))return;if(vers)fermer(z)});
  if(!root._aimeDockDoc){root._aimeDockDoc=true;document.addEventListener('click',function(e){if(!e.target.closest('.dock-zone'))document.querySelectorAll('.dock-zone').forEach(function(z){fermer(z)})})}
 }
 
-function poser(el,c,o){if(!el)return;el.innerHTML=html(c,o);monter(el);return el.querySelector('.dock-zone')}
+function poser(el,c,o){if(!el)return;el._dockOpts=o||{};el.innerHTML=html(c,o);monter(el);return el.querySelector('.dock-zone')}
 
 root.AIMEDockVue={html:html,poser:poser,monter:monter,ICONES:Object.keys(P)};
 })(typeof self!=='undefined'?self:this);
