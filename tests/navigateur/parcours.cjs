@@ -7,24 +7,33 @@ const echecs = [], ok = (c, m) => { if (!c) echecs.push(m); console.log((c ? '  
 /* « Je suis… » est une liste dessinée (accueil/liste.js) : on la choisit comme une personne, à la souris */
 const choisir = async (pg, v) => { await pg.click('#jsChoix'); await pg.click('#jsOptions [data-value="' + v + '"]'); };
 const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::ERR/;
+/* Le signalement « unsafe-eval » de la CSP report-only, quand le code évalué n'a AUCUNE adresse de script : c'est l'outil de test
+   (Playwright 1.47, celui de la CI, évalue ses attentes dans la page), pas le site. Une entorse venue d'un fichier du site a toujours
+   son adresse : elle reste comptée comme une erreur, comme toute autre entorse à la CSP. */
+const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) && !(m.location() || {}).url;   /* « [Report Only] Refused to evaluate… » ou « Evaluating a string as JavaScript violates… » selon Chromium */
 (async () => {
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
   for (const [n, vp, rm] of [['ordinateur', { width: 1440, height: 900 }, false], ['téléphone', { width: 390, height: 844 }, false], ['mouvement réduit', { width: 1280, height: 800 }, true]]) {
     console.log('— ' + n);
     const ctx = await b.newContext({ viewport: vp, reducedMotion: rm ? 'reduce' : 'no-preference', isMobile: n === 'téléphone', hasTouch: n === 'téléphone' });
     await ctx.addCookies([{ name: 'aime_test_proprietaire', value: 'oui', url: B }]);   /* le propriétaire du site (serveur de test) : /regie/ et /maitre/ lui sont servis */
+    /* la CSP report-only (vercel.json, point 4 de l'audit) : elle ne bloque rien, mais chaque entorse déclenche cet évènement */
+    await ctx.addInitScript(() => { window.__csp = []; document.addEventListener('securitypolicyviolation', e => window.__csp.push(e.effectiveDirective + ' ' + (e.blockedURI || 'inline'))); });
     if (n === 'ordinateur') { const z = await b.newContext(), q = await z.newPage();   /* sans propriétaire : les deux écrans répondent 404, leurs scripts et styles restent publics */
       for (const u of ['/regie/', '/regie', '/maitre/', '/maitre/index.html', '/%72egie/', '/%6daitre/', '//regie/', '/REGIE/', '/regie%2f']) ok((await q.goto(B + u)).status() === 404, u + ' : 404 sans propriétaire');
       for (const u of ['/regie/regie.js', '/regie/scene.js', '/maitre/maitre.js', '/maitre/modele.js']) ok((await q.goto(B + u)).status() === 200, u + ' : public');
       await q.goto(B + '/', { waitUntil: 'networkidle' }); ok(await q.evaluate(() => typeof window.AIMEScene !== 'undefined' || !!document.querySelector('script[src="/regie/scene.js"]')), 'accueil : /regie/scene.js chargé sans propriétaire');
       await z.close(); }
     const p = await ctx.newPage(), err = [];
-    p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
+    p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text()) && !outil(m)) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
+    const csp = [];
     for (const u of ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/tarifs/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
+      for (const v of await p.evaluate(() => window.__csp || [])) csp.push(u + ' : ' + v);
     }
+    ok(!csp.length, 'CSP report-only : aucune entorse sur les pages principales' + (csp.length ? ' (' + [...new Set(csp)].join(' ; ') + ')' : ''));
     // Exemples : la mosaïque d'abord, plus de liste répétée en bas, aucune case vide dans la grille
     await p.goto(B + '/exemples/', { waitUntil: 'networkidle' }); await p.waitForTimeout(300);
     const ex = await p.evaluate(() => { const L = [...document.querySelectorAll('.ex-liste > li')], u = document.querySelector('.ex-liste').getBoundingClientRect(), aire = L.reduce((s, x) => { const r = x.getBoundingClientRect(); return s + r.width * r.height; }, 0);

@@ -4,6 +4,8 @@ const http = require('http'), fs = require('fs'), path = require('path');
 const ROOT = path.resolve(process.env.ROOT || path.join(__dirname, '..')), PORT = +(process.env.PORT || 8771), HOST = process.env.HOST || '0.0.0.0';
 const VERCEL = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
 const REWRITES = new Map((VERCEL.rewrites || []).filter(r => !r.source.includes(':') && !r.destination.startsWith('/api/')).map(r => [r.source, r.destination]));
+/* les en-têtes de tout le site (vercel.json, source « /(.*) ») : CSP, Referrer-Policy, nosniff, Permissions-Policy, comme sur Vercel */
+const GLOBAUX = (VERCEL.headers || []).filter(h => h.source === '/(.*)').flatMap(h => h.headers);
 const T = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.pdf': 'application/pdf', '.xml': 'application/xml', '.mp4': 'video/mp4', '.vtt': 'text/vtt; charset=utf-8' };
 /* les écrans gardés (middleware.js sur Vercel) : la même fonction garder(), mais le « propriétaire » est ici un cookie de test,
    aime_test_proprietaire=oui, que seuls les tests navigateur posent. Ce serveur ne part jamais en production (.vercelignore : /scripts). */
@@ -16,6 +18,7 @@ const COMPTES = process.env.AIME_COMPTES_TEST === '1' && process.env.TEST_DATABA
 })() : null;
 const proprietaireDeTest = r => /(?:^|;\s*)aime_test_proprietaire=oui(?:;|$)/.test(r.headers.get('cookie') || '');
 http.createServer((req, res) => {
+  for (const h of GLOBAUX) res.setHeader(h.key, h.value);
   const brut = '/' + String(req.url || '/').split(/[?#]/)[0].replace(/^\/+/, m => m.slice(1));   /* le chemin brut : « //regie/ » reste un chemin, pas un hôte */
   ECRANS.then(E => E.garder(new Request('http://localhost' + brut, { headers: { cookie: req.headers.cookie || '' } }), proprietaireDeTest)).then(async r => {
     if (!r) return servir(req, res);
@@ -37,6 +40,8 @@ function servir(req, res) {
       let body = {}; try { body = JSON.parse(b || '{}'); } catch {} Promise.resolve(h({ method: req.method, body, headers: req.headers }, r)).catch(() => { res.writeHead(500); res.end(); });
     }); return;
   }
+  /* Speed Insights : Vercel sert ce script ; ici, un script vide, en JavaScript (avec nosniff, un 404 sans type est refusé en console) */
+  if (p === '/_vercel/speed-insights/script.js') { res.writeHead(200, { 'Content-Type': 'text/javascript' }); return res.end(''); }
   /* les routes de compte et de projet, SEULEMENT pour les parcours à plusieurs comptes contre une base de test (AIME_COMPTES_TEST=1 et
      TEST_DATABASE_URL) : jamais la base de production ; les liens de connexion sont écrits dans AIME_LIENS au lieu d'être envoyés */
   if (COMPTES && (p.startsWith('/api/auth/') || ['/api/temps', '/api/page', '/api/espaces', '/api/identite'].includes(p))) {
