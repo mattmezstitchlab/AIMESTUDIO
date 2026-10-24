@@ -159,6 +159,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
       ok((await em.locator('.tp-detail .tp-m').getAttribute('data-id')) === id, 'Emma (iPhone) : un doigt sur « ' + id + ' » ouvre son panneau');
     }
     /* un doigt un peu à côté d'un arc court (le discours : 20 min, couloir intérieur) */
+    await em.evaluate(() => document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' })); await em.waitForTimeout(100);   /* le cadran à l'écran avant de viser */
     const pres = await em.evaluate(() => { const p = document.querySelector('.tp-arc[data-id="discours"] .tp-trait-m'), L = p.getTotalLength(), q = p.getPointAtLength(L / 2), m = p.getScreenCTM(), x = m.a * q.x + m.c * q.y + m.e, y = m.b * q.x + m.d * q.y + m.f, c = document.querySelector('.tp-cadran').getBoundingClientRect(), cx = c.left + c.width / 2, cy = c.top + c.height / 2, d = Math.hypot(x - cx, y - cy);
       return { x: x - (x - cx) / d * 14, y: y - (y - cy) / d * 14 }; });
     await em.mouse.click(pres.x, pres.y); await em.waitForTimeout(150);
