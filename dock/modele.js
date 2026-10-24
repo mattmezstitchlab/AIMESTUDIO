@@ -89,7 +89,7 @@ var FAMILLES={
  'Équipe':{lieux:['notifications','mapart','messages','calendrier'],plus:['tache','ecrire','deposer'],garde:'Aucun accès aux paiements par défaut.'},
  'Contributeur':{lieux:['notifications','mission','documents','messages'],plus:['deposer','retard','ecrireCoordination'],garde:'Effectifs seulement, jamais la liste nominative.'},
  'Destinataire':{lieux:['programme','mareponse','lieu','messages'],plus:['confirmer','ecrireOrganisateurs'],garde:'Ne voit que sa propre réponse ; aucun compteur de ce qui existe ailleurs.'},
- 'Public':{lieux:['coeur','exemples','lab','compte'],plus:['commencer'],garde:'Aucune donnée personnelle.',public:true},
+ 'Public':{lieux:['coeur','exemples','compte'],plus:['commencer'],garde:'Aucune donnée personnelle.',public:true},
  'Financeur':{lieux:['notifications','budgetfinance','justificatifs'],plus:['justificatif','ecrireProprietaire'],garde:'Voit des montants, pas les invités.'},
  'Contrôleur':{lieux:['controle','exports','journal'],plus:['exporter','demanderPiece'],garde:'Lecture seule ; affiche « accès jusqu\'au … ».'},
  'Garant':{lieux:['signalements','contenus','journal'],plus:['masquer','repondreSignalement'],garde:'N\'accède pas aux contenus privés par confort.'},
