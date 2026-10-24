@@ -32,7 +32,9 @@ function chargerRegie(){if(!R)return;var apercu=false;try{apercu=localStorage.ge
  fetch('/regie/site.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).then(function(j){try{cfg=R.config(j||{})}catch(e){cfg=null}}).catch(function(){})}
 
 /* ---------- géométrie ---------- */
-function zone(){var d=$('dock');if(PAGE)return{x:12,y:12,l:innerWidth-24,h:innerHeight-(d.offsetHeight+30)-12};var b=$('bureau');return{x:12,y:12,l:b.clientWidth-24,h:b.clientHeight-(d.offsetHeight+30)}}
+/* la hauteur du dock du bas : la barre de l'OS si elle est visible, sinon le Dock AIME (le Bureau n'a plus que lui) */
+function hautDock(){var d=$('dock');if(d.offsetHeight)return d.offsetHeight;var z=document.querySelector('#dock-site .dock');return z?z.offsetHeight:0}
+function zone(){if(PAGE)return{x:12,y:12,l:innerWidth-24,h:innerHeight-(hautDock()+30)-12};var b=$('bureau');return{x:12,y:12,l:b.clientWidth-24,h:b.clientHeight-(hautDock()+30)}}
 function placer(w){var s=w.el.style;if(w.agrandie){var zz=zone();s.left='0px';s.top='0px';s.width=(PAGE?innerWidth:$('bureau').clientWidth)+'px';s.height=(zz.h+24)+'px';return}s.left=w.x+'px';s.top=w.y+'px';s.width=w.l+'px';s.height=w.h+'px'}
 var tEnr;function enregistrer(){clearTimeout(tEnr);tEnr=setTimeout(function(){etat.fenetres=fen.map(function(w){return{app:w.app.id,href:w.href,x:w.x,y:w.y,l:w.l,h:w.h,reduite:w.reduite,agrandie:w.agrandie}});ecrire(CLE,etat)},250)}
 
