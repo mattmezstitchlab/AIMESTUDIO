@@ -75,7 +75,7 @@ test('verticale · la Grande Partition complète vit au Lab ; l\'accueil présen
   for (const id of ['naiss', 'story2', 'atlas', 'lien', 'geste', 'pan-g44', 'regards', 'story3', 'build', 'vitrine', 'offres', 'tiroirAtelier']) {
     assert.doesNotMatch(accueil, new RegExp('id="' + id + '"'), 'accueil, gardé au Lab : #' + id);
   }
-  assert.match(accueil, /href="\/lab\/grande-partition\/"/, 'un lien mène au Lab');
+  assert.ok(!/href="\/lab\//.test(accueil), 'le Lab sort de la navigation publique (brief du 24/10) : la page reste servie à son adresse');
   const html = lab;
   for (const script of [
     '/contrats/projet.js', '/compte/timbre.js', '/cube/modele.js', '/cube/vue3d.js',

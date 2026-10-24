@@ -132,12 +132,11 @@ html.calme .pt.vif{animation:none}
    <div class="ac-champ"><input id="acTexte" type="text" maxlength="600" autocomplete="off" placeholder="Le mariage de Léa et Marc, le 14 juin 2027 au Domaine des Aulnes"><button type="submit" class="ac-go">Commencer</button></div>
    <p class="ac-ex"><span>Par exemple :</span><button type="button" data-ac-ex>Un séminaire de 80 personnes à Lyon le 3 mars 2027</button><button type="button" data-ac-ex>Les 40 ans de Julie, le 12 décembre 2026 au Café des Arts</button><button type="button" data-ac-ex>Un site pour mon atelier de céramique à Lille</button></p>
   </form>
-  <p class="ac-reprendre" id="acReprendre" hidden><button type="button" id="acReprendreB">Reprendre mon projet</button></p>
  </div>
  <a class="descendre" href="/exemples/mosaique/">Voir ce qui change tout<i aria-hidden="true"></i></a>
 </section>
 
-<!-- Le projet de la personne : ce qui a été compris, puis sa page (accueil/accueil.js) -->
+<!-- Le projet de la personne : ce qui a été compris (accueil/accueil.js) ; plus d'aperçu de mini-site ni de lien vers le Canevas (brief du 24/10) -->
 <section class="ac-projet" id="monProjet" hidden aria-label="Mon projet">
  <div id="acComprendre" class="ac-carte">
   <p class="ac-k">Étape 1 · votre intention</p>
@@ -154,26 +153,7 @@ html.calme .pt.vif{animation:none}
   <p class="ac-alerte" id="acPassee" hidden>Cette date est déjà passée : vérifiez-la.</p>
   <div class="ac-actions"><button type="button" class="ac-b p" id="acOui">Oui, créer mon projet</button><button type="button" class="ac-b" id="acCorriger">Corriger ma phrase</button></div>
  </div>
- <div id="acPage" hidden>
-  <div class="ac-tete"><div><p class="ac-k">Étape 2 · votre page</p><h2 id="acPageT" tabindex="-1"></h2><p class="ac-etat" id="acResume"></p></div><p class="ac-etat">Enregistré dans ce navigateur</p></div>
-  <div class="ac-outils"><div class="ac-seg" id="acDS" role="group" aria-label="Apparence de la page"></div><div class="ac-seg" id="acVues" role="group" aria-label="Taille de l'aperçu"><button type="button" data-ac-vue="pc" aria-pressed="true">Ordinateur</button><button type="button" data-ac-vue="tel" aria-pressed="false">Téléphone</button></div></div>
-  <div class="ac-cadre" id="acCadre"><iframe id="acApercu" title="Aperçu de la page du projet" sandbox="allow-same-origin"></iframe></div>
-  <p class="ac-note">Le titre, la date et le lieu viennent de votre phrase. Le programme et les questions sont des exemples : remplacez-les dans « Modifier ma page ». Pour l'instant, tout reste dans ce navigateur.</p>
-  <div class="ac-suite">
-   <a id="acModifier" href="/sites/">Modifier ma page<span>Textes, blocs, photos, pages : dans le Canevas universel.</span></a>
-   <a href="/bureau/">Retrouver mes projets<span>Le Bureau garde tout ce que ce navigateur contient.</span></a>
-   <button type="button" id="acNouveau">Un autre projet<span>Celui-ci reste enregistré.</span></button>
-  </div>
- </div>
  <p class="vivant ac-vivant" id="acVivant" role="status" aria-live="polite"></p>
-</section>
-
-<!-- Reprise conditionnelle (strictement lecture seule via bureau/sources.js : invisible s'il n'y a rien) -->
-<section class="reprise-locale" id="repriseLocale" hidden aria-label="Créations déjà présentes sur cet appareil">
- <div class="reprise-in">
-  <strong>Mes essais sur cet appareil :</strong>
-  <div class="reprise-liens" id="repriseLiens"></div>
- </div>
 </section>
 
 <!-- 1 · Le cœur : un seul projet, quatre écrans (accueil/coeur.js : vitrine/rendu.js + synchroview/permissions.js) -->
@@ -347,7 +327,7 @@ html.calme .pt.vif{animation:none}
 <!-- Pied de page : le contact a sa page (/contact/) ; les démonstrations sont au Lab -->
 <footer class="pied-site" id="contact">
  <div class="col">
-  <p class="pied-liens"><a href="/contact/">Parler d'un projet</a> · <a href="/exemples/">Les exemples</a> · <a href="/lab/grande-partition/">Le Lab</a> · <a href="/sante/">État et garanties du système</a> · <a href="/confidentialite/">Confidentialité</a></p>
+  <p class="pied-liens"><a href="/contact/">Parler d'un projet</a> · <a href="/exemples/">Les exemples</a> · <a href="/sante/">État et garanties du système</a> · <a href="/confidentialite/">Confidentialité</a></p>
   <p class="sorties-note">Vos essais restent dans ce navigateur.</p>
   <div class="pied-bas"><span>AIME®</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
  </div>

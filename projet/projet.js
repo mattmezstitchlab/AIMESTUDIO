@@ -6,7 +6,7 @@
 var S=window.AIMESite,B=window.AIMEBroderie,M=window.AIMEModes,MS=window.AIMEMiniSite,CLE='aime-sites';
 var $=function(i){return document.getElementById(i)};
 var q=new URLSearchParams(location.search),id=String(q.get('id')||'').replace(/[^a-z0-9-]/gi,'').slice(0,60),de=q.get('de');
-var ORIGINES={'/point-zero/':'Retour au Point Zéro','/bureau/':'Retour au Bureau'};if(!ORIGINES[de])de='/point-zero/';
+var ORIGINES={'/point-zero/':'Retour au Point Zéro','/projets/':'Retour à Mes projets'};if(!ORIGINES[de])de='/point-zero/';
 $('retour').href=de+(id?'?projet='+encodeURIComponent(id):'');$('retour').textContent='← '+ORIGINES[de];
 function dire(t,ko){var e=$('etat');e.textContent=t;e.hidden=!t;e.classList.toggle('ko',!!ko)}
 

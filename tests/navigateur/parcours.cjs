@@ -14,7 +14,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
-    for (const u of ['/', '/contact/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
+    for (const u of ['/', '/contact/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
     // le + unique du Dock (docs/IDENTITE.md) : en haut seulement le logo ; sans compte, « Commencer » met le curseur dans le champ d'intention
@@ -28,8 +28,8 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     await p.goto(B + '/?commencer=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(900);
     ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'acTexte'), '/?commencer=1 : le curseur est dans le champ d\'intention');
     await p.goto(B + '/contact/', { waitUntil: 'networkidle' }); ok(await p.evaluate(() => !!document.querySelector('#formContact [name=site_web]') && !!document.getElementById('dock-site')), '/contact/ : le formulaire a déménagé, avec le Dock');
-    // le Bureau : la barre d'apps cède la place au Dock AIME ; le Point Zéro et la Grande Partition ont le même + unique
-    for (const u of ['/bureau/', '/point-zero/', '/lab/grande-partition/']) { await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400);
+    // le Point Zéro et la Grande Partition ont le même + unique (le Bureau est supprimé : /bureau/ → /projets/)
+    for (const u of ['/point-zero/', '/lab/grande-partition/']) { await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400);
       ok(await p.evaluate(() => !!document.querySelector('#dock-site .dock-plus') && !document.querySelector('#porte .ap-b') && !(document.getElementById('dock') && document.getElementById('dock').offsetHeight)), u + ' : un seul Dock, un seul +, plus de porte'); }
     // le Dock ne cache rien : un champ qui reçoit le focus s'arrête au-dessus (iPhone 393×659, formulaire « Voici ce que j'ai compris ») ;
     // les fenêtres de Mes projets (ancien Bureau) aussi
@@ -40,8 +40,6 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       ok(caches.n > 0 && caches.k.length === 0, 'accueil (393×659) : chaque champ du formulaire, focalisé, reste au-dessus du Dock' + (caches.k.length ? ' (' + caches.k.join(', ') + ')' : ''));
       const dernier = await t.evaluate(() => { const L = [...document.querySelectorAll('#acComprendre input, #acComprendre select, #acComprendre button')].filter(x => x.offsetParent), x = L[L.length - 1]; x.focus(); return new Promise(r => setTimeout(() => r(x.getBoundingClientRect().bottom <= document.querySelector('#dock-site .dock').getBoundingClientRect().top), 80)); });
       ok(dernier, 'accueil (393×659) : le dernier champ, focalisé, reste au-dessus du Dock');
-      await t.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await t.waitForTimeout(400); await t.click('#toutBtn'); await t.waitForTimeout(300); await t.click('#toutG [data-app="canevas"]').catch(() => {}); await t.waitForTimeout(1200);
-      ok(await t.evaluate(() => { const f = [...document.querySelectorAll('.fen')].filter(x => !x.hidden)[0], d = document.querySelector('#dock-site .dock'); return !!f && f.getBoundingClientRect().bottom <= d.getBoundingClientRect().top; }), 'Mes projets (Bureau) : la fenêtre s\'arrête au-dessus du Dock');
       await q.close(); }
     // la mosaïque (démonstration) : aucun son avant le premier geste ; « Activer » lance les téléphones, sans erreur
     { const m = await ctx.newPage(), em = []; m.on('pageerror', e => em.push(e.message));
@@ -53,20 +51,20 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       ok(await m.evaluate(() => window.__sons >= 1), 'mosaïque : « Activer » ouvre le son');
       ok(!(await m.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)), 'mosaïque : sans débordement après activation');
       ok(em.length === 0, 'mosaïque : aucune erreur JavaScript' + (em.length ? ' (' + em[0] + ')' : '')); await m.close(); }
-    // les apps épinglées (en coulisses, derrière « Toutes les apps ») : Réseau et Canevas ; ni ancien générateur ni Régie pour le public
-    await p.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
+    // la coque de l'OS (Page Zéro, ?coque=1) : le Réseau épinglé ; le Canevas, le Studio et l'ancien générateur mis de côté ; ni Régie pour le public
+    await p.goto(B + '/?coque=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
     const dock = await p.$$eval('#dockApps [data-app]', a => a.map(x => x.dataset.app));
-    ok(dock.includes('reseau') && dock.includes('canevas'), 'dock : Réseau et Canevas'); ok(!dock.includes('sites'), 'dock : pas l\'ancien générateur');
+    ok(dock.includes('reseau') && !dock.includes('canevas'), 'coque : Réseau, sans le Canevas mis de côté'); ok(!dock.includes('sites'), 'coque : pas l\'ancien générateur');
     // l'ancien Bureau (« aime-os ») survit à l'ouverture et à la fermeture d'une fenêtre
     const ANCIEN = JSON.stringify({ folders: [{ id: 'f1', n: 'Mariage' }], memos: ['penser au sax'], me: { nom: 'Matt' } });
     await p.evaluate(v => localStorage.setItem('aime-os', v), ANCIEN);
-    await p.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(500);
-    await p.click('#toutBtn'); await p.waitForTimeout(300); await p.click('#toutG [data-app="canevas"]').catch(() => {}); await p.waitForTimeout(800);   /* la barre d'apps est en coulisses : on passe par « Toutes les apps » */
+    await p.goto(B + '/?coque=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(500);
+    await p.click('#dockApps [data-app="reseau"]').catch(() => {}); await p.waitForTimeout(800);
     await p.keyboard.press('Escape').catch(() => {}); await p.waitForTimeout(500);
-    const garde = await p.evaluate(() => ({ a: localStorage.getItem('aime-os'), v2: localStorage.getItem('aime-os-v2') }));
-    ok(garde.a === ANCIEN, 'ancien Bureau : « aime-os » intact après une fenêtre ouverte');
-    ok(!!garde.v2 && /fenetres/.test(garde.v2), 'OS : son état vit sous « aime-os-v2 »');
-    await p.evaluate(() => { localStorage.removeItem('aime-os'); localStorage.removeItem('aime-os-v2') });
+    const garde = await p.evaluate(() => ({ a: localStorage.getItem('aime-os'), v2: localStorage.getItem('aime-os-zero') }));
+    ok(garde.a === ANCIEN, 'ancienne clé « aime-os » intacte après une fenêtre ouverte');
+    ok(!!garde.v2 && /fenetres/.test(garde.v2), 'coque : son état vit sous « aime-os-zero » (le Bureau supprimé, plus de « aime-os-v2 »)');
+    await p.evaluate(() => { localStorage.removeItem('aime-os'); localStorage.removeItem('aime-os-zero') });
     // Point Zéro : une photo devient un projet (image dessinée dans la page, déposée comme un fichier)
     await p.goto(B + '/point-zero/', { waitUntil: 'networkidle' });
     ok(await p.$eval('[data-donnees]', e => /ce navigateur/.test(e.textContent) && !!e.querySelector('a[href="/bureau/espace/"]')).catch(() => false), 'Point Zéro : la mention « où sont mes données » est visible');
@@ -154,11 +152,10 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     // Premier écran : une phrase → ce qui est compris → un projet enregistré → sa page, retrouvée après rechargement
     await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.fill('#acTexte', 'Le mariage de Léa et Marc, le 14 juin 2027 à Chantilly, 120 invités'); await p.click('.ac-go'); await p.waitForTimeout(500);
     ok(await p.inputValue('#acLieu') === 'Chantilly' && await p.inputValue('#acDate') === '2027-06-14', 'Accueil : l\'intention est comprise (date, lieu)');
-    await p.click('#acOui'); await p.waitForSelector('#acPage:not([hidden])'); await p.waitForTimeout(600);
+    await p.click('#acOui'); await p.waitForFunction(() => /enregistré dans ce navigateur/.test(document.getElementById('acVivant').textContent), null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(300);
     ok(await p.evaluate(() => { const o = JSON.parse(localStorage.getItem('aime-projets')); return !!o && Object.values(o.projets).some(x => x.format === 'aime-projet' && x.titre === 'Léa & Marc'); }), 'Accueil : un projet aime-projet v1 est enregistré');
-    ok(await p.evaluate(() => /Chantilly/.test(document.getElementById('acApercu').srcdoc)), 'Accueil : sa page est composée par le moteur de pages');
+    ok(await p.evaluate(() => !document.getElementById('acApercu') && ![...document.querySelectorAll('a[href]')].some(a => /\/(sites|studio|canevas|bureau|lab|aime)\//.test(a.getAttribute('href')))), 'Accueil : ni aperçu de mini-site ni lien vers les outils mis de côté');
     ok(!(await deborde()), 'Accueil : sans débordement horizontal');
-    await p.reload({ waitUntil: 'networkidle' }); ok(/Léa & Marc/.test(await p.textContent('#acReprendreB')), 'Accueil : le projet est retrouvé après rechargement');
     // Canevas universel · Site : ouvrir un projet, choisir un bloc, voir sa source, changer de Design System, garder après rechargement
     await p.goto(B + '/sites/', { waitUntil: 'networkidle' }); await p.waitForTimeout(800); if (await p.isVisible('#atelier')) await p.click('#nouveau'); await p.click('[data-demo="mariage"]'); await p.waitForTimeout(2500);
     ok(!(await deborde()), 'Canevas universel : sans débordement horizontal');

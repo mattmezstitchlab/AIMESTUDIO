@@ -18,5 +18,5 @@ test('le constructeur vivant du Monde AIME reste intact et demeure la référenc
  assert.match(page,/id="build" aria-label="Construire votre site"/);
  assert.match(page,/id="cnv5"/);assert.match(page,/function add\(k,x,y,w\)/);
  assert.match(page,/function siteAdd\(kind\)/);assert.match(page,/id="plus5"/);
- assert.match(zero,/href="\/lab\/grande-partition\/"/,'l\'accueil mène au Lab, où vit Le Monde AIME');assert.ok(require('../nav/registre.js').ENTREES.some(e=>e.href==='/aime/'&&e.cat==='jeux'));
+ assert.ok(!/href="\/(lab|aime)\//.test(zero),'le Lab et Le Monde AIME sortent de la navigation publique (brief du 24/10)');assert.ok(require('../nav/registre.js').ENTREES.some(e=>e.href==='/aime/'&&e.cat==='jeux'));
 });

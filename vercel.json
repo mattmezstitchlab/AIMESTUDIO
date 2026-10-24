@@ -213,6 +213,21 @@
       "source": "/mariage.html",
       "destination": "/exemples/",
       "permanent": true
+    },
+    {
+      "source": "/bureau",
+      "destination": "/projets/",
+      "permanent": true
+    },
+    {
+      "source": "/bureau/",
+      "destination": "/projets/",
+      "permanent": true
+    },
+    {
+      "source": "/bureau/index.html",
+      "destination": "/projets/",
+      "permanent": true
     }
   ]
 }

@@ -18,7 +18,7 @@ const plein={
 
 test('registre : une seule liste, des statuts et des rôles explicites, des adresses internes',()=>{
  const ids=new Set();for(const e of N.ENTREES){assert.ok(!ids.has(e.id),'doublon '+e.id);ids.add(e.id);assert.ok(N.STATUTS[e.statut],e.id);assert.ok(N.ROLES[e.role],e.id);assert.match(e.href,/^\/(?!\/)/,e.id)}
- assert.equal(N.entree('bureau').href,'/bureau/');assert.equal(N.entree('projets').href,'/projets/');assert.deepEqual(N.par('role','travailler').map(e=>e.id),['projets'],'une seule entrée pour travailler : Mes projets');
+ assert.ok(!N.entree('bureau'),'le Bureau est supprimé : Mes projets le remplace');assert.equal(N.entree('projets').href,'/projets/');assert.deepEqual(N.par('role','travailler').map(e=>e.id),['projets'],'une seule entrée pour travailler : Mes projets');
  assert.ok(N.par('role','experimenter').length>=1,'un Lab séparé');
  const menu=fs.readFileSync(R('menu/menu.js'),'utf8');assert.match(menu,/window\.AIMENav/);
  for(const f of ['aime/index.html']){const h=fs.readFileSync(R(f),'utf8');assert.ok(h.indexOf('/nav/registre.js')>=0&&h.indexOf('/nav/registre.js')<h.indexOf('/menu/menu.js'),f+' charge le registre avant le menu')}});
@@ -63,15 +63,16 @@ test('moteur partagé : le Bureau est composé par vitrine/rendu.js, sans second
  assert.ok(r.html.includes('Expérimental'),'statut affiché');assert.equal((r.html.match(/data-dossier=/g)||[]).length,3,'un dossier par entrée');
  assert.ok(/aria-controls="dos-studio"/.test(r.html)&&/id="dos-studio"[^>]*hidden/.test(r.html),'chaque dossier ouvre sa fenêtre, fermée au départ');
  assert.deepEqual(r.bilan.blocs,['reprendre','dossiers','navigateur']);
- const html=fs.readFileSync(R('bureau/espace/index.html'),'utf8');assert.ok(html.includes('/vitrine/rendu.js'),'Mon espace (l\'ancien Bureau, app de l\'OS) reste composé par le moteur partagé');assert.ok(!/function (rendre|composer)\(/.test(fs.readFileSync(R('bureau/bureau.js'),'utf8')),'pas de moteur concurrent')});
+ const html=fs.readFileSync(R('bureau/espace/index.html'),'utf8');assert.ok(html.includes('/vitrine/rendu.js'),'Mon espace (la sauvegarde de ce navigateur) reste composé par le moteur partagé');assert.ok(!/function (rendre|composer)\(/.test(fs.readFileSync(R('bureau/bureau.js'),'utf8')),'pas de moteur concurrent')});
 
-test('routes : /bureau/ est servi, Page Zéro y mène, aucune boucle, chaque entrée du registre aboutit',()=>{
+test('routes : /bureau/ mène à Mes projets (Mon espace et sa sauvegarde restent servis), aucune boucle, chaque entrée du registre aboutit',()=>{
  const v=JSON.parse(fs.readFileSync(R('vercel.json'))),reds=v.redirects||[];
  const re=s=>new RegExp('^'+s.replace(/[.+?^${}|[\]\\]/g,'\\$&').replace(/\/:path\\\*/g,'(?:/.*)?').replace(/:path\*/g,'.*').replace(/\\\(\.\*\)/g,'.*').replace(/\(\.\*\)/g,'.*')+'$');
  const suivre=u=>{const vu=[];for(let i=0;i<12;i++){const r=reds.find(r=>re(r.source).test(u));if(!r)return{fin:u,sauts:vu.length};assert.ok(!vu.includes(u),'boucle sur '+u);vu.push(u);u=r.destination}assert.fail('trop de redirections')};
  assert.equal(suivre('/zero').fin,'/','le contrôle des redirections fonctionne');assert.equal(suivre('/monde/a/b').fin,'/aime/');
- for(const u of ['/bureau','/bureau/','/bureau/index.html'])assert.equal(suivre(u).sauts,0,u+' ne doit plus être redirigé');
- assert.ok(fs.existsSync(R('bureau/index.html')));
+ for(const u of ['/bureau','/bureau/','/bureau/index.html'])assert.equal(suivre(u).fin,'/projets/',u+' → Mes projets');
+ for(const u of ['/bureau/espace/'])assert.equal(suivre(u).sauts,0,u+' : la sauvegarde reste servie');
+ assert.ok(fs.existsSync(R('bureau/index.html')),'rien n\'est supprimé : le fichier reste, l\'adresse redirige');
  for(const r of reds)suivre(r.source.replace(/:path\*/,'x').replace('(.*)','x'));
  const rw=(v.rewrites||[]);const fichier=p=>{const f=p.endsWith('/')?p+'index.html':p;return fs.existsSync(R(f.slice(1)))||fs.existsSync(R(p.slice(1)+'/index.html'))};
  const sert=u=>{const p=u.split(/[?#]/)[0];if(fichier(p))return true;const r=rw.find(r=>r.source===p);return !!r&&fichier(r.destination)};
@@ -89,7 +90,7 @@ test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
 test('Page Zéro · le cœur de haut en bas : quatre écrans composés par le moteur, puis l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8'),c=fs.readFileSync(R('coeur/coeur.js'),'utf8');
  const ordre=['id="haut"','id="coeur"','id="arrivees"','id="arr-couple"','id="arr-prestataire"','id="arr-invite"','id="arr-coord"','id="ecrans"','id="droits"','id="jourj"','id="partout"','id="contact"'].map(s=>z.indexOf(s));
  assert.ok(ordre.every((x,i)=>x>0&&(i===0||x>ordre[i-1])),'les chapitres se suivent de haut en bas');
- assert.equal((z.match(/<iframe [^>]*sandbox="allow-same-origin"/g)||[]).length,5,'quatre écrans + l\'aperçu du projet, tous sans script');assert.ok(!/allow-scripts/.test(z));
+ assert.equal((z.match(/<iframe [^>]*sandbox="allow-same-origin"/g)||[]).length,4,'quatre écrans, tous sans script (plus d\'aperçu de mini-site)');assert.ok(!/allow-scripts/.test(z));
  assert.match(z,/Démonstration · données fictives/);assert.ok(!/href="\/synchroview\//.test(z),'SynchroView est réservé au propriétaire du site : l\'accueil n\'y renvoie pas');
  assert.ok(c.includes('Vit.rendre(')&&c.includes('Vit.politique(')&&c.includes('Live.rejouer('),'les vrais moteurs : pages, règles, journal du jour J');assert.ok(!/localStorage\.setItem|fetch\([^)]*method/.test(c),'rien n\'est écrit ni envoyé');
  assert.equal((z.match(/class="ancre[^"]*" [^>]*data-orbe="1"/g)||[]).length,6,'l\'orbe part du point zéro, recueille chaque arrivée puis passe d\'écran en écran');assert.match(c,/function choregraphie\(/);
