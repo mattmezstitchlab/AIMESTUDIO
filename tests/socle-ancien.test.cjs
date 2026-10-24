@@ -43,3 +43,9 @@ test('base sans la migration relation : la relation est ignorée sans erreur, la
   r = await appel(E.default, { action: 'inviter', espace: id, role: 'contributor', relation: 'témoin' }, o); assert.equal(r.code, 200); assert.equal(r.body.relation, null, 'pas de colonne : pas de relation, dit');
   r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, g); assert.equal(r.code, 200);
 });
+
+test('base sans la migration activites : l\'activité est refusée (503, dit), la liste est vide, rien n\'est écrit', opts, async () => {
+  const o = await connecter('p-ancien@exemple.test');
+  let r = await appel(E.default, { action: 'activite', metier: 'fleuriste' }, o); assert.equal(r.code, 503); assert.match(r.body.raison, /migration/);
+  r = await appel(E.default, { action: 'activites' }, o); assert.equal(r.code, 200); assert.deepEqual(r.body.activites, []);
+});

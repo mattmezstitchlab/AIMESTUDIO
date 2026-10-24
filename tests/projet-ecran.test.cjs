@@ -20,10 +20,12 @@ test('une seule fonction de création : Mes projets et le + ; l\'accueil ne cré
   assert.deepEqual(C.corps({ titre: '  Le mariage  ', modele: 'mariage', origine: 'np-abc123' }), { action: 'creer', titre: 'Le mariage', modele: 'mariage', origine: 'np-abc123' });
   assert.deepEqual(C.corps({ titre: 'X', modele: 'pirate' }), { action: 'creer', titre: 'X' }, 'un modèle inconnu n\'est pas envoyé');
   assert.match(lire('compte/compte.js'), /C\.creer\(\{titre:\$\('eTitre'\)\.value,modele:\$\('eModele'\)\.value,origine:C\.origine\('nouveau'\)\}\)/);
-  assert.equal((lire('compte/compte.js').match(/'creer'/g) || []).length, 0, 'compte.js n\'appelle plus creer directement');
+  assert.ok(!/espaces\('creer'|action:\s*'creer'/.test(lire('compte/compte.js')), 'compte.js n\'appelle plus creer directement');
   const P = require('../dock/plus.js'), e = P.etat({ connecte: true }, []);
   assert.equal(e.items.find(x => x.id === 'nouveau').href, '/projets/?nouveau=1', 'le + mène à la même création');
-  for (const f of ['accueil/accueil.js', 'index.html']) assert.ok(!/\/api\/espaces/.test(lire(f)), f + ' : l\'ancien formulaire n\'est pas branché au serveur (PR C le remplace)');
+  for (const f of ['accueil/accueil.js', 'accueil/je-suis.js', 'accueil/demo.js', 'index.html']) assert.ok(!/\/api\/espaces/.test(lire(f)), f + ' : l\'accueil n\'écrit au serveur que par AIMECreer (compte/creer.js)');
+  assert.match(lire('accueil/je-suis.js'), /C\.creer\(\{titre:'Notre mariage',modele:'mariage',origine:C\.origine\('accueil'\)\}\)/, '« Créer notre mariage » : la même fonction de création');
+  assert.match(lire('compte/compte.js'), /C\.creer\(\{titre:'Notre mariage',modele:'mariage',origine:CREER\}\)/, 'après le lien de connexion : la même fonction, la même origine');
 });
 
 test('la migration relation est numérotée, additive et rejouable', () => {
