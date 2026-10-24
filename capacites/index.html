@@ -1,0 +1,56 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Atlas des capacités · AIME</title><meta name="description" content="Tout ce qui pourrait servir au site AIME : 1 191 modules déclarés dans 130 dépôts, croisés avec les univers d'AIME et l'état réel des dépôts.">
+<link rel="stylesheet" href="/coeur/charte.css">
+<link rel="stylesheet" href="/dock/dock.css">
+<link rel="stylesheet" href="/capacites/capacites.css"></head><body>
+<a class="evite" href="#catalogue">Aller au catalogue</a>
+<header class="barre"><a class="mk" href="/" aria-label="AIME, accueil">AIME<sup>®</sup></a></header>
+<main>
+<section class="intro"><span class="k">TOUT CE QUI PEUT SERVIR · UNE SEULE PAGE</span>
+ <h1>L'atlas des<br>capacités.</h1>
+ <p>Chaque moteur écrit un jour, dans chaque dépôt, rangé à un seul endroit. Ce qui vit déjà ici, ce qui mérite d'y venir, et dans quel état se trouve chaque source.</p>
+ <p class="notice">Un index déclaré, pas une preuve. Les modules viennent de <code>moteurs.json</code> ; ce qu'un univers cite vient de <code>univers.json</code> ; l'état des dépôts vient de l'audit du <span id="date-audit">24 octobre 2026</span>. Un module « Dans AIME » est prouvé par le document cité ; tout le reste est à vérifier avant de brancher.</p>
+ <dl class="chiffres" id="chiffres" aria-label="Chiffres clés"></dl>
+</section>
+
+<section id="commencer" aria-labelledby="t-commencer"><span class="k">PAR OÙ COMMENCER</span><h2 id="t-commencer">Ce qui vaut le coup d'être branché.</h2>
+ <p class="meta">Classement expliqué, jamais une note opaque : chaque point a sa raison. Un module gagne s'il est cité par les univers d'AIME, autonome, issu d'un dépôt qui fonctionne et proche du cœur (rôles, événement, documents) ; il perd s'il est un doublon, enfermé dans une archive ou exposé à une faille non corrigée. Trois modules au plus par dépôt.</p>
+ <ol class="prio" id="prio"></ol>
+</section>
+
+<section id="deja" aria-labelledby="t-deja"><span class="k">DÉJÀ ICI</span><h2 id="t-deja">Ce qui vit dans AIME, et d'où ça vient.</h2>
+ <p class="meta">Table écrite à la main dans <code>capacites/modele.js</code>, une preuve par ligne. Les dépôts écartés y figurent aussi, avec la raison.</p>
+ <div class="tablebox"><table class="branchements"><thead><tr><th scope="col">Dépôt source</th><th scope="col">Statut</th><th scope="col">Où dans AIME</th><th scope="col">Ce qui a été repris</th><th scope="col">Preuve</th></tr></thead><tbody id="branchements"></tbody></table></div>
+</section>
+
+<section id="catalogue" aria-labelledby="t-catalogue"><span class="k">LE CATALOGUE</span><h2 id="t-catalogue">Les 1 191 modules.</h2>
+ <form class="filtres" id="filtres" role="search" onsubmit="return false">
+  <label class="q"><span>Chercher</span><input id="q" type="search" placeholder="plan de table, devis, accessibilité, DMC…" autocomplete="off"></label>
+  <label><span>Univers</span><select id="f-univers"><option value="">Tous</option></select></label>
+  <label><span>Famille</span><select id="f-famille"><option value="">Toutes</option></select></label>
+  <label><span>Statut dans AIME</span><select id="f-statut"><option value="">Tous</option></select></label>
+  <label><span>Dépôt</span><select id="f-depot"><option value="">Tous</option></select></label>
+ </form>
+ <p class="meta" id="compte" role="status" aria-live="polite"></p>
+ <ul class="modules" id="modules"></ul>
+ <button type="button" id="plus" class="plus" hidden>Afficher 60 de plus</button>
+</section>
+
+<section id="depots" aria-labelledby="t-depots"><span class="k">LES SOURCES</span><h2 id="t-depots">Les 130 dépôts, et leur état réel.</h2>
+ <p class="meta">Relevé du 24/10/2026 sur les dépôts publics. Les dépôts privés n'ont pas été lus par l'audit : leur état reste celui déclaré dans l'index.</p>
+ <div class="tablebox"><table class="depots"><thead><tr><th scope="col">Dépôt</th><th scope="col">Modules</th><th scope="col">Déclaré</th><th scope="col">Dernier envoi</th><th scope="col">Points d'attention</th><th scope="col">Dans AIME</th></tr></thead><tbody id="liste-depots"></tbody></table></div>
+</section>
+
+<section class="contexte" id="demande-bloc" aria-labelledby="t-demande"><span class="k">PASSER À L'ACTION</span><h2 id="t-demande">Préparer une demande de branchement.</h2>
+ <p>Ouvrez un module puis choisissez « Préparer la demande ». Le texte ci-dessous, à relire, suffit à un agent pour reprendre ce module dans AIME sans rien deviner. Il reste sur cette page.</p>
+ <label for="demande">Demande à relire et copier</label><textarea id="demande" rows="12" readonly placeholder="Aucun module choisi."></textarea>
+ <button type="button" id="copier">Copier la demande</button><p id="statut" role="status" aria-live="polite"></p>
+</section>
+
+<footer>Page publique, en lecture seule : aucune donnée personnelle, aucun secret, aucun stockage. Les dépôts privés sont nommés, jamais ouverts.<br><a href="/">← Revenir à l'accueil</a></footer>
+</main>
+<noscript><p class="noscript">Activez JavaScript pour parcourir l'atlas. Les données brutes restent lisibles : <a href="/moteurs.json">moteurs.json</a>, <a href="/univers.json">univers.json</a>, <a href="/capacites/etat-depots.json">etat-depots.json</a>.</p></noscript>
+<div id="dock-site"></div>
+<script src="/capacites/modele.js"></script><script src="/capacites/capacites.js"></script>
+<script src="/dock/modele.js"></script><script src="/dock/dock.js"></script><script src="/dock/plus.js"></script>
+<script>(function(){var el=document.getElementById('dock-site');if(el&&window.AIMEDock&&window.AIMEDockVue){AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')}})();</script>
+</body></html>
