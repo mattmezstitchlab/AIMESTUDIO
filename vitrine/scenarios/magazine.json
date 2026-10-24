@@ -3,7 +3,7 @@
  "univers": "magazine",
  "moteur": "magazine",
  "titre": "AIME Magazine · N° 001",
- "genre": "Édition · AIME Magazine",
+ "genre": "Édition",
  "scripts": [
   "/publication/planche.js",
   "/publication/gabarits.js",

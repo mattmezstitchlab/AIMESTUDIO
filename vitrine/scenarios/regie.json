@@ -4,7 +4,7 @@
  "moteur": "regles",
  "demo": "Les écrans sont composés dans votre navigateur, à partir de données fictives, par des règles écrites pour cet exemple. Aujourd'hui, la Régie n'a pas de compte : elle reste mono-utilisateur.",
  "titre": "Atelier Lumen",
- "genre": "Site et gestion · AIME Régie",
+ "genre": "Site et gestion",
  "scripts": ["/coeur/coeur-regles.js"],
  "arriveesTexte": "Un site d'entreprise, sa comptabilité, ses clients et son orbe. Six rôles ; l'orbe recueille ce que chacun apporte, puis compose six écrans depuis le même projet.",
  "source": {

@@ -3,7 +3,7 @@
  "univers": "g44",
  "moteur": "g44",
  "titre": "Dossier fictif DOS-FICTIF-0001",
- "genre": "Administration · G44 LAB",
+ "genre": "Administration",
  "scripts": [
   "/g44/js/dossier.js",
   "/g44/js/moteur.js",
