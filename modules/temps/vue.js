@@ -93,7 +93,7 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
  /* la date du programme : centrale, et le futur point d'entrée du Calendrier. Tant que les moments n'ont pas de date en base
     (migration 08, PR Calendrier), le programme est « Jour J » ; rien n'est inventé. */
  function dateDe(v){if(!v||!v.jour)return null;try{return new Date(v.jour+'T12:00:00Z').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})}catch(_){return null}}
- function cercle(v){var K=window.AIMECercle,z=el('div','tp-cercle');if(!K){z.appendChild(el('p','alerte','Le cadran n\'a pas pu être chargé : la Liste reste disponible.'));return z}
+ function cercle(v){var K=window.AIMECercle,z=el('div','tp-cercle');if(!K||!window.AIMERadial||!window.AIMERadial.interactions){z.appendChild(el('p','alerte','Le cadran n\'a pas pu être chargé : la Liste reste disponible.'));return z}
   if(!v.moments.length){z.appendChild(el('p','leg','Aucun moment à afficher.'));return z}
   var narrow=window.matchMedia&&window.matchMedia('(max-width: 560px)').matches,M=narrow?K.modele(v,{couloirs:3,epaisseur:60,rayon:366,ecart:8}):K.modele(v,{couloirs:4}),C=M.centre;
   if(etat.selection&&!v.moments.some(function(m){return m.id===etat.selection}))etat.selection=null;   /* un moment devenu invisible : rien n'en est dit */
@@ -117,16 +117,14 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
    if(span>2*cap+0.5)g.appendChild(svg('path',{d:K.arcPathAt(C,C,a.rayon,a.a0+cap,a.a0+span-cap),class:'tp-trait-m',style:'stroke-width:'+trait+'px'}));
    else{var pm=K.polarXY(C,C,a.rayon,a.a0+span/2);g.appendChild(svg('circle',{cx:pm.x,cy:pm.y,r:trait/2,class:'tp-pastille'}))}
    if(a.etat.indexOf('a-confirmer')>=0){var pc=K.polarXY(C,C,a.rayon,a.a0);g.appendChild(svg('circle',{cx:pc.x,cy:pc.y,r:11,class:'tp-point'}))}
-   g.addEventListener('keydown',function(e){var i=M.ordre.indexOf(a.id),k=e.key,cible=null;
-    if(k==='Enter'||k===' '){e.preventDefault();choisir(a.id,true);return}
-    if(k==='Escape'){e.preventDefault();choisir(null);return}
-    if(k==='ArrowRight'||k==='ArrowDown')cible=M.ordre[(i+1)%M.ordre.length];else if(k==='ArrowLeft'||k==='ArrowUp')cible=M.ordre[(i-1+M.ordre.length)%M.ordre.length];else if(k==='Home')cible=M.ordre[0];else if(k==='End')cible=M.ordre[M.ordre.length-1];
-    if(cible){e.preventDefault();[].forEach.call(arcs.querySelectorAll('.tp-arc'),function(x){x.setAttribute('tabindex',x.getAttribute('data-id')===cible?'0':'-1')});var n=arcs.querySelector('.tp-arc[data-id="'+cible+'"]');if(n)n.focus()}});
    arcs.appendChild(g)});
   s.appendChild(arcs);
-  /* toucher au doigt : le moment le plus proche du point touché, dans un rayon de 24 px à l'écran (même un arc étroit ou serré) */
-  s.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.tp-plus'))return;var ctm=s.getScreenCTM();if(!ctm)return;var p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;var q=p.matrixTransform(ctm.inverse());
-   var id=K.toucher(M,q.x,q.y,24/ctm.a);if(id)choisir(id,true,true)});
+  /* toucher au doigt (le moment le plus proche du point touché, dans un rayon de 24 px à l'écran, même un arc étroit ou serré) et
+     clavier (focus itinérant : flèches, Début, Fin ; Entrée ouvre le détail ; Échap le referme) : les interactions du noyau radial */
+  window.AIMERadial.interactions(s,{groupe:arcs,selecteur:'.tp-arc',ordre:M.ordre,tolerance:24,ignorer:'.tp-plus',
+   toucher:function(x,y,tol){return K.toucher(M,x,y,tol)},
+   choisir:function(id,comment){if(comment==='toucher')choisir(id,true,true);else choisir(id,true)},
+   fermer:function(){choisir(null)}});
   var zones=svg('g',{class:'tp-zones','aria-hidden':'true'});M.zones.forEach(function(zn){zones.appendChild(svg('path',{d:zn.d,class:'tp-zone',style:'stroke-width:'+trait+'px'}))});s.appendChild(zones);
   /* au-delà des couloirs visibles : une pastille « +N » par moment, qui ouvre la Liste sur lui */
   M.debordements.forEach(function(d){var p=K.polarXY(C,C,M.rayon+M.epaisseur/2+36,d.angle),g=svg('g',{class:'tp-plus',role:'button',tabindex:'0','aria-label':'Moment de plus, à voir dans la Liste : '+d.nom});

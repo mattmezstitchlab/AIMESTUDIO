@@ -126,6 +126,12 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     const toucher = async (k, id) => { await page[k].addScriptTag({ content: MILIEU }); const pt = await page[k].evaluate(i => { document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' }); return window.__milieu(i); }, id); await page[k].mouse.click(pt.x, pt.y); };
     for (const k of ['emma', 'alex', 'lea']) { await page[k].getByRole('button', { name: 'Circle', exact: true }).click(); await page[k].waitForSelector('.tp-arc'); }
     ok(await arcs('emma') === 5 && await arcs('alex') === 8 && await arcs('lea') === 9, 'Circle : 5 arcs pour Emma, 8 pour Alex, 9 pour Léa : exactement leurs vues');
+    /* non-régression du noyau radial (PR A) : le cadran dessiné est identique, au caractère près, à celui figé sur la tête de #131
+       (iPhone pour Emma et Alex, ordinateur pour Léa). Régénérer : REFERENCE=ecrire, seulement sur un cadran validé. */
+    { const F = path.join(__dirname, '..', 'references', 'temps-cadran-dom.json'), dom = {};
+      for (const k of ['emma', 'alex', 'lea']) dom[k] = await page[k].locator('.tp-cadran').evaluate(e => e.outerHTML);
+      if (process.env.REFERENCE === 'ecrire') { fs.writeFileSync(F, JSON.stringify(dom, null, 1) + '\n'); ok(true, 'référence du cadran écrite'); }
+      else { const ref = JSON.parse(fs.readFileSync(F, 'utf8')); for (const k of Object.keys(ref)) ok(dom[k] === ref[k], k + ' : le cadran est identique à la référence d\'avant l\'extraction (' + ref[k].length + ' caractères)'); } }
     ok((await page.emma.locator('.tp-zone').count()) === 0 && (await page.lea.locator('.tp-zone').count()) === 1, 'la conséquence à décider (ambre) seulement chez qui peut décider');
     ok(/décalé de 15 min, prévu 16:00/.test(await arc('emma', 'cocktail').getAttribute('aria-label')), 'Emma : l\'arc du cocktail dit son décalage en mots');
     ok((await page.emma.locator('.tp-cadran').evaluate(e => e.getAttribute('role'))) === 'group' && !(await page.emma.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)), 'Emma (iPhone) : cadran interactif (pas une image), sans défilement horizontal');
@@ -201,11 +207,18 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     const h = await page.emma.locator('.tp-hist-l').innerText();
     ok(/Cocktail/.test(h) && !/importé|Point coordination|Installation/.test(h), 'Emma : l\'historique, réduit à ses moments');
 
-    console.log('Accessibilité (axe-core, WCAG 2.1 AA)');
+    console.log('Accessibilité (axe-core, WCAG 2.2 AA : les règles 2.0, 2.1 et 2.2)');
     for (const k of ['camille', 'alex', 'emma']) {
       await page[k].addScriptTag({ content: AXE });
-      const v = await page[k].evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ') ' + x.nodes.slice(0, 3).map(n => n.target.join(' ') + ' ' + (n.any[0] && n.any[0].message || '').slice(0, 90)).join(' | ')));
+      const v = await page[k].evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ') ' + x.nodes.slice(0, 3).map(n => n.target.join(' ') + ' ' + (n.any[0] && n.any[0].message || '').slice(0, 90)).join(' | ')));
       ok(!v.length, k + ' : ' + (v.length ? v.join(', ') : 'aucune anomalie bloquante'));
+    }
+    /* Circle lui-même, sur ordinateur (Léa) et sur iPhone (Emma), un moment ouvert : mêmes règles WCAG 2.2 AA */
+    for (const k of ['lea', 'emma']) {
+      await page[k].goto(programme + '&vue=cercle&moment=cocktail', { waitUntil: 'networkidle' }); await page[k].waitForSelector('.tp-arc'); await page[k].waitForSelector('.tp-detail .tp-m');
+      await page[k].addScriptTag({ content: AXE });
+      const v = await page[k].evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ') ' + x.nodes.slice(0, 3).map(n => n.target.join(' ')).join(' | ')));
+      ok(!v.length, k + ' (Circle, un moment ouvert) : ' + (v.length ? v.join(', ') : 'aucune anomalie bloquante'));
     }
     const verif = await M.verifier(A._pool(), espace); ok(verif.ok, 'le journal rejoué redonne exactement la table (rev ' + verif.rev + ')');
     await A._pool().end();
