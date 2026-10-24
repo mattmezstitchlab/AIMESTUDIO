@@ -4,7 +4,7 @@ const C = require('../_live/core.js');
 module.exports = async function act(req, res) {
   const b = C.debut(req, res); if (!b) return;
   const ps = C.lirePasse(b.passe); if (!ps) return res.status(401).json({ ok: false, raison: 'laissez-passer invalide ou expiré' });
-  if (C.freiner(req, 30)) return res.status(429).json({ ok: false, raison: 'trop d\'actions, patientez une minute' });
+  if (!(await C.quota(req, 'live:act')).ok) return res.status(429).json({ ok: false, raison: 'trop d\'actions, patientez une minute' });
   const a = C.L.action({ qui: ps.qui, action: b.action, p: b.p, t: b.t });   /* qui = le laissez-passer, jamais le corps */
   if (!a) return res.status(400).json({ ok: false, raison: 'action mal formée' });
   const sql = C.base(); if (!sql) return C.ferme(res);
