@@ -11,6 +11,19 @@
       ]
     },
     {
+      "source": "/(regie|maitre)(/|/index|/index\\.html)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         {
