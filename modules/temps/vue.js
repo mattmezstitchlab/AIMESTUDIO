@@ -28,7 +28,7 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
  modes.setAttribute('role','group');modes.setAttribute('aria-label','Présentation du programme');
  var sum=el('summary',null,'Historique des changements');hist.appendChild(sum);var histL=el('ol','tp-hist-l');hist.appendChild(histL);
  hist.addEventListener('toggle',function(){if(hist.open)chargerHistorique()});
- tete.appendChild(modes);zone.appendChild(vivant);zone.appendChild(tete);zone.appendChild(corps);zone.appendChild(hist);
+ var jourEl=el('p','tp-jour');tete.appendChild(modes);tete.appendChild(jourEl);zone.appendChild(vivant);zone.appendChild(tete);zone.appendChild(corps);zone.appendChild(hist);
  function annoncer(t){vivant.textContent='';setTimeout(function(){vivant.textContent=t},30)}
 
  function poserModes(){modes.textContent='';var L=[['liste','Liste'],['cercle','Circle']];if(etat.vue&&etat.vue.peutComparer)L.push(['comparer','Comparer les vues']);
@@ -36,7 +36,8 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
  /* changer de mode garde le moment choisi (et le reste du contexte) */
  function changerMode(mo){etat.mode=mo;ecrireContexte(mo,etat.selection);poserModes();afficher();if(mo==='comparer')chargerPersonnes();
   if(etat.selection&&mo==='liste'){var c=corps.querySelector('[data-id="'+etat.selection+'"]');if(c){c.scrollIntoView({block:'center'});var t=c.querySelector('.tp-t strong');if(t){t.tabIndex=-1;t.focus({preventScroll:true})}}}}
- function choisir(id,annonce){etat.selection=id||null;ecrireContexte(etat.mode,etat.selection);afficher();
+ function choisir(id,annonce,montrer){etat.selection=id||null;ecrireContexte(etat.mode,etat.selection);afficher();
+  if(montrer){var d=corps.querySelector('.tp-detail');if(d&&d.scrollIntoView)d.scrollIntoView({block:'nearest'})}   /* le panneau, au-dessus du Dock (scroll-padding) */
   var m=id&&etat.vue&&etat.vue.moments.filter(function(x){return x.id===id})[0];if(m&&annonce)annoncer(m.titre+', '+m.debut+' à '+m.fin+' : détail ouvert.')}
 
  /* ---------- ce qui a changé entre deux vues : annoncé, jamais seulement montré ---------- */
@@ -89,9 +90,12 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
  /* ---------- Circle : la même vue, sur un cadran de 24 heures (modèle calculé par modules/temps/cercle.js) ---------- */
  var NS='http://www.w3.org/2000/svg';
  function svg(t,a){var e=document.createElementNS(NS,t);for(var k in a)if(a[k]!=null)e.setAttribute(k,a[k]);return e}
+ /* la date du programme : centrale, et le futur point d'entrée du Calendrier. Tant que les moments n'ont pas de date en base
+    (migration 08, PR Calendrier), le programme est « Jour J » ; rien n'est inventé. */
+ function dateDe(v){if(!v||!v.jour)return null;try{return new Date(v.jour+'T12:00:00Z').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})}catch(_){return null}}
  function cercle(v){var K=window.AIMECercle,z=el('div','tp-cercle');if(!K){z.appendChild(el('p','alerte','Le cadran n\'a pas pu être chargé : la Liste reste disponible.'));return z}
   if(!v.moments.length){z.appendChild(el('p','leg','Aucun moment à afficher.'));return z}
-  var narrow=window.matchMedia&&window.matchMedia('(max-width: 560px)').matches,M=K.modele(v,{couloirs:narrow?3:4,epaisseur:narrow?52:44}),C=M.centre;
+  var narrow=window.matchMedia&&window.matchMedia('(max-width: 560px)').matches,M=narrow?K.modele(v,{couloirs:3,epaisseur:60,rayon:366,ecart:8}):K.modele(v,{couloirs:4}),C=M.centre;
   if(etat.selection&&!v.moments.some(function(m){return m.id===etat.selection}))etat.selection=null;   /* un moment devenu invisible : rien n'en est dit */
   var s=svg('svg',{viewBox:'0 0 1000 1000',class:'tp-cadran',role:'group','aria-label':'Cadran de 24 heures, minuit en haut : '+M.arcs.length+' moment'+(M.arcs.length>1?'s':'')+'. Flèches pour passer d\'un moment à l\'autre, Entrée pour ouvrir son détail.'});
   var fond=svg('g',{'aria-hidden':'true',class:'tp-fond'});
@@ -103,10 +107,8 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
    var ti=svg('title');ti.textContent=a.nom;g.appendChild(ti);
    if(a.dPrevu)g.appendChild(svg('path',{d:a.dPrevu,class:'tp-prevu-c'}));
    if(a.dMoi)g.appendChild(svg('path',{d:a.dMoi,class:'tp-moi-c'}));
-   g.appendChild(svg('path',{d:a.d,class:'tp-touche'}));     /* une large zone invisible pour le doigt (idée de RIPPLECIRCLE v9) */
    g.appendChild(svg('path',{d:a.d,class:'tp-trait-m'}));
    if(a.etat.indexOf('a-confirmer')>=0){var pc=K.polarXY(C,C,a.rayon,a.a0);g.appendChild(svg('circle',{cx:pc.x,cy:pc.y,r:14,class:'tp-point'}))}
-   g.addEventListener('click',function(){choisir(a.id,true)});
    g.addEventListener('keydown',function(e){var i=M.ordre.indexOf(a.id),k=e.key,cible=null;
     if(k==='Enter'||k===' '){e.preventDefault();choisir(a.id,true);return}
     if(k==='Escape'){e.preventDefault();choisir(null);return}
@@ -114,6 +116,9 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
     if(cible){e.preventDefault();[].forEach.call(arcs.querySelectorAll('.tp-arc'),function(x){x.setAttribute('tabindex',x.getAttribute('data-id')===cible?'0':'-1')});var n=arcs.querySelector('.tp-arc[data-id="'+cible+'"]');if(n)n.focus()}});
    arcs.appendChild(g)});
   s.appendChild(arcs);
+  /* toucher au doigt : le moment le plus proche du point touché, dans un rayon de 24 px à l'écran (même un arc étroit ou serré) */
+  s.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.tp-plus'))return;var ctm=s.getScreenCTM();if(!ctm)return;var p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;var q=p.matrixTransform(ctm.inverse());
+   var id=K.toucher(M,q.x,q.y,24/ctm.a);if(id)choisir(id,true,true)});
   var zones=svg('g',{class:'tp-zones','aria-hidden':'true'});M.zones.forEach(function(zn){zones.appendChild(svg('path',{d:zn.d,class:'tp-zone'}))});s.appendChild(zones);
   /* au-delà des couloirs visibles : une pastille « +N » par moment, qui ouvre la Liste sur lui */
   M.debordements.forEach(function(d){var p=K.polarXY(C,C,M.rayon+M.epaisseur/2+36,d.angle),g=svg('g',{class:'tp-plus',role:'button',tabindex:'0','aria-label':'Moment de plus, à voir dans la Liste : '+d.nom});
@@ -122,15 +127,17 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
   /* le centre résume le moment choisi (idée de RIPPLECIRCLE v9) ; décoratif : le panneau dit la même chose en texte */
   var ch=etat.selection&&v.moments.filter(function(m){return m.id===etat.selection})[0],cen=svg('g',{'aria-hidden':'true',class:'tp-centre'});
   var l1=svg('text',{x:C,y:C-14,'text-anchor':'middle',class:'tp-c1'}),l2=svg('text',{x:C,y:C+36,'text-anchor':'middle',class:'tp-c2'});
-  l1.textContent=ch?ch.titre:'24 heures';l2.textContent=ch?(ch.debut+' – '+ch.fin):(M.arcs.length+M.debordements.length)+' moments';cen.appendChild(l1);cen.appendChild(l2);s.appendChild(cen);
+  l1.textContent=ch?ch.titre:(dateDe(v)||'Jour J');l2.textContent=ch?(ch.debut+' – '+ch.fin):(M.arcs.length+M.debordements.length)+' moments · 24 h';cen.appendChild(l1);cen.appendChild(l2);s.appendChild(cen);
   z.appendChild(s);
   /* le panneau de détail : la carte de la Liste elle-même, donc les mêmes gestes autorisés */
   var det=el('section','tp-detail');det.setAttribute('aria-label','Moment choisi');
   if(ch){var ol=el('ol','tp-liste');ol.appendChild(carteMoment(ch,false));det.appendChild(ol)}
   else det.appendChild(el('p','leg','Touchez un arc, ou utilisez les flèches, pour voir le moment et ses actions.'));
   z.appendChild(det);
-  var cle=el('ul','tp-cle');[['tp-k-normal','horaire en vigueur'],['tp-k-moi','vos moments (liseré)'],['tp-k-prevu','horaire prévu (trait fin)'],['tp-k-propose','conséquence à décider (ambre)'],['tp-k-confirmer','à confirmer (point)']].forEach(function(k){var li=el('li');li.appendChild(el('span','tp-k '+k[0]));li.appendChild(el('span',null,k[1]));cle.appendChild(li)});
-  z.appendChild(cle);
+  /* la légende ne nomme que les états présents dans CE cadran (les arcs disent tout en mots à qui les parcourt) */
+  var vus={};M.arcs.forEach(function(a){a.etat.forEach(function(e){vus[e]=1})});
+  var L=[['decale','tp-k-prevu','horaire prévu'],['propose','tp-k-propose','à décider'],['a-confirmer','tp-k-confirmer','à confirmer'],['moi','tp-k-moi','vos moments']].filter(function(k){return vus[k[0]]});
+  if(L.length){var cle=el('ul','tp-cle');L.forEach(function(k){var li=el('li');li.appendChild(el('span','tp-k '+k[1]));li.appendChild(el('span',null,k[2]));cle.appendChild(li)});z.appendChild(cle)}
   return z}
 
  /* ---------- comparer : le propriétaire voit la vue d'une autre personne, coupée par le serveur à la sienne ---------- */
@@ -156,7 +163,7 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
    if(etat.peutActiver){c.appendChild(el('p','leg','Importez le programme type de votre domaine : vous pourrez ensuite décaler chaque moment, et chacun verra les changements selon ses droits.'));
     var b=bouton('Importer le programme type','b-p');b.onclick=function(){b.disabled=true;envoyer({action:'activer',espace:espace}).then(function(j){if(j._code===200){annoncer('Programme importé.');dire('Programme importé : '+j.moments+' moments.');if(window.AIMEProjet&&AIMEProjet.ouvrir)AIMEProjet.ouvrir(espace,'deroule');else relire(true)}else{b.disabled=false;dire(j.raison||'Import refusé.',true)}})};c.appendChild(b)}
    corps.appendChild(c);return}
-  var v=etat.vue;if(!v)return;poserModes();
+  var v=etat.vue;if(!v)return;poserModes();jourEl.textContent=dateDe(v)||'Jour J';
   if(etat.mode!=='comparer'){
    if(v.propositions.length){var pr=el('div','carte-c tp-props');pr.appendChild(el('h3','k','À décider'));v.propositions.forEach(function(p){var l=el('div','lgn');l.appendChild(el('span',null,p.texte));
      var ok=bouton('Décaler de '+p.minutes+' min','b-p');ok.onclick=function(){geste(p.geste.action,p.geste.p,'Proposition appliquée')};l.appendChild(ok);pr.appendChild(l)});

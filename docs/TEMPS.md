@@ -49,6 +49,15 @@ Dock (dock/modele.js composerReel)   Atlas (/capacites/, capacites/modules.js)  
 - **Le contexte dans l'adresse** : `vue` et `moment`. Changer de mode garde le moment, et recharger la page rouvre la même vue.
 - **Idées reprises des branches v8 et v9 de RIPPLECIRCLE** : le centre qui résume le moment choisi, une large zone de toucher invisible, des arcs focusables au clavier, et aucune animation sous `prefers-reduced-motion`.
 - **Non repris** : la musique, les anneaux par phase, le vocabulaire métier.
+- **Passe iPhone (revue de Matt)** :
+  - Le cadran occupe toute la largeur utile, libellés horaires compris.
+  - Un toucher choisit le moment le plus proche, à 24 px près (`AIMECercle.toucher`), même étroit ou serré.
+  - Le panneau du moment, commun à la Liste, s'ouvre au-dessus du Dock.
+  - La légende ne nomme que les états présents.
+  - En paysage, le cadran et le panneau se placent côte à côte.
+  - Sur téléphone, l'en-tête du site défile au lieu de rester collé : le Dock est la seule zone fixe.
+  - La date du programme est affichée : « Jour J » tant que la migration 08 n'a pas donné de date aux moments. C'est le futur accès au Calendrier.
+  - La barre « AIME » qui traversait le cadran sur une capture était l'en-tête collant figé par la capture « page entière », pas un défaut à l'écran.
 
 ## 2. Source de vérité
 

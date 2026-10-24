@@ -40,6 +40,17 @@ test('cercle : moments simultanés en couloirs ; au-delà du maximum, un débord
   assert.deepEqual(m.ordre, ['a', 'b', 'c', 'e'], 'le clavier parcourt les moments dans l\'ordre des heures');
 });
 
+test('cercle : toucher au doigt sélectionne le moment le plus proche, même étroit ou serré', () => {
+  const M = [mo('large', 600, 720), mo('court', 640, 645), mo('autre', 900, 960)];
+  const m = K.modele({ moments: M, propositions: [] }, { couloirs: 3 }), arc = id => m.arcs.find(a => a.id === id);
+  const sur = (a, r) => K.polarXY(500, 500, r == null ? a.rayon : r, a.a0 + Math.max(a.a1 - a.a0, 2) / 2);
+  for (const a of m.arcs) { const p = sur(a); assert.equal(K.toucher(m, p.x, p.y, 40), a.id, a.id + ' : au milieu de son tracé'); }
+  const c = arc('court'), p = sur(c, c.rayon - m.epaisseur / 2 - 20); assert.equal(K.toucher(m, p.x, p.y, 40), 'court', 'un arc de 5 min, touché un peu à côté (vers l\'intérieur)');
+  const q = sur(arc('large'), arc('large').rayon + m.epaisseur / 2 + 10); assert.equal(K.toucher(m, q.x, q.y, 40), 'large', 'vers l\'extérieur : le couloir extérieur');
+  const vide = K.polarXY(500, 500, 400, 120); assert.equal(K.toucher(m, vide.x, vide.y, 40), null, 'loin de tout moment : rien');
+  assert.equal(K.toucher(m, 500, 500, 40), null, 'le centre ne choisit rien');
+});
+
 test('cercle : une fenêtre de temps (le futur zoom) sans rien changer d\'autre', () => {
   const f = K.fenetre({ debut: 900, fin: 1620 });   /* 15:00 → 03:00 */
   assert.equal(K.angle(900, f), 0); assert.equal(K.angle(1260, f), 180); assert.equal(K.angle(1620, f), 360);

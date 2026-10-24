@@ -60,7 +60,8 @@ function modele(vue,o){o=o||{};var f=fenetre(o.fenetre),max=o.couloirs||3,R=o.ra
  var c=couloirs(M,max),r=function(k){return R-k*(E+G)};
  var arcs=[];M.forEach(function(m){if(!(m.id in c.place))return;var e=etendue(m.dm,m.fm,f);if(!e)return;var k=c.place[m.id],etat=[];
   if(m.fait)etat.push('fait');if(m.decalage)etat.push('decale');if(m.aConfirmer)etat.push('a-confirmer');if(pp[m.id])etat.push('propose');if(m.planBActif)etat.push('repli');if(m.responsable==='moi')etat.push('moi');
-  var a={id:m.id,couloir:k,rayon:r(k),d:arcPathAt(CENTRE,CENTRE,r(k),e.a0,e.a1),debut:m.debut,fin:m.fin,a0:e.a0,a1:e.a1,etat:etat,nom:nom(m,pp[m.id]),lendemain:m.fm>JOUR&&m.dm<JOUR};
+  var vis=Math.max(e.a1,e.a0+2);   /* un moment très court reste visible (2° au moins) ; ses heures exactes sont dans son nom */
+  var a={id:m.id,couloir:k,rayon:r(k),d:arcPathAt(CENTRE,CENTRE,r(k),e.a0,vis),debut:m.debut,fin:m.fin,a0:e.a0,a1:e.a1,etat:etat,nom:nom(m,pp[m.id]),lendemain:m.fm>JOUR&&m.dm<JOUR};
   if(m.decalage){var p=etendue(m.dm-m.decalage,m.fm-m.decalage,f);if(p)a.dPrevu=arcPathAt(CENTRE,CENTRE,r(k)+E/2+6,p.a0,p.a1)}
   if(m.responsable==='moi')a.dMoi=arcPathAt(CENTRE,CENTRE,r(k)-E/2-8,e.a0,e.a1);   /* « mes moments » : un liseré intérieur */
   arcs.push(a)});
@@ -71,12 +72,19 @@ function modele(vue,o){o=o||{};var f=fenetre(o.fenetre),max=o.couloirs||3,R=o.ra
  var debordements=c.deborde.map(function(id){var m=parId[id];return{id:id,nom:nom(m,pp[id]),angle:angle(m.dm,f)}}).filter(function(x){return x.angle!=null});
  /* les graduations : chaque heure de la fenêtre, les quatre cardinales marquées (en journée entière : 00, 06, 12, 18) */
  var graduations=[];for(var h=Math.ceil(f.debut/60)*60;h<=f.fin-(f.jour?1:0);h+=60){var a=angle(h,f);if(a==null)continue;var card=f.jour?h%360===0:false;
-  var p1=polarXY(CENTRE,CENTRE,R+E/2+18,a),p2=polarXY(CENTRE,CENTRE,R+E/2+(card?40:30),a),pl=polarXY(CENTRE,CENTRE,R+E/2+(a===0||a===180?66:52),a);
+  var p1=polarXY(CENTRE,CENTRE,R+E/2+6,a),p2=polarXY(CENTRE,CENTRE,R+E/2+(card?24:16),a),pl=polarXY(CENTRE,CENTRE,R+E/2+(a===0||a===180?58:32),a);
   /* les heures des côtés s'écrivent vers l'extérieur (jamais sur leur trait), celles du haut et du bas centrées */
   graduations.push({minute:h,angle:a,cardinale:card,x1:n(p1.x),y1:n(p1.y),x2:n(p2.x),y2:n(p2.y),lx:n(pl.x),ly:n(pl.y),ancre:a===90?'start':a===270?'end':'middle',texte:card?(hm(h).slice(0,2)+' h'):''})}
  /* l'ordre de parcours au clavier : par heure de début, puis couloir */
  var ordre=arcs.slice().sort(function(a,b){return(parId[a.id].dm-parId[b.id].dm)||(a.couloir-b.couloir)}).map(function(a){return a.id});
- return{fenetre:f,centre:CENTRE,rayon:R,epaisseur:E,graduations:graduations,arcs:arcs,zones:zones,debordements:debordements,couloirs:c.n,ordre:ordre}}
+ return{fenetre:f,centre:CENTRE,rayon:R,epaisseur:E,ecart:G,graduations:graduations,arcs:arcs,zones:zones,debordements:debordements,couloirs:c.n,ordre:ordre}}
 
-return{JOUR:JOUR,polarXY:polarXY,arcPathAt:arcPathAt,normDeg:normDeg,fenetre:fenetre,angle:angle,etendue:etendue,couloirs:couloirs,nom:nom,modele:modele,hm:hm};
+/* toucher : un point du cadran (unités du dessin) → le moment le plus proche, dans une tolérance donnée.
+   Le doigt n'a pas à viser un arc étroit : on mesure la distance au tracé (angle ramené en longueur, et écart de rayon). */
+function toucher(M,x,y,tol){var dx=x-M.centre,dy=y-M.centre,r=Math.sqrt(dx*dx+dy*dy),a=normDeg(Math.atan2(dy,dx)*180/Math.PI+90),best=null;
+ M.arcs.forEach(function(c){var span=Math.max(c.a1-c.a0,2),d=normDeg(a-c.a0),ang=d<=span?0:Math.min(d-span,360-d),long=ang*Math.PI/180*c.rayon,rad=Math.max(0,Math.abs(r-c.rayon)-M.epaisseur/2),dist=Math.sqrt(long*long+rad*rad);
+  if(dist<=tol&&(!best||dist<best.dist||(dist===best.dist&&Math.abs(r-c.rayon)<best.rad)))best={id:c.id,dist:dist,rad:Math.abs(r-c.rayon)}});
+ return best?best.id:null}
+
+return{JOUR:JOUR,toucher:toucher,polarXY:polarXY,arcPathAt:arcPathAt,normDeg:normDeg,fenetre:fenetre,angle:angle,etendue:etendue,couloirs:couloirs,nom:nom,modele:modele,hm:hm};
 });
