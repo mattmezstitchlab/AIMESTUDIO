@@ -47,11 +47,20 @@ test('lecture seule : aucun stockage, aucune donnée de la Régie hors version p
  assert.ok(!/regie\/regie\.js|regie\/scene\.js/.test(lire('maitre/index.html')+code('maitre/sources.js')+code('canevas/adaptateurs/maitre.js')),'la Régie maîtresse n\'est pas chargée')});
 
 /* le garde : la Régie maîtresse, le cube-personne, la source unique des droits (synchroview/permissions.js) et le socle des comptes
-   (auth, propriétaire du site, journal en ajout seul) ne changent pas. espaces.mjs et pages.mjs évoluent (décision de Matt, PR B),
+   (auth, propriétaire du site) ne changent pas. Le stockage et le filtrage SQL du journal restent intacts ;
+   sa projection protège désormais les signalements (PR confidentialité). espaces.mjs et pages.mjs évoluent (décision de Matt, PR B),
    mais role() et exiger() restent identiques, mot pour mot, à la branche visée. */
 test('la Régie maîtresse, le cube-personne, la source des droits et le socle des comptes restent intacts (fichiers inchangés)',()=>{let d='';
- try{d=execSync('git diff --name-only --diff-filter=MDR '+require('./_base.cjs')()+' -- regie/ cube/modele.js cube/stock.js cube/regie.js cube/composition.js cube/cartes.js cube/assemblage.js canevas/adaptateurs/cube.js canevas/plan.js canevas/scene.js synchroview/permissions.js api/_auth/proprietaire.mjs api/_auth/journal.mjs',{cwd:R('.'),encoding:'utf8'}).trim()}catch(e){return}
+ try{d=execSync('git diff --name-only --diff-filter=MDR '+require('./_base.cjs')()+' -- regie/ cube/modele.js cube/stock.js cube/regie.js cube/composition.js cube/cartes.js cube/assemblage.js canevas/adaptateurs/cube.js canevas/plan.js canevas/scene.js synchroview/permissions.js api/_auth/proprietaire.mjs',{cwd:R('.'),encoding:'utf8'}).trim()}catch(e){return}
  assert.equal(d,'','aucun de ces fichiers n\'est modifié')});
+
+/* La correction de confidentialité ne change ni l'écriture en ajout seul, ni la portée SQL du journal. */
+test('journal : stockage et sélection des lignes inchangés, seule la projection évolue',()=>{
+ let avant;try{avant=execSync('git show '+require('./_base.cjs')()+':api/_auth/journal.mjs',{cwd:R('.'),encoding:'utf8'})}catch(e){return}
+ const marque='  return rows.map(';
+ assert.ok(avant.includes(marque));
+ assert.equal(lire('api/_auth/journal.mjs').split(marque)[0],avant.split(marque)[0]);
+});
 
 /* auth.mjs : le socle des comptes reste intact, sauf UNE ligne autorisée par Matt (24/10) : l'adresse passée à pg.Pool sans « sslmode »
    (l'avertissement de pg comptait comme une erreur dans les journaux de Vercel). Toute autre ligne modifiée fait échouer ce test. */

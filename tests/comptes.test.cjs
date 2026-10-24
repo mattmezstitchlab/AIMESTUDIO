@@ -195,7 +195,12 @@ test('espaces · « Je vois un accès inattendu » : au journal, propriétaire p
   assert.equal(liens.length, 1, 'un e-mail, au seul propriétaire'); assert.equal(liens[0].to, 'o@exemple.test');
   assert.ok(!/budget|traiteur|g@exemple/.test(liens[0].text + liens[0].html), 'ni le texte ni l\'auteur dans l\'e-mail');
   const j = (await appel(E.default, { action: 'journal', espace: id }, M.owner)).body.journal.find(l => l.action === 'signalement');
-  assert.equal(j.detail.objet, 'acces_inattendu'); assert.equal(j.detail.role, 'guest');
+  assert.deepEqual(j.detail, { objet: 'acces_inattendu', motif: 'Je vois le budget <b>du traiteur</b>' });
+  assert.equal(j.qui, null, 'le propriétaire ne reçoit pas l\'identifiant de l\'auteur');
+  assert.match(j.le, /^\d{4}-\d{2}-\d{2}$/, 'le jour seulement, pas l\'heure exacte');
+  const propre = (await appel(E.default, { action: 'journal', espace: id }, M.guest)).body.journal.find(l => l.action === 'signalement');
+  assert.equal(propre.detail.role, 'guest', 'l\'auteur garde sa trace complète');
+  assert.equal(propre.qui, propre.detail.cible);
   assert.ok((await appel(E.default, { action: 'journal', espace: id }, M.guest)).body.journal.some(l => l.action === 'signalement'), 'la personne relit son signalement');
   assert.ok(!(await appel(E.default, { action: 'journal', espace: id }, M.contributor)).body.journal.some(l => l.action === 'signalement'), 'un autre membre ne le lit pas');
   assert.equal((await appel(E.default, { action: 'signaler', espace: id }, M.dehors)).code, 404, 'non-membre : rien');

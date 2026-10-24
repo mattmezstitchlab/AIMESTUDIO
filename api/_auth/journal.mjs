@@ -21,5 +21,15 @@ export async function inscrire(db, { qui, espace, action, cible = null, detail =
 export async function lire(db, { espace, moi, tout }) {
   if (!(await table(db))) return null;
   const { rows } = await db.query(`select at, user_id, action, detail from audit where space_id = $1 ${tout ? '' : "and (user_id = $2 or detail->>'cible' = $2)"} order by at desc, id desc limit 200`, tout ? [espace] : [espace, moi]);
-  return rows.map(r => ({ le: new Date(r.at).toISOString(), qui: r.user_id, action: r.action, detail: r.detail || {} }));
+  return rows.map(r => {
+    const le = new Date(r.at).toISOString(), detail = r.detail || {};
+    /* Même protection pour toutes les sorties (action journal et pages) : seul l'auteur reçoit
+       son identité et l'heure exacte. Liste blanche : aucun futur champ technique ne doit le révéler.
+       Le motif reste lisible du propriétaire ; son texte libre peut identifier la personne. */
+    if (r.action === 'signalement' && r.user_id !== moi) return {
+      le: le.slice(0, 10), qui: null, action: r.action,
+      detail: { objet: 'acces_inattendu', ...(detail.motif ? { motif: detail.motif } : {}) }
+    };
+    return { le, qui: r.user_id, action: r.action, detail };
+  });
 }
