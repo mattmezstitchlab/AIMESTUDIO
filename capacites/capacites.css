@@ -1,31 +1,21 @@
-@font-face{font-family:Cal;src:url('/fonts/CalSans-latin.woff2') format('woff2');font-display:swap}
-@font-face{font-family:'Inter Variable';src:url('/fonts/InterVariable-latin.woff2') format('woff2');font-weight:100 900;font-display:swap}
-/* Charte AIME : noir, structure, contraste. La couleur est réservée à l'orbe et au mot-clé du titre. */
+/* Charte AIME (coeur/charte.css) : noir, structure, contraste ; l'iridescence est réservée à l'orbe et au contour du +. */
 *{box-sizing:border-box}[hidden]{display:none!important}
-:root{color-scheme:dark;--fond:#09090b;--surface:#111115;--surface2:#17171c;--trait:#26262d;--trait2:#3a3a44;--encre:#f3f2ef;--doux:#a9a7b4;--rose:#fb7185;--vio:#7c5cff;--cyan:#22d3ee;--ok:#86efac;--alerte:#fcd34d;--crit:#fca5a5}
-body{margin:0;background:var(--fond);color:var(--encre);font:16px/1.6 'Inter Variable',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+:root{color-scheme:dark;--fond:var(--desk);--surface:#111115;--surface2:#17171c;--trait:#26262d;--trait2:#3a3a44;--encre:#f3f2ef;--doux:#a9a7b4;--rose:#fb7185;--vio:#7c5cff;--cyan:#22d3ee;--ok:#86efac;--alerte:#fcd34d;--crit:#fca5a5}
+body{background:var(--desk);font-size:16px;line-height:1.6}
 a{color:inherit;text-underline-offset:4px}
 code{font:13px ui-monospace,Menlo,monospace;color:#d8d5e4}
-.evite{position:absolute;left:12px;top:-100px;background:var(--encre);color:var(--fond);padding:8px 12px;border-radius:8px;z-index:9}.evite:focus{top:12px}
-.top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px 20px;padding:22px max(16px,5vw);border-bottom:1px solid var(--trait);font-size:12px;letter-spacing:.08em}
-.top a{text-decoration:none}.top nav{display:flex;gap:18px}
-main{max-width:1160px;margin:auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
+main{max-width:1160px;margin:auto;padding-top:calc(72px + env(safe-area-inset-top,0px));padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
 section{margin:84px 0}
 .k{font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:#b4b0c7}
-h1,h2,h3{font-family:Cal,'Inter Variable',system-ui,sans-serif;font-weight:500;line-height:1.06;letter-spacing:-.01em;text-wrap:balance}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.06;letter-spacing:-.01em;text-wrap:balance}
 h1{font-size:clamp(52px,9vw,112px);margin:18px 0 22px}
-h1 em{font-style:normal;background:linear-gradient(100deg,var(--rose),var(--vio),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
 h2{font-size:clamp(28px,4.4vw,46px);margin:10px 0 14px}
 h3{font-size:19px;margin:0}
-.titre{display:flex;align-items:center;gap:clamp(16px,4vw,48px);flex-wrap:wrap}
-.orbe{width:clamp(76px,11vw,128px);aspect-ratio:1;border-radius:50%;flex:none;background:radial-gradient(circle at 32% 28%,#fff 0 7%,transparent 30%),conic-gradient(from 210deg,var(--rose),var(--vio),var(--cyan),#9dffc8,#ffe08a,var(--rose));box-shadow:inset -12px -16px 34px #0007,0 0 60px #7c5cff40;animation:orbe 22s linear infinite}
-@keyframes orbe{to{filter:hue-rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.orbe{animation:none}}
 .intro>p{font-size:20px;color:#c4c1cf;max-width:720px;margin:0 0 14px}
 .intro .notice,.meta{font-size:13.5px;color:var(--doux);max-width:760px}
 .chiffres{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:34px 0 0;border-top:1px solid var(--trait);border-left:1px solid var(--trait)}
 .chiffres div{padding:16px 16px 14px;border-right:1px solid var(--trait);border-bottom:1px solid var(--trait)}
-.chiffres dt{font:500 34px/1 Cal,system-ui;font-variant-numeric:tabular-nums}
+.chiffres dt{font:500 34px/1 var(--display);font-variant-numeric:tabular-nums}
 .chiffres dd{margin:6px 0 0;font-size:12.5px;color:var(--doux)}
 
 /* Par où commencer */
@@ -82,6 +72,7 @@ button.action:hover,.plus:hover,#copier:hover{border-color:var(--encre)}
 a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
 
 .contexte{max-width:860px}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 .contexte p{color:#c4c1cf}
 .contexte label{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--doux);margin:18px 0 6px}
 textarea{width:100%;font:13px/1.55 ui-monospace,Menlo,monospace;color:var(--encre);background:var(--surface);border:1px solid var(--trait2);border-radius:14px;padding:14px;resize:vertical}
