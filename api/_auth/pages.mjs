@@ -188,6 +188,11 @@ async function pageAcces(db, c, espace) {
     const { rows: n } = await db.query('select count(*)::int as n from space_members m where m.space_id = $1' + (d ? ' and (m.jusqu_au is null or m.jusqu_au > now())' : ''), [espace]);
     blocs.push({ id: 'acces-membres', type: 'compte', nombre: n[0].n, texte: n[0].n > 1 ? n[0].n + ' personnes partagent ce projet.' : 'Vous êtes seul dans ce projet pour l\'instant.' });
   }
+  /* le module Programme : tant que le propriétaire n'a pas importé de programme, rien ne change ; ce bloc lui en offre le geste */
+  if (P.can(s, 'manage_members', { type: 'space' }).allow && c.domaine) {
+    const a = await actifsDe(db, espace), installe = await db.query("select to_regclass('public.temps_espaces') as t").then(r => !!(r.rows[0] && r.rows[0].t)).catch(() => false);
+    if (installe && !a.temps) blocs.push({ id: 'acces-programme', type: 'activer', module: 'temps', texte: 'Ajouter le programme à ce projet', aide: 'Le programme type ' + c.mots.projet + ' : chacun le verra selon ses droits, et vous pourrez décaler chaque moment.' });
+  }
   /* jamais masqué (§ 2) */
   blocs.push({ id: 'acces-signaler', type: 'geste', geste: 'signaler', texte: 'Je vois un accès inattendu', aide: 'Le propriétaire lira votre message, pas votre nom.' });
   return { blocs, vide: null };

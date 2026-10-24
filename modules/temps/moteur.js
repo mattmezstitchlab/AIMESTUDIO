@@ -83,7 +83,7 @@ function propositions(prog,s,P,visibles){var V=trier(visibles),out=[];
 
 function vue(prog,s,P){if(!s||!s.role)return null;var eq=equipe(s,P),org=orga(s,P),V=prog.moments.filter(function(m){return lisible(s,m,P)});
  var M=trier(V).map(function(m){var g=gestesSur(prog,s,m,P),o={id:m.id,titre:m.titre,lieu:m.planBActif&&m.planB?m.planB:m.lieu,debut:fmt(debutEff(m)),fin:fmt(finEff(m)),
-   prevu:fmt(m.debut),decalage:m.decalage||0,fait:!!m.fait,planB:m.planB||'',planBActif:!!m.planBActif,audience:m.audience,audienceNom:AUDIENCES[m.audience],
+   prevu:fmt(m.debut),dm:debutEff(m),fm:finEff(m),decalage:m.decalage||0,fait:!!m.fait,planB:m.planB||'',planBActif:!!m.planBActif,audience:m.audience,audienceNom:AUDIENCES[m.audience],
    rev:m.majRev,gestes:g,aConfirmer:g.confirmer};
   if(eq&&m.note)o.note=m.note;                                            /* les consignes d'équipe restent à l'équipe */
   if(m.responsable){if(m.responsable===s.id)o.responsable='moi';else if(org)o.responsable=m.responsable}   /* qui porte quoi : l'organisation, ou soi-même */

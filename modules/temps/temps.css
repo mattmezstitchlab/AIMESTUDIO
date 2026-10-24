@@ -1,0 +1,29 @@
+/* AIME · module Temps (page Programme). Sobre : du texte, des heures lisibles, aucune information portée par la seule couleur. */
+.tp{display:grid;gap:14px}
+.tp .b{min-height:44px;min-width:44px;justify-content:center}
+.tp-tete{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tp-modes{display:flex;flex-wrap:wrap;gap:6px}.tp-modes .b[aria-pressed=true]{background:var(--encre);color:var(--fond);border-color:var(--encre)}
+.tp-liste{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tp-m{border:1px solid var(--ligne);background:var(--carte);border-radius:16px;padding:14px 16px;display:grid;gap:6px}
+.tp-m.decale{border-color:rgba(34,211,238,.45)}.tp-m.fait{opacity:.72}
+.tp-h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.tp-heure{font:600 18px/1.2 var(--titre);font-variant-numeric:tabular-nums}
+.tp-prevu{font-size:13px;color:var(--cyan)}
+.tp-t{display:grid;gap:2px}.tp-t strong{font-size:16px;font-weight:600}.tp-lieu{font-size:13.5px;color:var(--doux)}
+.tp-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tp-tag{font-size:12px;border:1px solid var(--ligne);border-radius:999px;padding:2px 9px;color:var(--doux)}.tp-tag.ok{color:var(--ok)}.tp-tag.moi{color:var(--encre);border-color:var(--doux)}
+.tp-note{margin:0;font-size:13.5px;color:var(--doux);border-left:2px solid var(--ligne);padding-left:10px}
+.tp-act{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-top:4px}
+.tp-casc{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--doux);min-height:44px;padding:0 4px}
+.tp-casc input{width:20px;height:20px;accent-color:var(--encre)}
+.tp-props .lgn{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.tp-chrono{position:relative;border-left:1px solid var(--ligne);margin-left:4px}
+.tp-graduation{position:absolute;left:6px;transform:translateY(-50%);font-size:11.5px;color:var(--doux);font-variant-numeric:tabular-nums}
+.tp-bloc{position:absolute;box-sizing:border-box;border:1px solid var(--ligne);background:var(--carte);border-radius:10px;padding:4px 8px;overflow:hidden;display:grid;align-content:start;gap:1px;font-size:12.5px}
+.tp-bloc strong{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tp-bloc span{color:var(--doux);font-variant-numeric:tabular-nums}
+.tp-bloc.decale{border-color:rgba(34,211,238,.6)}.tp-bloc.fait{opacity:.7}
+.tp-comp{display:grid;gap:12px}.tp-comp select{min-height:44px}
+.tp-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}.tp-col{display:grid;gap:8px;align-content:start;min-width:0}
+@media (max-width:720px){.tp-cols{grid-template-columns:1fr}}
+.tp-hist summary{cursor:pointer;min-height:32px}
+.tp-hist-l{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13.5px;color:var(--doux)}.tp-hist-l .moi{color:var(--encre)}.tp-quand{font-variant-numeric:tabular-nums;color:var(--doux)}

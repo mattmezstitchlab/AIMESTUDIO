@@ -93,3 +93,28 @@ jobs:
       - name: Serveur de test
         run: node scripts/serveur-test.cjs & sleep 1
       - run: node tests/navigateur/accessibilite.cjs
+  temps:
+    name: Parcours Temps (navigateur et base)
+    needs: suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Le module Temps de bout en bout : six navigateurs connectés à une base PostgreSQL éphémère (jamais la production)
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: test, POSTGRES_DB: aime_test }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 2s --health-timeout 5s --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:test@localhost:5432/aime_test?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm install --no-save playwright@1.47.2 axe-core@4.10.2
+      - run: npx playwright install --with-deps chromium
+      - name: Migrations
+        run: for f in $(ls db/migrations/*.sql | sort); do psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f "$f"; done
+      - run: node tests/navigateur/temps.cjs

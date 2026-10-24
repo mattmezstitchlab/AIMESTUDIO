@@ -12,6 +12,11 @@
  <dl class="chiffres" id="chiffres" aria-label="Chiffres clés"></dl>
 </section>
 
+<section id="modules-aime-bloc" aria-labelledby="t-modules-aime"><span class="k">LES MODULES D'AIME</span><h2 id="t-modules-aime">Des capacités, pas des pages.</h2>
+ <p class="notice">Lu dans le registre des modules (<code>modules/registre.js</code>) : le même que lisent le serveur et le Dock. « Opérationnel » veut dire servi par le serveur dans un vrai projet, droits vérifiés à chaque appel, avec ses tests ; rien d'autre ne porte ce mot.</p>
+ <ul class="modules-aime" id="modules-aime"></ul>
+</section>
+
 <section id="commencer" aria-labelledby="t-commencer"><span class="k">PAR OÙ COMMENCER</span><h2 id="t-commencer">Ce qui vaut le coup d'être branché.</h2>
  <p class="meta">Classement expliqué, jamais une note opaque : chaque point a sa raison. Un module gagne s'il est cité par les univers d'AIME, autonome, issu d'un dépôt qui fonctionne et proche du cœur (rôles, événement, documents) ; il perd s'il est un doublon, enfermé dans une archive ou exposé à une faille non corrigée. Trois modules au plus par dépôt.</p>
  <ol class="prio" id="prio"></ol>
@@ -51,6 +56,7 @@
 <noscript><p class="noscript">Activez JavaScript pour parcourir l'atlas. Les données brutes restent lisibles : <a href="/moteurs.json">moteurs.json</a>, <a href="/univers.json">univers.json</a>, <a href="/capacites/etat-depots.json">etat-depots.json</a>.</p></noscript>
 <div id="dock-site"></div>
 <script src="/capacites/modele.js"></script><script src="/capacites/capacites.js"></script>
+<script src="/modules/registre.js"></script><script src="/capacites/modules.js"></script>
 <script src="/dock/modele.js"></script><script src="/dock/dock.js"></script><script src="/dock/plus.js"></script>
 <script>(function(){var el=document.getElementById('dock-site');if(el&&window.AIMEDock&&window.AIMEDockVue){AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')}})();</script>
 </body></html>

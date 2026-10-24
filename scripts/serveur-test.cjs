@@ -8,6 +8,12 @@ const T = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs
 /* les écrans gardés (middleware.js sur Vercel) : la même fonction garder(), mais le « propriétaire » est ici un cookie de test,
    aime_test_proprietaire=oui, que seuls les tests navigateur posent. Ce serveur ne part jamais en production (.vercelignore : /scripts). */
 const ECRANS = Promise.resolve(require(path.join(ROOT, 'api/_auth/ecrans.cjs')));
+const COMPTES = process.env.AIME_COMPTES_TEST === '1' && process.env.TEST_DATABASE_URL ? (async () => {
+  Object.assign(process.env, { DATABASE_URL: process.env.TEST_DATABASE_URL, BETTER_AUTH_URL: 'http://localhost:' + PORT, BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || require('crypto').randomBytes(32).toString('hex') });
+  delete process.env.VERCEL_ENV;
+  const A = await import(path.join(ROOT, 'api/_auth/auth.mjs'));
+  A._envoyeur(m => fs.appendFileSync(process.env.AIME_LIENS || path.join(require('os').tmpdir(), 'aime-liens.txt'), JSON.stringify({ to: m.to, lien: (String(m.text).match(/https?:\/\/\S+/) || [''])[0] }) + '\n'));
+})() : null;
 const proprietaireDeTest = r => /(?:^|;\s*)aime_test_proprietaire=oui(?:;|$)/.test(r.headers.get('cookie') || '');
 http.createServer((req, res) => {
   const brut = '/' + String(req.url || '/').split(/[?#]/)[0].replace(/^\/+/, m => m.slice(1));   /* le chemin brut : « //regie/ » reste un chemin, pas un hôte */
@@ -30,6 +36,12 @@ function servir(req, res) {
       const r = { statusCode: 200, setHeader: (k, v) => res.setHeader(k, v), status(c) { this.statusCode = c; return this; }, json(o) { res.writeHead(this.statusCode, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); } };
       let body = {}; try { body = JSON.parse(b || '{}'); } catch {} Promise.resolve(h({ method: req.method, body, headers: req.headers }, r)).catch(() => { res.writeHead(500); res.end(); });
     }); return;
+  }
+  /* les routes de compte et de projet, SEULEMENT pour les parcours à plusieurs comptes contre une base de test (AIME_COMPTES_TEST=1 et
+     TEST_DATABASE_URL) : jamais la base de production ; les liens de connexion sont écrits dans AIME_LIENS au lieu d'être envoyés */
+  if (COMPTES && (p.startsWith('/api/auth/') || ['/api/temps', '/api/page', '/api/espaces', '/api/identite'].includes(p))) {
+    const nom = p.startsWith('/api/auth/') ? 'comptes' : p.slice(5);
+    return COMPTES.then(() => import(path.join(ROOT, 'api', nom + '.mjs'))).then(m => m.default(req, res)).catch(() => { res.writeHead(500); res.end(); });
   }
   if (p.startsWith('/api/')) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end('{}'); }
   let f = path.join(ROOT, p); if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
