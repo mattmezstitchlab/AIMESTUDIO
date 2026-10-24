@@ -10,10 +10,9 @@
 <link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/os/os.css">
+<link rel="stylesheet" href="/dock/dock.css">
 <link rel="stylesheet" href="/pointzero/pz.css">
 <link rel="stylesheet" href="/compte/timbre.css">
-<link rel="stylesheet" href="/porte/porte.css">
-<link rel="stylesheet" href="/porte/revelation.css">
 <link rel="stylesheet" href="/orbe/pilote.css">
 <link rel="stylesheet" href="/cube/vue3d.css">
 </head>
@@ -23,7 +22,8 @@
  <button class="marque" type="button" id="accueilBtn" aria-label="AIME OS, revenir au bureau">AIME<sup>®</sup><span>OS</span></button>
  <span class="app-courante" id="appCourante" aria-live="polite"></span>
  <span class="barre-d">
-  <span id="porte"></span>
+  <button class="os-dock-orbe" type="button" id="orbeBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="orbePan" aria-label="L'orbe : suggestions"><span class="mini-orbe"></span></button>
+  <button class="os-dock-app toutes" type="button" id="toutBtn" aria-haspopup="dialog" aria-label="Toutes les apps"><span class="ico"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5" cy="5" r="1.6"/><circle cx="10" cy="5" r="1.6"/><circle cx="15" cy="5" r="1.6"/><circle cx="5" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="15" cy="10" r="1.6"/><circle cx="5" cy="15" r="1.6"/><circle cx="10" cy="15" r="1.6"/><circle cx="15" cy="15" r="1.6"/></svg></span></button>
   <button class="cherche" type="button" id="chercheBtn" aria-haspopup="dialog" aria-label="Rechercher (Ctrl K)"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="M13.2 13.2 17 17"/></svg><span>Rechercher</span><kbd>Ctrl K</kbd></button>
   <time class="heure" id="heure"></time>
  </span>
@@ -42,12 +42,9 @@
  <div class="fenetres" id="fenetres"></div>
 </main>
 
-<nav class="os-dock" id="dock" aria-label="Dock">
- <button class="os-dock-orbe" type="button" id="orbeBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="orbePan" aria-label="L'orbe : suggestions"><span class="mini-orbe"></span></button>
- <span class="os-dock-sep" aria-hidden="true"></span>
+<!-- la barre d'applications est remplacée par le Dock AIME (en bas) ; elle reste en coulisses pour les fenêtres (os/os.js), sans être montrée -->
+<nav class="os-dock" id="dock" aria-label="Fenêtres ouvertes" hidden>
  <div class="os-dock-apps" id="dockApps"></div>
- <span class="os-dock-sep" aria-hidden="true"></span>
- <button class="os-dock-app toutes" type="button" id="toutBtn" aria-haspopup="dialog" aria-label="Toutes les apps"><span class="ico"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5" cy="5" r="1.6"/><circle cx="10" cy="5" r="1.6"/><circle cx="15" cy="5" r="1.6"/><circle cx="5" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="15" cy="10" r="1.6"/><circle cx="5" cy="15" r="1.6"/><circle cx="10" cy="15" r="1.6"/><circle cx="15" cy="15" r="1.6"/></svg></span></button>
 </nav>
 
 <div class="voile" id="voile" hidden></div>
@@ -80,15 +77,17 @@
 <script src="/stitch/js/couleur.js"></script>
 <script src="/stitch/js/conversion.js"></script>
 <script src="/compte/timbre.js"></script>
-<script src="/porte/porte.js"></script>
-<script src="/porte/revelation.js"></script>
 <script src="/pointzero/pz.js"></script>
-<script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'bureau',position:'compact'})</script>
 <script src="/cube/modele.js"></script>
 <script src="/cube/stock.js"></script>
 <script src="/cube/vue3d.js"></script>
 <script src="/os/apps.js"></script>
 <script src="/os/os.js"></script>
+<script src="/dock/modele.js"></script>
+<script src="/dock/dock.js"></script>
+<script src="/dock/plus.js"></script>
+<div id="dock-site"></div>
+<script>/* le Dock et le + unique : « Vos projets sont dans le Dock » (docs/IDENTITE.md § 6) */(function(){var el=document.getElementById('dock-site');if(!el||!window.AIMEDock||!window.AIMEDockVue)return;AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')})();</script>
 <!-- le dock montre le cube de la personne : ses faces posées en couleur -->
 <script>if(window.AIMECubeStock)AIMECubeStock.qui().then(function(u){u=u||AIMECubeStock.demo();if(!u)return;AIMECubeVue.memo(AIMECubeStock.charger(u),u);var b=document.querySelector('#dockApps [data-app="cube"] .ico');if(b)b.innerHTML=AIMECubeVue.miniHTML()}).catch(function(){})</script>
 </body>
