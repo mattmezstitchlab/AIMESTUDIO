@@ -6,6 +6,7 @@
 // seuls les espaces réels, réservés à leurs membres connectés, passent par le serveur. Et le secret de signature y est obligatoire.
 const crypto = require('crypto');
 const L = require('../../live/modele.js'), P = require('../../synchroview/permissions.js');
+const Q = require('../_auth/quotas.cjs'), R = require('../_auth/requete.cjs');   /* quotas partagés ; même origine et corps JSON (audit Vercel, PR 2) */
 const ESPACES = {
   mariage: { donnees: require('../../vitrine/donnees/mariage.json'), acces: require('../../vitrine/acces/mariage.json') },
   seminaire: { donnees: require('../../vitrine/donnees/seminaire.json'), acces: require('../../vitrine/acces/seminaire.json') }
@@ -51,6 +52,9 @@ function base() { if (fabrique) return fabrique(); if (!process.env.DATABASE_URL
 
 /* quelques envois par minute et par adresse, en mémoire de l'instance : un frein, pas un mur */
 const vus = new Map();
+/* les écritures du direct (actions, laissez-passer) : un quota partagé entre instances ; la lecture du journal, interrogée toutes
+   les quelques secondes, garde le frein en mémoire ci-dessous (un compteur en base doublerait ses requêtes) */
+async function quota(req, nom) { return Q.quota(nom, Q.ipDe(req)); }
 function freiner(req, max) {
   const ip = String((req.headers && (req.headers['x-forwarded-for'] || '')) || '').split(',')[0].trim() || 'inconnue', t = Date.now();
   const l = (vus.get(ip) || []).filter(x => t - x < 60000); l.push(t); vus.set(ip, l); if (vus.size > 5000) vus.clear(); return l.length > max;
@@ -59,6 +63,7 @@ function freiner(req, max) {
 function debut(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); res.status(405).json({ ok: false }); return null; }
+  const refus = R.ecriture(req); if (refus) { res.status(refus[0]).json(refus[1]); return null; }
   return corps(req);
 }
 const ferme = res => res.status(503).json({ ok: false, raison: 'Le direct entre appareils n\'est pas encore ouvert sur cet environnement.' });
@@ -67,4 +72,4 @@ const ferme = res => res.status(503).json({ ok: false, raison: 'Le direct entre 
 function equipe(acces, qui) { const s = L.sujet(acces, qui); return !!(s.role && P.can(s, 'read', { type: 'item', audience: 'equipe' }).allow); }
 function filtrer(lignes, acces, qui) { const eq = equipe(acces, qui); return lignes.filter(a => eq || !(a.action === 'annoncer' && a.p && a.p.audience === 'equipe')); }
 
-module.exports = { demoServeur, L, P, ESPACES, UUID, espace, DUREE, MAX_LIGNES, signer, lirePasse, base, freiner, debut, ferme, filtrer, _base(f) { fabrique = f; }, _reinitialiser() { vus.clear(); } };
+module.exports = { demoServeur, L, P, ESPACES, UUID, espace, DUREE, MAX_LIGNES, signer, lirePasse, base, freiner, quota, debut, ferme, filtrer, _base(f) { fabrique = f; }, _reinitialiser() { vus.clear(); } };
