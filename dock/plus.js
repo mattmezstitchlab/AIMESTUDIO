@@ -1,6 +1,6 @@
 /* AIME · le + unique (docs/IDENTITE.md § 6). Sa logique d'état est celle de porte/porte.js, sans dépendre du Timbre :
      sans compte  → « Commencer » : le champ d'intention de l'accueil, curseur dedans ;
-     connecté     → ses projets, puis « Nouveau projet ».
+     connecté     → ses projets, puis « Nouveau projet », « Tous mes projets » et « Se déconnecter » ; dans le Dock, « J'ai un compte » devient « Mon compte ».
    Le Timbre n'est jamais une étape. Le + ne donne aucun droit : il mène à des pages qui revérifient tout au serveur.
    AIMEPlus.etat(info, espaces) → { mode, items:[{ id, nom, sous?, href }] }   (pur, testé sous node)
    AIMEPlus.brancher(zone)       → lit /api/identite puis, connecté, /api/espaces « mes », et remplit le menu du + du dock
@@ -12,18 +12,21 @@ function etat(info,espaces){
  if(!info||!info.connecte)return{mode:'commencer',items:[{id:'commencer',nom:'Commencer',href:COMMENCER}]};
  var L=(espaces||[]).slice(0,MAX).map(function(e){return{id:'projet-'+e.id,nom:String(e.titre||'Projet'),sous:RELATION[e.role]||'',href:'/projets/?espace='+encodeURIComponent(e.id)}});
  L.push({id:'nouveau',nom:'Nouveau projet',href:COMMENCER});
- return{mode:'projets',items:L};
+ return{mode:'projets',items:L,fin:[{id:'tous',nom:'Tous mes projets',href:'/projets/'},{id:'sortir',nom:'Se déconnecter',href:'/compte/',sortir:true}]};
 }
 function champ(){return typeof document!=='undefined'?document.getElementById('acTexte'):null}
 function commencer(){var c=champ();if(!c){location.href=COMMENCER;return}
  c.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});setTimeout(function(){try{c.focus({preventScroll:true})}catch(_){c.focus()}},250)}
 function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function remplir(zone,e){var m=zone.querySelector('.dock-menu');if(!m)return;var sep=m.querySelector('.dock-sep'),fin=sep?[sep].concat([].slice.call(m.querySelectorAll('.dock-sep~*'))):[];
- m.innerHTML=e.items.map(function(x){var cmd=x.href===COMMENCER;return'<a class="dock-g" role="menuitem" tabindex="-1" href="'+esc(x.href)+'" data-geste="'+esc(x.id)+'" data-type="public"'+(cmd?' data-commencer="1"':'')+'>'+esc(x.nom)+(x.sous?'<small>'+esc(x.sous)+'</small>':'')+'</a>'}).join('');
+ var lien=function(x){var cmd=x.href===COMMENCER;return'<a class="dock-g" role="menuitem" tabindex="-1" href="'+esc(x.href)+'" data-geste="'+esc(x.id)+'" data-type="public"'+(cmd?' data-commencer="1"':'')+(x.sortir?' data-sortir="1"':'')+'>'+esc(x.nom)+(x.sous?'<small>'+esc(x.sous)+'</small>':'')+'</a>'};
+ m.innerHTML=e.items.map(lien).join('')+(e.fin&&e.fin.length?'<span class="dock-sep" role="separator"></span>'+e.fin.map(lien).join(''):'');
+ var c=zone.querySelector('.dock-e[data-lieu="compte"] .dock-t');if(c)c.textContent=e.mode==='projets'?'Mon compte':'J\'ai un compte';
  fin.forEach(function(n){m.appendChild(n)});var b=zone.querySelector('.dock-plus');if(b)b.setAttribute('aria-label',e.mode==='projets'?'Mes projets et nouveau projet':'Commencer un projet')}
 function brancher(zone){if(!zone||typeof fetch!=='function')return Promise.resolve(null);
  remplir(zone,etat(null));
- zone.addEventListener('click',function(ev){var a=ev.target.closest('[data-commencer]');if(!a||!champ())return;ev.preventDefault();ev.stopPropagation();var b=zone.querySelector('.dock-plus'),m=zone.querySelector('.dock-menu');if(m)m.hidden=true;if(b)b.setAttribute('aria-expanded','false');commencer()},true);
+ zone.addEventListener('click',function(ev){var s=ev.target.closest('[data-sortir]');if(s){ev.preventDefault();ev.stopPropagation();fetch('/api/auth/sign-out',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:'{}'}).catch(function(){}).then(function(){location.href='/'});return}
+  var a=ev.target.closest('[data-commencer]');if(!a||!champ())return;ev.preventDefault();ev.stopPropagation();var b=zone.querySelector('.dock-plus'),m=zone.querySelector('.dock-menu');if(m)m.hidden=true;if(b)b.setAttribute('aria-expanded','false');commencer()},true);
  return fetch('/api/identite',{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.ok?r.json():{connecte:false}}).catch(function(){return{connecte:false}}).then(function(info){
   if(!info||!info.connecte){remplir(zone,etat(info));return etat(info)}
   return fetch('/api/espaces',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({action:'mes'})}).then(function(r){return r.ok?r.json():{espaces:[]}}).catch(function(){return{espaces:[]}})
