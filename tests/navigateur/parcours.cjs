@@ -17,13 +17,32 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     for (const u of ['/', '/contact/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
-    // le + unique du Dock (docs/IDENTITE.md) : en haut seulement le logo ; sans compte, « Commencer » met le curseur dans le champ d'intention
+    // le Dock unique (docs/IDENTITE.md) : en haut seulement le logo
     await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.waitForTimeout(500);
     ok(await p.evaluate(() => !document.querySelector('.barre #porte, .barre .compte-d') && !document.getElementById('entrer')), 'accueil : en haut seulement le logo, plus de « Et maintenant ? »');
-    await p.click('#dock-site .dock-plus'); await p.waitForTimeout(250);
-    ok(await p.evaluate(() => [...document.querySelectorAll('#dock-site .dock-menu [role=menuitem]')].map(a => a.textContent.trim())[0] === 'Commencer'), 'le + : « Commencer » sans compte');
-    await p.click('#dock-site .dock-menu [data-commencer]'); await p.waitForTimeout(700);
-    ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'jsChoix'), 'le + : le curseur est dans « Je suis… »');
+    // le Dock public et la carte du + (décision de Matt, 24/10) : le Dock garde les lieux, le + garde les actions
+    ok(await p.evaluate(() => [...document.querySelectorAll('#dock-site .dock-e .dock-t')].map(x => x.textContent).join(' · ') === 'Le cœur · Exemples · J\'ai un compte'), 'Dock, pas connecté : Le cœur · Exemples · + · J\'ai un compte');
+    await p.click('#dock-site .dock-plus'); await p.waitForTimeout(300);
+    const carte = await p.evaluate(() => { const m = document.querySelector('#dock-site .dock-menu'), g = [...m.querySelectorAll('.dock-g')].map(a => a.textContent.trim()), d = document.querySelector('#dock-site .dock').getBoundingClientRect(), r = m.getBoundingClientRect(), lieux = [...document.querySelectorAll('#dock-site .dock-e .dock-t')].map(x => x.textContent);
+      return { g, dessus: r.bottom <= d.top + 1 && r.top >= 0 && r.left >= 0 && r.right <= innerWidth, carte: m.classList.contains('dock-carte'), double: g.some(x => lieux.includes(x)) }; });
+    ok(carte.carte && carte.g.join(' · ') === 'Créer un projet · J\'ai reçu une invitation' && !carte.double, 'le + : une carte, deux gestes, aucune entrée du Dock en double (' + carte.g.join(' · ') + ')');
+    ok(carte.dessus, 'le + : la carte est au-dessus du Dock, dans l\'écran');
+    await p.keyboard.press('Escape'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => document.querySelector('#dock-site .dock-menu').hidden && document.activeElement === document.querySelector('#dock-site .dock-plus')), 'le + : Échap ferme la carte et rend le focus au +');
+    await p.click('#dock-site .dock-plus'); await p.waitForTimeout(150); await p.click('#dock-site .dock-plus'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => document.querySelector('#dock-site .dock-menu').hidden), 'le + : retoucher le + ferme la carte');
+    await p.click('#dock-site .dock-plus'); await p.waitForTimeout(150); await p.mouse.click(20, 200); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => document.querySelector('#dock-site .dock-menu').hidden), 'le + : toucher ailleurs ferme la carte');
+    await p.click('#dock-site .dock-plus'); await p.waitForTimeout(150); await p.click('#dock-site [data-geste=creerProjet]'); await p.waitForTimeout(800);
+    ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'jsChoix'), '« Créer un projet » : jusqu\'à « Je suis… »');
+    // « J'ai reçu une invitation » : un lien collé mène à l'invitation ; un texte quelconque est refusé, sans navigation
+    await p.click('#dock-site .dock-plus'); await p.waitForTimeout(150); await p.click('#dock-site [data-geste=invitationRecue]'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => /Ouvrez le lien reçu par e-mail ou par message\./.test(document.querySelector('#dock-site [data-invitation]').textContent) && document.activeElement.type === 'url'), 'invitation : le champ s\'ouvre, avec la phrase');
+    await p.keyboard.type('bonjour'); await p.keyboard.press('Enter'); await p.waitForTimeout(200);
+    ok(new URL(p.url()).pathname === '/' && await p.evaluate(() => !!document.querySelector('#dock-site .dock-inv-e').textContent), 'invitation : un texte qui n\'est pas un lien est refusé, sans quitter la page');
+    const T = 'AbCdEfGhIjKlMnOpQrStUvWxYz012345';
+    await p.fill('#dock-site [data-invitation] input', B + '/projets/?invitation=' + T); await p.keyboard.press('Enter'); await p.waitForURL(/invitation=/, { timeout: 5000 }).catch(() => {});
+    ok(/\/projets\/\?invitation=AbCdEfGhIjKlMnOpQrStUvWxYz012345$/.test(p.url()), 'invitation : le lien collé mène à /projets/?invitation=…');
     await p.goto(B + '/exemples/?commencer=1', { waitUntil: 'networkidle' }).catch(() => {});
     await p.goto(B + '/?commencer=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(900);
     ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'jsChoix'), '/?commencer=1 : le curseur est dans « Je suis… »');
@@ -35,7 +54,10 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     // le bouton sous la démo, puis le champ e-mail, restent au-dessus du Dock
     if (n === 'téléphone') { const q = await b.newContext({ viewport: { width: 393, height: 659 }, isMobile: true, hasTouch: true }), t = await q.newPage(), api = [];
       t.on('request', r => { const u = new URL(r.url()); if (u.pathname.startsWith('/api/')) api.push(r.method() + ' ' + u.pathname); });
-      await t.goto(B + '/', { waitUntil: 'networkidle' }); await t.selectOption('#jsChoix', 'maries'); await t.waitForSelector('#demo .dm-tel.choisi'); await t.waitForTimeout(500);
+      await t.goto(B + '/', { waitUntil: 'networkidle' }); await t.click('#dock-site .dock-plus'); await t.waitForTimeout(250); await t.click('#dock-site [data-geste=invitationRecue]'); await t.waitForTimeout(250);
+      ok(await t.evaluate(() => { const m = document.querySelector('#dock-site .dock-menu').getBoundingClientRect(), d = document.querySelector('#dock-site .dock').getBoundingClientRect(); return m.bottom <= d.top + 1 && m.top >= 0 && m.left >= 0 && m.right <= innerWidth; }), 'le + (393×659) : la carte et le champ d\'invitation restent au-dessus du Dock, dans l\'écran');
+      await t.keyboard.press('Escape'); api.length = 0;
+      await t.selectOption('#jsChoix', 'maries'); await t.waitForSelector('#demo .dm-tel.choisi'); await t.waitForTimeout(500);
       const dessus = sel => t.evaluate(async s => { const x = document.querySelector(s); x.scrollIntoView({ block: 'nearest' }); await new Promise(r => setTimeout(r, 120)); const d = document.querySelector('#dock-site .dock').getBoundingClientRect().top, r = x.getBoundingClientRect(); return r.height > 0 && r.bottom <= d + 1 && r.top >= 0; }, sel);
       ok(await dessus('#jsCreer'), 'accueil (393×659) : « Créer notre mariage », sous la démo, reste au-dessus du Dock');
       ok(api.every(x => x === 'GET /api/identite'), 'accueil : aucun appel au serveur avant « Créer » (seul le Dock lit /api/identite)' + (api.length ? ' (' + [...new Set(api)].join(', ') + ')' : ''));
