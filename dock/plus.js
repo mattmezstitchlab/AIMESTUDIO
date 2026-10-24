@@ -10,7 +10,7 @@ var COMMENCER='/?commencer=1',MAX=5;
 var RELATION={owner:'votre projet',editor:'coordination',contributor:'contribution',viewer:'lecture seule',guest:'invité'};
 function etat(info,espaces){
  if(!info||!info.connecte)return{mode:'commencer',items:[{id:'commencer',nom:'Commencer',href:COMMENCER}]};
- var L=(espaces||[]).slice(0,MAX).map(function(e){return{id:'projet-'+e.id,nom:String(e.titre||'Projet'),sous:RELATION[e.role]||'',href:'/compte/?espace='+encodeURIComponent(e.id)}});
+ var L=(espaces||[]).slice(0,MAX).map(function(e){return{id:'projet-'+e.id,nom:String(e.titre||'Projet'),sous:RELATION[e.role]||'',href:'/projets/?espace='+encodeURIComponent(e.id)}});
  L.push({id:'nouveau',nom:'Nouveau projet',href:COMMENCER});
  return{mode:'projets',items:L};
 }

@@ -137,3 +137,15 @@ test('pages · la projection n\'invente aucun droit : chaque verbe de Mon accès
   const cam = await page(mariage, 'acces', P.camille), vc = cam.body.blocs.find(b => b.type === 'gestes').verbes;
   assert.ok(vc.some(x => x === 'inviter des lecteurs et des invités'), 'la coordination invite lecteurs et invités'); assert.ok(!vc.includes('supprimer le projet'));
 });
+
+test('pages · le Dock de la réponse est composé au serveur (composerReel) : Mon accès en tête, Inviter seulement si accordé', opts, async () => {
+  const d = async q => (await page(mariage, 'acces', q)).body.dock;
+  const lea = await d(P.lea), cam = await d(P.camille), lumen = await d(P.lumen), lucie = await d(P.lucie);
+  for (const k of [lea, cam, lumen, lucie]) { assert.ok(k && k.reel && !k.public, 'un vrai Dock'); assert.equal(k.lieux[0].gabarit, 'acces'); assert.equal(k.inattendu, true); assert.ok(!k.mention.includes('Démonstration'));
+    assert.ok(k.lieux.every(l => ['acces', 'journal', 'personnes'].includes(l.gabarit)), 'seulement les gabarits servis'); }
+  assert.deepEqual(lea.plus.map(a => a.id), ['inviter']); assert.deepEqual(lea.plus[0].roles, ['editor', 'contributor', 'viewer', 'guest']);
+  assert.deepEqual(cam.plus[0].roles, ['viewer', 'guest'], 'la coordination n\'invite que lecteurs et invités');
+  assert.deepEqual(lumen.plus, [], 'le prestataire n\'invite personne'); assert.deepEqual(lucie.lieux.map(l => l.gabarit), ['acces'], 'l\'invitée : Mon accès seulement');
+  assert.ok(!JSON.stringify(lucie).includes('Personnes') && !JSON.stringify(lucie).includes('Inviter'), 'aucune entrée interdite, même en texte');
+  assert.equal((await G.projeter(pool, null, { espace: mariage, gabarit: 'acces' })).dock, null, 'le public n\'a pas de Dock de projet');
+});

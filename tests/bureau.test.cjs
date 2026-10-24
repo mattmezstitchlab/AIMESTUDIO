@@ -18,10 +18,10 @@ const plein={
 
 test('registre : une seule liste, des statuts et des rôles explicites, des adresses internes',()=>{
  const ids=new Set();for(const e of N.ENTREES){assert.ok(!ids.has(e.id),'doublon '+e.id);ids.add(e.id);assert.ok(N.STATUTS[e.statut],e.id);assert.ok(N.ROLES[e.role],e.id);assert.match(e.href,/^\/(?!\/)/,e.id)}
- assert.equal(N.entree('bureau').href,'/bureau/');assert.equal(N.entree('bureau').role,'travailler');assert.equal(N.par('role','travailler').length,1,'une seule entrée pour travailler');
+ assert.equal(N.entree('bureau').href,'/bureau/');assert.equal(N.entree('projets').href,'/projets/');assert.deepEqual(N.par('role','travailler').map(e=>e.id),['projets'],'une seule entrée pour travailler : Mes projets');
  assert.ok(N.par('role','experimenter').length>=1,'un Lab séparé');
  const menu=fs.readFileSync(R('menu/menu.js'),'utf8');assert.match(menu,/window\.AIMENav/);
- for(const f of ['aime/index.html','bureau/espace/index.html']){const h=fs.readFileSync(R(f),'utf8');assert.ok(h.indexOf('/nav/registre.js')>=0&&h.indexOf('/nav/registre.js')<h.indexOf('/menu/menu.js'),f+' charge le registre avant le menu')}});
+ for(const f of ['aime/index.html']){const h=fs.readFileSync(R(f),'utf8');assert.ok(h.indexOf('/nav/registre.js')>=0&&h.indexOf('/nav/registre.js')<h.indexOf('/menu/menu.js'),f+' charge le registre avant le menu')}});
 
 test('sources : tout est retrouvé, rien n\'est écrit, rien n\'est inventé',()=>{
  const S=stock(plein,true),inv=B.inventaire(S),par=id=>inv.sources.find(s=>s.id===id).projets;

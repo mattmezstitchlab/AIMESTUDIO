@@ -19,7 +19,7 @@
 <header class="tete">
  <a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup> <span>Compte</span></a>
  <div class="ev"><b id="tTitre">Mon compte</b><span id="tSous">Vos espaces partagés, vos invitations, vos clés d'accès</span></div>
- <div class="tete-d"><button class="b" type="button" id="sortir" hidden>Se déconnecter</button></div>
+ <div class="tete-d"><a class="b" id="versAutre" href="/projets/" hidden>Mes projets</a><button class="b" type="button" id="sortir" hidden>Se déconnecter</button></div>
 </header>
 
 <main id="contenu" tabindex="-1" class="cpt">
@@ -56,10 +56,10 @@
  </section>
 
  <section id="espaces" hidden aria-labelledby="t-esp">
-  <div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-esp">Mes espaces</h2></div>
-  <form class="carte-c lgn" id="fEspace"><label class="sr" for="eTitre">Nom du nouvel espace</label><input id="eTitre" maxlength="120" placeholder="Nom d'un nouvel espace (le mariage de…, le séminaire…)" style="flex:1;min-width:220px" required>
+  <div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-esp">Mes projets</h2></div>
+  <form class="carte-c lgn" id="fEspace"><label class="sr" for="eTitre">Nom du nouveau projet</label><input id="eTitre" maxlength="120" placeholder="Nom d'un nouveau projet (le mariage de…, le séminaire…)" style="flex:1;min-width:220px" required>
    <label class="sr" for="eModele">Programme du jour J</label><select id="eModele"><option value="mariage">Programme : mariage (démonstration)</option><option value="seminaire">Programme : séminaire (démonstration)</option><option value="">Sans programme</option></select>
-   <button class="b b-p" type="submit">Créer l'espace</button></form>
+   <button class="b b-p" type="submit">Créer le projet</button></form>
   <div class="pile" id="liste"></div>
  </section>
 </main>

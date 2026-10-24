@@ -39,7 +39,7 @@ test('OS · la coque : /bureau/ est l\'OS, Mon espace garde l\'ancien Bureau, la
   const h = fs.readFileSync('bureau/index.html', 'utf8');
   for (const s of ['/nav/registre.js', '/regie/donnees.js', '/bureau/sources.js', '/os/apps.js', '/os/os.js']) assert.ok(h.includes(s), s);
   assert.ok(h.indexOf('/os/apps.js') < h.indexOf('/os/os.js'));
-  assert.match(h, /role="combobox"/); assert.match(h, /aria-label="Dock"/);
+  assert.match(h, /role="combobox"/); assert.match(h, /id="dock"[^>]*hidden/, 'la barre d\'apps reste en coulisses (fenêtres), cachée'); assert.match(h, /id="dock-site"/, 'le Dock AIME la remplace'); assert.match(h, /id="orbeBtn"/); assert.match(h, /id="toutBtn"/);
   assert.ok(fs.existsSync('bureau/espace/index.html'));
   assert.match(fs.readFileSync('regie/scene.js', 'utf8'), /DANS_OS/);
   const os = fs.readFileSync('os/os.js', 'utf8');

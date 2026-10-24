@@ -22,6 +22,10 @@ kbd{font:600 10.5px var(--ui);padding:2px 6px;border-radius:6px;border:1px solid
 .app-courante{font:500 13.5px var(--ui);color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .barre-d{margin-left:auto;display:flex;align-items:center;gap:12px}
 .cherche{display:flex;align-items:center;gap:8px;height:30px;padding:0 8px 0 10px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.04);color:var(--soft);cursor:pointer}
+/* le Bureau : la barre d'apps cède la place au Dock AIME ; l'orbe et « Toutes les apps » montent dans l'en-tête */
+.os-dock[hidden]{display:none!important}
+body.os.avec-dock{--dock:100px}
+.barre-d .os-dock-orbe,.barre-d .os-dock-app,.barre-d .os-dock-app .ico{width:30px;height:30px;border-radius:50%}.barre-d .os-dock-orbe .mini-orbe{width:24px;height:24px}.barre-d .os-dock-app:hover{transform:none}.barre-d .os-dock-app.toutes svg{width:14px;height:14px}
 .cherche:hover{color:var(--ink);background:rgba(255,255,255,.08)}
 .cherche svg,.palette-q svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
 .heure{font:500 13px var(--ui);font-variant-numeric:tabular-nums;color:var(--soft)}

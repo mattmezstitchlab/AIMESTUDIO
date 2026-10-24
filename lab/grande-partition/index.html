@@ -12,8 +12,7 @@
 <script>try{if(localStorage.getItem('aime-zero-calme')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}catch(e){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}</script>
 <link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/porte/porte.css">
-<link rel="stylesheet" href="/porte/revelation.css">
+<link rel="stylesheet" href="/dock/dock.css">
 <link rel="stylesheet" href="/compte/timbre.css">
 <link rel="stylesheet" href="/cube/vue3d.css">
 <link rel="stylesheet" href="/verticale/verticale.css">
@@ -227,7 +226,7 @@ html.calme .mo{opacity:1}
 </head>
 <body>
 <a class="evite" href="#impulsion">Aller à la saisie unique</a>
-<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#impulsion">Saisir une fois</a><a class="passer" href="#atlas">10 univers</a><a class="passer" href="#entrer">Passer l'introduction</a><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
+<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#impulsion">Saisir une fois</a><a class="passer" href="#atlas">10 univers</a><a class="passer" href="#entrer">Passer l'introduction</a></nav></header>
 
 <!-- La Règle vivante sur la tranche gauche : change d'unité à chaque Acte et ouvre les loupes d'échelle -->
 <aside class="regle" id="rul" aria-label="Règle de navigation et d'échelles">
@@ -800,8 +799,6 @@ html.calme .mo{opacity:1}
 <script src="/bureau/sources.js"></script>
 <script src="/os/coque.js"></script>
 <script src="/os/os.js"></script>
-<script src="/porte/porte.js"></script>
-<script src="/porte/revelation.js"></script>
 <script src="/verticale/noyau.js"></script>
 <script src="/verticale/regle.js"></script>
 <script src="/verticale/globe.js"></script>
@@ -809,6 +806,10 @@ html.calme .mo{opacity:1}
 <script src="/verticale/causalite.js"></script>
 <script src="/verticale/supports.js"></script>
 <script src="/verticale/atlas.js"></script>
-<script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'zero',position:'haut'})</script>
+<script src="/dock/modele.js"></script>
+<script src="/dock/dock.js"></script>
+<script src="/dock/plus.js"></script>
+<div id="dock-site"></div>
+<script>/* le Dock et le + unique (docs/IDENTITE.md § 6) */(function(){var el=document.getElementById('dock-site');if(!el||!window.AIMEDock||!window.AIMEDockVue)return;AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site',actif:'lab'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')})();</script>
 </body>
 </html>
