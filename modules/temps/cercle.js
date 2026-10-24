@@ -1,10 +1,12 @@
-/* AIME · module Temps, le CERCLE : un calculateur PUR (aucun DOM, aucun réseau, testé sous node) qui transforme la vue Temps
-   d'une personne (déjà calculée et filtrée par le serveur, modules/temps/moteur.js vue()) en un modèle de cadran à dessiner.
+/* AIME · module Temps, le CERCLE : la géométrie TEMPORELLE du noyau radial (modules/radial/noyau.js), pour le cadran de Temps.
+   Un calculateur PUR (aucun DOM, aucun réseau, testé sous node) qui transforme la vue Temps d'une personne (déjà calculée et filtrée
+   par le serveur, modules/temps/moteur.js vue()) en un modèle de cadran à dessiner.
    Il ne décide de rien : ni droit, ni conséquence. Il place ce que la vue contient : moments, horaire prévu, propositions,
    confirmations attendues. Aucun vocabulaire de domaine : il sert un mariage, une formation, un séminaire.
 
-   Géométrie reprise de RIPPLECIRCLE (mattmezstitchlab/RIPPLECIRCLE, src/utils/radial.ts : polarXY, arcPathAt), complétée :
-   arc nul, tour complet. Convention : 0° en haut, sens horaire.
+   Ce qui est propre au TEMPS vit ici : la fenêtre de temps (le futur zoom), l'angle d'une minute, l'étendue d'un moment à travers
+   minuit, les couloirs des moments simultanés, le nom accessible d'un moment. La géométrie polaire, le tracé d'arc et le toucher
+   viennent du noyau commun (ré-exposés ici à l'identique : AIMECercle.polarXY === AIMERadial.polarXY).
 
    Le cadran est une FENÊTRE de temps : par défaut la journée (0 → 1440 minutes, minuit en haut). Un zoom futur sur une plage
    (par exemple 15:00 → 03:00) passera une autre fenêtre ; rien d'autre ne change (fenetre(), angle()).
@@ -13,18 +15,15 @@
      fenetre, graduations[], arcs[{ id, couloir, d, dPrevu?, debut, fin, etat[], nom }], zones[{ moment, apres, d, nom }],
      debordements[{ id, nom, angle }], couloirs, ordre[] }
    AIMECercle.couloirs(moments, max) → { place: { id: couloir }, deborde: [id], n } */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.AIMECercle=factory()})(typeof self!=='undefined'?self:this,function(){'use strict';
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('../radial/noyau.js'));else root.AIMECercle=factory(root.AIMERadial)})(typeof self!=='undefined'?self:this,function(N){'use strict';   /* N : le noyau radial (R reste le rayon du cadran, dans modele) */
+if(!N||!N.polarXY)throw new Error('le noyau radial (modules/radial/noyau.js) doit être chargé avant le cercle de Temps');
 
+var GEOMETRIE=N.geometrie('temporelle');
 var JOUR=1440,CENTRE=500;
 
-/* ---------- géométrie (RIPPLECIRCLE, radial.ts) ---------- */
-function polarXY(cx,cy,r,deg){var rad=(deg-90)*Math.PI/180;return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)}}
+/* ---------- géométrie : celle du noyau commun ---------- */
+var polarXY=N.polarXY,arcPathAt=N.arcPathAt,normDeg=N.normDeg;
 function n(v){return Math.round(v*100)/100}
-/* un arc dans le sens horaire de a0 à a1 (degrés, a1 ≥ a0) ; tour complet = deux demi-arcs ; arc nul = un trait minimal */
-function arcPathAt(cx,cy,r,a0,a1){if(a1-a0>=359.99){return arcPathAt(cx,cy,r,a0,a0+180)+' '+arcPathAt(cx,cy,r,a0+180,a0+359.99)}
- if(a1-a0<0.5)a1=a0+0.5;var s=polarXY(cx,cy,r,a0),e=polarXY(cx,cy,r,a1);
- return'M'+n(s.x)+' '+n(s.y)+' A'+r+' '+r+' 0 '+(a1-a0>180?1:0)+' 1 '+n(e.x)+' '+n(e.y)}
-function normDeg(a){return((a%360)+360)%360}
 
 /* ---------- la fenêtre de temps (le futur zoom) ---------- */
 function fenetre(f){f=f||{};var d=typeof f.debut==='number'?f.debut:0,fi=typeof f.fin==='number'?f.fin:d+JOUR;if(!(fi>d))throw new Error('fenêtre vide');if(fi-d>JOUR)throw new Error('fenêtre de plus de 24 h');return{debut:d,fin:fi,duree:fi-d,jour:fi-d===JOUR}}
@@ -79,12 +78,9 @@ function modele(vue,o){o=o||{};var f=fenetre(o.fenetre),max=o.couloirs||3,R=o.ra
  var ordre=arcs.slice().sort(function(a,b){return(parId[a.id].dm-parId[b.id].dm)||(a.couloir-b.couloir)}).map(function(a){return a.id});
  return{fenetre:f,centre:CENTRE,rayon:R,epaisseur:E,ecart:G,graduations:graduations,arcs:arcs,zones:zones,debordements:debordements,couloirs:c.n,ordre:ordre}}
 
-/* toucher : un point du cadran (unités du dessin) → le moment le plus proche, dans une tolérance donnée.
-   Le doigt n'a pas à viser un arc étroit : on mesure la distance au tracé (angle ramené en longueur, et écart de rayon). */
-function toucher(M,x,y,tol){var dx=x-M.centre,dy=y-M.centre,r=Math.sqrt(dx*dx+dy*dy),a=normDeg(Math.atan2(dy,dx)*180/Math.PI+90),best=null;
- M.arcs.forEach(function(c){var span=Math.max(c.a1-c.a0,2),d=normDeg(a-c.a0),ang=d<=span?0:Math.min(d-span,360-d),long=ang*Math.PI/180*c.rayon,rad=Math.max(0,Math.abs(r-c.rayon)-M.epaisseur/2),dist=Math.sqrt(long*long+rad*rad);
-  if(dist<=tol&&(!best||dist<best.dist||(dist===best.dist&&Math.abs(r-c.rayon)<best.rad)))best={id:c.id,dist:dist,rad:Math.abs(r-c.rayon)}});
- return best?best.id:null}
+/* toucher : un point du cadran (unités du dessin) → le moment le plus proche, dans une tolérance donnée (le noyau commun ;
+   un moment très court compte pour 2°, comme il est dessiné) */
+function toucher(M,x,y,tol){return N.toucher(M,x,y,tol,{minSpan:2})}
 
-return{JOUR:JOUR,toucher:toucher,polarXY:polarXY,arcPathAt:arcPathAt,normDeg:normDeg,fenetre:fenetre,angle:angle,etendue:etendue,couloirs:couloirs,nom:nom,modele:modele,hm:hm};
+return{GEOMETRIE:GEOMETRIE,JOUR:JOUR,toucher:toucher,polarXY:polarXY,arcPathAt:arcPathAt,normDeg:normDeg,fenetre:fenetre,angle:angle,etendue:etendue,couloirs:couloirs,nom:nom,modele:modele,hm:hm};
 });

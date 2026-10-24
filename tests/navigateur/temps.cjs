@@ -207,11 +207,18 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     const h = await page.emma.locator('.tp-hist-l').innerText();
     ok(/Cocktail/.test(h) && !/importé|Point coordination|Installation/.test(h), 'Emma : l\'historique, réduit à ses moments');
 
-    console.log('Accessibilité (axe-core, WCAG 2.1 AA)');
+    console.log('Accessibilité (axe-core, WCAG 2.2 AA : les règles 2.0, 2.1 et 2.2)');
     for (const k of ['camille', 'alex', 'emma']) {
       await page[k].addScriptTag({ content: AXE });
-      const v = await page[k].evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ') ' + x.nodes.slice(0, 3).map(n => n.target.join(' ') + ' ' + (n.any[0] && n.any[0].message || '').slice(0, 90)).join(' | ')));
+      const v = await page[k].evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ') ' + x.nodes.slice(0, 3).map(n => n.target.join(' ') + ' ' + (n.any[0] && n.any[0].message || '').slice(0, 90)).join(' | ')));
       ok(!v.length, k + ' : ' + (v.length ? v.join(', ') : 'aucune anomalie bloquante'));
+    }
+    /* Circle lui-même, sur ordinateur (Léa) et sur iPhone (Emma), un moment ouvert : mêmes règles WCAG 2.2 AA */
+    for (const k of ['lea', 'emma']) {
+      await page[k].goto(programme + '&vue=cercle&moment=cocktail', { waitUntil: 'networkidle' }); await page[k].waitForSelector('.tp-arc'); await page[k].waitForSelector('.tp-detail .tp-m');
+      await page[k].addScriptTag({ content: AXE });
+      const v = await page[k].evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ') ' + x.nodes.slice(0, 3).map(n => n.target.join(' ')).join(' | ')));
+      ok(!v.length, k + ' (Circle, un moment ouvert) : ' + (v.length ? v.join(', ') : 'aucune anomalie bloquante'));
     }
     const verif = await M.verifier(A._pool(), espace); ok(verif.ok, 'le journal rejoué redonne exactement la table (rev ' + verif.rev + ')');
     await A._pool().end();
