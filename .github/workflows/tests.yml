@@ -23,6 +23,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
+      # les fichiers emportés par chaque fonction Vercel (tests/fonctions.test.cjs) : @vercel/nft, sans l'ajouter aux dépendances du site
+      - run: npm install --no-save @vercel/nft@1.11.0
       - run: npm test
   socle:
     name: Socle (base de test)
