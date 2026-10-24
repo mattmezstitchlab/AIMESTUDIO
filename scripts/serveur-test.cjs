@@ -10,8 +10,8 @@ const T = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs
 const ECRANS = Promise.resolve(require(path.join(ROOT, 'api/_auth/ecrans.cjs')));
 const proprietaireDeTest = r => /(?:^|;\s*)aime_test_proprietaire=oui(?:;|$)/.test(r.headers.get('cookie') || '');
 http.createServer((req, res) => {
-  const u0 = new URL(req.url, 'http://x');
-  ECRANS.then(E => E.garder(new Request('http://localhost' + u0.pathname, { headers: { cookie: req.headers.cookie || '' } }), proprietaireDeTest)).then(async r => {
+  const brut = '/' + String(req.url || '/').split(/[?#]/)[0].replace(/^\/+/, m => m.slice(1));   /* le chemin brut : « //regie/ » reste un chemin, pas un hôte */
+  ECRANS.then(E => E.garder(new Request('http://localhost' + brut, { headers: { cookie: req.headers.cookie || '' } }), proprietaireDeTest)).then(async r => {
     if (!r) return servir(req, res);
     res.writeHead(r.status, Object.fromEntries(r.headers)); res.end(await r.text());
   }, () => { res.writeHead(500); res.end(); });
