@@ -11,7 +11,7 @@ var RELATION={owner:'votre projet',editor:'coordination',contributor:'contributi
 function etat(info,espaces){
  if(!info||!info.connecte)return{mode:'commencer',items:[{id:'commencer',nom:'Commencer',href:COMMENCER}]};
  var L=(espaces||[]).slice(0,MAX).map(function(e){return{id:'projet-'+e.id,nom:String(e.titre||'Projet'),sous:RELATION[e.role]||'',href:'/projets/?espace='+encodeURIComponent(e.id)}});
- L.push({id:'nouveau',nom:'Nouveau projet',href:COMMENCER});
+ L.push({id:'nouveau',nom:'Nouveau projet',href:'/projets/?nouveau=1'});   /* une seule création : celle de Mes projets (compte/creer.js) */
  return{mode:'projets',items:L,fin:[{id:'tous',nom:'Tous mes projets',href:'/projets/'},{id:'sortir',nom:'Se déconnecter',href:'/compte/',sortir:true}]};
 }
 function champ(){return typeof document!=='undefined'?document.getElementById('acTexte'):null}
