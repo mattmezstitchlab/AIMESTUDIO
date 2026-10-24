@@ -24,6 +24,11 @@ function ressource(m){return{type:'event',id:m.id,public:m.audience==='public',a
 /* lire un moment : la règle du programme (event.read) PUIS son audience (item.read) ; les deux doivent passer */
 function lisible(s,m,P){return !!(s&&s.role&&P.can(s,'read',ressource(m)).allow&&P.can(s,'read',{type:'item',audience:m.audience}).allow)}
 function equipe(s,P){return !!(s&&s.role&&P.can(s,'read',{type:'item',audience:'equipe'}).allow)}
+/* confirmer : un accusé de lecture, pas un droit. Aucune règle nouvelle : il faut lire le moment (event.read) ET en être la personne responsable */
+function peutConfirmer(s,m,P){if(!(m.responsable&&m.responsable===s.id))return{allow:false,rule:'event.read + responsable',reason:'seule la personne responsable de ce moment le confirme'};
+ var d=P.can(s,'read',ressource(m));return d.allow?{allow:true,rule:'event.read + responsable',reason:''}:d}
+/* comparer les vues : la règle existante du propriétaire (space.manage_members), la vue comparée restant coupée à la sienne */
+function peutComparer(s,P){var d=P.can(s,'manage_members',{type:'space'});return d.allow?d:{allow:false,rule:d.rule,reason:'comparer les vues est réservé au propriétaire'}}
 function orga(s,P){return !!(s&&s.role&&P.can(s,'create',{type:'event'}).allow)}
 function debutEff(m){return m.debut+(m.decalage||0)}
 function finEff(m){return m.fin+(m.decalage||0)}
@@ -44,7 +49,7 @@ function decider(prog,sujet,geste,P){geste=geste||{};
  var p=geste.p||{},m=typeof p.moment==='string'?parId(prog,p.moment):null;
  /* un moment qu'on ne peut pas lire n'existe pas pour soi : même réponse qu'un moment inconnu */
  if(!m||!lisible(sujet,m,P))return refus(404,'','Moment introuvable.');
- if(geste.action==='confirmer'){var c=P.can(sujet,'confirm',ressource(m));if(!c.allow)return refus(403,c.rule,c.reason);
+ if(geste.action==='confirmer'){var c=peutConfirmer(sujet,m,P);if(!c.allow)return refus(403,c.rule,c.reason);
   var deja=((prog.confirmations||{})[sujet.id]||{})[m.id]||0;if(deja>=m.majRev||m.majRev<=(prog.revImport||0))return refus(409,c.rule,'Rien de nouveau à confirmer pour ce moment.');
   return{ok:true,code:200,regle:c.rule,raison:'',touches:[m.id],effets:[],confirme:m.id}}
  var a=L.action({qui:'x'+String(sujet.id).replace(/[^A-Za-z0-9_-]/g,'').slice(0,60),action:geste.action,p:p,t:0});
@@ -69,7 +74,7 @@ function conflit(prog,decision,revVue){var v=Number(revVue);if(!isFinite(v)||v<0
 
 /* les gestes possibles sur un moment, pour CETTE personne : calculés ici, revérifiés à l'envoi */
 function gestesSur(prog,s,m,P){var ed=P.can(s,'edit',ressource(m)).allow,conf=((prog.confirmations||{})[s.id]||{})[m.id]||0;
- return{retarder:ed&&!m.fait,fait:ed&&!m.fait,planB:ed&&!!m.planB,confirmer:P.can(s,'confirm',ressource(m)).allow&&m.majRev>conf&&m.majRev>(prog.revImport||0)}}
+ return{retarder:ed&&!m.fait,fait:ed&&!m.fait,planB:ed&&!!m.planB,confirmer:peutConfirmer(s,m,P).allow&&m.majRev>conf&&m.majRev>(prog.revImport||0)}}
 
 /* une conséquence qu'AIME ne tranche pas : un moment qui empiète maintenant sur le suivant (et ne le faisait pas au départ).
    Proposée seulement à qui peut lire les deux et modifier le second ; jamais appliquée sans son geste. */
@@ -89,10 +94,10 @@ function vue(prog,s,P){if(!s||!s.role)return null;var eq=equipe(s,P),org=orga(s,
   if(m.responsable){if(m.responsable===s.id)o.responsable='moi';else if(org)o.responsable=m.responsable}   /* qui porte quoi : l'organisation, ou soi-même */
   return o});
  return{rev:prog.rev,role:s.role,moments:M,propositions:propositions(prog,s,P,V),aConfirmer:M.filter(function(m){return m.aConfirmer}).map(function(m){return m.id}),
-  peutComparer:P.can(s,'compare',{type:'space'}).allow,equipe:eq}}
+  peutComparer:peutComparer(s,P).allow,equipe:eq}}
 
 /* la Comparaison ne crée aucun privilège : la vue de la cible, coupée à ce que le demandeur lit lui-même, champ par champ */
-function comparer(prog,demandeur,cibleId,P){var d=P.can(demandeur,'compare',{type:'space'});if(!d.allow)return{ok:false,code:403,raison:d.reason};
+function comparer(prog,demandeur,cibleId,P){var d=peutComparer(demandeur,P);if(!d.allow)return{ok:false,code:403,raison:d.reason};
  var role=(prog.membres||{})[cibleId];if(!role)return{ok:false,code:404,raison:'Cette personne n\'est pas membre du projet.'};
  var c={id:cibleId,role:role},vc=vue(prog,c,P),vd=vue(prog,demandeur,P),mien={};vd.moments.forEach(function(m){mien[m.id]=m});
  var M=vc.moments.filter(function(m){return mien[m.id]}).map(function(m){var o=Object.assign({},m),x=mien[m.id];
@@ -139,5 +144,5 @@ function reconstruire(lignes){var L2=(lignes||[]).slice().sort(function(a,b){ret
    etat[f.id]={decalage:f.apres.decalage,fait:f.apres.fait,planBActif:f.apres.planBActif,majRev:r}})});
  return{rev:rev,moments:etat||{},confirmations:conf}}
 
-return{AUDIENCES:AUDIENCES,GESTES:GESTES,importer:importer,lisible:lisible,ressource:ressource,decider:decider,conflit:conflit,vue:vue,comparer:comparer,propositions:propositions,historique:historique,reconstruire:reconstruire,fmt:fmt,debutEff:debutEff,finEff:finEff};
+return{peutComparer:peutComparer,peutConfirmer:peutConfirmer,AUDIENCES:AUDIENCES,GESTES:GESTES,importer:importer,lisible:lisible,ressource:ressource,decider:decider,conflit:conflit,vue:vue,comparer:comparer,propositions:propositions,historique:historique,reconstruire:reconstruire,fmt:fmt,debutEff:debutEff,finEff:finEff};
 });

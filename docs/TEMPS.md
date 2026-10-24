@@ -17,7 +17,7 @@ Dock (dock/modele.js composerReel)   Atlas (/capacites/, capacites/modules.js)  
                                                |
      modules/temps/moteur.js (pur) ── live/modele.js (grammaire, cascade) ── synchroview/permissions.js (règles)
                                                |
-                 Neon : temps_espaces (rev) · moments (état) · live_journal (historique) · audit
+                 Neon : temps_espaces (rev) · moments (état) · live_journal (historique)
 ```
 
 - **Le registre** (`modules/registre.js`) décrit chaque module : identifiant, fonction, ressources, actions et la règle de `permissions.js` qui décide chacune, présentations, contextes, destination, états, accessibilité, journal, intentions, preuves. Statuts : `operationnel` (Temps, Mon accès, Journal, Personnes), `composant` (Documents, Finances), `documente` (Messages). Le serveur en tire les pages servies (`pagesDe`), donc le Dock ; l'Atlas l'affiche ; l'écran de projet en tire ses pages.
@@ -31,7 +31,6 @@ Dock (dock/modele.js composerReel)   Atlas (/capacites/, capacites/modules.js)  
 | `moments` | **État courant**. Seule table lue par les vues. | `geste()` et `activer()`, dans la transaction |
 | `live_journal` (lignes avec `rev`) | **Historique**, en ajout seul (UPDATE interdit par déclencheur). Chaque geste inscrit sa révision et ses effets `{id, avant, apres}` ; la ligne `importer` (rev 1) porte le programme de départ. | même transaction |
 | `temps_espaces.rev` | Compteur du projet, verrouillé `for update` à chaque geste | même transaction |
-| `audit` | Journal du projet (« qui a modifié le programme »), sans contenu | même transaction |
 
 **Reconstruction** : `reconstruire(journal)` rejoue l'import puis les effets dans l'ordre des révisions et vérifie à chaque pas que l'état « avant » correspond. `verifier(db, espace)` compare le résultat à la table ; les tests l'exécutent à la fin de chaque passe.
 
@@ -45,7 +44,7 @@ Un geste = une transaction PostgreSQL :
 2. Le rôle est relu sous ce verrou (un retrait ou une fin d'accès concurrents comptent).
 3. Le programme est chargé, la décision prise par le moteur pur (règles, cascade atomique).
 4. **Conflit** : si un moment touché a une révision postérieure à celle que le navigateur a vue, la réponse est 409, avec la version à jour. Rien n'est écrit. Un geste sur un autre moment n'est pas bloqué.
-5. Ligne de journal (`rev` unique : index `live_journal_rev`), mises à jour conditionnelles des moments (sur leur état « avant »), nouvelle révision, ligne d'audit. Tout ou rien.
+5. Ligne de journal (`rev` unique : index `live_journal_rev`), mises à jour conditionnelles des moments (sur leur état « avant »), nouvelle révision. Tout ou rien.
 
 ## 4. Visibilité (au serveur, toujours)
 
@@ -53,9 +52,9 @@ Un geste = une transaction PostgreSQL :
 - Champ par champ : les consignes d'équipe pour l'équipe, l'identité d'un responsable pour l'organisation (ou « moi »).
 - Un moment invisible répond comme un moment inconnu (404). Le refus d'une cascade ne nomme jamais un moment invisible.
 - **Historique** : une ligne apparaît seulement si elle touche un moment lisible, et seulement ces moments. Les noms suivent `member.read`.
-- **Comparaison** : `space.compare` (le propriétaire seulement). La vue de la cible est calculée avec ses droits, **puis coupée à ce que le demandeur lit lui-même** (intersection, champ par champ). Elle ne peut donc créer aucun privilège indirect (testé avec des règles où la cible voit plus que le demandeur).
+- **Comparaison** : la règle existante du propriétaire (`space.manage_members`). La vue de la cible est calculée avec ses droits, **puis coupée à ce que le demandeur lit lui-même** (intersection, champ par champ). Elle ne peut donc créer aucun privilège indirect (testé avec des règles où la cible voit plus que le demandeur).
 - **Propositions** : un moment qui empiète maintenant sur le suivant, alors que ce n'était pas le cas au départ, est proposé à qui peut lire les deux et modifier le second. Rien n'est appliqué sans son geste.
-- **Confirmer** (`event.confirm`) : la personne responsable d'un moment accuse réception de son nouvel horaire. C'est un accusé de lecture, pas un droit de modifier.
+- **Confirmer** (`event.read` + être la personne responsable, sans règle nouvelle) : la personne responsable d'un moment accuse réception de son nouvel horaire. C'est un accusé de lecture, pas un droit de modifier.
 
 ## 5. Isolation de la démonstration
 
@@ -71,11 +70,15 @@ Un geste = une transaction PostgreSQL :
 - **L'ancien direct** (`/api/live/*`, laissez-passer) n'est pas modifié. Il est seulement fermé aux projets passés à Temps (une seule vérité). Ses démonstrations restent ce qu'elles étaient, et la production les garde dans le navigateur.
 - **Effacement d'un compte** : la suppression des lignes de `live_journal` reste permise (seul l'UPDATE est interdit). Supprimer un projet efface son programme (cascade).
 
-## 7. Migration à appliquer
+## 7. Fichiers gardés intacts
+
+`synchroview/permissions.js` (la source des droits) et le stockage du journal d'audit (`api/_auth/journal.mjs`) ne sont pas modifiés : des tests de garde le vérifient. Temps n'ajoute aucune règle ; il compose les règles existantes. Son historique est dans `live_journal`, pas dans `audit`.
+
+## 8. Migration à appliquer
 
 `db/migrations/2026-10-24-07-temps.sql` : rejouable, en ajout seul. À appliquer par l'agent Neon après fusion, d'abord sur une branche de test, puis en production. Aucune action manuelle dans la console.
 
-## 8. Tests
+## 9. Tests
 
 | Fichier | Ce qu'il prouve |
 |---|---|
@@ -84,7 +87,7 @@ Un geste = une transaction PostgreSQL :
 | `tests/socle-ancien.test.cjs` | base sans la migration : 503, rien d'autre ne change |
 | `tests/navigateur/temps.cjs` (base + navigateur) | le parcours de bout en bout : six navigateurs (ordinateur, iPhone, iPad), propagation sans rechargement, proposition, confirmation, refus forcé, rechargement, chronologie, Comparaison, historique, axe-core WCAG 2.1 AA |
 
-## 9. Ce qui manque (honnêtement)
+## 10. Ce qui manque (honnêtement)
 
 - **Démonstration sur la preview** : les comptes fictifs ne reçoivent pas de lien de connexion. La démonstration complète tourne en test (base de test + navigateurs). Sur la preview, on peut l'essayer avec de vrais comptes de test sur un vrai projet (« Ajouter le programme à ce projet »).
 - **Surprises cachées au couple** : l'audience « organisation » inclut le propriétaire. Une restriction par personne (masquer à quelqu'un) demandera une table de restrictions (prochaine phase, avec les responsabilités multiples).

@@ -51,8 +51,8 @@ var MODULES=[
    retarder:{regle:['event','edit'],ecrit:true,journal:'retarder',conflit:true,nom:'Décaler un moment'},
    fait:{regle:['event','edit'],ecrit:true,journal:'fait',conflit:true,nom:'Marquer comme fait'},
    planB:{regle:['event','edit'],ecrit:true,journal:'planB',conflit:true,nom:'Basculer en plan B'},
-   confirmer:{regle:['event','confirm'],ecrit:true,journal:'confirmer',nom:'Confirmer le nouvel horaire'},
-   comparer:{regle:['space','compare'],ecrit:false,nom:'Comparer les vues'},
+   confirmer:{regle:['event','read'],condition:'responsable du moment',ecrit:true,journal:'confirmer',nom:'Confirmer le nouvel horaire'},
+   comparer:{regle:['space','manage_members'],ecrit:false,nom:'Comparer les vues'},
    activer:{regle:['space','manage_members'],ecrit:true,journal:'importer',nom:'Importer le programme type'}
   },
   acces:'Membre actif du projet (space_members, date de fin comprise) ; règles relues à chaque appel. Visibilité : event.read, puis l\'audience du moment (item.read).',
@@ -161,7 +161,8 @@ function intention(texte){var t=String(texte||'').slice(0,200);if(!t.trim())retu
  MODULES.forEach(function(m){m.intentions.forEach(function(it){var x=it.motif.exec(t)||it.motif.exec(s);if(!x)return;var ok=m.statut==='operationnel';
   if(!best||x.index<best.i||(x.index===best.i&&ok&&!best.r.disponible))best={i:x.index,r:{module:m.id,action:it.action,nom:m.actions[it.action].nom,disponible:ok}}})});
  return best?best.r:null}
-function permises(id,sujet,ressource,P){var m=module(id);if(!m||!P)return[];return Object.keys(m.actions).filter(function(k){var a=m.actions[k],r=Object.assign({type:a.regle[0]},ressource||{});r.type=a.regle[0];return P.can(sujet,a.regle[1],r).allow})}
+/* une action à condition (« responsable du moment ») se décide objet par objet, dans le moteur du module : elle n'est jamais accordée ici */
+function permises(id,sujet,ressource,P){var m=module(id);if(!m||!P)return[];return Object.keys(m.actions).filter(function(k){var a=m.actions[k];if(a.condition)return false;var r=Object.assign({type:a.regle[0]},ressource||{});r.type=a.regle[0];return P.can(sujet,a.regle[1],r).allow})}
 
 return{CONTRAT:CONTRAT,STATUTS:STATUTS,PRESENTATIONS:PRESENTATIONS,MODULES:MODULES,valider:valider,module:module,parGabarit:parGabarit,servis:servis,destination:destination,intention:intention,permises:permises};
 });

@@ -3,7 +3,7 @@
 //
 // Garanties (docs/TEMPS.md) :
 //  * la personne vient de la session, son rôle de space_members (date de fin comprise), relu DANS la transaction de chaque geste ;
-//  * un geste = une transaction : verrou du projet (temps_espaces … for update), règles, conflit, moments, live_journal, audit ;
+//  * un geste = une transaction : verrou du projet (temps_espaces … for update), règles, conflit, moments, live_journal ;
 //    tout ou rien. Deux instances du serveur se rangent derrière le même verrou ; l'index unique (espace, rev) en est le filet ;
 //  * le navigateur ne reçoit que la vue calculée pour lui (et la Comparaison, coupée à ce que le demandeur lit lui-même) ;
 //  * un projet de démonstration (origine « demo ») n'est ouvert qu'aux comptes de démonstration, et réciproquement.
@@ -92,7 +92,7 @@ export async function historique(db, u, { espace }) {
 export async function comparer(db, u, { espace, cible }) {
   await exigerPret(db);
   const c = await contexte(db, u, espace); if (!c.actif) refus(404, 'Aucun programme dans ce projet.');
-  const d = P.can(c.s, 'compare', { type: 'space' }); if (!d.allow) refus(403, d.reason);
+  const d = T.peutComparer(c.s, P); if (!d.allow) refus(403, d.reason);
   const prog = await charger(db, espace, c.rev), { noms: n, relations } = await noms(db, c.s, espace);
   const personnes = Object.keys(prog.membres).filter(id => id !== u.id).map(id => ({ id, nom: n[id] || 'une personne', relation: relations[id] || null, role: prog.membres[id] }));
   if (!cible) return { rev: c.rev, personnes };
@@ -125,7 +125,6 @@ export async function geste(pool, u, { espace, geste: g, rev }) {
       if (r.rowCount !== 1) throw new Error('état du moment inattendu sous verrou : ' + f.id);   /* ne doit jamais arriver : tout est annulé */
     }
     await db.query('update temps_espaces set rev = $2 where space_id = $1', [espace, nouveau]);
-    await inscrire(db, { qui: u.id, espace, action: 'programme', detail: { geste: action, rev: nouveau, moments: d.touches } });
     return { rev: nouveau, regle: d.regle, touches: d.touches };
   });
 }
@@ -138,7 +137,6 @@ async function installer(db, u, espace, origine, lignes) {
       [espace, m.id, m.titre, m.lieu, m.debut, m.fin, m.audience, m.responsable, m.planB, m.note, m.position]);
   }
   await db.query("insert into live_journal (espace, qui, action, p, t, rev, effets) values ($1, $2, 'importer', $3::jsonb, 0, 1, null)", [espace, u.id, JSON.stringify({ moments: lignes })]);
-  await inscrire(db, { qui: u.id, espace, action: 'programme', detail: { geste: 'importer', rev: 1, moments: lignes.map(m => m.id) } });
 }
 
 /* POST activer : le propriétaire importe le programme type de son domaine (mariage, séminaire). Rien ne change avant ce geste. */

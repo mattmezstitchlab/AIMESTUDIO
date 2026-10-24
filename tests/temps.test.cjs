@@ -62,7 +62,6 @@ test('temps · Léa décale le cocktail de 15 min : écrit, journalisé, propag�
   const lea = (await lire('lea')).body.vue; assert.equal(lea.propositions.length, 1); assert.equal(lea.propositions[0].moment, 'diner');
   assert.deepEqual((await lire('sarah')).body.vue.aConfirmer, ['cocktail']);
   assert.equal(await n("select count(*)::int as n from live_journal where espace = $1 and rev = 2 and action = 'retarder' and qui = $2", [espace, U.lea.id]), 1);
-  assert.equal(await n("select count(*)::int as n from audit where space_id = $1 and action = 'programme' and detail->>'rev' = '2'", [espace]), 1, 'le journal du projet aussi');
   assert.deepEqual(await M.verifier(pool, espace), { ok: true, ecarts: [], rev: 2 });
 });
 
@@ -100,7 +99,7 @@ test('temps · conflit : deux gestes simultanés sur le même moment, depuis la 
 
 test('temps · tout ou rien : une panne au milieu du geste ne laisse ni moment changé, ni ligne de journal, ni révision', opts, async () => {
   const avant = { rev: await n('select rev::int as n from temps_espaces where space_id = $1', [espace]), j: await n('select count(*)::int as n from live_journal where espace = $1', [espace]), d: await n("select decalage_min as n from moments where space_id = $1 and id = 'diner'", [espace]) };
-  for (const motif of [/insert into audit/, /update temps_espaces/, /update moments/]) {
+  for (const motif of [/insert into live_journal/, /update moments/, /update temps_espaces/]) {
     let faite = false;
     const panne = { query: (t, v) => pool.query(t, v), connect: async () => { const c = await pool.connect(); return { query(t, v) { if (!faite && motif.test(t)) { faite = true; return Promise.reject(new Error('panne simulée')); } return c.query(t, v); }, release: x => c.release(x) }; } };
     await assert.rejects(M.geste(panne, U.lea, { espace, geste: { action: 'retarder', p: { moment: 'diner', minutes: 15, cascade: true } }, rev: avant.rev }), /panne simulée/, String(motif));

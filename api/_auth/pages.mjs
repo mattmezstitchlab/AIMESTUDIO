@@ -127,7 +127,6 @@ function phrase(l, moi, nom, mots, rel, proprio) {
     case 'changement_role': return le + qui + ' a changé un rôle (' + role + ').';
     case 'ouverture': return le + 'un accès a été ouvert' + fin + '.';
     case 'fermeture': return le + (vous ? 'votre accès a pris fin (' + (l.detail.raison || 'fin du rôle') + ').' : proprio && cible ? 'l\'accès ' + (/^[aeiouyhâàéèêîïôû]/i.test(qui_part()) ? 'd\'' : 'de ') + qui_part() + ' a pris fin.' : 'un accès a pris fin.');
-    case 'programme': return le + (l.qui === moi ? 'vous avez ' : qui + ' a ') + (l.detail.geste === 'importer' ? 'importé le programme.' : 'modifié le programme.');
     case 'signalement': return le + (l.qui === moi ? 'vous avez signalé un accès inattendu.' : 'un accès inattendu a été signalé.');
     default: return le + 'une action a été inscrite.';
   }
