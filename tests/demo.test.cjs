@@ -16,11 +16,14 @@ test('les métiers : un seul fichier de données, les huit du brief, chacun comp
 });
 
 test('« Je suis… » : la liste de l\'accueil est exactement celle du brief, et les métiers viennent du fichier', () => {
-  const h = lire('index.html'), sel = h.match(/<select id="jsChoix"[\s\S]*?<\/select>/)[0];
-  const vals = [...sel.matchAll(/<option value="([^"]*)"/g)].map(x => x[1]);
-  assert.deepEqual(vals, ['', 'maries', 'coordination', ...M.metiers.map(m => 'metier:' + m.id), 'invite']);
-  assert.match(sel, /<optgroup label="Prestataire">/); assert.match(sel, />Futurs mariés</); assert.match(sel, />Coordinatrice \/ coordinateur</); assert.match(sel, />Invité·e</);
-  assert.match(sel, /Musicien intermittent \(en préparation\)/);
+  const h = lire('index.html'), sel = h.match(/<ul class="jl-liste" id="jsOptions"[\s\S]*?\n    <\/ul>\n   <\/div>/)[0];
+  const vals = [...sel.matchAll(/role="option" aria-selected="false" data-value="([^"]*)"/g)].map(x => x[1]);
+  assert.deepEqual(vals, ['maries', 'coordination', ...M.metiers.map(m => 'metier:' + m.id), 'invite'], 'les mêmes valeurs que l\'ancien <select>');
+  assert.match(h, /id="jsChoix" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="jsOptions"/);
+  assert.match(sel, /role="group" aria-labelledby="jl-g-presta"/); assert.match(sel, /id="jl-g-presta"[^>]*><span class="jl-pt" aria-hidden="true"><\/span><span class="jl-t">Prestataire<\/span><small>fleuriste, traiteur, musicien, DJ, lieu…<\/small>/);
+  assert.ok(!/<select id="jsChoix"/.test(h), 'plus de liste native');
+  for (const [v, c] of [['maries', '#FB7185'], ['coordination', '#7C5CFF'], ['metier:photographe', '#F59E0B'], ['invite', '#22D3EE']]) assert.match(sel, new RegExp('data-value="' + v + '" style="--pt:' + c + '"'), v);
+  assert.match(sel, />Musicien intermittent<\/span> <span class="jl-badge">En préparation<\/span>/); assert.ok(!/\(en préparation\)/.test(sel), 'un badge, pas une parenthèse');
 });
 
 test('chaque choix compose des téléphones, le rôle choisi au centre ; un métier prend le gabarit prestataire avec ses mots', () => {

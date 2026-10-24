@@ -128,25 +128,28 @@ html.calme .pt.vif{animation:none}
   <h1 id="t-zero">AIME<sup>®</sup></h1>
   <p class="intention" data-regie="intention">Tout commence par une intention.</p>
   <p class="trois" data-regie="trois">Créer. Relier. Transformer.</p>
-  <!-- « Je suis… » : un choix, aucun rôle (le rôle vient du serveur, seulement pour qui crée un projet) ; accueil/je-suis.js -->
+  <!-- « Je suis… » : un choix, aucun rôle (le rôle vient du serveur, seulement pour qui crée un projet) ; une liste dessinée au style du site (motif ARIA combobox + listbox, accueil/liste.js) ; la valeur reste « maries », « metier:photographe »… -->
   <div class="js-choix">
-   <label class="js-l" for="jsChoix">Je suis…</label>
-   <select id="jsChoix" autocomplete="off">
-    <option value="">Choisissez votre place</option>
-    <option value="maries">Futurs mariés</option>
-    <option value="coordination">Coordinatrice / coordinateur</option>
-    <optgroup label="Prestataire">
-     <option value="metier:fleuriste">Fleuriste</option>
-     <option value="metier:traiteur">Traiteur</option>
-     <option value="metier:musicien">Musicien</option>
-     <option value="metier:musicien-intermittent">Musicien intermittent (en préparation)</option>
-     <option value="metier:videaste">Vidéaste</option>
-     <option value="metier:photographe">Photographe</option>
-     <option value="metier:dj">DJ</option>
-     <option value="metier:lieu">Lieu</option>
-    </optgroup>
-    <option value="invite">Invité·e</option>
-   </select>
+   <span class="js-l" id="jsChoixL">Je suis…</span>
+   <div class="jl" id="jsListe">
+    <div class="jl-champ" id="jsChoix" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="jsOptions" aria-labelledby="jsChoixL jsChoixV"><span class="jl-v" id="jsChoixV">Choisissez votre place</span><svg class="jl-coche" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg><svg class="jl-fl" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div>
+    <ul class="jl-liste" id="jsOptions" role="listbox" aria-labelledby="jsChoixL" tabindex="-1" hidden>
+    <li id="jl-maries" class="jl-o" role="option" aria-selected="false" data-value="maries" style="--pt:#FB7185"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Futurs mariés</span></li>
+    <li id="jl-coordination" class="jl-o" role="option" aria-selected="false" data-value="coordination" style="--pt:#7C5CFF"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Coordinatrice / coordinateur</span></li>
+    <li role="presentation" class="jl-gr"><ul role="group" aria-labelledby="jl-g-presta">
+     <li role="presentation" class="jl-g" id="jl-g-presta" style="--pt:#F59E0B"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Prestataire</span><small>fleuriste, traiteur, musicien, DJ, lieu…</small></li>
+      <li id="jl-metier-fleuriste" class="jl-o jl-m" role="option" aria-selected="false" data-value="metier:fleuriste" style="--pt:#F59E0B"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Fleuriste</span></li>
+      <li id="jl-metier-traiteur" class="jl-o jl-m" role="option" aria-selected="false" data-value="metier:traiteur" style="--pt:#F59E0B"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Traiteur</span></li>
+      <li id="jl-metier-musicien" class="jl-o jl-m" role="option" aria-selected="false" data-value="metier:musicien" style="--pt:#F59E0B"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Musicien</span></li>
+      <li id="jl-metier-musicien-intermittent" class="jl-o jl-m" role="option" aria-selected="false" data-value="metier:musicien-intermittent" style="--pt:#F59E0B"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Musicien intermittent</span> <span class="jl-badge">En préparation</span></li>
+      <li id="jl-metier-videaste" class="jl-o jl-m" role="option" aria-selected="false" data-value="metier:videaste" style="--pt:#F59E0B"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Vidéaste</span></li>
+      <li id="jl-metier-photographe" class="jl-o jl-m" role="option" aria-selected="false" data-value="metier:photographe" style="--pt:#F59E0B"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Photographe</span></li>
+      <li id="jl-metier-dj" class="jl-o jl-m" role="option" aria-selected="false" data-value="metier:dj" style="--pt:#F59E0B"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">DJ</span></li>
+      <li id="jl-metier-lieu" class="jl-o jl-m" role="option" aria-selected="false" data-value="metier:lieu" style="--pt:#F59E0B"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Lieu</span></li>
+    </ul></li>
+    <li id="jl-invite" class="jl-o" role="option" aria-selected="false" data-value="invite" style="--pt:#22D3EE"><span class="jl-pt" aria-hidden="true"></span><span class="jl-t">Invité·e</span></li>
+    </ul>
+   </div>
   </div>
  </div>
  <!-- la démo : les téléphones du mariage, le rôle choisi au centre (accueil/demo.js, vitrine/metiers.json) -->
@@ -377,6 +380,7 @@ html.calme .pt.vif{animation:none}
 <script src="/projets/intention.js"></script>
 <script src="/projets/projets.js"></script>
 <script src="/compte/creer.js"></script>
+<script src="/accueil/liste.js"></script>
 <script src="/accueil/demo.js"></script>
 <script src="/accueil/je-suis.js"></script>
 <script src="/coeur/roles.js"></script>

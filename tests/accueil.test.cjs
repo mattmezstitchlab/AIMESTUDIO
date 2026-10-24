@@ -23,8 +23,8 @@ t('un stockage illisible ne casse rien, et un stockage plein est dit',()=>{const
  const l=I.lire('Notre association de quartier',J),p=P.versProjet(l),r=D.enregistrer(p,P.versSite(p,S,M.find(x=>x.id===l.modele)));assert.equal(r.ok,false);assert.ok(r.raison)});
 t('le premier écran (PR C) : « Je suis… », plus de champ de texte ni de formulaire d\'intention ; les anciens essais restent lisibles dans Mes projets',()=>{const h=lire('index.html');
  assert.ok(!/id="acForm"|id="acTexte"|data-ac-ex|id="monProjet"|Que préparez-vous/.test(h),'plus de champ, d\'exemples ni de « Voici ce que j\'ai compris »');
- assert.ok(h.includes('<label class="js-l" for="jsChoix">Je suis…</label>'));assert.ok(!h.includes('src="/accueil/accueil.js"'),'l\'ancien formulaire n\'est plus chargé');
- ['/compte/creer.js','/accueil/demo.js','/accueil/je-suis.js'].forEach(f=>assert.ok(h.includes('src="'+f+'"'),f));
+ assert.ok(h.includes('<span class="js-l" id="jsChoixL">Je suis…</span>')&&h.includes('aria-labelledby="jsChoixL jsChoixV"'));assert.ok(!h.includes('src="/accueil/accueil.js"'),'l\'ancien formulaire n\'est plus chargé');
+ ['/compte/creer.js','/accueil/liste.js','/accueil/demo.js','/accueil/je-suis.js'].forEach(f=>assert.ok(h.includes('src="'+f+'"'),f));
  const c=lire('compte/index.html');['/contrats/projet.js','/projets/projets.js'].forEach(f=>assert.ok(c.includes('src="'+f+'"'),'Mes projets lit les essais de ce navigateur : '+f));assert.ok(c.includes('id="local"')&&c.includes('Sur cet appareil'))});
 t('taxonomie d\'AIMEEVENT : catégorie, type Schema.org, mode et accès lus dans la phrase',()=>{const X=require('../projets/taxonomie.js');
  const c=I.lire('Un concert de jazz le 21 juin 2027 à Lille',J);assert.deepEqual([c.categorie,c.schemaType,c.modele,c.acces],['musique','MusicEvent','libre','Ouvert au public']);
@@ -32,5 +32,5 @@ t('taxonomie d\'AIMEEVENT : catégorie, type Schema.org, mode et accès lus dans
  const m=I.lire('Le mariage de Léa et Marc, le 14 juin 2027 à Chantilly',J);assert.deepEqual([m.categorie,m.schemaType,m.acces,m.modele],['celebrations','SocialEvent','Sur invitation','mariage']);
  assert.equal(I.lire('Une idée sans rien de reconnaissable',J).categorie,'autre');assert.equal(X.CATEGORIES.length,18);assert.ok(X.CATEGORIES.every(c=>c.schemaType&&c.modele));
  const p=P.versProjet(Object.assign(c,{titre:'Jazz'}));const e=P.evenement(p);assert.deepEqual([e.categorie,e.schemaType,e.mode,e.acces],['musique','MusicEvent','Sur place','Ouvert au public']);assert.ok(C.valide(p).ok)});
-t('les scripts du premier écran se lisent sans erreur de syntaxe',()=>{const {execFileSync}=require('child_process');for(const f of ['accueil/accueil.js','accueil/demo.js','accueil/je-suis.js','projets/intention.js','projets/projets.js','projets/taxonomie.js'])execFileSync(process.execPath,['--check',path.join(__dirname,'..',f)])});
+t('les scripts du premier écran se lisent sans erreur de syntaxe',()=>{const {execFileSync}=require('child_process');for(const f of ['accueil/accueil.js','accueil/liste.js','accueil/demo.js','accueil/je-suis.js','projets/intention.js','projets/projets.js','projets/taxonomie.js'])execFileSync(process.execPath,['--check',path.join(__dirname,'..',f)])});
 console.log('accueil : '+n+' vérifications');

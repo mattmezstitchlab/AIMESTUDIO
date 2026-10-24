@@ -22,7 +22,7 @@ function reduit(){return typeof matchMedia==='function'&&matchMedia('(prefers-re
 /* « Créer un projet » : jusqu'à « Je suis… », et la liste s'ouvre (quand le navigateur le permet ; sinon le focus y est) */
 function commencer(){var c=champ();if(!c){location.href=COMMENCER;return}
  c.scrollIntoView({block:'center',behavior:reduit()?'auto':'smooth'});
- setTimeout(function(){try{c.focus({preventScroll:true})}catch(_){c.focus()}try{if(c.showPicker)c.showPicker()}catch(_){}},reduit()?0:350)}
+ setTimeout(function(){if(c._ouvrir){c._ouvrir();return}try{c.focus({preventScroll:true})}catch(_){c.focus()}try{if(c.showPicker)c.showPicker()}catch(_){}},reduit()?0:350)}   /* la liste dessinée (accueil/liste.js) s'ouvre ; un <select> natif, à défaut */
 function fermerMenu(el){var b=el.querySelector('.dock-plus'),m=el.querySelector('.dock-menu');if(m)m.hidden=true;if(b)b.setAttribute('aria-expanded','false')}
 function brancher(el){if(!el||typeof fetch!=='function')return Promise.resolve(null);
  if(!el._plus){el._plus=true;

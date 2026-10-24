@@ -4,6 +4,8 @@
 const { chromium } = require('playwright');
 const B = process.env.BASE || 'http://localhost:8771';
 const echecs = [], ok = (c, m) => { if (!c) echecs.push(m); console.log((c ? '  ✓ ' : '  ✗ ') + m); };
+/* « Je suis… » est une liste dessinée (accueil/liste.js) : on la choisit comme une personne, à la souris */
+const choisir = async (pg, v) => { await pg.click('#jsChoix'); await pg.click('#jsOptions [data-value="' + v + '"]'); };
 const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::ERR/;
 (async () => {
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
@@ -62,7 +64,11 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       await t.goto(B + '/', { waitUntil: 'networkidle' }); await t.click('#dock-site .dock-plus'); await t.waitForTimeout(250); await t.click('#dock-site [data-geste=invitationRecue]'); await t.waitForTimeout(250);
       ok(await t.evaluate(() => { const m = document.querySelector('#dock-site .dock-menu').getBoundingClientRect(), d = document.querySelector('#dock-site .dock').getBoundingClientRect(); return m.bottom <= d.top + 1 && m.top >= 0 && m.left >= 0 && m.right <= innerWidth; }), 'le + (393×659) : la carte et le champ d\'invitation restent au-dessus du Dock, dans l\'écran');
       await t.keyboard.press('Escape'); api.length = 0;
-      await t.selectOption('#jsChoix', 'maries'); await t.waitForSelector('#demo .dm-tel.choisi'); await t.waitForTimeout(500);
+      await t.click('#jsChoix'); await t.waitForTimeout(250);
+      ok(await t.evaluate(() => { const l = document.getElementById('jsOptions').getBoundingClientRect(), d = document.querySelector('#dock-site .dock').getBoundingClientRect(), L = document.getElementById('jsOptions'); return !L.hidden && l.bottom <= d.top + 1 && l.top >= 0 && L.scrollHeight >= L.clientHeight; }), 'Je suis… (393×659) : la liste ouverte reste au-dessus du Dock et défile à l\'intérieur');
+      ok(await t.evaluate(() => [...document.querySelectorAll('#jsOptions [role=option]')].every(o => o.getBoundingClientRect().height >= 44)), 'Je suis… (393×659) : chaque ligne fait au moins 44 px');
+      await t.keyboard.press('Escape');
+      await choisir(t, 'maries'); await t.waitForSelector('#demo .dm-tel.choisi'); await t.waitForTimeout(500);
       const dessus = sel => t.evaluate(async s => { const x = document.querySelector(s); x.scrollIntoView({ block: 'nearest' }); await new Promise(r => setTimeout(r, 120)); const d = document.querySelector('#dock-site .dock').getBoundingClientRect().top, r = x.getBoundingClientRect(); return r.height > 0 && r.bottom <= d + 1 && r.top >= 0; }, sel);
       ok(await dessus('#jsCreer'), 'accueil (393×659) : « Créer notre mariage », sous la démo, reste au-dessus du Dock');
       ok(api.every(x => x === 'GET /api/identite'), 'accueil : aucun appel au serveur avant « Créer » (seul le Dock lit /api/identite)' + (api.length ? ' (' + [...new Set(api)].join(', ') + ')' : ''));
@@ -181,19 +187,32 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       ok(t.filter(Boolean).length === 4, 'Exemples (Studio) : la quantité paraît chez les quatre rôles qui voient le bon à tirer, et chez eux seuls'); }
     // Premier écran (PR C) : chaque choix de « Je suis… » affiche des téléphones, le rôle choisi au centre ; un seul bouton, selon le rôle
     await p.goto(B + '/', { waitUntil: 'networkidle' });
-    const choix = await p.evaluate(() => [...document.querySelectorAll('#jsChoix option')].map(o => o.value).filter(Boolean));
+    const choix = await p.evaluate(() => [...document.querySelectorAll('#jsOptions [role=option]')].map(o => o.getAttribute('data-value')));
     const vus = [];
-    for (const v of choix) { await p.selectOption('#jsChoix', v); await p.waitForTimeout(250);
+    for (const v of choix) { await choisir(p, v); await p.waitForTimeout(250);
       const r = await p.evaluate(() => ({ n: document.querySelectorAll('#demo .dm-tel').length, c: !!document.querySelector('#demo .dm-tel.choisi'), b: (document.getElementById('jsCreer') || {}).textContent || '', inv: !!document.querySelector('#jsSuite .js-invit'), vis: !document.getElementById('demo').hidden }));
       if (!(r.vis && r.n >= 7 && r.c && (v === 'invite' ? r.inv && !r.b : r.b))) vus.push(v); }
     ok(choix.length === 11 && vus.length === 0, 'Accueil : les ' + choix.length + ' choix de « Je suis… » affichent chacun des téléphones et un seul bouton' + (vus.length ? ' (' + vus.join(', ') + ')' : ''));
-    await p.selectOption('#jsChoix', 'metier:fleuriste'); await p.waitForTimeout(200);
+    // la liste au clavier (motif combobox) : flèches, Entrée, Échap, première lettre ; la valeur et la démo inchangées
+    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.focus('#jsChoix'); await p.keyboard.press('ArrowDown'); await p.waitForTimeout(150);
+    const k1 = await p.evaluate(() => ({ ouvert: document.getElementById('jsChoix').getAttribute('aria-expanded'), actif: document.getElementById('jsChoix').getAttribute('aria-activedescendant') }));
+    await p.keyboard.press('ArrowDown'); await p.keyboard.press('Enter'); await p.waitForTimeout(400);
+    const k2 = await p.evaluate(() => ({ v: document.getElementById('jsChoix').value, texte: document.getElementById('jsChoixV').textContent, demo: !document.getElementById('demo').hidden, focus: document.activeElement.id, ferme: document.getElementById('jsOptions').hidden }));
+    ok(k1.ouvert === 'true' && k1.actif === 'jl-maries' && k2.v === 'coordination' && k2.demo && k2.focus === 'jsChoix' && k2.ferme, 'Je suis… au clavier : ↓ ouvre, ↓ puis Entrée choisit (« ' + k2.texte + ' »), la démo suit, le focus reste');
+    await p.keyboard.press('p'); await p.waitForTimeout(150);
+    const k3 = await p.evaluate(() => document.getElementById('jsChoix').getAttribute('aria-activedescendant'));
+    await p.keyboard.press('Escape'); await p.waitForTimeout(150);
+    ok(k3 === 'jl-metier-photographe' && await p.evaluate(() => document.getElementById('jsOptions').hidden && document.getElementById('jsChoix').value === 'coordination'), 'Je suis… : « p » va à Photographe, Échap ferme sans changer le choix');
+    await p.keyboard.press('Enter'); await p.keyboard.press('i'); await p.keyboard.press('Enter'); await p.waitForTimeout(300);
+    ok(await p.evaluate(() => document.getElementById('jsChoix').value === 'invite' && /Ce rôle arrive par invitation/.test(document.getElementById('jsSuite').textContent)), 'Je suis… : Entrée, « i », Entrée : Invité·e');
+    ok(await p.evaluate(() => { const g = document.querySelector('#jsOptions [role=group]'); return g && document.getElementById(g.getAttribute('aria-labelledby')).textContent.includes('Prestataire') && !document.querySelector('#jsOptions .jl-g[role=option]') && !!document.querySelector('[data-value="metier:musicien-intermittent"] .jl-badge'); }), 'Je suis… : le groupe « Prestataire » nommé et non sélectionnable ; « En préparation » en badge');
+    await choisir(p, 'metier:fleuriste'); await p.waitForTimeout(200);
     ok(await p.evaluate(() => /Créer mon espace fleuriste/.test(document.getElementById('jsCreer').textContent) && /fleuriste/.test(document.querySelector('#demo .dm-tel.choisi .dm-leg b').textContent)), 'Accueil : un métier, le gabarit prestataire avec ses mots (vitrine/metiers.json)');
-    await p.selectOption('#jsChoix', 'metier:musicien-intermittent'); await p.waitForTimeout(200);
+    await choisir(p, 'metier:musicien-intermittent'); await p.waitForTimeout(200);
     ok(await p.evaluate(() => /en préparation/i.test(document.getElementById('demo').textContent)), 'Accueil : le module intermittent est marqué « en préparation »');
-    await p.selectOption('#jsChoix', 'invite'); await p.waitForTimeout(200);
+    await choisir(p, 'invite'); await p.waitForTimeout(200);
     ok(await p.evaluate(() => !document.getElementById('jsCreer') && /Ce rôle arrive par invitation/.test(document.getElementById('jsSuite').textContent)), 'Accueil : invité·e, pas d\'inscription');
-    await p.selectOption('#jsChoix', 'coordination'); await p.waitForTimeout(200);
+    await choisir(p, 'coordination'); await p.waitForTimeout(200);
     await p.click('#dmGo'); await p.waitForTimeout(rm ? 900 : 2600);
     ok(await p.evaluate(() => !document.getElementById('dmSon').hidden && document.getElementById('dmGo').hidden), 'Accueil : « Activer la démo » lance le scénario ; le bouton du son paraît');
     await p.click('#dmSon'); ok(await p.getAttribute('#dmSon', 'aria-pressed') === 'true', 'Accueil : le son se coupe');
