@@ -65,3 +65,20 @@ test('l\'Orbe sans doublon (docs/ORBE-AUDIT.md § 4) : yeux.js n\'est plus charg
   assert.ok(fs.existsSync(R('zero/yeux.js')) && fs.existsSync(R('menu/menu.js')), 'rien n\'est supprimé : la Grande Partition et /aime/ (Lab) les gardent');
   assert.ok(fs.existsSync(R('docs/ORBE-AUDIT.md')));
 });
+
+test('affichage : le Dock ne cache rien, le menu du + se détache, l\'en-tête a un fond, le compte n\'a pas de seconde navigation, le Point Zéro reste en coulisses', () => {
+  const css = lire('dock/dock.css');
+  assert.match(css, /html:has\(>body\.avec-dock\)\{scroll-padding-bottom:calc\(96px \+ env\(safe-area-inset-bottom,0px\)\)\}/, 'un champ focalisé s\'arrête au-dessus du Dock');
+  const m = css.match(/\.dock-menu\{[^}]*\}/)[0]; assert.match(m, /background:#[0-9A-Fa-f]{6}/, 'menu du + : fond opaque'); assert.match(m, /border:1px solid #/, 'et un bord');
+  for (const f of ['coeur/charte.css', 'index.html']) assert.match(lire(f), /\.barre::before\{[^}]*background:rgba\(10,10,12,\.8\d\)/, f + ' : l\'en-tête a un fond léger');
+  for (const f of ['contact/index.html', 'capacites/index.html']) assert.match(lire(f), /<body class="loin">/, f + ' : logo et fond dès l\'arrivée');
+  const c = lire('compte/index.html'), haut = c.match(/<header class="tete">[\s\S]*?<\/header>/)[0];
+  assert.ok(!/versAutre|sortir|Mes projets|Mon compte|<button/.test(haut), 'en-tête du compte : le logo seul');
+  assert.match(c, /id="dock-site"/); assert.match(c, /AIMEPlus\.brancher\(el\)/);
+  const P = require('../dock/plus.js'), e = P.etat({ connecte: true }, []);
+  assert.deepEqual(e.fin.map(x => x.nom), ['Tous mes projets', 'Se déconnecter'], 'Mes projets et Se déconnecter passent par le +');
+  assert.match(lire('dock/plus.js'), /'Mon compte'/, 'connecté, « J\'ai un compte » devient « Mon compte » dans le Dock');
+  assert.match(lire('point-zero/index.html'), /<meta name="robots" content="noindex">/);
+  assert.match(c, /href="\/point-zero\/\?intention=identite">Mon timbre</, 'Compte → Mon timbre');
+  for (const f of ['index.html', 'exemples/index.html', 'contact/index.html', 'capacites/index.html', 'nav/registre.js', 'dock/modele.js']) assert.ok(!lire(f).includes('/point-zero/'), f + ' : le Point Zéro n\'est pas une seconde accueil');
+});
