@@ -20,7 +20,7 @@ var PROJETS=/^\/projets\/?$/.test(location.pathname);
 if(!PROJETS&&/[?&](invitation|espace|nouvel)=/.test(location.search)){location.replace('/projets/'+location.search);return}
 var Q=new URLSearchParams(location.search),INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(Q.get('invitation')||'')?Q.get('invitation'):null,OUVRIR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(Q.get('espace')||'')?Q.get('espace'):null,moi=null;
 if(INVIT)$('invite').hidden=false;
-(function(){var a=$('versAutre');if(PROJETS){document.title='Mes projets · AIME';$('tTitre').textContent='Mes projets';$('tSous').textContent='Vos projets, vos invitations';var s=document.querySelector('.tete .mk span');if(s)s.textContent='Projets';if(a){a.href='/compte/';a.textContent='Mon compte'}}})();
+if(PROJETS){document.title='Mes projets · AIME';$('tTitre').textContent='Mes projets';$('tSous').textContent='Vos projets, vos invitations'}
 if(Q.get('supprime'))toast('Votre compte a été supprimé. Merci d\'être passé par AIME.');
 else if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
 function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime','nouvel'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
@@ -29,7 +29,7 @@ function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','
 requete('/api/auth/get-session').then(function(r){
  if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=(r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.';return}
  if(!r.j||!r.j.user){$('connexion').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
- moi=r.j.user;afficherProfil();$('profil').hidden=PROJETS;$('espaces').hidden=!PROJETS;$('sortir').hidden=false;$('zoneSuppr').hidden=PROJETS;if($('versAutre'))$('versAutre').hidden=false;
+ moi=r.j.user;afficherProfil();$('profil').hidden=PROJETS;$('espaces').hidden=!PROJETS;$('zoneSuppr').hidden=PROJETS;
  (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' » ('+(ROLES[x.role]||x.role)+').');$('invite').hidden=true;if(x.espace)OUVRIR=x.espace}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
   .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();if(PROJETS)chargerEspaces(OUVRIR);else chargerCles()})
 }).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.'});
@@ -50,7 +50,7 @@ $('supprOui').onclick=function(){var b=this;b.disabled=true;requete('/api/auth/d
   var expire=r.j&&/SESSION_EXPIRED|fresh|expired/i.test(String(r.j.code||'')+' '+String(r.j.message||''));
   var partage=r.j&&String(r.j.code||'')==='ESPACES_PARTAGES';
   toast(expire?'Par sécurité, reconnectez-vous (lien e-mail ou clé d\'accès), puis supprimez votre compte dans la foulée.':partage?String(r.j.message):'Suppression impossible pour le moment : réessayez.',true)}).catch(function(){b.disabled=false;toast('Serveur injoignable : réessayez.',true)})};
-$('sortir').onclick=function(){requete('/api/auth/sign-out',{corps:{}}).then(function(){location.href='/compte/'})};
+/* se déconnecter : par le + du Dock (dock/plus.js) */
 
 /* ---------- profil en timbre ---------- */
 function afficherProfil(){var box=$('monTimbre');box.textContent='';var t=T.creer({id:moi.id,nom:moi.name||moi.email,detail:'Mon timbre',image:moi.image,legende:false});t.style.setProperty('--l','132px');t.tabIndex=-1;box.appendChild(t);
