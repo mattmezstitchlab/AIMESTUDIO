@@ -68,6 +68,14 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       ok(await t.evaluate(() => { const l = document.getElementById('jsOptions').getBoundingClientRect(), d = document.querySelector('#dock-site .dock').getBoundingClientRect(), L = document.getElementById('jsOptions'); return !L.hidden && l.bottom <= d.top + 1 && l.top >= 0 && L.scrollHeight >= L.clientHeight; }), 'Je suis… (393×659) : la liste ouverte reste au-dessus du Dock et défile à l\'intérieur');
       ok(await t.evaluate(() => [...document.querySelectorAll('#jsOptions [role=option]')].every(o => o.getBoundingClientRect().height >= 44)), 'Je suis… (393×659) : chaque ligne fait au moins 44 px');
       await t.keyboard.press('Escape');
+      // les mots du Dock en 393 px : une ligne chacun, rien ne déborde, pour le Dock public (sans compte, connecté) et le Dock d'un projet
+      const mots = await t.evaluate(() => { const el = document.getElementById('dock-site'), D = window.AIMEDock, V = window.AIMEDockVue, R = [];
+        const comps = [['public', D.composer({})], ['connecté', D.composer({ famille: 'Public connecté' })], ['projet', D.composerReel({ roleServeur: 'owner', gestes: { lire: true, inviter: ['guest'], signaler: true }, servis: ['acces', 'journal', 'personnes'] })]];
+        for (const [n, c] of comps) { const z = V.poser(el, c, { mode: 'page', id: 'dock-site', actif: c.lieux[0].id });
+          const L = [...z.querySelectorAll('.dock-t')], e = [...z.querySelectorAll('.dock-e')];
+          R.push({ n, ok: L.every(x => x.getClientRects().length === 1 && x.scrollWidth <= x.clientWidth + 1 && x.getBoundingClientRect().height < 20) && !z.classList.contains('serre'), min: getComputedStyle(L[0]).textTransform === 'none', aria: e.every(x => x.getAttribute('aria-label') && x.getAttribute('aria-label') !== x.getAttribute('aria-label').toUpperCase()), mots: L.map(x => x.textContent).join(' · ') }); }
+        V.poser(el, D.composer({}), { mode: 'page', id: 'dock-site', actif: 'coeur' }); return R; });
+      for (const m of mots) ok(m.ok && m.aria, 'Dock ' + m.n + ' (393 px) : chaque mot sur une ligne, sans débordement, ' + (m.min ? 'en minuscules, 11 px' : 'en capitales') + ' ; nom en minuscules dans aria-label (' + m.mots + ')');
       await choisir(t, 'maries'); await t.waitForSelector('#demo .dm-tel.choisi'); await t.waitForTimeout(500);
       const dessus = sel => t.evaluate(async s => { const x = document.querySelector(s); x.scrollIntoView({ block: 'nearest' }); await new Promise(r => setTimeout(r, 120)); const d = document.querySelector('#dock-site .dock').getBoundingClientRect().top, r = x.getBoundingClientRect(); return r.height > 0 && r.bottom <= d + 1 && r.top >= 0; }, sel);
       ok(await dessus('#jsCreer'), 'accueil (393×659) : « Créer notre mariage », sous la démo, reste au-dessus du Dock');

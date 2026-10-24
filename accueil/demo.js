@@ -9,11 +9,11 @@
 /* les personnes du mariage (les mêmes que la mosaïque) ; les prestataires viennent de vitrine/metiers.json */
 var PERSONNES={
  mariee:{id:'mariee',titre:'La mariée',desc:'Tout : programme, réponses, prestataires.',c:'#FB7185',k:'Notre mariage',lead:'Tout votre jour, en un seul endroit.',compte:true,note:67,
-  dock:[['bell','Alertes'],['chat','Messages'],['grid','Projet'],['cal','Calendrier']],gestes:['Inviter','Écrire','Ajouter une tâche']},
+  dock:[['bell','Alertes'],['chat','Messages'],['grid','Projet'],['cal','Agenda']],gestes:['Inviter','Écrire','Ajouter une tâche']},
  temoin:{id:'temoin',titre:'Le témoin',desc:'Sa mission, et la surprise.',c:'#34D399',k:'Votre mission',lead:'Ce qui vous concerne, et ce qu’on prépare en secret.',note:74,
   dock:[['bell','Alertes'],['list','Ma part'],['chat','Messages'],['gift','Surprise']],gestes:['Écrire aux témoins','Lancer la surprise','Ajouter une tâche']},
  invite:{id:'invite',titre:'L’invitée',desc:'Le programme public, le lieu, sa réponse.',c:'#22D3EE',k:'Vous êtes invitée',lead:'Le programme, le lieu, votre réponse.',compte:true,note:79,
-  dock:[['prog','Programme'],['check','Ma réponse'],['pin','Lieu'],['chat','Messages']],gestes:['Écrire aux mariés','Confirmer ma présence','Accès inattendu ?']},
+  dock:[['prog','Programme'],['check','Réponse'],['pin','Lieu'],['chat','Messages']],gestes:['Écrire aux mariés','Confirmer ma présence','Accès inattendu ?']},
  coord:{id:'coord',titre:'La coordination',desc:'Le déroulé, l’équipe, le plan B.',c:'#7C5CFF',k:'Votre jour J, coordonné',lead:'Le déroulé minute par minute, l’équipe, le plan B.',note:62,
   dock:[['bell','Alertes'],['time','Déroulé'],['team','Équipe'],['umb','Plan B']],gestes:['Modifier le déroulé','Activer le plan B','Valider un remplaçant']}
 };

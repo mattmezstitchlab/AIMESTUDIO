@@ -113,6 +113,9 @@
   .dock { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 4; height: 86px; border-radius: 30px; background: #0F0F12; box-shadow: 0 0 0 1px #2B2B33, 0 18px 40px -16px rgba(0,0,0,.6);
     display: grid; grid-template-columns: 1fr 1fr 86px 1fr 1fr; align-items: center; padding: 0 6px; }
   .dk { position: relative; display: grid; justify-items: center; gap: 6px; border: 0; background: none; padding: 8px 0; cursor: pointer; color: #9C9CA8; font: 500 12.5px var(--ui); }
+  /* téléphones réduits : les icônes seules (aucun téléphone n'est mis en avant ici) ; le nom reste dans aria-label */
+  .dk > span:not(.badge) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .dk { gap: 0; }
   .dk svg { width: 28px; height: 28px; fill: none; stroke: #EDEDF0; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
   .dk.on { color: #EDEDF0; }
   .dk .badge { position: absolute; top: 2px; left: 50%; margin-left: 6px; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: var(--role); color: #141416; font: 700 14px/24px var(--ui); text-align: center; transform: scale(0); transition: transform .3s cubic-bezier(.34,1.6,.64,1); }
@@ -211,9 +214,9 @@
     key: '<circle cx="8.5" cy="12" r="4"/><path d="M12.5 12H20M17 12v3M20 12v2.5"/>'
   };
   const DOCK = {
-    mariee: { e: [['bell', 'Alertes'], ['chat', 'Messages'], ['grid', 'Projet'], ['cal', 'Calendrier']], a: [['Inviter'], ['Écrire'], ['Ajouter une tâche']] },
+    mariee: { e: [['bell', 'Alertes'], ['chat', 'Messages'], ['grid', 'Projet'], ['cal', 'Agenda']], a: [['Inviter'], ['Écrire'], ['Ajouter une tâche']] },
     temoin: { e: [['bell', 'Alertes'], ['list', 'Ma part'], ['chat', 'Messages'], ['gift', 'Surprise']], a: [['Écrire aux témoins'], ['Lancer la surprise', 'surprise'], ['Ajouter une tâche']] },
-    invite: { e: [['prog', 'Programme'], ['check', 'Ma réponse'], ['pin', 'Lieu'], ['chat', 'Messages']], a: [['Écrire aux mariés'], ['Confirmer ma présence', 'rsvp'], ['Accès inattendu ?']] },
+    invite: { e: [['prog', 'Programme'], ['check', 'Réponse'], ['pin', 'Lieu'], ['chat', 'Messages']], a: [['Écrire aux mariés'], ['Confirmer ma présence', 'rsvp'], ['Accès inattendu ?']] },
     coord: { e: [['bell', 'Alertes'], ['time', 'Déroulé'], ['team', 'Équipe'], ['umb', 'Plan B']], a: [['Modifier le déroulé'], ['Activer le plan B', 'rain'], ['Valider un remplaçant']] },
     traiteur: { e: [['bell', 'Alertes'], ['case', 'Mission'], ['count', 'Effectif'], ['doc', 'Documents']], a: [['Déposer un document'], ['Signaler un retard', 'late'], ['Écrire']] },
     dj: { e: [['bell', 'Alertes'], ['case', 'Mission'], ['clock', 'Horaires'], ['doc', 'Documents']], a: [['Déposer la playlist'], ['Signaler un retard'], ['Écrire']] },

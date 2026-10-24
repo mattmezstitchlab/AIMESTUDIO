@@ -17,6 +17,14 @@
 .dock-e[aria-current]{color:var(--dk-actif);background:var(--dk-surf)}
 .dock-i{width:22px;height:22px;fill:none;stroke:var(--dk-ic);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .dock-t{display:block;max-width:100%;white-space:nowrap;text-align:center}
+/* les mots du Dock, en plus léger (décision de Matt, 24/10) : la page active en blanc, les autres plus gris, toujours visibles.
+   Les petites capitales (10 px, 600, +0,04 em) ne tiennent pas en 393 px dans le Dock connecté (« MES PROJETS », « MON COMPTE » se touchent) :
+   comme convenu, tout le Dock garde donc les minuscules, 11 px. Un mot ne passe jamais sur deux lignes ; dock/dock.js le vérifie (classe « serre »). */
+.dock-zone .dock-t{font:500 11px/1.2 "Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:0;color:#8A8A96}
+.dock-zone .dock-e[aria-current] .dock-t,.dock-zone .dock-e:hover .dock-t{color:#fff;font-weight:600}
+.dock-zone.serre .dock-t{font-size:10px}
+/* dans un téléphone réduit (les écrans du cœur et des exemples) : les icônes seules ; le nom reste dans aria-label */
+.dock-ecran .dock-t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .dock-page .dock-e{min-width:76px}
 .dock-p{position:absolute;top:2px;right:calc(50% - 22px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--role,#FB7185);color:#141416;font:700 10.5px/18px "Inter Variable",Inter,sans-serif;text-align:center}
 .dock-c{flex:0 0 auto!important;position:relative;padding:0 6px}
@@ -42,7 +50,7 @@
 @keyframes dock-s{0%,85%{opacity:1}100%{opacity:0}}
 .dock-zone :focus-visible{outline:2px solid #fff;outline-offset:2px}
 @media (max-width:560px){.dock-page{left:0;right:0;transform:none;width:auto;max-width:none;bottom:0;padding:0 max(8px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
- .dock-page .dock-e{min-width:0;width:100%;padding:6px 2px}.dock-page .dock-t{white-space:normal;line-height:1.1}.dock-page .dock-l>li{flex:1 1 0}}
+ .dock-page .dock-e{min-width:0;width:100%;padding:6px 0}.dock-page .dock-t{white-space:nowrap}.dock-page .dock-l{gap:0}.dock-page .dock-c{padding:0 3px}.dock-page .dock-l>li{flex:1 1 0}}
 @media (prefers-reduced-motion:reduce){.dock-plus span{transition:none}.dock-s:not(:empty){animation:none}}
 /* Fermé, c'est fermé : rien n'est visible, rien n'est atteignable au clavier */
 .dock-menu[hidden],.dock-conf[hidden]{display:none!important}

@@ -58,7 +58,9 @@ function html(c,o){
  var entree=function(e){var cur=o.actif===e.id?' aria-current="page"':'',
    pas=e.id==='notifications'&&c.pastille>0?'<span class="dock-p" aria-label="'+c.pastille+' notification'+(c.pastille>1?'s':'')+'">'+c.pastille+'</span>':'',
    corps=icone(e.icone)+'<span class="dock-t">'+esc(e.nom)+'</span>'+pas;
-  return'<li>'+(e.href?'<a class="dock-e" href="'+esc(e.href)+'" data-lieu="'+esc(e.id)+'"'+cur+'>'+corps+'</a>':'<button type="button" class="dock-e" data-lieu="'+esc(e.id)+'"'+cur+'>'+corps+'</button>')+'</li>'};
+  /* le nom en aria-label, tel qu'on l'écrit (pas en capitales : il n'est pas épelé), même quand le mot est masqué ou en petites capitales */
+  var nom=' aria-label="'+esc(e.nom)+(pas?' · '+c.pastille+' notification'+(c.pastille>1?'s':''):'')+'"';
+  return'<li>'+(e.href?'<a class="dock-e" href="'+esc(e.href)+'" data-lieu="'+esc(e.id)+'"'+nom+cur+'>'+corps+'</a>':'<button type="button" class="dock-e" data-lieu="'+esc(e.id)+'"'+nom+cur+'>'+corps+'</button>')+'</li>'};
  /* le + public est une carte (deux gestes et un champ) : des boutons ordinaires dans un groupe, pas un menu ; dans un projet, un vrai menu */
  var item=function(a){var attrs=(c.public?'':' role="menuitem" tabindex="-1"')+' data-geste="'+esc(a.id)+'" data-type="'+esc(a.geste)+'"'+(a.sensible?' data-sensible="1"':'');
   var t=esc(a.nom)+(a.sensible?'<small>Confirmation demandée</small>':'');
@@ -123,7 +125,12 @@ function monter(el){
  if(!root._aimeDockDoc){root._aimeDockDoc=true;document.addEventListener('click',function(e){if(!e.target.closest('.dock-zone'))document.querySelectorAll('.dock-zone').forEach(function(z){fermer(z)})})}
 }
 
-function poser(el,c,o){if(!el)return;el._dockOpts=o||{};el.innerHTML=html(c,o);monter(el);return el.querySelector('.dock-zone')}
+/* un mot du Dock ne passe jamais sur deux lignes ni ne déborde : sur un écran très étroit, tout le Dock prend un point de moins (jamais un mot coupé) */
+function ajuster(z){if(!z||!z.classList.contains('dock-page'))return;z.classList.remove('serre');
+ var trop=[].some.call(z.querySelectorAll('.dock-t'),function(t){return t.scrollWidth>t.clientWidth+1||t.getClientRects().length>1});if(trop)z.classList.add('serre')}
+function poser(el,c,o){if(!el)return;el._dockOpts=o||{};el.innerHTML=html(c,o);monter(el);var z=el.querySelector('.dock-zone');ajuster(z);
+ if(!el._ajuste&&typeof addEventListener==='function'){el._ajuste=true;addEventListener('resize',function(){ajuster(el.querySelector('.dock-zone'))});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){ajuster(el.querySelector('.dock-zone'))})}
+ return z}
 
-root.AIMEDockVue={html:html,poser:poser,monter:monter,ICONES:Object.keys(P)};
+root.AIMEDockVue={html:html,poser:poser,monter:monter,ajuster:ajuster,ICONES:Object.keys(P)};
 })(typeof self!=='undefined'?self:this);
