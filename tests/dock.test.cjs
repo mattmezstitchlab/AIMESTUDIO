@@ -81,3 +81,40 @@ test('dock : posé sur l\'accueil et les exemples (le public), et dans chaque é
   assert.ok(h.indexOf('/dock/dock.js')<h.indexOf('/coeur/coeur.js'),f+' : le dock avant le cœur');assert.match(h,/AIMEDockVue\.poser\(el,AIMEDock\.composer\(\{\}\)/)}
  const k=lire('coeur/coeur.js');assert.match(k,/AIMEDock\.pourScenario|Dk\.pourScenario/);assert.match(k,/mode:'ecran'/);
 });
+
+/* ---------- Le dock d'un vrai espace (docs/GABARITS.md § 4, § 7 et § 12) ---------- */
+const SERVIS=['acces','journal','personnes'];
+const GESTES={owner:{lire:true,inviter:['editor','contributor','viewer','guest'],signaler:true},editor:{lire:true,inviter:['viewer','guest'],signaler:true},
+ contributor:{lire:true,inviter:[],signaler:true},viewer:{lire:true,inviter:[],signaler:true},guest:{lire:true,inviter:[],signaler:true}};
+
+test('dock réel : jamais la table par défaut ; sans gestes calculés par le serveur, il refuse',()=>{
+ assert.throws(()=>D.composerReel({roleServeur:'owner',servis:SERVIS}),/gestes calculés par le serveur/);
+ assert.throws(()=>D.composerReel({roleServeur:'owner',gestes:{lire:true},servis:SERVIS}));
+ assert.equal(D.composerReel({roleServeur:'owner',gestes:{lire:false,inviter:[],signaler:false},servis:SERVIS}),null,'sans lecture, pas de dock');
+});
+
+test('dock réel : aucun lieu dont le gabarit n\'est pas servi, aucun geste non accordé',()=>{
+ for(const r of Object.keys(GESTES)){const c=D.composerReel({roleServeur:r,gestes:GESTES[r],servis:SERVIS});
+  assert.ok(c.lieux.every(l=>SERVIS.includes(l.gabarit)),r+' : lieux servis seulement');assert.equal(c.lieux[0].gabarit,'acces',r+' : Mon accès en tête, toujours');
+  assert.ok(c.plus.every(a=>a.id==='inviter'),r+' : au lot 1, le seul geste du + est Inviter');
+  assert.equal(c.plus.length>0,GESTES[r].inviter.length>0,r+' : Inviter seulement si permissions.js l\'accorde');
+  assert.equal(c.inattendu,true,r+' : signaler un accès inattendu, toujours');
+  assert.ok(!c.mention.includes('Démonstration'),r+' : un vrai espace n\'est pas une démonstration');
+  for(const mot of ['Messages','Projet','Calendrier','Déroulé','Documents','Mission'])assert.ok(!c.lieux.some(l=>l.nom===mot),r+' : '+mot+' n\'est pas encore servi')}
+ const servisTous=['acces','journal','personnes','projet','deroule','documents','messages'];
+ assert.ok(D.composerReel({roleServeur:'owner',gestes:GESTES.owner,servis:servisTous}).lieux.some(l=>l.gabarit==='messages'),'servi plus tard, il apparaîtra');
+});
+
+test('dock réel : l\'invitée n\'a que Mon accès ; le propriétaire invite depuis Personnes ; la coordination n\'invite que lecteurs et invités',()=>{
+ const g=D.composerReel({roleServeur:'guest',gestes:GESTES.guest,servis:SERVIS});assert.deepEqual(g.lieux.map(l=>l.gabarit),['acces']);
+ assert.ok(!D.mots(g).includes('Personnes')&&!D.mots(g).includes('Inviter'));
+ const o=D.composerReel({roleServeur:'owner',gestes:GESTES.owner,servis:SERVIS});assert.deepEqual(o.lieux.map(l=>l.gabarit),['acces','journal','personnes']);
+ assert.ok(o.plus[0].sensible,'inviter demande confirmation');
+ const e=D.composerReel({roleServeur:'editor',gestes:GESTES.editor,servis:SERVIS});assert.deepEqual(e.plus[0].roles,['viewer','guest']);
+});
+
+test('dock réel : chaque nom de lieu des docks se rattache à un gabarit (ou est hors gabarit)',()=>{
+ const ids=new Set(Object.keys(D.ENTREES));for(const k in D.INSTANCES)(D.INSTANCES[k].lieux||[]).forEach(l=>ids.add(typeof l==='string'?l:l.id));
+ for(const id of ids)assert.ok(id in D.GABARIT_DE,id+' : rattaché');
+ for(const v of Object.values(D.GABARIT_DE))assert.ok(v===null||D.NOM_GABARIT[v],String(v));
+});
