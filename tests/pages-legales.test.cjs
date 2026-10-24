@@ -11,6 +11,7 @@ const PUBLIQUES = {
   'Compte et Mes projets (/projets/ sert /compte/)': 'compte/index.html',
   'Confidentialité': 'confidentialite/index.html',
   'Mentions légales': 'mentions-legales/index.html',
+  'Tarifs': 'tarifs/index.html',
 };
 const tete = s => s.slice(0, s.indexOf('</head>'));
 
@@ -27,11 +28,11 @@ test('/projets/ sert bien la page Compte (donc le même <head>)', () => {
   assert.ok(v.rewrites.some(r => r.source === '/projets/' && r.destination === '/compte/'));
 });
 
-test('pied légal : « Mentions légales · Confidentialité · Contact » sur chaque page publique, avec sa feuille de style', () => {
+test('pied légal : « Tarifs · Mentions légales · Confidentialité · Contact » sur chaque page publique, avec sa feuille de style', () => {
   for (const [nom, f] of Object.entries(PUBLIQUES)) {
     const s = lire(f), m = s.match(/<nav class="pied-legal" aria-label="Informations légales">([\s\S]*?)<\/nav>/);
     assert.ok(m, nom + ' : la ligne existe');
-    assert.deepEqual([...m[1].matchAll(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g)].map(x => [x[1], x[2]]), [['/mentions-legales/', 'Mentions légales'], ['/confidentialite/', 'Confidentialité'], ['/contact/', 'Contact']], nom);
+    assert.deepEqual([...m[1].matchAll(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g)].map(x => [x[1], x[2]]), [['/tarifs/', 'Tarifs'], ['/mentions-legales/', 'Mentions légales'], ['/confidentialite/', 'Confidentialité'], ['/contact/', 'Contact']], nom);
     assert.ok(tete(s).includes('<link rel="stylesheet" href="/nav/pied-legal.css">'), nom + ' : la feuille de style');
     assert.equal(s.match(/class="pied-legal"/g).length, 1, nom + ' : une seule fois');
   }
@@ -62,4 +63,28 @@ test('confidentialité : le formulaire de contact (Resend, rien d\'enregistré, 
 test('contact : le texte de confidentialité ne promet que ce que fait api/contact.js (un e-mail, sans stockage)', () => {
   const c = lire('api/contact.js');
   assert.match(c, /un e-mail, sans stockage/); assert.match(c, /CONTACT_TO/); assert.ok(!/pool|query\(|INSERT/i.test(c), 'aucune écriture en base');
+});
+
+test('pied légal : toutes les pages du site qui en ont un portent la même ligne, Tarifs en premier', () => {
+  const { execSync } = require('child_process');
+  const fichiers = execSync("grep -rl 'class=\"pied-legal\"' --include=*.html . --exclude-dir=node_modules", { cwd: path.join(__dirname, '..'), encoding: 'utf8' }).split('\n').filter(Boolean);
+  assert.ok(fichiers.length >= 8);
+  for (const f of fichiers) { const m = lire(f.replace(/^\.\//, '')).match(/<nav class="pied-legal"[^>]*>([\s\S]*?)<\/nav>/); assert.deepEqual([...m[1].matchAll(/href="([^"]+)"/g)].map(x => x[1]), ['/tarifs/', '/mentions-legales/', '/confidentialite/', '/contact/'], f); }
+});
+
+test('tarifs : la page, ses trois offres et la bêta ; aucun appel serveur ni paiement', () => {
+  const s = lire('tarifs/index.html'), t = s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  assert.match(s, /<meta name="robots" content="noindex">/);
+  assert.match(t, /AIME est gratuit pendant la bêta\./);
+  for (const x of [/Découverte 0 €/, /Projet 79 € TTC, une seule fois 59 € pour les 50 premiers projets/, /Pro 390 € HT par an ou 39 € HT par mois/]) assert.match(t, x);
+  assert.ok(!/fetch\(|XMLHttpRequest|\/api\/|stripe|<form/i.test(s), 'aucun appel, aucun formulaire, aucun paiement');
+  assert.ok(s.includes('src="/media/visuels/traiteur.webp"'));
+});
+
+test('visuels : chaque image citée existe ; la photo du Point Zéro est la seule en fetchpriority="high"', () => {
+  for (const f of ['index.html', 'tarifs/index.html', 'compte/index.html', 'coeur/coeur.css']) for (const x of lire(f).matchAll(/\/media\/visuels\/([\w.-]+\.webp)/g)) assert.ok(fs.existsSync(path.join(__dirname, '..', 'media/visuels', x[1])), f + ' : ' + x[1]);
+  const a = lire('index.html');
+  assert.equal((a.match(/fetchpriority="high"/g) || []).length, 1); assert.match(a, /<img src="\/media\/visuels\/cour-trio\.webp"[^>]*fetchpriority="high"/);
+  assert.equal((a.match(/cour-trio\.webp/g) || []).length, 1, 'la photo du Point Zéro n\'est demandée qu\'une fois');
+  assert.equal((a.match(/class="sc-photo"[^>]*loading="lazy"/g) || []).length, 4, 'les quatre arrivées, en différé');
 });
