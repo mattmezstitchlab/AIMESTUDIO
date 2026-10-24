@@ -46,9 +46,17 @@ test('lecture seule : aucun stockage, aucune donnée de la Régie hors version p
  assert.match(code('maitre/sources.js'),/proprio\?json\('\/api\/maitre'/,'les compteurs ne sont demandés qu\'avec le droit propriétaire');
  assert.ok(!/regie\/regie\.js|regie\/scene\.js/.test(lire('maitre/index.html')+code('maitre/sources.js')+code('canevas/adaptateurs/maitre.js')),'la Régie maîtresse n\'est pas chargée')});
 
-test('la Régie maîtresse et le cube-personne restent intacts (fichiers inchangés)',()=>{let d='';
- try{d=execSync('git diff --name-only --diff-filter=MDR '+require('./_base.cjs')()+' -- regie/ cube/modele.js cube/stock.js cube/regie.js cube/composition.js cube/cartes.js cube/assemblage.js canevas/adaptateurs/cube.js canevas/plan.js canevas/scene.js api/_auth/',{cwd:R('.'),encoding:'utf8'}).trim()}catch(e){return}
- assert.equal(d,'','aucun de ces fichiers n\'est modifié par le Cube Maître')});
+/* le garde : la Régie maîtresse, le cube-personne, la source unique des droits (synchroview/permissions.js) et le socle des comptes
+   (auth, propriétaire du site, journal en ajout seul) ne changent pas. espaces.mjs et pages.mjs évoluent (décision de Matt, PR B),
+   mais role() et exiger() restent identiques, mot pour mot, à la branche visée. */
+test('la Régie maîtresse, le cube-personne, la source des droits et le socle des comptes restent intacts (fichiers inchangés)',()=>{let d='';
+ try{d=execSync('git diff --name-only --diff-filter=MDR '+require('./_base.cjs')()+' -- regie/ cube/modele.js cube/stock.js cube/regie.js cube/composition.js cube/cartes.js cube/assemblage.js canevas/adaptateurs/cube.js canevas/plan.js canevas/scene.js synchroview/permissions.js api/_auth/auth.mjs api/_auth/proprietaire.mjs api/_auth/journal.mjs',{cwd:R('.'),encoding:'utf8'}).trim()}catch(e){return}
+ assert.equal(d,'','aucun de ces fichiers n\'est modifié')});
+
+test('espaces.mjs : role() et exiger() sont identiques à la branche visée',()=>{let avant='';
+ try{avant=execSync('git show '+require('./_base.cjs')()+':api/_auth/espaces.mjs',{cwd:R('.'),encoding:'utf8'})}catch(e){return}
+ const maintenant=lire('api/_auth/espaces.mjs'),f=(t,n)=>{const m=t.match(new RegExp('\\n(export )?async function '+n+'\\([\\s\\S]*?\\n}\\n'));return m&&m[0]};
+ for(const n of ['role','exiger']){assert.ok(f(avant,n),n+' introuvable dans la branche visée');assert.equal(f(maintenant,n),f(avant,n),n+'() a changé')}});
 
 test('la vue 3D partagée : modèle facultatif, cube-personne inchangé par défaut, miniature du dock réservée au cube-personne',()=>{const v=lire('cube/vue3d.js');
  assert.match(v,/var M=o\.modele\|\|C/);assert.match(v,/if\(!o\.modele\)dernier=\{cube:cube,moi:moi\}/,'le Cube Maître ne remplace jamais la miniature du dock');

@@ -32,6 +32,24 @@ export async function duree(db) {
   return DUREE;
 }
 export const ACTIF = 'and (m.jusqu_au is null or m.jusqu_au > now())';
+/* la relation d'un membre (db/migrations/2026-10-24-03-relation.sql) : le mot métier (« témoin », « fleuriste »…), jamais un droit.
+   Tant que la colonne n'existe pas sur une base, on ne l'écrit pas ; l'invitation se fait quand même. */
+let RELATION_PRETE = null;
+export function _oublierRelation() { RELATION_PRETE = null; }
+export async function relationPrete(db) {
+  if (RELATION_PRETE !== null) return RELATION_PRETE;
+  try { const { rows } = await db.query("select count(*)::int as n from information_schema.columns where table_schema = 'public' and column_name = 'relation' and table_name in ('space_members', 'invitations')"); RELATION_PRETE = rows[0].n === 2; }
+  catch { RELATION_PRETE = false; }
+  return RELATION_PRETE;
+}
+/* un mot, pas une phrase : lettres, espaces, apostrophes, traits d'union ; 40 caractères au plus */
+export function motRelation(v) {
+  const t = texte(v, 40); if (!t) return null;
+  if (!/^[\p{L}][\p{L} '’-]*$/u.test(t)) refus(400, 'La relation est un mot (« témoin », « fleuriste »…), sans chiffres ni signes.');
+  return t.toLowerCase();
+}
+/* l'origine d'un projet (un essai, un formulaire) : un identifiant court, pour ne jamais créer deux fois le même projet */
+const ORIGINE = /^[A-Za-z0-9_-]{6,80}$/;
 const MAX_JOURS_ROLE = 3 * 366;
 /* le rôle actif : après sa date de fin, un rôle vaut absence (même réponse qu'un non-membre) ; la fermeture est inscrite une fois */
 export async function role(db, espace, userId) {
@@ -73,9 +91,19 @@ export async function mes(db, u) {
 export async function creer(db, u, b) {
   const titre = texte(b.titre, 120); if (!titre) refus(400, 'Donnez un nom à l\'espace.');
   const kind = KINDS.includes(b.kind) ? b.kind : 'evenement', modele = MODELES.includes(b.modele) ? b.modele : null;
+  if (b.origine != null && !ORIGINE.test(String(b.origine))) refus(400, 'Origine invalide.');
+  const origine = b.origine != null ? String(b.origine) : null;
+  /* sans doublon : la même origine, pour le même propriétaire, rend le projet déjà créé (aucune nouvelle ligne, aucun journal) */
+  if (origine) {
+    const { rows: deja } = await db.query("select s.id, s.title, s.kind, s.data->>'modele' as modele from spaces s join space_members m on m.space_id = s.id and m.user_id = $1 and m.role = 'owner' where s.owner_id = $1 and s.data->>'origine' = $2 limit 1", [u.id, origine]);
+    if (deja[0]) return { id: deja[0].id, titre: deja[0].title, kind: deja[0].kind, modele: deja[0].modele || null, role: 'owner', existant: true, journal: null };
+  }
   const { rows: n } = await db.query('select count(*)::int as n from spaces where owner_id = $1', [u.id]);
   if (n[0].n >= MAX_ESPACES) refus(429, 'Vous avez atteint le nombre maximal d\'espaces.');
-  const { rows } = await db.query('insert into spaces (kind, title, owner_id, data) values ($1, $2, $3, $4::jsonb) returning id', [kind, titre, u.id, JSON.stringify(modele ? { modele } : {})]);
+  const donnees = Object.assign({}, modele ? { modele } : {}, origine ? { origine } : {});
+  let rows;
+  try { ({ rows } = await db.query('insert into spaces (kind, title, owner_id, data) values ($1, $2, $3, $4::jsonb) returning id', [kind, titre, u.id, JSON.stringify(donnees)])); }
+  catch (e) { if (origine && e && e.code === '23505') return creer(db, u, b); throw e; }   /* deux envois simultanés : l'index unique tranche, le second relit */
   await db.query('insert into space_members (space_id, user_id, role) values ($1, $2, \'owner\')', [rows[0].id, u.id]);
   const journal = await inscrire(db, { qui: u.id, espace: rows[0].id, action: 'creation', cible: u.id, detail: { role: 'owner' } });
   return { id: rows[0].id, titre, kind, modele, role: 'owner', journal };
@@ -90,13 +118,16 @@ export async function inviter(db, u, b, base) {
   if (email && !EMAIL.test(email)) refus(400, 'Adresse e-mail invalide.');
   const jusquau = fin(b.jusquau), d = await duree(db);
   if (jusquau && !d) refus(503, 'La durée des rôles n\'est pas encore installée sur cette base (migration à exécuter).');
+  const relation = motRelation(b.relation), rp = relation ? await relationPrete(db) : false;   /* sans la colonne, la relation est ignorée */
   const { rows: n } = await db.query('select count(*)::int as n from invitations where space_id = $1 and used_at is null and expires_at > now()', [b.espace]);
   if (n[0].n >= MAX_INVITATIONS) refus(429, 'Trop d\'invitations en attente pour cet espace.');
   const jeton = crypto.randomBytes(32).toString('base64url'), jours = email ? JOURS_INVITATION : JOURS_SANS_ADRESSE;
-  const { rows: inv } = await db.query(`insert into invitations (space_id, role, token_hash, email, created_by, expires_at${d ? ', role_jusqu_au' : ''}) values ($1, $2, $3, $4, $5, now() + interval '${jours} days'${d ? ', $6' : ''}) returning id`,
-    [b.espace, cible, hacher(jeton), email, u.id].concat(d ? [jusquau] : []));
+  const cols = ['space_id', 'role', 'token_hash', 'email', 'created_by'], vals = [b.espace, cible, hacher(jeton), email, u.id];
+  if (d) { cols.push('role_jusqu_au'); vals.push(jusquau); }
+  if (rp) { cols.push('relation'); vals.push(relation); }
+  const { rows: inv } = await db.query(`insert into invitations (${cols.join(', ')}, expires_at) values (${vals.map((_, i) => '$' + (i + 1)).join(', ')}, now() + interval '${jours} days') returning id`, vals);
   const journal = await inscrire(db, { qui: u.id, espace: b.espace, action: 'invitation', detail: Object.assign({ role: cible, invitation: inv[0].id, nominative: !!email, jours }, jusquau ? { jusqu_au: jusquau } : {}) });
-  return { lien: base + '/compte/?invitation=' + jeton, role: cible, email, jours, jusquau, journal };
+  return { lien: base + '/projets/?invitation=' + jeton, role: cible, email, jours, jusquau, relation: rp ? relation : null, journal };
 }
 
 /* rejoindre : consommation atomique (une seule fois, avant expiration, et par la bonne adresse si l'invitation en nomme une) */
@@ -112,6 +143,8 @@ export async function rejoindre(db, u, b) {
   if (d) { await db.query('delete from space_members where space_id = $1 and user_id = $2 and jusqu_au is not null and jusqu_au <= now()', [rows[0].space_id, u.id]);
     await db.query('insert into space_members (space_id, user_id, role, jusqu_au) values ($1, $2, $3, $4) on conflict (space_id, user_id) do nothing', [rows[0].space_id, u.id, rows[0].role, rows[0].role_jusqu_au || null]); }
   else await db.query('insert into space_members (space_id, user_id, role) values ($1, $2, $3) on conflict (space_id, user_id) do nothing', [rows[0].space_id, u.id, rows[0].role]);
+  /* la relation choisie à l'invitation devient celle du membre, seulement s'il n'en a pas déjà une (un mot, jamais un droit) */
+  if (rows[0].relation && await relationPrete(db)) await db.query('update space_members set relation = $3 where space_id = $1 and user_id = $2 and relation is null', [rows[0].space_id, u.id, rows[0].relation]);
   const r = await role(db, rows[0].space_id, u.id);
   const journal = await inscrire(db, { qui: u.id, espace: rows[0].space_id, action: 'acceptation', cible: u.id, detail: Object.assign({ role: r, invitation: rows[0].id }, rows[0].role_jusqu_au ? { jusqu_au: iso(rows[0].role_jusqu_au) } : {}) });
   const { rows: s } = await db.query('select title from spaces where id = $1', [rows[0].space_id]);

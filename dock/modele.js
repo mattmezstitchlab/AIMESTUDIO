@@ -238,7 +238,8 @@ function composerReel(d){
  var vus={},lieux=[];
  function poser(id,nom,icone,gab){if(vus[gab]||servis.indexOf(gab)<0)return;vus[gab]=1;lieux.push({id:id,nom:nom,icone:icone,gabarit:gab,href:null})}
  poser('acces',NOM_GABARIT.acces,ICONE_GABARIT.acces,'acces');
- ((inst&&inst.lieux)||F.lieux||[]).map(lieu).forEach(function(e){var gab=GABARIT_DE[e.id];if(!gab)return;if(gab==='acces')return;poser(e.id,e.nom,e.icone,gab)});
+ /* dans un vrai projet, un lieu porte le nom de la page servie (Journal, Personnes…), pas le mot de la démonstration */
+ ((inst&&inst.lieux)||F.lieux||[]).map(lieu).forEach(function(e){var gab=GABARIT_DE[e.id];if(!gab)return;if(gab==='acces')return;poser(e.id,NOM_GABARIT[gab]||e.nom,e.icone,gab)});
  if(g.inviter.length)poser('personnes',NOM_GABARIT.personnes,ICONE_GABARIT.personnes,'personnes');
  lieux=lieux.slice(0,MAX_LIEUX);
  var plus=[];

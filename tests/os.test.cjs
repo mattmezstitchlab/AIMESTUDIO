@@ -35,11 +35,11 @@ test('OS · les fenêtres restent dans l\'écran, et l\'OS ne s\'ouvre jamais da
   assert.equal(e.fenetres.length, 1); assert.equal(e.fenetres[0].href, '/'); assert.equal(e.fenetres[0].x, 40); assert.deepEqual(e.epingles, ['ok']);
 });
 
-test('OS · la coque : /bureau/ est l\'OS, Mon espace garde l\'ancien Bureau, la page n\'a pas d\'orbe en double', () => {
-  const h = fs.readFileSync('bureau/index.html', 'utf8');
-  for (const s of ['/nav/registre.js', '/regie/donnees.js', '/bureau/sources.js', '/os/apps.js', '/os/os.js']) assert.ok(h.includes(s), s);
+test('OS · le Bureau est supprimé (accord de Matt, PR B) : la coque ne vit plus que sur la Page Zéro (?coque=1) ; Mon espace garde la sauvegarde', () => {
+  assert.ok(!fs.existsSync('bureau/index.html') && !fs.existsSync('os/os.css'), 'le code propre au Bureau est retiré');
+  const h = fs.readFileSync('index.html', 'utf8');
+  for (const s of ['/os/coque.js', '/os/apps.js', '/os/os.js']) assert.ok(h.includes(s), s);
   assert.ok(h.indexOf('/os/apps.js') < h.indexOf('/os/os.js'));
-  assert.match(h, /role="combobox"/); assert.match(h, /id="dock"[^>]*hidden/, 'la barre d\'apps reste en coulisses (fenêtres), cachée'); assert.match(h, /id="dock-site"/, 'le Dock AIME la remplace'); assert.match(h, /id="orbeBtn"/); assert.match(h, /id="toutBtn"/);
   assert.ok(fs.existsSync('bureau/espace/index.html'));
   assert.match(fs.readFileSync('regie/scene.js', 'utf8'), /DANS_OS/);
   const os = fs.readFileSync('os/os.js', 'utf8');
@@ -58,7 +58,7 @@ test('OS · autonomie de l\'orbe : le visiteur l\'emporte, à la demande par dé
   assert.equal(A.autonomie('attentive', null), 'attentive');
   assert.equal(A.autonomie(undefined, undefined), 'discrete');
   assert.equal(A.etat({ orbe: 'active' }).orbe, 'active'); assert.equal(A.etat({ orbe: 'tout' }).orbe, null);
-  const h = fs.readFileSync('bureau/index.html', 'utf8'); assert.match(h, /id="orbePref"/); assert.match(h, /id="orbeBulle"/);
+  const h = fs.readFileSync('os/coque.js', 'utf8'); assert.match(h, /id="orbePref"/); assert.match(h, /id="orbeBulle"/);
 });
 
 test('OS · la clé « aime-os » de l\'ancien Bureau n\'est jamais réécrite', () => {

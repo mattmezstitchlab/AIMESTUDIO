@@ -35,3 +35,11 @@ test('base sans les migrations du 24/10 : les espaces marchent, le journal le di
   liens = []; r = await appel(E.default, { action: 'signaler', espace: id }, g); assert.equal(r.code, 200); assert.equal(r.body.journal, false); assert.equal(r.body.prevenu, true, 'le propriétaire est prévenu même sans journal');
   r = await appel(E.default, { action: 'mes' }, g); assert.ok(r.body.espaces.some(e => e.id === id));
 });
+
+test('base sans la migration relation : la relation est ignorée sans erreur, la création sans doublon tient quand même', opts, async () => {
+  const o = await connecter('o2-ancien@exemple.test'), g = await connecter('g2-ancien@exemple.test');
+  let r = await appel(E.default, { action: 'creer', titre: 'Origine', origine: 'essai-ancien-0001' }, o); assert.equal(r.code, 200); const id = r.body.id;
+  r = await appel(E.default, { action: 'creer', titre: 'Origine', origine: 'essai-ancien-0001' }, o); assert.equal(r.body.id, id, 'même origine, même projet');
+  r = await appel(E.default, { action: 'inviter', espace: id, role: 'contributor', relation: 'témoin' }, o); assert.equal(r.code, 200); assert.equal(r.body.relation, null, 'pas de colonne : pas de relation, dit');
+  r = await appel(E.default, { action: 'rejoindre', jeton: new URL(r.body.lien).searchParams.get('invitation') }, g); assert.equal(r.code, 200);
+});

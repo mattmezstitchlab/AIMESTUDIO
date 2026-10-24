@@ -72,7 +72,7 @@ test('routes : /bureau/ mène à Mes projets (Mon espace et sa sauvegarde resten
  assert.equal(suivre('/zero').fin,'/','le contrôle des redirections fonctionne');assert.equal(suivre('/monde/a/b').fin,'/aime/');
  for(const u of ['/bureau','/bureau/','/bureau/index.html'])assert.equal(suivre(u).fin,'/projets/',u+' → Mes projets');
  for(const u of ['/bureau/espace/'])assert.equal(suivre(u).sauts,0,u+' : la sauvegarde reste servie');
- assert.ok(fs.existsSync(R('bureau/index.html')),'rien n\'est supprimé : le fichier reste, l\'adresse redirige');
+ assert.ok(!fs.existsSync(R('bureau/index.html')),'le Bureau est supprimé (accord de Matt) ; l\'adresse redirige vers Mes projets');
  for(const r of reds)suivre(r.source.replace(/:path\*/,'x').replace('(.*)','x'));
  const rw=(v.rewrites||[]);const fichier=p=>{const f=p.endsWith('/')?p+'index.html':p;return fs.existsSync(R(f.slice(1)))||fs.existsSync(R(p.slice(1)+'/index.html'))};
  const sert=u=>{const p=u.split(/[?#]/)[0];if(fichier(p))return true;const r=rw.find(r=>r.source===p);return !!r&&fichier(r.destination)};

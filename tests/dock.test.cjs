@@ -123,15 +123,14 @@ test('le + unique (docs/IDENTITE.md) : sans compte « Commencer », connecté se
  const P=require('../dock/plus.js');
  assert.deepEqual(P.etat({connecte:false}).items.map(x=>x.nom),['Commencer']);assert.deepEqual(P.etat(null).items.map(x=>x.href),['/?commencer=1']);
  const e=P.etat({connecte:true,timbre:null},[{id:'11111111-1111-4111-8111-111111111111',titre:'Mariage Léa & Marc',role:'owner'},{id:'22222222-2222-4222-8222-222222222222',titre:'Séminaire',role:'guest'}]);
- assert.equal(e.mode,'projets');assert.deepEqual(e.items.map(x=>x.nom),['Mariage Léa & Marc','Séminaire','Nouveau projet']);
+ assert.equal(e.mode,'projets');assert.deepEqual(e.items.map(x=>x.nom),['Mariage Léa & Marc','Séminaire','Nouveau projet']);assert.equal(e.items[2].href,'/projets/?nouveau=1','une seule création : celle de Mes projets');
  assert.equal(e.items[0].href,'/projets/?espace=11111111-1111-4111-8111-111111111111');assert.equal(e.items[1].sous,'invité');
  assert.equal(P.etat({connecte:true},Array.from({length:9},(_,i)=>({id:'x'+i,titre:'P'+i,role:'viewer'}))).items.length,6,'cinq projets au plus, puis « Nouveau projet »');
  const j=lire('dock/plus.js');assert.ok(!/timbre|Timbre\./.test(j.replace(/\/\*[\s\S]*?\*\//g,'')),'le + ne dépend pas du Timbre');assert.ok(!/#entrer/.test(j));assert.ok(!/localStorage|sessionStorage/.test(j));
  assert.equal(require('../dock/modele.js').ACTIONS.commencer.href,'/?commencer=1');
 });
 
-test('le Bureau garde ses fenêtres ; ses classes sont préfixées pour ne jamais heurter le Dock (.dock)',()=>{
- for(const f of ['bureau/index.html','os/os.js','os/coque.js'])assert.ok(!/class="dock/.test(lire(f)),f);
- for(const f of ['os/os.css','os/coque.css'])assert.ok(!/(^|[^-\w])\.dock[-\s{,:.\[)]/.test(lire(f)),f);
- assert.match(lire('bureau/index.html'),/id="dockApps"/);
+test('l\'OS restant (coque de la Page Zéro) garde ses classes préfixées : jamais de collision avec le Dock (.dock)',()=>{
+ for(const f of ['os/os.js','os/coque.js'])assert.ok(!/class="dock/.test(lire(f)),f);
+ assert.ok(!/(^|[^-\w])\.dock[-\s{,:.\[)]/.test(lire('os/coque.css')),'os/coque.css');
 });
