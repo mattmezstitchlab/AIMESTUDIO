@@ -25,6 +25,7 @@
 <main id="contenu" tabindex="-1" class="cpt">
  <div class="cpt-titre"><h1 id="tTitre">Mon compte</h1><p class="leg" id="tSous">Votre adresse, votre Timbre, vos clés d'accès</p></div>
  <p class="alerte" id="ferme" hidden></p>
+ <p class="bandeau" id="depuisAccueil" hidden>Connectez-vous avec votre adresse : ce que vous avez choisi sur l'accueil sera créé à l'ouverture du lien.</p>
  <p class="bandeau" id="invite" hidden>Vous avez reçu une invitation dans un espace AIME. Connectez-vous avec l'adresse qui l'a reçue pour la rejoindre.</p>
 
  <section class="carte-c" id="connexion" hidden aria-labelledby="t-cnx">
@@ -58,10 +59,24 @@
 
  <section id="espaces" hidden aria-labelledby="t-esp">
   <div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-esp">Mes projets</h2></div>
+  <!-- un prestataire : ses activités (un métier, non publié), et ses missions qui arrivent par invitation -->
+  <div class="carte-c" id="activites" hidden aria-labelledby="t-act">
+   <h3 id="t-act">Mon activité</h3>
+   <ul class="cles" id="mesActivites"></ul>
+   <p class="leg">Vos missions arrivent quand des mariés ou une coordination vous invitent. Votre activité n'est publiée nulle part.</p>
+   <span><a class="b b-s" id="invitezMoi" href="mailto:">Invitez-moi sur AIME</a></span>
+  </div>
   <form class="carte-c lgn" id="fEspace"><label class="sr" for="eTitre">Nom du nouveau projet</label><input id="eTitre" maxlength="120" placeholder="Nom d'un nouveau projet (le mariage de…, le séminaire…)" style="flex:1;min-width:220px" required>
    <label class="sr" for="eModele">Domaine du projet</label><select id="eModele"><option value="mariage">Mariage</option><option value="seminaire">Séminaire</option></select>
    <button class="b b-p" type="submit">Créer le projet</button></form>
   <div class="pile" id="liste"></div>
+ </section>
+
+ <!-- sur cet appareil : les anciens essais de ce navigateur ; rien n'est envoyé sans le geste « Créer dans mon compte » -->
+ <section id="local" hidden aria-labelledby="t-local">
+  <h2 class="k" id="t-local">Sur cet appareil</h2>
+  <p class="leg" id="localNote"></p>
+  <div class="pile" id="localListe"></div>
  </section>
 
  <!-- l'écran de projet : Mon accès, Journal, Personnes, composés par le serveur (compte/projet.js) -->
@@ -76,6 +91,8 @@
 <script src="/vendor/simplewebauthn-browser-13.3.0.umd.min.js"></script>
 <script src="/compte/timbre.js"></script>
 <script src="/coeur/roles.js"></script>
+<script src="/contrats/projet.js"></script>
+<script src="/projets/projets.js"></script>
 <script src="/compte/creer.js"></script>
 <script src="/compte/projet.js"></script>
 <script src="/compte/compte.js"></script>

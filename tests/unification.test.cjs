@@ -55,7 +55,7 @@ test('le texte de l\'accueil dit ce qui existe : le serveur compose, l\'Orbe exp
   assert.equal((p.match(/<dt>/g) || []).length, 4, 'rien d\'autre que ce qui existe');
   assert.match(z, /id="domaines"[\s\S]*séminaire, une formation, une association[\s\S]*href="\/exemples\/"/);
   assert.ok(!/Témoin/.test(z) && !/"Témoin"/.test(m), 'Lucie est invitée, pas témoin');
-  assert.match(z, /placeholder="Le mariage de Léa et Marc, le 14 juin 2027 au Domaine des Aulnes"/);
+  assert.match(z, /<option value="maries">Futurs mariés<\/option>/, 'l\'accueil commence par « Je suis… » (PR C)');
 });
 
 test('l\'Orbe sans doublon (docs/ORBE-AUDIT.md § 4) : yeux.js n\'est plus chargé par l\'accueil ; le menu Explorer quitte /sites/ et /bureau/espace/', () => {

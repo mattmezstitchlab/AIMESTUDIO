@@ -23,23 +23,26 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     await p.click('#dock-site .dock-plus'); await p.waitForTimeout(250);
     ok(await p.evaluate(() => [...document.querySelectorAll('#dock-site .dock-menu [role=menuitem]')].map(a => a.textContent.trim())[0] === 'Commencer'), 'le + : « Commencer » sans compte');
     await p.click('#dock-site .dock-menu [data-commencer]'); await p.waitForTimeout(700);
-    ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'acTexte'), 'le + : le curseur est dans le champ d\'intention');
+    ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'jsChoix'), 'le + : le curseur est dans « Je suis… »');
     await p.goto(B + '/exemples/?commencer=1', { waitUntil: 'networkidle' }).catch(() => {});
     await p.goto(B + '/?commencer=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(900);
-    ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'acTexte'), '/?commencer=1 : le curseur est dans le champ d\'intention');
+    ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'jsChoix'), '/?commencer=1 : le curseur est dans « Je suis… »');
     await p.goto(B + '/contact/', { waitUntil: 'networkidle' }); ok(await p.evaluate(() => !!document.querySelector('#formContact [name=site_web]') && !!document.getElementById('dock-site')), '/contact/ : le formulaire a déménagé, avec le Dock');
     // le Point Zéro et la Grande Partition ont le même + unique (le Bureau est supprimé : /bureau/ → /projets/)
     for (const u of ['/point-zero/', '/lab/grande-partition/']) { await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400);
       ok(await p.evaluate(() => !!document.querySelector('#dock-site .dock-plus') && !document.querySelector('#porte .ap-b') && !(document.getElementById('dock') && document.getElementById('dock').offsetHeight)), u + ' : un seul Dock, un seul +, plus de porte'); }
-    // le Dock ne cache rien : un champ qui reçoit le focus s'arrête au-dessus (iPhone 393×659, formulaire « Voici ce que j'ai compris ») ;
-    // les fenêtres de Mes projets (ancien Bureau) aussi
-    if (n === 'téléphone') { const q = await b.newContext({ viewport: { width: 393, height: 659 }, isMobile: true, hasTouch: true }), t = await q.newPage();
-      await t.goto(B + '/', { waitUntil: 'networkidle' }); await t.fill('#acTexte', 'Le mariage de Léa et Marc, le 14 juin 2027 au Domaine des Aulnes, 120 invités'); await t.click('.ac-go'); await t.waitForTimeout(600);
-      const caches = await t.evaluate(async () => { const dock = document.querySelector('#dock-site .dock').getBoundingClientRect().top, L = [...document.querySelectorAll('#acComprendre input, #acComprendre select, #acComprendre button')].filter(x => x.offsetParent); let k = [];
-        for (const x of L) { x.focus(); await new Promise(r => setTimeout(r, 60)); const r = x.getBoundingClientRect(); if (r.bottom > dock + 1 || r.top < 0) k.push(x.id || x.textContent.trim()); } return { n: L.length, k }; });
-      ok(caches.n > 0 && caches.k.length === 0, 'accueil (393×659) : chaque champ du formulaire, focalisé, reste au-dessus du Dock' + (caches.k.length ? ' (' + caches.k.join(', ') + ')' : ''));
-      const dernier = await t.evaluate(() => { const L = [...document.querySelectorAll('#acComprendre input, #acComprendre select, #acComprendre button')].filter(x => x.offsetParent), x = L[L.length - 1]; x.focus(); return new Promise(r => setTimeout(() => r(x.getBoundingClientRect().bottom <= document.querySelector('#dock-site .dock').getBoundingClientRect().top), 80)); });
-      ok(dernier, 'accueil (393×659) : le dernier champ, focalisé, reste au-dessus du Dock');
+    // PR C (iPhone 393×659) : « Je suis… » → la démo ; aucun appel au serveur avant « Créer » (seul le Dock lit /api/identite) ;
+    // le bouton sous la démo, puis le champ e-mail, restent au-dessus du Dock
+    if (n === 'téléphone') { const q = await b.newContext({ viewport: { width: 393, height: 659 }, isMobile: true, hasTouch: true }), t = await q.newPage(), api = [];
+      t.on('request', r => { const u = new URL(r.url()); if (u.pathname.startsWith('/api/')) api.push(r.method() + ' ' + u.pathname); });
+      await t.goto(B + '/', { waitUntil: 'networkidle' }); await t.selectOption('#jsChoix', 'maries'); await t.waitForSelector('#demo .dm-tel.choisi'); await t.waitForTimeout(500);
+      const dessus = sel => t.evaluate(async s => { const x = document.querySelector(s); x.scrollIntoView({ block: 'nearest' }); await new Promise(r => setTimeout(r, 120)); const d = document.querySelector('#dock-site .dock').getBoundingClientRect().top, r = x.getBoundingClientRect(); return r.height > 0 && r.bottom <= d + 1 && r.top >= 0; }, sel);
+      ok(await dessus('#jsCreer'), 'accueil (393×659) : « Créer notre mariage », sous la démo, reste au-dessus du Dock');
+      ok(api.every(x => x === 'GET /api/identite'), 'accueil : aucun appel au serveur avant « Créer » (seul le Dock lit /api/identite)' + (api.length ? ' (' + [...new Set(api)].join(', ') + ')' : ''));
+      await t.click('#jsCreer'); await t.waitForSelector('#jsLien:not([hidden])', { timeout: 4000 }).catch(() => {});
+      ok(await t.evaluate(() => !document.getElementById('jsLien').hidden && document.activeElement && document.activeElement.id === 'jsEmail'), 'accueil : sans session, « Créer » demande l\'adresse du lien de connexion');
+      ok(await dessus('#jsLien button'), 'accueil (393×659) : « Recevoir le lien » reste au-dessus du Dock');
+      ok(!api.some(x => /espaces|sign-in/.test(x)), 'accueil : rien n\'est créé ni envoyé avant l\'adresse');
       await q.close(); }
     // la mosaïque (démonstration) : aucun son avant le premier geste ; « Activer » lance les téléphones, sans erreur
     { const m = await ctx.newPage(), em = []; m.on('pageerror', e => em.push(e.message));
@@ -149,12 +152,41 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     await p.fill('#src-exemplaires', '4321'); await p.waitForTimeout(900);
     { const t = await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /4\s?321/.test(document.body.textContent))));
       ok(t.filter(Boolean).length === 4, 'Exemples (Studio) : la quantité paraît chez les quatre rôles qui voient le bon à tirer, et chez eux seuls'); }
-    // Premier écran : une phrase → ce qui est compris → un projet enregistré → sa page, retrouvée après rechargement
-    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.fill('#acTexte', 'Le mariage de Léa et Marc, le 14 juin 2027 à Chantilly, 120 invités'); await p.click('.ac-go'); await p.waitForTimeout(500);
-    ok(await p.inputValue('#acLieu') === 'Chantilly' && await p.inputValue('#acDate') === '2027-06-14', 'Accueil : l\'intention est comprise (date, lieu)');
-    await p.click('#acOui'); await p.waitForFunction(() => /enregistré dans ce navigateur/.test(document.getElementById('acVivant').textContent), null, { timeout: 8000 }).catch(() => {}); await p.waitForTimeout(300);
-    ok(await p.evaluate(() => { const o = JSON.parse(localStorage.getItem('aime-projets')); return !!o && Object.values(o.projets).some(x => x.format === 'aime-projet' && x.titre === 'Léa & Marc'); }), 'Accueil : un projet aime-projet v1 est enregistré');
+    // Premier écran (PR C) : chaque choix de « Je suis… » affiche des téléphones, le rôle choisi au centre ; un seul bouton, selon le rôle
+    await p.goto(B + '/', { waitUntil: 'networkidle' });
+    const choix = await p.evaluate(() => [...document.querySelectorAll('#jsChoix option')].map(o => o.value).filter(Boolean));
+    const vus = [];
+    for (const v of choix) { await p.selectOption('#jsChoix', v); await p.waitForTimeout(250);
+      const r = await p.evaluate(() => ({ n: document.querySelectorAll('#demo .dm-tel').length, c: !!document.querySelector('#demo .dm-tel.choisi'), b: (document.getElementById('jsCreer') || {}).textContent || '', inv: !!document.querySelector('#jsSuite .js-invit'), vis: !document.getElementById('demo').hidden }));
+      if (!(r.vis && r.n >= 7 && r.c && (v === 'invite' ? r.inv && !r.b : r.b))) vus.push(v); }
+    ok(choix.length === 11 && vus.length === 0, 'Accueil : les ' + choix.length + ' choix de « Je suis… » affichent chacun des téléphones et un seul bouton' + (vus.length ? ' (' + vus.join(', ') + ')' : ''));
+    await p.selectOption('#jsChoix', 'metier:fleuriste'); await p.waitForTimeout(200);
+    ok(await p.evaluate(() => /Créer mon espace fleuriste/.test(document.getElementById('jsCreer').textContent) && /fleuriste/.test(document.querySelector('#demo .dm-tel.choisi .dm-leg b').textContent)), 'Accueil : un métier, le gabarit prestataire avec ses mots (vitrine/metiers.json)');
+    await p.selectOption('#jsChoix', 'metier:musicien-intermittent'); await p.waitForTimeout(200);
+    ok(await p.evaluate(() => /en préparation/i.test(document.getElementById('demo').textContent)), 'Accueil : le module intermittent est marqué « en préparation »');
+    await p.selectOption('#jsChoix', 'invite'); await p.waitForTimeout(200);
+    ok(await p.evaluate(() => !document.getElementById('jsCreer') && /Ce rôle arrive par invitation/.test(document.getElementById('jsSuite').textContent)), 'Accueil : invité·e, pas d\'inscription');
+    await p.selectOption('#jsChoix', 'coordination'); await p.waitForTimeout(200);
+    await p.click('#dmGo'); await p.waitForTimeout(rm ? 900 : 2600);
+    ok(await p.evaluate(() => !document.getElementById('dmSon').hidden && document.getElementById('dmGo').hidden), 'Accueil : « Activer la démo » lance le scénario ; le bouton du son paraît');
+    await p.click('#dmSon'); ok(await p.getAttribute('#dmSon', 'aria-pressed') === 'true', 'Accueil : le son se coupe');
+    await p.waitForFunction(() => document.querySelectorAll('#demo .nt').length > 0, null, { timeout: 15000 }).catch(() => {});
+    ok(await p.evaluate(() => document.querySelectorAll('#demo .nt').length > 0), 'Accueil : les notifications arrivent sur les téléphones concernés');
+    // les deux vidéos : rien en lecture automatique, preload="none", sous-titres par défaut, Échap ferme
+    await p.click('[data-video="aime-film"]'); await p.waitForTimeout(300);
+    ok(await p.evaluate(() => { const d = document.getElementById('lecteur'), v = document.getElementById('lecteurVideo'), tr = v.querySelector('track'); return d.open && v.paused && v.preload === 'none' && !v.autoplay && /aime-film\.mp4$/.test(v.src) && tr && tr.default && tr.srclang === 'fr'; }), 'Accueil : la vidéo s\'ouvre sans lecture automatique, preload="none", sous-titres par défaut');
+    await p.keyboard.press('Escape'); await p.waitForTimeout(200);
+    ok(await p.evaluate(() => !document.getElementById('lecteur').open && document.activeElement && document.activeElement.getAttribute('data-video') === 'aime-film'), 'Accueil : Échap ferme le lecteur et rend le focus à la vignette');
     ok(await p.evaluate(() => !document.getElementById('acApercu') && ![...document.querySelectorAll('a[href]')].some(a => /\/(sites|studio|canevas|bureau|lab|aime)\//.test(a.getAttribute('href')))), 'Accueil : ni aperçu de mini-site ni lien vers les outils mis de côté');
+    // les anciens essais de ce navigateur : rien ne se perd, ils paraissent dans Mes projets, « Sur cet appareil », sans être envoyés
+    await p.goto(B + '/projets/', { waitUntil: 'networkidle' });
+    await p.evaluate(() => { const P = window.AIMEProjets; P.Depot(localStorage).enregistrer(P.versProjet({ titre: 'Léa & Marc', date: '2027-06-14', lieu: 'Chantilly', type: 'mariage', modele: 'mariage' })); });
+    { const api2 = []; const h = r => { if (/\/api\/espaces/.test(r.url())) api2.push(r.url()); }; p.on('request', h);
+      await p.goto(B + '/projets/', { waitUntil: 'networkidle' }); await p.waitForTimeout(400);
+      ok(await p.evaluate(() => !document.getElementById('local').hidden && /Léa & Marc/.test(document.getElementById('localListe').textContent) && /sur cet appareil/.test(document.getElementById('localListe').textContent)), 'Mes projets : les anciens essais paraissent « Sur cet appareil »');
+      ok(api2.length === 0, 'Mes projets : les essais ne sont pas envoyés au serveur sans geste'); p.off('request', h);
+      await p.evaluate(() => localStorage.removeItem('aime-projets')); }
+    await p.goto(B + '/', { waitUntil: 'networkidle' });
     ok(!(await deborde()), 'Accueil : sans débordement horizontal');
     // Canevas universel · Site : ouvrir un projet, choisir un bloc, voir sa source, changer de Design System, garder après rechargement
     await p.goto(B + '/sites/', { waitUntil: 'networkidle' }); await p.waitForTimeout(800); if (await p.isVisible('#atelier')) await p.click('#nouveau'); await p.click('[data-demo="mariage"]'); await p.waitForTimeout(2500);

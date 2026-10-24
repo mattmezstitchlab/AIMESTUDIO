@@ -110,11 +110,12 @@ html.calme .pt.vif{animation:none}
 /* le formulaire de contact a déménagé vers /contact/ (lien en pied de page) */
 </style>
 <link rel="stylesheet" href="/accueil/accueil.css">
+<link rel="stylesheet" href="/accueil/je-suis.css">
 <link rel="stylesheet" href="/coeur/coeur.css">
 <link rel="stylesheet" href="/dock/dock.css">
 </head>
 <body>
-<a class="evite" href="#acTexte">Aller au champ « Que préparez-vous ? »</a>
+<a class="evite" href="#jsChoix">Aller au choix « Je suis… »</a>
 <header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a></header>
 
 <div class="flot" id="flot" aria-hidden="true"></div>
@@ -127,34 +128,51 @@ html.calme .pt.vif{animation:none}
   <h1 id="t-zero">AIME<sup>®</sup></h1>
   <p class="intention" data-regie="intention">Tout commence par une intention.</p>
   <p class="trois" data-regie="trois">Créer. Relier. Transformer.</p>
-  <form class="ac-form" id="acForm" novalidate>
-   <label class="ac-l" for="acTexte">Que préparez-vous ?</label>
-   <div class="ac-champ"><input id="acTexte" type="text" maxlength="600" autocomplete="off" placeholder="Le mariage de Léa et Marc, le 14 juin 2027 au Domaine des Aulnes"><button type="submit" class="ac-go">Commencer</button></div>
-   <p class="ac-ex"><span>Par exemple :</span><button type="button" data-ac-ex>Un séminaire de 80 personnes à Lyon le 3 mars 2027</button><button type="button" data-ac-ex>Les 40 ans de Julie, le 12 décembre 2026 au Café des Arts</button><button type="button" data-ac-ex>Un site pour mon atelier de céramique à Lille</button></p>
-  </form>
+  <!-- « Je suis… » : un choix, aucun rôle (le rôle vient du serveur, seulement pour qui crée un projet) ; accueil/je-suis.js -->
+  <div class="js-choix">
+   <label class="js-l" for="jsChoix">Je suis…</label>
+   <select id="jsChoix" autocomplete="off">
+    <option value="">Choisissez votre place</option>
+    <option value="maries">Futurs mariés</option>
+    <option value="coordination">Coordinatrice / coordinateur</option>
+    <optgroup label="Prestataire">
+     <option value="metier:fleuriste">Fleuriste</option>
+     <option value="metier:traiteur">Traiteur</option>
+     <option value="metier:musicien">Musicien</option>
+     <option value="metier:musicien-intermittent">Musicien intermittent (en préparation)</option>
+     <option value="metier:videaste">Vidéaste</option>
+     <option value="metier:photographe">Photographe</option>
+     <option value="metier:dj">DJ</option>
+     <option value="metier:lieu">Lieu</option>
+    </optgroup>
+    <option value="invite">Invité·e</option>
+   </select>
+  </div>
  </div>
+ <!-- la démo : les téléphones du mariage, le rôle choisi au centre (accueil/demo.js, vitrine/metiers.json) -->
+ <section class="dm" id="demo" hidden aria-labelledby="dmTete">
+  <p class="dm-tete" id="dmTete"></p>
+  <div class="dm-bande" tabindex="0" role="region" aria-label="Les téléphones de la démonstration ; faites défiler"><ul class="dm-tels"></ul></div>
+  <p class="dm-etat" id="dmEtat" aria-live="polite"></p>
+  <div class="dm-ctrl"><button type="button" class="dm-go" id="dmGo">Activer la démo</button><button type="button" class="dm-son" id="dmSon" aria-pressed="false" hidden>Couper le son</button></div>
+  <p class="dm-note">Démonstration · données fictives (Léa &amp; Marc). Rien n'est enregistré ni envoyé.</p>
+  <div class="js-suite" id="jsSuite"></div>
+  <form class="js-lien" id="jsLien" hidden novalidate>
+   <p id="jsLienT"></p>
+   <div class="js-champ"><label class="sr" for="jsEmail">Adresse e-mail</label><input id="jsEmail" type="email" autocomplete="email" placeholder="vous@exemple.fr" required><button type="submit">Recevoir le lien</button></div>
+   <p class="js-envoye" id="jsEnvoye" role="status" hidden></p>
+   <p class="js-legal">Pas de mot de passe. Votre adresse sert à faire fonctionner votre compte. <a href="/confidentialite/">Confidentialité</a></p>
+  </form>
+  <p class="vivant" id="jsVivant" role="status" aria-live="polite"></p>
+ </section>
+ <!-- deux vidéos, à la place des exemples : rien en lecture automatique, sous-titres par défaut (media/) -->
+ <ul class="vg" aria-label="Vidéos">
+  <li><button type="button" class="vg-b" data-video="aime-film" data-vtt data-titre="AIME en 2 minutes"><span class="vg-img"><img src="/media/aime-film.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">AIME en 2 minutes</span><span class="vg-d">2 min 22 · sous-titrée</span></button></li>
+  <li><button type="button" class="vg-b" data-video="aime-accueil" data-vtt data-titre="L'accueil en 45 secondes"><span class="vg-img"><img src="/media/aime-accueil.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">L'accueil en 45 secondes</span><span class="vg-d">45 s · sous-titrée</span></button></li>
+ </ul>
  <a class="descendre" href="/exemples/mosaique/">Voir ce qui change tout<i aria-hidden="true"></i></a>
 </section>
 
-<!-- Le projet de la personne : ce qui a été compris (accueil/accueil.js) ; plus d'aperçu de mini-site ni de lien vers le Canevas (brief du 24/10) -->
-<section class="ac-projet" id="monProjet" hidden aria-label="Mon projet">
- <div id="acComprendre" class="ac-carte">
-  <p class="ac-k">Étape 1 · votre intention</p>
-  <h2 id="acT" tabindex="-1">Voici ce que j'ai compris</h2>
-  <div class="ac-grille">
-   <label>Type de projet<select id="acType"><option value="mariage">Mariage</option><option value="seminaire">Séminaire ou conférence</option><option value="fete">Fête ou anniversaire</option><option value="association">Association</option><option value="portfolio">Portfolio ou créateur</option><option value="artisan">Artisan ou indépendant</option><option value="autre">Autre projet</option></select></label>
-   <label>Nombre de personnes<input id="acInvites" type="number" min="0" max="100000" inputmode="numeric"></label>
-   <label>Catégorie<select id="acCategorie"><option value="celebrations">Mariages & célébrations</option><option value="famille">Enfants & famille</option><option value="musique">Musique & concerts</option><option value="spectacles">Spectacles & scène</option><option value="cinema">Cinéma & médias</option><option value="arts">Arts & expositions</option><option value="festivals">Festivals & grands événements</option><option value="sport">Sport & activités physiques</option><option value="ateliers">Ateliers & loisirs</option><option value="formation">Cours & formation</option><option value="pro">Conférences & professionnel</option><option value="gastronomie">Gastronomie & dégustations</option><option value="bienetre">Santé & bien-être</option><option value="sorties">Sorties & plein air</option><option value="communaute">Communauté & solidarité</option><option value="ecole">École & jeunesse</option><option value="spiritualite">Spiritualité & cérémonies</option><option value="autre">Autre événement</option></select></label>
-   <label>Qui peut venir<select id="acAcces"><option>Ouvert au public</option><option>Sur inscription</option><option>Sur invitation</option><option>Privé</option></select></label>
-   <label class="large">Titre<input id="acTitre" type="text" maxlength="90"></label>
-   <label>Date<input id="acDate" type="date"></label>
-   <label>Lieu<input id="acLieu" type="text" maxlength="120"></label>
-  </div>
-  <p class="ac-alerte" id="acPassee" hidden>Cette date est déjà passée : vérifiez-la.</p>
-  <div class="ac-actions"><button type="button" class="ac-b p" id="acOui">Oui, créer mon projet</button><button type="button" class="ac-b" id="acCorriger">Corriger ma phrase</button></div>
- </div>
- <p class="vivant ac-vivant" id="acVivant" role="status" aria-live="polite"></p>
-</section>
 
 <!-- 1 · Le cœur : un seul projet, quatre écrans (accueil/coeur.js : vitrine/rendu.js + synchroview/permissions.js) -->
 <section class="cx cx-ouverture" id="coeur" aria-labelledby="t-coeur">
@@ -328,11 +346,13 @@ html.calme .pt.vif{animation:none}
 <footer class="pied-site" id="contact">
  <div class="col">
   <p class="pied-liens"><a href="/contact/">Parler d'un projet</a> · <a href="/exemples/">Les exemples</a> · <a href="/sante/">État et garanties du système</a> · <a href="/confidentialite/">Confidentialité</a></p>
-  <p class="sorties-note">Vos essais restent dans ce navigateur.</p>
+  <p class="sorties-note">Les démonstrations tournent dans ce navigateur, avec des données fictives.</p>
   <div class="pied-bas"><span>AIME®</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
  </div>
 </footer>
 </main>
+<!-- le lecteur : se ferme avec Échap, le bouton ou un clic à côté ; au-dessus du Dock (couche supérieure) -->
+<dialog class="lecteur" id="lecteur" aria-labelledby="lecteurT"><div class="lecteur-in"><div class="lecteur-tete"><h2 id="lecteurT"></h2><button type="button" id="lecteurFermer">Fermer<span class="sr"> la vidéo</span></button></div><video id="lecteurVideo" controls playsinline preload="none"></video></div></dialog>
 
 <script src="/contrats/projet.js"></script>
 <script src="/synchroview/permissions.js"></script>
@@ -356,7 +376,9 @@ html.calme .pt.vif{animation:none}
 <script src="/projets/taxonomie.js"></script>
 <script src="/projets/intention.js"></script>
 <script src="/projets/projets.js"></script>
-<script src="/accueil/accueil.js"></script>
+<script src="/compte/creer.js"></script>
+<script src="/accueil/demo.js"></script>
+<script src="/accueil/je-suis.js"></script>
 <script src="/coeur/roles.js"></script>
 <script src="/dock/modele.js"></script>
 <script src="/dock/dock.js"></script>
