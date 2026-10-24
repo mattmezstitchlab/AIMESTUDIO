@@ -7,6 +7,10 @@ const echecs = [], ok = (c, m) => { if (!c) echecs.push(m); console.log((c ? '  
 /* « Je suis… » est une liste dessinée (accueil/liste.js) : on la choisit comme une personne, à la souris */
 const choisir = async (pg, v) => { await pg.click('#jsChoix'); await pg.click('#jsOptions [data-value="' + v + '"]'); };
 const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::ERR/;
+/* Le signalement « unsafe-eval » de la CSP report-only, quand le code évalué n'a AUCUNE adresse de script : c'est l'outil de test
+   (Playwright 1.47, celui de la CI, évalue ses attentes dans la page), pas le site. Une entorse venue d'un fichier du site a toujours
+   son adresse : elle reste comptée comme une erreur, comme toute autre entorse à la CSP. */
+const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) && !(m.location() || {}).url;   /* « [Report Only] Refused to evaluate… » ou « Evaluating a string as JavaScript violates… » selon Chromium */
 (async () => {
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
   for (const [n, vp, rm] of [['ordinateur', { width: 1440, height: 900 }, false], ['téléphone', { width: 390, height: 844 }, false], ['mouvement réduit', { width: 1280, height: 800 }, true]]) {
@@ -21,7 +25,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       await q.goto(B + '/', { waitUntil: 'networkidle' }); ok(await q.evaluate(() => typeof window.AIMEScene !== 'undefined' || !!document.querySelector('script[src="/regie/scene.js"]')), 'accueil : /regie/scene.js chargé sans propriétaire');
       await z.close(); }
     const p = await ctx.newPage(), err = [];
-    p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
+    p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text()) && !outil(m)) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
     const csp = [];
