@@ -28,6 +28,9 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     await p.goto(B + '/?commencer=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(900);
     ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'acTexte'), '/?commencer=1 : le curseur est dans le champ d\'intention');
     await p.goto(B + '/contact/', { waitUntil: 'networkidle' }); ok(await p.evaluate(() => !!document.querySelector('#formContact [name=site_web]') && !!document.getElementById('dock-site')), '/contact/ : le formulaire a déménagé, avec le Dock');
+    // le Bureau : la barre d'apps cède la place au Dock AIME ; le Point Zéro et la Grande Partition ont le même + unique
+    for (const u of ['/bureau/', '/point-zero/', '/lab/grande-partition/']) { await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400);
+      ok(await p.evaluate(() => !!document.querySelector('#dock-site .dock-plus') && !document.querySelector('#porte .ap-b') && !(document.getElementById('dock') && document.getElementById('dock').offsetHeight)), u + ' : un seul Dock, un seul +, plus de porte'); }
     // la mosaïque (démonstration) : aucun son avant le premier geste ; « Activer » lance les téléphones, sans erreur
     { const m = await ctx.newPage(), em = []; m.on('pageerror', e => em.push(e.message));
       await m.addInitScript(() => { window.__sons = 0; const A = window.AudioContext || window.webkitAudioContext; if (!A) return; const W = function (...a) { window.__sons++; return new A(...a) }; W.prototype = A.prototype; window.AudioContext = W; window.webkitAudioContext = W; });
@@ -38,7 +41,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       ok(await m.evaluate(() => window.__sons >= 1), 'mosaïque : « Activer » ouvre le son');
       ok(!(await m.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)), 'mosaïque : sans débordement après activation');
       ok(em.length === 0, 'mosaïque : aucune erreur JavaScript' + (em.length ? ' (' + em[0] + ')' : '')); await m.close(); }
-    // le dock : Réseau et Canevas ; ni ancien générateur ni Régie pour le public
+    // les apps épinglées (en coulisses, derrière « Toutes les apps ») : Réseau et Canevas ; ni ancien générateur ni Régie pour le public
     await p.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
     const dock = await p.$$eval('#dockApps [data-app]', a => a.map(x => x.dataset.app));
     ok(dock.includes('reseau') && dock.includes('canevas'), 'dock : Réseau et Canevas'); ok(!dock.includes('sites'), 'dock : pas l\'ancien générateur');
@@ -46,7 +49,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     const ANCIEN = JSON.stringify({ folders: [{ id: 'f1', n: 'Mariage' }], memos: ['penser au sax'], me: { nom: 'Matt' } });
     await p.evaluate(v => localStorage.setItem('aime-os', v), ANCIEN);
     await p.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await p.waitForTimeout(500);
-    await p.click('#dockApps [data-app="canevas"]').catch(() => {}); await p.waitForTimeout(800);
+    await p.click('#toutBtn'); await p.waitForTimeout(300); await p.click('#toutG [data-app="canevas"]').catch(() => {}); await p.waitForTimeout(800);   /* la barre d'apps est en coulisses : on passe par « Toutes les apps » */
     await p.keyboard.press('Escape').catch(() => {}); await p.waitForTimeout(500);
     const garde = await p.evaluate(() => ({ a: localStorage.getItem('aime-os'), v2: localStorage.getItem('aime-os-v2') }));
     ok(garde.a === ANCIEN, 'ancien Bureau : « aime-os » intact après une fenêtre ouverte');
