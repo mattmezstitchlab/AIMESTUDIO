@@ -51,18 +51,24 @@ test('mentions légales : l\'éditeur, le directeur de la publication, l\'héber
   assert.ok(s.includes('<a href="/mentions-legales/" aria-current="page">'), 'la page courante est marquée');
 });
 
-test('confidentialité : le formulaire de contact (Resend, rien d\'enregistré, pour un devis), pas de bandeau, Speed Insights, Neon à Francfort', () => {
+test('confidentialité : le formulaire de contact (enregistré, Resend, pour un devis, 24 mois), pas de bandeau, Speed Insights, Neon à Francfort', () => {
   const t = lire('confidentialite/index.html').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-  assert.match(t, /formulaire de contact .*envoyés par e-mail \(Resend\) à Matthieu Lecointre, pour que AIME puisse vous répondre et vous proposer un devis\. Rien n'est enregistré sur le site\./);
+  assert.match(t, /formulaire de contact .*sont enregistrés sur le site puis envoyés par e-mail \(Resend\) à Matthieu Lecointre, pour que AIME puisse vous répondre, vous proposer un devis et suivre votre demande\. Seul le propriétaire du site peut les lire\. Votre adresse IP n'est pas enregistrée\. Ils sont effacés 24 mois après notre dernier échange/);
+  assert.ok(!/Rien n'est enregistré sur le site/.test(t), 'l\'ancienne promesse a disparu');
   assert.match(t, /strictement nécessaires.*pas de bandeau de cookies/);
   assert.ok(t.includes('Nous mesurons la vitesse d\'affichage des pages, sans cookie ni identifiant personnel (Vercel Speed Insights).'));
   assert.match(t, /Neon , en région Europe \(Francfort\)/);
   assert.match(t, /mentions légales/);
 });
 
-test('contact : le texte de confidentialité ne promet que ce que fait api/contact.js (un e-mail, sans stockage)', () => {
-  const c = lire('api/contact.js');
-  assert.match(c, /un e-mail, sans stockage/); assert.match(c, /CONTACT_TO/); assert.ok(!/pool|query\(|INSERT/i.test(c), 'aucune écriture en base');
+test('contact : les textes ne promettent que ce que fait le code (demande enregistrée, puis e-mail ; durée = celle du code)', () => {
+  const c = lire('api/contact.js'), D = require('../api/_demandes/depot.cjs');
+  assert.match(c, /D\.enregistrer\(/); assert.ok(c.indexOf('D.enregistrer(') < c.indexOf('C.envoyer('), 'la demande est écrite avant l\'e-mail');
+  assert.match(c, /CONTACT_TO/);
+  assert.equal(D.CONSERVATION_DEFAUT, 24, 'si la durée change dans le code, changer aussi la page Confidentialité et le formulaire');
+  for (const f of ['contact/index.html', 'lab/grande-partition/index.html'])
+    assert.ok(lire(f).includes('Elles sont transmises par e-mail et conservées sur ce site au plus ' + D.CONSERVATION_DEFAUT + ' mois après notre dernier échange'), f + ' : le consentement dit la vérité');
+  assert.ok(lire('confidentialite/index.html').includes('Une demande envoyée par le formulaire de contact : ' + D.CONSERVATION_DEFAUT + ' mois après notre dernier échange'));
 });
 
 test('pied légal : toutes les pages du site qui en ont un portent la même ligne, Tarifs en premier', () => {

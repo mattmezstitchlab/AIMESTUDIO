@@ -1,21 +1,21 @@
-// AIME · formulaire de contact (devis, projet) → un e-mail, sans stockage.
+// AIME · formulaire de contact (devis, projet) → la demande est enregistrée, puis un e-mail part.
+// Deux événements distincts, chacun avec son statut : la demande (table « demandes », api/_demandes/depot.cjs) et l'e-mail
+// (Resend, api/_demandes/courriel.cjs). Une panne d'e-mail laisse la demande enregistrée (email_statut = 'echec'), visible
+// et renvoyable par le propriétaire du site (api/demandes.mjs). Une base absente ou injoignable laisse le comportement
+// d'avant : l'e-mail seul. Seule la panne des deux ensemble renvoie une erreur au visiteur, dont le texte reste dans la page.
 // La clé Resend, le destinataire et l'expéditeur vivent dans les variables d'environnement du serveur
 // (RESEND_API_KEY, CONTACT_TO, CONTACT_FROM) ; rien de tout cela n'atteint le navigateur.
 // L'adresse du visiteur n'est utilisée qu'en Reply-To : l'expéditeur est toujours celui du domaine vérifié.
 // Protections : même origine, JSON seulement, taille bornée, champs validés, piège à robots, délai minimal de saisie,
-// limitation des envois par adresse IP, partagée entre instances (api/_auth/quotas.cjs). Les journaux ne contiennent jamais de données personnelles.
-const crypto = require('crypto');
+// limitation des envois par adresse IP, partagée entre instances (api/_auth/quotas.cjs). Aucune adresse IP n'est enregistrée.
+// Les journaux ne contiennent jamais de données personnelles.
 const Q = require('./_auth/quotas.cjs');      /* quotas partagés entre instances (audit Vercel, PR 2) */
 const R = require('./_auth/requete.cjs');     /* même origine et corps JSON, comme toutes les écritures */
+const C = require('./_demandes/courriel.cjs'); /* l'e-mail d'une demande : composition et envoi */
+const D = require('./_demandes/depot.cjs');   /* les demandes enregistrées (migration 2026-10-25-09) */
 
 const LIMITE_OCTETS = 16 * 1024;
-const PROJETS = {
-  site: 'Création de site',
-  refonte: 'Refonte ou évolution d\'un site',
-  supports: 'Supports (faire-part, affiches, signalétique…)',
-  projet: 'Parler d\'un projet',
-  autre: 'Autre demande',
-};
+const PROJETS = C.PROJETS;
 const DELAI_MIN_MS = 3000; // un humain met plus de 3 s à remplir le formulaire
 
 
@@ -26,9 +26,6 @@ function propre(v, max) {
     .slice(0, max + 1);
 }
 function uneLigne(v) { return !/[\r\n]/.test(v); }
-function esc(s) {
-  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-}
 
 // Renvoie { ok: true, valeurs } ou { ok: false, erreurs: { champ: message } }.
 function valider(corps, maintenant) {
@@ -73,25 +70,6 @@ function ipDe(req) {
   return String(req.headers['x-real-ip'] || String(req.headers['x-forwarded-for'] || '').split(',')[0] || (req.socket && req.socket.remoteAddress) || 'inconnue').trim().slice(0, 64);
 }
 
-function message(v) {
-  const lignes = [
-    ['Type de demande', PROJETS[v.projet]],
-    ['Prénom et nom', v.prenom + ' ' + v.nom],
-    ['E-mail', v.email],
-    ['Téléphone', v.tel || '—'],
-    ['Adresse', v.adresse || '—'],
-    ['Livraison souhaitée', v.livraison ? v.livraison.split('-').reverse().join('/') : '—'],
-  ];
-  const text = lignes.map(([k, x]) => k + ' : ' + x).join('\n') + '\n\nMessage :\n' + v.message +
-    '\n\n—\nEnvoyé depuis le formulaire de contact AIME. Répondez directement à ce message pour écrire à la personne.';
-  const html = '<table cellpadding="6" style="border-collapse:collapse;font:14px/1.5 sans-serif">' +
-    lignes.map(([k, x]) => '<tr><th align="left" style="color:#555;font-weight:600">' + esc(k) + '</th><td>' + esc(x) + '</td></tr>').join('') +
-    '</table><p style="font:14px/1.6 sans-serif;white-space:pre-wrap;border-left:3px solid #7C5CFF;padding-left:12px">' + esc(v.message) + '</p>' +
-    '<p style="font:12px sans-serif;color:#777">Envoyé depuis le formulaire de contact AIME. Répondez directement à ce message pour écrire à la personne.</p>';
-  const sujet = ('Demande · ' + PROJETS[v.projet] + ' · ' + v.prenom + ' ' + v.nom).replace(/[\r\n]+/g, ' ').slice(0, 180);
-  return { sujet, text, html };
-}
-
 async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -110,30 +88,32 @@ async function handler(req, res) {
   const r = valider(corps);
   if (!r.ok) return repondre(422, { ok: false, erreur: 'champs', champs: r.erreurs });
 
-  const cle = process.env.RESEND_API_KEY, a = process.env.CONTACT_TO, de = process.env.CONTACT_FROM;
-  if (!cle || !a || !de) { console.error('contact: configuration incomplète'); return repondre(503, { ok: false, erreur: 'indisponible' }); }
-
   const q = await Q.quota('contact:ip', ipDe(req)), qt = q.ok ? await Q.quota('contact:tous', 'site') : q;
   if (!q.ok || !qt.ok) { const attente = q.ok ? qt.attente : q.attente; res.setHeader('Retry-After', String(attente)); return repondre(429, { ok: false, erreur: 'limite', attente }); }
 
-  const m = message(r.valeurs);
-  // Même demande renvoyée deux fois (double clic, réseau) : Resend ne l'envoie qu'une fois.
-  const idem = 'contact-' + crypto.createHash('sha256').update([r.valeurs.email, r.valeurs.message, Math.floor(Date.now() / 600000)].join('|')).digest('hex').slice(0, 48);
-  try {
-    const envoi = await (handler.fetch || fetch)('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + cle, 'Content-Type': 'application/json', 'Idempotency-Key': idem },
-      body: JSON.stringify({ from: de, to: a.split(',').map((s) => s.trim()).filter(Boolean), reply_to: r.valeurs.email, subject: m.sujet, text: m.text, html: m.html }),
-    });
-    if (!envoi.ok) { console.error('contact: envoi refusé, statut ' + envoi.status); return repondre(502, { ok: false, erreur: 'envoi' }); }
-    return repondre(200, { ok: true });
-  } catch {
-    console.error('contact: service d\'envoi injoignable');
-    return repondre(502, { ok: false, erreur: 'envoi' });
+  // 1. La demande, d'abord. Même demande renvoyée deux fois (double clic, réseau) : une seule ligne (empreinte unique).
+  const emp = D.empreinte(r.valeurs), db = handler.db !== undefined ? handler.db : D.base();
+  const enr = await D.enregistrer(db, r.valeurs, emp);
+  const enregistree = enr.etat !== 'indisponible';
+  if (!enregistree) console.error('contact: demande non enregistrée (base indisponible), l\'e-mail seul est tenté');
+  if (enr.etat === 'existante' && enr.email_statut === 'envoye') return repondre(200, { ok: true });   /* déjà reçue et transmise */
+
+  // 2. L'e-mail, ensuite. La même Idempotency-Key qu'avant : Resend ne l'envoie qu'une fois.
+  const conf = C.configuration();
+  if (!conf) {
+    console.error('contact: configuration incomplète');
+    if (enregistree) { await D.noterEnvoi(db, enr.id, { nonConfigure: true }); return repondre(200, { ok: true }); }
+    return repondre(503, { ok: false, erreur: 'indisponible' });
   }
+  const envoi = await C.envoyer(r.valeurs, 'contact-' + emp, conf, handler.fetch);
+  if (enregistree) await D.noterEnvoi(db, enr.id, envoi);
+  if (envoi.ok) return repondre(200, { ok: true });
+  console.error(envoi.code === 'reseau' ? 'contact: service d\'envoi injoignable' : 'contact: envoi refusé, statut ' + envoi.code);
+  if (enregistree) return repondre(200, { ok: true });   /* la demande est gardée : rien n'est perdu, le propriétaire la voit en échec */
+  return repondre(502, { ok: false, erreur: 'envoi' });
 }
 
 module.exports = handler;
 module.exports.valider = valider;
 module.exports.PROJETS = PROJETS;
-module.exports._reinitialiser = () => { Q._oublier(); };
+module.exports._reinitialiser = () => { Q._oublier(); D._oublier(); };

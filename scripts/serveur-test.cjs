@@ -44,7 +44,7 @@ function servir(req, res) {
   if (p === '/_vercel/speed-insights/script.js') { res.writeHead(200, { 'Content-Type': 'text/javascript' }); return res.end(''); }
   /* les routes de compte et de projet, SEULEMENT pour les parcours à plusieurs comptes contre une base de test (AIME_COMPTES_TEST=1 et
      TEST_DATABASE_URL) : jamais la base de production ; les liens de connexion sont écrits dans AIME_LIENS au lieu d'être envoyés */
-  if (COMPTES && (p.startsWith('/api/auth/') || ['/api/temps', '/api/page', '/api/espaces', '/api/identite'].includes(p))) {
+  if (COMPTES && (p.startsWith('/api/auth/') || ['/api/temps', '/api/page', '/api/espaces', '/api/identite', '/api/demandes'].includes(p))) {
     const nom = p.startsWith('/api/auth/') ? 'comptes' : p.slice(5);
     return COMPTES.then(() => import(path.join(ROOT, 'api', nom + '.mjs'))).then(m => m.default(req, res)).catch(() => { res.writeHead(500); res.end(); });
   }
