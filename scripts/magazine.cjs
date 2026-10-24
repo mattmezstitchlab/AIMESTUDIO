@@ -14,7 +14,7 @@ function source() { return JSON.parse(fs.readFileSync(MAG + '/n001.aime-site.jso
 function medias(site) { const ids = new Set(); JSON.stringify(site).replace(/"biblio:([a-z0-9-]{1,80})"/g, (m, i) => ids.add(i)); return [...ids]; }
 function generer() {
   const site = source(), P = Object.assign({}, JSON.parse(fs.readFileSync(R + '/vitrine/presentation/studio.json', 'utf8')), { systemes: catalogue().compiles });
-  return S.exporter(site, { presentation: P, medias: MEDIAS }).map(f => ({ chemin: f.chemin, contenu: f.contenu.replace("<head>", "<head><base href=\"/magazine/\"><meta name=\"generator\" content=\"AIME · moteur de pages (scripts/magazine.cjs)\">") }));
+  return S.exporter(site, { presentation: P, medias: MEDIAS }).map(f => ({ chemin: f.chemin, contenu: f.contenu.replace("<head>", "<head><base href=\"/magazine/\"><meta name=\"generator\" content=\"AIME · moteur de pages (scripts/magazine.cjs)\"><meta name=\"robots\" content=\"noindex\">") }));
 }
 module.exports = { generer, source, medias, MAG };
 if (require.main === module) {
