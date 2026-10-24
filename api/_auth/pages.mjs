@@ -2,9 +2,9 @@
 // Une fonction de projection réutilisable : (base, personne, { espace, gabarit }) → { gabarit, domaine, mots, blocs, dock, vide }.
 // Le navigateur ne reçoit que ce que la personne peut lire, champ par champ. Aucune règle n'est réécrite ici : les droits
 // viennent de synchroview/permissions.js et du rôle lu dans space_members (role() dans ./espaces.mjs), jamais de la requête.
-// Le Dock de la réponse arrive dans une PR à part (dock: null ici).
+// Le Dock de la réponse est composé dans api/page.mjs (dock/modele.js composerReel), à partir de gestes() ci-dessous.
 import { createRequire } from 'module';
-import { role, membres, ROLES_INVITES, duree, Refus } from './espaces.mjs';
+import { role, membres, ROLES_INVITES, duree, relationPrete, Refus } from './espaces.mjs';
 import { lire } from './journal.mjs';
 const require = createRequire(import.meta.url);
 const P = require('../../synchroview/permissions.js');
@@ -15,11 +15,18 @@ export const SERVIS = ['acces', 'journal', 'personnes'];
 export const TITRES = { acces: 'Mon accès', journal: 'Journal', personnes: 'Personnes' };
 
 /* les mots d'un domaine (§ 8) : un mot par rôle serveur ; un modèle n'accorde aucun droit, il nomme.
-   Le témoin et le prestataire partagent le rôle contributor : sans relation enregistrée par membre, le mot est celui du prestataire. */
+   Le témoin et le prestataire partagent le rôle contributor : la relation enregistrée pour le membre (space_members.relation,
+   choisie à l'invitation) les distingue ; sans elle, le mot est celui du rôle dans le domaine. */
 export const MOTS = {
   mariage: { owner: 'le couple', editor: 'la coordination', contributor: 'prestataire', viewer: 'parent', guest: 'invité', projet: 'du mariage' },
   seminaire: { owner: 'l\'organisation', editor: 'l\'agence', contributor: 'intervenant', viewer: 'direction', guest: 'participant', projet: 'du séminaire' },
   _: { owner: 'propriétaire', editor: 'coordination', contributor: 'contributeur', viewer: 'lecture seule', guest: 'invité', projet: 'du projet' }
+};
+/* des relations proposées à l'invitation (un mot libre reste possible) : elles nomment, elles n'accordent rien */
+export const SUGGESTIONS = {
+  mariage: { editor: ['coordinatrice', 'coordinateur'], contributor: ['témoin', 'fleuriste', 'traiteur', 'musicien', 'photographe', 'vidéaste', 'DJ', 'lieu'], viewer: ['parent'], guest: ['invité'] },
+  seminaire: { editor: ['agence'], contributor: ['intervenant', 'traiteur', 'lieu'], viewer: ['direction'], guest: ['participant'] },
+  _: {}
 };
 const RELATION = { owner: 'Propriétaire', editor: 'Coordination', contributor: 'Contribution', viewer: 'Lecture seule', guest: 'Invité' };
 
@@ -61,13 +68,20 @@ async function contexte(db, u, espace) {
   return { s: { id: u.id, role: r }, titre: rows[0].title, domaine, mots: MOTS[domaine || '_'] };
 }
 
-/* les noms que cette personne peut voir : membres actifs dont member.read l'autorise ; les autres restent anonymes */
+/* les noms que cette personne peut voir : membres dont member.read l'autorise ; les autres restent anonymes.
+   Un membre dont l'accès a pris fin n'est plus nommé, sauf pour le propriétaire (revue de #104) ; un membre retiré ne l'est plus du tout. */
 async function annuaire(db, s, espace) {
-  const d = await duree(db);
-  const { rows } = await db.query(`select m.user_id, m.role, u.name, u.email from space_members m join "user" u on u.id = m.user_id where m.space_id = $1`, [espace]);
+  const d = await duree(db), proprio = P.can(s, 'manage_members', { type: 'space' }).allow;
+  const { rows } = await db.query(`select m.user_id, m.role, u.name, u.email${d ? ', (m.jusqu_au is not null and m.jusqu_au <= now()) as fini' : ''} from space_members m join "user" u on u.id = m.user_id where m.space_id = $1`, [espace]);
   const noms = {};
-  rows.forEach(x => { if (P.can(s, 'read', { type: 'member', subjectId: x.user_id, role: x.role }).allow) noms[x.user_id] = x.name || (x.email || '').split('@')[0]; });
+  rows.forEach(x => { if (x.fini && !proprio && x.user_id !== s.id) return; if (P.can(s, 'read', { type: 'member', subjectId: x.user_id, role: x.role }).allow) noms[x.user_id] = x.name || (x.email || '').split('@')[0]; });
   return { noms, d };
+}
+/* les relations des membres (le mot métier), quand la colonne existe : jamais un droit, seulement un nom */
+async function relations(db, espace) {
+  if (!(await relationPrete(db))) return {};
+  const { rows } = await db.query('select user_id, relation from space_members where space_id = $1 and relation is not null', [espace]);
+  const r = {}; rows.forEach(x => { r[x.user_id] = x.relation; }); return r;
 }
 const ANONYME = 'une personne de l\'organisation';
 
@@ -111,7 +125,7 @@ async function pageAcces(db, c, espace) {
   const { s, mots } = c, d = await duree(db);
   const { rows: m } = await db.query('select role, added_at' + (d ? ', jusqu_au' : '') + ' from space_members where space_id = $1 and user_id = $2', [espace, s.id]);
   const moi = m[0], g = gestes(s), blocs = [];
-  const nomRole = mots[s.role] || RELATION[s.role];
+  const nomRole = (await relations(db, espace))[s.id] || mots[s.role] || RELATION[s.role];
   blocs.push({ id: 'acces-role', type: 'role', role: s.role, relation: nomRole,
     texte: s.role === 'owner' ? 'Vous êtes ' + nomRole + ' : « ' + c.titre + ' » est votre projet.' : 'Vous êtes ' + nomRole + ' ' + mots.projet + ' « ' + c.titre + ' ».' });
   const peut = CAPACITES.filter(([type, action, r]) => P.can(s, action, Object.assign({ type }, r)).allow).map(x => x[3]);
@@ -139,7 +153,7 @@ async function pageAcces(db, c, espace) {
     blocs.push({ id: 'acces-membres', type: 'compte', nombre: n[0].n, texte: n[0].n > 1 ? n[0].n + ' personnes partagent ce projet.' : 'Vous êtes seul dans ce projet pour l\'instant.' });
   }
   /* jamais masqué (§ 2) */
-  blocs.push({ id: 'acces-signaler', type: 'geste', geste: 'signaler', texte: 'Je vois un accès inattendu' });
+  blocs.push({ id: 'acces-signaler', type: 'geste', geste: 'signaler', texte: 'Je vois un accès inattendu', aide: 'Le propriétaire lira votre message, pas votre nom.' });
   return { blocs, vide: null };
 }
 
@@ -147,13 +161,14 @@ async function pageAcces(db, c, espace) {
 async function pagePersonnes(db, c, espace) {
   const { s, mots } = c, g = gestes(s);
   const m = await membres(db, { id: s.id }, { espace });       /* même portée que l'action « membres » (règle 2) */
+  const rel = await relations(db, espace), mot = x => rel[x.id] || mots[x.role] || RELATION[x.role];
   const blocs = [];
   if (s.role === 'guest') {
     const moi = m.membres.find(x => x.id === s.id);
-    blocs.push({ id: 'personnes-moi', type: 'personne', nom: moi ? moi.nom : 'vous', relation: mots.guest, moi: true });
+    blocs.push({ id: 'personnes-moi', type: 'personne', nom: moi ? moi.nom : 'vous', relation: rel[s.id] || mots.guest, moi: true });
     return { blocs, vide: null };
   }
-  blocs.push({ id: 'personnes-liste', type: 'liste', personnes: m.membres.map(x => Object.assign({ nom: x.nom, relation: mots[x.role] || RELATION[x.role], role: x.role }, x.image ? { image: x.image } : {}, x.jusquau ? { jusquau: x.jusquau } : {}, x.email ? { email: x.email } : {}, x.id === s.id ? { moi: true } : {}, g.gerer && x.id !== s.id ? { ref: x.id } : {})) });
+  blocs.push({ id: 'personnes-liste', type: 'liste', personnes: m.membres.map(x => Object.assign({ nom: x.nom, relation: mot(x), role: x.role }, x.image ? { image: x.image } : {}, x.jusquau ? { jusquau: x.jusquau } : {}, x.email ? { email: x.email } : {}, x.id === s.id ? { moi: true } : {}, g.gerer && x.id !== s.id ? { ref: x.id } : {})) });
   if (m.effectif) blocs.push({ id: 'personnes-effectif', type: 'effectif', effectif: m.effectif, texte: 'Des effectifs, sans les noms.' });
   /* invitations en cours : le propriétaire les voit toutes ; la coordination, seulement celles qu'elle peut émettre (décision de Matt) */
   let inv = [];
@@ -163,8 +178,9 @@ async function pagePersonnes(db, c, espace) {
     const { rows } = await db.query(`select id, role, email, expires_at${d ? ', role_jusqu_au' : ''} from invitations where space_id = $1 and used_at is null and expires_at > now() and role = any($2) order by expires_at desc limit 50`, [espace, g.inviter]);
     inv = rows.map(i => ({ id: i.id, role: i.role, email: i.email, expire: i.expires_at, jusquau: iso(i.role_jusqu_au) }));
   }
-  if (g.gerer || g.inviter.length) blocs.push({ id: 'personnes-invitations', type: 'invitations', invitations: inv.map(i => Object.assign({ ref: i.id, role: i.role, relation: mots[i.role] || RELATION[i.role], nominative: !!i.email, expire: iso(i.expire), jusquau: i.jusquau || null }, g.gerer && i.email ? { email: i.email } : {})) });
-  if (g.inviter.length) blocs.push({ id: 'personnes-inviter', type: 'geste', geste: 'inviter', roles: g.inviter.map(r => ({ role: r, relation: mots[r] || RELATION[r] })), sensible: true });
+  if (g.gerer || g.inviter.length) blocs.push({ id: 'personnes-invitations', type: 'invitations', invitations: inv.map(i => Object.assign({ ref: i.id, role: i.role, relation: mots[i.role] || RELATION[i.role], nominative: !!i.email, expire: iso(i.expire), jusquau: i.jusquau || null }, g.gerer && i.email ? { email: i.email } : {}, g.gerer ? { annulable: true } : {})) });
+  const sug = SUGGESTIONS[c.domaine || '_'] || {};
+  if (g.inviter.length) blocs.push({ id: 'personnes-inviter', type: 'geste', geste: 'inviter', roles: g.inviter.map(r => ({ role: r, relation: mots[r] || RELATION[r], suggestions: sug[r] || [] })), sensible: true });
   const seul = m.membres.length === 1 && !m.effectif;
   return { blocs, vide: seul && g.gerer ? 'Invitez les personnes de votre projet.' : null };
 }
@@ -177,6 +193,6 @@ export async function projeter(db, u, { espace, gabarit }) {
   if (!u) return { gabarit, domaine: null, mots: { titre: TITRES[gabarit] || gabarit }, visuel: null, blocs: [], dock: null, vide: null, public: true };
   const c = await contexte(db, u, espace);
   if (!SERVIS.includes(gabarit)) refus(404, 'Cette page n\'existe pas encore dans ce projet.');
-  const p = await PAGES[gabarit](db, c, espace);
-  return { gabarit, domaine: c.domaine, mots: { titre: TITRES[gabarit], projet: c.titre, role: premierMot(c.mots[c.s.role] || RELATION[c.s.role]) }, visuel: null, blocs: p.blocs, dock: null, vide: p.vide || null };
+  const p = await PAGES[gabarit](db, c, espace), maRelation = (await relations(db, espace))[u.id];
+  return { gabarit, domaine: c.domaine, mots: { titre: TITRES[gabarit], projet: c.titre, role: premierMot(maRelation || c.mots[c.s.role] || RELATION[c.s.role]) }, visuel: null, blocs: p.blocs, dock: null, vide: p.vide || null };
 }
