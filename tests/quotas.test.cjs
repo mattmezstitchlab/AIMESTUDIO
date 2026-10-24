@@ -40,9 +40,9 @@ test('sans table (migration pas encore appliquée) ou sans base : le compteur re
 });
 
 test('les quotas du site sont en un seul endroit, et chaque fonction concernée passe par lui (plus de compteur en mémoire)', () => {
-  assert.deepEqual(Object.keys(Q.QUOTAS).sort(), ['contact:ip', 'contact:tous', 'espaces:creer', 'espaces:inviter', 'lien:ip', 'live:act', 'live:passe', 'remontee:personne']);
+  assert.deepEqual(Object.keys(Q.QUOTAS).sort(), ['attente:adresse', 'attente:envois', 'attente:ip', 'contact:ip', 'contact:tous', 'espaces:creer', 'espaces:inviter', 'lien:ip', 'live:act', 'live:passe', 'remontee:personne']);
   const lire = f => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
-  for (const [f, q] of [['api/contact.js', 'contact:ip'], ['api/remontee.mjs', 'remontee:personne'], ['api/comptes.mjs', 'lien:ip'], ['api/espaces.mjs', 'espaces:inviter'], ['api/live/act.js', 'live:act'], ['api/live/passe.js', 'live:passe']])
+  for (const [f, q] of [['api/attente.mjs', 'attente:ip'], ['api/attente.mjs', 'attente:adresse'], ['api/attente.mjs', 'attente:envois'], ['api/contact.js', 'contact:ip'], ['api/remontee.mjs', 'remontee:personne'], ['api/comptes.mjs', 'lien:ip'], ['api/espaces.mjs', 'espaces:inviter'], ['api/live/act.js', 'live:act'], ['api/live/passe.js', 'live:passe']])
     assert.ok(lire(f).includes("'" + q + "'"), f + ' : ' + q);
   assert.ok(!/parIp|globaux|new Map\(\)/.test(lire('api/contact.js')), 'contact : plus de compteur en mémoire');
   assert.ok(!/const vus = new Map/.test(lire('api/remontee.mjs')), 'remontee : plus de compteur en mémoire');
@@ -82,7 +82,7 @@ function appel(h, r) {
   });
 }
 test('chaque écriture du site refuse un autre site (403) et un corps non JSON (415)', async () => {
-  const H = [['api/espaces.mjs', '/api/espaces'], ['api/identite.mjs', '/api/identite'], ['api/matiere.mjs', '/api/matiere'], ['api/remontee.mjs', '/api/remontee'], ['api/comptes.mjs', '/api/auth/sign-in/magic-link'], ['api/contact.js', '/api/contact'], ['api/live/act.js', '/api/live/act'], ['api/live/passe.js', '/api/live/passe'], ['api/live/journal.js', '/api/live/journal']];
+  const H = [['api/espaces.mjs', '/api/espaces'], ['api/identite.mjs', '/api/identite'], ['api/matiere.mjs', '/api/matiere'], ['api/remontee.mjs', '/api/remontee'], ['api/comptes.mjs', '/api/auth/sign-in/magic-link'], ['api/contact.js', '/api/contact'], ['api/live/act.js', '/api/live/act'], ['api/live/passe.js', '/api/live/passe'], ['api/live/journal.js', '/api/live/journal'], ['api/attente.mjs', '/api/attente']];
   for (const [f, url] of H) {
     const m = f.endsWith('.mjs') ? (await import('../' + f)).default : require('../' + f);
     assert.equal(await appel(m, Object.assign(req('POST', Object.assign({}, BON, { origin: 'https://evil.example' })), { url, body: {} })), 403, f + ' : autre site');
