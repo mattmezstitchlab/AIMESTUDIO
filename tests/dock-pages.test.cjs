@@ -72,9 +72,20 @@ test('Journal : la relation plutôt que le rôle ; « Vous avez retiré une pers
   const idP = (await pool.query('select id from "user" where email = $1', ['p@exemple.test'])).rows[0].id;
   await post({ action: 'retirer', espace: projet, membre: idP }, S.owner);
   j = await page(projet, 'journal', S.owner); t = j.body.blocs.map(b => b.texte).join('\n');
-  assert.match(t, /vous avez retiré (Nora|une personne) du projet\./); assert.ok(!/Vous a retiré/.test(t));
+  assert.match(t, /vous avez retiré Nora, photographe, du projet\./, 'le propriétaire garde le nom et la relation de qui est parti'); assert.match(t, /Nora a rejoint le projet comme photographe/, 'même après son départ'); assert.ok(!/Vous a retiré/.test(t));
   assert.ok(!/, (Une personne|Vous) /.test(t), 'après « Le 24 octobre, », pas de majuscule');
   for (const role of ['owner', 'editor', 'viewer', 'guest']) for (const g of ['acces', 'journal', 'personnes']) {
     const r = await page(projet, g, S[role]); assert.ok(!/de l'organisation/.test(JSON.stringify(r.body.blocs)), role + ' / ' + g);
   }
+});
+
+test('hors mariage et séminaire : les places universelles (l\'organisation, la coordination, contributeur, un proche, participant), sans changer les droits', opts, async () => {
+  const P = await import('../api/_auth/pages.mjs');
+  assert.deepEqual(['owner', 'editor', 'contributor', 'viewer', 'guest'].map(r => P.MOTS._[r]), ['l\'organisation', 'la coordination', 'contributeur', 'un proche', 'participant']);
+  const libre = (await post({ action: 'creer', titre: 'Atelier du samedi', origine: 'preuve-libre-0001' }, S.owner)).body.id;
+  const a = await page(libre, 'acces', S.owner); assert.match(a.body.blocs.find(b => b.id === 'acces-role').texte, /^Vous êtes l'organisation : « Atelier du samedi » est votre projet\.$/);
+  assert.deepEqual(a.body.dock.lieux.map(l => l.gabarit), ['acces', 'journal', 'personnes']);
+  const inv = await post({ action: 'inviter', espace: libre, role: 'viewer', email: 'v@exemple.test' }, S.owner);
+  await post({ action: 'rejoindre', jeton: new URL(inv.body.lien).searchParams.get('invitation') }, S.viewer);
+  assert.match((await page(libre, 'acces', S.viewer)).body.blocs.find(b => b.id === 'acces-role').texte, /^Vous êtes un proche du projet « Atelier du samedi »\.$/);
 });

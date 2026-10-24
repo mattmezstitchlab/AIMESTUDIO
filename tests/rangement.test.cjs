@@ -13,7 +13,7 @@ test('depuis l\'accueil, Exemples, Contact, Compte et Mes projets, aucun lien ne
   for (const f of ['compte/compte.js', 'compte/projet.js', 'dock/plus.js', 'accueil/accueil.js', 'coeur/coeur.js']) assert.ok(!/href\s*=\s*['"]\/(bureau|sites|studio|canevas|aime|cube|infinity|g44|lab)\//.test(lire(f)) && !/\.href\s*=\s*'\/(bureau|sites|studio|canevas|aime|cube|infinity|g44|lab)\//.test(lire(f)), f);
   const D = require('../dock/modele.js'), pub = D.composer({}), P = require('../dock/plus.js');
   assert.deepEqual(pub.lieux.map(e => e.nom), ['Le cœur', 'Exemples', 'J\'ai un compte'], 'le Dock public : Le cœur · Exemples · + · J\'ai un compte');
-  for (const e of [P.etat(null), P.etat({ connecte: true }, [{ id: 'a', titre: 'P', role: 'owner' }])]) for (const x of e.items.concat(e.fin || [])) assert.ok(!MIS_DE_COTE.test(x.href), x.href);
+  for (const e of [P.etat(null), P.etat({ connecte: true })]) { const c = D.composer({ famille: e.famille }); for (const x of c.lieux.concat(c.plus)) assert.ok(!MIS_DE_COTE.test(x.href || ''), x.href); }
   assert.ok(!/Le Lab<\/a>/.test(lire('index.html')), 'le pied de l\'accueil ne mène plus au Lab');
 });
 

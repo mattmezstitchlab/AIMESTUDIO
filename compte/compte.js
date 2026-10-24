@@ -57,7 +57,8 @@ $('supprOui').onclick=function(){var b=this;b.disabled=true;requete('/api/auth/d
   var expire=r.j&&/SESSION_EXPIRED|fresh|expired/i.test(String(r.j.code||'')+' '+String(r.j.message||''));
   var partage=r.j&&String(r.j.code||'')==='ESPACES_PARTAGES';
   toast(expire?'Par sécurité, reconnectez-vous (lien e-mail ou clé d\'accès), puis supprimez votre compte dans la foulée.':partage?String(r.j.message):'Suppression impossible pour le moment : réessayez.',true)}).catch(function(){b.disabled=false;toast('Serveur injoignable : réessayez.',true)})};
-/* se déconnecter : par le + du Dock (dock/plus.js) */
+/* se déconnecter : ici, dans Mon compte (le + ne garde que des actions de projet, décision de Matt du 24/10) */
+$('seDeconnecter').onclick=function(){var b=this;b.disabled=true;requete('/api/auth/sign-out',{corps:{}}).catch(function(){}).then(function(){location.href='/'})};
 
 /* ---------- profil en timbre ---------- */
 function afficherProfil(){var box=$('monTimbre');box.textContent='';var t=T.creer({id:moi.id,nom:moi.name||moi.email,detail:'Mon timbre',image:moi.image,legende:false});t.style.setProperty('--l','132px');t.tabIndex=-1;box.appendChild(t);

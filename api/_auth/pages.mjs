@@ -27,7 +27,8 @@ export const TITRES = { acces: 'Mon accès', journal: 'Journal', personnes: 'Per
 export const MOTS = {
   mariage: { owner: 'le couple', editor: 'la coordination', contributor: 'prestataire', viewer: 'parent', guest: 'invité', projet: 'du mariage', anonyme: 'une personne' },
   seminaire: { owner: 'l\'organisation', editor: 'l\'agence', contributor: 'intervenant', viewer: 'direction', guest: 'participant', projet: 'du séminaire', anonyme: 'une personne' },
-  _: { owner: 'propriétaire', editor: 'coordination', contributor: 'contributeur', viewer: 'lecture seule', guest: 'invité', projet: 'du projet', anonyme: 'une personne de l\'organisation' }
+  /* hors mariage et séminaire, les places universelles (décision de Matt, 24/10) : J'organise · Je coordonne · Je contribue · Je participe ; les droits ne changent pas */
+  _: { owner: 'l\'organisation', editor: 'la coordination', contributor: 'contributeur', viewer: 'un proche', guest: 'participant', projet: 'du projet', anonyme: 'une personne de l\'organisation' }
 };
 /* des relations proposées à l'invitation (un mot libre reste possible) : elles nomment, elles n'accordent rien */
 export const SUGGESTIONS = {
@@ -101,21 +102,23 @@ const ANONYME = 'une personne de l\'organisation', anonyme = mots => (mots && mo
 
 /* ---------- Journal ---------- */
 /* chaque phrase commence par « Le 24 octobre, » : les noms gardent leur casse, « une personne » reste en minuscules */
-function phrase(l, moi, nom, mots, rel) {
+function phrase(l, moi, nom, mots, rel, proprio) {
   const qui = l.qui === moi ? 'vous' : (l.qui ? nom(l.qui) : 'AIME'), cible = l.detail.cible, vous = cible === moi;
   /* la relation (« photographe ») quand elle existe : celle de l'invitation, sinon celle du membre ; sinon le mot du rôle dans le domaine */
   const relation = rel ? (rel.invitations[l.detail.invitation] || (l.action === 'acceptation' && rel.membres[cible]) || '') : '';
   const role = relation || (l.detail.role ? (mots[l.detail.role] || l.detail.role) : ''), fin = l.detail.jusqu_au ? ', jusqu\'au ' + dateFr(l.detail.jusqu_au, true) : '';
   const le = 'Le ' + dateFr(l.le) + ', ';
+  /* un membre retiré ou dont l'accès a pris fin : nommé, avec sa relation, pour le propriétaire seulement ; pour les autres, anonyme */
+  const qui_part = () => { const n = nom(cible), r = rel && (rel.membres[cible] || rel.parCible[cible]); return n + (r && n !== anonyme(mots) ? ', ' + r + ',' : ''); };
   switch (l.action) {
     case 'creation': return le + (l.qui === moi ? 'vous avez créé le projet.' : qui + ' a créé le projet.');
     case 'invitation': return le + (l.qui === moi ? 'vous avez préparé une invitation (' + role + ')' : qui + ' a préparé une invitation (' + role + ')') + fin + '.';
     case 'acceptation': return le + (vous ? 'vous avez rejoint le projet comme ' + role : nom(cible) + ' a rejoint le projet comme ' + role) + fin + '.';
-    case 'retrait': return le + (vous ? qui + ' vous a retiré du projet.' : l.qui === moi ? 'vous avez retiré ' + nom(cible) + ' du projet.' : qui + ' a retiré ' + nom(cible) + ' du projet.');
+    case 'retrait': return le + (vous ? qui + ' vous a retiré du projet.' : !proprio ? 'une personne a quitté le projet.' : (l.qui === moi ? 'vous avez retiré ' : qui + ' a retiré ') + qui_part() + ' du projet.');
     case 'annulation': return le + qui + ' a annulé une invitation.';
     case 'changement_role': return le + qui + ' a changé un rôle (' + role + ').';
     case 'ouverture': return le + 'un accès a été ouvert' + fin + '.';
-    case 'fermeture': return le + (vous ? 'votre accès a pris fin (' + (l.detail.raison || 'fin du rôle') + ').' : 'un accès a pris fin.');
+    case 'fermeture': return le + (vous ? 'votre accès a pris fin (' + (l.detail.raison || 'fin du rôle') + ').' : proprio && cible ? 'l\'accès ' + (/^[aeiouyhâàéèêîïôû]/i.test(qui_part()) ? 'd\'' : 'de ') + qui_part() + ' a pris fin.' : 'un accès a pris fin.');
     case 'signalement': return le + (l.qui === moi ? 'vous avez signalé un accès inattendu.' : 'un accès inattendu a été signalé.');
     default: return le + 'une action a été inscrite.';
   }
@@ -124,13 +127,19 @@ async function pageJournal(db, c, espace) {
   const tout = P.can(c.s, 'manage_members', { type: 'space' }).allow;
   const lignes = await lire(db, { espace, moi: c.s.id, tout });
   if (lignes === null) return { blocs: [], vide: 'Le journal n\'est pas encore installé sur cette base.' };
-  const { noms } = await annuaire(db, c.s, espace), nom = id => (id === c.s.id ? 'vous' : (noms[id] || anonyme(c.mots)));
-  const rel = { membres: await relations(db, espace), invitations: await relationsInvitations(db, espace) };
+  const { noms } = await annuaire(db, c.s, espace);
+  /* le propriétaire garde les noms de ceux qui sont partis (retrait, fin d'accès) : ils ne sont plus dans space_members */
+  const partis = {};
+  if (tout) { const ids = [...new Set(lignes.filter(l => (l.action === 'retrait' || l.action === 'fermeture' || l.action === 'acceptation') && l.detail.cible && !noms[l.detail.cible]).map(l => l.detail.cible))];
+    if (ids.length) { const { rows } = await db.query('select id, name, email from "user" where id = any($1)', [ids]); rows.forEach(x => { partis[x.id] = x.name || (x.email || '').split('@')[0]; }); } }
+  const nom = id => (id === c.s.id ? 'vous' : (noms[id] || partis[id] || anonyme(c.mots)));
+  const rel = { membres: await relations(db, espace), invitations: await relationsInvitations(db, espace), parCible: {} };
+  lignes.forEach(l => { if (l.action === 'acceptation' && l.detail.cible && rel.invitations[l.detail.invitation]) rel.parCible[l.detail.cible] = rel.invitations[l.detail.invitation]; });
   const blocs = lignes.map((l, i) => {
     const signal = l.action === 'signalement', mienne = l.qui === c.s.id;
     /* l'auteur d'un signalement est protégé (décision de Matt) : pour tout autre que lui, ni identifiant, ni rôle, ni heure exacte */
     const le = signal && !mienne ? jour(l.le) : l.le;
-    const b = { id: 'journal-' + i, type: 'ligne', action: l.action, le, texte: phrase(signal && !mienne ? { le: l.le, action: l.action, qui: null, detail: {} } : l, c.s.id, nom, c.mots, rel) };
+    const b = { id: 'journal-' + i, type: 'ligne', action: l.action, le, texte: phrase(signal && !mienne ? { le: l.le, action: l.action, qui: null, detail: {} } : l, c.s.id, nom, c.mots, rel, tout) };
     if (signal && l.detail.motif) b.motif = l.detail.motif;
     if (mienne) b.moi = true;
     return b;

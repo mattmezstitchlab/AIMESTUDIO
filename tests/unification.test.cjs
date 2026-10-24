@@ -7,7 +7,7 @@ const N = require('../nav/registre.js'), D = require('../dock/modele.js');
 test('accueil : un seul +, un seul accès au compte, plus de « Mes essais sur cet appareil », aucun lien vers /#entrer', () => {
   const z = lire('index.html'), haut = z.match(/<header class="barre">[\s\S]*?<\/header>/)[0];
   assert.ok(!/porte|compte/.test(haut), 'en haut, seulement le logo');
-  assert.equal(D.composer({}).plus.length, 1, 'un seul geste au + public : Commencer');
+  assert.deepEqual(D.composer({}).plus.map(a => a.nom), ['Créer un projet', 'J\'ai reçu une invitation'], 'deux gestes au + public, plus de « Commencer » seul');
   assert.equal(D.composer({}).lieux.filter(e => e.href === '/compte/').length, 1, 'un seul accès au compte, dans le Dock');
   assert.ok(!/Mes essais sur cet appareil|Déjà sur cet appareil/.test(z), 'retiré de l\'accueil (brief du 24/10)');
   assert.ok(!z.includes('/#entrer') && !z.includes('id="entrer"'));
@@ -43,7 +43,7 @@ test('le Bureau devient « Mes projets » : connecté, on arrive sur /projets/ ;
   assert.match(c, /location\.replace\('\/projets\/'\+location\.search\)/, 'une invitation, un projet à ouvrir ou venu du Point Zéro mènent à Mes projets');
   assert.match(c, /\$\('profil'\)\.hidden=PROJETS;\$\('espaces'\)\.hidden=!PROJETS/, 'le compte : identité ; Mes projets : espaces et invitations');
   assert.match(lire('compte/index.html'), /<h2 class="k" id="t-esp">Mes projets<\/h2>/);
-  assert.equal(require('../dock/plus.js').etat({ connecte: true }, [{ id: 'a', titre: 'P', role: 'owner' }]).items[0].href, '/projets/?espace=a');
+  assert.ok(require('../dock/modele.js').composer({ famille: 'Public connecté' }).lieux.some(e => e.href === '/projets/'), 'connecté : Mes projets est un lieu du Dock');
 });
 
 test('le texte de l\'accueil dit ce qui existe : le serveur compose, l\'Orbe explique ; ce qui protège ; d\'autres domaines ; l\'invitée n\'est pas témoin', () => {
@@ -74,9 +74,9 @@ test('affichage : le Dock ne cache rien, le menu du + se détache, l\'en-tête a
   const c = lire('compte/index.html'), haut = c.match(/<header class="tete">[\s\S]*?<\/header>/)[0];
   assert.ok(!/versAutre|sortir|Mes projets|Mon compte|<button/.test(haut), 'en-tête du compte : le logo seul');
   assert.match(c, /id="dock-site"/); assert.match(c, /AIMEPlus\.brancher\(el\)/);
-  const P = require('../dock/plus.js'), e = P.etat({ connecte: true }, []);
-  assert.deepEqual(e.fin.map(x => x.nom), ['Tous mes projets', 'Se déconnecter'], 'Mes projets et Se déconnecter passent par le +');
-  assert.match(lire('dock/plus.js'), /'Mon compte'/, 'connecté, « J\'ai un compte » devient « Mon compte » dans le Dock');
+  const e = require('../dock/modele.js').composer({ famille: 'Public connecté' });
+  assert.deepEqual(e.lieux.map(x => x.nom).slice(2), ['Mes projets', 'Mon compte'], 'connecté : Mes projets et Mon compte sont des lieux du Dock, pas des entrées du +');
+  assert.match(c, /id="seDeconnecter"/, 'Se déconnecter : dans Mon compte');
   assert.match(lire('point-zero/index.html'), /<meta name="robots" content="noindex">/);
   assert.match(c, /href="\/point-zero\/\?intention=identite">Mon timbre</, 'Compte → Mon timbre');
   for (const f of ['index.html', 'exemples/index.html', 'contact/index.html', 'capacites/index.html', 'nav/registre.js', 'dock/modele.js']) assert.ok(!lire(f).includes('/point-zero/'), f + ' : le Point Zéro n\'est pas une seconde accueil');

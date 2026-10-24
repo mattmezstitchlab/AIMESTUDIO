@@ -50,7 +50,10 @@ var ENTREES={
  coeur:{nom:'Le cœur',icone:'coeur',droit:'public',href:'/#coeur'},
  exemples:{nom:'Exemples',icone:'exemples',droit:'public',href:'/exemples/'},
  lab:{nom:'Lab',icone:'lab',droit:'public',href:'/lab/grande-partition/'},
- compte:{nom:'J\'ai un compte',icone:'compte',droit:'public',href:'/compte/'}
+ compte:{nom:'J\'ai un compte',icone:'compte',droit:'public',href:'/compte/'},
+ /* connecté, hors projet : deux lieux de chaque côté du + (décision de Matt, 24/10) */
+ mesprojets:{nom:'Mes projets',icone:'projet',droit:'public',href:'/projets/'},
+ moncompte:{nom:'Mon compte',icone:'compte',droit:'public',href:'/compte/'}
 };
 
 /* Les gestes (docs/ROLES.md). Ceux-ci ne sont jamais à un toucher : confirmation lisible, une action à la fois, annulation. */
@@ -71,6 +74,10 @@ var ACTIONS={
  confirmer:{nom:'Confirmer ma présence',geste:'repondre'},
  ecrireOrganisateurs:{nom:'Écrire aux organisateurs',geste:'repondre'},
  commencer:{nom:'Commencer',geste:'public',href:'/?commencer=1'},
+ /* le + du public : des actions, jamais une destination du Dock (dock/plus.js les rend vivantes) */
+ creerProjet:{nom:'Créer un projet',geste:'public',href:'/?commencer=1'},
+ nouveauProjet:{nom:'Nouveau projet',geste:'public',href:'/projets/?nouveau=1'},
+ invitationRecue:{nom:'J\'ai reçu une invitation',geste:'public'},
  justificatif:{nom:'Déposer un justificatif',geste:'deposer'},
  ecrireProprietaire:{nom:'Écrire au propriétaire',geste:'repondre'},
  exporter:{nom:'Exporter',geste:'lire'},
@@ -89,7 +96,8 @@ var FAMILLES={
  'Équipe':{lieux:['notifications','mapart','messages','calendrier'],plus:['tache','ecrire','deposer'],garde:'Aucun accès aux paiements par défaut.'},
  'Contributeur':{lieux:['notifications','mission','documents','messages'],plus:['deposer','retard','ecrireCoordination'],garde:'Effectifs seulement, jamais la liste nominative.'},
  'Destinataire':{lieux:['programme','mareponse','lieu','messages'],plus:['confirmer','ecrireOrganisateurs'],garde:'Ne voit que sa propre réponse ; aucun compteur de ce qui existe ailleurs.'},
- 'Public':{lieux:['coeur','exemples','compte'],plus:['commencer'],garde:'Aucune donnée personnelle.',public:true},
+ 'Public':{lieux:['coeur','exemples','compte'],plus:['creerProjet','invitationRecue'],garde:'Aucune donnée personnelle.',public:true},
+ 'Public connecté':{lieux:['coeur','exemples','mesprojets','moncompte'],plus:['nouveauProjet','invitationRecue'],garde:'Aucune donnée d\'un projet hors du projet.',public:true},
  'Financeur':{lieux:['notifications','budgetfinance','justificatifs'],plus:['justificatif','ecrireProprietaire'],garde:'Voit des montants, pas les invités.'},
  'Contrôleur':{lieux:['controle','exports','journal'],plus:['exporter','demanderPiece'],garde:'Lecture seule ; affiche « accès jusqu\'au … ».'},
  'Garant':{lieux:['signalements','contenus','journal'],plus:['masquer','repondreSignalement'],garde:'N\'accède pas aux contenus privés par confort.'},
@@ -111,6 +119,7 @@ var GESTES={
  'Contributeur':['lire','repondre','deposer','annuler'],
  'Destinataire':['lire','repondre'],
  'Public':['public'],
+ 'Public connecté':['public'],
  'Financeur':['lire','repondre','deposer'],
  'Contrôleur':['lire','repondre'],
  'Garant':['lire','repondre','modifier'],
@@ -210,6 +219,7 @@ function pourScenario(univers,role,acces){
 /* ---------- Le dock d'un vrai espace (docs/GABARITS.md § 4 et § 7) ----------
    Chaque lieu ouvre l'un des sept gabarits. Un domaine renomme un lieu, il n'en invente pas. */
 var GABARIT_DE={
+ mesprojets:null,moncompte:null,
  mareponse:'acces',acces:'acces',monavis:'acces',consentements:'acces',reglages:'acces',compte:'acces',
  notifications:'journal',journal:'journal',signalements:'journal',controle:'journal',
  personnes:'personnes',equipe:'personnes',effectif:'personnes',designation:'personnes',
