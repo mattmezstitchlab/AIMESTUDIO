@@ -1,0 +1,50 @@
+/* AIME · le Dock par rôle (docs/DOCK.md, « Apparence »). Noir et blanc ; un seul élément irisé : le +.
+   La couleur du rôle n'apparaît que dans la pastille (--role, posée par la page). */
+.dock-zone{--dk-fond:#0F0F12;--dk-bord:#2B2B33;--dk-ic:#EDEDF0;--dk-lib:#9C9CA8;--dk-actif:#EDEDF0;--dk-surf:#17171C;
+ font:500 11px/1.2 "Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--dk-lib);z-index:40}
+.dock-page{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));width:max-content;max-width:calc(100vw - 24px)}
+/* Dans un écran de démonstration : le dock est dessiné à la taille réelle d'un téléphone (390 px), puis réduit avec l'écran */
+.dock-ecran{position:absolute;left:10px;right:10px;bottom:18px}
+.dock-ecran .dock-c{position:static}
+.dock-ecran .dock-menu,.dock-ecran .dock-conf{left:6px;right:6px;transform:none;width:auto;min-width:0;max-width:none}
+.dock-ecran .dock-e{min-width:0;width:100%;padding:6px 2px}
+.dock-zone.dock-ecran .dock-m,.dock-zone.dock-page .dock-m{display:table;margin:0 auto 6px;padding:4px 10px;border-radius:9px;background:rgba(15,15,18,.9);border:1px solid var(--dk-bord)}
+.dock{background:var(--dk-fond);border:1px solid var(--dk-bord);border-radius:26px;box-shadow:0 18px 50px rgba(0,0,0,.55);padding:6px 8px}
+.dock-l{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:2px}
+.dock-l>li{flex:1 1 0;min-width:0;display:flex;justify-content:center}
+.dock-e{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:64px;min-height:48px;padding:6px 8px;border:0;border-radius:16px;background:none;color:var(--dk-lib);font:inherit;text-decoration:none;cursor:pointer}
+.dock-e:hover{color:var(--dk-actif)}
+.dock-e[aria-current]{color:var(--dk-actif);background:var(--dk-surf)}
+.dock-i{width:22px;height:22px;fill:none;stroke:var(--dk-ic);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.dock-t{display:block;max-width:100%;white-space:nowrap;text-align:center}
+.dock-page .dock-e{min-width:76px}
+.dock-p{position:absolute;top:2px;right:calc(50% - 22px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--role,#FB7185);color:#141416;font:700 10.5px/18px "Inter Variable",Inter,sans-serif;text-align:center}
+.dock-c{flex:0 0 auto!important;position:relative;padding:0 6px}
+.dock-plus{width:48px;height:48px;border-radius:50%;border:2px solid transparent;background:linear-gradient(#0B0B0D,#0B0B0D) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;display:grid;place-items:center;cursor:pointer;padding:0}
+.dock-plus span{position:relative;width:18px;height:18px;transition:transform .25s ease}
+.dock-plus span::before,.dock-plus span::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:2.2px;border-radius:2px;background:#fff;transform:translate(-50%,-50%)}
+.dock-plus span::after{transform:translate(-50%,-50%) rotate(90deg)}
+.dock-plus[aria-expanded="true"] span{transform:rotate(45deg)}
+.dock-menu{position:absolute;left:50%;bottom:calc(100% + 14px);transform:translateX(-50%);display:flex;flex-direction:column;gap:6px;min-width:220px;padding:8px;background:var(--dk-fond);border:1px solid var(--dk-bord);border-radius:20px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.dock-g{display:block;text-align:left;width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--dk-bord);border-radius:14px;background:var(--dk-surf);color:var(--dk-actif);font:500 13px/1.25 "Inter Variable",Inter,sans-serif;text-decoration:none;cursor:pointer}
+.dock-g small{display:block;margin-top:2px;font-size:11px;color:var(--dk-lib)}
+.dock-g:hover{border-color:#4A4A55}
+.dock-g-alerte{color:var(--dk-lib)}
+.dock-sep{display:block;height:1px;background:var(--dk-bord);margin:2px 4px}
+.dock-m{margin:0 0 6px;text-align:center;font:500 10.5px/1.2 "Inter Variable",Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--dk-lib)}
+.dock-conf{position:absolute;left:50%;bottom:calc(100% + 14px);transform:translateX(-50%);width:max-content;max-width:min(320px,calc(100vw - 32px));padding:14px;background:var(--dk-fond);border:1px solid #4A4A55;border-radius:18px;color:var(--dk-actif);font:500 13px/1.4 "Inter Variable",Inter,sans-serif;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.dock-conf p{margin:0 0 10px}
+.dock-conf div{display:flex;gap:8px}
+.dock-conf button{flex:1;min-height:44px;border-radius:12px;border:1px solid var(--dk-bord);background:var(--dk-surf);color:var(--dk-actif);font:inherit;cursor:pointer}
+.dock-conf [data-conf="oui"]{background:#EDEDF0;color:#141416;border-color:#EDEDF0}
+.dock-s{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);width:max-content;max-width:min(360px,calc(100vw - 32px));margin:0;padding:0;font:500 12px/1.35 "Inter Variable",Inter,sans-serif;color:var(--dk-actif);text-align:center;pointer-events:none}
+.dock-s:not(:empty){padding:8px 12px;border-radius:12px;background:rgba(15,15,18,.92);border:1px solid var(--dk-bord);animation:dock-s 4s forwards}
+@keyframes dock-s{0%,85%{opacity:1}100%{opacity:0}}
+.dock-zone :focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media (max-width:560px){.dock-page{left:0;right:0;transform:none;width:auto;max-width:none;bottom:0;padding:0 max(8px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+ .dock-page .dock-e{min-width:0;width:100%;padding:6px 2px}.dock-page .dock-t{white-space:normal;line-height:1.1}.dock-page .dock-l>li{flex:1 1 0}}
+@media (prefers-reduced-motion:reduce){.dock-plus span{transition:none}.dock-s:not(:empty){animation:none}}
+/* Fermé, c'est fermé : rien n'est visible, rien n'est atteignable au clavier */
+.dock-menu[hidden],.dock-conf[hidden]{display:none!important}
+/* La page réserve la place du dock pour ne rien masquer */
+body.avec-dock{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}

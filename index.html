@@ -142,10 +142,11 @@ html.calme .pt.vif{animation:none}
 </style>
 <link rel="stylesheet" href="/accueil/accueil.css">
 <link rel="stylesheet" href="/coeur/coeur.css">
+<link rel="stylesheet" href="/dock/dock.css">
 </head>
 <body>
 <a class="evite" href="#acTexte">Aller au champ « Que préparez-vous ? »</a>
-<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="#coeur">Le cœur</a><a class="passer" href="/lab/grande-partition/">Lab</a><a class="passer" href="#entrer">Passer l'introduction</a><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
+<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
 
 <div class="flot" id="flot" aria-hidden="true"></div>
 
@@ -431,8 +432,12 @@ html.calme .pt.vif{animation:none}
 <script src="/projets/projets.js"></script>
 <script src="/accueil/accueil.js"></script>
 <script src="/coeur/roles.js"></script>
+<script src="/dock/modele.js"></script>
+<script src="/dock/dock.js"></script>
 <script src="/coeur/coeur.js"></script>
 <script>fetch('/vitrine/scenarios/mariage.json').then(function(r){return r.json()}).then(function(sc){AIMECoeur.monter(sc)}).catch(function(){var e=document.getElementById('ecransEtat');if(e)e.textContent='Les écrans n\'ont pas pu être chargés. Rechargez la page.'})</script>
 <script>AIMEPorte.monter(document.getElementById('porte'),{contexte:'zero',position:'haut'})</script>
+<div id="dock-site"></div>
+<script>/* la navigation du site, mise en dock (docs/DOCK.md, famille Public) */(function(){var el=document.getElementById('dock-site');if(!el||!window.AIMEDock||!window.AIMEDockVue)return;AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site',actif:'coeur'});document.body.classList.add('avec-dock')})();</script>
 </body>
 </html>

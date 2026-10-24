@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="/porte/porte.css">
 <link rel="stylesheet" href="/coeur/charte.css">
 <link rel="stylesheet" href="/coeur/coeur.css">
+<link rel="stylesheet" href="/dock/dock.css">
 <style>
 .ex-liste{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:22px;overflow:hidden}
 .ex-liste a{display:grid;gap:10px;align-content:start;height:100%;padding:28px 26px 30px;background:var(--desk);text-decoration:none;transition:background .3s}
@@ -29,7 +30,7 @@
 </head>
 <body>
 <a class="evite" href="#contenu">Aller au contenu</a>
-<header class="barre"><a class="mk" href="/" aria-label="AIME, accueil">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="passer" href="/">Accueil</a><a class="passer" href="/exemples/">Exemples</a><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
+<header class="barre"><a class="mk" href="/" aria-label="AIME, accueil">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
 <div class="flot" id="flot" aria-hidden="true"></div>
 <main id="contenu">
 <section class="zero" id="haut" aria-labelledby="t-zero">
@@ -55,6 +56,8 @@
 <script src="/vitrine/rendu.js"></script>
 <script src="/live/modele.js"></script>
 <script src="/coeur/roles.js"></script>
+<script src="/dock/modele.js"></script>
+<script src="/dock/dock.js"></script>
 <script src="/coeur/coeur.js"></script>
 <script src="/porte/porte.js"></script>
 <script>
@@ -92,5 +95,7 @@ fetch('/vitrine/scenarios/'+ex.u+'.json',{cache:'no-cache'}).then(function(r){if
 }).catch(function(){$('exCorps').innerHTML='<p class="cx-note">Cet exemple n\'a pas pu être chargé. Rechargez la page.</p>';charger(ORBE,porte)});
 })();
 </script>
+<div id="dock-site"></div>
+<script>(function(){var el=document.getElementById('dock-site');if(!el||!window.AIMEDock||!window.AIMEDockVue)return;AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site',actif:'exemples'});document.body.classList.add('avec-dock')})();</script>
 </body>
 </html>

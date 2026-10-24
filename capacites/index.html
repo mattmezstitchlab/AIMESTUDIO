@@ -1,9 +1,12 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Atlas des capacités · AIME</title><meta name="description" content="Tout ce qui pourrait servir au site AIME : 1 191 modules déclarés dans 130 dépôts, croisés avec les univers d'AIME et l'état réel des dépôts."><link rel="stylesheet" href="/capacites/capacites.css"></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Atlas des capacités · AIME</title><meta name="description" content="Tout ce qui pourrait servir au site AIME : 1 191 modules déclarés dans 130 dépôts, croisés avec les univers d'AIME et l'état réel des dépôts."><link rel="stylesheet" href="/porte/porte.css">
+<link rel="stylesheet" href="/coeur/charte.css">
+<link rel="stylesheet" href="/dock/dock.css">
+<link rel="stylesheet" href="/capacites/capacites.css"></head><body>
 <a class="evite" href="#catalogue">Aller au catalogue</a>
-<header class="top"><a href="/aime/">AIME® / LE MONDE AIME</a><nav><a href="/maitre/">Cube Maître</a><a href="/sante/">Système nerveux</a></nav></header>
+<header class="barre"><a class="mk" href="/" aria-label="AIME, accueil">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
 <main>
 <section class="intro"><span class="k">TOUT CE QUI PEUT SERVIR · UNE SEULE PAGE</span>
- <div class="titre"><h1>L'atlas des<br><em>capacités.</em></h1><div class="orbe" aria-hidden="true"></div></div>
+ <h1>L'atlas des<br>capacités.</h1>
  <p>Chaque moteur écrit un jour, dans chaque dépôt, rangé à un seul endroit. Ce qui vit déjà ici, ce qui mérite d'y venir, et dans quel état se trouve chaque source.</p>
  <p class="notice">Un index déclaré, pas une preuve. Les modules viennent de <code>moteurs.json</code> ; ce qu'un univers cite vient de <code>univers.json</code> ; l'état des dépôts vient de l'audit du <span id="date-audit">24 octobre 2026</span>. Un module « Dans AIME » est prouvé par le document cité ; tout le reste est à vérifier avant de brancher.</p>
  <dl class="chiffres" id="chiffres" aria-label="Chiffres clés"></dl>
@@ -43,8 +46,11 @@
  <button type="button" id="copier">Copier la demande</button><p id="statut" role="status" aria-live="polite"></p>
 </section>
 
-<footer>Page publique, en lecture seule : aucune donnée personnelle, aucun secret, aucun stockage. Les dépôts privés sont nommés, jamais ouverts.<br><a href="/aime/">← Revenir au Monde AIME</a></footer>
+<footer>Page publique, en lecture seule : aucune donnée personnelle, aucun secret, aucun stockage. Les dépôts privés sont nommés, jamais ouverts.<br><a href="/">← Revenir à l'accueil</a></footer>
 </main>
 <noscript><p class="noscript">Activez JavaScript pour parcourir l'atlas. Les données brutes restent lisibles : <a href="/moteurs.json">moteurs.json</a>, <a href="/univers.json">univers.json</a>, <a href="/capacites/etat-depots.json">etat-depots.json</a>.</p></noscript>
+<div id="dock-site"></div>
 <script src="/capacites/modele.js"></script><script src="/capacites/capacites.js"></script>
+<script src="/porte/porte.js"></script><script src="/dock/modele.js"></script><script src="/dock/dock.js"></script>
+<script>(function(){if(window.AIMEPorte)AIMEPorte.monter(document.getElementById('porte'),{contexte:'zero',position:'haut'});var el=document.getElementById('dock-site');if(el&&window.AIMEDock&&window.AIMEDockVue){AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site'});document.body.classList.add('avec-dock')}})();</script>
 </body></html>

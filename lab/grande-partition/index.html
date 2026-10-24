@@ -75,10 +75,11 @@ body.loin .barre::before{opacity:.92}
 .geste .scene{position:sticky;top:0;height:100svh;display:grid;justify-items:center;align-content:start;padding-top:calc(13svh + env(safe-area-inset-top,0px));pointer-events:none}
 .geste .ancre{width:min(22vmin,175px)}
 .geste .phrases{margin-top:-100svh}
-.phrase{min-height:46svh;display:grid;place-items:center;padding:18svh 0 0}
+.phrase{min-height:46svh;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;padding:18svh 0 0}
 .phrase p{margin:0;font:400 clamp(40px,6.4vw,86px)/1.02 var(--display);letter-spacing:-.02em;will-change:opacity,transform}
-.phrase.comprendre p{font:400 clamp(21px,2.3vw,29px)/1.4 var(--ui);letter-spacing:-.01em;color:var(--soft);max-width:620px}
+.phrase.comprendre p{font:400 clamp(21px,2.3vw,29px)/1.4 var(--ui);letter-spacing:-.01em;color:var(--soft);max-width:min(620px,100%)}
 .phrase.comprendre p b{color:var(--ink);font-weight:500}
+.phrase.comprendre p span:has(>b){white-space:normal!important}
 
 /* 3 · la métamorphose */
 .meta{position:relative;height:230svh}
