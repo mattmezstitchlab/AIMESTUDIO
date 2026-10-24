@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Liste d'attente · AIME</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/travaux/travaux.css">
+<style>
+/* les compteurs de la liste d'attente, pour le propriétaire du site : aucune adresse n'arrive jusqu'ici */
+.cpt-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.bloc{padding:20px 22px;border:1px solid var(--ligne);border-radius:18px;background:var(--carte);min-width:0}
+.bloc h2{margin:0 0 12px;font:600 20px/1.2 var(--titre)}
+.chiffres{display:flex;gap:28px;flex-wrap:wrap;margin:0 0 28px}
+.chiffres b{display:block;font:600 44px/1 var(--titre)}.chiffres span{color:var(--doux);font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:7px 0;border-bottom:1px solid var(--ligne);vertical-align:top}
+th{color:var(--doux);font-weight:500}
+td.n{text-align:right;font-variant-numeric:tabular-nums;width:4em}
+.barre{display:block;height:6px;margin-top:5px;border-radius:3px;background:linear-gradient(90deg,#FB7185,#7C5CFF)}
+.libres li{margin:0 0 10px;color:var(--encre)}.libres small{display:block;color:var(--doux)}
+.libres{margin:0;padding-left:18px}
+select{background:#16161B;color:var(--encre);border:1px solid var(--ligne);border-radius:10px;padding:6px 10px;font:inherit}
+.vide{color:var(--doux)}
+</style>
+</head>
+<body>
+<a class="evite" href="#contenu">Aller au contenu</a>
+<header class="tete"><a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup></a><nav aria-label="Maître"><a href="/maitre/">Cube Maître</a></nav></header>
+<main id="contenu" tabindex="-1">
+<section class="intro"><p class="k">Propriétaire</p><h1>Liste d'attente</h1><p>Des compteurs, sans aucune adresse. L'export des adresses se fait à l'ouverture, depuis la base.</p></section>
+<div id="etat" role="status" class="vide">Chargement…</div>
+<div id="tout" hidden>
+ <div class="chiffres"><div><b id="nConf">0</b><span>inscrits confirmés</span></div><div><b id="nAtt">0</b><span>en attente de confirmation</span></div></div>
+ <div class="cpt-g">
+  <section class="bloc" aria-labelledby="tSouhaits"><h2 id="tSouhaits">Fonctions attendues</h2>
+   <p><label for="parPlace">Pour </label><select id="parPlace"><option value="">toutes les places</option></select></p>
+   <table id="souhaits"></table></section>
+  <section class="bloc" aria-labelledby="tPlace"><h2 id="tPlace">Par « Je suis… »</h2><table id="place"></table></section>
+  <section class="bloc" aria-labelledby="tSource"><h2 id="tSource">Par source</h2><table id="source"></table><h2 style="margin-top:18px">Par campagne</h2><table id="campagne"></table></section>
+  <section class="bloc" aria-labelledby="tJour"><h2 id="tJour">Par jour</h2><table id="jour"></table></section>
+  <section class="bloc" aria-labelledby="tLibres"><h2 id="tLibres">« Autre chose ? »</h2><ul class="libres" id="libres"></ul></section>
+ </div>
+</div>
+</main>
+<footer class="pied"><a href="/maitre/">← Cube Maître</a><span>AIME®</span></footer>
+<script src="/maitre/attente/compteurs.js"></script>
+</body>
+</html>
