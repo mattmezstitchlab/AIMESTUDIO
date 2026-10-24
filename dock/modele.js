@@ -253,6 +253,8 @@ function composerReel(d){
  /* toute page que le serveur sert à ce rôle a sa place dans le Dock (la même règle décide de la page et du lieu : pagesDe, api/_auth/pages.mjs) */
  servis.forEach(function(gab){if(ICONE_GABARIT[gab])poser(gab,NOM_GABARIT[gab]||gab,ICONE_GABARIT[gab],gab)});
  lieux=lieux.slice(0,MAX_LIEUX);
+ /* le même ordre pour tous les rôles : celui des pages servies (le registre des modules), Mon accès en tête ; le choix des lieux ne change pas */
+ lieux.sort(function(a,b){return servis.indexOf(a.gabarit)-servis.indexOf(b.gabarit)});
  var plus=[];
  if(g.inviter.length&&vus.personnes)plus.push({id:'inviter',nom:'Inviter',geste:'inviter',sensible:true,roles:g.inviter.slice(),gabarit:'personnes'});
  var notes=(d.notifications||[]).filter(function(n){return n&&n.a==='moi'}).length;

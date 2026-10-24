@@ -18,6 +18,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
   await pool.query('truncate "user", spaces, invitations, live_journal, audit cascade'); await pool.query('truncate quotas').catch(() => {});
   try { fs.unlinkSync(LIENS); } catch {}
   const srv = spawn(process.execPath, [path.join(__dirname, '../../scripts/serveur-test.cjs')], { env: Object.assign({}, process.env, { PORT: String(PORT), HOST: '127.0.0.1', AIME_COMPTES_TEST: '1', AIME_LIENS: LIENS }), stdio: 'inherit' });
+  process.on('exit', () => { try { srv.kill(); } catch {} });   /* jamais de serveur orphelin, même après un échec */
   await attendre(1200);
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
   const ctx = {}, page = {};
@@ -38,7 +39,8 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     const comptes = {}; for (const p of DEMO.personnes) comptes[p.cle] = (await pool.query('select id, email from "user" where email = $1', [p.email])).rows[0];
     const { espace } = await M.semerDemo(A._pool(), DEMO, comptes);
     const programme = B + '/projets/?espace=' + espace + '&page=deroule';
-    const capture = async (k, nom) => { if (CAP) { fs.mkdirSync(CAP, { recursive: true }); await page[k].screenshot({ path: path.join(CAP, nom + '.png'), fullPage: true }); } };
+    const capture = async (k, nom) => { if (CAP) { fs.mkdirSync(CAP, { recursive: true }); await page[k].screenshot({ path: path.join(CAP, nom + '.png'), fullPage: true });
+      const y = await page[k].evaluate(() => scrollY); await page[k].evaluate(() => scrollTo(0, 0)); await page[k].screenshot({ path: path.join(CAP, nom + '__ecran.png') }); await page[k].evaluate(v => scrollTo(0, v), y); } };   /* la page entière, et ce que l'écran montre (Dock compris) */
     const texte = k => page[k].locator('#pCorps').innerText();
     for (const k of Object.keys(page)) { await page[k].goto(programme, { waitUntil: 'networkidle' }); await page[k].waitForSelector('.tp-m', { timeout: 8000 }); }
 
@@ -51,6 +53,45 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok((await page.alex.locator('[data-id="cocktail"] .tp-act button').count()) === 0 && (await page.alex.locator('[data-id="set-cocktail"] .tp-act button').count()) > 0, 'Alex : ses moments seulement');
     for (const k of ['camille', 'lea', 'emma']) { const d = await page[k].locator('#dock-site').innerText(); ok(/Programme/.test(d), k + ' : le Dock du site, avec « Programme »'); }
     for (const k of Object.keys(page)) await capture(k, 'TEMPS__' + k.toUpperCase() + '__programme__depart');
+
+    console.log('Une seule navigation générale : le Dock');
+    for (const k of Object.keys(page)) {
+      const r = await page[k].evaluate(() => ({ onglets: [...document.querySelectorAll('.p-onglets')].filter(n => n.offsetParent).length,
+        navs: [...document.querySelectorAll('main nav')].filter(n => n.offsetParent).length, dock: !!document.querySelector('#dock-site nav.dock'),
+        titre: document.querySelector('#tTitre').textContent, role: document.querySelector('#tSous').textContent, module: (document.querySelector('#pTitre') || {}).textContent,
+        fond: getComputedStyle(document.querySelector('.cpt-fond')).display, modes: [...document.querySelectorAll('.tp-modes button')].map(b => b.textContent) }));
+      ok(r.onglets === 0 && r.navs === 0 && r.dock, k + ' : aucune rangée d\'onglets, le Dock seul');
+      ok(r.titre === DEMO.titre && r.role && r.module === 'Programme' && r.modes.includes('Liste') && r.modes.includes('Chronologie'), k + ' : projet « ' + r.titre + ' », participation « ' + r.role + ' », module et ses modes');
+      ok(r.fond === 'none', k + ' : pas de photo derrière la zone de travail');
+    }
+    /* clavier, retour du navigateur, lien direct */
+    const cam = page.camille, dockLieu = n => cam.locator('#dock-site nav.dock').getByRole('link', { name: n }).or(cam.locator('#dock-site nav.dock').getByRole('button', { name: n })).first();
+    await dockLieu('Journal').focus(); await cam.keyboard.press('Enter');
+    await cam.waitForFunction(() => document.querySelector('#pTitre') && document.querySelector('#pTitre').textContent === 'Journal');
+    ok(/page=journal/.test(cam.url()) && await cam.evaluate(() => document.activeElement && document.activeElement.id === 'pTitre'), 'Camille : le Dock au clavier ouvre le Journal, le focus va au titre de la page');
+    await cam.goBack(); await cam.waitForSelector('.tp-m');
+    ok(/page=deroule/.test(cam.url()) && (await cam.locator('#pTitre').textContent()) === 'Programme', 'Camille : le retour du navigateur revient au Programme');
+    await cam.goForward(); await cam.waitForFunction(() => document.querySelector('#pTitre') && document.querySelector('#pTitre').textContent === 'Journal');
+    ok(true, 'Camille : l\'avance du navigateur rouvre le Journal');
+    await cam.goto(B + '/projets/?espace=' + espace + '&page=personnes', { waitUntil: 'networkidle' }); await cam.waitForFunction(() => document.querySelector('#pTitre') && document.querySelector('#pTitre').textContent === 'Personnes');
+    ok(true, 'lien direct vers Personnes');
+    ok(await cam.evaluate(() => [...document.querySelectorAll('#dock-site nav.dock [aria-current="page"]')].some(n => /Personnes/.test(n.textContent))), 'le Dock marque la page en cours (aria-current)');
+    await cam.goto(programme, { waitUntil: 'networkidle' }); await cam.waitForSelector('.tp-m');
+    /* iPhone : rien sous le Dock en bas de page, pas de défilement horizontal */
+    for (const k of ['emma', 'alex']) {
+      const r = await page[k].evaluate(async () => { scrollTo(0, document.documentElement.scrollHeight); await new Promise(f => setTimeout(f, 300));
+        const d = document.querySelector('#dock-site nav.dock').getBoundingClientRect(), h = document.querySelector('.tp-hist').getBoundingClientRect(), m = [...document.querySelectorAll('.tp-m')].pop().getBoundingClientRect();
+        return { sous: Math.max(h.bottom, m.bottom) - d.top, large: document.documentElement.scrollWidth - innerWidth }; });
+      ok(r.sous <= 0 && r.large <= 1, k + ' (iPhone) : le dernier moment et l\'historique restent au-dessus du Dock (' + Math.round(r.sous) + ' px), sans défilement horizontal');
+    }
+    /* repli : sans le Dock universel (script absent), la rangée d'onglets revient et chaque page reste atteignable */
+    const sans = await b.newContext({ locale: 'fr-FR', viewport: { width: 1440, height: 900 }, storageState: await ctx.lea.storageState(), extraHTTPHeaders: { 'x-forwarded-for': '203.0.113.40' } });
+    await sans.route('**/dock/dock.js', r => r.abort());
+    const ps = await sans.newPage(); await ps.goto(programme, { waitUntil: 'networkidle' }); await ps.waitForSelector('.tp-m');
+    const liens = await ps.locator('.p-onglets a').allTextContents();
+    ok(['Mon accès', 'Journal', 'Programme', 'Personnes'].every(n => liens.includes(n)), 'sans Dock : les quatre pages restent atteignables (' + liens.join(', ') + ')');
+    await ps.locator('.p-onglets a', { hasText: 'Journal' }).click(); await ps.waitForFunction(() => document.querySelector('#pTitre').textContent === 'Journal');
+    ok(true, 'sans Dock : le repli ouvre le Journal'); await sans.close();
 
     console.log('Léa décale le cocktail de 15 minutes');
     await page.lea.getByRole('button', { name: 'Décaler « Cocktail » de 15 minutes' }).click();

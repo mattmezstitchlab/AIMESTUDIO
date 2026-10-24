@@ -24,6 +24,14 @@ Dock (dock/modele.js composerReel)   Atlas (/capacites/, capacites/modules.js)  
 - **Pas de quatrième Dock** : le Dock unifié existant sait déjà poser un lieu pour toute page servie. Le Programme apparaît dans le Dock quand le serveur sert la page `deroule`, c'est-à-dire quand le projet a un programme.
 - **Intentions sans IA** : `AIMEModules.intention("Léa décale le cocktail")` → `{ module: 'temps', action: 'retarder' }`, par motifs déterministes et testés.
 
+### Navigation (correction du 24/10, revue de Matt)
+
+- **Une seule navigation générale : le Dock**, sur ordinateur, tablette et mobile. La rangée d'onglets sous le nom du projet n'est plus affichée quand le Dock est posé ; elle ne revient qu'en repli, si le Dock universel manque (script absent), pour qu'aucune page ne perde son accès.
+- **En haut** : le nom du projet et la participation active, dans un bandeau d'identité ; puis le titre du module ouvert et ses modes d'affichage (Liste, Chronologie, Comparer les vues), qui sont des commandes locales.
+- **Le Dock garde le même ordre pour tous les rôles** (celui du registre) ; seul son contenu varie.
+- **Retour et avance du navigateur** : chaque passage d'une page à l'autre est une entrée d'historique. Les liens directs (`/projets/?espace=…&page=deroule`) ouvrent la bonne page. Le focus va au titre de la page ouverte, et le Dock marque la page en cours (`aria-current`).
+- **La photo** n'est plus derrière la zone de travail : elle est cadrée et voilée dans le bandeau d'identité. La zone de travail est sur fond plein.
+
 ## 2. Source de vérité
 
 | | Rôle | Écrit par |
