@@ -27,7 +27,7 @@ var STATUTS={
  composant:{nom:'Composant',dit:'Du code existe (règles, démonstration) ; pas encore de parcours serveur complet.'},
  documente:{nom:'Documenté',dit:'Décrit dans le registre ; rien d\'exécutable encore.'}
 };
-var PRESENTATIONS=['liste','grille','chronologie','calendrier','document','carte','editeur','comparaison'];
+var PRESENTATIONS=['liste','grille','chronologie','cercle','calendrier','document','carte','editeur','comparaison'];
 var CHAMPS=['id','contrat','nom','fonction','statut','ressources','actions','acces','presentations','contextes','destination','etats','accessibilite','journal','intentions','preuves'];
 var ETATS=['chargement','vide','succes','refus','introuvable','ferme'];
 
@@ -56,9 +56,9 @@ var MODULES=[
    activer:{regle:['space','manage_members'],ecrit:true,journal:'importer',nom:'Importer le programme type'}
   },
   acces:'Membre actif du projet (space_members, date de fin comprise) ; règles relues à chaque appel. Visibilité : event.read, puis l\'audience du moment (item.read).',
-  presentations:['liste','chronologie','comparaison'],
+  presentations:['liste','cercle','comparaison'],
   prevues:['calendrier','carte'],
-  contextes:{preparation:'liste',jourJ:'chronologie',verification:'comparaison'},
+  contextes:{preparation:'liste',jourJ:'cercle',verification:'comparaison'},
   destination:{gabarit:'deroule',requiert:'temps'},
   api:'/api/temps',
   etats:etats({conflit:{code:409,dit:'Le programme a changé entre-temps : voici la version à jour, rien n\'a été enregistré.'},vide:{dit:'Aucun programme dans ce projet pour l\'instant.'}}),
@@ -70,7 +70,7 @@ var MODULES=[
    {motif:/\b(plan b|repli|pluie)\b/i,action:'planB'},
    {motif:/\b(comparer|voir comme|perspective)\b/i,action:'comparer'},
    {motif:/\b(programme|d[ée]roul[ée]|horaires?|planning|me concerne|demain|aujourd'hui|quand|cons[ée]quences?)\b/i,action:'lire'}],
-  preuves:['api/temps.mjs','api/_temps/moteur.mjs','modules/temps/moteur.js','tests/temps-moteur.test.cjs','tests/temps.test.cjs']},
+  preuves:['api/temps.mjs','api/_temps/moteur.mjs','modules/temps/moteur.js','modules/temps/cercle.js','tests/temps-moteur.test.cjs','tests/temps-cercle.test.cjs','tests/temps.test.cjs']},
 
  {id:'acces',contrat:1,nom:'Mon accès',statut:'operationnel',
   fonction:'Ce que je suis dans ce projet, ce que je peux y faire, qui me l\'a accordé et jusqu\'à quand.',

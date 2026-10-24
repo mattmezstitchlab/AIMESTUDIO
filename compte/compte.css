@@ -44,3 +44,6 @@ body.en-projet .cpt-titre .leg{color:#D0D0D8}
 body.en-projet #projet{gap:12px}
 body.en-projet #projet>.leg:first-child{margin:0}
 @media (max-width:560px){body.en-projet .cpt-titre{min-height:92px;padding:18px 16px 14px}}
+/* téléphone (ou écran bas) dans un projet : l'en-tête du site défile avec la page au lieu de rester collé, pour laisser toute la hauteur au travail ;
+   seule navigation fixe, le Dock, en bas */
+@media (max-width:560px),(max-height:500px){body.en-projet .tete{position:static}}

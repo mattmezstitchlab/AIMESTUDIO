@@ -61,7 +61,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
         titre: document.querySelector('#tTitre').textContent, role: document.querySelector('#tSous').textContent, module: (document.querySelector('#pTitre') || {}).textContent,
         fond: getComputedStyle(document.querySelector('.cpt-fond')).display, modes: [...document.querySelectorAll('.tp-modes button')].map(b => b.textContent) }));
       ok(r.onglets === 0 && r.navs === 0 && r.dock, k + ' : aucune rangée d\'onglets, le Dock seul');
-      ok(r.titre === DEMO.titre && r.role && r.module === 'Programme' && r.modes.includes('Liste') && r.modes.includes('Chronologie'), k + ' : projet « ' + r.titre + ' », participation « ' + r.role + ' », module et ses modes');
+      ok(r.titre === DEMO.titre && r.role && r.module === 'Programme' && r.modes.includes('Liste') && r.modes.includes('Circle') && !r.modes.includes('Chronologie'), k + ' : projet « ' + r.titre + ' », participation « ' + r.role + ' », module et ses modes');
       ok(r.fond === 'none', k + ' : pas de photo derrière la zone de travail');
     }
     /* clavier, retour du navigateur, lien direct */
@@ -117,9 +117,80 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await page.emma.reload({ waitUntil: 'networkidle' }); await page.emma.waitForSelector('.tp-m');
     ok(/16:15 – 18:45/.test(await texte('emma')), 'Emma recharge : la modification est toujours là');
 
-    console.log('Chronologie, Comparaison, historique');
-    await page.alex.getByRole('button', { name: 'Chronologie' }).click(); await page.alex.waitForSelector('.tp-bloc');
-    ok((await page.alex.locator('.tp-bloc').count()) === 8, 'Alex : la même ressource en chronologie'); await capture('alex', 'TEMPS__ALEX__programme__chronologie');
+    console.log('Circle : la même ressource sur un cadran de 24 heures');
+    const arcs = async k => page[k].locator('.tp-arc').count(), arc = (k, id) => page[k].locator('.tp-arc[data-id="' + id + '"]');
+    /* toucher un arc comme un doigt : au milieu de son tracé (le centre de sa boîte tombe à l'intérieur du cercle) */
+    /* le milieu d'un moment à l'écran : son tracé, ou sa pastille quand il est très court */
+    const MILIEU = `window.__milieu = i => { const n = document.querySelector('.tp-arc[data-id="' + i + '"] .tp-trait-m, .tp-arc[data-id="' + i + '"] .tp-pastille'), m = n.getScreenCTM();
+      const q = n.tagName === 'circle' ? { x: +n.getAttribute('cx'), y: +n.getAttribute('cy') } : n.getPointAtLength(n.getTotalLength() / 2); return { x: m.a * q.x + m.c * q.y + m.e, y: m.b * q.x + m.d * q.y + m.f }; };`;
+    const toucher = async (k, id) => { await page[k].addScriptTag({ content: MILIEU }); const pt = await page[k].evaluate(i => { document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' }); return window.__milieu(i); }, id); await page[k].mouse.click(pt.x, pt.y); };
+    for (const k of ['emma', 'alex', 'lea']) { await page[k].getByRole('button', { name: 'Circle', exact: true }).click(); await page[k].waitForSelector('.tp-arc'); }
+    ok(await arcs('emma') === 5 && await arcs('alex') === 8 && await arcs('lea') === 9, 'Circle : 5 arcs pour Emma, 8 pour Alex, 9 pour Léa : exactement leurs vues');
+    ok((await page.emma.locator('.tp-zone').count()) === 0 && (await page.lea.locator('.tp-zone').count()) === 1, 'la conséquence à décider (ambre) seulement chez qui peut décider');
+    ok(/décalé de 15 min, prévu 16:00/.test(await arc('emma', 'cocktail').getAttribute('aria-label')), 'Emma : l\'arc du cocktail dit son décalage en mots');
+    ok((await page.emma.locator('.tp-cadran').evaluate(e => e.getAttribute('role'))) === 'group' && !(await page.emma.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)), 'Emma (iPhone) : cadran interactif (pas une image), sans défilement horizontal');
+    /* un arc ouvre le même panneau que la Liste, avec les mêmes gestes */
+    await toucher('lea', 'cocktail'); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="cocktail"]');
+    ok((await page.lea.locator('.tp-detail').getByRole('button', { name: 'Décaler « Cocktail » de 15 minutes' }).count()) === 1, 'Léa : l\'arc ouvre le panneau de la Liste, avec ses gestes');
+    ok(/vue=cercle/.test(page.lea.url()) && /moment=cocktail/.test(page.lea.url()), 'Léa : le mode et le moment sont dans l\'adresse');
+    await toucher('emma', 'cocktail'); await page.emma.waitForSelector('.tp-detail .tp-m');
+    ok((await page.emma.locator('.tp-detail button').count()) === 0, 'Emma : le même panneau, sans aucun geste');
+    await capture('lea', 'TEMPS__LEA__programme__cercle-cocktail'); if (CAP) { await page.lea.evaluate(() => document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' })); await page.lea.screenshot({ path: path.join(CAP, 'TEMPS__LEA__cercle__ordinateur__cadran.png') }); } await capture('emma', 'TEMPS__EMMA__programme__cercle-cocktail'); await capture('alex', 'TEMPS__ALEX__programme__cercle');
+    /* changer de mode garde le moment ; recharger garde tout */
+    await page.lea.getByRole('button', { name: 'Liste', exact: true }).click(); await page.lea.waitForSelector('.tp-m.choisi');
+    ok((await page.lea.locator('.tp-m.choisi').getAttribute('data-id')) === 'cocktail' && /moment=cocktail/.test(page.lea.url()) && !/vue=/.test(page.lea.url()), 'Léa : en Liste, le cocktail reste choisi');
+    await page.lea.getByRole('button', { name: 'Circle', exact: true }).click(); await page.lea.reload({ waitUntil: 'networkidle' }); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="cocktail"]');
+    ok(true, 'Léa recharge : Circle et le cocktail sont rouverts depuis l\'adresse');
+    /* clavier : flèches de moment en moment, Entrée ouvre */
+    await arc('lea', 'cocktail').focus(); await page.lea.keyboard.press('ArrowRight');
+    const suivant = await page.lea.evaluate(() => document.activeElement && document.activeElement.getAttribute('data-id'));
+    await page.lea.keyboard.press('Enter'); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="' + suivant + '"]');
+    ok(suivant === 'set-cocktail', 'Léa au clavier : flèche droite → « ' + suivant + ' », Entrée ouvre son détail');
+    /* un geste dans Circle se voit dans la Liste d'une autre personne, et l'inverse */
+    await toucher('lea', 'bal'); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="bal"]');
+    await page.lea.locator('.tp-detail').getByRole('button', { name: 'Décaler « Ouverture du bal » de 5 minutes' }).click();
+    await page.camille.waitForFunction(() => /22:05 – 01:35/.test((document.querySelector('[data-id="bal"]') || {}).innerText || ''), null, { timeout: 6000 }).then(() => ok(true, 'geste dans Circle (Léa) → Liste de Camille : 22:05'), () => ok(false, 'geste dans Circle non propagé'));
+    await page.camille.locator('[data-id="discours"]').getByRole('button', { name: 'Décaler « Discours des témoins » de 5 minutes' }).click();
+    await page.emma.waitForFunction(() => /21:05 à 21:25/.test((document.querySelector('.tp-arc[data-id="discours"]') || { getAttribute: () => '' }).getAttribute('aria-label') || ''), null, { timeout: 6000 }).then(() => ok(true, 'geste dans la Liste (Camille) → Circle d\'Emma : 21:05'), () => ok(false, 'geste dans la Liste non propagé au cercle'));
+    await capture('camille', 'TEMPS__CAMILLE__programme__liste-apres-gestes');
+
+    console.log('Circle sur iPhone : toucher, Dock, en-tête, taille, rotation, légende, date');
+    const em = page.emma;
+    for (const id of await em.$$eval('.tp-arc', l => l.map(x => x.getAttribute('data-id')))) {
+      await toucher('emma', id); await em.waitForSelector('.tp-detail .tp-m[data-id="' + id + '"]', { timeout: 3000 }).then(() => {}, () => {});
+      ok((await em.locator('.tp-detail .tp-m').getAttribute('data-id')) === id, 'Emma (iPhone) : un doigt sur « ' + id + ' » ouvre son panneau');
+    }
+    /* un doigt un peu à côté d'un arc court (le discours : 20 min, couloir intérieur) */
+    await em.evaluate(() => document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' })); await em.waitForTimeout(100);   /* le cadran à l'écran avant de viser */
+    await em.addScriptTag({ content: MILIEU });
+    const pres = await em.evaluate(() => { const o = window.__milieu('discours'), x = o.x, y = o.y, c = document.querySelector('.tp-cadran').getBoundingClientRect(), cx = c.left + c.width / 2, cy = c.top + c.height / 2, d = Math.hypot(x - cx, y - cy);
+      /* on vise 14 px à côté, du côté où aucun autre moment ne se trouve : vers l'extérieur s'il est dans le couloir extérieur, sinon vers l'intérieur */
+      const rayons = [...document.querySelectorAll('.tp-arc')].map(g => { const o2 = window.__milieu(g.getAttribute('data-id')); return Math.round(Math.hypot(o2.x - cx, o2.y - cy)); });
+      const sens = Math.round(d) >= Math.max(...rayons) - 1 ? 1 : -1;
+      return { x: x + sens * (x - cx) / d * 14, y: y + sens * (y - cy) / d * 14 }; });
+    await em.mouse.click(pres.x, pres.y); await em.waitForTimeout(150);
+    ok((await em.locator('.tp-detail .tp-m').getAttribute('data-id')) === 'discours', 'Emma : un arc de 20 min touché 14 px à côté reste sélectionnable');
+    const vue = await em.evaluate(() => { const d = document.querySelector('#dock-site nav.dock').getBoundingClientRect(), p = document.querySelector('.tp-detail').getBoundingClientRect(),
+      fixes = [...document.querySelectorAll('body *')].filter(n => { const st = getComputedStyle(n).position; return (st === 'fixed' || st === 'sticky') && n.offsetParent !== null && n.getBoundingClientRect().height > 0 && !n.closest('#dock-site'); }).map(n => n.className || n.tagName);
+      const c = document.querySelector('.tp-cadran').getBoundingClientRect(), h = [...document.querySelectorAll('.tp-heure-c')].map(t => t.getBoundingClientRect());
+      return { panneau: p.top < d.top, dockBas: Math.round(innerHeight - d.bottom), fixes, tete: getComputedStyle(document.querySelector('.tete')).position, large: c.width / innerWidth, heures: h.every(r => r.left >= 0 && r.right <= innerWidth), deborde: document.documentElement.scrollWidth > innerWidth + 1,
+        cle: [...document.querySelectorAll('.tp-cle li')].map(l => l.textContent), jour: (document.querySelector('.tp-jour') || {}).textContent }; });
+    ok(vue.panneau, 'Emma : le panneau ouvert apparaît au-dessus du Dock');
+    ok(vue.dockBas <= 12 && vue.fixes.length === 0 && vue.tete === 'static', 'Emma : le Dock est la seule zone fixe, en bas (' + vue.dockBas + ' px) ; l\'en-tête défile avec la page' + (vue.fixes.length ? ' — fixes : ' + vue.fixes.join(', ') : ''));
+    ok(vue.large >= 0.95 && vue.heures && !vue.deborde, 'Emma : le cadran occupe ' + Math.round(vue.large * 100) + ' % de la largeur, libellés horaires entiers, sans défilement horizontal');
+    ok(vue.cle.join('|') === 'horaire prévu', 'Emma : la légende ne nomme que les états présents (' + vue.cle.join(', ') + ')');
+    ok(vue.jour === 'Jour J', 'la date du programme est affichée (« Jour J » tant que les moments n\'ont pas de date en base)');
+    const cleAlex = await page.alex.$$eval('.tp-cle li', l => l.map(x => x.textContent)); ok(cleAlex.includes('vos moments') && cleAlex.includes('horaire prévu'), 'Alex : la légende ajoute « vos moments » (' + cleAlex.join(', ') + ')');
+    await capture('emma', 'TEMPS__EMMA__cercle__iphone-portrait');
+    if (CAP) { await em.evaluate(() => document.querySelector('.tp-cadran').scrollIntoView({ block: 'start' })); await em.screenshot({ path: path.join(CAP, 'TEMPS__EMMA__cercle__iphone-portrait__cadran.png') }); }
+    /* rotation : paysage, le cadran et le panneau côte à côte, sans débordement */
+    await em.setViewportSize({ width: 844, height: 390 }); await em.waitForTimeout(300);
+    const pay = await em.evaluate(() => { const c = document.querySelector('.tp-cadran').getBoundingClientRect(), p = document.querySelector('.tp-detail').getBoundingClientRect(); return { cote: c.right <= p.left + 1, haut: c.height <= innerHeight, deborde: document.documentElement.scrollWidth > innerWidth + 1 }; });
+    ok(pay.cote && pay.haut && !pay.deborde, 'Emma tourne son iPhone : cadran et panneau côte à côte, le cadran tient dans la hauteur, sans débordement');
+    if (CAP) { await em.evaluate(() => document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' })); await em.screenshot({ path: path.join(CAP, 'TEMPS__EMMA__cercle__iphone-paysage.png') }); }
+    await em.setViewportSize({ width: 390, height: 664 }); await em.waitForTimeout(200);
+
+    console.log('Comparaison, historique');
     ok((await page.lea.getByRole('button', { name: 'Comparer les vues' }).count()) === 0, 'Léa : pas de Comparaison');
     await page.camille.getByRole('button', { name: 'Comparer les vues' }).click(); await page.camille.waitForSelector('.tp-comp select option:nth-child(2)', { state: 'attached' });
     const val = await page.camille.locator('.tp-comp select option', { hasText: 'Emma' }).getAttribute('value');

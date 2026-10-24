@@ -92,7 +92,9 @@ function ouvrir(id,g,o){o=o||{};if(module_){module_.arreter();module_=null}espac
   if(j._code!==200||!j.ok){rep=null;dock();$('pCorps').textContent='';$('pCorps').appendChild(el('p','alerte',j._code===404?'Ce projet est introuvable, ou votre accès a pris fin.':(j.raison||'Le projet n\'a pas pu être chargé.')));return}
   rep=j;$('tTitre').textContent=(j.mots&&j.mots.projet)||'Projet';$('tSous').textContent=(j.mots&&j.mots.role)||'';document.title=((j.mots&&j.mots.projet)||'Projet')+' · AIME';
   /* le retour du navigateur revient à la page précédente du projet : chaque passage d'une page à l'autre (Dock, repli) est une entrée d'historique */
-  try{var adr='/projets/?espace='+encodeURIComponent(espace)+(courant!=='acces'?'&page='+courant:'');if(o.pousser&&location.pathname+location.search!==adr)history.pushState({espace:espace,page:courant},'',adr);else history.replaceState({espace:espace,page:courant},'',adr)}catch(_){}
+  try{var adr='/projets/?espace='+encodeURIComponent(espace)+(courant!=='acces'?'&page='+courant:'');
+  /* le contexte d'un module (mode, moment, échelle, jour) survit au rechargement de SA page ; il ne suit pas vers une autre page */
+  var ici=new URLSearchParams(location.search);if(ici.get('espace')===espace&&(ici.get('page')||'acces')===courant)['vue','moment','echelle','jour'].forEach(function(k){var v=ici.get(k);if(v&&/^[A-Za-z0-9-]{1,60}$/.test(v))adr+='&'+k+'='+encodeURIComponent(v)});if(o.pousser&&location.pathname+location.search!==adr)history.pushState({espace:espace,page:courant},'',adr);else history.replaceState({espace:espace,page:courant},'',adr)}catch(_){}
   composerPage();dock();var t=$('pTitre');if(t)t.focus({preventScroll:true})})
  .catch(function(){$('pCorps').textContent='';$('pCorps').appendChild(el('p','alerte','Serveur injoignable. Réessayez dans un instant.'))})}
 

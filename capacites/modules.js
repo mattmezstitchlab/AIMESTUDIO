@@ -4,7 +4,7 @@
 (function(){'use strict';
 var R=window.AIMEModules,z=document.getElementById('modules-aime');if(!R||!z)return;
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-var NOMS_P={liste:'liste',grille:'grille',chronologie:'chronologie',calendrier:'calendrier',document:'document',carte:'carte',editeur:'éditeur',comparaison:'comparaison'};
+var NOMS_P={liste:'liste',grille:'grille',chronologie:'chronologie',cercle:'cercle (Circle)',calendrier:'calendrier',document:'document',carte:'carte',editeur:'éditeur',comparaison:'comparaison'};
 R.MODULES.forEach(function(m){var li=el('li','mod-aime s-'+m.statut);li.id='module-'+m.id;
  var h=el('div','mod-tete');h.appendChild(el('h3',null,m.nom));var st=el('span','statut',R.STATUTS[m.statut].nom);st.title=R.STATUTS[m.statut].dit;h.appendChild(st);li.appendChild(h);
  li.appendChild(el('p',null,m.fonction));
