@@ -70,7 +70,7 @@ var ACTIONS={
  ecrireCoordination:{nom:'Écrire à la coordination',geste:'repondre'},
  confirmer:{nom:'Confirmer ma présence',geste:'repondre'},
  ecrireOrganisateurs:{nom:'Écrire aux organisateurs',geste:'repondre'},
- commencer:{nom:'Commencer un projet',geste:'public',href:'/#entrer'},
+ commencer:{nom:'Commencer',geste:'public',href:'/?commencer=1'},
  justificatif:{nom:'Déposer un justificatif',geste:'deposer'},
  ecrireProprietaire:{nom:'Écrire au propriétaire',geste:'repondre'},
  exporter:{nom:'Exporter',geste:'lire'},

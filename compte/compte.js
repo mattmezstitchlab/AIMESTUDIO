@@ -14,7 +14,7 @@ function confirmer(b,texte,action){if(b.dataset.arme){delete b.dataset.arme;b.te
 var ROLES={owner:'Propriétaire',editor:'Coordination',contributor:'Contributeur (prestataire, intervenant)',viewer:'Lecture seule',guest:'Invité'};
 var MODELES={mariage:'Mariage',seminaire:'Séminaire'};
 
-var Q=new URLSearchParams(location.search),INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(Q.get('invitation')||'')?Q.get('invitation'):null,moi=null;
+var Q=new URLSearchParams(location.search),INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(Q.get('invitation')||'')?Q.get('invitation'):null,OUVRIR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(Q.get('espace')||'')?Q.get('espace'):null,moi=null;
 if(INVIT)$('invite').hidden=false;
 if(Q.get('supprime'))toast('Votre compte a été supprimé. Merci d\'être passé par AIME.');
 else if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
@@ -25,8 +25,8 @@ requete('/api/auth/get-session').then(function(r){
  if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=(r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.';return}
  if(!r.j||!r.j.user){$('connexion').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
  moi=r.j.user;afficherProfil();$('profil').hidden=false;$('espaces').hidden=false;$('sortir').hidden=false;$('zoneSuppr').hidden=false;
- (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' » ('+(ROLES[x.role]||x.role)+').');$('invite').hidden=true}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
-  .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();chargerEspaces();chargerCles()})
+ (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' » ('+(ROLES[x.role]||x.role)+').');$('invite').hidden=true;if(x.espace)OUVRIR=x.espace}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
+  .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();chargerEspaces(OUVRIR);chargerCles()})
 }).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.'});
 
 /* ---------- se connecter ---------- */

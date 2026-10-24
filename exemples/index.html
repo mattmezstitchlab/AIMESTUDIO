@@ -10,7 +10,6 @@
 <script>try{if(localStorage.getItem('aime-zero-calme')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}catch(e){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}</script>
 <link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/porte/porte.css">
 <link rel="stylesheet" href="/coeur/charte.css">
 <link rel="stylesheet" href="/coeur/coeur.css">
 <link rel="stylesheet" href="/dock/dock.css">
@@ -30,7 +29,7 @@
 </head>
 <body>
 <a class="evite" href="#contenu">Aller au contenu</a>
-<header class="barre"><a class="mk" href="/" aria-label="AIME, accueil">AIME<sup>®</sup></a><nav class="droite" aria-label="AIME"><a class="compte-d" href="/compte/">J'ai un compte</a><span id="porte"></span></nav></header>
+<header class="barre"><a class="mk" href="/" aria-label="AIME, accueil">AIME<sup>®</sup></a></header>
 <div class="flot" id="flot" aria-hidden="true"></div>
 <main id="contenu">
 <section class="zero" id="haut" aria-labelledby="t-zero">
@@ -58,8 +57,8 @@
 <script src="/coeur/roles.js"></script>
 <script src="/dock/modele.js"></script>
 <script src="/dock/dock.js"></script>
+<script src="/dock/plus.js"></script>
 <script src="/coeur/coeur.js"></script>
-<script src="/porte/porte.js"></script>
 <script>
 /* Exemples : la même mécanique que l'accueil, lue dans un scénario (vitrine/scenarios/<u>.json).
    Sans ?u : la liste des exemples. Avec ?u : l'exemple, de haut en bas. Le balisage est posé AVANT l'orbe,
@@ -80,7 +79,7 @@ var u=(new URLSearchParams(location.search).get('u')||'').replace(/[^a-z0-9]/g,'
 $('exAutres').innerHTML=EX.filter(function(e){return!ex||e.u!==ex.u}).map(function(e){return'<li><a href="'+e.href+'">'+esc(e.genre)+' · '+esc(e.titre)+' · '+e.n+' rôles</a></li>'}).join('');
 function charger(srcs,fin){var i=0;(function suite(){if(i>=srcs.length)return fin();var s=document.createElement('script');s.src=srcs[i++];s.onload=suite;s.onerror=suite;document.body.appendChild(s)})()}
 var ORBE=['/zero/orbe.js','/zero/points.js','/zero/yeux.js','/zero/formes.js','/zero/zero.js'];
-function porte(){if(window.AIMEPorte)AIMEPorte.monter($('porte'),{contexte:'zero',position:'haut'})}
+function porte(){}
 if(!ex){
  document.title='Exemples · AIME';
  $('exCorps').innerHTML='<section class="cx" id="liste" aria-labelledby="t-liste"><div class="cx-in"><div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">01</p><h2 id="t-liste">Le même principe, d\'autres métiers.</h2><p>Chaque exemple est un vrai projet de démonstration : un seul contenu, une couche d\'accès, une perspective par rôle. Deux, quatre, six rôles ou plus : la mécanique ne change pas.</p></div>'+
@@ -97,6 +96,6 @@ fetch('/vitrine/scenarios/'+ex.u+'.json',{cache:'no-cache'}).then(function(r){if
 })();
 </script>
 <div id="dock-site"></div>
-<script>(function(){var el=document.getElementById('dock-site');if(!el||!window.AIMEDock||!window.AIMEDockVue)return;AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site',actif:'exemples'});document.body.classList.add('avec-dock')})();</script>
+<script>(function(){var el=document.getElementById('dock-site');if(!el||!window.AIMEDock||!window.AIMEDockVue)return;AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site',actif:'exemples'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')})();</script>
 </body>
 </html>

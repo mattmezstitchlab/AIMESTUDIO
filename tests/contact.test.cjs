@@ -79,7 +79,8 @@ test('contact · configuration absente ou envoi refusé : réponse claire, sans 
 });
 
 test('contact · la page ne contient ni clé ni adresse destinataire, et le formulaire a son piège et son consentement', () => {
-  const z = fs.readFileSync('index.html', 'utf8') + fs.readFileSync('zero/contact.js', 'utf8');
+  const page = fs.readFileSync('contact/index.html', 'utf8'), z = page + fs.readFileSync('zero/contact.js', 'utf8');
+  assert.match(page, /<script src="\/zero\/contact\.js"><\/script>/); assert.match(fs.readFileSync('index.html', 'utf8'), /href="\/contact\/"/, 'le pied de page de l\'accueil y mène');
   assert.ok(!/re_[A-Za-z0-9]{8,}|RESEND|CONTACT_TO/.test(z));
   assert.match(z, /name="site_web"/); assert.match(z, /id="c-accord"/); assert.match(z, /fetch\('\/api\/contact'/);
   for (const n of ['prenom', 'nom', 'email', 'tel', 'adresse', 'livraison', 'message']) assert.match(z, new RegExp('name="' + n + '"'));

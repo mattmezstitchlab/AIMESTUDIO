@@ -180,6 +180,31 @@
       "source": "/lab/orb/naissance/:path*/",
       "destination": "/aime/",
       "permanent": false
+    },
+    {
+      "source": "/v1",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/v1/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/v1/:chemin*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/mariage",
+      "destination": "/exemples/",
+      "permanent": true
+    },
+    {
+      "source": "/mariage.html",
+      "destination": "/exemples/",
+      "permanent": true
     }
   ]
 }
