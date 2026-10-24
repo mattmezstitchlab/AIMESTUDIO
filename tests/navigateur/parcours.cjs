@@ -14,9 +14,20 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
-    for (const u of ['/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
+    for (const u of ['/', '/contact/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
+    // le + unique du Dock (docs/IDENTITE.md) : en haut seulement le logo ; sans compte, « Commencer » met le curseur dans le champ d'intention
+    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.waitForTimeout(500);
+    ok(await p.evaluate(() => !document.querySelector('.barre #porte, .barre .compte-d') && !document.getElementById('entrer')), 'accueil : en haut seulement le logo, plus de « Et maintenant ? »');
+    await p.click('#dock-site .dock-plus'); await p.waitForTimeout(250);
+    ok(await p.evaluate(() => [...document.querySelectorAll('#dock-site .dock-menu [role=menuitem]')].map(a => a.textContent.trim())[0] === 'Commencer'), 'le + : « Commencer » sans compte');
+    await p.click('#dock-site .dock-menu [data-commencer]'); await p.waitForTimeout(700);
+    ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'acTexte'), 'le + : le curseur est dans le champ d\'intention');
+    await p.goto(B + '/exemples/?commencer=1', { waitUntil: 'networkidle' }).catch(() => {});
+    await p.goto(B + '/?commencer=1', { waitUntil: 'networkidle' }); await p.waitForTimeout(900);
+    ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'acTexte'), '/?commencer=1 : le curseur est dans le champ d\'intention');
+    await p.goto(B + '/contact/', { waitUntil: 'networkidle' }); ok(await p.evaluate(() => !!document.querySelector('#formContact [name=site_web]') && !!document.getElementById('dock-site')), '/contact/ : le formulaire a déménagé, avec le Dock');
     // la mosaïque (démonstration) : aucun son avant le premier geste ; « Activer » lance les téléphones, sans erreur
     { const m = await ctx.newPage(), em = []; m.on('pageerror', e => em.push(e.message));
       await m.addInitScript(() => { window.__sons = 0; const A = window.AudioContext || window.webkitAudioContext; if (!A) return; const W = function (...a) { window.__sons++; return new A(...a) }; W.prototype = A.prototype; window.AudioContext = W; window.webkitAudioContext = W; });
