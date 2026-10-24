@@ -22,8 +22,9 @@ a{color:inherit}
 .barre .mk{font:400 19px var(--display);letter-spacing:-.01em;opacity:0;transition:opacity .6s;padding-left:44px}
 .barre .mk sup{font-size:.5em}
 body.loin .barre .mk{opacity:1}
-.barre::before{content:"";position:absolute;inset:0 0 -24px;background:linear-gradient(var(--desk) 40%,transparent);opacity:0;transition:opacity .5s;z-index:-1}
-body.loin .barre::before{opacity:.92}
+/* un fond léger dès que le logo paraît : il ne se pose jamais sur le texte qui défile */
+.barre::before{content:"";position:absolute;inset:0;background:rgba(10,10,12,.84);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07);opacity:0;transition:opacity .5s;z-index:-1}
+body.loin .barre::before{opacity:1}
 .barre .droite{display:flex;align-items:center;gap:16px;pointer-events:auto}
 .barre .compte-d{font:500 12.5px var(--ui);color:var(--ink);opacity:.85;text-decoration:underline;text-underline-offset:3px}.barre .compte-d:hover{opacity:1}
 @media (max-width:620px){.barre .passer{display:none}.barre .mk{padding-left:0}}
