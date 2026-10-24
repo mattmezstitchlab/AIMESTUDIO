@@ -161,7 +161,10 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     /* un doigt un peu à côté d'un arc court (le discours : 20 min, couloir intérieur) */
     await em.evaluate(() => document.querySelector('.tp-cadran').scrollIntoView({ block: 'center' })); await em.waitForTimeout(100);   /* le cadran à l'écran avant de viser */
     const pres = await em.evaluate(() => { const p = document.querySelector('.tp-arc[data-id="discours"] .tp-trait-m'), L = p.getTotalLength(), q = p.getPointAtLength(L / 2), m = p.getScreenCTM(), x = m.a * q.x + m.c * q.y + m.e, y = m.b * q.x + m.d * q.y + m.f, c = document.querySelector('.tp-cadran').getBoundingClientRect(), cx = c.left + c.width / 2, cy = c.top + c.height / 2, d = Math.hypot(x - cx, y - cy);
-      return { x: x - (x - cx) / d * 14, y: y - (y - cy) / d * 14 }; });
+      /* on vise 14 px à côté, du côté où aucun autre moment ne se trouve : vers l'extérieur s'il est dans le couloir extérieur, sinon vers l'intérieur */
+      const rayons = [...document.querySelectorAll('.tp-arc .tp-trait-m')].map(t => { const L2 = t.getTotalLength(), q2 = t.getPointAtLength(L2 / 2), m2 = t.getScreenCTM(); return Math.round(Math.hypot(m2.a * q2.x + m2.c * q2.y + m2.e - cx, m2.b * q2.x + m2.d * q2.y + m2.f - cy)); });
+      const sens = Math.round(d) >= Math.max(...rayons) - 1 ? 1 : -1;
+      return { x: x + sens * (x - cx) / d * 14, y: y + sens * (y - cy) / d * 14 }; });
     await em.mouse.click(pres.x, pres.y); await em.waitForTimeout(150);
     ok((await em.locator('.tp-detail .tp-m').getAttribute('data-id')) === 'discours', 'Emma : un arc de 20 min touché 14 px à côté reste sélectionnable');
     const vue = await em.evaluate(() => { const d = document.querySelector('#dock-site nav.dock').getBoundingClientRect(), p = document.querySelector('.tp-detail').getBoundingClientRect(),
