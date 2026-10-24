@@ -20,9 +20,7 @@ var E=[
  ['bureau','Mon Bureau','/bureau/','AIME OS : toutes les apps, une orbe, une recherche','monde','travailler','disponible',true],
  ['compte','Mon compte','/compte/','Mes espaces partagés, mes invitations, mes clés d\'accès','monde','realiser','experimental',true],
  ['zero','Page Zéro','/','Tout commence par une intention','monde','decouvrir','disponible'],
- ['aime','Le Monde AIME','/aime/','La grande présentation, le cube, l\'orbe','monde','decouvrir','disponible'],
- ['reseau','Le Réseau','/reseau/','Découvrir, garder et réutiliser des facettes vivantes','monde','decouvrir','demonstration',true],
- ['tout','Tout voir','/tout/','Toutes les vues d\'un coup','monde','decouvrir','disponible'],
+ ['tout','Tout voir','/tout/','Les quatre écrans d\'un projet côte à côte : un outil de contrôle (Régie)','monde','decouvrir','disponible',false,true],
  ['capacites','Atlas des capacités','/capacites/','Tout ce qui peut servir au site : 1 191 modules, 130 dépôts, leur état','monde','decouvrir','experimental',true],
  ['exemples','Les exemples','/exemples/','Un seul projet, chacun son écran : mariage, mariage à distance, séminaire','evenements','decouvrir','demonstration',true],
  ['world','AIME WORLD','/vitrine/world/','Paris · New York, six perspectives','evenements','decouvrir','demonstration'],
@@ -41,10 +39,12 @@ var E=[
  ['accessibilite','Atelier Accessibilité','/accessibilite/','Le studio, côté accessibilité','creation','realiser','disponible'],
  ['image','Atelier Image','/image/','Le studio, côté image','creation','realiser','disponible'],
  ['infinity','AIME INFINITY','/infinity/','Le jeu de l\'onde','jeux','realiser','experimental',true],
+ ['aime','Lab · Le Monde AIME','/aime/','L\'ancienne grande présentation, le cube, l\'orbe','jeux','experimenter','experimental'],
  ['orb','Lab · AIME ORB','/lab/orb/','L\'orbe, son terrain de jeu','jeux','experimenter','experimental'],
  ['infinity-lab','Lab · INFINITY','/infinity/lab/','Les règles du jeu, en essai','jeux','experimenter','experimental'],
  ['sante','Système nerveux','/sante/','Comprendre les parcours et les connexions','jeux','experimenter','experimental',true],
- ['cartes','Lab · Trois cartes','/lab/cartes/','Les trois modèles de carte, côte à côte','jeux','experimenter','experimental',true]
+ ['reseau','Lab · Le Réseau','/reseau/','Découvrir, garder et réutiliser des facettes vivantes (données locales)','jeux','experimenter','demonstration'],
+ ['cartes','Lab · Trois cartes','/lab/cartes/','Les trois modèles de carte, côte à côte','jeux','experimenter','demonstration',true]
 ].map(function(x){return{id:x[0],nom:x[1],href:x[2],phrase:x[3],cat:x[4],role:x[5],statut:x[6],nouveau:!!x[7],interne:!!x[8]}});
 
 function entree(id){for(var i=0;i<E.length;i++)if(E[i].id===id)return E[i];return null}
