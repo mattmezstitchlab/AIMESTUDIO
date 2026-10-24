@@ -1,0 +1,22 @@
+{
+  "format": "aime-souhaits",
+  "version": 1,
+  "note": "« Qu'attendez-vous d'AIME ? » (liste d'attente de la bêta). Une seule liste, lue par la page /beta/ et par le serveur (api/attente.js), qui refuse toute valeur hors liste. id : identifiant stocké ; mot : le mot court du bouton, au style du Dock ; nom : la fonction en entier (lecteur d'écran, compteurs) ; icone : une icône du Dock (dock/dock.js).",
+  "souhaits": [
+    { "id": "programme", "mot": "Programme", "nom": "Programme du jour", "icone": "deroule" },
+    { "id": "planb", "mot": "Plan B", "nom": "Plan B", "icone": "planb" },
+    { "id": "agenda", "mot": "Agenda", "nom": "Agenda partagé", "icone": "calendrier" },
+    { "id": "reponses", "mot": "Réponses", "nom": "Réponses des invités", "icone": "reponse" },
+    { "id": "plan-table", "mot": "Plan de table", "nom": "Plan de table", "icone": "personnes" },
+    { "id": "effectif", "mot": "Effectif", "nom": "Effectif et régimes", "icone": "effectif" },
+    { "id": "missions", "mot": "Missions", "nom": "Missions des prestataires", "icone": "mission" },
+    { "id": "documents", "mot": "Documents", "nom": "Documents et contrats", "icone": "document" },
+    { "id": "budget", "mot": "Budget", "nom": "Budget privé", "icone": "budget" },
+    { "id": "messages", "mot": "Messages", "nom": "Messages ciblés", "icone": "bulle" },
+    { "id": "rappels", "mot": "Rappels", "nom": "Rappels automatiques", "icone": "cloche" },
+    { "id": "hebergement", "mot": "Hébergement", "nom": "Hébergement et trajets", "icone": "lieu" },
+    { "id": "site", "mot": "Site", "nom": "Site pour les invités", "icone": "exemples" },
+    { "id": "photos", "mot": "Photos", "nom": "Photos partagées après le jour J", "icone": "contenus" },
+    { "id": "cadeaux", "mot": "Cadeaux", "nom": "Liste de cadeaux", "icone": "cadeau" }
+  ]
+}

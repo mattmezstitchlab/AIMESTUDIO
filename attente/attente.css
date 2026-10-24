@@ -1,0 +1,45 @@
+/* AIME · la liste d'attente de la bêta : le formulaire de /beta/, la grille « Qu'attendez-vous d'AIME ? » au style du Dock
+   (icône + mot court, mêmes couleurs : dock/dock.css), et le bloc court de l'accueil. */
+.at-form{display:grid;gap:22px;max-width:620px}
+.at-champ{display:grid;gap:8px}
+.at-champ>label,.at-grille legend,.at-l{font:600 13px/1.3 var(--ui);letter-spacing:.14em;text-transform:uppercase;color:#9C9CA8}
+.at-champ input[type=email],.at-champ input[type=text]{width:100%;box-sizing:border-box;min-height:52px;padding:0 16px;background:#16161B;border:1px solid #2B2B33;border-radius:16px;color:#EDEDF0;font:400 16px/1.4 var(--ui)}
+.at-champ input:focus-visible{outline:2px solid #EDEDF0;outline-offset:3px}
+.at-aide{margin:0;font:400 13px/1.4 var(--ui);color:#9C9CA8}
+/* la grille : trois colonnes, comme trois boutons du Dock par rang */
+.at-grille{margin:0;padding:0;border:0;min-width:0}
+.at-grille legend{padding:0;margin-bottom:10px}
+.at-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px;background:#0F0F12;border:1px solid #2B2B33;border-radius:22px}
+.at-e{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:64px;padding:8px 4px;border:1px solid transparent;border-radius:16px;cursor:pointer;color:#8A8A96;text-align:center}
+.at-e input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.at-e .dock-i{width:22px;height:22px;fill:none;stroke:#9C9CA8;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.at-t{display:block;max-width:100%;font:500 11.5px/1.2 "Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.at-e:hover{color:#EDEDF0}
+.at-e:has(input:checked){background:#22222A;border-color:#3A3A44;color:#fff}
+.at-e:has(input:checked) .at-t{font-weight:600}
+.at-e:has(input:checked) .dock-i{stroke:#fff}
+.at-e:has(input:focus-visible){outline:2px solid #EDEDF0;outline-offset:2px}
+.at-e .at-coche{position:absolute;top:6px;right:8px;width:14px;height:14px;fill:none;stroke:#6EE7B7;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.at-e:has(input:checked) .at-coche{opacity:1}
+/* le consentement : une vraie case, non cochée */
+.at-ok{display:flex;gap:12px;align-items:flex-start;font:400 15px/1.5 var(--ui);color:#EDEDF0;cursor:pointer}
+.at-ok input{flex:none;width:22px;height:22px;margin:1px 0 0;accent-color:#EDEDF0}
+.at-envoyer{justify-self:start;min-height:48px;padding:0 22px;border:0;border-radius:999px;background:#EDEDF0;color:#0A0A0C;font:600 15px var(--ui);cursor:pointer}
+.at-envoyer[disabled]{opacity:.6;cursor:default}
+.at-etat{margin:0;font:500 15px/1.5 var(--ui);color:#EDEDF0}
+.at-etat.erreur{color:#FCA5A5}
+.at-etat:empty{display:none}
+.at-fin{max-width:620px;padding:22px 24px;border:1px solid #2B2B33;border-radius:20px;background:#151519}
+.at-fin h2{margin:0 0 8px;font:600 26px/1.15 var(--titre,"Cal Sans",sans-serif)}
+.at-fin p{margin:0;color:#9C9CA8}
+.piege{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+/* le bloc court de l'accueil, sous « Je suis… » */
+.at-bloc{width:min(420px,calc(100% - 40px));margin:26px auto 0;display:grid;gap:10px;text-align:left}
+.at-bloc .at-titre{margin:0;font:400 15px/1.45 var(--ui);color:#9C9CA8;text-align:center}
+.at-bloc .at-titre b{color:#EDEDF0;font-weight:600}
+.at-bloc .at-ok{font-size:13.5px;color:#C8C8D0}
+.at-bloc .at-ok input{width:20px;height:20px}
+.at-bloc .at-etat{font-size:14px;text-align:center}
+.at-bloc .at-plus{justify-self:center;font:500 14px var(--ui);color:#EDEDF0;text-underline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:420px){.at-g{gap:4px;padding:6px}.at-t{font-size:11px}}
