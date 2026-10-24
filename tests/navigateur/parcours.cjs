@@ -31,6 +31,18 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     // le Bureau : la barre d'apps cède la place au Dock AIME ; le Point Zéro et la Grande Partition ont le même + unique
     for (const u of ['/bureau/', '/point-zero/', '/lab/grande-partition/']) { await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400);
       ok(await p.evaluate(() => !!document.querySelector('#dock-site .dock-plus') && !document.querySelector('#porte .ap-b') && !(document.getElementById('dock') && document.getElementById('dock').offsetHeight)), u + ' : un seul Dock, un seul +, plus de porte'); }
+    // le Dock ne cache rien : un champ qui reçoit le focus s'arrête au-dessus (iPhone 393×659, formulaire « Voici ce que j'ai compris ») ;
+    // les fenêtres de Mes projets (ancien Bureau) aussi
+    if (n === 'téléphone') { const q = await b.newContext({ viewport: { width: 393, height: 659 }, isMobile: true, hasTouch: true }), t = await q.newPage();
+      await t.goto(B + '/', { waitUntil: 'networkidle' }); await t.fill('#acTexte', 'Le mariage de Léa et Marc, le 14 juin 2027 au Domaine des Aulnes, 120 invités'); await t.click('.ac-go'); await t.waitForTimeout(600);
+      const caches = await t.evaluate(async () => { const dock = document.querySelector('#dock-site .dock').getBoundingClientRect().top, L = [...document.querySelectorAll('#acComprendre input, #acComprendre select, #acComprendre button')].filter(x => x.offsetParent); let k = [];
+        for (const x of L) { x.focus(); await new Promise(r => setTimeout(r, 60)); const r = x.getBoundingClientRect(); if (r.bottom > dock + 1 || r.top < 0) k.push(x.id || x.textContent.trim()); } return { n: L.length, k }; });
+      ok(caches.n > 0 && caches.k.length === 0, 'accueil (393×659) : chaque champ du formulaire, focalisé, reste au-dessus du Dock' + (caches.k.length ? ' (' + caches.k.join(', ') + ')' : ''));
+      const dernier = await t.evaluate(() => { const L = [...document.querySelectorAll('#acComprendre input, #acComprendre select, #acComprendre button')].filter(x => x.offsetParent), x = L[L.length - 1]; x.focus(); return new Promise(r => setTimeout(() => r(x.getBoundingClientRect().bottom <= document.querySelector('#dock-site .dock').getBoundingClientRect().top), 80)); });
+      ok(dernier, 'accueil (393×659) : le dernier champ, focalisé, reste au-dessus du Dock');
+      await t.goto(B + '/bureau/', { waitUntil: 'networkidle' }); await t.waitForTimeout(400); await t.click('#toutBtn'); await t.waitForTimeout(300); await t.click('#toutG [data-app="canevas"]').catch(() => {}); await t.waitForTimeout(1200);
+      ok(await t.evaluate(() => { const f = [...document.querySelectorAll('.fen')].filter(x => !x.hidden)[0], d = document.querySelector('#dock-site .dock'); return !!f && f.getBoundingClientRect().bottom <= d.getBoundingClientRect().top; }), 'Mes projets (Bureau) : la fenêtre s\'arrête au-dessus du Dock');
+      await q.close(); }
     // la mosaïque (démonstration) : aucun son avant le premier geste ; « Activer » lance les téléphones, sans erreur
     { const m = await ctx.newPage(), em = []; m.on('pageerror', e => em.push(e.message));
       await m.addInitScript(() => { window.__sons = 0; const A = window.AudioContext || window.webkitAudioContext; if (!A) return; const W = function (...a) { window.__sons++; return new A(...a) }; W.prototype = A.prototype; window.AudioContext = W; window.webkitAudioContext = W; });
