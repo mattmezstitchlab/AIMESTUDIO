@@ -8,7 +8,7 @@ test('Page Zéro : une seule entrée par intention, sans imposer le Bureau ni la
  const z=lire('index.html'),P=require('../dock/plus.js');
  assert.ok(require('../nav/registre.js').ENTREES.some(e=>e.href==='/aime/'&&e.cat==='jeux'));
  assert.doesNotMatch(z,/id="bureau" href="\/bureau\/"/);
- assert.match(z,/AIMEPlus\.brancher/);assert.equal(P.etat({connecte:false}).items[0].href,'/?commencer=1');
+ assert.match(z,/AIMEPlus\.brancher/);assert.equal(require('../dock/modele.js').ACTIONS.creerProjet.href,'/?commencer=1');assert.deepEqual(P.etat({connecte:false}).gestes,['creerProjet','invitationRecue']);
  assert.equal(Porte.etat({connecte:false}).href,'/point-zero/?intention=identite');
 });
 test('Le Timbre confirmé rejoint la facette du Monde AIME et non le Bureau',()=>{

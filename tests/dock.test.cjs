@@ -10,7 +10,7 @@ test('dock : chaque rôle serveur a un instantané stable (entrées et gestes du
  assert.equal(inst('contributor'),'notifications,mission,documents,messages | deposer,retard,ecrireCoordination');
  assert.equal(inst('viewer'),'controle,exports,journal | exporter,demanderPiece');
  assert.equal(inst('guest'),'programme,mareponse,lieu,messages | confirmer,ecrireOrganisateurs');
- assert.equal(inst(undefined),'coeur,exemples,compte | commencer','le Lab sort de la navigation publique (brief du 24/10)');
+ assert.equal(inst(undefined),'coeur,exemples,compte | creerProjet,invitationRecue','le Lab sort de la navigation publique (brief du 24/10)');
 });
 
 test('dock : la réponse d\'une invitée ne contient ni Budget, ni Personnes, ni aucun nom d\'entrée interdite, même en texte',()=>{
@@ -68,7 +68,10 @@ test('dock : le vocabulaire est fermé ; chaque entrée a un droit, chaque actio
 
 test('dock : le composant est accessible, échappé, sans action au survol, et un seul élément irisé',()=>{
  const j=lire('dock/dock.js'),c=lire('dock/dock.css');
- for(const a of ['aria-haspopup="menu"','aria-expanded','role="menu"','role="menuitem"','aria-current','role="status"','role="alertdialog"','aria-label="Gestes possibles"'])assert.ok(j.includes(a),a);
+ const V=require('../dock/dock.js').AIMEDockVue,pro=V.html(D.composer({roleServeur:'owner'}),{id:'p',actif:'notifications'}),pub=V.html(D.composer({}),{id:'q'});
+ for(const a of ['aria-haspopup="menu"','aria-expanded','role="menu"','role="menuitem"','aria-current','role="status"','role="alertdialog"','aria-label="Gestes possibles"'])assert.ok(pro.includes(a),'dans un projet : '+a);
+ for(const a of ['aria-expanded','role="group"','aria-label="Actions"'])assert.ok(pub.includes(a),'le + public : '+a);
+ assert.ok(!/role="menu"|role="menuitem"|aria-haspopup/.test(pub),'le + public est une carte (un groupe de boutons et un champ), pas un menu');
  assert.match(j,/ArrowDown/);assert.match(j,/Escape/);assert.match(j,/function esc\(/);assert.ok(!/mouseenter|mouseover|pointerenter/.test(j),'jamais d\'action au survol');
  assert.match(c,/prefers-reduced-motion/);assert.match(c,/min-height:4[48]px/);assert.match(c,/\.dock-menu\[hidden\]/);
  assert.equal((c.match(/conic-gradient/g)||[]).length,1,'le + seul est irisé');assert.match(c,/\.dock-plus\{[^}]*conic-gradient/);
@@ -120,15 +123,27 @@ test('dock réel : chaque nom de lieu des docks se rattache à un gabarit (ou es
  for(const v of Object.values(D.GABARIT_DE))assert.ok(v===null||D.NOM_GABARIT[v],String(v));
 });
 
-test('le + unique (docs/IDENTITE.md) : sans compte « Commencer », connecté ses projets puis « Nouveau projet », jamais /#entrer ni le Timbre',()=>{
- const P=require('../dock/plus.js');
- assert.deepEqual(P.etat({connecte:false}).items.map(x=>x.nom),['Commencer']);assert.deepEqual(P.etat(null).items.map(x=>x.href),['/?commencer=1']);
- const e=P.etat({connecte:true,timbre:null},[{id:'11111111-1111-4111-8111-111111111111',titre:'Mariage Léa & Marc',role:'owner'},{id:'22222222-2222-4222-8222-222222222222',titre:'Séminaire',role:'guest'}]);
- assert.equal(e.mode,'projets');assert.deepEqual(e.items.map(x=>x.nom),['Mariage Léa & Marc','Séminaire','Nouveau projet']);assert.equal(e.items[2].href,'/projets/?nouveau=1','une seule création : celle de Mes projets');
- assert.equal(e.items[0].href,'/projets/?espace=11111111-1111-4111-8111-111111111111');assert.equal(e.items[1].sous,'invité');
- assert.equal(P.etat({connecte:true},Array.from({length:9},(_,i)=>({id:'x'+i,titre:'P'+i,role:'viewer'}))).items.length,6,'cinq projets au plus, puis « Nouveau projet »');
+test('le Dock public et son + (décision de Matt, 24/10) : le Dock garde les lieux, le + garde les actions ; jamais /#entrer ni le Timbre',()=>{
+ const P=require('../dock/plus.js'),D=require('../dock/modele.js');
+ const pub=D.composer({famille:P.etat(null).famille}),con=D.composer({famille:P.etat({connecte:true}).famille});
+ assert.deepEqual(pub.lieux.map(x=>x.nom),['Le cœur','Exemples','J\'ai un compte'],'pas connecté : asymétrique, sans bouton fictif');
+ assert.deepEqual(con.lieux.map(x=>x.nom),['Le cœur','Exemples','Mes projets','Mon compte'],'connecté : deux de chaque côté du +');
+ assert.deepEqual(pub.plus.map(x=>x.nom),['Créer un projet','J\'ai reçu une invitation']);assert.deepEqual(con.plus.map(x=>x.nom),['Nouveau projet','J\'ai reçu une invitation']);
+ assert.deepEqual(P.etat({connecte:false}).gestes,pub.plus.map(x=>x.id));assert.deepEqual(P.etat({connecte:true}).gestes,con.plus.map(x=>x.id));
+ for(const c of [pub,con]){const lieux=new Set(c.lieux.map(x=>x.href)),noms=new Set(c.lieux.map(x=>x.nom));
+  for(const a of c.plus){assert.ok(!lieux.has(a.href),a.nom+' : aucune destination du Dock dans le +');assert.ok(!noms.has(a.nom),a.nom+' : aucune entrée en double')}
+  assert.ok(!c.plus.some(a=>/compte|exemples|Mes projets|Tous mes projets|Se déconnecter/i.test(a.nom)))}
+ assert.equal(con.plus[0].href,'/projets/?nouveau=1','« Nouveau projet » : la création de Mes projets (compte/creer.js)');assert.equal(pub.plus[0].href,'/?commencer=1');
+ const V=require('../dock/dock.js').AIMEDockVue,m=V.html(pub,{id:'t'});
+ assert.match(m,/class="dock-menu dock-carte"/);assert.match(m,/Ouvrez le lien reçu par e-mail ou par message\./);assert.ok(!/dock-carte/.test(V.html(D.composer({roleServeur:'owner'}),{id:'u'})),'dans un projet : le menu des gestes du rôle, comme aujourd\'hui');
  const j=lire('dock/plus.js');assert.ok(!/timbre|Timbre\./.test(j.replace(/\/\*[\s\S]*?\*\//g,'')),'le + ne dépend pas du Timbre');assert.ok(!/#entrer/.test(j));assert.ok(!/localStorage|sessionStorage/.test(j));
- assert.equal(require('../dock/modele.js').ACTIONS.commencer.href,'/?commencer=1');
+});
+
+test('« J\'ai reçu une invitation » : un lien collé mène à son invitation, rien d\'autre n\'est suivi',()=>{
+ const P=require('../dock/plus.js'),T='AbCdEfGhIjKlMnOpQrStUvWxYz012345_-';
+ assert.equal(P.jeton('https://www.lemondeaime.com/projets/?invitation='+T),T);assert.equal(P.jeton('  https://www.lemondeaime.com/compte/?invitation='+T+'  '),T,'l\'ancien lien aussi');
+ assert.equal(P.jeton('/projets/?invitation='+T),T);assert.equal(P.jeton(T),T,'le jeton seul');
+ for(const x of ['','bonjour','https://exemple.fr/ailleurs/?invitation='+T,'https://www.lemondeaime.com/projets/?invitation=court','javascript:alert(1)','https://www.lemondeaime.com/projets/?invitation='+T+'%22%3E'])assert.equal(P.jeton(x),null,x);
 });
 
 test('l\'OS restant (coque de la Page Zéro) garde ses classes préfixées : jamais de collision avec le Dock (.dock)',()=>{
