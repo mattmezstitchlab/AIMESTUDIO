@@ -54,6 +54,10 @@ create index if not exists moments_espace on moments (space_id, position);
 
 -- 3. Le journal du direct devient l'historique de Temps : deux colonnes facultatives (les lignes des démonstrations n'en ont pas),
 --    deux actions de plus, une révision unique par projet, et plus aucune modification de ligne.
+-- Les projets réels (identifiant uuid) dans le journal : 2026-10-21-comptes.sql l'élargit, mais sur une base neuve il passe AVANT la
+-- création de live_journal (ordre des noms) et ne fait rien. On le réaffirme ici, à l'identique (sans effet là où c'est déjà fait).
+alter table live_journal drop constraint if exists live_journal_espace_check;
+alter table live_journal add constraint live_journal_espace_check check (espace in ('mariage','seminaire') or espace ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
 alter table live_journal add column if not exists rev bigint;
 alter table live_journal add column if not exists effets jsonb;
 alter table live_journal drop constraint if exists live_journal_action_check;
