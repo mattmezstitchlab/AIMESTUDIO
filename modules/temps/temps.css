@@ -1,0 +1,128 @@
+/* AIME · module Temps (page Programme). Sobre : du texte, des heures lisibles, aucune information portée par la seule couleur. */
+.tp{display:grid;gap:14px}
+.tp .b{min-height:44px;min-width:44px;justify-content:center}
+.tp-tete{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tp-modes{display:flex;flex-wrap:wrap;gap:6px}.tp-modes .b[aria-pressed=true]{background:var(--encre);color:var(--fond);border-color:var(--encre)}
+.tp-liste{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tp-m{border:1px solid var(--ligne);background:var(--carte);border-radius:16px;padding:14px 16px;display:grid;gap:6px}
+.tp-m.decale{border-color:rgba(34,211,238,.45)}.tp-m.fait{opacity:.72}
+.tp-h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.tp-heure{font:600 18px/1.2 var(--titre);font-variant-numeric:tabular-nums}
+.tp-prevu{font-size:13px;color:var(--cyan)}
+.tp-t{display:grid;gap:2px}.tp-t strong{font-size:16px;font-weight:600}.tp-lieu{font-size:13.5px;color:var(--doux)}
+.tp-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tp-tag{font-size:12px;border:1px solid var(--ligne);border-radius:999px;padding:2px 9px;color:var(--doux)}.tp-tag.ok{color:var(--ok)}.tp-tag.moi{color:var(--encre);border-color:var(--doux)}
+.tp-note{margin:0;font-size:13.5px;color:var(--doux);border-left:2px solid var(--ligne);padding-left:10px}
+.tp-act{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-top:4px}
+.tp-casc{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--doux);min-height:44px;padding:0 4px}
+.tp-casc input{width:20px;height:20px;accent-color:var(--encre)}
+.tp-props .lgn{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.tp-chrono{position:relative;border-left:1px solid var(--ligne);margin-left:4px}
+.tp-graduation{position:absolute;left:6px;transform:translateY(-50%);font-size:11.5px;color:var(--doux);font-variant-numeric:tabular-nums}
+.tp-bloc{position:absolute;box-sizing:border-box;border:1px solid var(--ligne);background:var(--carte);border-radius:10px;padding:4px 8px;overflow:hidden;display:grid;align-content:start;gap:1px;font-size:12.5px}
+.tp-bloc strong{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tp-bloc span{color:var(--doux);font-variant-numeric:tabular-nums}
+.tp-bloc.decale{border-color:rgba(34,211,238,.6)}.tp-bloc.fait{opacity:.7}
+.tp-comp{display:grid;gap:12px}.tp-comp select{min-height:44px}
+.tp-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}.tp-col{display:grid;gap:8px;align-content:start;min-width:0}
+@media (max-width:720px){.tp-cols{grid-template-columns:1fr}}
+.tp-hist summary{cursor:pointer;min-height:32px}
+.tp-hist-l{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13.5px;color:var(--doux)}.tp-hist-l .moi{color:var(--encre)}.tp-quand{font-variant-numeric:tabular-nums;color:var(--doux)}
+
+/* ---------- Circle : le cadran de 24 heures (modules/temps/cercle.js) ---------- */
+.tp-m.choisi{border-color:var(--encre);box-shadow:0 0 0 1px var(--encre) inset}
+.tp-cercle{display:grid;gap:14px;justify-items:center}
+.tp-cadran{width:100%;max-width:560px;height:auto;display:block;touch-action:manipulation;overflow:visible;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tp-anneau{fill:none;stroke:var(--ligne);stroke-width:2}
+.tp-trait{stroke:var(--pale);stroke-width:3}.tp-trait.fort{stroke:var(--doux);stroke-width:5}
+.tp-heure-c{fill:var(--doux);font:600 34px var(--ui)}
+.tp-arc{cursor:pointer;outline:none}
+.tp-trait-m{fill:none;stroke:#8E8E9C;stroke-width:44;pointer-events:none}
+.tp-arc.e-decale .tp-trait-m{stroke:var(--cyan)}
+.tp-arc.e-fait .tp-trait-m{stroke-opacity:.45}
+.tp-arc.choisi .tp-trait-m,.tp-arc:hover .tp-trait-m{stroke:var(--encre)}
+.tp-arc:focus-visible .tp-trait-m{stroke:var(--encre);filter:drop-shadow(0 0 6px rgba(237,237,240,.7))}
+.tp-prevu-c{fill:none;stroke:var(--cyan);stroke-width:4;stroke-dasharray:10 10;pointer-events:none}
+.tp-zone{fill:none;stroke:var(--ambre);stroke-width:54;stroke-opacity:.9;pointer-events:none}
+.tp-point{fill:var(--ambre);stroke:var(--fond);stroke-width:5;pointer-events:none}
+.tp-plus{cursor:pointer}.tp-plus circle{fill:var(--carte);stroke:var(--doux);stroke-width:3}.tp-plus text{fill:var(--encre);font:700 26px var(--ui)}
+.tp-plus:focus-visible circle{stroke:var(--encre);stroke-width:6}
+.tp-c1{fill:var(--encre);font:600 40px var(--titre)}.tp-c2{fill:var(--doux);font:500 30px var(--ui);font-variant-numeric:tabular-nums}
+.tp-detail{width:100%}
+.tp-cle{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--doux);justify-content:center}
+.tp-cle li{display:inline-flex;align-items:center;gap:6px}
+.tp-k{display:inline-block;width:18px;height:8px;border-radius:2px;background:#8E8E9C}
+.tp-k-prevu{height:0;border-top:2px dashed var(--cyan);background:none}.tp-k-propose{background:var(--ambre)}.tp-k-confirmer{width:10px;height:10px;border-radius:50%;background:var(--ambre)}
+@media (prefers-reduced-motion:no-preference){.tp-trait-m{transition:stroke .15s}}
+.tp-moi-c{fill:none;stroke:var(--encre);stroke-width:5;pointer-events:none}
+.tp-k-moi{height:0;border-top:3px solid var(--encre);background:none}
+
+/* la date du programme, à droite des modes (le futur accès au Calendrier) */
+.tp-tete{justify-content:space-between}
+.tp-jour{margin:0;font:600 14px var(--ui);color:var(--doux);text-transform:capitalize}
+/* téléphone : le cadran prend toute la largeur utile (jusque dans les marges), les libellés horaires restent dans le dessin */
+@media (max-width:560px){.tp-cadran{width:calc(100% + 16px);max-width:none;margin:0 -8px}}
+/* paysage (téléphone tourné, tablette, ordinateur) : le cadran à gauche, le panneau du moment à droite, sans défilement pour voir les deux */
+@media (orientation:landscape) and (min-width:700px){
+ .tp-cercle{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;justify-items:stretch;column-gap:20px}
+ .tp-cadran{justify-self:center;max-width:min(560px,calc(100svh - 110px))}
+ .tp-cle{grid-column:1/-1}}
+
+/* ======================================================================================================
+   Raffinement visuel (24/10, revue de Matt) : des surfaces, pas des cadres. Une même matière pour les cartes, le panneau et le cadran :
+   noir profond, verre sombre à peine éclairé, bordures translucides ; l'état actif se lit par un halo et un liseré fin, jamais par un
+   contour blanc. Les couleurs gardent leur sens (cyan : décalé, ambre : à décider), sans saturer.
+   ====================================================================================================== */
+.tp{--tp-surface:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));--tp-bord:rgba(255,255,255,.07);--tp-ombre:0 1px 0 rgba(255,255,255,.04) inset,0 10px 30px -12px rgba(0,0,0,.65);--tp-accent:34,211,238}
+/* les modes : un sélecteur segmenté, comme une montre (pas de bouton blanc plein) */
+.tp-modes{gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--tp-bord)}
+.tp-modes .b{border:0;background:transparent;color:var(--doux);min-height:38px;padding:6px 16px;font-size:13px}
+.tp-modes .b[aria-pressed=true]{background:rgba(255,255,255,.14);color:var(--encre);border:0;box-shadow:0 1px 2px rgba(0,0,0,.4),0 0 0 .5px rgba(255,255,255,.08) inset}
+.tp-modes .b:focus-visible{outline:2px solid rgba(var(--tp-accent),.9);outline-offset:2px}
+@media (pointer:coarse){.tp-modes .b{min-height:44px}}
+/* les cartes et le panneau : verre sombre */
+.tp-m{border:1px solid var(--tp-bord);background:var(--tp-surface),#121216;border-radius:20px;padding:16px 18px;box-shadow:var(--tp-ombre);transition:box-shadow .2s,border-color .2s}
+.tp-m.decale{border-color:var(--tp-bord);box-shadow:var(--tp-ombre),inset 3px 0 0 rgba(var(--tp-accent),.75)}
+.tp-m.choisi{border-color:rgba(var(--tp-accent),.28);box-shadow:var(--tp-ombre),0 0 0 1px rgba(var(--tp-accent),.18),0 0 28px -6px rgba(var(--tp-accent),.35)}
+.tp-m.decale.choisi{box-shadow:var(--tp-ombre),inset 3px 0 0 rgba(var(--tp-accent),.75),0 0 0 1px rgba(var(--tp-accent),.18),0 0 28px -6px rgba(var(--tp-accent),.35)}
+.tp-heure{font:600 20px/1.15 var(--ui);letter-spacing:-.01em}
+.tp-prevu{color:rgba(var(--tp-accent),.9);font-weight:500}
+.tp-tag{border:0;background:rgba(255,255,255,.07);padding:3px 10px}.tp-tag.moi{background:rgba(255,255,255,.12);color:var(--encre)}.tp-tag.ok{background:rgba(134,239,172,.12)}
+.tp-note{border-left:2px solid rgba(255,255,255,.12)}
+/* les gestes : des pastilles de verre, la principale pleine */
+.tp-act .b-s,.tp-props .b-s{border:0;background:rgba(255,255,255,.08);color:var(--encre)}
+.tp-act .b-s:hover,.tp-props .b-s:hover{background:rgba(255,255,255,.14)}
+.tp .b:focus-visible{outline:2px solid rgba(var(--tp-accent),.9);outline-offset:2px}
+.tp-casc input{accent-color:rgb(var(--tp-accent))}
+/* les bandeaux (à décider, à confirmer) : la même matière, un liseré de couleur */
+.tp .tp-props,.tp .tp-confirmer{border:1px solid var(--tp-bord);background:var(--tp-surface),#121216;box-shadow:var(--tp-ombre),inset 3px 0 0 rgba(245,158,11,.8);border-radius:20px}
+.tp .tp-confirmer{color:var(--encre);padding:14px 18px}
+.tp-hist{border:1px solid var(--tp-bord)!important;background:var(--tp-surface),#121216!important;box-shadow:var(--tp-ombre);border-radius:20px!important}
+
+/* ---------- le cadran : un instrument ---------- */
+.tp-cadran{filter:none}
+.tp-face{fill:url(#tp-face)}
+.tp-piste{fill:none;stroke:rgba(255,255,255,.032)}
+.tp-anneau{stroke:rgba(255,255,255,.06);stroke-width:1.5}
+.tp-trait{stroke:rgba(255,255,255,.22);stroke-width:2.5;stroke-linecap:round}.tp-trait.fort{stroke:rgba(255,255,255,.55);stroke-width:4}
+.tp-heure-c{fill:rgba(235,235,245,.62);font:500 28px var(--ui);letter-spacing:.04em}
+.tp-trait-m{stroke:rgba(235,235,245,.5);stroke-linecap:round}
+.tp-arc.e-decale .tp-trait-m{stroke:rgb(var(--tp-accent))}
+.tp-arc.e-fait .tp-trait-m{stroke-opacity:.35}
+.tp-arc.choisi .tp-trait-m{stroke:#F5F5F7;filter:drop-shadow(0 0 10px rgba(var(--tp-accent),.55))}
+.tp-arc.e-decale.choisi .tp-trait-m{stroke:#7DEBFA}
+.tp-arc:hover .tp-trait-m{stroke-opacity:1;filter:brightness(1.15)}
+.tp-arc:focus-visible .tp-trait-m{filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 12px rgba(var(--tp-accent),.95))}
+.tp-prevu-c{stroke:rgba(var(--tp-accent),.55);stroke-width:2.5;stroke-dasharray:2 9;stroke-linecap:round}
+.tp-zone{stroke:#F5A524;stroke-opacity:.95;stroke-linecap:round;filter:drop-shadow(0 0 8px rgba(245,165,36,.45))}
+.tp-point{fill:#F5A524;stroke:#0B0B0E;stroke-width:4;filter:drop-shadow(0 0 6px rgba(245,165,36,.6))}
+.tp-moi-c{stroke:rgba(255,255,255,.75);stroke-width:3;stroke-linecap:round}
+.tp-c0{fill:rgba(235,235,245,.5);font:600 22px var(--ui);letter-spacing:.18em}
+.tp-c1{fill:var(--encre);font:600 44px var(--titre);letter-spacing:-.01em}.tp-c2{fill:rgba(235,235,245,.62);font:500 28px var(--ui)}
+.tp-plus circle{fill:#18181D;stroke:rgba(255,255,255,.18);stroke-width:2}
+/* la légende : discrète, des pastilles de couleur et un mot */
+.tp-cle{gap:6px 18px;font-size:12px;color:rgba(235,235,245,.6)}
+.tp-k{background:rgba(235,235,245,.5);border-radius:999px;height:6px}.tp-k-prevu{border-top:2px dotted rgba(var(--tp-accent),.8)}.tp-k-propose{background:#F5A524}.tp-k-confirmer{background:#F5A524}.tp-k-moi{border-top:2px solid rgba(255,255,255,.75)}
+.tp-jour{font:500 13px var(--ui);letter-spacing:.06em;text-transform:uppercase;color:rgba(235,235,245,.55)}
+@media (prefers-reduced-motion:reduce){.tp-m{transition:none}}
+.tp-pastille{fill:rgba(235,235,245,.5)}.tp-arc.e-decale .tp-pastille{fill:rgb(var(--tp-accent))}.tp-arc.choisi .tp-pastille{fill:#F5F5F7;filter:drop-shadow(0 0 10px rgba(var(--tp-accent),.55))}
+.tp-arc:focus-visible .tp-pastille{filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 12px rgba(var(--tp-accent),.95))}

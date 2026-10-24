@@ -49,3 +49,14 @@ test('base sans la migration activites : l\'activité est refusée (503, dit), l
   let r = await appel(E.default, { action: 'activite', metier: 'fleuriste' }, o); assert.equal(r.code, 503); assert.match(r.body.raison, /migration/);
   r = await appel(E.default, { action: 'activites' }, o); assert.equal(r.code, 200); assert.deepEqual(r.body.activites, []);
 });
+
+test('base sans la migration Temps : /api/temps répond 503 (dit), le projet et son Dock restent exactement ceux d\'avant', opts, async () => {
+  const T = await import('../api/temps.mjs'), PG = await import('../api/page.mjs');
+  const o = await connecter('t-ancien@exemple.test');
+  const r = await appel(E.default, { action: 'creer', titre: 'Sans programme', modele: 'mariage' }, o); assert.equal(r.code, 200);
+  const get = (h, url) => new Promise(d => { const res = { statusCode: 200, setHeader() {}, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; h({ method: 'GET', url, headers: { cookie: o } }, res); });
+  const t = await get(T.default, '/api/temps?espace=' + r.body.id); assert.equal(t.code, 503); assert.match(t.body.raison, /pas encore installé/);
+  const p = await get(PG.default, '/api/page?espace=' + r.body.id + '&gabarit=acces'); assert.equal(p.code, 200);
+  assert.deepEqual(p.body.dock.lieux.map(l => l.gabarit).sort(), ['acces', 'journal', 'personnes']);
+  assert.equal((await get(PG.default, '/api/page?espace=' + r.body.id + '&gabarit=deroule')).code, 404, 'pas de page Programme sans le module');
+});

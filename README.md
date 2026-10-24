@@ -27,6 +27,9 @@ La liste des adresses, avec leur statut (disponible, démonstration, expériment
 | `/v1/` | Réaliser | **La Timeline Jour J**, l'ancienne application de planning. Elle est conservée parce qu'elle n'est pas remplacée. |
 | `/lab/orb/`, `/infinity/lab/` | Expérimenter | **Le Lab.** |
 | `/tout/` | Découvrir | Toutes les vues d'un coup. |
+| `/etude/` | Découvrir | **L'étude de convergence** (24/10/2026) : l'audit des rôles et du Dock, puis le dossier du moteur universel et du Dock unique. HTML statique, noindex ; texte brut en `/etude/dossier.md`. Regénérée par `python3 scripts/etude-construire.py`. |
+| `/atlas/` | Réservé | **L'Atlas d'audit UX** : 482 captures (ordinateur, iPhone, iPad), parcours, Dock, anomalies. Gardé comme `/regie/` (404 hors propriétaire du site). Le dépôt étant public, les constats de sécurité serveur n'y figurent pas. |
+| `/projets/?espace=…&page=deroule` | Projet | **Le Programme (module Temps)** : la première ressource partagée réelle. Une table `moments`, une vue par personne calculée au serveur, conflits en 409, historique dans `live_journal`. Registre des modules : `modules/registre.js`. Voir `docs/TEMPS.md`. |
 | `/capacites/` | Découvrir | **L'Atlas des capacités** : les 1 191 modules des 130 dépôts, ce qui est déjà dans AIME, ce qui vaut le coup d'être branché, l'état réel de chaque dépôt. Voir `docs/CAPACITES.md`. |
 | `/mariage` | Réaliser | **AIME Wedding** en une seule app : l'organisation et les supports sur une seule ligne du temps, données dans le navigateur. |
 

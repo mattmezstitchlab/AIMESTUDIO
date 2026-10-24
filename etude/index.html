@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Étude de convergence · AIME</title>
+<meta name="description" content="Audit des parcours, rôles et écrans du Dock d'AIME, et dossier de conception du moteur universel et du Dock unique (24 octobre 2026).">
+<meta name="theme-color" content="#0A0A0C">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/travaux/travaux.css">
+<link rel="stylesheet" href="/dock/dock.css">
+<style>
+.texte{max-width:880px;display:grid;gap:12px;padding-bottom:40px}
+.texte h2,.texte h3{scroll-margin-top:96px}
+.texte h2{margin:40px 0 4px;font:600 26px/1.2 var(--titre)}
+.texte h3{margin:22px 0 2px;font:600 18px/1.3 var(--ui)}
+.texte p,.texte li{color:var(--doux);line-height:1.65;margin:0}
+.texte ul,.texte ol{margin:0;padding-left:22px;display:grid;gap:6px}
+.texte strong{color:var(--encre);font-weight:600}
+.texte a{color:var(--encre)}
+.texte code{font:13px ui-monospace,Menlo,Consolas,monospace;color:var(--encre);overflow-wrap:anywhere}
+.tab{overflow-x:auto;border:1px solid var(--ligne);border-radius:12px;margin:6px 0}
+.tab table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+.tab th,.tab td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--ligne);color:var(--doux);line-height:1.5}
+.tab th{color:var(--encre);font-weight:600;background:var(--carte)}
+.tab tr:last-child td{border-bottom:0}
+.sommaire{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 0}
+.galerie{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.galerie figure{margin:0;display:grid;gap:6px}
+.galerie img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;border-radius:10px;border:1px solid var(--ligne);background:var(--carte)}
+.galerie figcaption{font-size:13px;color:var(--doux)}
+</style>
+<link rel="stylesheet" href="/nav/pied-legal.css">
+</head>
+<body>
+<a class="evite" href="#contenu">Aller au contenu</a>
+<header class="tete"><a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup></a><nav aria-label="Compte"><a href="/compte/">Mon compte</a><a class="b" href="/contact/">Nous écrire</a></nav></header>
+<main id="contenu" tabindex="-1">
+<section class="intro"><p class="k">Étude · 24 octobre 2026</p><h1>Un seul Dock pour tous les rôles&nbsp;?</h1>
+<p>Audit des parcours, rôles et écrans du Dock de lemondeaime.com (482 captures, 11 rôles, 22 anomalies publiées), puis dossier de conception du moteur universel. Aucune modification du site n'a été faite pendant l'audit.</p>
+<p class="sommaire"><a class="b" href="#synthèse">Lire la synthèse</a><a class="b" href="/etude/dossier.md">Texte brut (Markdown)</a><a class="b" href="#annexe">Résultats de l'audit</a></p></section>
+<article class="texte">
+
+<p>Version publique du 24 octobre 2026 · Matthieu Lecointre (Le Monde AIME) · étude préparée avec Claude.
+Cette version retire les détails de sécurité serveur ; ils restent dans l'Atlas de référence, réservé au propriétaire du site.</p>
+<p>Statuts utilisés : <strong>vérifié</strong> (observé en ligne ou lu dans le code), <strong>inaccessible</strong> (existe, non visible sans compte), <strong>non implémenté</strong> (déclaré, non construit), <strong>à tester</strong>. Pour les recommandations : existant vérifié, réutilisable, à modifier, à créer, hypothèse à valider.</p>
+<h2 id="synthèse">Synthèse</h2>
+<p>L'hypothèse résiste aux tests, avec une réserve : le Dock universel est la bonne réponse pour la navigation, pas pour les outils de production métier. Un seul Dock à quatre lieux et un + suffit aux 11 rôles audités ; cinq cas gardent un composant spécialisé, ouvert depuis ce Dock commun.</p>
+<p><strong>Pourquoi l'hypothèse tient</strong></p>
+<ul>
+<li>Le moteur de droits est déjà universel : <code>synchroview/permissions.js</code> juge dix types de ressources sans jamais nommer un métier.</li>
+<li>Les 44 entrées de Dock montrées pour les 11 rôles se ramènent à sept moteurs communs. Les huit Docks métier ne diffèrent que d'un mot (Accès, Effectif, Horaires), qui désigne trois filtres d'une même vue des moments.</li>
+<li>AIME Live sert déjà un seul écran à cinq rôles, avec un cloisonnement correct : vérifié pendant l'audit (annonce d'équipe invisible pour l'invitée, décalage répercuté partout).</li>
+<li>Le vrai serveur sert déjà les mêmes pages aux cinq rôles ; c'est le contenu qui manque, pas la structure.</li>
+</ul>
+<p><strong>Où elle cède</strong></p>
+<ul>
+<li>Payer, cacher une information au propriétaire, l'écran de salle, les outils de production métier (playlist, répertoire, cachets) et le jour J sous pression demandent des composants dédiés (section 3).</li>
+<li>L'invité doit garder un Dock réduit à deux lieux : même logique, moins d'entrées.</li>
+</ul>
+<p><strong>Décisions à valider avant tout développement</strong></p>
+<ul>
+<li>☐ Dock unique : Accueil · Programme · + · Personnes · Ressources, mots identiques pour tous (section 6).</li>
+<li>☐ Le métier ne donne aucun droit ; une participation peut porter plusieurs responsabilités (section 7).</li>
+<li>☐ Rôle « coordination » de l'accueil : invitation par les mariés (editor) plutôt que création du projet.</li>
+<li>☐ Premier module prouvé de bout en bout : Programme, à partir d'AIME Live (section 12).</li>
+<li>☐ Atlas public et Comparaison construits seulement à partir de modules réellement servis.</li>
+<li>☐ Données fictives de la Comparaison : réutiliser Léa &amp; Marc, ou créer Camille &amp; Gabriel.</li>
+</ul>
+<p>L'Atlas d'audit (482 captures, 25 anomalies) reste la référence privée.</p>
+<h2 id="1-état-réel-de-larchitecture">1. État réel de l'architecture</h2>
+<p>Le socle universel existe déjà à moitié : le moteur de droits est indépendant du métier, mais les données, les écrans et les Docks ne le sont pas. Constats lus dans le dépôt aimestudio (commit 622eb57) et vérifiés sur l'Atlas d'audit du 24 octobre 2026 (482 captures).</p>
+<h3 id="ce-qui-est-réellement-en-production">Ce qui est réellement en production</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Entité</th>
+<th>Où</th>
+<th>Ce qu'elle contient</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Personne (identité)</td>
+<td>table <code>user</code> (Better Auth), <code>identite</code>, <code>passkey</code></td>
+<td>nom, e-mail, photo, Timbre</td>
+<td>Existant vérifié</td>
+</tr>
+<tr>
+<td>Métier déclaré</td>
+<td>table <code>activites</code> (<code>user_id</code>, <code>metier</code>, <code>publiee=false</code>)</td>
+<td>un métier libre, sans projet ni droit</td>
+<td>Existant vérifié</td>
+</tr>
+<tr>
+<td>Projet</td>
+<td>table <code>spaces</code> (<code>kind</code> ∈ evenement / projet / atelier, <code>title</code>, <code>owner_id</code>, <code>data jsonb</code>)</td>
+<td>tout le contenu métier dans un seul champ JSON</td>
+<td>Existant vérifié</td>
+</tr>
+<tr>
+<td>Participation</td>
+<td>table <code>space_members</code> (<code>role</code>, <code>relation</code>, <code>jusqu_au</code>), clé primaire <code>(space_id, user_id)</code></td>
+<td>un seul rôle par personne et par projet</td>
+<td>Existant vérifié</td>
+</tr>
+<tr>
+<td>Invitation</td>
+<td>table <code>invitations</code> (jeton haché, rôle, e-mail, expiration 7 j ou 48 h)</td>
+<td>rôle owner jamais invitable</td>
+<td>Existant vérifié</td>
+</tr>
+<tr>
+<td>Historique</td>
+<td>table <code>audit</code>, en ajout seul, et <code>live_journal</code></td>
+<td>gestes, invitations, retraits, signalements</td>
+<td>Existant vérifié</td>
+</tr>
+<tr>
+<td>Moments, documents, messages</td>
+<td>aucune table</td>
+<td>—</td>
+<td>Non implémenté</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="les-droits-déjà-universels">Les droits : déjà universels</h3>
+<p><code>synchroview/permissions.js</code> est la meilleure pièce du système. Il raisonne par type de ressource, jamais par métier : <code>space</code>, <code>event</code>, <code>document</code>, <code>personal</code>, <code>member</code>, <code>summary</code>, <code>item</code> (audience public / membres / équipe / organisation), <code>mission</code>, <code>candidature</code>, <code>payment</code>. Le même fichier sert le serveur et l'affichage (AIME Live, vitrines). Les cinq rôles serveur (owner, editor, contributor, viewer, guest) sont des niveaux de portée, pas des métiers.</p>
+<p>Limite : ce moteur n'est appelé côté serveur que pour l'espace, les membres et les invitations. Moments, documents, missions et paiements ne sont jugés que dans des démonstrations.</p>
+<h3 id="les-écrans-trois-mondes-qui-ne-se-parlent-pas">Les écrans : trois mondes qui ne se parlent pas</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Monde</th>
+<th>Exemples</th>
+<th>Données</th>
+<th>Dock</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Projet réel</td>
+<td><code>/projets/?espace=</code> : Mon accès, Journal, Personnes</td>
+<td>serveur (Neon)</td>
+<td><code>composerReel</code> : Mon accès · Journal · Personnes, pour les 5 rôles</td>
+</tr>
+<tr>
+<td>Démonstrations moteur</td>
+<td>AIME Live, vitrine de perspective, exemple World</td>
+<td><code>vitrine/donnees/*.json</code> (moments, documents, missions, paiements) + règles réelles</td>
+<td>composant AIMEDockVue (exemples) ou aucun (Live)</td>
+</tr>
+<tr>
+<td>Démonstrations scénarisées</td>
+<td>téléphones de l'accueil, mosaïque</td>
+<td>écrits à la main dans <code>accueil/demo.js</code>, <code>exemples/mosaique</code></td>
+<td>Dock dessiné à la main (« Alertes »)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="propagation-de-linformation">Propagation de l'information</h3>
+<p>Trois mécanismes coexistent, aucun n'est serveur pour le contenu : état JS d'une page (le cœur, la mosaïque), BroadcastChannel entre onglets (<code>live/canal.js</code>, vitrine World), et <code>postMessage</code> entre iframes (SynchroView, réservé). Le test de l'audit confirme qu'ils appliquent bien les règles : une annonce « équipe » de la coordination atteint mariés et prestataires, pas l'invitée ni la lecture seule ; un décalage de 15 min se répercute partout où le moment est visible.</p>
+<h3 id="incompatibilités-à-lever-avant-tout-moteur-universel">Incompatibilités à lever avant tout moteur universel</h3>
+<ol>
+<li><strong>Une seule participation par projet</strong> : la clé <code>(space_id, user_id)</code> interdit d'être à la fois témoin et photographe d'un même mariage.</li>
+<li><strong>Le métier ne touche jamais les droits</strong> : <code>relation</code> est un mot libre, <code>activites</code> n'est relié à aucun projet. C'est sain, mais aucune capacité métier ne peut s'y accrocher.</li>
+<li><strong>Le contenu vit dans <code>spaces.data</code> (JSON)</strong> : pas de moment, de document ni de message adressable, donc rien à autoriser finement côté serveur.</li>
+<li><strong>Deux modèles de données</strong> : le modèle riche des démonstrations (<code>vitrine/donnees</code>) n'a pas d'équivalent en base.</li>
+<li><strong>Trois implémentations du Dock</strong> et un vocabulaire qui change d'une page à l'autre.</li>
+<li><strong>Le propriétaire voit tout</strong> : aucune information ne peut lui être cachée (la « Surprise » du témoin n'est possible qu'en démo).</li>
+<li><strong>Rôle « coordination » mal raccordé</strong> : l'accueil la rend propriétaire.</li>
+</ol>
+<h2 id="2-matrice-de-convergence-des-écrans">2. Matrice de convergence des écrans</h2>
+<p>Les 44 entrées de Dock montrées pour les 11 rôles (4 chacun) se ramènent toutes à sept moteurs communs ; les différences sont de vocabulaire et de portée, pas de nature. Relevé fait sur les Docks de démonstration de l'accueil, de la mosaïque, de l'exemple World et du modèle <code>dock/modele.js</code>, croisé avec AIME Live.</p>
+<h3 id="ce-que-les-11-docks-contiennent-réellement">Ce que les 11 Docks contiennent réellement</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Entrée affichée</th>
+<th>Rôles qui l'ont</th>
+<th>Ce qu'elle montre</th>
+<th>Moteur commun</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Alertes / Notifications</td>
+<td>10 sur 11 (tous sauf l'invité)</td>
+<td>ce qui a changé pour moi</td>
+<td>Journal filtré par portée</td>
+</tr>
+<tr>
+<td>Mission / Projet / Ma part</td>
+<td>10 sur 11</td>
+<td>ma part du projet</td>
+<td>Vue d'ensemble contextuelle</td>
+</tr>
+<tr>
+<td>Documents</td>
+<td>8 sur 11 (les métiers)</td>
+<td>contrats, devis, plans, playlist</td>
+<td>Ressources</td>
+</tr>
+<tr>
+<td>Horaires / Agenda / Déroulé / Programme</td>
+<td>6 sur 11</td>
+<td>les moments qui me concernent</td>
+<td>Moments</td>
+</tr>
+<tr>
+<td>Accès / Lieu</td>
+<td>4 sur 11</td>
+<td>où entrer, où aller</td>
+<td>Moments (lieu d'un moment)</td>
+</tr>
+<tr>
+<td>Effectif / Équipe</td>
+<td>3 sur 11</td>
+<td>combien, qui</td>
+<td>Personnes (agrégé ou nominatif)</td>
+</tr>
+<tr>
+<td>Messages</td>
+<td>2 sur 11 sur l'accueil, 4 sur 6 dans World</td>
+<td>conversations</td>
+<td>Échanges</td>
+</tr>
+<tr>
+<td>Réponse</td>
+<td>1 (invité)</td>
+<td>ma confirmation</td>
+<td>Confirmations</td>
+</tr>
+<tr>
+<td>Plan B</td>
+<td>1 (coordination)</td>
+<td>variante d'un moment</td>
+<td>Moments (attribut)</td>
+</tr>
+<tr>
+<td>Surprise</td>
+<td>1 (témoin, mosaïque)</td>
+<td>ce qui est caché aux mariés</td>
+<td>Aucun : demande un espace confidentiel</td>
+</tr>
+</tbody>
+</table></div>
+<p>Le cas des métiers est parlant : les Docks du fleuriste, du traiteur, du musicien, de l'intermittent, du vidéaste, du photographe, du DJ et du lieu sont identiques à une entrée près (Accès, Effectif ou Horaires), et ces trois mots sont trois filtres d'une même vue des moments.</p>
+<h3 id="matrice-par-fonction-a-universalisable-b-avec-adaptation-c-spécifique-justifié">Matrice par fonction (A universalisable, B avec adaptation, C spécifique justifié)</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Emplacement actuel</th>
+<th>Rôles</th>
+<th>Équivalents</th>
+<th>Similarité</th>
+<th>Données communes</th>
+<th>Différences de droits</th>
+<th>Différences d'interaction</th>
+<th>Composant universel</th>
+<th>Classe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ce qui a changé</td>
+<td>Alertes (démo), Journal (réel)</td>
+<td>tous</td>
+<td>Notifications, Journal, Signalements</td>
+<td>Forte : même flux d'événements, filtré</td>
+<td>événements datés, auteur, cible</td>
+<td>portée de lecture (owner tout, autres leurs lignes)</td>
+<td>pastille, silence pour l'invité</td>
+<td>Journal</td>
+<td>A</td>
+</tr>
+<tr>
+<td>Mon accès</td>
+<td>réel seulement</td>
+<td>tous</td>
+<td>« Ce qu'il contrôle », Ma désignation</td>
+<td>Totale</td>
+<td>rôle, origine, fin, capacités</td>
+<td>aucune</td>
+<td>aucune</td>
+<td>Mon accès</td>
+<td>A</td>
+</tr>
+<tr>
+<td>Programme du jour</td>
+<td>Live, vitrine, mosaïque</td>
+<td>tous</td>
+<td>Déroulé, Horaires, Agenda, Programme, Accès, Lieu</td>
+<td>Forte : mêmes moments</td>
+<td>titre, début, fin, espace, public / équipe</td>
+<td>event.read (invité : public seulement), event.edit (organisation ; contributeur : ses moments)</td>
+<td>décaler, plan B, « c'est fait » selon le droit</td>
+<td>Moments</td>
+<td>B</td>
+</tr>
+<tr>
+<td>Personnes</td>
+<td>réel, World</td>
+<td>tous sauf invité</td>
+<td>Invités, Effectif, Équipe, Contacts, Intervenants</td>
+<td>Forte : mêmes membres, portée différente</td>
+<td>membres, relation, réponse</td>
+<td>member.read (organisation tout ; contributeur : l'organisation ; invité : lui-même), summary.read pour les totaux sans noms</td>
+<td>vue nominative ou agrégée</td>
+<td>Personnes</td>
+<td>B</td>
+</tr>
+<tr>
+<td>Documents</td>
+<td>démo seulement</td>
+<td>métiers, organisation</td>
+<td>Justificatifs, Devis, Contrat, Playlist, Répertoire, Plan, Bon à tirer</td>
+<td>Forte pour stocker et partager ; faible pour certains formats</td>
+<td>fichier, auteur, autorisations explicites</td>
+<td>document.read : auteur ou autorisation explicite</td>
+<td>déposer, valider, signer selon le type</td>
+<td>Ressources</td>
+<td>B</td>
+</tr>
+<tr>
+<td>Messages</td>
+<td>démo seulement</td>
+<td>tous</td>
+<td>Écrire aux mariés / à la coordination / aux témoins</td>
+<td>Totale : seuls les destinataires changent</td>
+<td>fil, participants</td>
+<td>qui peut écrire à qui (portée member.read)</td>
+<td>aucune</td>
+<td>Échanges</td>
+<td>A (à créer)</td>
+</tr>
+<tr>
+<td>Confirmer</td>
+<td>démo</td>
+<td>invité, métiers, Studio</td>
+<td>Réponse, Confirmer ma présence, Confirmer l'impression, mission.confirm</td>
+<td>Forte : un oui / non daté sur un objet</td>
+<td>objet, personne, état</td>
+<td>personal.edit sur soi ; organisation pour tous</td>
+<td>formulaire très court</td>
+<td>Confirmations</td>
+<td>B</td>
+</tr>
+<tr>
+<td>Signaler un retard / imprévu</td>
+<td>démo, Live</td>
+<td>métiers, coordination</td>
+<td>Signaler un incident, Retard, Imprévus</td>
+<td>Forte : un événement sur un moment</td>
+<td>moment, écart, auteur</td>
+<td>contributeur sur ses moments</td>
+<td>cascade réservée à l'organisation</td>
+<td>Moments (geste)</td>
+<td>B</td>
+</tr>
+<tr>
+<td>Tâches</td>
+<td>World, modèle</td>
+<td>organisation, équipe</td>
+<td>Ajouter une tâche, Ma part</td>
+<td>Totale</td>
+<td>intitulé, assigné, état</td>
+<td>assigné ou organisation</td>
+<td>aucune</td>
+<td>Tâches</td>
+<td>A</td>
+</tr>
+<tr>
+<td>Missions et candidatures</td>
+<td>World</td>
+<td>organisation, prestataires</td>
+<td>Candidater, Proposer au couple, Valider</td>
+<td>Forte : moteur déjà écrit (mission.*)</td>
+<td>étapes, affectés, candidats</td>
+<td>14 règles par étape</td>
+<td>parcours en 6 étapes</td>
+<td>Missions</td>
+<td>B</td>
+</tr>
+<tr>
+<td>Paiements</td>
+<td>démo</td>
+<td>organisation, financeurs, prestataires payés</td>
+<td>Budget, Budget financé, Ma facture</td>
+<td>Moyenne en lecture, faible pour payer</td>
+<td>montant, payeur, bénéficiaire</td>
+<td>payment.read ; payment.pay exige une autorisation de transaction</td>
+<td>confirmation lisible obligatoire</td>
+<td>Finances (lecture) + parcours de paiement</td>
+<td>B / C</td>
+</tr>
+<tr>
+<td>Médias</td>
+<td>galerie (démo)</td>
+<td>tous</td>
+<td>Galerie, Réalisations, Médias</td>
+<td>Forte</td>
+<td>image, auteur, audience</td>
+<td>item.read par audience</td>
+<td>aucune</td>
+<td>Ressources (vue galerie)</td>
+<td>B</td>
+</tr>
+<tr>
+<td>Surprise</td>
+<td>mosaïque</td>
+<td>témoin, coordination</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>doit être cachée au propriétaire</td>
+<td>—</td>
+<td>Espace confidentiel</td>
+<td>C</td>
+</tr>
+<tr>
+<td>Écran de salle</td>
+<td>Live <code>?mode=salle</code></td>
+<td>appareil public</td>
+<td>—</td>
+<td>—</td>
+<td>moments publics</td>
+<td>guest</td>
+<td>aucune interaction, lisible à 5 m</td>
+<td>Moments, mode affichage</td>
+<td>C</td>
+</tr>
+<tr>
+<td>Outils de production métier</td>
+<td>aucun (annoncés)</td>
+<td>DJ, musicien, intermittent, lieu</td>
+<td>Playlist, Répertoire, Cachets, Plan</td>
+<td>Faible</td>
+<td>—</td>
+<td>—</td>
+<td>formats propres</td>
+<td>Capacités métier branchées sur Ressources</td>
+<td>C</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-différences-réellement-justifiées">3. Différences réellement justifiées</h2>
+<p>Cinq cas résistent à l'unification ; aucun ne justifie un Dock propre à un métier, tous justifient un composant spécialisé ouvert depuis le Dock commun.</p>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Cas</th>
+<th>Pourquoi la configuration du composant universel ne suffit pas</th>
+<th>Ce qu'on garde commun</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Payer</td>
+<td>Un paiement exige une autorisation propre à la transaction (<code>payment.pay</code>, <code>needsTx</code>), une confirmation lisible, un prestataire de paiement et des obligations légales. Un simple bouton dans une liste créerait le risque d'un paiement à un toucher.</td>
+<td>La lecture des montants (Finances) suit le moteur commun ; seul le parcours de paiement est dédié.</td>
+<td>À créer</td>
+</tr>
+<tr>
+<td>Information cachée au propriétaire (Surprise)</td>
+<td>Le moteur actuel donne tout au propriétaire. Cacher une donnée à l'organisateur demande un sous-espace confidentiel avec ses propres membres, pas un filtre d'affichage, sinon le serveur la renverrait quand même.</td>
+<td>Le sous-espace réutilise moments, ressources et échanges.</td>
+<td>Non implémenté</td>
+</tr>
+<tr>
+<td>Écran de salle</td>
+<td>Un appareil public n'est pas une personne : pas de compte, aucune interaction, lisibilité à distance. Live le traite déjà comme un invité fictif.</td>
+<td>Les moments publics et leur mise à jour.</td>
+<td>Existant vérifié (démo)</td>
+</tr>
+<tr>
+<td>Outils de production métier</td>
+<td>Une playlist, un répertoire, un plan de salle ou une déclaration d'intermittent ont des formats, des contrôles et parfois des règles légales propres. Les forcer dans « Documents » dégraderait le travail du professionnel.</td>
+<td>Le partage, l'autorisation, la version et la notification passent par Ressources.</td>
+<td>À créer, branché comme capacité métier</td>
+</tr>
+<tr>
+<td>Jour J en direct</td>
+<td>Sous pression, un prestataire veut « maintenant / ensuite » et un seul geste (signaler un retard), pas une navigation.</td>
+<td>Les mêmes moments ; c'est un mode d'affichage du moteur Moments, pas un module à part.</td>
+<td>Existant vérifié (Live, démo)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="ce-qui-deviendrait-plus-difficile-si-lon-unifiait-trop">Ce qui deviendrait plus difficile si l'on unifiait trop</h3>
+<ul>
+<li><strong>L'invité</strong> : il n'a besoin que du programme, du lieu et de sa réponse. Lui montrer le même Dock que la coordination, même grisé, contredirait la règle « absent plutôt que grisé » et alourdirait un parcours qui doit rester d'une minute.</li>
+<li><strong>La coordination le jour J</strong> : elle enchaîne décaler, prévenir, activer le plan B. Si chaque geste demande d'ouvrir un module puis un menu, elle perd du temps. Les gestes fréquents doivent rester dans le +, au contact des moments.</li>
+<li><strong>Le vocabulaire métier</strong> : « Effectif » parle au traiteur, « Invités » aux mariés. Un mot unique imposé partout (« Personnes ») est juste pour la navigation, mais le titre et les colonnes de l'écran doivent garder le mot du métier.</li>
+</ul>
+<h2 id="4-composants-mutualisables">4. Composants mutualisables</h2>
+<p>La moitié du moteur universel existe dans le dépôt ; il manque surtout les tables de contenu et un Dock unique branché sur le serveur.</p>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Fichier</th>
+<th>Rôle dans le moteur cible</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Règles d'accès par type de ressource</td>
+<td><code>synchroview/permissions.js</code></td>
+<td>Source unique des droits, serveur et affichage</td>
+<td>Réutilisable tel quel ; à appeler côté serveur pour chaque nouvelle ressource</td>
+</tr>
+<tr>
+<td>Composition du Dock</td>
+<td><code>dock/modele.js</code> (<code>composer</code>, <code>composerReel</code>)</td>
+<td>Calcul des lieux et des gestes à partir des droits</td>
+<td>Réutilisable ; à simplifier (une seule grammaire, plus d'instances métier)</td>
+</tr>
+<tr>
+<td>Rendu du Dock</td>
+<td><code>dock/dock.js</code> (AIMEDockVue, WCAG 2.2 AA)</td>
+<td>Composant unique pour toutes les pages</td>
+<td>Réutilisable ; à imposer à la mosaïque et à l'accueil</td>
+</tr>
+<tr>
+<td>+ public</td>
+<td><code>dock/plus.js</code></td>
+<td>Gestes hors projet</td>
+<td>Réutilisable</td>
+</tr>
+<tr>
+<td>Gabarits servis</td>
+<td><code>api/_auth/pages.mjs</code> (<code>pagesDe</code>, 3 servis sur 7)</td>
+<td>Pages calculées au serveur par participation</td>
+<td>Réutilisable ; à étendre (Moments, Ressources, Échanges)</td>
+</tr>
+<tr>
+<td>Membres et invitations</td>
+<td>tables <code>space_members</code>, <code>invitations</code></td>
+<td>Participations, expiration, relation</td>
+<td>Réutilisable ; à modifier (plusieurs responsabilités par projet)</td>
+</tr>
+<tr>
+<td>Historique en ajout seul</td>
+<td>table <code>audit</code></td>
+<td>Journal et preuves</td>
+<td>Réutilisable tel quel</td>
+</tr>
+<tr>
+<td>Rejeu du jour J</td>
+<td><code>live/modele.js</code>, <code>live/canal.js</code></td>
+<td>Vue par rôle d'un journal de gestes, synchronisation</td>
+<td>Réutilisable pour le moteur Moments ; à brancher sur le serveur</td>
+</tr>
+<tr>
+<td>Politique de vitrine</td>
+<td><code>vitrine/rendu.js</code> (<code>politique</code>)</td>
+<td>Ce que chaque perspective voit et ne voit pas</td>
+<td>Réutilisable pour Comparaison et Atlas public</td>
+</tr>
+<tr>
+<td>Rendu multi-écrans</td>
+<td><code>coeur/coeur.js</code></td>
+<td>N écrans d'un même projet, recomposés depuis une saisie</td>
+<td>Réutilisable comme base du mode Comparaison</td>
+</tr>
+<tr>
+<td>Comparateur synchronisé</td>
+<td><code>synchroview/</code></td>
+<td>Vues côte à côte, défilement lié</td>
+<td>Réutilisable ; aujourd'hui réservé au propriétaire</td>
+</tr>
+<tr>
+<td>Vocabulaire métier en données</td>
+<td><code>vitrine/metiers.json</code></td>
+<td>Mots et gestes d'un métier sans écran codé à la main</td>
+<td>Réutilisable ; à transformer en capacités métier</td>
+</tr>
+<tr>
+<td>Registre des modules</td>
+<td><code>/capacites/</code> (1 191 modules déclarés)</td>
+<td>Matière première de l'Atlas comme module</td>
+<td>Réutilisable</td>
+</tr>
+<tr>
+<td>Docks écrits à la main</td>
+<td><code>accueil/demo.js</code>, <code>exemples/mosaique</code></td>
+<td>—</td>
+<td>À remplacer par AIMEDockVue</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-architecture-cible-du-moteur-universel">5. Architecture cible du moteur universel</h2>
+<p>La chaîne PROJET → PARTICIPATION → PERMISSIONS → CONTEXTE → DOCK → ACTIONS tient sur l'existant : seul l'étage Permissions est déjà complet ; les autres sont à étendre ou à créer. Le métier ne donne aucun droit : tout passe par la participation.</p>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Étage</th>
+<th>Rôle</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Projet</td>
+<td><code>spaces</code> : type, titre, données ; le contenu vit encore dans un champ JSON</td>
+<td>Existant, à structurer</td>
+</tr>
+<tr>
+<td>2. Participation</td>
+<td>niveau, relation, fin, responsabilités ; plusieurs par personne et par projet</td>
+<td>À modifier</td>
+</tr>
+<tr>
+<td>3. Permissions</td>
+<td><code>permissions.js</code> au serveur, à chaque requête ; jamais décidées par l'écran</td>
+<td>Existant</td>
+</tr>
+<tr>
+<td>4. Contexte</td>
+<td>pages servies et données filtrées pour cette participation (<code>pagesDe</code>)</td>
+<td>À étendre</td>
+</tr>
+<tr>
+<td>5. Dock</td>
+<td><code>composerReel</code> : Accueil, Programme, +, Personnes, Ressources ; mêmes mots pour tous</td>
+<td>À modifier</td>
+</tr>
+<tr>
+<td>6. Actions</td>
+<td>gestes du + et boutons au contact du contenu ; revérifiés et journalisés</td>
+<td>À brancher</td>
+</tr>
+</tbody>
+</table></div>
+<p>Le Contexte puise dans huit moteurs communs : Journal (existe), Accueil (à modifier), Moments (à créer, depuis Live), Personnes (existe, à étendre), Ressources (à créer), Échanges (à créer), Confirmations (à créer), Capacités métier (à créer, en option). Un type de projet (mariage, formation, création) n'ajoute ni étage ni lieu de Dock, seulement des vues et des capacités métier.</p>
+<h2 id="6-le-dock-unique">6. Le Dock unique</h2>
+<p>Recommandation : quatre lieux fixes et le + au centre, les mêmes mots pour tout le monde, et des entrées absentes (jamais grisées) quand la participation ne les ouvre pas. Les dix familles proposées se ramènent à quatre lieux : les autres sont des vues internes ou des gestes.</p>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Position</th>
+<th>Lieu</th>
+<th>Ce qu'il réunit (entrées actuelles)</th>
+<th>Qui l'a</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Accueil</strong></td>
+<td>Alertes, Notifications, Mission, Projet, Ma part, Mon accès (en tête d'écran)</td>
+<td>tous</td>
+<td>À modifier (le Journal et Mon accès existent)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Programme</strong></td>
+<td>Agenda, Déroulé, Horaires, Accès, Lieu, Plan B, jour J</td>
+<td>tous</td>
+<td>À créer (moteur Moments)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>+</strong></td>
+<td>les gestes du rôle dans ce projet</td>
+<td>tous ceux qui ont au moins un geste</td>
+<td>Existant à brancher</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Personnes</strong></td>
+<td>Invités, Effectif, Équipe, Contacts, Messages</td>
+<td>tous sauf l'invité</td>
+<td>À modifier (Personnes existe)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Ressources</strong></td>
+<td>Documents, Contrats, Devis, Playlist, Médias, Budget en lecture</td>
+<td>qui a au moins une ressource autorisée</td>
+<td>À créer</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ce que deviennent les autres familles :</p>
+<ul>
+<li><strong>Échanges</strong> : dans Personnes (écrire à une personne ou à un groupe) et dans le + (« Écrire »). Les conversations récentes remontent dans Accueil. Pas de lieu propre : 2 rôles sur 11 l'avaient sur l'accueil.</li>
+<li><strong>Actions / Décisions</strong> : le +, et les boutons au contact du contenu (décaler un moment, confirmer sur la carte du moment). Une action ponctuelle ne mérite jamais une entrée du Dock.</li>
+<li><strong>Finances</strong> : une vue de Ressources pour la lecture ; le paiement est un parcours dédié lancé depuis le + (section 3).</li>
+<li><strong>Médias</strong> : une vue galerie de Ressources.</li>
+<li><strong>Atlas</strong> : un mode de lecture d'Accueil et de Ressources (section 11), pas une entrée.</li>
+<li><strong>AIME / Assistance</strong> : l'Orbe vit dans le +, comme le prévoit déjà <code>docs/DOCK.md</code> (« l'Orbe n'est pas un lieu »).</li>
+</ul>
+<h3 id="le-dock-selon-la-participation-projet-mariage">Le Dock selon la participation (projet Mariage)</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Participation</th>
+<th>Accueil</th>
+<th>Programme</th>
+<th>+</th>
+<th>Personnes</th>
+<th>Ressources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>J'organise (mariés)</td>
+<td>✓</td>
+<td>✓ (modifier)</td>
+<td>Inviter, Écrire, Ajouter une tâche, Payer</td>
+<td>✓ tous</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Je coordonne</td>
+<td>✓</td>
+<td>✓ (modifier, plan B)</td>
+<td>Décaler, Plan B, Prévenir, Inviter</td>
+<td>✓ tous</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Je contribue (8 métiers)</td>
+<td>✓ « Ma mission »</td>
+<td>✓ mes moments</td>
+<td>Signaler un retard, Déposer, Confirmer</td>
+<td>✓ l'organisation + effectifs</td>
+<td>✓ mes ressources</td>
+</tr>
+<tr>
+<td>Je participe (invité)</td>
+<td>✓</td>
+<td>✓ public</td>
+<td>Confirmer ma présence, Écrire</td>
+<td>—</td>
+<td>— si aucune</td>
+</tr>
+</tbody>
+</table></div>
+<p>L'invité garde la même place pour chaque chose, avec deux lieux au lieu de quatre. La logique reste identique ; seule la quantité change.</p>
+<h3 id="exigences">Exigences</h3>
+<ul>
+<li>Texte sous chaque icône, cibles de 44 px, menu du + au clavier (flèches, Échap) : déjà dans <code>dock/dock.js</code>.</li>
+<li>Sur téléphone : 4 lieux + le + tiennent sur 393 px (vérifié sur les captures iPhone du Dock public, 3 lieux + le +).</li>
+<li>Extension sans encombrement : un nouveau type de projet n'ajoute pas de lieu ; il ajoute des vues dans les lieux existants et des gestes dans le +.</li>
+<li>Le Dock ne décide d'aucun droit : il affiche la composition calculée au serveur par <code>composerReel</code>.</li>
+</ul>
+<h2 id="7-modèle-des-projets-participations-et-permissions">7. Modèle des projets, participations et permissions</h2>
+<p>Recommandation : un noyau de six objets communs à tous les types de projet, et une participation qui peut porter plusieurs responsabilités. Le métier décrit la personne ; il ne donne jamais un droit.</p>
+<h3 id="les-six-notions-à-séparer">Les six notions à séparer</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Notion</th>
+<th>Question</th>
+<th>Où aujourd'hui</th>
+<th>Cible</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identité</td>
+<td>Qui est-ce ?</td>
+<td><code>user</code>, <code>identite</code> (Timbre)</td>
+<td>inchangé</td>
+<td>Existant vérifié</td>
+</tr>
+<tr>
+<td>Métier, compétences</td>
+<td>Que sait-elle faire ?</td>
+<td><code>activites.metier</code> (libre, non publié)</td>
+<td><code>competences</code> (métier, qualifications vérifiées) : sert à proposer des missions, jamais à autoriser</td>
+<td>À modifier</td>
+</tr>
+<tr>
+<td>Relation au projet</td>
+<td>Qui est-elle pour ce projet ?</td>
+<td><code>space_members.relation</code> (40 caractères)</td>
+<td>inchangé : « témoin », « photographe », « mère de la mariée »</td>
+<td>Existant vérifié</td>
+</tr>
+<tr>
+<td>Responsabilités</td>
+<td>Que doit-elle faire ici ?</td>
+<td>—</td>
+<td><code>responsabilites</code> (participation × moment, mission ou ressource)</td>
+<td>À créer</td>
+</tr>
+<tr>
+<td>Autorisations effectives</td>
+<td>Que peut-elle faire ici ?</td>
+<td><code>space_members.role</code> (5 niveaux) + <code>permissions.js</code></td>
+<td>inchangé, calculé au serveur à chaque requête</td>
+<td>Existant vérifié</td>
+</tr>
+<tr>
+<td>Préférences d'affichage</td>
+<td>Comment veut-elle voir ?</td>
+<td>—</td>
+<td>par personne et par projet (ordre, silence, langue)</td>
+<td>À créer</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="le-noyau-universel">Le noyau universel</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Objet</th>
+<th>Champs essentiels</th>
+<th>Règle d'accès existante</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Projet</td>
+<td>type (mariage, formation, événement…), titre, dates, identité visuelle</td>
+<td><code>space.*</code></td>
+<td>Existant (<code>spaces</code>)</td>
+</tr>
+<tr>
+<td>Participation</td>
+<td>personne, niveau (owner…guest), relation, fin, état (invitée, active, retirée)</td>
+<td><code>member.*</code>, <code>space.invite</code></td>
+<td>À modifier : clé <code>(space_id, user_id)</code> → identifiant propre, plusieurs responsabilités</td>
+</tr>
+<tr>
+<td>Moment</td>
+<td>titre, début, fin, lieu, audience (public, membres, équipe, organisation), attribué à</td>
+<td><code>event.*</code>, <code>item.read</code></td>
+<td>À créer (table)</td>
+</tr>
+<tr>
+<td>Ressource</td>
+<td>nature (document, média, contrat, playlist), auteur, autorisations explicites, version</td>
+<td><code>document.*</code></td>
+<td>À créer (table + stockage)</td>
+</tr>
+<tr>
+<td>Échange</td>
+<td>fil, participants, message</td>
+<td>portée <code>member.read</code></td>
+<td>À créer (règles à écrire)</td>
+</tr>
+<tr>
+<td>Événement</td>
+<td>qui, quoi, sur quoi, quand ; en ajout seul</td>
+<td><code>audit</code></td>
+<td>Existant vérifié</td>
+</tr>
+</tbody>
+</table></div>
+<p>Les capacités métier (missions, paiements, plan de salle, cachets d'intermittent) s'ajoutent comme des types de ressource supplémentaires dans <code>permissions.js</code>, jamais comme des tables par métier. Le moteur <code>mission.*</code> montre que c'est faisable : 14 règles, aucune ne nomme un métier.</p>
+<h3 id="règles-de-cycle-de-vie">Règles de cycle de vie</h3>
+<ul>
+<li><strong>Retrait</strong> : la participation passe à « retirée » ; le Dock disparaît à la requête suivante. L'historique reste.</li>
+<li><strong>Expiration</strong> : <code>jusqu_au</code> existe déjà et est refusé après échéance ; à afficher dans le Dock réel, qui ne le montre pas encore.</li>
+<li><strong>Partage limité</strong> : une ressource n'est visible que par son auteur et les personnes autorisées explicitement (<code>document.read</code>) ; c'est déjà la règle.</li>
+<li><strong>Journalisation</strong> : chaque ouverture, retrait, changement de rôle et geste sensible écrit une ligne <code>audit</code> ; <code>changement_role</code> est prévu mais n'a aucun point d'accès.</li>
+<li><strong>Jamais par le composant</strong> : un écran ne reçoit que les champs que la règle autorise. L'audit a relevé quelques réponses serveur qui transmettent plus de champs que nécessaire ; elles sont à corriger avant toute extension (détail dans l'Atlas de référence).</li>
+</ul>
+<h2 id="8-un-même-module-plusieurs-usages">8. Un même module, plusieurs usages</h2>
+<p>AIME Live le prouve déjà sur le module Temps : un seul écran, un seul journal de gestes, cinq rôles, et chacun ne voit et ne fait que ce que la règle lui accorde. Les cellules « Live » sont vérifiées, les autres sont la cible.</p>
+<h3 id="temps-moteur-moments">Temps (moteur Moments)</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Participation</th>
+<th>Voit</th>
+<th>Peut faire</th>
+<th>Vérifié</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mariés (owner)</td>
+<td>les 9 moments, équipe comprise</td>
+<td>décaler, cascade, plan B, annoncer</td>
+<td>oui (Live)</td>
+</tr>
+<tr>
+<td>Coordination (editor)</td>
+<td>les 9 moments</td>
+<td>décaler, cascade, plan B, annoncer à l'équipe ou à tous</td>
+<td>oui (Live)</td>
+</tr>
+<tr>
+<td>DJ (contributor)</td>
+<td>les 9 moments</td>
+<td>gestes sur ses propres moments (3 boutons)</td>
+<td>oui (Live)</td>
+</tr>
+<tr>
+<td>Fleuriste (contributor)</td>
+<td>les 9 moments</td>
+<td>aucun geste (0 bouton relevé)</td>
+<td>oui (Live)</td>
+</tr>
+<tr>
+<td>Invitée (guest)</td>
+<td>6 moments publics</td>
+<td>aucun geste ; reçoit les changements</td>
+<td>oui (Live)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="personnes">Personnes</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Participation</th>
+<th>Voit</th>
+<th>Peut faire</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mariés</td>
+<td>tous les membres, réponses, régimes</td>
+<td>inviter (tous niveaux sauf owner), retirer</td>
+</tr>
+<tr>
+<td>Coordination</td>
+<td>tous les membres, e-mails masqués</td>
+<td>inviter lecteurs et invités</td>
+</tr>
+<tr>
+<td>Traiteur</td>
+<td>l'organisation, et « 87 couverts » sans noms</td>
+<td>écrire à l'organisation</td>
+</tr>
+<tr>
+<td>Invitée</td>
+<td>elle-même</td>
+<td>modifier sa réponse</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="ressources">Ressources</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Participation</th>
+<th>Voit</th>
+<th>Peut faire</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mariés</td>
+<td>les ressources où ils sont autorisés</td>
+<td>déposer, partager, signer</td>
+</tr>
+<tr>
+<td>Photographe</td>
+<td>son contrat, les accès du domaine</td>
+<td>déposer, voir le contrat</td>
+</tr>
+<tr>
+<td>DJ</td>
+<td>ses horaires, sa playlist</td>
+<td>déposer la playlist (capacité métier)</td>
+</tr>
+<tr>
+<td>Invitée</td>
+<td>le livret et le plan d'accès publics</td>
+<td>télécharger</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="confirmations">Confirmations</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Participation</th>
+<th>Objet confirmé</th>
+<th>Effet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Invitée</td>
+<td>sa présence</td>
+<td>l'effectif change chez le traiteur, sans nom ni sonnerie</td>
+</tr>
+<tr>
+<td>Musicien</td>
+<td>sa disponibilité sur un moment</td>
+<td>la coordination voit le moment couvert</td>
+</tr>
+<tr>
+<td>Imprimeur (Studio)</td>
+<td>l'impression d'un bon à tirer</td>
+<td>l'auteur est prévenu</td>
+</tr>
+<tr>
+<td>Prestataire (World)</td>
+<td>sa mission (<code>mission.confirm</code>)</td>
+<td>le démarrage devient possible</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="échanges">Échanges</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Participation</th>
+<th>Peut écrire à</th>
+<th>Ne peut pas écrire à</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mariés</td>
+<td>tout le monde</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Prestataire</td>
+<td>l'organisation</td>
+<td>les invités</td>
+</tr>
+<tr>
+<td>Invitée</td>
+<td>les mariés</td>
+<td>les autres invités, les prestataires</td>
+</tr>
+</tbody>
+</table></div>
+<p>Dans chaque famille, les données sont les mêmes ; seules la portée et la liste des gestes changent. C'est exactement ce que <code>permissions.js</code> calcule aujourd'hui.</p>
+<h2 id="9-et-10-atlas-public-et-mode-comparaison">9 et 10. Atlas public et mode Comparaison</h2>
+<p>Recommandation : deux Atlas qui partagent le même moteur mais jamais les mêmes données. L'Atlas de référence reste privé ; l'Atlas vivant est public et ne montre que des projets fictifs, rendus en direct par les vrais composants.</p>
+<div class="tab"><table>
+<thead>
+<tr>
+<th></th>
+<th>Atlas de référence (privé)</th>
+<th>Atlas vivant (public)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contenu</td>
+<td>captures d'audit, chemins, anomalies, permissions techniques, tests, preuves de non-régression</td>
+<td>projets fictifs rendus en direct, explications des droits, modules universels</td>
+</tr>
+<tr>
+<td>Source</td>
+<td>l'audit (482 captures, 24/10/2026)</td>
+<td>les moteurs opérationnels + des données de démonstration</td>
+</tr>
+<tr>
+<td>Accès</td>
+<td>propriétaire du site (comme <code>/regie/</code>, protégé par le middleware)</td>
+<td>tout le monde, sans compte</td>
+</tr>
+<tr>
+<td>Ne contient jamais</td>
+<td>—</td>
+<td>donnée personnelle, faille, jeton, capture d'administration, anomalie de sécurité</td>
+</tr>
+<tr>
+<td>Statut affiché</td>
+<td>vérifié · inaccessible · non implémenté · à tester</td>
+<td>opérationnel · prototype · concept</td>
+</tr>
+<tr>
+<td>Existant</td>
+<td><code>/atlas/</code> (réservé)</td>
+<td>à créer ; s'appuie sur <code>coeur/coeur.js</code> et <code>vitrine/rendu.js</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="ce-que-latlas-vivant-permet">Ce que l'Atlas vivant permet</h3>
+<ul>
+<li>Choisir un <strong>type de projet</strong> (mariage, séminaire, formation) et une <strong>participation</strong> (j'organise, je coordonne, je contribue, je participe).</li>
+<li>Filtrer par <strong>fonction</strong> (Programme, Personnes, Ressources), par <strong>format</strong> (téléphone, tablette, ordinateur) et par <strong>parcours</strong>.</li>
+<li>Ouvrir un écran et voir, à côté, <strong>pourquoi</strong> chaque information est visible ou masquée : la règle (<code>event.read : invité, moment public</code>) traduite en une phrase.</li>
+<li>Passer en <strong>Comparaison</strong>.</li>
+</ul>
+<h3 id="le-mode-comparaison">Le mode Comparaison</h3>
+<p>Le visiteur choisit un projet, puis un moment ; les colonnes montrent la même réalité vue par plusieurs personnes. Exemple avec les données fictives existantes (Léa &amp; Marc, 14 juin 2027) :</p>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Ce qu'on compare</th>
+<th>Mariés</th>
+<th>Coordination</th>
+<th>Traiteur</th>
+<th>Musicien</th>
+<th>Invitée</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Moment « Vin d'honneur », 16 h, Orangerie</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Consigne « ouverture des bars à 15 h 50 »</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>masquée (équipe)</td>
+</tr>
+<tr>
+<td>Effectif</td>
+<td>87 / 120, noms</td>
+<td>87 / 120, noms</td>
+<td>87 couverts, sans noms</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Gestes</td>
+<td>décaler, plan B</td>
+<td>décaler, plan B, prévenir</td>
+<td>signaler un retard</td>
+<td>confirmer sa disponibilité</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Après « décaler de 30 min »</td>
+<td>prévenu</td>
+<td>auteur</td>
+<td>prévenu, sonnerie</td>
+<td>prévenu</td>
+<td>prévenue (moment public)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ce tableau est la cible, pas l'existant : la vue prestataire actuelle ne montre pas le vin d'honneur et l'espace de démonstration ne contient aucun musicien.</p>
+<p>Le décalage est simulé dans le navigateur : il rejoue le même journal pour chaque colonne avec <code>live/modele.js</code> et <code>permissions.js</code>, sans toucher aucun projet réel. Les cases « masquée » affichent la règle, jamais la donnée.</p>
+<p>Point à valider : le brief cite « Camille &amp; Gabriel » et « Cocktail ». Les données publiables existantes sont Léa &amp; Marc et « Vin d'honneur » ; créer un nouveau jeu fictif coûte peu, mais ajoute un troisième mariage de démonstration au site.</p>
+<h2 id="11-latlas-comme-module-universel">11. L'Atlas comme module universel</h2>
+<p>C'est faisable, à condition de le définir comme une façon de parcourir une collection reliée, et non comme une mosaïque. L'Atlas d'audit en est déjà un premier exemplaire : 482 éléments, des relations (rôle, Dock, écran, anomalie), des filtres et des fiches.</p>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Usage</th>
+<th>Éléments</th>
+<th>Relations</th>
+<th>Représentation la plus utile</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mariage</td>
+<td>moments, ressources, intervenants</td>
+<td>qui intervient à quel moment, quel document sert où</td>
+<td>frise du jour, et fiche par moment</td>
+</tr>
+<tr>
+<td>Formation</td>
+<td>séquences, contenus, ressources</td>
+<td>prérequis, ordre</td>
+<td>parcours ordonné, et carte des séquences</td>
+</tr>
+<tr>
+<td>Projet créatif</td>
+<td>fragments, versions</td>
+<td>« dérive de », « remplace »</td>
+<td>galerie, et arbre des versions</td>
+</tr>
+<tr>
+<td>Audit UX</td>
+<td>écrans, anomalies, rôles</td>
+<td>« vu par », « concerne »</td>
+<td>mosaïque filtrable, comparaison côte à côte</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="ce-quil-faut-pour-le-généraliser">Ce qu'il faut pour le généraliser</h3>
+<ul>
+<li><strong>Un contrat d'élément commun</strong> : identifiant, type, titre, aperçu, audience, relations. Les moments, ressources et événements du noyau (section 7) le remplissent déjà presque.</li>
+<li><strong>Les droits du moteur, pas de l'Atlas</strong> : un élément n'apparaît dans un Atlas que si <code>permissions.js</code> autorise sa lecture pour cette participation. L'Atlas n'ajoute aucune règle.</li>
+<li><strong>Plusieurs représentations</strong> : mosaïque, frise, liste, graphe de relations, comparaison. Le choix dépend du type d'élément, pas d'un réglage de l'utilisateur.</li>
+<li><strong>Une base existante</strong> : le registre de <code>/capacites/</code> (1 191 modules) et la recherche par fragments prévue pour l'Atlas AIME dans SynchroView.</li>
+</ul>
+<p>Risque : un Atlas générique peut devenir un deuxième Canevas. La frontière proposée : le Canevas crée et modifie, l'Atlas lit, relie et compare.</p>
+<h2 id="12-et-14-plan-de-migration-et-premier-parcours">12 et 14. Plan de migration et premier parcours</h2>
+<p>Recommandation : prouver d'abord le module Programme, le seul dont un moteur complet existe déjà (AIME Live), puis étendre écran par écran sans retirer l'ancien tant que le nouveau n'est pas vérifié.</p>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Contenu</th>
+<th>Porte de sortie</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Comprendre</td>
+<td>Atlas d'audit (fait), matrice de convergence (faite), décisions de ce dossier</td>
+<td>décisions validées</td>
+</tr>
+<tr>
+<td>2. Définir</td>
+<td>lexique et Dock unique, plusieurs responsabilités, contrats de composants</td>
+<td>migrations relues</td>
+</tr>
+<tr>
+<td>3. Prouver</td>
+<td>module Programme complet, repris d'AIME Live, au serveur ; 5 comptes de test, 1 projet</td>
+<td>tests de refus verts</td>
+</tr>
+<tr>
+<td>4. Vérifier</td>
+<td>droits, retrait, expiration ; accessibilité WCAG 2.2 AA ; iPhone, iPad, ordinateur</td>
+<td>zéro régression</td>
+</tr>
+<tr>
+<td>5. Étendre</td>
+<td>Personnes, Ressources, Échanges, Confirmations ; ancien écran gardé en parallèle</td>
+<td>remplacement vérifié</td>
+</tr>
+<tr>
+<td>6. Démontrer</td>
+<td>Atlas vivant et Comparaison, à partir des modules servis, données fictives seulement</td>
+<td>revue de confidentialité</td>
+</tr>
+</tbody>
+</table></div>
+<p>Chaque phase se teste de bout en bout et se désactive : le nouvel écran est servi à côté de l'ancien, derrière un réglage par projet, et le retour arrière consiste à couper ce réglage.</p>
+<h3 id="pourquoi-programme-en-premier">Pourquoi Programme en premier</h3>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Programme</th>
+<th>Personnes</th>
+<th>Ressources</th>
+<th>Échanges</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Valeur pour l'utilisateur</td>
+<td>haute (tous les rôles, jour J)</td>
+<td>moyenne</td>
+<td>haute</td>
+<td>haute</td>
+</tr>
+<tr>
+<td>Moteur existant</td>
+<td>complet en démo (<code>live/modele.js</code>, <code>event.*</code>)</td>
+<td>serveur, partiel</td>
+<td>règles seules</td>
+<td>aucun</td>
+</tr>
+<tr>
+<td>Ce qui manque</td>
+<td>une table des moments, un point d'accès, la page servie</td>
+<td>portée nominative / agrégée</td>
+<td>table, stockage</td>
+<td>tout</td>
+</tr>
+<tr>
+<td>Risque de régression</td>
+<td>faible (page nouvelle)</td>
+<td>moyen (page existante)</td>
+<td>faible</td>
+<td>faible</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="le-premier-parcours-de-bout-en-bout">Le premier parcours de bout en bout</h3>
+<ol>
+<li>Les mariés (compte de test owner) créent un projet Mariage de test et y ajoutent trois moments, dont un réservé à l'équipe.</li>
+<li>Ils invitent la coordination (editor), le DJ (contributor, attribué au moment « Ouverture du bal ») et une invitée (guest).</li>
+<li>Chacun ouvre le projet : le Dock affiche Accueil et Programme pour tous, Personnes pour tous sauf l'invitée.</li>
+<li>La coordination décale le vin d'honneur de 30 minutes avec cascade.</li>
+<li>Le DJ voit le nouvel horaire et signale un retard sur son propre moment ; il ne peut pas décaler celui des autres (refus serveur journalisé).</li>
+<li>L'invitée voit le nouvel horaire du moment public, ne voit jamais le moment d'équipe, et n'a aucun geste de modification.</li>
+<li>Les mariés retirent le DJ : son Dock disparaît à la requête suivante et la ligne de retrait apparaît au Journal.</li>
+</ol>
+<p>Critère de réussite : chaque étape est un test automatisé sur une base PostgreSQL de test, avec une migration numérotée appliquée d'abord sur une branche Neon de test, comme le prévoit la règle du dépôt.</p>
+<h2 id="13-risques-contraintes-inconnues">13. Risques, contraintes, inconnues</h2>
+<p>Le risque principal n'est pas technique : c'est de construire l'Atlas public et la Comparaison avant que les moteurs soient réels, et de refaire une couche de démonstration de plus.</p>
+<div class="tab"><table>
+<thead>
+<tr>
+<th>Risque</th>
+<th>Effet</th>
+<th>Parade</th>
+<th>Gravité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Démonstrations sans équivalent opérationnel</td>
+<td>Le site promet ce que le produit ne fait pas (déjà vrai pour 4 pages sur 7 et pour les Docks de démo)</td>
+<td>Aucune nouvelle démo tant que le moteur correspondant n'est pas servi par le serveur</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>Fuite de données à la généralisation</td>
+<td>Un composant commun expose ce qu'une vue spécialisée cachait</td>
+<td>Corriger d'abord les écarts relevés par l'audit ; un test refus rôle × geste par nouvelle ressource</td>
+<td>Haute</td>
+</tr>
+<tr>
+<td>Migration de <code>space_members</code></td>
+<td>Changer la clé casse invitations, journal et Dock</td>
+<td>Nouvelle table de responsabilités à côté, sans toucher la clé, puis bascule</td>
+<td>Moyenne</td>
+</tr>
+<tr>
+<td>Sur-unification</td>
+<td>Invité et jour J deviennent plus lents</td>
+<td>Dock à lieux absents, mode « maintenant », gestes dans le +</td>
+<td>Moyenne</td>
+</tr>
+<tr>
+<td>Plusieurs chantiers concurrents</td>
+<td>AIMESTUDIO, AIME FINAL, AIME-NEXT, AIMENEW, plusieurs agents</td>
+<td>Un seul dépôt cible pour ce moteur : AIMESTUDIO, seul connecté à Neon</td>
+<td>Moyenne</td>
+</tr>
+<tr>
+<td>Vocabulaire</td>
+<td>Changer « Alertes » en « Accueil » dérange ceux qui ont vu les démos</td>
+<td>Un lexique unique publié, appliqué à toutes les démos en une fois</td>
+<td>Basse</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="inconnues-à-lever">Inconnues à lever</h3>
+<ul>
+<li>Écrans connectés jamais vus : aucun compte de test n'existe en production. Il faut 5 comptes de test (un par niveau) invités dans un même projet de test, sur une branche Neon de test.</li>
+<li>Charge du jour J réel : Live n'a jamais tourné « entre appareils » en production.</li>
+<li>Stockage des ressources : aucun stockage de fichiers n'est choisi (Neon Object Storage ou autre).</li>
+<li>Messages : aucune règle de portée n'est écrite ; c'est le seul moteur à concevoir de zéro.</li>
+<li>Confidentialité vis-à-vis du propriétaire : décision produit avant toute implémentation.</li>
+</ul>
+<h2 id="annexe">Annexe A · Les onze rôles audités</h2>
+<p>Ce que chaque place de « Je suis… » ouvre réellement sur l'accueil : la démo, le Dock montré, le bouton, et ce qui manque.</p>
+<div class="tab"><table><thead><tr><th>Rôle</th><th>Rôle serveur</th><th>Dock montré (démo)</th><th>+ (démo)</th><th>Bouton de l&#x27;accueil</th><th>Ce qui manque</th></tr></thead><tbody><tr><td><strong>Futurs mariés</strong></td><td>owner (Propriétaire)</td><td>Alertes · Messages · Projet · Agenda</td><td>Inviter · Écrire · Ajouter une tâche</td><td>Créer notre mariage →</td><td>Co-propriété (le marié) non implémentée ; projet, déroulé, documents, messages non servis.</td></tr><tr><td><strong>Coordination</strong></td><td>owner via l&#x27;accueil (attendu : editor / Délégué)</td><td>Alertes · Déroulé · Équipe · Plan B</td><td>Modifier le déroulé · Activer le plan B · Valider un remplaçant</td><td>Créer notre mariage →</td><td>Déroulé et Plan B annoncés dans la démo, non servis dans un vrai projet.</td></tr><tr><td><strong>Fleuriste</strong></td><td>aucun (activité sans espace) ; contributor sur invitation</td><td>Alertes · Mission · Accès · Documents</td><td>Déposer le devis · Signaler un retard · Écrire</td><td>Créer mon espace fleuriste →</td><td>Pas d&#x27;écran propre hors démo ; pas d&#x27;instance de Dock.</td></tr><tr><td><strong>Traiteur</strong></td><td>aucun ; contributor sur invitation</td><td>Alertes · Mission · Effectif · Documents</td><td>Déposer un document · Signaler un retard · Écrire</td><td>Créer mon espace traiteur →</td><td>Effectif sans noms : démo seulement.</td></tr><tr><td><strong>Musicien</strong></td><td>aucun ; contributor sur invitation</td><td>Alertes · Mission · Horaires · Documents</td><td>Déposer le répertoire · Signaler un retard · Écrire</td><td>Créer mon espace musicien →</td><td>Aucun écran propre hors démo de l&#x27;accueil.</td></tr><tr><td><strong>Musicien intermittent</strong></td><td>aucun ; contributor sur invitation</td><td>Alertes · Mission · Horaires · Documents</td><td>Déposer le répertoire · Signaler un retard · Écrire</td><td>Créer mon espace musicien intermittent →</td><td>Module intermittent : non implémenté.</td></tr><tr><td><strong>Vidéaste</strong></td><td>aucun ; contributor sur invitation</td><td>Alertes · Mission · Accès · Documents</td><td>Déposer le contrat · Signaler un retard · Écrire</td><td>Créer mon espace vidéaste →</td><td>Pas d&#x27;écran distinct du photographe.</td></tr><tr><td><strong>Photographe</strong></td><td>aucun ; contributor sur invitation</td><td>Alertes · Mission · Accès · Documents</td><td>Déposer le contrat · Signaler un retard · Écrire</td><td>Créer mon espace photographe →</td><td>« Annuler la prestation » : démo seulement.</td></tr><tr><td><strong>DJ</strong></td><td>aucun ; contributor sur invitation</td><td>Alertes · Mission · Horaires · Documents</td><td>Déposer la playlist · Signaler un retard · Écrire</td><td>Créer mon espace DJ →</td><td>—</td></tr><tr><td><strong>Lieu</strong></td><td>aucun ; contributor sur invitation</td><td>Alertes · Mission · Effectif · Documents</td><td>Déposer le plan · Signaler un incident · Écrire</td><td>Créer mon espace lieu →</td><td>Aucun écran propre ; le lieu n&#x27;est jamais propriétaire d&#x27;un espace.</td></tr><tr><td><strong>Invité</strong></td><td>guest, par invitation seulement</td><td>Programme · Réponse · Lieu · Messages</td><td>Écrire aux mariés · Confirmer ma présence · Accès inattendu ?</td><td>(aucun : « Ce rôle arrive par invitation »)</td><td>« Confirmer ma présence » : démo seulement ; pas de page Réponse réelle.</td></tr></tbody></table></div>
+<h2>Annexe B · Contrôle fonctionnel</h2>
+<p>Propagation et cloisonnement des données, testés dans les démonstrations (données fictives, rien envoyé au serveur de production).</p>
+<div class="tab"><table><thead><tr><th>Essai</th><th>Attendu</th><th>Obtenu</th><th>Statut</th></tr></thead><tbody><tr><td>Annonce « équipe » de la coordination (Live)</td><td>Visible par l&#x27;équipe, invisible pour les invités</td><td>Visible : Léa (owner), Camille (editor), Fleurs d&#x27;Anne et Nova (contributor). Invisible : Nina (guest), Paul (viewer).</td><td>vérifié</td></tr><tr><td>Annonce « tout le monde » (Live)</td><td>Visible par tous</td><td>Visible par les 6 personnes ouvertes.</td><td>vérifié</td></tr><tr><td>Décalage +15 min de « Cérémonie laïque » avec cascade (Live)</td><td>Nouvel horaire partout où le moment est visible</td><td>15:15 (prévu 15:00, barré) chez coordination, fleuriste, invitée et lecture seule.</td><td>vérifié</td></tr><tr><td>Gestes d&#x27;un invité (Live)</td><td>Aucun geste, aucun formulaire d&#x27;annonce</td><td>Nina et Paul : 0 bouton de geste, formulaire d&#x27;annonce caché, journal caché.</td><td>vérifié</td></tr><tr><td>Moments d&#x27;équipe pour la lecture seule (Live)</td><td>À arbitrer</td><td>Paul (viewer) voit 9 moments dont ceux marqués « équipe » ; Nina (guest) en voit 6.</td><td>à tester</td></tr><tr><td>Journal d&#x27;équipe pour un prestataire (Live)</td><td>À arbitrer</td><td>Fleurs d&#x27;Anne et Nova voient tout le journal de Camille (« l&#x27;équipe voit tout »).</td><td>à tester</td></tr><tr><td>Candidature du prestataire (vitrine World)</td><td>Visible par le couple et l&#x27;agence, privée pour les autres</td><td>Couple et agence : « Petal &amp; Stem · Reçue » ; agence : « Proposer au couple ». Invitée : aucun contenu, seulement « révision 2 ».</td><td>vérifié</td></tr><tr><td>Droits réels d&#x27;un projet (serveur)</td><td>Un rôle ne reçoit que sa portée</td><td>Non exécuté : aucun compte de test autorisé en production. Lecture du code : contrôles d&#x27;appartenance présents ; quelques réponses transmettent plus de champs que nécessaire (détail réservé, hors dépôt public).</td><td>à tester</td></tr><tr><td>Acceptation d&#x27;une invitation</td><td>Rôle accordé à l&#x27;adresse invitée</td><td>Non exécuté (aucun jeton de test). Champ du + : un faux lien est refusé avec un message clair.</td><td>à tester</td></tr></tbody></table></div>
+<h2>Annexe C · Anomalies</h2>
+<p>Trois constats de sécurité serveur (A11, A12, A13) sont retirés de cette version : le dépôt est public. Leur détail est dans l&#x27;Atlas de référence privé.</p>
+<div class="tab"><table><thead><tr><th>N°</th><th>Gravité</th><th>Type</th><th>Constat</th><th>Preuve</th><th>Statut</th></tr></thead><tbody><tr><td>A01</td><td>haute</td><td>Fonctionnelle</td><td><strong>« Coordination » crée un projet dont on devient propriétaire</strong><br>Sur l&#x27;accueil, la démo place la coordination au centre comme Délégué, mais le bouton « Créer notre mariage » rend propriétaire (note : « vous y invitez les mariés »). Aucun transfert de propriété n&#x27;existe.</td><td><code>accueil/je-suis.js:22 · COORDINATION__LE-COEUR__demo-je-suis__formulaire-lien</code></td><td>vérifié</td></tr><tr><td>A02</td><td>haute</td><td>Fonctionnelle</td><td><strong>Un vrai projet sert 3 pages sur 7, les mêmes pour les 5 rôles</strong><br>Mon accès, Journal et Personnes seulement. Projet, Déroulé, Documents et Messages répondent « Cette page n&#x27;existe pas encore ». Seuls Personnes et « Inviter » changent selon le rôle.</td><td><code>api/_auth/pages.mjs:12-21</code></td><td>non implémenté</td></tr><tr><td>A03</td><td>haute</td><td>Cohérence</td><td><strong>Trois Docks différents pour un même rôle</strong><br>Accueil et mosaïque : Dock écrit à la main (« Alertes », « Accès inattendu ? »). Exemple World : composant AIMEDockVue (« Notifications », « Je vois un accès inattendu »). Projet réel : composerReel (« Mon accès · Journal · Personnes »). L&#x27;ordre et le contenu du + diffèrent aussi (ex. photographe : « Annuler la prestation » dans la mosaïque, « Déposer le contrat » sur l&#x27;accueil).</td><td><code>accueil/demo.js:12-18 · exemples/mosaique/index.html:220-228 · dock/modele.js:133-142</code></td><td>vérifié</td></tr><tr><td>A04</td><td>moyenne</td><td>Navigation</td><td><strong>Le Dock unifié n&#x27;est présent que sur 8 pages</strong><br>Décision du 24/10 : le Dock remplace la navigation partout. Relevé automatique : présent sur 8 des 44 pages servies ; les autres gardent leur en-tête (Studio, Stitch, Magazine, Live, G44, Canevas…).</td><td><code>pages.json (relevé .dock-zone)</code></td><td>vérifié</td></tr><tr><td>A05</td><td>moyenne</td><td>UX</td><td><strong>Deux formulaires e-mail aux messages contradictoires</strong><br>Après le choix d&#x27;un rôle : « Recevoir le lien » (création immédiate du compte), puis juste en dessous « La bêta ouvre bientôt · Me prévenir ». Sur iPhone, les deux se suivent dans le même écran.</td><td><code>TRAITEUR__LE-COEUR__demo-je-suis__formulaire-lien__IPHONE</code></td><td>vérifié</td></tr><tr><td>A06</td><td>basse</td><td>Responsive</td><td><strong>La note sous le bouton de création passe sous le Dock flottant</strong><br>Sur ordinateur, à la fin de la démo, la phrase « Votre espace ne contient aucun projet… » est en partie masquée par le Dock.</td><td><code>FLEURISTE__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR</code></td><td>vérifié</td></tr><tr><td>A07</td><td>moyenne</td><td>Couverture</td><td><strong>Cinq métiers sans écran propre hors de l&#x27;accueil</strong><br>Musicien, musicien intermittent et lieu : absents de la mosaïque, de Live et sans instance de Dock. Fleuriste : absent de la mosaïque, sans instance. Vidéaste : confondu avec le photographe (Studio Lumen).</td><td><code>vitrine/metiers.json · vitrine/donnees/mariage.json · dock/modele.js</code></td><td>vérifié</td></tr><tr><td>A08</td><td>basse</td><td>Fonctionnelle</td><td><strong>La vue prestataire est la même pour tous les métiers</strong><br>La vitrine « prestataire » affiche les mêmes créneaux à tous, dont « Séance photo du couple », y compris pour le fleuriste ou le lieu.</td><td><code>FLEURISTE__HORS-DOCK__vitrine-perspective-prestataire__defaut__ORDINATEUR</code></td><td>vérifié</td></tr><tr><td>A09</td><td>moyenne</td><td>Fonctionnelle</td><td><strong>Dock réel : ni date de fin ni pastille</strong><br>api/page.mjs ne transmet ni fin ni notifications à composerReel : « Rôle jusqu&#x27;au … » n&#x27;apparaît jamais et la pastille vaut toujours 0 (règles 6 et 12 du Dock).</td><td><code>api/page.mjs:26</code></td><td>à tester</td></tr><tr><td>A10</td><td>moyenne</td><td>Fonctionnelle</td><td><strong>« Ce que vous pouvez faire » annonce des gestes inexistants</strong><br>Mon accès promet « composer le déroulé », « déposer vos documents », « supprimer le projet » ; aucun point d&#x27;accès ne les réalise.</td><td><code>api/_auth/pages.mjs:42-50 · api/_auth/espaces.mjs:261</code></td><td>à tester</td></tr><tr><td>A14</td><td>moyenne</td><td>Navigation</td><td><strong>Pages orphelines</strong><br>/lab/grande-partition/, /magazine/ et /bureau/espace/ n&#x27;ont aucun lien entrant public. AIME Live, Réseau, Santé et World ne sont reliés que depuis la Grande Partition.</td><td><code>Graphe de navigation (lecture du code)</code></td><td>vérifié</td></tr><tr><td>A15</td><td>basse</td><td>Navigation</td><td><strong>L&#x27;orbe de l&#x27;accueil renvoie vers /bureau/ (deux redirections)</strong><br>Suggestion de l&#x27;orbe Régie → /bureau/ → /projets/ → /compte/.</td><td><code>regie/scene.js · vercel.json (redirects)</code></td><td>vérifié</td></tr><tr><td>A16</td><td>basse</td><td>Fonctionnelle</td><td><strong>/tout/ vise des sections absentes de l&#x27;accueil</strong><br>Les repères attendus (naiss, impulsion, story2…) n&#x27;existent que dans la Grande Partition : l&#x27;index reste vide.</td><td><code>tout/index.html:79-97</code></td><td>à tester</td></tr><tr><td>A17</td><td>basse</td><td>Fonctionnelle</td><td><strong>Erreurs réseau visibles en console</strong><br>/live/ : /api/live/passe répond 503 (repli « Dans ce navigateur »). /synchroview/demo/ : /api/sv/check répond 404 (page réservée).</td><td><code>pages.json (console)</code></td><td>vérifié</td></tr><tr><td>A18</td><td>moyenne</td><td>Accessibilité</td><td><strong>Contrôles sans nom accessible</strong><br>Relevé automatique (boutons et liens visibles sans texte ni aria-label) : 125 sur /capacites/, 34 sur /studio/ (ordinateur, iPad), 24 sur /sante/.</td><td><code>pages.json (boutonsSansNom)</code></td><td>à tester</td></tr><tr><td>A19</td><td>basse</td><td>Accessibilité</td><td><strong>Cibles tactiles de moins de 24 px</strong><br>Relevé automatique : 132 sur /capacites/, 52 sur la mosaïque, 56 sur /aime/ (iPhone).</td><td><code>pages.json (ciblesInf24px)</code></td><td>à tester</td></tr><tr><td>A20</td><td>basse</td><td>Cohérence</td><td><strong>Un même rôle porte quatre noms</strong><br>« L&#x27;invitée » (scénario), « Invité · Participant » (perspective), « L&#x27;invité » (mosaïque), « Participant » (SynchroView) ; « Coordinatrice / coordinateur », « La coordination », « Coordinateur ».</td><td><code>vitrine/scenarios · vitrine/perspectives · synchroview/profiles.js</code></td><td>vérifié</td></tr><tr><td>A21</td><td>basse</td><td>Cohérence</td><td><strong>Le client du Studio est rangé en Propriétaire</strong><br>L&#x27;instance studio:client hérite du Dock Propriétaire (pastille 3, « publier ») alors que le scénario le décrit « Destinataire et valideur ».</td><td><code>dock/modele.js:153</code></td><td>vérifié</td></tr><tr><td>A22</td><td>moyenne</td><td>Orbe</td><td><strong>Plusieurs Orbes coexistent, sans IA</strong><br>Orbe décorative de l&#x27;accueil, bouton d&#x27;orbe de la Régie (absent de l&#x27;audit de l&#x27;Orbe), compagnon (/aime/, /lab/orb/), pilote (Point Zéro), bulle de la mosaïque, bouton d&#x27;orbe de la vitrine World. Aucune n&#x27;appelle d&#x27;IA.</td><td><code>orbe/*.js · regie/scene.js · docs/ORBE-AUDIT.md</code></td><td>vérifié</td></tr><tr><td>A23</td><td>basse</td><td>Fonctionnelle</td><td><strong>Erreur JavaScript ponctuelle sur SynchroView (iPad)</strong><br>« Cannot read properties of null (reading &#x27;c&#x27;) » relevée une fois sur iPad ; non reproduite au second passage.</td><td><code>pages.json</code></td><td>à tester</td></tr><tr><td>A24</td><td>basse</td><td>UX</td><td><strong>« Musicien intermittent » proposé alors que le module est en préparation</strong><br>La place est sélectionnable et mène à « Créer mon espace musicien intermittent » ; la note précise que le module arrivera plus tard.</td><td><code>MUSICIEN-INTERMITTENT__LE-COEUR__demo-je-suis__formulaire-lien</code></td><td>vérifié</td></tr><tr><td>A25</td><td>basse</td><td>Fonctionnelle</td><td><strong>Le + n&#x27;est pas branché sur /projets/?espace= et ?invitation=</strong><br>Sur ces adresses, le geste « J&#x27;ai reçu une invitation » afficherait le message de démonstration au lieu du champ.</td><td><code>compte/index.html:120</code></td><td>à tester</td></tr></tbody></table></div>
+<h2>Annexe D · Fonctions présentes, écrans manquants</h2>
+<div class="tab"><table><thead><tr><th>Fonction</th><th>Présent</th><th>Manquant</th><th>Statut</th></tr></thead><tbody><tr><td>Écrans réels par rôle</td><td>Mon accès · Journal · Personnes</td><td>Projet · Déroulé · Documents · Messages (non servis)</td><td>non implémenté</td></tr><tr><td>Co-propriété (le marié)</td><td>Instance de démo mariage:marie</td><td>Rôle serveur co-propriétaire</td><td>non implémenté</td></tr><tr><td>Transfert de propriété</td><td>—</td><td>Indispensable si la coordination crée le projet</td><td>non implémenté</td></tr><tr><td>Changement de rôle</td><td>Ligne de journal prévue</td><td>Aucun point d&#x27;accès</td><td>non implémenté</td></tr><tr><td>Suppression d&#x27;un projet</td><td>Annoncée dans Mon accès</td><td>Aucun point d&#x27;accès</td><td>non implémenté</td></tr><tr><td>Module intermittent</td><td>Badge « En préparation »</td><td>Cachets, déclarations</td><td>non implémenté</td></tr><tr><td>Annuaire des prestataires</td><td>Activité enregistrée (non publiée)</td><td>Rendre l&#x27;activité trouvable</td><td>non implémenté</td></tr><tr><td>Docks Régie et Studio</td><td>Décrits dans dock/modele.js et en démo</td><td>Non branchés sur un vrai compte</td><td>non implémenté</td></tr><tr><td>Écran « invité pas encore entré »</td><td>Prévu (+ Rejoindre)</td><td>Le visiteur voit le Dock public</td><td>non implémenté</td></tr><tr><td>Instances de Dock métier</td><td>traiteur, photographe, DJ</td><td>fleuriste, musicien, intermittent, vidéaste, lieu</td><td>non implémenté</td></tr><tr><td>Régie maîtresse, Cube Maître</td><td>Gardés (404 public)</td><td>—</td><td>inaccessible</td></tr><tr><td>SynchroView, démonstration des droits</td><td>Réservés au propriétaire</td><td>—</td><td>inaccessible</td></tr><tr><td>Écrans connectés (Mes projets, Mon compte, projet réel)</td><td>Code lu</td><td>Captures : comptes de test nécessaires</td><td>à tester</td></tr></tbody></table></div>
+<h2>Annexe E · Captures</h2>
+<p>Une sélection : l'accueil, la liste « Je suis… », le + du Dock, puis la démo jouée pour chacun des onze rôles (ordinateur). L'Atlas complet est réservé à l'administration.</p>
+<div class="galerie"><figure><a href="/atlas/img/PUBLIC__LE-COEUR__accueil__arrivee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/PUBLIC__LE-COEUR__accueil__arrivee__ORDINATEUR.webp" alt="Accueil · « Tout commence par une intention » · Public (tous)"></a><figcaption><strong>Public (tous)</strong> · Accueil · « Tout commence par une intention » · Arrivée</figcaption></figure><figure><a href="/atlas/img/PUBLIC__LE-COEUR__je-suis__liste-ouverte__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/PUBLIC__LE-COEUR__je-suis__liste-ouverte__ORDINATEUR.webp" alt="Liste « Je suis… » · Public (tous)"></a><figcaption><strong>Public (tous)</strong> · Liste « Je suis… » · Liste ouverte</figcaption></figure><figure><a href="/atlas/img/PUBLIC__PLUS__carte-actions__ouvert__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/PUBLIC__PLUS__carte-actions__ouvert__ORDINATEUR.webp" alt="+ du Dock public · Public (tous)"></a><figcaption><strong>Public (tous)</strong> · + du Dock public · Ouvert</figcaption></figure><figure><a href="/atlas/img/FUTURS-MARIES__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/FUTURS-MARIES__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Futurs mariés"></a><figcaption><strong>Futurs mariés</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/COORDINATION__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/COORDINATION__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Coordination"></a><figcaption><strong>Coordination</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/FLEURISTE__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/FLEURISTE__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Fleuriste"></a><figcaption><strong>Fleuriste</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/TRAITEUR__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/TRAITEUR__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Traiteur"></a><figcaption><strong>Traiteur</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/MUSICIEN__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/MUSICIEN__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Musicien"></a><figcaption><strong>Musicien</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/MUSICIEN-INTERMITTENT__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/MUSICIEN-INTERMITTENT__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Musicien intermittent"></a><figcaption><strong>Musicien intermittent</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/VIDEASTE__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/VIDEASTE__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Vidéaste"></a><figcaption><strong>Vidéaste</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/PHOTOGRAPHE__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/PHOTOGRAPHE__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Photographe"></a><figcaption><strong>Photographe</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/DJ__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/DJ__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · DJ"></a><figcaption><strong>DJ</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/LIEU__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/LIEU__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Lieu"></a><figcaption><strong>Lieu</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure><figure><a href="/atlas/img/INVITE__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp"><img loading="lazy" src="/atlas/img/INVITE__LE-COEUR__demo-je-suis__demo-terminee__ORDINATEUR.webp" alt="Démo « chacun son écran » · Invité"></a><figcaption><strong>Invité</strong> · Démo « chacun son écran » · Démo jouée</figcaption></figure></div>
+</article>
+</main>
+<nav class="pied-legal" aria-label="Informations légales"><a href="/tarifs/">Tarifs</a><span aria-hidden="true">·</span><a href="/mentions-legales/">Mentions légales</a><span aria-hidden="true">·</span><a href="/confidentialite/">Confidentialité</a><span aria-hidden="true">·</span><a href="/contact/">Contact</a></nav>
+<footer class="pied"><a href="/">← Page Zéro</a><span>AIME®</span></footer>
+<script src="/dock/modele.js"></script>
+<script src="/dock/dock.js"></script>
+<script src="/dock/plus.js"></script>
+<div id="dock-site"></div>
+<script>(function(){var el=document.getElementById('dock-site');if(el&&window.AIMEDock&&window.AIMEDockVue){AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')}})();</script>
+</body>
+</html>

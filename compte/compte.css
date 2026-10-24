@@ -25,7 +25,7 @@ input[type=email]{font:inherit;color:var(--encre);background:var(--carte);border
 /* l'écran de projet (compte/projet.js) */
 #projet{display:grid;gap:14px}
 .p-onglets{display:flex;flex-wrap:wrap;gap:6px}.p-onglets a{text-decoration:none}.p-onglets a[aria-current=page]{background:var(--encre);color:#0B0B0E;border-color:var(--encre)}
-.p-titre{font:600 22px/1.2 var(--titre);margin:8px 0 0}.p-titre:focus:not(:focus-visible){outline:none}
+.p-titre{font:600 22px/1.2 var(--titre);margin:8px 0 0}.p-titre:focus{outline:none}   /* un titre qui reçoit le focus (tabindex -1) pour le lecteur d'écran n'est pas une commande : pas d'anneau */
 .p-texte{font-size:17px;margin:0}.p-fin{margin:0}.p-fin.a-fin{color:var(--cyan)}
 .p-liste{margin:0;padding-left:20px;display:grid;gap:6px}.p-personnes{list-style:none;padding:0}.p-personnes li{justify-content:space-between;gap:10px}
 .p-journal{margin:0;padding-left:20px;display:grid;gap:8px}.p-ligne.moi{color:var(--encre)}.p-motif{display:block;margin-top:4px;color:var(--doux);font-style:italic}
@@ -33,3 +33,17 @@ input[type=email]{font:inherit;color:var(--encre);background:var(--carte);border
 .signal summary{cursor:pointer}.signal textarea{font:inherit;color:var(--encre);background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:8px 10px;width:100%}
 .vivant.ko{color:var(--ko)}
 #projet .leg,#projet .leg a{color:var(--doux)}
+
+/* l'écran de projet (body.en-projet, posé par compte/projet.js) : l'identité du projet dans un bandeau, la zone de travail sur fond plein.
+   La photo de l'espace compte reste la même image, cadrée dans le bandeau et voilée : elle n'est plus derrière le contenu métier. */
+body.en-projet .cpt-fond{display:none}
+body.en-projet .cpt{gap:16px}
+body.en-projet .cpt-titre{position:relative;isolation:isolate;overflow:hidden;margin:0;min-height:112px;align-content:end;padding:22px 20px 18px;border:1px solid var(--ligne);border-radius:18px;background:var(--panneau)}
+body.en-projet .cpt-titre::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(11,11,14,.95) 0%,rgba(11,11,14,.86) 50%,rgba(11,11,14,.62) 100%),url(/media/visuels/fleuriste-terrasse.webp) center 38%/cover no-repeat}
+body.en-projet .cpt-titre .leg{color:#D0D0D8}
+body.en-projet #projet{gap:12px}
+body.en-projet #projet>.leg:first-child{margin:0}
+@media (max-width:560px){body.en-projet .cpt-titre{min-height:92px;padding:18px 16px 14px}}
+/* téléphone (ou écran bas) dans un projet : l'en-tête du site défile avec la page au lieu de rester collé, pour laisser toute la hauteur au travail ;
+   seule navigation fixe, le Dock, en bas */
+@media (max-width:560px),(max-height:500px){body.en-projet .tete{position:static}}
