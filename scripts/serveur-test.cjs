@@ -5,7 +5,18 @@ const ROOT = path.resolve(process.env.ROOT || path.join(__dirname, '..')), PORT 
 const VERCEL = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
 const REWRITES = new Map((VERCEL.rewrites || []).filter(r => !r.source.includes(':') && !r.destination.startsWith('/api/')).map(r => [r.source, r.destination]));
 const T = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.pdf': 'application/pdf', '.xml': 'application/xml', '.mp4': 'video/mp4', '.vtt': 'text/vtt; charset=utf-8' };
+/* les écrans gardés (middleware.js sur Vercel) : la même fonction garder(), mais le « propriétaire » est ici un cookie de test,
+   aime_test_proprietaire=oui, que seuls les tests navigateur posent. Ce serveur ne part jamais en production (.vercelignore : /scripts). */
+const ECRANS = Promise.resolve(require(path.join(ROOT, 'api/_auth/ecrans.cjs')));
+const proprietaireDeTest = r => /(?:^|;\s*)aime_test_proprietaire=oui(?:;|$)/.test(r.headers.get('cookie') || '');
 http.createServer((req, res) => {
+  const brut = '/' + String(req.url || '/').split(/[?#]/)[0].replace(/^\/+/, m => m.slice(1));   /* le chemin brut : « //regie/ » reste un chemin, pas un hôte */
+  ECRANS.then(E => E.garder(new Request('http://localhost' + brut, { headers: { cookie: req.headers.cookie || '' } }), proprietaireDeTest)).then(async r => {
+    if (!r) return servir(req, res);
+    res.writeHead(r.status, Object.fromEntries(r.headers)); res.end(await r.text());
+  }, () => { res.writeHead(500); res.end(); });
+}).listen(PORT, HOST, () => console.log('serveur de test sur ' + HOST + ':' + PORT));
+function servir(req, res) {
   const u = new URL(req.url, 'http://x'); let p; try { p = decodeURIComponent(u.pathname); } catch { res.writeHead(400); return res.end(); }
   const pCle = p.length > 1 ? p.replace(/\/+$/, '') : p;
   if (REWRITES.has(p)) p = REWRITES.get(p);
@@ -24,4 +35,4 @@ http.createServer((req, res) => {
   let f = path.join(ROOT, p); if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
   if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
   fs.readFile(f, (e, d) => { if (e) { res.writeHead(404); return res.end('404'); } res.writeHead(200, { 'Content-Type': T[path.extname(f)] || 'application/octet-stream' }); res.end(d); });
-}).listen(PORT, HOST, () => console.log('serveur de test sur ' + HOST + ':' + PORT));
+}

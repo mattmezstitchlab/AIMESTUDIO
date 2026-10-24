@@ -8,6 +8,7 @@ const PAGES = ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/ex
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}); let n = 0;
   for (const [nom, vp] of [['ordinateur', { width: 1440, height: 900 }], ['téléphone', { width: 390, height: 844 }]]) {
     const ctx = await b.newContext({ viewport: vp });
+    await ctx.addCookies([{ name: 'aime_test_proprietaire', value: 'oui', url: B }]);   /* /regie/ et /maitre/ : réservés au propriétaire (middleware.js) ; le serveur de test reconnaît ce cookie */
     for (const u of PAGES) {
       const p = await ctx.newPage(); await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
       for (let y = 0; y < 30; y++) { await p.mouse.wheel(0, 900); await p.waitForTimeout(80); } await p.waitForTimeout(1200);

@@ -12,6 +12,12 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
   for (const [n, vp, rm] of [['ordinateur', { width: 1440, height: 900 }, false], ['téléphone', { width: 390, height: 844 }, false], ['mouvement réduit', { width: 1280, height: 800 }, true]]) {
     console.log('— ' + n);
     const ctx = await b.newContext({ viewport: vp, reducedMotion: rm ? 'reduce' : 'no-preference', isMobile: n === 'téléphone', hasTouch: n === 'téléphone' });
+    await ctx.addCookies([{ name: 'aime_test_proprietaire', value: 'oui', url: B }]);   /* le propriétaire du site (serveur de test) : /regie/ et /maitre/ lui sont servis */
+    if (n === 'ordinateur') { const z = await b.newContext(), q = await z.newPage();   /* sans propriétaire : les deux écrans répondent 404, leurs scripts et styles restent publics */
+      for (const u of ['/regie/', '/regie', '/maitre/', '/maitre/index.html', '/%72egie/', '/%6daitre/', '//regie/', '/REGIE/', '/regie%2f']) ok((await q.goto(B + u)).status() === 404, u + ' : 404 sans propriétaire');
+      for (const u of ['/regie/regie.js', '/regie/scene.js', '/maitre/maitre.js', '/maitre/modele.js']) ok((await q.goto(B + u)).status() === 200, u + ' : public');
+      await q.goto(B + '/', { waitUntil: 'networkidle' }); ok(await q.evaluate(() => typeof window.AIMEScene !== 'undefined' || !!document.querySelector('script[src="/regie/scene.js"]')), 'accueil : /regie/scene.js chargé sans propriétaire');
+      await z.close(); }
     const p = await ctx.newPage(), err = [];
     p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
