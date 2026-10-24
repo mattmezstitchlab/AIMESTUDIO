@@ -1,7 +1,9 @@
-/* AIME · la ligne légale du pied de page, identique sur toutes les pages publiques : Mentions légales · Confidentialité · Contact.
+/* AIME · la ligne légale du pied de page, identique sur toutes les pages publiques : Tarifs · Mentions légales · Confidentialité · Contact.
    Elle se pose dans le flux, en bas de page : la page réserve déjà la place du Dock (body.avec-dock), elle ne passe donc jamais dessous. */
 .pied-legal{margin:0 auto;padding:18px max(16px,env(safe-area-inset-left,0px)) 22px;text-align:center;font:500 12.5px/1.6 "Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,sans-serif;color:#9C9CA8}
-.pied-legal a{color:#EDEDF0;text-decoration:underline;text-underline-offset:3px;padding:6px 2px}
+.pied-legal a{display:inline-block;color:#EDEDF0;text-decoration:underline;text-underline-offset:3px;padding:6px 2px}   /* inline-block : sur deux lignes (393 px), les zones de toucher ne se chevauchent pas */
 .pied-legal a:hover{color:#fff}
 .pied-legal a:focus-visible{outline:2px solid #EDEDF0;outline-offset:3px;border-radius:4px}
 .pied-legal span{margin:0 8px}
+/* écran étroit : la ligne passe sur deux rangs ; sans les « · », aucun séparateur ne reste seul en bout de rang */
+@media (max-width:480px){.pied-legal{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 18px}.pied-legal span{display:none}}

@@ -161,3 +161,6 @@ html.calme figure.tel iframe,html.calme .tel-attente,html.calme .tel figcaption,
 .tel-dock{position:absolute;left:0;bottom:0;width:390px;height:844px;transform-origin:0 100%;pointer-events:none}
 .tel-dock>*{pointer-events:auto}
 .tel-sans-dock{position:absolute;left:14px;right:14px;bottom:20px;margin:0;padding:8px 10px;border-radius:14px;background:#0F0F12;border:1px solid #2B2B33;color:#9C9CA8;font:500 13px/1.35 "Inter Variable",Inter,sans-serif;text-align:center}
+
+/* les visuels des quatre arrivées : une photo réelle au-dessus du texte */
+.sc-photo{display:block;width:100%;height:auto;max-width:560px;aspect-ratio:16/9;object-fit:cover;border-radius:20px;margin:0 0 26px;box-shadow:0 30px 80px -40px rgba(0,0,0,.9)}
