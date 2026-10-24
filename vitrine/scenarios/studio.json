@@ -4,7 +4,7 @@
  "moteur": "regles",
  "demo": "Les écrans sont composés dans votre navigateur, à partir de données fictives, par des règles écrites pour cet exemple. Aujourd'hui, le Studio n'a pas de compte : rien n'est partagé.",
  "titre": "Festival Lignes Claires",
- "genre": "Supports imprimés · AIME Studio",
+ "genre": "Supports imprimés",
  "scripts": ["/coeur/coeur-regles.js"],
  "arriveesTexte": "Une affiche, un programme, des badges, une badgeuse, des avis. Neuf rôles autour des mêmes supports ; l'orbe recueille ce que chacun apporte, puis compose neuf écrans.",
  "source": {
