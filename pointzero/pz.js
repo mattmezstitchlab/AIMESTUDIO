@@ -342,8 +342,8 @@ function monter(conteneur,o){o=o||{};
   var a=el('div','pz-o-act');a.appendChild(lienSite(p,true));a.appendChild(lienCanevas(p));a.appendChild(transmettre(p));var s=bouton('Ouvrir dans AIME Stitch · bientôt','pz-b');s.disabled=true;a.appendChild(s);a.appendChild(bouton('Nouvelle matière','pz-b',retour));c.appendChild(a);V.compo=true;aller(5,600)}
  /* la carte s'ouvre en mini-site privé (lot B) : le projet ne bouge pas, on y revient tel quel */
  /* modifier le mini-site dans le Canevas : la page du projet le prépare (avec les données validées) puis l'y ouvre */
- function lienCanevas(p){var x=el('a','pz-b','Modifier dans le Canevas');x.href='/projet/?id='+encodeURIComponent(p.id)+'&de='+(/^\/bureau\//.test(location.pathname)?'/bureau/':'/point-zero/')+'&canevas=1';return x}
- function lienSite(p,principal){var x=el('a',principal?'pz-b pz-b-p':'pz-b','Voir mon mini-site');x.href='/projet/?id='+encodeURIComponent(p.id)+'&de='+(/^\/bureau\//.test(location.pathname)?'/bureau/':'/point-zero/');return x}
+ function lienCanevas(p){var x=el('a','pz-b','Modifier dans le Canevas');x.href='/projet/?id='+encodeURIComponent(p.id)+'&de='+'/point-zero/'+'&canevas=1';return x}
+ function lienSite(p,principal){var x=el('a',principal?'pz-b pz-b-p':'pz-b','Voir mon mini-site');x.href='/projet/?id='+encodeURIComponent(p.id)+'&de='+'/point-zero/';return x}
  function transmettre(p){var b=bouton(S.connecte?'Transmettre à AIME':'Se connecter pour transmettre','pz-b pz-b-p',function(){if(!S.connecte){location.href='/compte/';return}b.disabled=true;b.textContent='Transmission…';
    post('/api/remontee',{projet:p.type==='broderie'?B.remontee(p):p}).then(function(r){if(r.statut===200){b.textContent='Transmis à AIME';if(p.type==='broderie'){p.transmis=new Date().toISOString();enregistrer(p)}dire('C\'est transmis : AIME a reçu le résumé de votre projet (sans l\'image, qui reste chez vous).')}
     else{b.disabled=false;b.textContent='Transmettre à AIME';dire((r.j&&r.j.raison)||'Transmission impossible pour le moment.')}}).catch(function(){b.disabled=false;b.textContent='Transmettre à AIME';dire('Serveur injoignable : réessayez.')})});return b}
