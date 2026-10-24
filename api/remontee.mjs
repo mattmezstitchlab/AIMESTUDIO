@@ -1,8 +1,9 @@
 // POST /api/remontee { projet } : l'orbe remonte à AIME (CONTACT_TO) le résumé structuré d'un projet en préparation.
 // Session obligatoire (la personne vient du cookie vérifié, jamais du corps). Jamais d'image : elle reste sur l'appareil.
 // Le résumé est revalidé ici, champ par champ ; l'adresse de la personne n'est utilisée qu'en Reply-To.
-import { auth, personne, envoyer } from './_auth/auth.mjs';
-const vus = new Map(); const FENETRE = 10 * 60 * 1000, MAX = 5;
+import { auth, personne, envoyer, _pool } from './_auth/auth.mjs';
+import Q from './_auth/quotas.cjs';      /* 5 transmissions par personne et par 10 minutes, partagé entre instances (audit Vercel, PR 2) */
+import R from './_auth/requete.cjs';     /* même origine et corps JSON */
 function json(res, code, o) { res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify(o)); }
 async function corps(req) {
   if (req.body && typeof req.body === 'object') return req.body;
@@ -39,15 +40,16 @@ export function texte(p, u) {
 export default async function remontee(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { ok: false }); }
+  const refus = R.ecriture(req); if (refus) return json(res, ...refus);
   if (!auth()) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
   let u = null; try { u = await personne(req); } catch { u = null; }
   if (!u) return json(res, 401, { ok: false, raison: 'Connectez-vous pour transmettre votre projet à AIME.' });
   const dest = process.env.CONTACT_TO; if (!dest) return json(res, 503, { ok: false, raison: 'La transmission n\'est pas encore configurée : votre projet reste enregistré ici.' });
-  const t = Date.now(), l = (vus.get(u.id) || []).filter(x => t - x < FENETRE); if (l.length >= MAX) return json(res, 429, { ok: false, raison: 'Vous avez déjà transmis plusieurs fois : patientez quelques minutes.' });
-  l.push(t); vus.set(u.id, l);
+  const q = await Q.quota('remontee:personne', u.id, { db: _pool() });
+  if (!q.ok) { res.setHeader('Retry-After', String(q.attente)); return json(res, 429, { ok: false, raison: 'Vous avez déjà transmis plusieurs fois : patientez quelques minutes.' }); }
   const p = nettoyer((await corps(req)).projet), corpsTexte = texte(p, u);
   try { await envoyer({ to: dest, subject: `[AIME · Point Zéro] ${p.titre}`, text: corpsTexte, html: '<pre style="font:14px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap">' + esc(corpsTexte) + '</pre>', replyTo: u.email }); }
   catch { return json(res, 502, { ok: false, raison: 'Transmission impossible pour le moment : réessayez.' }); }
   return json(res, 200, { ok: true });
 }
-export function _reinitialiser() { vus.clear(); }
+export function _reinitialiser() { Q._oublier(); }

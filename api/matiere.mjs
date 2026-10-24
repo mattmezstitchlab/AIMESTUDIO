@@ -3,6 +3,7 @@
 // La personne vient de la session (cookie vérifié par Better Auth), jamais du corps. L'analyse est refaite ici, jamais reprise du navigateur.
 import { createRequire } from 'node:module';
 import { auth, personne, _pool } from './_auth/auth.mjs';
+import R from './_auth/requete.cjs';     /* même origine et corps JSON sur toute écriture (audit Vercel, PR 2) */
 const require = createRequire(import.meta.url);
 const A = require('../pointzero/analyse.js');
 const MAX_TEXTE = 20000, MAX_PAR_PERSONNE = 500, MAX_IMPORT = 50;
@@ -20,6 +21,7 @@ let db = null; export function _db(d) { db = d; }
 export default async function matiere(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return json(res, 405, { ok: false }); }
+  const refus = R.ecriture(req); if (refus) return json(res, ...refus);
   if (!auth()) return json(res, 503, { ok: false, raison: 'Les comptes ne sont pas encore ouverts sur cet environnement.' });
   let u = null; try { u = await personne(req); } catch { return json(res, 503, { ok: false, raison: 'Service indisponible : réessayez.' }); }
   if (!u) return json(res, 401, { ok: false, raison: 'Connectez-vous pour garder votre matière sur votre compte.' });

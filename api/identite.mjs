@@ -5,6 +5,7 @@
 // db/migrations/2026-10-22-identite.sql) ; si elle manque, l'état se déduit du compte (un nom = un timbre) et le dit.
 import { auth, personne, _pool } from './_auth/auth.mjs';
 import { estProprietaireId } from './_auth/proprietaire.mjs';
+import R from './_auth/requete.cjs';     /* même origine et corps JSON sur toute écriture (audit Vercel, PR 2) */
 function json(res, code, o) { res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify(o)); }
 async function corps(req) {
   if (req.body && typeof req.body === 'object') return req.body;
@@ -18,6 +19,7 @@ async function table(base) { const r = await base.query("select to_regclass('pub
 export default async function identite(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'GET' && req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return json(res, 405, { ok: false }); }
+  const refus = R.ecriture(req); if (refus) return json(res, ...refus);
   if (!auth()) return json(res, 200, { ok: true, connecte: false, timbre: false, ouvert: false });
   let u = null; try { u = await personne(req); } catch { return json(res, 503, { ok: false, raison: 'Service indisponible : réessayez.' }); }
   if (!u) return json(res, req.method === 'GET' ? 200 : 401, { ok: req.method === 'GET', connecte: false, timbre: false, ouvert: true, raison: req.method === 'GET' ? undefined : 'Connectez-vous d\'abord.' });
