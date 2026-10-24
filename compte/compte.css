@@ -1,5 +1,7 @@
 .cpt{display:grid;gap:22px;max-width:960px;margin:0 auto;padding:26px max(16px,env(safe-area-inset-right,0px)) 70px max(16px,env(safe-area-inset-left,0px));outline:none}
 .cpt h1{font:600 28px/1.15 var(--titre);margin:0;text-wrap:balance}
+.cpt #t-cnx,.cpt #t-moi{font:600 24px/1.15 var(--titre);margin:0;text-wrap:balance}
+.cpt-titre{display:grid;gap:4px;margin:4px 0 6px}.cpt-titre .leg{margin:0;color:#A6A6B2}
 .carte-c{border:1px solid var(--ligne);background:var(--carte);border-radius:18px;padding:20px;display:grid;gap:12px}
 .carte-c h3{margin:0;font:600 19px/1.2 var(--titre)}
 .alerte{border:1px solid rgba(253,164,175,.4);color:var(--ko);border-radius:12px;padding:12px 14px;margin:0}

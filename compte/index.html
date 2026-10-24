@@ -13,21 +13,22 @@
 <link rel="stylesheet" href="/live/live.css">
 <link rel="stylesheet" href="/compte/timbre.css">
 <link rel="stylesheet" href="/compte/compte.css">
+<link rel="stylesheet" href="/dock/dock.css">
 </head>
 <body>
 <a class="evite" href="#contenu">Aller au contenu</a>
+<!-- en haut, seulement le logo : « Mon compte », « Mes projets » et « Se déconnecter » passent par le Dock et son + -->
 <header class="tete">
- <a class="mk" href="/" aria-label="AIME, Page Zéro">AIME<sup>®</sup> <span>Compte</span></a>
- <div class="ev"><b id="tTitre">Mon compte</b><span id="tSous">Vos espaces partagés, vos invitations, vos clés d'accès</span></div>
- <div class="tete-d"><a class="b" id="versAutre" href="/projets/" hidden>Mes projets</a><button class="b" type="button" id="sortir" hidden>Se déconnecter</button></div>
+ <a class="mk" href="/" aria-label="AIME, accueil">AIME<sup>®</sup></a>
 </header>
 
 <main id="contenu" tabindex="-1" class="cpt">
+ <div class="cpt-titre"><h1 id="tTitre">Mon compte</h1><p class="leg" id="tSous">Votre adresse, votre Timbre, vos clés d'accès</p></div>
  <p class="alerte" id="ferme" hidden></p>
  <p class="bandeau" id="invite" hidden>Vous avez reçu une invitation dans un espace AIME. Connectez-vous avec l'adresse qui l'a reçue pour la rejoindre.</p>
 
  <section class="carte-c" id="connexion" hidden aria-labelledby="t-cnx">
-  <h1 id="t-cnx">Se connecter</h1>
+  <h2 id="t-cnx">Se connecter</h2>
   <p class="leg">Pas de mot de passe : un lien de connexion vous est envoyé par e-mail, puis vous pouvez ajouter une clé d'accès (Face ID, Touch ID, empreinte, code de l'appareil).</p>
   <form class="lgn" id="fLien"><label class="sr" for="cEmail">Adresse e-mail</label><input id="cEmail" type="email" autocomplete="email webauthn" required placeholder="vous@exemple.fr" style="flex:1;min-width:220px"><button class="b b-p" type="submit">Recevoir un lien</button></form>
   <p class="ok" id="lienEnvoye" hidden role="status"></p>
@@ -38,9 +39,9 @@
 
  <section class="carte-c" id="profil" hidden aria-labelledby="t-moi">
   <div class="moi">
-   <div class="moi-t"><div id="monTimbre"></div><label class="b b-s">Changer la photo<input type="file" id="photo" accept="image/*" hidden></label><button class="b b-s" type="button" id="sansPhoto" hidden>Retirer la photo</button></div>
+   <div class="moi-t"><div id="monTimbre"></div><label class="b b-s">Changer la photo<input type="file" id="photo" accept="image/*" hidden></label><button class="b b-s" type="button" id="sansPhoto" hidden>Retirer la photo</button><a class="b b-s" id="monTimbreLien" href="/point-zero/?intention=identite">Mon timbre</a></div>
    <div class="pile" style="flex:1;min-width:0">
-    <h1 id="t-moi">Bonjour<span id="bonjour"></span></h1>
+    <h2 id="t-moi">Bonjour<span id="bonjour"></span></h2>
     <p class="leg" id="monEmail"></p>
     <form class="lgn" id="fNom"><label class="sr" for="nom">Votre nom</label><input id="nom" maxlength="80" placeholder="Votre nom, tel que les autres le verront" style="flex:1;min-width:200px"><button class="b" type="submit">Enregistrer</button></form>
     <div class="pile"><h2 class="k" style="margin:8px 0 0">Clés d'accès</h2><ul class="cles" id="cles"></ul><span><button class="b b-s" type="button" id="ajCle">+ Ajouter une clé d'accès sur cet appareil</button></span></div>
@@ -70,5 +71,10 @@
 <script src="/compte/timbre.js"></script>
 <script src="/coeur/roles.js"></script>
 <script src="/compte/compte.js"></script>
+<script src="/dock/modele.js"></script>
+<script src="/dock/dock.js"></script>
+<script src="/dock/plus.js"></script>
+<div id="dock-site"></div>
+<script>/* le Dock, public ou connecté, comme partout (docs/IDENTITE.md § 6) */(function(){var el=document.getElementById('dock-site');if(!el||!window.AIMEDock||!window.AIMEDockVue)return;AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site',actif:/^\/projets/.test(location.pathname)?'':'compte'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')})();</script>
 </body>
 </html>
