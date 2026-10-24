@@ -10,7 +10,7 @@ const BASE = 'http://localhost:8776';
 let A, E, PG, AC, liens = [], pool, ipn = 0;
 
 function appel(fn, req) { return new Promise(d => { const res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; fn(Object.assign({ headers: {} }, req), res); }); }
-const post = (body, cookie) => appel(E.default, { method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json' }, cookie ? { cookie } : {}) });
+const post = (body, cookie) => appel(E.default, { method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json', origin: 'http://localhost', host: 'localhost' }, cookie ? { cookie } : {}) });
 const page = (espace, gabarit, cookie) => appel(PG.default, { method: 'GET', url: '/api/page?espace=' + encodeURIComponent(espace) + '&gabarit=' + gabarit, headers: cookie ? { cookie } : {} });
 async function connecter(email, cb) {
   const a = A.auth(); liens = [];
@@ -26,6 +26,7 @@ before(async () => { if (!URLT) return;
   A = await import('../api/_auth/auth.mjs'); E = await import('../api/espaces.mjs'); PG = await import('../api/page.mjs'); AC = await import('../api/_auth/activites.mjs');
   A._envoyeur(m => { liens.push(m); }); A.auth(); pool = A._pool(); AC._oublier();
   await pool.query('truncate "user", spaces, invitations, live_journal, audit cascade').catch(async () => { await pool.query('truncate "user", spaces, invitations, live_journal cascade'); });
+  await pool.query('truncate quotas').catch(() => {});   /* les quotas partagés (migration 06) : chaque passe repart de zéro */
 });
 after(async () => { if (pool) await pool.end(); });
 

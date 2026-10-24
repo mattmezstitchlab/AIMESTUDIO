@@ -8,7 +8,7 @@ const BASE = 'http://localhost:8774';
 let A, E, G, PG, liens = [], pool, ipn = 0;
 
 async function post(body, cookie) { let res; const p = new Promise(d => { res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; });
-  await E.default({ method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json' }, cookie ? { cookie } : {}) }, res); return p; }
+  await E.default({ method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json', origin: 'http://localhost', host: 'localhost' }, cookie ? { cookie } : {}) }, res); return p; }
 async function page(espace, gabarit, cookie) { let res; const p = new Promise(d => { res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, end(t) { d({ code: this.statusCode, h: this.h, body: t ? JSON.parse(t) : null, brut: t || '' }); } }; });
   await PG.default({ method: 'GET', url: '/api/page?espace=' + encodeURIComponent(espace) + '&gabarit=' + encodeURIComponent(gabarit), headers: cookie ? { cookie } : {} }, res); return p; }
 async function connecter(email, nom) {
@@ -30,6 +30,7 @@ before(async () => { if (!URLT) return;
   A = await import('../api/_auth/auth.mjs'); E = await import('../api/espaces.mjs'); PG = await import('../api/page.mjs'); G = await import('../api/_auth/pages.mjs');
   A._envoyeur(m => { liens.push(m); }); A.auth(); pool = A._pool();
   await pool.query('truncate "user", spaces, invitations, live_journal, audit cascade').catch(async () => { await pool.query('truncate "user", spaces, invitations, live_journal cascade'); });
+  await pool.query('truncate quotas').catch(() => {});   /* les quotas partagés (migration 06) : chaque passe repart de zéro */
 });
 after(async () => { if (pool) await pool.end(); });
 

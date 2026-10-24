@@ -8,7 +8,7 @@ const opts = { skip: !URLT && 'TEST_DATABASE_URL_ANCIEN absent' };
 const BASE = 'http://localhost:8773';
 let A, E, liens = [], pool, ipn = 0;
 async function appel(h, body, cookie) { let res; const p = new Promise(d => { res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, status(c) { this.statusCode = c; return this; }, json(o) { d({ code: this.statusCode, body: o }); }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; });
-  await h({ method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json', 'x-forwarded-for': '198.51.100.' + (++ipn % 250) }, cookie ? { cookie } : {}) }, res); return p; }
+  await h({ method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json', origin: 'http://localhost', host: 'localhost', 'x-forwarded-for': '198.51.100.' + (++ipn % 250) }, cookie ? { cookie } : {}) }, res); return p; }
 async function connecter(email) {
   const a = A.auth(); liens = [];
   let r = await a.handler(new Request(BASE + '/api/auth/sign-in/magic-link', { method: 'POST', headers: { 'content-type': 'application/json', origin: BASE, 'x-forwarded-for': '192.0.2.' + (++ipn % 250) }, body: JSON.stringify({ email, callbackURL: '/compte/' }) }));

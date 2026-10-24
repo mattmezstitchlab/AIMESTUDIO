@@ -10,7 +10,7 @@ test('comptes · fermés par défaut : sans base ou sans secret, 503, en product
   assert.equal(A.pret({ DATABASE_URL: 'x', BETTER_AUTH_SECRET: 'court' }), false, 'un secret trop court ne suffit pas');
   const h = (await import('../api/comptes.mjs')).default, E = (await import('../api/espaces.mjs')).default;
   let r = res(); await h({ method: 'GET', url: '/api/auth/get-session', headers: {} }, r); r = await r.p; assert.equal(r.code, 503); assert.doesNotMatch(JSON.stringify(r.body), /DATABASE|SECRET|postgres/i);
-  r = res(); await E({ method: 'POST', body: { action: 'mes' }, headers: {} }, r); assert.equal((await r.p).code, 503);
+  r = res(); await E({ method: 'POST', body: { action: 'mes' }, headers: { 'content-type': 'application/json', origin: 'http://localhost', host: 'localhost' } }, r); assert.equal((await r.p).code, 503);
   process.env.VERCEL_ENV = 'production'; r = res(); await h({ method: 'GET', url: '/api/auth/get-session', headers: {} }, r); assert.equal((await r.p).code, 503, 'ouvert en production, mais toujours fermé sans base ni secret');
   Object.keys(process.env).forEach(k => { if (!(k in sauv)) delete process.env[k]; }); Object.assign(process.env, sauv);
 });

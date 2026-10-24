@@ -10,7 +10,7 @@ let A, E, C, liens = [], pool, ipn = 0;
 function reponse() { return new Promise(done => { const r = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, getHeader(k) { return this.h[k.toLowerCase()]; },
   status(c) { this.statusCode = c; return this; }, json(o) { done({ code: this.statusCode, body: o }); }, end(t) { done({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; r.done = done; return r; }); }
 async function appel(h, body, cookie) { let res; const p = new Promise(d => { res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, status(c) { this.statusCode = c; return this; }, json(o) { d({ code: this.statusCode, body: o }); }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; });
-  await h({ method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json', 'x-forwarded-for': '198.51.100.' + Math.floor(Math.random() * 250) }, cookie ? { cookie } : {}) }, res); return p; }
+  await h({ method: 'POST', body, headers: Object.assign({ 'content-type': 'application/json', origin: 'http://localhost', host: 'localhost', 'x-forwarded-for': '198.51.100.' + Math.floor(Math.random() * 250) }, cookie ? { cookie } : {}) }, res); return p; }
 async function connecter(email) {
   const a = A.auth(); liens = [];
   let r = await a.handler(new Request(BASE + '/api/auth/sign-in/magic-link', { method: 'POST', headers: { 'content-type': 'application/json', origin: BASE, 'x-forwarded-for': '192.0.2.' + (++ipn) }, body: JSON.stringify({ email, callbackURL: '/compte/' }) }));
@@ -26,6 +26,7 @@ before(async () => { if (!URLT) return;
   A = await import('../api/_auth/auth.mjs'); E = await import('../api/espaces.mjs'); C = require('../api/_live/core.js');
   A._envoyeur(m => { liens.push(m); }); A.auth(); pool = A._pool();
   await pool.query('truncate "user", spaces, invitations, live_journal cascade');
+  await pool.query('truncate quotas').catch(() => {});   /* les quotas partagés (migration 06) : chaque passe repart de zéro */
   C._base(() => (s, ...v) => pool.query(s.reduce((acc, x, i) => acc + '$' + i + x), v).then(r => r.rows)); C._reinitialiser();
 });
 after(async () => { if (pool) await pool.end(); });
