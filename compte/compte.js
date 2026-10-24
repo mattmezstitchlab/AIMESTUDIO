@@ -31,7 +31,7 @@ function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','
 requete('/api/auth/get-session').then(function(r){
  if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=(r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.';if(PROJETS)surCetAppareil(false);return}
  if(!r.j||!r.j.user){$('connexion').hidden=false;if(PROJETS&&!OUVRIR&&!INVIT&&!CREER&&!ACTIVITE)surCetAppareil(false);if(CREER||ACTIVITE)$('depuisAccueil').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
- moi=r.j.user;afficherProfil();$('profil').hidden=PROJETS;$('espaces').hidden=!PROJETS;$('zoneSuppr').hidden=PROJETS;
+ moi=r.j.user;afficherProfil();inviterNom();$('profil').hidden=PROJETS;$('espaces').hidden=!PROJETS;$('zoneSuppr').hidden=PROJETS;
  (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' ».');$('invite').hidden=true;if(x.espace)OUVRIR=x.espace}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
   .then(function(){
    /* « Créer notre mariage » : la seule fonction de création, sans doublon (l'origine vient de l'accueil) ; puis l'écran du projet */
@@ -106,5 +106,12 @@ function surCetAppareil(connecte){var Pj=window.AIMEProjets,z=$('local');if(!Pj|
    b.onclick=function(){confirmer(b,'Confirmer : créer',function(){b.disabled=true;var g=e.genre==='mariage'||e.genre==='seminaire'?e.genre:undefined,o=('essai-'+String(p.id).replace(/[^A-Za-z0-9_-]/g,'')).slice(0,80);
     C.creer({titre:p.titre,modele:g,origine:o}).then(function(x){location.href='/projets/?espace='+encodeURIComponent(x.id)}).catch(function(err){b.disabled=false;toast(err.message,true)})})};h.appendChild(b)}
   c.appendChild(h);box.appendChild(c)})}
+
+/* ---------- le nom, à la première connexion : une invitation discrète, qu'on peut ignorer ; elle ne bloque jamais l'entrée ---------- */
+function inviterNom(){var f=$('nomInvite');if(!PROJETS||!f||!moi||(moi.name&&moi.name.trim()))return;var cle='aime-nom-plus-tard-'+moi.id;try{if(localStorage.getItem(cle))return}catch(_){}
+ f.hidden=false;
+ $('nomPlusTard').onclick=function(){f.hidden=true;try{localStorage.setItem(cle,'1')}catch(_){}};
+ f.onsubmit=function(e){e.preventDefault();var n=$('nomInviteChamp').value.trim().slice(0,80);if(!n){$('nomInviteChamp').focus();return}
+  majProfil({name:n},'Merci, '+n+'.').then(function(){if(moi.name===n)f.hidden=true})}}
 
 })();

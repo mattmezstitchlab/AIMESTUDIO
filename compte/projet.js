@@ -36,12 +36,12 @@ var RENDU={
  personne:function(b){var d=el('div','carte-c');d.appendChild(el('p',null,b.nom+(b.moi?' (vous)':'')+(b.relation?' · '+b.relation:'')));return d},
  liste:function(b){var c=el('div','carte-c');c.appendChild(el('h2','k','Les personnes du projet'));var u=el('ul','p-liste p-personnes');
   (b.personnes||[]).forEach(function(x){var li=el('li','lgn');var t=el('span',null,x.nom+(x.moi?' (vous)':'')+' · '+x.relation+(x.jusquau?' · jusqu\'au '+date(x.jusquau):'')+(x.email?' · '+x.email:''));li.appendChild(t);
-   if(x.ref){var bt=el('button','b b-s','Retirer');bt.type='button';bt.onclick=function(){confirmer(bt,'Confirmer le retrait',function(){post({action:'retirer',espace:espace,membre:x.ref}).then(function(){dire(x.nom+' n\'a plus accès au projet.');ouvrir(espace,'personnes')}).catch(function(e){dire(e.message,true)})})};li.appendChild(bt)}
+   if(x.ref){var bt=el('button','b b-s','Retirer');bt.type='button';bt.onclick=function(){confirmer(bt,'Confirmer le retrait',function(){post({action:'retirer',espace:espace,membre:x.ref}).then(function(){dire(x.nom+' n\'a plus accès au projet.');rafraichir()}).catch(function(e){dire(e.message,true)})})};li.appendChild(bt)}
    u.appendChild(li)});c.appendChild(u);return c},
  effectif:function(b){var N={owner:'propriétaire',editor:'coordination',contributor:'contribution',viewer:'lecture',guest:'invité'};return el('p','leg',b.texte+' '+Object.keys(b.effectif||{}).map(function(k){return b.effectif[k]+' × '+(N[k]||k)}).join(', ')+'.')},
  invitations:function(b){var c=el('div','carte-c');c.appendChild(el('h2','k','Invitations en cours'));if(!(b.invitations||[]).length){c.appendChild(el('p','leg','Aucune invitation en cours.'));return c}
   var u=el('ul','p-liste');b.invitations.forEach(function(i){var li=el('li','lgn');li.appendChild(el('span',null,i.relation+(i.email?' · '+i.email:(i.nominative?' · nominative':' · sans adresse'))+' · expire le '+date(i.expire)+(i.jusquau?' · rôle jusqu\'au '+date(i.jusquau):'')));
-   if(i.annulable){var bt=el('button','b b-s','Annuler');bt.type='button';bt.onclick=function(){post({action:'annuler',espace:espace,invitation:i.ref}).then(function(){dire('Invitation annulée.');ouvrir(espace,'personnes')}).catch(function(e){dire(e.message,true)})};li.appendChild(bt)}
+   if(i.annulable){var bt=el('button','b b-s','Annuler');bt.type='button';bt.onclick=function(){post({action:'annuler',espace:espace,invitation:i.ref}).then(function(){dire('Invitation annulée.');rafraichir()}).catch(function(e){dire(e.message,true)})};li.appendChild(bt)}
    u.appendChild(li)});c.appendChild(u);return c},
  geste:function(b){return b.geste==='signaler'?signaler(b):b.geste==='inviter'?inviter(b):null}
 };
@@ -64,16 +64,17 @@ function inviter(b){var c=el('form','carte-c pile');c.id='pInviter';c.appendChil
  c.onsubmit=function(e){e.preventDefault();ok.disabled=true;post({action:'inviter',espace:espace,role:sel.value,relation:rel.value.trim()||undefined,email:em.value.trim()||undefined,jusquau:ju.value?new Date(ju.value+'T23:59:59').toISOString():undefined})
   .then(function(x){res.textContent='';var lg=el('div','lgn lien');var i=el('input');i.readOnly=true;i.value=x.lien;i.setAttribute('aria-label','Lien d\'invitation');i.style.flex='1';i.style.minWidth='0';
    var cp=el('button','b','Copier');cp.type='button';cp.onclick=function(){(navigator.clipboard?navigator.clipboard.writeText(x.lien):Promise.reject()).then(function(){dire('Lien copié.')}).catch(function(){i.select();dire('Sélectionné : copiez-le.')})};lg.appendChild(i);lg.appendChild(cp);res.appendChild(lg);
-   res.appendChild(el('p','leg','Lien à usage unique, valable '+x.jours+' jours'+(x.email?', réservé à '+x.email:'')+(x.relation?', comme '+x.relation:'')+(x.jusquau?' ; accès jusqu\'au '+date(x.jusquau):'')+'. Envoyez-le par le moyen de votre choix.'));rel.value='';em.value='';ju.value=''})
+   res.appendChild(el('p','leg','Lien à usage unique, valable '+x.jours+' jours'+(x.email?', réservé à '+x.email:'')+(x.relation?', comme '+x.relation:'')+(x.jusquau?' ; accès jusqu\'au '+date(x.jusquau):'')+'. Envoyez-le par le moyen de votre choix.'));rel.value='';em.value='';ju.value='';rafraichir()})
   .catch(function(err){dire(err.message,true)}).then(function(){ok.disabled=false})};
  return c}
 
-function composerPage(){var C=$('pCorps');C.textContent='';
+/* garder : le formulaire d'invitation déjà affiché (avec le lien qu'il vient de produire), reposé tel quel au lieu d'être recréé */
+function composerPage(garder){var C=$('pCorps');C.textContent='';
  var nav=el('nav','p-onglets');nav.setAttribute('aria-label','Pages du projet');
  (rep.dock&&rep.dock.lieux||[]).forEach(function(l){if(GAB.indexOf(l.gabarit)<0)return;var a=el('a','b b-s',l.nom);a.href='/projets/?espace='+encodeURIComponent(espace)+'&page='+l.gabarit;if(l.gabarit===courant)a.setAttribute('aria-current','page');a.onclick=function(e){e.preventDefault();ouvrir(espace,l.gabarit)};nav.appendChild(a)});
  C.appendChild(nav);
  var h=el('h2','p-titre',(rep.mots&&rep.mots.titre)||'');h.tabIndex=-1;h.id='pTitre';C.appendChild(h);
- var lignes=null;(rep.blocs||[]).forEach(function(b){var f=RENDU[b.type];if(!f)return;var n=f(b);if(!n)return;if(b.type==='ligne'){if(!lignes){lignes=el('ol','p-journal');C.appendChild(lignes)}lignes.appendChild(n)}else C.appendChild(n)});
+ var lignes=null;(rep.blocs||[]).forEach(function(b){var f=RENDU[b.type];if(!f)return;var n=garder&&b.id==='personnes-inviter'?garder:f(b);if(!n)return;if(b.type==='ligne'){if(!lignes){lignes=el('ol','p-journal');C.appendChild(lignes)}lignes.appendChild(n)}else C.appendChild(n)});
  if(rep.vide)C.appendChild(el('p','leg',rep.vide))}
 
 function ouvrir(id,g){espace=id;courant=GAB.indexOf(g)>=0?g:'acces';var P=$('projet');if(!P)return Promise.resolve();
@@ -85,5 +86,11 @@ function ouvrir(id,g){espace=id;courant=GAB.indexOf(g)>=0?g:'acces';var P=$('pro
   composerPage();dock();var t=$('pTitre');if(t)t.focus({preventScroll:true})})
  .catch(function(){$('pCorps').textContent='';$('pCorps').appendChild(el('p','alerte','Serveur injoignable. Réessayez dans un instant.'))})}
 
-window.AIMEProjet={ouvrir:ouvrir,RENDU:RENDU};
+/* après un geste (invitation créée, membre retiré, invitation annulée) : la page en cours est relue au serveur et ses blocs reposés,
+   sans quitter la page ni perdre le lien d'invitation qui vient d'être créé ; le focus reste où il était quand c'est possible */
+function rafraichir(){if(!espace)return Promise.resolve();var f=document.activeElement,garder=$('pInviter');
+ return lire(courant).then(function(j){if(j._code!==200||!j.ok)return ouvrir(espace,courant);rep=j;var y=window.scrollY;composerPage(garder);dock();window.scrollTo(0,y);
+  if(f&&document.body.contains(f))f.focus({preventScroll:true});else{var t=$('pTitre');if(t)t.focus({preventScroll:true})}}).catch(function(){})}
+
+window.AIMEProjet={ouvrir:ouvrir,rafraichir:rafraichir,RENDU:RENDU};
 })();
