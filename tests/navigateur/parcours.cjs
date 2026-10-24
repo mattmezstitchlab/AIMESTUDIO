@@ -16,7 +16,7 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
     p.on('pageerror', e => err.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !IGNORE.test(m.text())) err.push(m.text()); });
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
-    for (const u of ['/', '/contact/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
+    for (const u of ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
     }
     // Exemples : la mosaïque d'abord, plus de liste répétée en bas, aucune case vide dans la grille
@@ -84,6 +84,14 @@ const IGNORE = /fonts\.g|Failed to load resource|Blocked script execution|net::E
       ok(await t.evaluate(() => !document.getElementById('jsLien').hidden && document.activeElement && document.activeElement.id === 'jsEmail'), 'accueil : sans session, « Créer » demande l\'adresse du lien de connexion');
       ok(await dessus('#jsLien button'), 'accueil (393×659) : « Recevoir le lien » reste au-dessus du Dock');
       ok(!api.some(x => /espaces|sign-in/.test(x)), 'accueil : rien n\'est créé ni envoyé avant l\'adresse');
+      // pied légal (393×659) : en bas de chaque page publique, la ligne reste au-dessus du Dock, lisible et cliquable ; Speed Insights chargé sans erreur
+      for (const u of ['/', '/exemples/', '/exemples/mosaique/', '/contact/', '/compte/', '/projets/', '/confidentialite/', '/mentions-legales/']) {
+        await t.goto(B + u, { waitUntil: 'networkidle' }); await t.waitForTimeout(300); await t.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await t.waitForTimeout(300);
+        ok(await t.evaluate(() => { const n = document.querySelector('.pied-legal'), d = document.querySelector('#dock-site .dock'); if (!n) return false; const r = n.getBoundingClientRect(), bas = d ? d.getBoundingClientRect().top : innerHeight; const liens = [...n.querySelectorAll('a')]; return r.height > 0 && r.bottom <= bas + 1 && r.left >= 0 && r.right <= innerWidth && liens.length === 3 && liens.every(a => { const q = a.getBoundingClientRect(), x = q.left + q.width / 2, y = q.top + q.height / 2; return document.elementFromPoint(x, y) === a; }); }), u + ' (393×659) : « Mentions légales · Confidentialité · Contact » au-dessus du Dock, chaque lien cliquable');
+        ok(await t.evaluate(() => typeof window.si === 'function' && !!document.querySelector('script[src="/_vercel/speed-insights/script.js"]')), u + ' : Speed Insights présent');
+      }
+      await t.goto(B + '/mentions-legales/', { waitUntil: 'networkidle' });
+      ok(await t.evaluate(() => /798 582 342 00035/.test(document.body.innerText) && /Vercel Inc\./.test(document.body.innerText) && /Francfort/.test(document.body.innerText)), '/mentions-legales/ : éditeur, hébergeur, stockage');
       await q.close(); }
     // la mosaïque (démonstration) : aucun son avant le premier geste ; « Activer » lance les téléphones, sans erreur
     { const m = await ctx.newPage(), em = []; m.on('pageerror', e => em.push(e.message));
