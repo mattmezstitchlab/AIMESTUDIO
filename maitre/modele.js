@@ -58,7 +58,7 @@ function resumer(src){src=src||{};var P=src.proprietaire===true,R=src.regie,cfg=
     [(st.disponible||0)+' · '+(st.demonstration||0)+' · '+(st.experimental||0),'disponibles · démonstrations · expérimentales'],
     [fr((src.nav.CATS||[]).length),'catégories du menu Explorer']].concat(cfg?[[fr(pg.length),'pages réglées par la Régie ('+app+' appareil'+(app>1?'s':'')+')']]:[]),
    [['nav/registre.js','ENTREES, CATS, STATUTS']].concat(cfg?[['regie/site.json','pages, version publiée']]:[]),
-   [action('lecture','Explorer les destinations','Toutes les apps et pages, dans le Bureau.','/bureau/'),regie('Régler les pages','La Régie, onglet Pages et arborescence.','/regie/#pages'),regie('Éditer sur la page','La Régie, onglet Édition sur la page.','/regie/#edition')])}
+   [action('lecture','Retrouver ses projets','Vos projets et vos invitations, dans Mes projets.','/projets/'),regie('Régler les pages','La Régie, onglet Pages et arborescence.','/regie/#pages'),regie('Éditer sur la page','La Régie, onglet Édition sur la page.','/regie/#edition')])}
 
  /* Orbe : les réglages publiés, site par site ; le vocabulaire est celui de la Régie ; aucun droit */
  if(cfg&&R){var ob=cfg.orbe||{},k=Object.keys(ob),pres=k.filter(function(x){return(ob[x]||{}).presence&&ob[x].presence!=='aucune'}).length,sug=0;k.forEach(function(x){sug+=((ob[x]||{}).suggestions||[]).length});
