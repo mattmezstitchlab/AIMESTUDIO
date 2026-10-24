@@ -67,6 +67,7 @@
 (function(){'use strict';
 var EX=[
  {u:'mariage',href:'/',genre:'Mariage',titre:'Léa & Marc',texte:'Le couple, le prestataire, l\'invitée, la coordination.',n:4},
+ {u:'mosaique',href:'/exemples/mosaique/',genre:'Mariage · le jour J',titre:'Chacun son écran',texte:'Sept téléphones, un seul mariage : quand quelque chose arrive, seuls les écrans concernés sonnent. Démonstration.',n:7},
  {u:'world',href:'/exemples/?u=world',genre:'Mariage à distance',titre:'Inès & Théo · Paris / New York',texte:'Le couple, l\'agence, le prestataire, l\'invitée, la contributrice, la coordination locale.',n:6},
  {u:'seminaire',href:'/exemples/?u=seminaire',genre:'Séminaire d\'entreprise',titre:'Maison Orée · Cap 2030',texte:'La direction, l\'intervenante, le participant, la logistique, le traiteur, l\'observateur.',n:6},
  {u:'stitch',href:'/exemples/?u=stitch',genre:'Création · AIME Stitch',titre:'Un patron, quatre regards',texte:'La créatrice, la boutique, la brodeuse, la visiteuse : la grille ne sort que pour qui y a droit.',n:4},
@@ -75,7 +76,7 @@ var EX=[
  {u:'studio',href:'/exemples/?u=studio',genre:'Supports imprimés · AIME Studio',titre:'Un festival, neuf rôles',texte:'L\'auteur, le client, le relecteur, l\'imprimeur, la bénévole, la personne badgée, le responsable, l\'auteur d\'un avis, l\'écriture assistée.',n:9},
  {u:'g44',href:'/exemples/?u=g44',genre:'Administration · G44 LAB',titre:'Un dossier, quatre missions',texte:'L\'agent, le formateur, la responsable, le contrôleur : un dossier fictif, des habilitations, rien d\'exécuté.',n:4}];
 var $=function(i){return document.getElementById(i)},esc=function(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
-var u=(new URLSearchParams(location.search).get('u')||'').replace(/[^a-z0-9]/g,''),ex=EX.filter(function(e){return e.u===u&&e.u!=='mariage'})[0];
+var u=(new URLSearchParams(location.search).get('u')||'').replace(/[^a-z0-9]/g,''),ex=EX.filter(function(e){return e.u===u&&e.u!=='mariage'&&e.u!=='mosaique'})[0];
 $('exAutres').innerHTML=EX.filter(function(e){return!ex||e.u!==ex.u}).map(function(e){return'<li><a href="'+e.href+'">'+esc(e.genre)+' · '+esc(e.titre)+' · '+e.n+' rôles</a></li>'}).join('');
 function charger(srcs,fin){var i=0;(function suite(){if(i>=srcs.length)return fin();var s=document.createElement('script');s.src=srcs[i++];s.onload=suite;s.onerror=suite;document.body.appendChild(s)})()}
 var ORBE=['/zero/orbe.js','/zero/points.js','/zero/yeux.js','/zero/formes.js','/zero/zero.js'];
