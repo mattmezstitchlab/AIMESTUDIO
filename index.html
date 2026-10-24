@@ -108,6 +108,15 @@ html.calme .pt.vif{animation:none}
 .duo-o.cligne .oeil{transform:scaleY(.08)}
 
 /* le formulaire de contact a déménagé vers /contact/ (lien en pied de page) */
+
+/* les visuels : une scène réelle derrière le Point Zéro ; l'orbe, le logo et les animations restent au-dessus */
+.zero-photo{position:absolute;inset:0 0 auto;height:100svh;z-index:0;overflow:hidden;pointer-events:none}
+.zero-photo img{width:100%;height:100%;object-fit:cover;display:block;opacity:.62}
+.zero-photo::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 50% 40%,rgba(10,10,12,.55),rgba(10,10,12,.2) 70%),linear-gradient(180deg,rgba(10,10,12,.55) 0%,rgba(10,10,12,0) 28%,rgba(10,10,12,0) 62%,var(--desk) 100%)}
+.zero>*:not(.zero-photo){position:relative;z-index:1}
+.zero>.col{z-index:2}   /* la liste « Je suis… » (dans .col) s'ouvre par-dessus la démo et les vidéos, ses voisines */
+html.calme .zero-photo img{opacity:.5}
+@media (max-width:700px){.zero-photo img{object-position:9% 50%;opacity:.7}}
 </style>
 <link rel="stylesheet" href="/accueil/accueil.css">
 <link rel="stylesheet" href="/accueil/je-suis.css">
@@ -126,6 +135,9 @@ html.calme .pt.vif{animation:none}
 <main>
 <!-- 0 · Ouverture : le Point Zéro -->
 <section class="zero" id="haut" aria-labelledby="t-zero">
+ <picture class="zero-photo" aria-hidden="true">
+  <img src="/media/visuels/cour-trio.webp" alt="" width="1672" height="941" fetchpriority="high" decoding="async">
+ </picture>
  <span class="ancre" data-orbe="1"></span>
  <div class="col">
   <h1 id="t-zero">AIME<sup>®</sup></h1>
@@ -197,6 +209,7 @@ html.calme .pt.vif{animation:none}
  <section class="sc" id="arr-couple" aria-labelledby="t-arr-couple">
   <div class="cx-in sc-in">
    <div class="sc-texte">
+    <img class="sc-photo" src="/media/visuels/maries.webp" alt="Deux mariés regardent ensemble leur téléphone sur les marches du domaine" width="1200" height="675" loading="lazy" decoding="async">
     <p class="sc-k">1 / 4 · Le couple</p>
     <h3 id="t-arr-couple">Le couple crée le projet.</h3>
     <p>Léa écrit une phrase sur l'accueil. AIME en tire le projet : qui, quand, où, combien. C'est la source que tout le reste lira.</p>
@@ -213,6 +226,7 @@ html.calme .pt.vif{animation:none}
  <section class="sc" id="arr-prestataire" aria-labelledby="t-arr-prestataire">
   <div class="cx-in sc-in">
    <div class="sc-texte">
+    <img class="sc-photo" src="/media/visuels/photographe.webp" alt="Un photographe consulte sa mission entre deux réglages" width="1200" height="675" loading="lazy" decoding="async">
     <p class="sc-k">2 / 4 · Le prestataire</p>
     <h3 id="t-arr-prestataire">Le photographe rejoint le mariage.</h3>
     <p>Déjà inscrit sur AIME, Studio Lumen est invité au projet en un geste. Nouveau, il s'inscrit avec le lien reçu, puis rejoint. Dans les deux cas, il apporte son créneau et son contrat, rien de plus.</p>
@@ -229,6 +243,7 @@ html.calme .pt.vif{animation:none}
  <section class="sc" id="arr-invite" aria-labelledby="t-arr-invite">
   <div class="cx-in sc-in">
    <div class="sc-texte">
+    <img class="sc-photo" src="/media/visuels/invitee.webp" alt="Une invitée lit son programme en se préparant" width="1200" height="675" loading="lazy" decoding="async">
     <p class="sc-k">3 / 4 · L'invitée</p>
     <h3 id="t-arr-invite">L'invitée reçoit son invitation.</h3>
     <p>Lucie reçoit un lien. Elle s'inscrit en une étape, rejoint le mariage et répond. Sa réponse n'est écrite qu'une fois : le couple la voit, le traiteur n'en reçoit que le régime.</p>
@@ -245,6 +260,7 @@ html.calme .pt.vif{animation:none}
  <section class="sc" id="arr-coord" aria-labelledby="t-arr-coord">
   <div class="cx-in sc-in">
    <div class="sc-texte">
+    <img class="sc-photo" src="/media/visuels/coordinatrice.webp" alt="Une coordinatrice vérifie le déroulé en traversant la salle" width="1200" height="675" loading="lazy" decoding="async">
     <p class="sc-k">4 / 4 · La coordination</p>
     <h3 id="t-arr-coord">La coordinatrice prend le déroulé.</h3>
     <p>Camille est invitée par le couple pour coordonner le jour J. Elle tient le déroulé, le plan B et l'équipe ; elle ne voit ni les paiements privés ni ce qui ne la regarde pas.</p>
@@ -352,7 +368,7 @@ html.calme .pt.vif{animation:none}
 <footer class="pied-site" id="contact">
  <div class="col">
   <p class="sorties-note">Les démonstrations tournent dans ce navigateur, avec des données fictives.</p>
-  <nav class="pied-legal" aria-label="Informations légales"><a href="/mentions-legales/">Mentions légales</a><span aria-hidden="true">·</span><a href="/confidentialite/">Confidentialité</a><span aria-hidden="true">·</span><a href="/contact/">Contact</a></nav>
+  <nav class="pied-legal" aria-label="Informations légales"><a href="/tarifs/">Tarifs</a><span aria-hidden="true">·</span><a href="/mentions-legales/">Mentions légales</a><span aria-hidden="true">·</span><a href="/confidentialite/">Confidentialité</a><span aria-hidden="true">·</span><a href="/contact/">Contact</a></nav>
 <div class="pied-bas"><span>AIME®</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
  </div>
 </footer>
