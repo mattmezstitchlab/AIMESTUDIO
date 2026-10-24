@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exemples · AIME</title>
+<meta name="description" content="Les exemples AIME : un même principe, un seul projet, chacun son écran. Mariage, mariage à distance, séminaire, administration, création, édition : deux, quatre, six rôles ou plus.">
+<meta name="theme-color" content="#0A0A0C">
+<link rel="icon" href="data:,">
+<script>try{if(localStorage.getItem('aime-zero-calme')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}catch(e){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}</script>
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/coeur/charte.css">
+<link rel="stylesheet" href="/coeur/coeur.css">
+<link rel="stylesheet" href="/dock/dock.css">
+<style>
+.ex-liste{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.ex-liste a{display:grid;gap:10px;align-content:start;height:100%;padding:28px 26px 30px;background:var(--desk);text-decoration:none;transition:background .3s}
+.ex-liste a:hover{background:#111114}
+.ex-liste .k{font:600 11.5px var(--ui);letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.ex-liste b{font:400 clamp(24px,2.4vw,30px)/1.1 var(--display);letter-spacing:-.015em}
+.ex-liste span{font-size:15px;color:var(--soft)}
+.ex-liste .n{margin-top:8px;font:500 13.5px var(--ui);color:var(--ink)}
+.ex-autres{display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:center;margin:0;padding:0;list-style:none;font:500 15px var(--ui)}
+.ex-autres a{text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px}.ex-autres a:hover{border-color:var(--ink)}
+.ex-pied{position:relative;padding:clamp(80px,12vh,130px) 0 calc(110px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);text-align:center}
+.ex-pied h2{margin:0 0 26px;font:400 clamp(30px,4vw,48px)/1.05 var(--display);letter-spacing:-.02em}
+</style>
+</head>
+<body>
+<a class="evite" href="#contenu">Aller au contenu</a>
+<header class="barre"><a class="mk" href="/" aria-label="AIME, accueil">AIME<sup>®</sup></a></header>
+<div class="flot" id="flot" aria-hidden="true"></div>
+<main id="contenu">
+<section class="zero" id="haut" aria-labelledby="t-zero">
+ <span class="ancre" data-orbe="1"></span>
+ <div class="col">
+  <p class="trois" id="exGenre">Exemples</p>
+  <h1 id="t-zero" style="font-size:clamp(44px,7vw,88px)">Chacun son écran.</h1>
+  <p class="intention" id="exLead">Le même principe partout : un seul projet, plusieurs personnes, chacune voit ce qui la concerne.</p>
+ </div>
+ <a class="descendre" href="#arrivees" id="exDescendre">Voir comment<i aria-hidden="true"></i></a>
+</section>
+<div id="exCorps"><noscript><p class="cx-note">Cette page compose ses écrans dans le navigateur : activez JavaScript pour les voir.</p></noscript></div>
+<section class="ex-pied" aria-labelledby="t-autres">
+ <div class="col">
+  <h2 id="t-autres">Les exemples</h2>
+  <ul class="ex-autres" id="exAutres"></ul>
+ </div>
+ <div class="pied"><span>AIME® · Exemples</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
+</section>
+</main>
+<script src="/synchroview/permissions.js"></script>
+<script src="/synchroview/flux.js"></script>
+<script src="/vitrine/rendu.js"></script>
+<script src="/live/modele.js"></script>
+<script src="/coeur/roles.js"></script>
+<script src="/dock/modele.js"></script>
+<script src="/dock/dock.js"></script>
+<script src="/dock/plus.js"></script>
+<script src="/coeur/coeur.js"></script>
+<script>
+/* Exemples : la même mécanique que l'accueil, lue dans un scénario (vitrine/scenarios/<u>.json).
+   Sans ?u : la liste des exemples. Avec ?u : l'exemple, de haut en bas. Le balisage est posé AVANT l'orbe,
+   pour qu'elle connaisse toutes ses ancres. */
+(function(){'use strict';
+var EX=[
+ {u:'mariage',href:'/',genre:'Mariage',titre:'Léa & Marc',texte:'Le couple, le prestataire, l\'invitée, la coordination.',n:4},
+ {u:'mosaique',href:'/exemples/mosaique/',genre:'Mariage · le jour J',titre:'Chacun son écran',texte:'Sept téléphones, un seul mariage : quand quelque chose arrive, seuls les écrans concernés sonnent. Démonstration.',n:7},
+ {u:'world',href:'/exemples/?u=world',genre:'Mariage à distance',titre:'Inès & Théo · Paris / New York',texte:'Le couple, l\'agence, le prestataire, l\'invitée, la contributrice, la coordination locale.',n:6},
+ {u:'seminaire',href:'/exemples/?u=seminaire',genre:'Séminaire d\'entreprise',titre:'Maison Orée · Cap 2030',texte:'La direction, l\'intervenante, le participant, la logistique, le traiteur, l\'observateur.',n:6},
+ {u:'stitch',href:'/exemples/?u=stitch',genre:'Création · AIME Stitch',titre:'Un patron, quatre regards',texte:'La créatrice, la boutique, la brodeuse, la visiteuse : la grille ne sort que pour qui y a droit.',n:4},
+ {u:'magazine',href:'/exemples/?u=magazine',genre:'Édition · AIME Magazine',titre:'Un numéro, quatre postes',texte:'L\'autrice, la rédactrice en chef, le maquettiste, la lectrice : un seul fichier, une page publiée.',n:4},
+ {u:'regie',href:'/exemples/?u=regie',genre:'Site et gestion · AIME Régie',titre:'Un site, six rôles',texte:'Le propriétaire, le collaborateur, l\'expert-comptable, le client, le visiteur, l\'orbe : la gestion ne sort jamais du propriétaire.',n:6},
+ {u:'studio',href:'/exemples/?u=studio',genre:'Supports imprimés · AIME Studio',titre:'Un festival, neuf rôles',texte:'L\'auteur, le client, le relecteur, l\'imprimeur, la bénévole, la personne badgée, le responsable, l\'auteur d\'un avis, l\'écriture assistée.',n:9},
+ {u:'g44',href:'/exemples/?u=g44',genre:'Administration · G44 LAB',titre:'Un dossier, quatre missions',texte:'L\'agent, le formateur, la responsable, le contrôleur : un dossier fictif, des habilitations, rien d\'exécuté.',n:4}];
+var $=function(i){return document.getElementById(i)},esc=function(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var u=(new URLSearchParams(location.search).get('u')||'').replace(/[^a-z0-9]/g,''),ex=EX.filter(function(e){return e.u===u&&e.u!=='mariage'&&e.u!=='mosaique'})[0];
+$('exAutres').innerHTML=EX.filter(function(e){return!ex||e.u!==ex.u}).map(function(e){return'<li><a href="'+e.href+'">'+esc(e.genre)+' · '+esc(e.titre)+' · '+e.n+' rôles</a></li>'}).join('');
+function charger(srcs,fin){var i=0;(function suite(){if(i>=srcs.length)return fin();var s=document.createElement('script');s.src=srcs[i++];s.onload=suite;s.onerror=suite;document.body.appendChild(s)})()}
+var ORBE=['/zero/orbe.js','/zero/points.js','/zero/yeux.js','/zero/formes.js','/zero/zero.js'];
+function porte(){}
+if(!ex){
+ document.title='Exemples · AIME';
+ $('exCorps').innerHTML='<section class="cx" id="liste" aria-labelledby="t-liste"><div class="cx-in"><div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">01</p><h2 id="t-liste">Le même principe, d\'autres métiers.</h2><p>Chaque exemple est un vrai projet de démonstration : un seul contenu, une couche d\'accès, une perspective par rôle. Deux, quatre, six rôles ou plus : la mécanique ne change pas.</p></div>'+
+  '<ul class="ex-liste">'+EX.map(function(e){return'<li><a href="'+e.href+'"><span class="k">'+esc(e.genre)+'</span><b>'+esc(e.titre)+'</b><span>'+esc(e.texte)+'</span><span class="n">'+e.n+' rôles, '+e.n+' écrans →</span></a></li>'}).join('')+'</ul></div></section>';
+ $('exDescendre').href='#liste';$('exDescendre').firstChild.textContent='Voir les exemples';
+ charger(ORBE,porte);return}
+fetch('/vitrine/scenarios/'+ex.u+'.json',{cache:'no-cache'}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(sc){
+ var N=sc.roles.length;document.title=sc.titre+' · Exemples · AIME';
+ $('exGenre').textContent='Exemple · '+(sc.genre||ex.genre);$('t-zero').textContent=sc.titre;
+ $('exLead').textContent=AIMECoeur.nombre(N)+' personnes, un seul projet. Chacune voit ce qui la concerne.';
+ $('exCorps').innerHTML=AIMECoeur.html(sc);
+ charger((sc.scripts||[]).filter(function(s){return /^\/[a-z0-9\/-]+\.js$/.test(s)}).concat(ORBE),function(){AIMECoeur.monter(sc);porte()})
+}).catch(function(){$('exCorps').innerHTML='<p class="cx-note">Cet exemple n\'a pas pu être chargé. Rechargez la page.</p>';charger(ORBE,porte)});
+})();
+</script>
+<div id="dock-site"></div>
+<script>(function(){var el=document.getElementById('dock-site');if(!el||!window.AIMEDock||!window.AIMEDockVue)return;AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site',actif:'exemples'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')})();</script>
+</body>
+</html>
