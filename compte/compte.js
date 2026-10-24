@@ -14,8 +14,13 @@ function confirmer(b,texte,action){if(b.dataset.arme){delete b.dataset.arme;b.te
 var ROLES={owner:'Propriétaire',editor:'Coordination',contributor:'Contributeur (prestataire, intervenant)',viewer:'Lecture seule',guest:'Invité'};
 var MODELES={mariage:'Mariage',seminaire:'Séminaire'};
 
+/* deux écrans, un seul moteur : /compte/ (l'identité : adresse, Timbre, clés, suppression) et /projets/ (Mes projets : espaces, invitations).
+   Une invitation, un projet à ouvrir ou un projet venu du Point Zéro mènent toujours à Mes projets. */
+var PROJETS=/^\/projets\/?$/.test(location.pathname);
+if(!PROJETS&&/[?&](invitation|espace|nouvel)=/.test(location.search)){location.replace('/projets/'+location.search);return}
 var Q=new URLSearchParams(location.search),INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(Q.get('invitation')||'')?Q.get('invitation'):null,OUVRIR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(Q.get('espace')||'')?Q.get('espace'):null,moi=null;
 if(INVIT)$('invite').hidden=false;
+(function(){var a=$('versAutre');if(PROJETS){document.title='Mes projets · AIME';$('tTitre').textContent='Mes projets';$('tSous').textContent='Vos projets, vos invitations';var s=document.querySelector('.tete .mk span');if(s)s.textContent='Projets';if(a){a.href='/compte/';a.textContent='Mon compte'}}})();
 if(Q.get('supprime'))toast('Votre compte a été supprimé. Merci d\'être passé par AIME.');
 else if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
 function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime','nouvel'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
@@ -24,13 +29,13 @@ function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','
 requete('/api/auth/get-session').then(function(r){
  if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=(r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.';return}
  if(!r.j||!r.j.user){$('connexion').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
- moi=r.j.user;afficherProfil();$('profil').hidden=false;$('espaces').hidden=false;$('sortir').hidden=false;$('zoneSuppr').hidden=false;
+ moi=r.j.user;afficherProfil();$('profil').hidden=PROJETS;$('espaces').hidden=!PROJETS;$('sortir').hidden=false;$('zoneSuppr').hidden=PROJETS;if($('versAutre'))$('versAutre').hidden=false;
  (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' » ('+(ROLES[x.role]||x.role)+').');$('invite').hidden=true;if(x.espace)OUVRIR=x.espace}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
-  .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();chargerEspaces(OUVRIR);chargerCles()})
+  .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();if(PROJETS)chargerEspaces(OUVRIR);else chargerCles()})
 }).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.'});
 
 /* ---------- se connecter ---------- */
-$('fLien').onsubmit=function(e){e.preventDefault();var b=this.querySelector('button');b.disabled=true;var cb='/compte/'+(INVIT?'?invitation='+encodeURIComponent(INVIT):'');
+$('fLien').onsubmit=function(e){e.preventDefault();var b=this.querySelector('button');b.disabled=true;var cb='/projets/'+(INVIT?'?invitation='+encodeURIComponent(INVIT):'');
  requete('/api/auth/sign-in/magic-link',{corps:{email:$('cEmail').value.trim(),callbackURL:cb,newUserCallbackURL:cb,errorCallbackURL:'/compte/?erreur=lien'}}).then(function(r){b.disabled=false;
   if(r.statut===200){$('lienEnvoye').hidden=false;$('lienEnvoye').textContent='Lien envoyé à '+$('cEmail').value.trim()+'. Ouvrez-le sur cet appareil ; il est valable 15 minutes.'}
   else toast((r.j&&(r.j.raison||r.j.message))||(r.statut===429?'Trop de demandes : patientez une minute.':'Envoi impossible.'),true)})};
