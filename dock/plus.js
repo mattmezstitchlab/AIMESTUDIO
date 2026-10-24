@@ -4,7 +4,7 @@
    Le Timbre n'est jamais une étape. Le + ne donne aucun droit : il mène à des pages qui revérifient tout au serveur.
    AIMEPlus.etat(info, espaces) → { mode, items:[{ id, nom, sous?, href }] }   (pur, testé sous node)
    AIMEPlus.brancher(zone)       → lit /api/identite puis, connecté, /api/espaces « mes », et remplit le menu du + du dock
-   AIMEPlus.commencer()          → sur l'accueil, met le curseur dans le champ d'intention ; ailleurs, y conduit. */
+   AIMEPlus.commencer()          → sur l'accueil, met le curseur dans « Je suis… » ; ailleurs, y conduit. */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.AIMEPlus=factory()})(typeof self!=='undefined'?self:this,function(){'use strict';
 var COMMENCER='/?commencer=1',MAX=5;
 var RELATION={owner:'votre projet',editor:'coordination',contributor:'contribution',viewer:'lecture seule',guest:'invité'};
@@ -14,7 +14,7 @@ function etat(info,espaces){
  L.push({id:'nouveau',nom:'Nouveau projet',href:'/projets/?nouveau=1'});   /* une seule création : celle de Mes projets (compte/creer.js) */
  return{mode:'projets',items:L,fin:[{id:'tous',nom:'Tous mes projets',href:'/projets/'},{id:'sortir',nom:'Se déconnecter',href:'/compte/',sortir:true}]};
 }
-function champ(){return typeof document!=='undefined'?document.getElementById('acTexte'):null}
+function champ(){return typeof document!=='undefined'?document.getElementById('jsChoix'):null}   /* « Je suis… » : le premier geste de l'accueil (PR C) */
 function commencer(){var c=champ();if(!c){location.href=COMMENCER;return}
  c.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});setTimeout(function(){try{c.focus({preventScroll:true})}catch(_){c.focus()}},250)}
 function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
