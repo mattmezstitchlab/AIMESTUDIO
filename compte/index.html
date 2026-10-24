@@ -17,8 +17,15 @@
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 <link rel="stylesheet" href="/nav/pied-legal.css">
+<style>
+/* un visuel réel, très assourdi, derrière le bloc de connexion */
+.cpt-fond{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(11,11,14,.78),rgba(11,11,14,.95) 70%),url(/media/visuels/fleuriste-terrasse.webp) center 35%/cover no-repeat}
+/* seuls les blocs statiques passent au-dessus du fond ; l'en-tête (sticky), le lien d'évitement, le toast et le Dock gardent leur position */
+.cpt,body>.pied-legal{position:relative;z-index:1}
+</style>
 </head>
 <body>
+<div class="cpt-fond" aria-hidden="true"></div>
 <a class="evite" href="#contenu">Aller au contenu</a>
 <!-- en haut, seulement le logo : « Mon compte », « Mes projets » et « Se déconnecter » passent par le Dock et son + -->
 <header class="tete">
@@ -95,7 +102,7 @@
   <p class="vivant" id="pVivant" role="status" aria-live="polite"></p>
  </section>
 </main>
-<nav class="pied-legal" aria-label="Informations légales"><a href="/mentions-legales/">Mentions légales</a><span aria-hidden="true">·</span><a href="/confidentialite/">Confidentialité</a><span aria-hidden="true">·</span><a href="/contact/">Contact</a></nav>
+<nav class="pied-legal" aria-label="Informations légales"><a href="/tarifs/">Tarifs</a><span aria-hidden="true">·</span><a href="/mentions-legales/">Mentions légales</a><span aria-hidden="true">·</span><a href="/confidentialite/">Confidentialité</a><span aria-hidden="true">·</span><a href="/contact/">Contact</a></nav>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <noscript><p class="ns">Le compte AIME a besoin de JavaScript.</p></noscript>
 <script src="/vendor/simplewebauthn-browser-13.3.0.umd.min.js"></script>
