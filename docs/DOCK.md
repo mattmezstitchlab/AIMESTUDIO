@@ -183,6 +183,18 @@ Tant que la Régie n'a pas de connexion, ces docks restent **décrits, pas branc
 - La pastille prend la couleur du rôle (`coeur/roles.js`), chiffre en `#141416`.
 - Le radial : pastilles sombres, libellé Inter, en arc au-dessus du + ; une suggestion de l'orbe porte un point irisé et « proposé par l'orbe ».
 
+## Fait le 24/10/2026 : le modèle et le composant (étape 3)
+
+Décisions de Matt : **sur ordinateur, le dock flotte en bas au centre** ; **le dock remplace la navigation des pages publiques, partout** (dock de la famille Public).
+
+- `dock/modele.js` (`AIMEDock`) : le modèle **pur**, le même au navigateur et, demain, au serveur. Les tables de ce document y sont écrites telles quelles : vocabulaire des entrées (chacune avec son droit), actions du + (chacune avec son geste), dock des 14 familles, rôle serveur → famille, instances (mariage, Régie, Studio). `composer(demande)` rend la composition ; une entrée ou une action non permise n'y figure pas, même en texte. `pourScenario(univers, rôle, accès)` choisit l'instance écrite, sinon la famille du scénario, sinon le rôle serveur.
+- `dock/dock.js` (`AIMEDockVue`) et `dock/dock.css` : le composant. Il affiche la composition, ne décide de rien. Accessibilité : `nav` nommée, `aria-current`, + en `aria-haspopup="menu"`, menu aux flèches, Échap, focus rendu, cibles de 44 px, texte sous chaque icône, pastille annoncée. Gestes sensibles : confirmation lisible, annulation. Un seul élément irisé : le +.
+- Posé sur **l'accueil** et **les exemples** (dock Public : Le cœur · Exemples · + · Lab · J'ai un compte ; le + porte « Commencer un projet ») et **dans chaque écran du cœur** (`coeur/coeur.js`) : chaque rôle de chaque exemple a son dock, dessiné à la taille d'un téléphone puis réduit avec l'écran, marqué « Démonstration ». L'orbe de la Régie et l'écriture assistée du Studio n'ont pas de dock (famille Agent IA).
+- **Familles proposées, à confirmer** (aucun dock écrit pour ces rôles) : G44 agent et formateur → Équipe, responsable → Délégué, contrôleur → Contrôleur ; Stitch créatrice → Propriétaire, boutique → Délégué, brodeuse → Destinataire, visiteuse → Public ; Magazine autrice → Équipe, rédactrice en chef → Propriétaire, maquettiste → Contributeur, lectrice → Public. Le dock l'affiche (« Famille proposée »).
+- Tests : `tests/dock.test.cjs` (instantané par rôle serveur, invitée sans Budget ni Personnes, Surprise du témoin, pastille, limites, gestes sensibles, rôle retiré, date de fin, chaque rôle de chaque scénario).
+
+Reste : l'étape 2 (le contrat serveur, `GET /api/dock` composé depuis `space_members` avec ce même modèle), puis l'étape 4 (le mariage de preuve dans un vrai espace), et le dock Public sur les autres pages publiques.
+
 ## Ce qui se construit, dans l'ordre (une petite PR par étape)
 
 1. **Documenter** : ce fichier, et la table famille → dock dans `docs/AUDIT-ROLES.md`. Aucun code.
@@ -204,8 +216,8 @@ Tant que la Régie n'a pas de connexion, ces docks restent **décrits, pas branc
 
 ## Questions ouvertes
 
-- [ ] Le dock remplace-t-il aussi la navigation des pages publiques, ou seulement les espaces avec compte ?
+- [x] Le dock remplace-t-il aussi la navigation des pages publiques ? **Oui, partout** (Matt, 24/10).
 - [ ] Le témoin : famille Équipe, ou Délégué borné à la surprise ?
 - [ ] Le marié : co-propriétaire dès la création, ou invité par la mariée ?
 - [ ] Les parents qui financent : rôle Financeur dès la première version, ou plus tard ?
-- [ ] Sur ordinateur : dock flottant en bas, ou le + en haut à droite seul avec le radial ?
+- [x] Sur ordinateur : **dock flottant en bas** (Matt, 24/10).
