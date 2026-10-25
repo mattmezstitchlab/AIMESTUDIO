@@ -11,7 +11,12 @@
 var RELIRE=2000;
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function bouton(txt,cls,aria){var b=el('button','b '+(cls||'b-s'),txt);b.type='button';if(aria)b.setAttribute('aria-label',aria);return b}
-function api(espace,q){return fetch('/api/temps?espace='+encodeURIComponent(espace)+(q||''),{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){j._code=r.status;return j})})}
+/* une lecture qui ne répond pas en DELAI_LECTURE est abandonnée (_code 0) : la boucle relit ensuite, au lieu de rester sur
+   « Chargement du programme… » pour toujours (vu en CI : une lecture partie juste après l'import n'a jamais eu de réponse) */
+var DELAI_LECTURE=6000;
+function api(espace,q){var c=typeof AbortController==='function'?new AbortController():null,t=c?setTimeout(function(){c.abort()},DELAI_LECTURE):null;
+ return fetch('/api/temps?espace='+encodeURIComponent(espace)+(q||''),{credentials:'same-origin',cache:'no-store',signal:c?c.signal:undefined}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){j._code=r.status;return j})})
+  .catch(function(){return{_code:0,raison:'Le programme met du temps à répondre : nouvel essai…'}}).then(function(j){if(t)clearTimeout(t);return j})}
 function envoyer(b){return fetch('/api/temps',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){j._code=r.status;return j})})}
 var MOTS={owner:'organisation',editor:'coordination',contributor:'contribution',viewer:'lecture',guest:'participation'};
 
