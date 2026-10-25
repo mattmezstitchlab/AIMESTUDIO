@@ -1,6 +1,6 @@
 // AIME · /api/carte-publique?l=<jeton> : ce qu'une Carte montre à qui a son lien (V1, PR P2), et la demande qu'on peut lui
 // écrire quand la personne l'a permis (V1, PR P3). Sans compte, sans session.
-// GET ne sert QUE les rubriques marquées « publique », calculées au serveur à chaque ouverture (api/_carte/carte.cjs vuePublique) :
+// GET ne sert QUE les rubriques marquées « publique » (et les activités cochées « sur ma Carte », V1 P4), calculées au serveur à chaque ouverture (api/_carte/carte.cjs vuePublique) :
 // jamais la naissance ni les relations, jamais la photo, jamais l'identifiant du compte ni son adresse e-mail.
 // Lien inconnu, coupé, ou Carte retirée du compte : 404, sans dire lequel. Aucune adresse IP gardée (le quota n'en garde qu'une
 // empreinte, 48 h au plus) ; un compteur d'ouvertures, que seul le propriétaire voit. Jamais indexé, jamais mis en cache.
@@ -16,6 +16,7 @@ import K from './_carte/carte.cjs';
 import D from './_demandes/depot.cjs';
 import C from './_demandes/courriel.cjs';
 import contact from './contact.js';
+import { surCarte } from './_auth/activites.mjs';
 
 let db; export function _db(d) { db = d; }
 let envoi = null; export function _fetch(f) { envoi = f || null; }
@@ -33,7 +34,7 @@ async function corps(req) {
 /* le lien actif et son réglage « recevoir des demandes » ; sans la migration 12, le contact est fermé (rien ne casse) */
 async function ouvrir(base, jeton) {
   const sql = c => `update cartes_liens l set ouvertures = least(l.ouvertures + 1, 2000000000) from cartes c
-      where l.jeton = $1 and l.coupe_le is null and c.user_id = l.user_id returning c.donnees${c ? ', l.contact' : ''}`;
+      where l.jeton = $1 and l.coupe_le is null and c.user_id = l.user_id returning c.donnees, l.user_id${c ? ', l.contact' : ''}`;
   try { return (await base.query(sql(true), [jeton])).rows[0] || null; }
   catch (e) { if (e && e.code === '42703') return (await base.query(sql(false), [jeton])).rows[0] || null; throw e; }
 }
@@ -84,7 +85,9 @@ export default async function cartePublique(req, res) {
     if (!q.ok) { res.setHeader('Retry-After', String(q.attente)); return json(res, 429, { ok: false, raison: 'Trop d\'ouvertures en peu de temps : réessayez dans un moment.' }); }
     const l = await ouvrir(base, jeton);
     if (!l) return json(res, 404, INTROUVABLE);
-    return json(res, 200, Object.assign({ ok: true }, K.vuePublique(l.donnees), { contact: l.contact === true }));
+    /* les activités que la personne a cochées « sur ma Carte » (V1, P4) : un métier et son nom, rien d'autre ; jamais l'identifiant */
+    let activites = []; try { activites = await surCarte(base, l.user_id); } catch { activites = []; }
+    return json(res, 200, Object.assign({ ok: true }, K.vuePublique(l.donnees), { activites, contact: l.contact === true }));
   } catch (e) {
     if (e && e.code === '42P01') return json(res, 404, INTROUVABLE);
     return json(res, 503, { ok: false, raison: 'Cette Carte ne peut pas être affichée pour l\'instant.' });

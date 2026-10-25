@@ -70,8 +70,14 @@
  <!-- ME v0 : ce que je suis (activités, métiers), ce qui existe dans ce navigateur, et le reste d'AIME ; rien de nouveau au serveur -->
  <section class="carte-c" id="activites" hidden aria-labelledby="t-act">
   <h2 class="k" id="t-act">Mes activités</h2>
-  <ul class="cles" id="mesActivites"></ul>
-  <p class="leg">Vos missions arrivent quand des mariés ou une coordination vous invitent. Votre activité n'est publiée nulle part.</p>
+  <p class="leg" id="actVide">Aucune activité pour l'instant.</p>
+  <ul class="cles act-liste" id="mesActivites"></ul>
+  <p class="leg">Une activité ne donne aucun droit dans un projet : vos missions arrivent quand des mariés ou une coordination vous invitent. Cochée « Montrer sur ma Carte », elle apparaît sur le lien public de votre Carte, s'il existe ; elle n'est publiée nulle part ailleurs.</p>
+  <p class="alerte" id="actIndispo" hidden>Montrer une activité sur votre Carte n'est pas encore disponible ici.</p>
+  <form class="lgn act-ajout" id="fActivite" hidden>
+   <label for="actAjout" class="pile"><span>Ajouter une activité</span><select id="actAjout"></select></label>
+   <button class="b b-s" type="submit">Ajouter</button>
+  </form>
   <span><a class="b b-s" id="invitezMoi" href="mailto:">Invitez-moi sur AIME</a></span>
  </section>
 

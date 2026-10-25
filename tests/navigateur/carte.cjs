@@ -15,7 +15,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
   const pg = require('pg'), pool = new pg.Pool({ connectionString: URLT.replace('?sslmode=disable', '') });
   await pool.query('truncate "user", spaces, invitations, live_journal, audit cascade');
-  for (const t of ['quotas', 'cartes_liens', 'cartes', 'demandes cascade']) await pool.query('truncate ' + t).catch(() => {});
+  for (const t of ['quotas', 'cartes_liens', 'cartes', 'demandes cascade', 'activites']) await pool.query('truncate ' + t).catch(() => {});
   try { fs.unlinkSync(LIENS); } catch {}
   const srv = spawn(process.execPath, [path.join(__dirname, '../../scripts/serveur-test.cjs')], { env: Object.assign({}, process.env, { PORT: String(PORT), HOST: '127.0.0.1', AIME_COMPTES_TEST: '1', AIME_LIENS: LIENS }), stdio: 'inherit' });
   process.on('exit', () => { try { srv.kill(); } catch {} });
@@ -167,6 +167,32 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await pi.uncheck('#mcContact'); await pi.waitForFunction(() => /ne reçoit plus de demandes/.test(document.getElementById('mcVivant').textContent), null, { timeout: 6000 });
     await pv.reload({ waitUntil: 'networkidle' }); await pv.waitForFunction(() => document.getElementById('cpNom').textContent === 'Dominique Fictif', null, { timeout: 6000 });
     ok(await pv.locator('#cpEcrire').isHidden(), 'éteint de nouveau : plus de formulaire');
+
+    console.log('10. Le + de ME (P4) : modifier ma Carte, ajouter une activité et la montrer, partager ; le lien la montre, rien d\'autre');
+    await pi.goto(B + '/compte/', { waitUntil: 'networkidle' }); await pi.waitForSelector('#activites:not([hidden]) #fActivite:not([hidden])', { timeout: 8000 });
+    await pi.waitForFunction(() => !/Chargement/.test(document.getElementById('mcCorps').textContent));
+    await pi.click('#dock-site .dock-plus'); await pi.waitForTimeout(300);
+    const gm = await pi.evaluate(() => [...document.querySelectorAll('#dock-site .dock-menu .dock-g')].map(a => a.textContent.trim()).join(' · '));
+    ok(gm === 'Modifier ma Carte · Ajouter une activité · Partager ma Carte', 'le + de ME : ' + gm);
+    await pi.click('#dock-site .dock-menu .dock-g:has-text("Ajouter une activité")'); await attendre(200);
+    ok(await pi.evaluate(() => document.activeElement && document.activeElement.id === 'actAjout'), '« Ajouter une activité » : le focus est sur le choix du métier');
+    await pi.selectOption('#actAjout', 'dj'); await pi.click('#fActivite button[type=submit]'); await pi.waitForSelector('#act-c-dj', { timeout: 6000 });
+    ok(!(await pi.isChecked('#act-c-dj')), 'ajoutée, et montrée nulle part par défaut');
+    await pi.check('#act-c-dj'); await attendre(600);
+    ok((await pool.query("select a.sur_carte from activites a join \"user\" u on u.id = a.user_id where u.email = $1 and metier = 'dj'", [DEUX.email])).rows[0].sur_carte === true, 'cochée : « sur ma Carte » en base');
+    await pi.click('#dock-site .dock-plus'); await pi.waitForTimeout(300); await pi.click('#dock-site .dock-menu .dock-g:has-text("Modifier ma Carte")'); await attendre(200);
+    ok(await pi.evaluate(() => document.getElementById('mcModifier').open && document.activeElement.id === 'mcmNom'), '« Modifier ma Carte » : le formulaire s\'ouvre, le focus sur le nom');
+    await pi.fill('#mcm-competences', 'platines, sonorisation'); await pi.click('#mcModifier button[type=submit]');
+    await pi.waitForFunction(() => /enregistrée sur votre compte/.test(document.getElementById('mcVivant').textContent), null, { timeout: 6000 });
+    const l3 = await enBase(DEUX.email); ok(JSON.stringify(l3.donnees.competences) === '["platines","sonorisation"]' && l3.donnees.visibilite.competences === 'privee', 'modifiée sur le compte ; la nouvelle rubrique reste privée');
+    await pi.click('#dock-site .dock-plus'); await pi.waitForTimeout(300); await pi.click('#dock-site .dock-menu .dock-g:has-text("Partager ma Carte")'); await attendre(200);
+    ok(await pi.evaluate(() => !!document.activeElement.closest('.mc-partage')), '« Partager ma Carte » : le focus est dans le partage');
+    ok(await large(pi) <= 1, 'ME sur iPad : aucun défilement horizontal'); await capture(pi, 'CARTE__8-ipad-activites'); await axe(pi, 'ME, activités et + (iPad)');
+    await pv.reload({ waitUntil: 'networkidle' }); await pv.waitForSelector('#cp-activites', { timeout: 6000 });
+    const vu2 = await pv.locator('main').innerText();
+    ok(/DJ/.test(vu2) && !/platines/.test(vu2), 'le lien montre l\'activité cochée, pas les compétences (privées)');
+    await pi.uncheck('#act-c-dj'); await attendre(600); await pv.reload({ waitUntil: 'networkidle' }); await pv.waitForFunction(() => document.getElementById('cpNom').textContent === 'Dominique Fictif', null, { timeout: 6000 });
+    ok(!(await pv.locator('#cp-activites').count()), 'décochée : l\'activité disparaît du lien');
   } catch (e) { echecs++; console.error(e); }
   await b.close(); await pool.end(); try { srv.kill(); } catch {}
   console.log(echecs ? '\nparcours Carte : ' + echecs + ' échec(s)' : '\nparcours Carte : tout est vert');
