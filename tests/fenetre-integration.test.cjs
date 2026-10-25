@@ -5,7 +5,9 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const html=fs.readFileSync('fenetre/index.html','utf8');
 const contact=fs.readFileSync('fenetre/contact-capsule.js','utf8');
-const match=html.match(/<script type="application\\/json" id="oa-settings">([\\s\\S]*?)<\\/script>/);
+const tag='<script type="application/json" id="oa-settings">';
+const from=html.indexOf(tag),to=from<0?-1:html.indexOf('</script>',from);
+const config=from>=0&&to>=0?html.slice(from+tag.length,to):null;
 test('fenêtre AIME intacte, route autonome, sans modifier la landing',()=>{
  assert.ok(html.includes('id="stage"'));
  assert.ok(html.includes('id="blind"'));
@@ -19,8 +21,8 @@ test('fenêtre AIME intacte, route autonome, sans modifier la landing',()=>{
  assert.ok(html.includes('content="noindex"'));
 });
 test('post-it visible et vierge, média épinglé pendant migration',()=>{
- assert.ok(match);
- const s=JSON.parse(match[1]);
+ assert.ok(config);
+ const s=JSON.parse(config);
  assert.equal(s.name,'AIME');
  assert.equal(s.postit.tasks,'');
  assert.equal(s.postit.show,true);
