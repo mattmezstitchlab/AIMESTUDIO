@@ -127,7 +127,8 @@ test('le Dock public et son + (décision de Matt, 24/10) : le Dock garde les lie
  const P=require('../dock/plus.js'),D=require('../dock/modele.js');
  const pub=D.composer({famille:P.etat(null).famille}),con=D.composer({famille:P.etat({connecte:true}).famille});
  assert.deepEqual(pub.lieux.map(x=>x.nom),['Le cœur','Exemples','J\'ai un compte'],'pas connecté : asymétrique, sans bouton fictif');
- assert.deepEqual(con.lieux.map(x=>x.nom),['Le cœur','Exemples','Mes projets','Mon compte'],'connecté : deux de chaque côté du +');
+ assert.deepEqual(con.lieux.map(x=>x.nom),['AI','ME'],'connecté : AI | + | ME (architecture de convergence, 25/10)');
+ assert.deepEqual(con.lieux.map(x=>x.href),['/projets/','/compte/'],'les adresses d\'avant sont gardées');
  assert.deepEqual(pub.plus.map(x=>x.nom),['Créer un projet','J\'ai reçu une invitation']);assert.deepEqual(con.plus.map(x=>x.nom),['Nouveau projet','J\'ai reçu une invitation']);
  assert.deepEqual(P.etat({connecte:false}).gestes,pub.plus.map(x=>x.id));assert.deepEqual(P.etat({connecte:true}).gestes,con.plus.map(x=>x.id));
  for(const c of [pub,con]){const lieux=new Set(c.lieux.map(x=>x.href)),noms=new Set(c.lieux.map(x=>x.nom));
@@ -155,7 +156,8 @@ test('les mots du Dock (24/10) : un mot court par icône, le nom en aria-label, 
  const V=require('../dock/dock.js').AIMEDockVue,c=lire('dock/dock.css');
  assert.equal(D.ENTREES.mareponse.nom,'Réponse');assert.equal(D.ENTREES.calendrier.nom,'Agenda');
  const h=V.html(D.composer({famille:'Public connecté'}),{id:'m',actif:'coeur'});
- for(const n of ['Le cœur','Exemples','Mes projets','Mon compte'])assert.ok(h.includes('aria-label="'+n+'"'),n+' : le nom, tel qu\'on l\'écrit');
+ for(const n of ['AI, mon environnement','ME, ma Carte'])assert.ok(h.includes('aria-label="'+n+'"'),n+' : AI et ME se disent en entier au lecteur d\'écran');
+ for(const n of ['Le cœur','Exemples'])assert.ok(V.html(D.composer({}),{id:'p'}).includes('aria-label="'+n+'"'),n+' : le nom, tel qu\'on l\'écrit');
  assert.match(c,/\.dock-zone \.dock-t\{font:500 11px/);assert.match(c,/\.dock-zone \.dock-e\[aria-current\] \.dock-t[^{]*\{color:#fff/);assert.match(c,/\.dock-ecran \.dock-t\{position:absolute;width:1px/,'téléphone réduit : icônes seules');
  assert.ok(!/\.dock-page \.dock-t\{white-space:normal/.test(c),'jamais de retour à la ligne');
  assert.match(lire('exemples/mosaique/index.html'),/\.dk > span:not\(\.badge\) \{ position: absolute; width: 1px/);assert.match(lire('accueil/je-suis.css'),/\.dm-tel:not\(\.choisi\) \.dk>span:not\(\.badge\)\{display:none\}/);

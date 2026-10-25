@@ -22,7 +22,7 @@ var Q=new URLSearchParams(location.search),
  /* venus de l'accueil (« Je suis… ») : créer le mariage, ou enregistrer l'activité d'un prestataire, une fois la session ouverte */
  CREER=Q.get('creer')==='mariage'&&/^[A-Za-z0-9_-]{6,80}$/.test(Q.get('origine')||'')?Q.get('origine'):null,ACTIVITE=/^[a-z][a-z-]{1,39}$/.test(Q.get('activite')||'')?Q.get('activite'):null,BIENVENUE=/^[a-z][a-z-]{1,39}$/.test(Q.get('bienvenue')||'')?Q.get('bienvenue'):null,INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(Q.get('invitation')||'')?Q.get('invitation'):null,MODULE=window.AIMEModules&&AIMEModules.destination(Q.get('module')||'')?Q.get('module'):null,OUVRIR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(Q.get('espace')||'')?Q.get('espace'):null,moi=null;
 if(INVIT)$('invite').hidden=false;
-if(PROJETS){document.title='Mes projets · AIME';$('tTitre').textContent='Mes projets';$('tSous').textContent='Vos projets, vos invitations'}
+if(PROJETS){document.title='AI · AIME';$('tTitre').textContent='AI';$('tSous').textContent='Ce qui vous concerne : demandes, projets, activités'}
 if(Q.get('supprime'))toast('Votre compte a été supprimé. Merci d\'être passé par AIME.');
 else if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
 function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime','nouvel','creer','origine','activite','bienvenue'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
@@ -38,7 +38,12 @@ requete('/api/auth/get-session').then(function(r){
    if(PROJETS&&CREER&&C)return C.creer({titre:'Notre mariage',modele:'mariage',origine:CREER}).then(function(x){OUVRIR=x.id;C.oublier('accueil');if(!x.existant)toast('Votre mariage est créé : vous en êtes propriétaire.')}).catch(function(e){toast(e.message,true)});
    /* « Créer mon espace [métier] » : une activité, non publiée ; aucun projet, aucun droit */
    if(PROJETS&&ACTIVITE&&C)return C.activite(ACTIVITE).then(function(){BIENVENUE=ACTIVITE}).catch(function(e){toast(e.message,true)})})
-  .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();if(PROJETS&&OUVRIR&&PJ)PJ.ouvrir(OUVRIR,Q.get('page'));else if(PROJETS){chargerEspaces();chargerActivites();surCetAppareil(true);if(/[?&]nouveau=1\b/.test(location.search)){var t=$('eTitre');if(t){t.scrollIntoView({block:'center'});t.focus()}}}else chargerCles()})
+  .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();
+   /* AI : un seul écran pour AI, une demande et un projet (compte/ai.js) ; l'adresse choisit le contexte, sans rechargement ensuite */
+   if(PROJETS&&window.AIMEAI&&PJ){AIMEAI.monter({chargerAI:function(){chargerEspaces();chargerActivites();surCetAppareil(true)}});
+    if(OUVRIR&&!new URLSearchParams(location.search).get('espace')){AIMEAI.montrer('projet');PJ.ouvrir(OUVRIR,Q.get('page'))}else AIMEAI.route();
+    if(/[?&]nouveau=1\b/.test(location.search)){var t0=$('eTitre');if(t0){t0.scrollIntoView({block:'center'});t0.focus()}}}
+   else if(PROJETS&&OUVRIR&&PJ)PJ.ouvrir(OUVRIR,Q.get('page'));else if(PROJETS){chargerEspaces();chargerActivites();surCetAppareil(true);if(/[?&]nouveau=1\b/.test(location.search)){var t=$('eTitre');if(t){t.scrollIntoView({block:'center'});t.focus()}}}else chargerCles()})
 }).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.';if(PROJETS)surCetAppareil(false)});
 
 /* ---------- se connecter ---------- */
@@ -81,12 +86,13 @@ $('ajCle').onclick=function(){requete('/api/auth/passkey/generate-register-optio
 
 /* ---------- espaces ---------- */
 /* « Nouveau projet » : la seule fonction de création (compte/creer.js), sans doublon grâce à l'origine de ce brouillon ; puis l'écran du projet */
-$('fEspace').onsubmit=function(e){e.preventDefault();var b=this.querySelector('button[type=submit]');if(b)b.disabled=true;C.creer({titre:$('eTitre').value,modele:$('eModele').value,origine:C.origine('nouveau')}).then(function(x){C.oublier('nouveau');location.href='/projets/?espace='+encodeURIComponent(x.id)}).catch(function(err){toast(err.message,true);if(b)b.disabled=false})};
+$('fEspace').onsubmit=function(e){e.preventDefault();var b=this.querySelector('button[type=submit]');if(b)b.disabled=true;C.creer({titre:$('eTitre').value,modele:$('eModele').value,origine:C.origine('nouveau')}).then(function(x){C.oublier('nouveau');if(b)b.disabled=false;$('eTitre').value='';if(window.AIMEAI){AIMEAI.projets(null);AIMEAI.ouvrirProjet(x.id)}else location.href='/projets/?espace='+encodeURIComponent(x.id)}).catch(function(err){toast(err.message,true);if(b)b.disabled=false})};
 function chargerEspaces(){espaces('mes').then(function(r){var L=$('liste');L.textContent='';
- var liste=r.espaces||[];
+ var liste=r.espaces||[];if(window.AIMEAI)AIMEAI.projets(liste);
  if(!liste.length){L.appendChild(el('p','leg','Aucun projet pour l\'instant. Créez-en un, ou ouvrez le lien d\'invitation que l\'on vous a envoyé.'));return}
  liste.forEach(function(s){var c=el('article','carte-c esp');var h=el('div','lgn');h.style.justifyContent='space-between';var t=el('div');t.appendChild(el('h3',null,s.titre));var lg=el('p','leg',(ROLES[s.role]||s.role)+(s.modele?' · '+MODELES[s.modele]:'')+(s.jusquau?' · jusqu\'au '+new Date(s.jusquau).toLocaleDateString('fr-FR'):''));lg.insertBefore(pastille(s.role),lg.firstChild);t.appendChild(lg);h.appendChild(t);
-  var a=el('div','lgn');var o=el('a','b b-p','Ouvrir');o.href=(MODULE&&window.AIMEModules&&AIMEModules.destination(MODULE,s.id))||'/projets/?espace='+encodeURIComponent(s.id);o.setAttribute('aria-label','Ouvrir « '+s.titre+' »');a.appendChild(o);if(s.modele){var l=el('a','b b-s','Le direct');l.href='/live/?espace='+encodeURIComponent(s.id);a.appendChild(l)}h.appendChild(a);c.appendChild(h);L.appendChild(c)})}).catch(function(e){toast(e.message,true)})}
+  var a=el('div','lgn');var o=el('a','b b-p','Ouvrir');var dest=MODULE&&window.AIMEModules&&AIMEModules.destination(MODULE,s.id);o.href=dest||'/projets/?espace='+encodeURIComponent(s.id);if(!dest)o.setAttribute('data-ouvrir',s.id);   /* sans rechargement (compte/ai.js) */
+  o.setAttribute('aria-label','Ouvrir « '+s.titre+' »');a.appendChild(o);if(s.modele){var l=el('a','b b-s','Le direct');l.href='/live/?espace='+encodeURIComponent(s.id);a.appendChild(l)}h.appendChild(a);c.appendChild(h);L.appendChild(c)})}).catch(function(e){toast(e.message,true)})}
 
 /* ---------- mes activités (prestataire) : un métier, non publié ; les missions arrivent par invitation ---------- */
 var NOMS_METIERS={};

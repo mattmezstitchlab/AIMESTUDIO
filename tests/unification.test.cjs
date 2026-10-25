@@ -42,7 +42,7 @@ test('le Bureau devient « Mes projets » : connecté, on arrive sur /projets/ ;
   assert.match(c, /var cb='\/projets\/'/, 'le lien e-mail ramène sur Mes projets');
   assert.match(c, /location\.replace\('\/projets\/'\+location\.search\)/, 'une invitation, un projet à ouvrir ou venu du Point Zéro mènent à Mes projets');
   assert.match(c, /\$\('profil'\)\.hidden=PROJETS;\$\('espaces'\)\.hidden=!PROJETS/, 'le compte : identité ; Mes projets : espaces et invitations');
-  assert.match(lire('compte/index.html'), /<h2 class="k" id="t-esp">Mes projets<\/h2>/);
+  assert.match(lire('compte/index.html'), /<h2 class="k" id="t-esp">Mes projets et participations<\/h2>/, 'dans AI (25/10)');
   assert.ok(require('../dock/modele.js').composer({ famille: 'Public connecté' }).lieux.some(e => e.href === '/projets/'), 'connecté : Mes projets est un lieu du Dock');
 });
 
@@ -75,7 +75,7 @@ test('affichage : le Dock ne cache rien, le menu du + se détache, l\'en-tête a
   assert.ok(!/versAutre|sortir|Mes projets|Mon compte|<button/.test(haut), 'en-tête du compte : le logo seul');
   assert.match(c, /id="dock-site"/); assert.match(c, /AIMEPlus\.brancher\(el\)/);
   const e = require('../dock/modele.js').composer({ famille: 'Public connecté' });
-  assert.deepEqual(e.lieux.map(x => x.nom).slice(2), ['Mes projets', 'Mon compte'], 'connecté : Mes projets et Mon compte sont des lieux du Dock, pas des entrées du +');
+  assert.deepEqual(e.lieux.map(x => x.nom), ['AI', 'ME'], 'connecté : AI (Mes projets) et ME (Mon compte) sont des lieux du Dock, pas des entrées du + (25/10)');
   assert.match(c, /id="seDeconnecter"/, 'Se déconnecter : dans Mon compte');
   assert.match(lire('point-zero/index.html'), /<meta name="robots" content="noindex">/);
   assert.match(c, /href="\/point-zero\/\?intention=identite">Mon timbre</, 'Compte → Mon timbre');

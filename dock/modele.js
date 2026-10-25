@@ -51,9 +51,11 @@ var ENTREES={
  exemples:{nom:'Exemples',icone:'exemples',droit:'public',href:'/exemples/'},
  lab:{nom:'Lab',icone:'lab',droit:'public',href:'/lab/grande-partition/'},
  compte:{nom:'J\'ai un compte',icone:'compte',droit:'public',href:'/compte/'},
- /* connecté, hors projet : deux lieux de chaque côté du + (décision de Matt, 24/10) */
- mesprojets:{nom:'Mes projets',icone:'projet',droit:'public',href:'/projets/'},
- moncompte:{nom:'Mon compte',icone:'compte',droit:'public',href:'/compte/'}
+ /* connecté, hors projet : AI | + | ME (architecture de convergence, décision de Matt du 25/10).
+    AI : mon environnement (demandes, projets, participations, activités), à /projets/ ; ME : ma Carte et mon compte, à /compte/.
+    Les adresses restent celles d'avant ; « Exemples » et « Le cœur » quittent le Dock connecté (l'accueil, l'Atlas et AI y mènent). */
+ ai:{nom:'AI',dit:'AI, mon environnement',icone:'projet',droit:'public',href:'/projets/'},
+ me:{nom:'ME',dit:'ME, ma Carte',icone:'compte',droit:'public',href:'/compte/'}
 };
 
 /* Les gestes (docs/ROLES.md). Ceux-ci ne sont jamais à un toucher : confirmation lisible, une action à la fois, annulation. */
@@ -97,7 +99,7 @@ var FAMILLES={
  'Contributeur':{lieux:['notifications','mission','documents','messages'],plus:['deposer','retard','ecrireCoordination'],garde:'Effectifs seulement, jamais la liste nominative.'},
  'Destinataire':{lieux:['programme','mareponse','lieu','messages'],plus:['confirmer','ecrireOrganisateurs'],garde:'Ne voit que sa propre réponse ; aucun compteur de ce qui existe ailleurs.'},
  'Public':{lieux:['coeur','exemples','compte'],plus:['creerProjet','invitationRecue'],garde:'Aucune donnée personnelle.',public:true},
- 'Public connecté':{lieux:['coeur','exemples','mesprojets','moncompte'],plus:['nouveauProjet','invitationRecue'],garde:'Aucune donnée d\'un projet hors du projet.',public:true},
+ 'Public connecté':{lieux:['ai','me'],plus:['nouveauProjet','invitationRecue'],garde:'Aucune donnée d\'un projet hors du projet.',public:true},
  'Financeur':{lieux:['notifications','budgetfinance','justificatifs'],plus:['justificatif','ecrireProprietaire'],garde:'Voit des montants, pas les invités.'},
  'Contrôleur':{lieux:['controle','exports','journal'],plus:['exporter','demanderPiece'],garde:'Lecture seule ; affiche « accès jusqu\'au … ».'},
  'Garant':{lieux:['signalements','contenus','journal'],plus:['masquer','repondreSignalement'],garde:'N\'accède pas aux contenus privés par confort.'},
@@ -180,7 +182,7 @@ function familleDe(nom){if(!nom)return null;if(FAMILLES[nom])return nom;
  var n=String(nom).toLowerCase();for(var k in FAMILLES)if(n.indexOf(k.toLowerCase())===0)return k;return null}
 
 function lieu(x){
- if(typeof x==='string'){var e=ENTREES[x];if(!e)throw new Error('entrée inconnue : '+x);return{id:x,nom:e.nom,icone:e.icone,droit:e.droit,href:e.href||null}}
+ if(typeof x==='string'){var e=ENTREES[x];if(!e)throw new Error('entrée inconnue : '+x);return{id:x,nom:e.nom,dit:e.dit||null,icone:e.icone,droit:e.droit,href:e.href||null}}
  if(!x||!x.id||!x.nom||!x.droit)throw new Error('entrée propre incomplète');return{id:x.id,nom:x.nom,icone:x.icone||'projet',droit:x.droit,href:x.href||null}}
 function action(x){
  var base=typeof x[0]==='string'?ACTIONS[x[0]]:x[0];if(!base)throw new Error('action inconnue : '+x[0]);
@@ -202,7 +204,7 @@ function composer(d){
  if(d.demonstration!==false&&!F.public)mention.push('Démonstration');
  if(d.fin){var f=new Date(d.fin);if(!isNaN(f))mention.push((fam==='Contrôleur'?'Accès':'Rôle')+' jusqu\'au '+f.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}))}
  if(inst&&inst.propose)mention.push('Famille proposée');
- return{famille:fam,nom:(inst&&inst.nom)||d.nom||fam,lieux:lieux.map(function(e){return{id:e.id,nom:e.nom,icone:e.icone,href:e.href}}),
+ return{famille:fam,nom:(inst&&inst.nom)||d.nom||fam,lieux:lieux.map(function(e){var x={id:e.id,nom:e.nom,icone:e.icone,href:e.href};if(e.dit)x.dit=e.dit;return x}),
   plus:plus,inattendu:!F.public&&d.session!==false,pastille:F.public?0:notes,mention:mention,garde:F.garde,public:!!F.public};
 }
 
@@ -219,7 +221,7 @@ function pourScenario(univers,role,acces){
 /* ---------- Le dock d'un vrai espace (docs/GABARITS.md § 4 et § 7) ----------
    Chaque lieu ouvre l'un des sept gabarits. Un domaine renomme un lieu, il n'en invente pas. */
 var GABARIT_DE={
- mesprojets:null,moncompte:null,
+ ai:null,me:null,
  mareponse:'acces',acces:'acces',monavis:'acces',consentements:'acces',reglages:'acces',compte:'acces',
  notifications:'journal',journal:'journal',signalements:'journal',controle:'journal',
  personnes:'personnes',equipe:'personnes',effectif:'personnes',designation:'personnes',

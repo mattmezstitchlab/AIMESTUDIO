@@ -58,8 +58,9 @@ function html(c,o){
  var entree=function(e){var cur=o.actif===e.id?' aria-current="page"':'',
    pas=e.id==='notifications'&&c.pastille>0?'<span class="dock-p" aria-label="'+c.pastille+' notification'+(c.pastille>1?'s':'')+'">'+c.pastille+'</span>':'',
    corps=icone(e.icone)+'<span class="dock-t">'+esc(e.nom)+'</span>'+pas;
-  /* le nom en aria-label, tel qu'on l'écrit (pas en capitales : il n'est pas épelé), même quand le mot est masqué ou en petites capitales */
-  var nom=' aria-label="'+esc(e.nom)+(pas?' · '+c.pastille+' notification'+(c.pastille>1?'s':''):'')+'"';
+  /* le nom en aria-label, tel qu'on l'écrit (pas en capitales : il n'est pas épelé), même quand le mot est masqué ou en petites capitales ;
+     « dit » quand le mot court ne se lit pas seul (AI, ME : « AI, mon environnement ») */
+  var nom=' aria-label="'+esc(e.dit||e.nom)+(pas?' · '+c.pastille+' notification'+(c.pastille>1?'s':''):'')+'"';
   return'<li>'+(e.href?'<a class="dock-e" href="'+esc(e.href)+'" data-lieu="'+esc(e.id)+'"'+nom+cur+'>'+corps+'</a>':'<button type="button" class="dock-e" data-lieu="'+esc(e.id)+'"'+nom+cur+'>'+corps+'</button>')+'</li>'};
  /* le + public est une carte (deux gestes et un champ) : des boutons ordinaires dans un groupe, pas un menu ; dans un projet, un vrai menu */
  var item=function(a){var attrs=(c.public?'':' role="menuitem" tabindex="-1"')+' data-geste="'+esc(a.id)+'" data-type="'+esc(a.geste)+'"'+(a.sensible?' data-sensible="1"':'');
