@@ -50,9 +50,9 @@ test('le texte de l\'accueil dit ce qui existe : le serveur compose, l\'Orbe exp
   const z = lire('index.html'), c = lire('coeur/coeur.js'), m = lire('vitrine/scenarios/mariage.json');
   for (const t of [z, c, m]) { assert.ok(!/L'orbe recueille|L\\?'orbe compose/.test(t.replace(/\/\*[\s\S]*?\*\//g, ''))); }
   assert.match(z, /le serveur compose la page de chacun selon son rôle/); assert.match(z, /L'Orbe, elle, explique les droits et propose les gestes/);
-  const p = z.match(/<section class="cx" id="protection"[\s\S]*?<\/section>/)[0];
-  for (const t of ['Composé par le serveur', 'Un journal en ajout seul', 'Des accès qui expirent', 'Je vois un accès inattendu']) assert.ok(p.includes(t), t);
-  assert.equal((p.match(/<dt>/g) || []).length, 4, 'rien d\'autre que ce qui existe');
+  const p = z.match(/<section class="v-sec" id="protection"[\s\S]*?<\/section>/)[0];
+  for (const t of ['Composé par le serveur', 'Un journal en ajout seul', 'Des accès qui expirent', 'Je vois un accès inattendu', 'Un lien que vous coupez', 'Accessible']) assert.ok(p.includes(t), t);
+  assert.equal((p.match(/<dt>/g) || []).length, 6, 'rien d\'autre que ce qui existe (le lien coupable : P2 ; l\'accessibilité : parcours axe)');
   assert.match(z, /id="domaines"[\s\S]*séminaire, une formation, une association[\s\S]*href="\/exemples\/"/);
   assert.ok(!/Témoin/.test(z) && !/"Témoin"/.test(m), 'Lucie est invitée, pas témoin');
   assert.match(z, /data-value="maries"[^>]*><span class="jl-pt" aria-hidden="true"><\/span><span class="jl-t">Futurs mariés<\/span>/, 'l\'accueil commence par « Je suis… » (PR C)');
@@ -69,7 +69,8 @@ test('affichage : le Dock ne cache rien, le menu du + se détache, l\'en-tête a
   const css = lire('dock/dock.css');
   assert.match(css, /html:has\(>body\.avec-dock\)\{scroll-padding-bottom:calc\(96px \+ env\(safe-area-inset-bottom,0px\)\)\}/, 'un champ focalisé s\'arrête au-dessus du Dock');
   const m = css.match(/\.dock-menu\{[^}]*\}/)[0]; assert.match(m, /background:#[0-9A-Fa-f]{6}/, 'menu du + : fond opaque'); assert.match(m, /border:1px solid #/, 'et un bord');
-  for (const f of ['coeur/charte.css', 'index.html']) assert.match(lire(f), /\.barre::before\{[^}]*background:rgba\(10,10,12,\.8\d\)/, f + ' : l\'en-tête a un fond léger');
+  assert.match(lire('coeur/charte.css'), /\.barre::before\{[^}]*background:rgba\(10,10,12,\.8\d\)/, 'coeur/charte.css : l\'en-tête a un fond léger');
+  assert.match(lire('accueil/vitrine.css'), /\.clair \.barre::before\{[^}]*background:rgba\(255,255,255,\.8\d\)/, 'accueil clair : l\'en-tête a un fond léger');
   for (const f of ['contact/index.html', 'capacites/index.html']) assert.match(lire(f), /<body class="loin">/, f + ' : logo et fond dès l\'arrivée');
   const c = lire('compte/index.html'), haut = c.match(/<header class="tete">[\s\S]*?<\/header>/)[0];
   assert.ok(!/versAutre|sortir|Mes projets|Mon compte|<button/.test(haut), 'en-tête du compte : le logo seul');

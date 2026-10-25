@@ -1,0 +1,169 @@
+/* AIME · l'accueil clair (25/10/2026, prototype validé par Matt) : fond blanc, texte noir, une couleur par place
+   (coeur/roles.js), l'orbe comme signature. Structure : le titre et le manifeste, « Un projet. Chacun son écran. » (le produit
+   en héros, sur les vraies règles), les sept téléphones, une capacité par carte, les détails de confiance, les domaines, l'entrée.
+   Les composants repris de l'ancien accueil (« Je suis… », démonstration, liste d'attente, vidéos, Dock) gardent leur code ;
+   ce fichier ne fait que les éclairer, sous body.clair. */
+body.clair{--desk:#FFFFFF;--ink:#111114;--soft:#4B4B55;--faint:#5B5B66;--line:#E4E4E9;--alt:#F6F6F4;--carte:#FFFFFF;--doux:#FAFAFA;
+ --conic:conic-gradient(#FB7185,#F59E0B,#6D4AFF,#22D3EE,#FB7185);color-scheme:light}
+html:has(body.clair){background:#FFFFFF}
+body.clair{background:#FFFFFF;color:#111114}
+body.clair :focus-visible{outline:2px solid #6D4AFF;outline-offset:3px}
+.clair .d{font-family:var(--display);font-weight:400;letter-spacing:-.02em}
+.clair .gris{color:#8A8A94}
+
+/* l'orbe, en petit et en grand */
+.v-orbe{position:relative;display:inline-block;border-radius:50%;overflow:hidden;flex:none;box-shadow:0 10px 40px rgba(109,74,255,.18)}
+.v-orbe i{position:absolute;inset:-22%;background:var(--conic);animation:tourne 22s linear infinite}
+.v-orbe b{position:absolute;inset:0;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.6),rgba(255,255,255,.06) 30%,transparent 48%)}
+html.calme .v-orbe i{animation:none}
+
+/* la barre : le logo seul, dans une pilule (la navigation est dans le Dock) */
+.clair .barre{position:fixed;inset:0 0 auto;z-index:30;display:flex;justify-content:center;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 0;pointer-events:none}
+.clair .barre::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid #ECECF0;opacity:0;transition:opacity .4s;z-index:-1}
+.clair .barre .mk{pointer-events:auto;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font:400 19px var(--display);letter-spacing:-.01em;background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:999px;padding:8px 16px 8px 10px;box-shadow:0 8px 30px -18px rgba(17,17,20,.35)}
+.clair .barre .mk sup{font-size:9px}
+.clair .bouton,.v-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:#FFFFFF!important;font:600 15px var(--ui);cursor:pointer;text-decoration:none}
+.clair .bouton:hover,.v-btn:hover{background:#2A2A31}
+.v-btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid #D6D6DD;background:#FFFFFF;color:var(--ink);font:600 14.5px var(--ui);cursor:pointer;text-decoration:none}
+.v-btn2:hover{border-color:var(--ink)}
+.v-btn2[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
+.v-btn2:disabled{opacity:.45;cursor:not-allowed}
+.v-pil{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font:500 13px var(--ui);background:#FFFFFF;color:var(--ink);white-space:nowrap}
+.v-k{margin:0;font:600 12.5px var(--ui);letter-spacing:.24em;text-transform:uppercase;color:var(--faint)}
+.v-leg{margin:0;font-size:16px;line-height:1.55;color:var(--soft)}
+.v-pt{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none;background:var(--pt,#9C9CA8)}
+.v-carte{background:var(--carte);border:1px solid var(--line);border-radius:28px;box-shadow:0 1px 2px rgba(17,17,20,.04),0 24px 60px -30px rgba(17,17,20,.18)}
+.v-mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.v-col{max-width:1240px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.v-titre{margin:0 0 32px;text-align:center;font:400 clamp(40px,6vw,76px)/1 var(--display);letter-spacing:-.025em}
+.v-sec{padding:96px 0}
+.v-alt{background:var(--alt)}
+
+/* 1 · le titre et le manifeste (le « Je suis… », la démonstration et la liste d'attente restent ici) */
+.clair .zero{min-height:auto;padding:104px 0 48px;gap:22px}
+.clair .zero h1{color:var(--ink)}
+.clair .zero .intention{max-width:860px;margin:6px auto 0;font:400 clamp(26px,3.4vw,42px)/1.15 var(--display);letter-spacing:-.02em}
+.clair .zero .intention .gris{color:#8A8A94}
+.clair .zero .trois{color:var(--faint)}
+.clair .zero .v-orbe{width:min(26vmin,132px);height:min(26vmin,132px)}
+
+/* 2 · un projet, chacun son écran : le produit en héros */
+.v-app{display:flex;overflow:hidden;border-radius:30px}
+.v-ecran{flex:1 1 640px;min-width:0;display:flex;flex-direction:column}
+.v-fen{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid #ECECF0}
+.v-fen span:last-child{flex:1;text-align:center;font-size:13px;color:var(--faint)}
+.v-feux{display:flex;gap:7px}.v-feux i{width:11px;height:11px;border-radius:50%;display:block}
+.v-scene{flex:1;padding:28px;display:flex;justify-content:center;transition:background .35s}
+.v-page{width:100%;max-width:560px;background:#FFFFFF;border-radius:22px;border:1px solid var(--line);box-shadow:0 20px 50px -28px rgba(17,17,20,.35);overflow:hidden}
+.v-page-t{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid #ECECF0}
+.v-page-t .v-pt{width:14px;height:14px}
+.v-page-t p{margin:0}
+.v-moments{list-style:none;margin:0;padding:8px 20px}
+.v-moments li{display:flex;gap:14px;align-items:baseline;padding:12px 0;border-bottom:1px solid #F0F0F3}
+.v-moments li:last-child{border-bottom:0}
+.v-moments .h{width:58px;flex:none;font:600 15px ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.v-moments .t{flex:1;min-width:0}
+.v-moments b{display:block;font-size:16px}
+.v-moments small{display:block;font-size:13.5px;color:var(--faint)}
+.v-panneau{width:360px;flex:none;border-left:1px solid #ECECF0;padding:22px;display:flex;flex-direction:column;gap:16px;background:var(--doux)}
+.v-places{display:flex;flex-direction:column;gap:8px}
+.v-place{display:flex;align-items:center;gap:12px;min-height:52px;padding:0 14px;border-radius:16px;border:1px solid var(--line);background:#FFFFFF;cursor:pointer;text-align:left;font:500 15.5px var(--ui);color:var(--ink)}
+.v-place .v-pt{width:14px;height:14px}
+.v-place span:nth-child(2){flex:1}
+.v-place small{font-size:12.5px;color:var(--faint)}
+.v-place[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.v-gestes{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14.5px}
+.v-reel{display:flex;flex-direction:column;gap:10px;margin-top:auto}
+.v-dit{margin:0;font-size:13.5px;color:var(--soft);min-height:40px}
+@media (max-width:900px){.v-app{flex-direction:column}.v-panneau{width:auto;border-left:0;border-top:1px solid #ECECF0}.v-scene{padding:16px}}
+
+/* 3 · les sept téléphones */
+.v-tete{display:flex;gap:40px;align-items:flex-end;justify-content:space-between;margin-bottom:32px}
+.v-tete h2{margin:0;font:400 clamp(38px,5vw,64px)/1.02 var(--display);letter-spacing:-.025em}
+.v-tete p{max-width:420px}
+@media (max-width:860px){.v-tete{flex-direction:column;align-items:flex-start;gap:14px}}
+.v-evts{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.v-tels{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:14px;list-style:none;margin:0;padding:0}
+.v-tel{display:flex;flex-direction:column;gap:8px;transition:opacity .35s}
+.v-tel.eteint{opacity:.45}
+.v-tel .cadre{aspect-ratio:9/17;border-radius:26px;border:1px solid #DADAE0;background:#FFFFFF;padding:10px;display:flex;flex-direction:column;box-shadow:0 16px 34px -24px rgba(17,17,20,.4)}
+.v-tel .aplat{height:44%;border-radius:18px;background:#EDEDF0;display:flex;align-items:flex-end;padding:10px;transition:background .35s;font:600 12px var(--ui);color:#141416}
+.v-tel .msg{margin:10px 4px 0;font-size:12.5px;line-height:1.4}
+.v-tel .nom{margin:0;display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600}
+.v-tel .voit{margin:-4px 0 0;font-size:12.5px;color:var(--faint)}
+html.calme .v-tel,html.calme .v-tel .aplat,html.calme .v-scene{transition:none}
+
+/* 4 · une capacité par carte */
+.v-caps{display:flex;flex-direction:column;gap:28px}
+.v-cap{display:flex;overflow:hidden}
+.v-cap>div:first-child{flex:1 1 440px;padding:48px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.v-cap>div:last-child{flex:1 1 520px;padding:40px;background:var(--doux);border-left:1px solid #ECECF0;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.v-cap h3{margin:0;font:400 clamp(34px,4.4vw,56px)/1.02 var(--display);letter-spacing:-.025em}
+.v-cap .v-leg{font-size:17px}
+.v-cap.ambre>div:first-child{background:linear-gradient(160deg,#FFF4E3,#FFFFFF 70%)}
+.v-cap.violet>div:first-child{background:linear-gradient(160deg,#EEF0FF,#FFFFFF 70%)}
+.v-cap.cyan>div:first-child{background:linear-gradient(160deg,#E8FAFD,#FFFFFF 70%)}
+@media (max-width:900px){.v-cap{flex-direction:column}.v-cap>div:first-child,.v-cap>div:last-child{padding:28px}.v-cap>div:last-child{border-left:0;border-top:1px solid #ECECF0}}
+.v-eng{background:#FFFFFF;border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.v-eng>div{flex:1 1 220px;min-width:0}
+.v-eng p{margin:0}
+.v-eng .q{margin-top:2px;font-size:13.5px;color:var(--faint)}
+.v-form{width:100%;max-width:420px;align-self:center;background:#FFFFFF;border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.v-form label{display:grid;gap:6px;font-size:13.5px;color:var(--soft)}
+.v-form input,.v-form select,.v-form textarea{min-height:44px;border:1px solid #DADAE0;border-radius:12px;padding:0 12px;font:15px var(--ui);color:var(--ink);background:#FFFFFF}
+.v-form textarea{padding:10px 12px;resize:none}
+.v-agent{background:#FFFFFF;border:1px solid var(--line);border-radius:20px;padding:18px 20px}
+.v-agent p{margin:0}
+.v-etapes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;list-style:none;padding:0}
+.v-etapes li.fait{background:#E7F8EF;border-color:#BFE9D3}
+
+/* 5 · les détails de confiance */
+.v-rangs{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 18px;list-style:none;margin:0}
+.v-rangs>div{flex:0 0 300px;scroll-snap-align:start;padding:26px;display:flex;flex-direction:column;gap:10px;border-radius:24px}
+.v-rangs dt{font-size:18px;font-weight:600;margin-top:6px}
+.v-rangs dd{margin:0}
+.v-rangs .ic{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.v-rangs .ic .v-pt{width:14px;height:14px}
+
+/* 6 · les domaines */
+.v-doms{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;list-style:none;margin:0;padding:0}
+.v-doms li{padding:22px;border-radius:22px;display:flex;flex-direction:column;gap:10px}
+.v-doms li.venir{opacity:.78}
+.v-doms .v-pil{align-self:flex-start}
+.v-doms b{font:400 26px var(--display);letter-spacing:-.02em;margin-top:4px}
+.v-doms a{font:600 14px var(--ui)}
+
+/* 7 · l'entrée */
+.v-entree{padding:110px 0 150px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+.v-entree h2{margin:0;font:400 clamp(40px,6vw,76px)/1 var(--display);letter-spacing:-.025em}
+
+/* les composants repris, éclairés */
+.clair .js-l{color:var(--faint)}
+.clair .jl-champ{background:#FFFFFF;border-color:#D6D6DD;color:var(--ink)}
+.clair .jl-champ.choisi .jl-v{color:var(--ink)}
+.clair .jl-fl{stroke:var(--ink)}
+.clair .jl-liste{background:#FFFFFF;border-color:var(--line);box-shadow:0 24px 60px -24px rgba(17,17,20,.35)}
+.clair .jl-o,.clair .jl-g{color:var(--ink)}
+.clair .jl-o.actif{background:#F1F1F4;color:var(--ink)}
+.clair .jl-o[aria-selected="true"] .jl-t{color:var(--ink)}
+.clair .js-champ{background:#FFFFFF;border-color:#D6D6DD}
+.clair .js-champ button{background:var(--ink);color:#FFFFFF}
+.clair .at-bloc .at-titre{color:var(--soft)}
+.clair .at-bloc .at-titre b{color:var(--ink)}
+.clair .at-bloc .at-ok{color:var(--soft)}
+.clair .at-bloc .at-ok input{accent-color:var(--ink)}
+.clair .at-bloc .at-plus{color:var(--ink)}
+.clair .vg-t{color:var(--ink)}
+.clair .vg-d{color:var(--faint)}
+.clair .pied-site{border-top:1px solid #ECECF0;color:var(--soft);padding:32px 0 calc(120px + env(safe-area-inset-bottom,0px))}
+.clair .pied-site .sorties-note{margin:0 0 14px;font-size:14px;color:var(--soft)}
+.clair .pied-legal a{color:var(--ink)}
+.clair .pied-bas{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:14px;font:500 13px var(--ui);color:var(--ink)}
+.clair .pied-bas button{border:0;background:none;color:var(--ink);font:inherit;cursor:pointer;min-height:44px;padding:0 4px;text-decoration:underline;text-underline-offset:3px}
+.clair .pied-bas button[aria-pressed="true"]{font-weight:600}
+.clair .dock-zone{--dk-fond:rgba(255,255,255,.94);--dk-bord:#E4E4E9;--dk-ic:#111114;--dk-lib:#4B4B55;--dk-actif:#111114;--dk-surf:#F1F1F4}
+.clair .dock-zone .dock{box-shadow:0 14px 40px -18px rgba(17,17,20,.4)}
+.clair .dock-zone.dock-ecran .dock-m,.clair .dock-zone.dock-page .dock-m{background:rgba(255,255,255,.94)}
+.clair .lecteur{background:#FFFFFF;color:var(--ink)}
+.clair .dock-zone .dock-t{color:#4B4B55}
+.clair .dock-zone .dock-e[aria-current] .dock-t,.clair .dock-zone .dock-e:hover .dock-t{color:#111114}

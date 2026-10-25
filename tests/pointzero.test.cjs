@@ -49,7 +49,7 @@ test('point zéro · les six formes viennent d\'un seul module, partagé avec la
   assert.deepEqual(F.NOMS, ['Point', 'Ligne', 'Relation', 'Grille', 'Composition', 'Projet']);
   const E = F.etats(); assert.equal(E.length, 6); E.forEach(P => assert.equal(P.length, F.N));
   const z = fs.readFileSync('zero/zero.js', 'utf8'); assert.match(z, /window\.AIMEFormes/); assert.doesNotMatch(z, /var RECTS=/, 'pas de copie des formes dans la Page Zéro');
-  const idx = fs.readFileSync('index.html', 'utf8'); assert.ok(idx.indexOf('/zero/formes.js') < idx.indexOf('/zero/zero.js'));
+  const idx = fs.readFileSync('lab/grande-partition/index.html', 'utf8'); assert.ok(idx.includes('/zero/zero.js') && idx.indexOf('/zero/formes.js') < idx.indexOf('/zero/zero.js'), 'la Page Zéro animée vit au Lab ; l\'accueil clair (25/10) ne la charge plus');
 });
 
 test('point zéro · stockage : session obligatoire, analyse refaite côté serveur, fichiers jamais envoyés, tout effacé avec le compte', () => {

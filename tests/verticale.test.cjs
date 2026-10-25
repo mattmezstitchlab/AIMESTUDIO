@@ -69,7 +69,7 @@ test('verticale · la Grande Partition complète vit au Lab ; l\'accueil présen
     assert.match(lab, new RegExp('id="' + id + '"'), 'Lab, section présente : #' + id);
   }
   const accueil = lire('index.html');
-  for (const id of ['haut', 'demo', 'coeur', 'ecrans', 'droits', 'jourj', 'partout', 'contact']) {
+  for (const id of ['haut', 'demo', 'ecrans', 'mosaique', 'capacites', 'protection', 'domaines', 'contact']) {
     assert.match(accueil, new RegExp('id="' + id + '"'), 'accueil, section présente : #' + id);
   }
   for (const id of ['naiss', 'story2', 'atlas', 'lien', 'geste', 'pan-g44', 'regards', 'story3', 'build', 'vitrine', 'offres', 'tiroirAtelier']) {

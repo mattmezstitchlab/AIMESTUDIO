@@ -90,7 +90,6 @@ test('tarifs : la page, ses trois offres et la bêta ; aucun appel serveur ni pa
 test('visuels : chaque image citée existe ; la photo du Point Zéro est la seule en fetchpriority="high"', () => {
   for (const f of ['index.html', 'tarifs/index.html', 'compte/index.html', 'coeur/coeur.css']) for (const x of lire(f).matchAll(/\/media\/visuels\/([\w.-]+\.webp)/g)) assert.ok(fs.existsSync(path.join(__dirname, '..', 'media/visuels', x[1])), f + ' : ' + x[1]);
   const a = lire('index.html');
-  assert.equal((a.match(/fetchpriority="high"/g) || []).length, 1); assert.match(a, /<img src="\/media\/visuels\/cour-trio\.webp"[^>]*fetchpriority="high"/);
-  assert.equal((a.match(/cour-trio\.webp/g) || []).length, 1, 'la photo du Point Zéro n\'est demandée qu\'une fois');
-  assert.equal((a.match(/class="sc-photo"[^>]*loading="lazy"/g) || []).length, 4, 'les quatre arrivées, en différé');
+  assert.ok((a.match(/fetchpriority="high"/g) || []).length <= 1, 'au plus une image prioritaire');
+  assert.ok(!/cour-trio\.webp/.test(a), 'l\'accueil clair (25/10) n\'a plus de photo de nuit en tête');
 });

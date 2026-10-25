@@ -81,7 +81,7 @@ test('dock : le composant est accessible, échappé, sans action au survol, et u
 test('dock : posé sur l\'accueil et les exemples (le public), et dans chaque écran du cœur',()=>{
  for(const f of ['index.html','exemples/index.html']){const h=lire(f);
   assert.ok(h.includes('/dock/modele.js')&&h.includes('/dock/dock.js')&&h.includes('/dock/dock.css'),f);
-  assert.ok(h.indexOf('/dock/dock.js')<h.indexOf('/coeur/coeur.js'),f+' : le dock avant le cœur');assert.match(h,/AIMEDockVue\.poser\(el,AIMEDock\.composer\(\{\}\)/)}
+  if(h.includes('/coeur/coeur.js'))assert.ok(h.indexOf('/dock/dock.js')<h.indexOf('/coeur/coeur.js'),f+' : le dock avant le cœur');assert.match(h,/AIMEDockVue\.poser\(el,AIMEDock\.composer\(\{\}\)/)}
  const k=lire('coeur/coeur.js');assert.match(k,/AIMEDock\.pourScenario|Dk\.pourScenario/);assert.match(k,/mode:'ecran'/);
 });
 

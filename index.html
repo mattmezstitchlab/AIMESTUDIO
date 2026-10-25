@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AIME® · Un projet, chacun son écran</title>
-<meta name="description" content="AIME. Un seul projet, écrit une fois. Le couple, la coordination, le prestataire et l'invité le voient chacun depuis sa place, au même instant, avec ce que les règles leur permettent.">
-<meta name="theme-color" content="#0A0A0C">
+<meta name="description" content="AIME. On ne peut pas tout être au même moment, mais on peut être bien plus qu'une seule chose. Un seul projet, écrit une fois : le couple, la coordination, le prestataire et l'invité le voient chacun depuis sa place, avec ce que les règles leur permettent.">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:,">
 <script>try{if(localStorage.getItem('aime-zero-calme')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}catch(e){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('calme')}</script>
@@ -16,133 +16,45 @@
 @font-face{font-family:"Cal Sans";font-weight:400 700;font-display:swap;src:url("/fonts/CalSans-latin-ext.woff2") format("woff2");unicode-range:U+0100-024F,U+1E00-1EFF}
 @font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin.woff2") format("woff2-variations")}
 @font-face{font-family:"Inter Variable";font-weight:100 900;font-display:swap;src:url("/fonts/InterVariable-latin-ext.woff2") format("woff2-variations");unicode-range:U+0100-024F,U+1E00-1EFF}
-/* l'identité AIME existante : les mêmes jetons que la grande landing */
-:root{color-scheme:dark;--desk:#0A0A0C;--ink:#EDEDF0;--soft:#9C9CA8;--faint:#7E7E8A;--line:#2B2B33;
+/* l'identité AIME, en clair (25/10/2026) : texte noir sur blanc, une couleur par place, l'orbe en signature */
+:root{color-scheme:light;--desk:#FFFFFF;--ink:#111114;--soft:#4B4B55;--faint:#5B5B66;--line:#E4E4E9;
  --ui:"Inter Variable",Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--display:"Cal Sans","Inter Variable",Inter,-apple-system,sans-serif;
- --conic:conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185)}
+ --conic:conic-gradient(#FB7185,#F59E0B,#6D4AFF,#22D3EE,#FB7185)}
 *{box-sizing:border-box}
-html{background:var(--desk)}
-body{margin:0;background:var(--desk);color:var(--ink);font:400 17px/1.55 var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+html{background:#FFFFFF;scroll-behavior:smooth}
+html.calme{scroll-behavior:auto}
+body{margin:0;background:#FFFFFF;color:var(--ink);font:400 17px/1.55 var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
 a{color:inherit}
-:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
-.evite{position:absolute;left:-999px;top:10px;z-index:50;background:var(--ink);color:var(--desk);padding:10px 14px;border-radius:10px;text-decoration:none}.evite:focus{left:12px}
-.col{max-width:980px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));text-align:center}
-
-/* la barre : presque rien */
-.barre{position:fixed;inset:0 0 auto;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 14px max(20px,env(safe-area-inset-left,0px));pointer-events:none}
-.barre a{pointer-events:auto;text-decoration:none}
-.barre .mk{font:400 19px var(--display);letter-spacing:-.01em;opacity:0;transition:opacity .6s;padding-left:44px}
-.barre .mk sup{font-size:.5em}
-body.loin .barre .mk{opacity:1}
-/* un fond léger dès que le logo paraît : il ne se pose jamais sur le texte qui défile */
-.barre::before{content:"";position:absolute;inset:0;background:rgba(10,10,12,.84);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07);opacity:0;transition:opacity .5s;z-index:-1}
-body.loin .barre::before{opacity:1}
-.barre .droite{display:flex;align-items:center;gap:16px;pointer-events:auto}
-.barre .compte-d{font:500 12.5px var(--ui);color:var(--ink);opacity:.85;text-decoration:underline;text-underline-offset:3px}.barre .compte-d:hover{opacity:1}
-@media (max-width:620px){.barre .passer{display:none}.barre .mk{padding-left:0}}
-.barre .passer{font:500 13px var(--ui);color:var(--soft);padding:8px 2px;transition:color .2s}.barre .passer:hover{color:var(--ink)}
-
-/* l'orbe : un seul objet, qui suit des ancres posées dans la page */
-.flot{position:fixed;left:0;top:0;width:100px;height:100px;z-index:2;pointer-events:none;will-change:transform,opacity;transform-origin:0 0}
-.aime-orbe{position:relative;display:block;width:100%;height:100%}
-.ao-halo{position:absolute;inset:-30%;border-radius:50%;background:radial-gradient(closest-side,rgba(124,92,255,.34),rgba(34,211,238,.10) 52%,rgba(251,113,133,.05) 64%,transparent 74%);animation:halo 9s ease-in-out infinite;will-change:transform,opacity}
-.ao-def{position:absolute}
-.ao-peau,.ao-lumiere{position:absolute;inset:0;display:block}.ao-peau{overflow:hidden}
-.ao-cone{position:absolute;inset:-21%;display:block;background:var(--conic);animation:tourne 22s linear infinite;will-change:transform}
-.ao-lumiere{background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55),rgba(255,255,255,.08) 28%,transparent 46%),radial-gradient(circle at 70% 78%,rgba(10,10,12,.38),transparent 55%)}
-@keyframes tourne{to{transform:rotate(360deg)}}
-@keyframes halo{50%{transform:scale(1.08);opacity:.75}}
-.ancre{display:block;margin:0 auto;aspect-ratio:1;flex:none}
-
-/* le point zéro */
-.zero{min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(22px,3.6vh,38px);padding:calc(76px + env(safe-area-inset-top,0px)) 0 96px;position:relative}
-.zero .ancre{width:min(28vmin,220px)}
-.zero h1{margin:0;font:400 clamp(56px,9vw,112px)/.95 var(--display);letter-spacing:-.02em}
-.zero h1 sup{font-size:.28em;vertical-align:top;position:relative;top:.35em;margin-left:.04em}
-.zero .intention{margin:14px 0 0;font:400 clamp(22px,2.6vw,32px)/1.25 var(--ui);letter-spacing:-.015em}
-.zero .trois{margin:14px 0 0;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
-.descendre{position:absolute;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font:500 14px var(--ui);color:var(--soft);text-decoration:none;display:grid;justify-items:center;gap:8px;padding:6px 10px}
-.descendre i{width:1px;height:30px;background:linear-gradient(var(--soft),transparent);display:block;animation:fil 2.8s ease-in-out infinite;transform-origin:top}
-@keyframes fil{0%{transform:scaleY(0);opacity:0}40%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
-.apparait{opacity:0;transform:translateY(22px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.2,.7,.2,1)}
-.apparait.vu{opacity:1;transform:none}
-
-/* entrer */
-.entrer{min-height:80svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(24px,4vh,40px);padding:110px 0 100px;position:relative;border-top:1px solid var(--line)}
-.entrer h2{margin:0;font:400 clamp(44px,7.2vw,96px)/1 var(--display);letter-spacing:-.025em}
-.entrer p{margin:22px auto 0;max-width:600px;font-size:clamp(17px,1.7vw,21px);color:var(--soft);text-wrap:balance}
-.bouton{display:inline-flex;align-items:center;gap:12px;margin-top:10px;padding:17px 28px;border-radius:999px;background:var(--ink);color:var(--desk);font:600 16.5px var(--ui);text-decoration:none;transition:transform .2s,box-shadow .3s}
-.sorties{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin-top:34px}.sorties .bouton{margin-top:0}.bouton.second{background:transparent;color:var(--ink);border:1px solid var(--line);padding:16px 24px}.bouton.second:hover{border-color:var(--soft)}
-@media (max-width:420px){.sorties .bouton{width:100%;justify-content:center}}
-.bouton:hover{transform:translateY(-1px);box-shadow:0 0 0 6px rgba(237,237,240,.08)}
-.bouton span{transition:transform .25s}.bouton:hover span{transform:translateX(4px)}
-.sorties-note{font-size:14px!important}
-.pied{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;flex-wrap:wrap;gap:8px 22px;font:500 12.5px var(--ui);color:var(--soft);padding:0 20px}
-.pied button{border:0;background:none;color:var(--ink);font:inherit;cursor:pointer;padding:4px 2px;text-decoration:underline;text-underline-offset:3px}
-
-/* mouvement réduit */
-html.calme .apparait{opacity:1;transform:none;transition:none}
-html.calme .ao-cone,html.calme .ao-halo,html.calme .descendre i{animation:none}
-html.calme .bouton,html.calme .bouton span{transition:none}
-
-/* les points des « i » */
+.evite{position:absolute;left:-999px;top:10px;z-index:50;background:var(--ink);color:#FFFFFF;padding:10px 14px;border-radius:10px;text-decoration:none}.evite:focus{left:12px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.ii{position:relative}
-.pt{position:absolute;border-radius:50%;background:currentColor;transform-origin:50% 50%;pointer-events:none}
-.pt.vif{background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.75),rgba(255,255,255,0) 46%),conic-gradient(#FB7185,#F59E0B,#7C5CFF,#22D3EE,#FB7185);box-shadow:0 0 .32em rgba(124,92,255,.75),0 0 .9em rgba(34,211,238,.25);animation:ptTourne 6s linear infinite}
-.pt.plein{box-shadow:0 0 .5em rgba(124,92,255,.9),0 0 1.4em rgba(251,113,133,.45)}
-@keyframes ptTourne{to{filter:hue-rotate(360deg)}}
-.eclats{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden}
-.eclats i{position:absolute;left:0;top:0;display:block;will-change:transform,opacity}
-html.calme .pt.vif{animation:none}
-
-/* deux orbes qui regardent */
-.duo{display:flex;justify-content:center;gap:clamp(14px,3vw,26px);margin:0 auto clamp(18px,3vh,30px)}
-.duo-o{position:relative;width:clamp(78px,11vw,112px);aspect-ratio:1;transform:scale(.2);opacity:0;transition:transform .9s cubic-bezier(.3,1.5,.5,1),opacity .5s}
-.duo-o.duo-1{transition-delay:.12s}
-.duo.eveil .duo-o{transform:none;opacity:1}
-.duo-c{position:absolute;inset:0;display:block}
-.yeux{position:absolute;left:19%;right:19%;top:27%;height:34%;display:flex;justify-content:space-between;z-index:2}
-.oeil{position:relative;width:42%;height:100%;border-radius:50%;background:#F5F5F7;box-shadow:inset 0 -2px 4px rgba(0,0,0,.18);overflow:hidden;transition:transform .12s}
-.oeil i{position:absolute;left:28%;top:26%;width:44%;height:48%;border-radius:50%;background:#0A0A0C;box-shadow:inset 2px 2px 0 rgba(255,255,255,.55)}
-.duo-o.cligne .oeil{transform:scaleY(.08)}
-
-/* le formulaire de contact a déménagé vers /contact/ (lien en pied de page) */
-
-/* les visuels : une scène réelle derrière le Point Zéro ; l'orbe, le logo et les animations restent au-dessus */
-.zero-photo{position:absolute;inset:0 0 auto;height:100svh;z-index:0;overflow:hidden;pointer-events:none}
-.zero-photo img{width:100%;height:100%;object-fit:cover;display:block;opacity:.62}
-.zero-photo::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 50% 40%,rgba(10,10,12,.55),rgba(10,10,12,.2) 70%),linear-gradient(180deg,rgba(10,10,12,.55) 0%,rgba(10,10,12,0) 28%,rgba(10,10,12,0) 62%,var(--desk) 100%)}
-.zero>*:not(.zero-photo){position:relative;z-index:1}
-.zero>.col{z-index:2}   /* la liste « Je suis… » (dans .col) s'ouvre par-dessus la démo et les vidéos, ses voisines */
-html.calme .zero-photo img{opacity:.5}
-@media (max-width:700px){.zero-photo img{object-position:9% 50%;opacity:.7}}
+.col{max-width:980px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));text-align:center}
+.zero{display:flex;flex-direction:column;align-items:center;position:relative}
+.zero h1{margin:0;font:400 clamp(64px,10vw,128px)/.95 var(--display);letter-spacing:-.02em}
+.zero h1 sup{font-size:.26em;vertical-align:top;position:relative;top:.4em;margin-left:.04em}
+.zero .trois{margin:14px 0 0;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase}
+@keyframes tourne{to{transform:rotate(360deg)}}
 </style>
 <link rel="stylesheet" href="/accueil/accueil.css">
 <link rel="stylesheet" href="/accueil/je-suis.css">
 <link rel="stylesheet" href="/attente/attente.css">
-<link rel="stylesheet" href="/coeur/coeur.css">
 <link rel="stylesheet" href="/dock/dock.css">
+<link rel="stylesheet" href="/nav/pied-legal.css">
+<link rel="stylesheet" href="/accueil/vitrine.css">
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
-<link rel="stylesheet" href="/nav/pied-legal.css">
 </head>
-<body>
+<body class="clair">
 <a class="evite" href="#jsChoix">Aller au choix « Je suis… »</a>
-<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut">AIME<sup>®</sup></a></header>
-
-<div class="flot" id="flot" aria-hidden="true"></div>
+<!-- en haut, seulement le logo : la navigation est dans le Dock (décision du 24/10) -->
+<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut"><span class="v-orbe" style="width:24px;height:24px" aria-hidden="true"><i></i><b></b></span>AIME<sup>®</sup></a></header>
 
 <main>
-<!-- 0 · Ouverture : le Point Zéro -->
+<!-- 1 · le titre, le manifeste, puis « Je suis… », la démonstration, la liste d'attente et les vidéos (inchangés) -->
 <section class="zero" id="haut" aria-labelledby="t-zero">
- <picture class="zero-photo" aria-hidden="true">
-  <img src="/media/visuels/cour-trio.webp" alt="" width="1672" height="941" fetchpriority="high" decoding="async">
- </picture>
- <span class="ancre" data-orbe="1"></span>
+ <span class="v-orbe" aria-hidden="true"><i></i><b></b></span>
  <div class="col">
   <h1 id="t-zero">AIME<sup>®</sup></h1>
-  <p class="intention" data-regie="intention">Tout commence par une intention.</p>
+  <p class="intention" data-regie="intention"><span class="gris">On ne peut pas tout être au même moment.</span> Mais on peut être bien plus qu'une seule chose.</p>
   <p class="trois" data-regie="trois">Créer. Relier. Transformer.</p>
   <!-- « Je suis… » : un choix, aucun rôle (le rôle vient du serveur, seulement pour qui crée un projet) ; une liste dessinée au style du site (motif ARIA combobox + listbox, accueil/liste.js) ; la valeur reste « maries », « metier:photographe »… -->
   <div class="js-choix">
@@ -167,6 +79,7 @@ html.calme .zero-photo img{opacity:.5}
     </ul>
    </div>
   </div>
+ </div>
  </div>
  <!-- la démo : les téléphones du mariage, le rôle choisi au centre (accueil/demo.js, vitrine/metiers.json) -->
  <section class="dm" id="demo" hidden aria-labelledby="dmTete">
@@ -200,183 +113,123 @@ html.calme .zero-photo img{opacity:.5}
   <li><button type="button" class="vg-b" data-video="aime-film" data-vtt data-titre="AIME en 2 minutes"><span class="vg-img"><img src="/media/aime-film.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">AIME en 2 minutes</span><span class="vg-d">2 min 22 · sous-titrée</span></button></li>
   <li><button type="button" class="vg-b" data-video="aime-accueil" data-vtt data-titre="L'accueil en 45 secondes"><span class="vg-img"><img src="/media/aime-accueil.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">L'accueil en 45 secondes</span><span class="vg-d">45 s · sous-titrée</span></button></li>
  </ul>
- <a class="descendre" href="/exemples/mosaique/">Voir ce qui change tout<i aria-hidden="true"></i></a>
 </section>
 
-
-<!-- 1 · Le cœur : un seul projet, quatre écrans (accueil/coeur.js : vitrine/rendu.js + synchroview/permissions.js) -->
-<section class="cx cx-ouverture" id="coeur" aria-labelledby="t-coeur">
- <div class="cx-in">
-  <p class="cx-k apparait">Le cœur d'AIME</p>
-  <h2 class="cx-titre apparait" id="t-coeur">Un seul projet.<br>Chacun voit ce qui le concerne.</h2>
-  <p class="cx-lead apparait">Le couple, la coordination, le prestataire et l'invitée ouvrent le même mariage au même instant. Rien n'est recopié : chaque écran est composé pour la personne qui le regarde, avec ce que les règles lui permettent.</p>
- </div>
-</section>
-
-<!-- 1 · Quatre arrivées : ce que chacun apporte, écrit une seule fois (une scène par rôle) -->
-<div class="arrivees" id="arrivees">
- <div class="cx-in arr-tete">
-  <div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">01</p><h2 id="t-arrivees">Quatre arrivées, une seule mémoire.</h2><p>Chacun arrive par son propre chemin. Ce qu'il apporte est écrit une seule fois, dans le même projet.</p></div>
- </div>
- <section class="sc" id="arr-couple" aria-labelledby="t-arr-couple">
-  <div class="cx-in sc-in">
-   <div class="sc-texte">
-    <img class="sc-photo" src="/media/visuels/maries.webp" alt="Deux mariés regardent ensemble leur téléphone sur les marches du domaine" width="1200" height="675" loading="lazy" decoding="async">
-    <p class="sc-k">1 / 4 · Le couple</p>
-    <h3 id="t-arr-couple">Le couple crée le projet.</h3>
-    <p>Léa écrit une phrase sur l'accueil. AIME en tire le projet : qui, quand, où, combien. C'est la source que tout le reste lira.</p>
+<!-- 2 · Un projet. Chacun son écran. Le produit en héros, sur les vraies règles (accueil/vitrine.js : synchroview/permissions.js, coeur/roles.js) -->
+<section class="v-sec" id="ecrans" aria-labelledby="tEcrans" style="padding-top:48px">
+ <div class="v-col">
+  <h2 class="v-titre" id="tEcrans"><span class="gris">Un projet.</span> Chacun son écran.</h2>
+  <div class="v-carte v-app" id="vHero">
+   <div class="v-ecran">
+    <div class="v-fen"><span class="v-feux" aria-hidden="true"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i></span><span>Mariage Camille &amp; Gabriel · démonstration, données fictives</span></div>
+    <div class="v-scene" id="vScene">
+     <div class="v-page" aria-live="polite">
+      <div class="v-page-t"><span class="v-pt" id="vVousPt" aria-hidden="true"></span><div style="flex:1;min-width:0"><p style="font-size:12.5px;color:var(--faint)">Vous êtes</p><p class="d" style="font-size:24px" id="vVous">Le couple</p></div><span class="v-pil" id="vNb"></span></div>
+      <ul class="v-moments" id="vMoments"></ul>
+      <p style="margin:0;padding:12px 20px 18px;font-size:13.5px;color:var(--faint)" id="vCache"></p>
+     </div>
+    </div>
    </div>
-   <figure class="fiche"><span class="ancre ancre-sc" data-orbe="1" aria-hidden="true"></span>
-    <p class="fiche-k">Léa écrit</p>
-    <p class="fiche-phrase">« Le mariage de Léa et Marc, le 14 juin 2027 au Domaine des Aulnes, 120 invités »</p>
-    <p class="fiche-k">Écrit une fois</p>
-    <dl class="fiche-l"><div><dt>Projet</dt><dd>Léa &amp; Marc</dd></div><div><dt>Date</dt><dd>14 juin 2027</dd></div><div><dt>Lieu</dt><dd>Domaine des Aulnes</dd></div><div><dt>Invités</dt><dd>120</dd></div></dl>
-    <figcaption>Léa · <b>propriétaire</b> du projet</figcaption>
-   </figure>
+   <aside class="v-panneau" aria-label="Choisir une place">
+    <p class="v-k" style="font-size:11.5px">Places</p>
+    <div class="v-places" id="vPlaces" role="group" aria-label="Voir le projet depuis la place de"></div>
+    <p class="v-k" style="font-size:11.5px">Ce que cette place peut faire</p>
+    <ul class="v-gestes" id="vGestes"></ul>
+    <div class="v-reel">
+     <p class="v-k" style="font-size:11.5px">Le réel bouge</p>
+     <button type="button" class="v-btn2" id="vDecaler" aria-pressed="false">Décaler le cocktail de 15 min</button>
+     <button type="button" class="v-btn2" id="vPlanB" aria-pressed="false">Il pleut : basculer en plan B</button>
+     <p class="v-dit" id="vReelDit" role="status"></p>
+    </div>
+   </aside>
   </div>
- </section>
- <section class="sc" id="arr-prestataire" aria-labelledby="t-arr-prestataire">
-  <div class="cx-in sc-in">
-   <div class="sc-texte">
-    <img class="sc-photo" src="/media/visuels/photographe.webp" alt="Un photographe consulte sa mission entre deux réglages" width="1200" height="675" loading="lazy" decoding="async">
-    <p class="sc-k">2 / 4 · Le prestataire</p>
-    <h3 id="t-arr-prestataire">Le photographe rejoint le mariage.</h3>
-    <p>Déjà inscrit sur AIME, Studio Lumen est invité au projet en un geste. Nouveau, il s'inscrit avec le lien reçu, puis rejoint. Dans les deux cas, il apporte son créneau et son contrat, rien de plus.</p>
-   </div>
-   <figure class="fiche"><span class="ancre ancre-sc" data-orbe="1" aria-hidden="true"></span>
-    <p class="fiche-k">Deux chemins, un même projet</p>
-    <ol class="fiche-chemins"><li><b>Déjà sur AIME</b><span>Léa l'invite → il accepte</span></li><li><b>Nouveau</b><span>Lien reçu → inscription → il rejoint</span></li></ol>
-    <p class="fiche-k">Écrit une fois</p>
-    <dl class="fiche-l"><div><dt>Métier</dt><dd>Photographie et film</dd></div><div><dt>Créneau</dt><dd>17 h 30 · Séance photo</dd></div><div><dt>Document</dt><dd>Contrat, 2 pages</dd></div></dl>
-    <figcaption>Studio Lumen · <b>contribution</b> au projet</figcaption>
-   </figure>
-  </div>
- </section>
- <section class="sc" id="arr-invite" aria-labelledby="t-arr-invite">
-  <div class="cx-in sc-in">
-   <div class="sc-texte">
-    <img class="sc-photo" src="/media/visuels/invitee.webp" alt="Une invitée lit son programme en se préparant" width="1200" height="675" loading="lazy" decoding="async">
-    <p class="sc-k">3 / 4 · L'invitée</p>
-    <h3 id="t-arr-invite">L'invitée reçoit son invitation.</h3>
-    <p>Lucie reçoit un lien. Elle s'inscrit en une étape, rejoint le mariage et répond. Sa réponse n'est écrite qu'une fois : le couple la voit, le traiteur n'en reçoit que le régime.</p>
-   </div>
-   <figure class="fiche"><span class="ancre ancre-sc" data-orbe="1" aria-hidden="true"></span>
-    <p class="fiche-k">Son chemin</p>
-    <ol class="fiche-chemins"><li><b>L'invitation</b><span>Un lien personnel, envoyé par le couple</span></li><li><b>L'inscription</b><span>Une étape, puis elle rejoint le mariage</span></li></ol>
-    <p class="fiche-k">Écrit une fois</p>
-    <dl class="fiche-l"><div><dt>Réponse</dt><dd>Oui, présente</dd></div><div><dt>Régime</dt><dd>Végétarien</dd></div></dl>
-    <figcaption>Lucie · <b>invitée</b> du mariage</figcaption>
-   </figure>
-  </div>
- </section>
- <section class="sc" id="arr-coord" aria-labelledby="t-arr-coord">
-  <div class="cx-in sc-in">
-   <div class="sc-texte">
-    <img class="sc-photo" src="/media/visuels/coordinatrice.webp" alt="Une coordinatrice vérifie le déroulé en traversant la salle" width="1200" height="675" loading="lazy" decoding="async">
-    <p class="sc-k">4 / 4 · La coordination</p>
-    <h3 id="t-arr-coord">La coordinatrice prend le déroulé.</h3>
-    <p>Camille est invitée par le couple pour coordonner le jour J. Elle tient le déroulé, le plan B et l'équipe ; elle ne voit ni les paiements privés ni ce qui ne la regarde pas.</p>
-   </div>
-   <figure class="fiche"><span class="ancre ancre-sc" data-orbe="1" aria-hidden="true"></span>
-    <p class="fiche-k">Son chemin</p>
-    <ol class="fiche-chemins"><li><b>Invitée par le couple</b><span>Comme coordinatrice du jour J</span></li><li><b>Elle rejoint</b><span>Avec son compte AIME, ou en s'inscrivant</span></li></ol>
-    <p class="fiche-k">Écrit une fois</p>
-    <dl class="fiche-l"><div><dt>Déroulé</dt><dd>9 moments, de 12 h 30 à 3 h 30</dd></div><div><dt>Plan B</dt><dd>Orangerie couverte</dd></div><div><dt>Équipe</dt><dd>4 prestataires</dd></div></dl>
-    <figcaption>Camille Roux · <b>coordination</b> du jour J</figcaption>
-   </figure>
-  </div>
- </section>
-</div>
-
-<section class="cx cx-ecrans" id="ecrans" aria-labelledby="t-ecrans">
- <div class="cx-in">
-  <div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">02</p><h2 id="t-ecrans">Quatre écrans, une seule source.</h2><p>Dans un vrai projet, le serveur compose la page de chacun selon son rôle, à partir de la même source. Ici, quatre vraies pages, composées par les mêmes règles. L'Orbe, elle, explique les droits et propose les gestes. Faites défiler chaque écran.</p></div>
- </div>
- <section class="ecrans-scene" id="ecransScene" aria-label="Une page pour chacun, composée selon son rôle">
- <div class="ecrans-collant">
- <div class="ecrans" id="ecransGrille" role="list" aria-label="Le même mariage, vu par quatre personnes">
-  <span class="ancre ancre-ecran" id="ancreEcran" data-orbe="1" aria-hidden="true"></span>
-  <figure class="tel" role="listitem" data-angle="couple"><div class="tel-ecran"><span class="tel-attente" aria-hidden="true"></span><iframe title="Écran du couple : la page du mariage" sandbox="allow-same-origin" loading="lazy" tabindex="0"></iframe></div><figcaption><b>Le couple</b><span>Tout : programme, réponses, prestataires, paiements.</span></figcaption></figure>
-  <figure class="tel" role="listitem" data-angle="prestataire"><div class="tel-ecran"><span class="tel-attente" aria-hidden="true"></span><iframe title="Écran du prestataire : sa mission" sandbox="allow-same-origin" loading="lazy" tabindex="0"></iframe></div><figcaption><b>Le prestataire</b><span>Ses créneaux, l'accès, son contrat. Rien d'autre.</span></figcaption></figure>
-  <figure class="tel" role="listitem" data-angle="invite"><div class="tel-ecran"><span class="tel-attente" aria-hidden="true"></span><iframe title="Écran de l'invitée : le programme et sa réponse" sandbox="allow-same-origin" loading="lazy" tabindex="0"></iframe></div><figcaption><b>L'invitée</b><span>Le programme public, le lieu, sa réponse.</span></figcaption></figure>
-  <figure class="tel" role="listitem" data-angle="coordinateur"><div class="tel-ecran"><span class="tel-attente" aria-hidden="true"></span><iframe title="Écran de la coordination : le déroulé du jour" sandbox="allow-same-origin" loading="lazy" tabindex="0"></iframe></div><figcaption><b>La coordination</b><span>Le déroulé, l'équipe, le plan B, les urgences.</span></figcaption></figure>
- </div>
- <p class="ecrans-etat" id="ecransPas" aria-hidden="true"></p>
- </div>
- </section>
- <div class="cx-in">
-  <form class="source" id="source" aria-labelledby="t-source">
-   <p class="source-t" id="t-source">Écrivez une fois, les quatre écrans suivent</p>
-   <div class="source-champs">
-    <label>Les mariés<input id="srcTitre" type="text" maxlength="60" autocomplete="off"></label>
-    <label>La date<input id="srcDate" type="date"></label>
-    <label>Le lieu<input id="srcLieu" type="text" maxlength="80" autocomplete="off"></label>
-    <button type="button" class="source-r" id="srcRetour">Revenir à l'exemple</button>
-   </div>
-   <p class="source-etat" id="srcEtat" role="status" aria-live="polite"></p>
-  </form>
-  <p class="cx-note" id="ecransEtat">Démonstration · données fictives (Léa &amp; Marc). Rien n'est enregistré ni envoyé.</p>
+  <p class="v-leg" style="text-align:center;margin:18px auto 0;font-size:14px;max-width:760px">Ici, les vraies règles d'accès, avec des données fictives. Dans un vrai projet, le serveur compose la page de chacun selon son rôle, à partir de la même source : ce qu'une place ne voit pas ne lui est jamais envoyé. L'Orbe, elle, explique les droits et propose les gestes.</p>
  </div>
 </section>
 
-<!-- 2 · Décidé avant l'affichage -->
-<section class="cx" id="droits" aria-labelledby="t-droits">
- <div class="cx-in">
-  <div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">03</p><h2 id="t-droits">Décidé avant l'affichage.</h2><p>Ce qu'un écran ne montre pas n'est pas masqué : la page n'est composée qu'avec ce que les règles autorisent pour cette personne. Les mêmes règles sont vérifiées par le serveur dans les espaces partagés.</p></div>
-  <dl class="demo-cible"><div><dt>Ce que fait cette démonstration</dt><dd>Les écrans sont composés dans votre navigateur, à partir de données fictives, par les mêmes règles que le serveur.</dd></div><div><dt>L'architecture visée</dt><dd>Dans un vrai projet, chaque écran est composé par le serveur : une donnée non autorisée n'est jamais envoyée au navigateur.</dd></div></dl>
-  <div class="droits-cadre" tabindex="0" role="region" aria-label="Ce que chacun voit et peut faire">
-   <table class="droits">
-    <caption class="sr">Ce que chacun voit et peut faire, calculé par les règles</caption>
-    <thead><tr id="droitsTete"><th scope="col"><span class="sr">Ce que chacun voit</span></th><th scope="col">Le couple</th><th scope="col">Le prestataire</th><th scope="col">L'invitée</th><th scope="col">La coordination</th></tr></thead>
-    <tbody id="droitsCorps"></tbody>
-   </table>
-  </div>
+<!-- 3 · les sept téléphones (la mosaïque, gardée) : seuls les écrans concernés s'allument -->
+<section class="v-sec v-alt" id="mosaique" aria-labelledby="tMosa">
+ <div class="v-col">
+  <div class="v-tete"><h2 id="tMosa">Le réel bouge,<br>chacun le sait.</h2><p class="v-leg">Sept personnes, sept téléphones, un seul mariage. Quand quelque chose arrive, seuls les écrans concernés s'allument. Choisissez ce qui arrive.</p></div>
+  <div class="v-evts" id="vEvts" role="group" aria-label="Ce qui arrive"></div>
+  <ul class="v-tels" id="vTels" aria-live="polite"></ul>
+  <p class="v-leg" style="margin-top:22px;font-size:14px"><a href="/exemples/mosaique/">Voir la mosaïque en grand</a></p>
  </div>
 </section>
 
-<!-- 3 · Le réel bouge (live/modele.js : journal rejoué) -->
-<section class="cx" id="jourj" aria-labelledby="t-jourj">
- <div class="cx-in">
-  <div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">04</p><h2 id="t-jourj">Le réel bouge, chacun le sait.</h2><p>Une averse, un retard : on l'écrit une fois au journal du jour J. Les quatre écrans se recalent, chacun avec ce qui le concerne.</p></div>
-  <div class="gestes" id="jourGestes" role="group" aria-label="Faire bouger le jour J">
-   <button type="button" class="geste-b" data-j="pluie" id="jourPluie" aria-pressed="false">Il pleut : cérémonie à l'Orangerie</button>
-   <button type="button" class="geste-b" data-j="retard">Retard de 25 minutes</button>
-   <button type="button" class="geste-b" data-j="annuler" id="jourAnnuler" disabled>Annuler le dernier geste</button>
-  </div>
-  <p class="cx-trace" id="jourTrace" role="status" aria-live="polite"></p>
-  <div class="jours" id="jourVues"></div>
+<!-- 4 · une capacité par carte, chacune vivante -->
+<section class="v-sec" id="capacites" aria-labelledby="tCap" style="padding-bottom:40px">
+ <div class="v-col v-caps">
+  <h2 class="v-titre" id="tCap" style="margin-bottom:12px"><span class="gris">Une architecture.</span> Plusieurs gestes.</h2>
+  <article class="v-carte v-cap ambre" aria-labelledby="tEng">
+   <div><p class="v-k">Engagements</p><h3 id="tEng">Qui doit quoi,<br>pour quand.</h3><p class="v-leg">Une promesse datée entre deux personnes du projet. Seules elles, et l'organisation, la voient. Le retard est dit en toutes lettres.</p></div>
+   <div>
+    <div class="v-eng"><span class="v-pt" style="--pt:#F59E0B" aria-hidden="true"></span><div><p><b>Envoyer la playlist du bal</b></p><p class="q">Le DJ envers le couple · échéance le 1er juin</p></div><span class="v-pil" style="background:#F1EEFF;border-color:#F1EEFF">En attente de réponse</span><button type="button" class="v-btn" style="min-height:40px;padding:0 16px" data-eng="propose">Accepter</button></div>
+    <div class="v-eng"><span class="v-pt" style="--pt:#6D4AFF" aria-hidden="true"></span><div><p><b>Confirmer le nombre de couverts</b></p><p class="q">La coordination envers le traiteur · échéance le 20 mai</p></div><span class="v-pil" style="background:#FFF6E5;border-color:#FFF6E5">En cours</span><button type="button" class="v-btn" style="min-height:40px;padding:0 16px" data-eng="accepte">Marquer comme tenu</button></div>
+    <div class="v-eng"><span class="v-pt" style="--pt:#FB7185" aria-hidden="true"></span><div><p><b>Envoyer les faire-part</b></p><p class="q">Le couple envers l'organisation · échéance le 2 mars</p></div><span class="v-pil" style="background:#FFE4E8;border-color:#FFE4E8">En retard</span></div>
+   </div>
+  </article>
+  <article class="v-carte v-cap violet" aria-labelledby="tCarte">
+   <div><p class="v-k">ME · ma Carte</p><h3 id="tCarte">Votre Carte reçoit.<br>Vous décidez.</h3><p class="v-leg">Un lien que vous pouvez couper à tout moment. Vos questions, posées à qui vous écrit. Sa demande arrive dans votre AI, avec ses réponses. Votre adresse n'est jamais montrée.</p></div>
+   <div>
+    <form class="v-form" aria-label="Écrire à une Carte (démonstration)" onsubmit="return false">
+     <p class="d" style="margin:0;font-size:22px">Écrire à Matt</p>
+     <label for="vqDate">Date de l'événement<input id="vqDate" type="text" value="12/06/2027"></label>
+     <label for="vqFormule">Formule<select id="vqFormule"><option>Cérémonie</option><option>Cocktail</option><option selected>Soirée</option></select></label>
+     <label for="vqMsg">Votre message<textarea id="vqMsg" rows="3">Bonjour, seriez-vous libre pour jouer le 12 juin ?</textarea></label>
+     <button type="button" class="v-btn" id="vEnvoyer">Envoyer</button>
+     <p id="vEnvoiDit" role="status" style="margin:0;font-size:13px;color:var(--faint)">Démonstration : rien n'est envoyé.</p>
+    </form>
+   </div>
+  </article>
+  <article class="v-carte v-cap cyan" aria-labelledby="tAgent">
+   <div><p class="v-k" style="display:flex;align-items:center;gap:10px">Agent <span class="v-pil" style="letter-spacing:0;text-transform:none">En préparation</span></p><h3 id="tAgent">Votre agent.<br>Dans vos projets.</h3><p class="v-leg">Demandez en une phrase. L'agent fait les gestes un par un, avec les mêmes règles que vous : il ne peut rien de plus que vous, et chaque geste s'inscrit au journal.</p></div>
+   <div>
+    <div class="v-agent"><p style="font-size:12.5px;color:var(--faint);margin-bottom:8px">Vous</p><p class="v-mono" style="font-size:16px;line-height:1.55">Crée le projet depuis la demande de Sacha, invite le DJ et demande-lui la playlist avant le 1er juin.</p>
+     <ul class="v-etapes" id="vEtapes"><li class="v-pil v-mono"><span>·</span> créer le projet</li><li class="v-pil v-mono"><span>·</span> inviter le DJ</li><li class="v-pil v-mono"><span>·</span> demander l'engagement</li><li class="v-pil v-mono"><span>·</span> inscrire au journal</li></ul></div>
+    <p style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button type="button" class="v-btn2" id="vAgent">Montrer les étapes</button><span style="font-size:13.5px;color:var(--faint)">Une démonstration : l'agent n'est pas encore branché.</span></p>
+   </div>
+  </article>
  </div>
 </section>
 
-<!-- 4 · Sur chaque appareil (SynchroView) -->
-<section class="cx" id="partout" aria-labelledby="t-partout">
- <div class="cx-in">
-  <div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">05</p><h2 id="t-partout">Sur chaque appareil, au même instant.</h2><p>Téléphone, tablette, ordinateur, grand écran : la même page se compose pour chaque format, section par section.</p></div>
-  <div class="formats" aria-hidden="true"><span class="f-tel"><i></i>iPhone</span><span class="f-tab"><i></i>iPad</span><span class="f-pc"><i></i>Ordinateur</span><span class="f-grand"><i></i>Écran large</span></div>
- </div>
-</section>
-
-<!-- 5 · Ce qui protège vos données : seulement ce qui existe (docs/GABARITS.md, lot 1) -->
-<section class="cx" id="protection" aria-labelledby="t-protection">
- <div class="cx-in">
-  <div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">06</p><h2 id="t-protection">Ce qui protège vos données.</h2><p>Dans un vrai projet, aujourd'hui :</p></div>
-  <dl class="demo-cible">
-   <div><dt>Composé par le serveur</dt><dd>Chaque page est composée par le serveur selon votre rôle. Une donnée que votre rôle n'autorise pas n'est jamais envoyée à votre navigateur.</dd></div>
-   <div><dt>Un journal en ajout seul</dt><dd>Les invitations, les arrivées, les retraits et les fins d'accès y sont inscrits. Rien ne s'y efface ni ne s'y réécrit.</dd></div>
-   <div><dt>Des accès qui expirent</dt><dd>Un accès peut avoir une date de fin. Ce jour-là, il se ferme seul, et la fermeture est inscrite au journal.</dd></div>
-   <div><dt>« Je vois un accès inattendu »</dt><dd>Toujours présent dans Mon accès. Le propriétaire du projet est prévenu, sans votre nom.</dd></div>
+<!-- 5 · ce qui protège vos données, dans un vrai projet, aujourd'hui (rien d'autre que ce qui existe) -->
+<section class="v-sec" id="protection" aria-labelledby="tDetails" style="padding-top:56px">
+ <div class="v-col">
+  <h2 class="v-titre" id="tDetails" style="font-size:clamp(36px,5vw,64px)">La confiance, dans chaque détail.</h2>
+  <dl class="v-rangs" tabindex="0" aria-label="Ce qui protège vos données ; faites défiler">
+   <div class="v-carte"><span class="ic" style="background:#E7F8EF" aria-hidden="true"><span class="v-pt" style="--pt:#34D399"></span></span><dt>Composé par le serveur</dt><dd class="v-leg">Ce qu'un écran ne montre pas n'est pas masqué : il ne lui est jamais envoyé.</dd></div>
+   <div class="v-carte"><span class="ic" style="background:#E8FAFD" aria-hidden="true"><span class="v-pt" style="--pt:#22D3EE"></span></span><dt>Un journal en ajout seul</dt><dd class="v-leg">Qui a fait quoi, et quand. Jamais le texte d'un message ou d'un engagement.</dd></div>
+   <div class="v-carte"><span class="ic" style="background:#FFF6E5" aria-hidden="true"><span class="v-pt" style="--pt:#F59E0B"></span></span><dt>Des accès qui expirent</dt><dd class="v-leg">Une place peut durer jusqu'à une date. Après, elle vaut absence.</dd></div>
+   <div class="v-carte"><span class="ic" style="background:#FFF1F3" aria-hidden="true"><span class="v-pt" style="--pt:#FB7185"></span></span><dt>Je vois un accès inattendu</dt><dd class="v-leg">Chacun peut le signaler. Le propriétaire lit le message, pas le nom.</dd></div>
+   <div class="v-carte"><span class="ic" style="background:#F1EEFF" aria-hidden="true"><span class="v-pt" style="--pt:#6D4AFF"></span></span><dt>Un lien que vous coupez</dt><dd class="v-leg">Votre Carte se partage par un lien. Coupé, il ne mène plus à rien, tout de suite.</dd></div>
+   <div class="v-carte"><span class="ic" style="background:#EAF2FE" aria-hidden="true"><span class="v-pt" style="--pt:#60A5FA"></span></span><dt>Accessible</dt><dd class="v-leg">Clavier, lecteur d'écran, contrastes : chaque parcours est vérifié WCAG 2.2 AA.</dd></div>
   </dl>
  </div>
 </section>
 
-<!-- 6 · D'autres domaines : le même système -->
-<section class="cx" id="domaines" aria-labelledby="t-domaines">
- <div class="cx-in">
-  <div class="cx-tete apparait"><p class="cx-n" aria-hidden="true">07</p><h2 id="t-domaines">Pas seulement un mariage.</h2><p>Le même système sert d'autres domaines : un séminaire, une formation, une association. Un projet, chacun son écran.</p><p><a href="/exemples/">Voir les exemples</a></p></div>
+<!-- 6 · pas seulement un mariage (sans simuler ce qui n'existe pas) -->
+<section class="v-sec v-alt" id="domaines" aria-labelledby="tDom">
+ <div class="v-col">
+  <div class="v-tete"><h2 id="tDom">Pas seulement un mariage.</h2><p class="v-leg">La même architecture sert d'autres moments de vie : un séminaire, une formation, une association. Chacun garde ses places, ses règles et son programme.</p></div>
+  <ul class="v-doms">
+   <li class="v-carte"><span class="v-pil" style="background:#E7F8EF;border-color:#E7F8EF">Disponible</span><b>Mariage</b><span class="v-leg" style="font-size:14px">Le couple, la coordination, les prestataires, les invités.</span></li>
+   <li class="v-carte"><span class="v-pil" style="background:#F1EEFF;border-color:#F1EEFF">Exemple</span><b>Séminaire</b><span class="v-leg" style="font-size:14px">L'organisation, l'agence, les intervenants, les participants.</span><a href="/exemples/">Voir les exemples</a></li>
+   <li class="v-carte venir"><span class="v-pil" style="background:#F0F0F3;border-color:#F0F0F3">À venir</span><b>Sortie collective</b><span class="v-leg" style="font-size:14px">Un organisateur, des accompagnateurs, des participants.</span></li>
+   <li class="v-carte venir"><span class="v-pil" style="background:#F0F0F3;border-color:#F0F0F3">À venir</span><b>Soirée au restaurant</b><span class="v-leg" style="font-size:14px">Une réservation, une salle, des convives.</span></li>
+   <li class="v-carte venir"><span class="v-pil" style="background:#F0F0F3;border-color:#F0F0F3">Possibilité</span><b>Et la suite</b><span class="v-leg" style="font-size:14px">Chaque nouveau domaine garde la même architecture.</span></li>
+  </ul>
  </div>
 </section>
 
-<!-- Pied de page : le contact a sa page (/contact/) ; les démonstrations sont au Lab -->
+<!-- 7 · l'entrée -->
+<section class="v-entree" id="entree" aria-labelledby="tEntree">
+ <span class="v-orbe" style="width:72px;height:72px" aria-hidden="true"><i></i><b></b></span>
+ <h2 id="tEntree">Tout commence<br>par une intention.</h2>
+ <p class="v-leg" style="font-size:17px;max-width:520px">Choisissez votre place en haut de la page, ou entrez dans votre espace : AI pour ce qui vous concerne, ME pour votre Carte.</p>
+ <p style="margin:0;display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="v-btn" href="#jsChoix">Choisir ma place</a><a class="v-btn2" href="/projets/">Entrer dans AI</a></p>
+</section>
+
 <footer class="pied-site" id="contact">
  <div class="col">
   <p class="sorties-note">Les démonstrations tournent dans ce navigateur, avec des données fictives.</p>
@@ -390,22 +243,6 @@ html.calme .zero-photo img{opacity:.5}
 
 <script src="/contrats/projet.js"></script>
 <script src="/synchroview/permissions.js"></script>
-<script src="/synchroview/flux.js"></script>
-<script src="/vitrine/rendu.js"></script>
-<script src="/design/systemes.js"></script>
-<script src="/design/charger.js"></script>
-<script src="/live/modele.js"></script>
-<script src="/regie/donnees.js"></script>
-<script src="/nav/registre.js"></script>
-<script src="/regie/scene.js"></script>
-<script src="/zero/orbe.js"></script>
-<script src="/zero/points.js"></script>
-<script src="/zero/formes.js"></script>
-<script src="/zero/zero.js"></script>
-<script src="/os/apps.js"></script>
-<script src="/bureau/sources.js"></script>
-<script src="/os/coque.js"></script>
-<script src="/os/os.js"></script>
 <script src="/pointzero/analyse.js"></script>
 <script src="/projets/taxonomie.js"></script>
 <script src="/projets/intention.js"></script>
@@ -417,11 +254,19 @@ html.calme .zero-photo img{opacity:.5}
 <script src="/accueil/demo.js"></script>
 <script src="/accueil/je-suis.js"></script>
 <script src="/coeur/roles.js"></script>
+<script src="/accueil/vitrine.js"></script>
+<!-- la régie applique ses textes et son orbe ; la coque de l'OS ne recouvre la page que si ?coque=1 est demandé -->
+<script src="/regie/donnees.js"></script>
+<script src="/nav/registre.js"></script>
+<script src="/regie/scene.js"></script>
+<script src="/os/apps.js"></script>
+<script src="/bureau/sources.js"></script>
+<script src="/os/coque.js"></script>
+<script src="/os/os.js"></script>
+<script>/* « Réduire les animations » : le même réglage qu'avant (aime-zero-calme) */(function(){var b=document.getElementById('calme');if(!b)return;var on=document.documentElement.classList.contains('calme');b.setAttribute('aria-pressed',on?'true':'false');b.onclick=function(){on=!on;document.documentElement.classList.toggle('calme',on);b.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem('aime-zero-calme',on?'1':'0')}catch(e){}}})();</script>
 <script src="/dock/modele.js"></script>
 <script src="/dock/dock.js"></script>
 <script src="/dock/plus.js"></script>
-<script src="/coeur/coeur.js"></script>
-<script>fetch('/vitrine/scenarios/mariage.json').then(function(r){return r.json()}).then(function(sc){AIMECoeur.monter(sc)}).catch(function(){var e=document.getElementById('ecransEtat');if(e)e.textContent='Les écrans n\'ont pas pu être chargés. Rechargez la page.'})</script>
 <div id="dock-site"></div>
 <script>/* la navigation du site, mise en dock (docs/DOCK.md, famille Public) */(function(){var el=document.getElementById('dock-site');if(!el||!window.AIMEDock||!window.AIMEDockVue)return;AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site',actif:'coeur'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')})();</script>
 </body>

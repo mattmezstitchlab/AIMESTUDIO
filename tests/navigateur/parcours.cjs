@@ -95,7 +95,9 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
         V.poser(el, D.composer({}), { mode: 'page', id: 'dock-site', actif: 'coeur' }); return R; });
       for (const m of mots) ok(m.ok && m.aria, 'Dock ' + m.n + ' (393 px) : chaque mot sur une ligne, sans débordement, ' + (m.min ? 'en minuscules, 11 px' : 'en capitales') + ' ; nom en minuscules dans aria-label (' + m.mots + ')');
       await choisir(t, 'maries'); await t.waitForSelector('#demo .dm-tel.choisi'); await t.waitForTimeout(500);
-      const dessus = sel => t.evaluate(async s => { const x = document.querySelector(s); x.scrollIntoView({ block: 'nearest' }); await new Promise(r => setTimeout(r, 120)); const d = document.querySelector('#dock-site .dock').getBoundingClientRect().top, r = x.getBoundingClientRect(); return r.height > 0 && r.bottom <= d + 1 && r.top >= 0; }, sel);
+      // Mesurer la position finale, pas une étape du défilement CSS animé (variable selon la CI).
+      const dessus = sel => t.evaluate(async s => { const x = document.querySelector(s); x.scrollIntoView({ block: 'nearest', behavior: 'instant' }); await new Promise(r => requestAnimationFrame(r)); const d = document.querySelector('#dock-site .dock').getBoundingClientRect().top, r = x.getBoundingClientRect(); return r.height > 0 && r.bottom <= d + 1 && r.top >= 0; }, sel);
+      ok(await t.$eval('#jsCreer', x => x.getBoundingClientRect().height >= 44), 'accueil (393×659) : « Créer » garde une cible tactile de 44 px au moins');
       ok(await dessus('#jsCreer'), 'accueil (393×659) : « Créer notre mariage », sous la démo, reste au-dessus du Dock');
       ok(api.every(x => x === 'GET /api/identite'), 'accueil : aucun appel au serveur avant « Créer » (seul le Dock lit /api/identite)' + (api.length ? ' (' + [...new Set(api)].join(', ') + ')' : ''));
       await t.click('#jsCreer'); await t.waitForSelector('#jsLien:not([hidden])', { timeout: 4000 }).catch(() => {});
@@ -104,7 +106,7 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
       ok(!api.some(x => /espaces|sign-in/.test(x)), 'accueil : rien n\'est créé ni envoyé avant l\'adresse');
       // pied légal (393×659) : en bas de chaque page publique, la ligne reste au-dessus du Dock, lisible et cliquable ; Speed Insights chargé sans erreur
       for (const u of ['/', '/exemples/', '/exemples/mosaique/', '/contact/', '/compte/', '/projets/', '/confidentialite/', '/mentions-legales/', '/tarifs/']) {
-        await t.goto(B + u, { waitUntil: 'networkidle' }); await t.waitForTimeout(300); await t.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await t.waitForTimeout(300);
+        await t.goto(B + u, { waitUntil: 'networkidle' }); await t.waitForTimeout(300); await t.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })); await t.waitForTimeout(300);
         ok(await t.evaluate(() => { const n = document.querySelector('.pied-legal'), d = document.querySelector('#dock-site .dock'); if (!n) return false; const r = n.getBoundingClientRect(), bas = d ? d.getBoundingClientRect().top : innerHeight; const liens = [...n.querySelectorAll('a')]; return r.height > 0 && r.bottom <= bas + 1 && r.left >= 0 && r.right <= innerWidth && liens.length === 4 && liens.every(a => { const q = a.getBoundingClientRect(), x = q.left + q.width / 2, y = q.top + q.height / 2; return document.elementFromPoint(x, y) === a; }); }), u + ' (393×659) : « Tarifs · Mentions légales · Confidentialité · Contact » au-dessus du Dock, chaque lien cliquable');
         ok(await t.evaluate(() => typeof window.si === 'function' && !!document.querySelector('script[src="/_vercel/speed-insights/script.js"]')), u + ' : Speed Insights présent');
       }
@@ -218,12 +220,17 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     ok(/Moteurs/.test(await p.textContent('#mc-pan h2')), 'Cube Maître : au clavier, une face ouvre sa fiche');
     await p.goto(B + '/canevas/?maitre=sante&de=/maitre/', { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
     ok(/Cube Maître/.test(await p.textContent('.cv-titre')), 'Canevas : le Cube Maître s\'ouvre déplié');
-    // Le cœur : un seul projet, quatre écrans ; écrire une fois recompose les quatre, le jour J se recale pour chacun
-    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(800);
-    await p.fill('#srcTitre', 'Inès & Théo'); await p.waitForTimeout(1200);
-    ok((await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /Inès & Théo/.test(document.body.textContent))))).filter(Boolean).length === 4, 'Accueil : le nom écrit une fois apparaît sur les quatre écrans');
-    await p.click('#jourPluie'); await p.waitForTimeout(400); ok(/plan B/.test(await p.textContent('#jourTrace')) && (await p.$$('#jourVues li.change')).length >= 3, 'Accueil : l\'averse recale le jour J pour chacun');
-    ok(!(await deborde()), 'Accueil (cœur) : sans débordement horizontal');
+    // L'accueil clair (25/10) : « Un projet. Chacun son écran. » sur les vraies règles ; le réel bouge, chacun le sait
+    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#vMoments li'); await p.waitForTimeout(300);
+    const nb = async () => p.evaluate(() => document.querySelectorAll('#vMoments li').length);
+    const vu = {}; for (const pl of ['owner', 'editor', 'contributor', 'guest']) { await p.click('#vPlaces [data-place="' + pl + '"]'); await p.waitForTimeout(120); vu[pl] = await nb(); }
+    ok(vu.owner === 7 && vu.editor === 7 && vu.contributor === 6 && vu.guest === 4, 'Accueil : chaque place reçoit sa page (7, 7, 6, 4 moments)');
+    ok(await p.evaluate(() => document.getElementById('vDecaler').disabled), 'Accueil : l\'invitée ne peut pas décaler');
+    await p.click('#vPlaces [data-place="editor"]'); await p.click('#vDecaler'); await p.click('#vPlanB'); await p.click('#vPlaces [data-place="guest"]'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => /16:15/.test(document.getElementById('vMoments').textContent) && /Orangerie/.test(document.getElementById('vMoments').textContent)), 'Accueil : écrit une fois par la coordination, vu par l\'invitée (16:15, Orangerie)');
+    await p.click('#vEvts [data-evt="surprise"]'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => document.querySelectorAll('#vTels .v-tel:not(.eteint)').length === 3 && document.querySelectorAll('#vTels .v-tel').length === 7), 'Accueil : sept téléphones, seuls les trois concernés s\'allument');
+    ok(!(await deborde()), 'Accueil (chacun son écran) : sans débordement horizontal');
     // Les exemples : la même mécanique avec six rôles (World), six écrans composés par le moteur
     await p.goto(B + '/exemples/?u=world', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(1200);
     ok((await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /Inès &amp; Théo|Inès & Théo/.test(document.body.textContent))))).filter(Boolean).length === 6, 'Exemples : six écrans composés depuis la même source (World)');
