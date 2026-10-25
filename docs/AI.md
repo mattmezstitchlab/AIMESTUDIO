@@ -48,8 +48,10 @@ pendant qu'on ouvre B, puis pendant qu'on revient à AI.
   d'AI vers ME : elles disent ce que je suis), les clés d'accès, la déconnexion, la suppression du compte. Rien n'est retiré de
   « Mon compte ».
 - « Découvrir AIME » : Le cœur, les exemples et toutes les capacités, qui ont quitté le Dock connecté, restent à un clic depuis ME.
-- **Ma Carte sur cet appareil** : si une Carte existe dans ce navigateur (`aime-carte`), ME le dit. Elle n'est **ni lue ni envoyée**.
-  Son rattachement au compte, avec l'accord de la personne, est une étape suivante, marquée « en conception ».
+- **Ma Carte** : sur cet appareil (`aime-carte`) **et sur le compte**, avec un accord explicite et daté (docs/CARTE.md § 5, PR P1).
+  Les rubriques et leurs visibilités sont enregistrées ; la photo et les relations restent sur l'appareil. Un conflit entre deux
+  appareils ne s'écrase pas : on choisit la version à garder (409). ME porte aussi le lien public révocable et son compteur
+  d'ouvertures (P2), « Recevoir des demandes par ce lien » (P3) et jusqu'à six questions personnelles (P5).
 - Corrigé au passage : sur iPhone, le bloc du Timbre débordait de 43 px (une colonne réduite à 158 px pour un champ de 200 px).
 - **Aucune donnée nouvelle au serveur, aucune migration.**
 

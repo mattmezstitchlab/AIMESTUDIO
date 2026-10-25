@@ -93,3 +93,30 @@ test('visuels : chaque image citée existe ; la photo du Point Zéro est la seul
   assert.ok((a.match(/fetchpriority="high"/g) || []).length <= 1, 'au plus une image prioritaire');
   assert.ok(!/cour-trio\.webp/.test(a), 'l\'accueil clair (25/10) n\'a plus de photo de nuit en tête');
 });
+
+test('confidentialité : la Carte enregistrée, le lien public, les demandes reçues et les engagements — les textes suivent le code', () => {
+  const t = lire('confidentialite/index.html').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const C = require('../api/_carte/carte.cjs'), F = require('../api/_carte/formulaire.cjs'), K = require('../carte/carte.js');
+  /* la Carte : accord explicite, photo et relations jamais envoyées */
+  assert.match(t, /Votre Carte personnelle vit d'abord dans votre navigateur\. Avec votre accord/);
+  assert.match(t, /jamais la photo ni les relations/);
+  assert.ok(C.JAMAIS_ENVOYES.includes('photo') && C.JAMAIS_ENVOYES.includes('relations'), 'le code ne les envoie pas, la page le dit');
+  assert.ok(K.RUBRIQUES.naissance.jamaisPublique && K.RUBRIQUES.relations.jamaisPublique);
+  /* le lien : jeton après #, coupure, ouvertures sans IP, aucune promesse d'annuaire */
+  assert.match(t, /\/c\/#/); assert.match(t, /couper à tout moment/);
+  assert.match(t, /n'est envoyé ni au serveur de la page ni aux sites liés/);
+  assert.match(t, /Nous comptons les ouvertures, sans adresse IP/);
+  assert.match(t, /ne publie rien dans un registre public/);
+  assert.ok(!/registre public (avec|et) filtres|annuaire pour découvrir/.test(t), 'aucun registre promis');
+  /* les demandes reçues : six questions au plus, Resend, conservation identique au code */
+  assert.ok(t.includes('six au plus') && F.MAX_QUESTIONS === 6, 'la page et le serveur disent six questions');
+  assert.match(t, /l'e-mail de prévenance part par Resend/);
+  const D = require('../api/_demandes/depot.cjs');
+  assert.ok(t.includes('Une demande reçue par le lien de votre Carte : ' + D.CONSERVATION_DEFAUT + ' mois après le dernier échange'), 'même durée que le code');
+  /* la suppression dit exactement ce qu\'elle efface, et ce qui reste */
+  assert.match(t, /La suppression efface aussi votre Carte, son lien \(coupé aussitôt\), vos questions, vos activités et les engagements/);
+  assert.match(t, /restent jusqu'à la fin de leur durée de conservation/);
+  /* les engagements : visibles des membres du projet, effacés avec lui */
+  assert.match(t, /Les membres de ce projet les voient/);
+  assert.match(t, /il part avec le projet ou avec le compte de la personne qui s'engage/);
+});
