@@ -17,8 +17,9 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
-/* v : { projet, prenom, nom, email, tel, adresse, livraison (AAAA-MM-JJ ou vide), message } */
+/* v : { projet, prenom, nom, email, tel, adresse, livraison (AAAA-MM-JJ ou vide), message, via? ('carte' : reçue par une Carte AIME, V1 P3) } */
 function message(v) {
+  const origine = v.via === 'carte' ? 'Envoyé depuis votre Carte AIME' : 'Envoyé depuis le formulaire de contact AIME';
   const lignes = [
     ['Type de demande', PROJETS[v.projet]],
     ['Prénom et nom', v.prenom + ' ' + v.nom],
@@ -28,12 +29,12 @@ function message(v) {
     ['Livraison souhaitée', v.livraison ? v.livraison.split('-').reverse().join('/') : '—'],
   ];
   const text = lignes.map(([k, x]) => k + ' : ' + x).join('\n') + '\n\nMessage :\n' + v.message +
-    '\n\n—\nEnvoyé depuis le formulaire de contact AIME. Répondez directement à ce message pour écrire à la personne.';
+    '\n\n—\n' + origine + '. Répondez directement à ce message pour écrire à la personne.';
   const html = '<table cellpadding="6" style="border-collapse:collapse;font:14px/1.5 sans-serif">' +
     lignes.map(([k, x]) => '<tr><th align="left" style="color:#555;font-weight:600">' + esc(k) + '</th><td>' + esc(x) + '</td></tr>').join('') +
     '</table><p style="font:14px/1.6 sans-serif;white-space:pre-wrap;border-left:3px solid #7C5CFF;padding-left:12px">' + esc(v.message) + '</p>' +
-    '<p style="font:12px sans-serif;color:#777">Envoyé depuis le formulaire de contact AIME. Répondez directement à ce message pour écrire à la personne.</p>';
-  const sujet = ('Demande · ' + PROJETS[v.projet] + ' · ' + v.prenom + ' ' + v.nom).replace(/[\r\n]+/g, ' ').slice(0, 180);
+    '<p style="font:12px sans-serif;color:#777">' + esc(origine) + '. Répondez directement à ce message pour écrire à la personne.</p>';
+  const sujet = ((v.via === 'carte' ? 'Demande via votre Carte · ' : 'Demande · ' + PROJETS[v.projet] + ' · ') + v.prenom + ' ' + v.nom).replace(/[\r\n]+/g, ' ').slice(0, 180);
   return { sujet, text, html };
 }
 

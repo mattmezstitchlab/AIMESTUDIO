@@ -37,6 +37,8 @@ test.before(async () => {
   if (!URLT) return;
   A = await import('../api/_auth/auth.mjs'); A._envoyeur(m => { liens.push(m); }); A.auth(); pool = A._pool();
   await pool.query('truncate cartes').catch(() => {}); await pool.query('truncate quotas').catch(() => {});
+  /* rejouable sur la même base : les liens et les demandes des Cartes d'un passage précédent sont effacés */
+  await pool.query('truncate cartes_liens').catch(() => {}); await pool.query("delete from demandes where boite like 'compte:%'").catch(() => {});
 });
 test.after(async () => { if (pool) await pool.end(); });
 
@@ -219,5 +221,130 @@ test('lien public : sans la migration 2026-10-25-11, publier répond 503 dit, la
     const g = await lire(c); assert.equal(g.code, 200); assert.equal(g.body.publication, 'indisponible'); assert.equal(g.body.carte.nom, 'Bastien');
     assert.equal((await ecrire(c, { action: 'publier', consentement: true })).code, 503);
     assert.equal((await publique('A'.repeat(32))).code, 404);
+  } finally { H._db(undefined); P._db(undefined); }
+});
+
+/* ---------- PR P3 : écrire à une Carte (migration 2026-10-25-12) : la demande arrive dans l'AI de la personne ---------- */
+let Dm, courriels = []; const Qm = require('../api/_auth/quotas.cjs');
+const fauxEnvoi = async (url, o) => { courriels.push(JSON.parse(o.body)); return { ok: true, status: 200 }; };
+function deposer(jeton, body, o = {}) {
+  return new Promise(d => {
+    const res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null, h: this.h }); } };
+    P.default({ method: 'POST', url: '/api/carte-publique?l=' + encodeURIComponent(jeton), body,
+      headers: Object.assign({ origin: BASE, host: 'localhost:8783', 'content-type': 'application/json', 'x-real-ip': o.ip || '203.0.113.' + (++ip % 250) }, o.headers || {}) }, res);
+  });
+}
+function mesDemandes(cookie, o = {}) {
+  return new Promise(d => {
+    const res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } };
+    Dm.default({ method: o.method || 'GET', url: '/api/demandes' + (o.q || ''), body: o.body,
+      headers: Object.assign({ origin: BASE, host: 'localhost:8783', 'content-type': 'application/json' }, cookie ? { cookie } : {}) }, res);
+  });
+}
+const visiteur = x => Object.assign({ prenom: 'Sacha', nom: 'Visiteur', email: 'sacha.visiteur@exemple.test', message: 'Bonjour, seriez-vous libre pour jouer le 12 juin prochain ?', consentement: true, duree: 5000 }, x || {});
+const demandesDe = async email => (await pool.query("select d.* from demandes d join \"user\" u on d.boite = 'compte:' || u.id where u.email = $1 order by d.id", [email])).rows;
+
+test('écrire à une Carte : éteint par défaut ; le réglage exige un lien actif', opts, async () => {
+  Dm = await import('../api/demandes.mjs'); Dm._proprietaire(async () => null); P._fetch(fauxEnvoi); Dm._fetch(fauxEnvoi);
+  Object.assign(process.env, { RESEND_API_KEY: 'test_cle_fictive', CONTACT_TO: 'site@exemple.test', CONTACT_FROM: 'AIME <bonjour@exemple.test>' });
+  await pool.query('truncate quotas').catch(() => {}); Qm._oublier();
+  const c = await carteAvecPublic('ecrire.une@exemple.test', { nom: 'Noé Fictif' }, { nom: 'publique' });
+  assert.equal((await ecrire(c, { action: 'contact', actif: true })).code, 400, 'sans lien : rien à régler');
+  const jeton = (await ecrire(c, { action: 'publier', consentement: true })).body.lien.jeton;
+  assert.equal((await lire(c)).body.lien.contact, false, 'éteint par défaut');
+  assert.equal((await publique(jeton)).body.contact, false, 'la page publique ne montre pas de formulaire');
+  const r = await deposer(jeton, visiteur());
+  assert.equal(r.code, 404); assert.equal((await demandesDe('ecrire.une@exemple.test')).length, 0, 'rien n\'est gardé');
+  assert.equal((await ecrire(c, { action: 'contact', actif: 'oui' })).code, 400, 'réglage invalide');
+  const on = await ecrire(c, { action: 'contact', actif: true });
+  assert.equal(on.code, 200); assert.equal(on.body.lien.contact, true);
+  assert.equal((await publique(jeton)).body.contact, true);
+  assert.equal((await mesDemandes(c)).code, 200, 'avec le contact allumé, la personne a une boîte (vide)');
+});
+
+test('écrire à une Carte : la demande arrive dans SON AI et à l\'adresse de SON compte, jamais montrée au visiteur', opts, async () => {
+  const c = await connecter('ecrire.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton; courriels = [];
+  const r = await deposer(jeton, visiteur());
+  assert.equal(r.code, 200); assert.deepEqual(r.body, { ok: true }, 'la réponse ne dit rien de la personne');
+  const rows = await demandesDe('ecrire.une@exemple.test');
+  assert.equal(rows.length, 1); assert.equal(rows[0].email, 'sacha.visiteur@exemple.test'); assert.equal(rows[0].email_statut, 'envoye'); assert.ok(rows[0].consentement_le);
+  assert.equal(courriels.length, 1); assert.deepEqual(courriels[0].to, ['ecrire.une@exemple.test'], 'à l\'adresse du compte, pas à celle du site');
+  assert.equal(courriels[0].reply_to, 'sacha.visiteur@exemple.test'); assert.match(courriels[0].subject, /^Demande via votre Carte · Sacha Visiteur/);
+  const l = await mesDemandes(c);
+  assert.equal(l.code, 200); assert.equal(l.body.demandes.length, 1); assert.equal(l.body.demandes[0].via, 'carte');
+  const d = await mesDemandes(c, { q: '?cle=' + l.body.demandes[0].cle });
+  assert.equal(d.code, 200); assert.equal(d.body.demande.via, 'carte'); assert.equal(d.body.demande.prenom, 'Sacha');
+  assert.equal((await mesDemandes(c, { method: 'POST', body: { action: 'statut', cle: l.body.demandes[0].cle, statut: 'en_cours' } })).code, 200, 'elle la traite comme toute demande');
+  assert.equal((await deposer(jeton, visiteur())).code, 200); assert.equal((await demandesDe('ecrire.une@exemple.test')).length, 1, 'double envoi : une seule demande');
+});
+
+test('écrire à une Carte : personne d\'autre ne la voit, ni le propriétaire du site, ni un autre compte', opts, async () => {
+  const c = await connecter('ecrire.une@exemple.test'), cle = (await mesDemandes(c)).body.demandes[0].cle;
+  const autre = await connecter('ecrire.autre@exemple.test');
+  assert.equal((await mesDemandes(autre)).code, 404, 'un autre compte sans boîte : 404');
+  assert.equal((await mesDemandes(autre, { q: '?cle=' + cle })).code, 404);
+  assert.equal((await mesDemandes(autre, { method: 'POST', body: { action: 'statut', cle, statut: 'classee' } })).code, 404);
+  const proprio = await connecter('proprio.site@exemple.test'), idp = (await pool.query("select id, email from \"user\" where email = 'proprio.site@exemple.test'")).rows[0];
+  Dm._proprietaire(async () => ({ id: idp.id, email: idp.email }));
+  try {
+    const l = await mesDemandes(proprio); assert.equal(l.code, 200);
+    assert.ok(!l.body.demandes.some(x => x.cle === cle), 'la liste du site ne contient pas la demande de la Carte');
+    assert.equal((await mesDemandes(proprio, { q: '?cle=' + cle })).code, 404, 'ni son détail');
+  } finally { Dm._proprietaire(async () => null); }
+});
+
+test('écrire à une Carte : champs, pièges à robots, même origine ; rien n\'est gardé à tort', opts, async () => {
+  const c = await connecter('ecrire.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton, avant = (await demandesDe('ecrire.une@exemple.test')).length;
+  const k = await deposer(jeton, visiteur({ email: 'pas-une-adresse', message: 'trop court', consentement: false }));
+  assert.equal(k.code, 422); assert.deepEqual(Object.keys(k.body.champs).sort(), ['consentement', 'email', 'message']); assert.match(k.body.champs.consentement, /la personne/);
+  assert.deepEqual((await deposer(jeton, visiteur({ site_web: 'http://robot.test' }))).body, { ok: true }, 'piège rempli : « reçu »');
+  assert.deepEqual((await deposer(jeton, visiteur({ duree: 200 }))).body, { ok: true }, 'trop rapide : « reçu »');
+  assert.equal((await deposer(jeton, visiteur({ message: 'Un autre message assez long pour passer.' }), { headers: { origin: 'https://ailleurs.test' } })).code, 403, 'autre origine');
+  assert.equal((await deposer(jeton, 'pas du json', { headers: { 'content-type': 'text/plain' } })).code, 415);
+  assert.equal((await demandesDe('ecrire.une@exemple.test')).length, avant, 'aucune demande de plus');
+  assert.equal((await deposer('A'.repeat(32), visiteur())).code, 404, 'jeton inconnu');
+});
+
+test('écrire à une Carte : 3 par adresse IP et 10 minutes, 20 par Carte et par jour', opts, async () => {
+  /* compteurs remis à zéro, en base ET en mémoire (une base simulée sans table plus haut fait compter en mémoire une minute) */
+  await pool.query('truncate quotas'); Qm._oublier();
+  const c = await connecter('ecrire.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton;
+  for (let i = 0; i < 3; i++) assert.equal((await deposer(jeton, visiteur({ email: 'ip' + i + '@exemple.test' }), { ip: '203.0.113.250' })).code, 200, 'ip ' + i);
+  const r = await deposer(jeton, visiteur({ email: 'ip9@exemple.test' }), { ip: '203.0.113.250' });
+  assert.equal(r.code, 429); assert.ok(Number(r.h['retry-after']) > 0);
+  for (let i = 3; i < 20; i++) assert.equal((await deposer(jeton, visiteur({ email: 'b' + i + '@exemple.test' }))).code, 200, 'demande ' + i);
+  assert.equal((await deposer(jeton, visiteur({ email: 'b99@exemple.test' }))).code, 429, 'la 21e du jour : refusée, la personne n\'est pas submergée');
+  await pool.query('truncate quotas');
+});
+
+test('écrire à une Carte : un e-mail en échec garde la demande, et « Renvoyer » l\'envoie à la personne, pas au site', opts, async () => {
+  const c = await connecter('ecrire.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton;
+  P._fetch(async () => ({ ok: false, status: 500 }));
+  try { assert.equal((await deposer(jeton, visiteur({ email: 'echec@exemple.test' }))).code, 200, 'gardée malgré la panne'); } finally { P._fetch(fauxEnvoi); }
+  const row = (await demandesDe('ecrire.une@exemple.test')).find(x => x.email === 'echec@exemple.test');
+  assert.equal(row.email_statut, 'echec'); courriels = [];
+  assert.equal((await mesDemandes(c, { method: 'POST', body: { action: 'renvoyer', cle: row.cle } })).code, 200);
+  assert.deepEqual(courriels[0].to, ['ecrire.une@exemple.test']); assert.match(courriels[0].subject, /via votre Carte/);
+});
+
+test('écrire à une Carte : éteindre ou couper le lien ferme la porte tout de suite ; la boîte reste lisible', opts, async () => {
+  const c = await connecter('ecrire.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton;
+  assert.equal((await ecrire(c, { action: 'contact', actif: false })).body.lien.contact, false);
+  assert.equal((await deposer(jeton, visiteur({ email: 'apres@exemple.test' }))).code, 404);
+  await ecrire(c, { action: 'contact', actif: true }); await ecrire(c, { action: 'couper' });
+  assert.equal((await deposer(jeton, visiteur({ email: 'apres2@exemple.test' }))).code, 404, 'lien coupé : plus personne ne peut écrire');
+  assert.equal((await mesDemandes(c)).code, 200, 'les demandes déjà reçues restent dans son AI');
+  const n = await ecrire(c, { action: 'publier', consentement: true }); assert.equal(n.body.lien.contact, false, 'un nouveau lien repart éteint');
+});
+
+test('écrire à une Carte : sans la migration 2026-10-25-12, le lien marche, le contact est dit indisponible, rien n\'est déposé', opts, async () => {
+  const c = await connecter('ecrire.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton;
+  const faux = { query: async (sql, v) => { if (/\bcontact\b/.test(sql) && /cartes_liens|\bl\./.test(sql)) { const e = new Error('column "contact" does not exist'); e.code = '42703'; throw e; } return pool.query(sql, v); } };
+  H._db(faux); P._db(faux);
+  try {
+    const g = await lire(c); assert.equal(g.code, 200); assert.equal(g.body.contact, 'indisponible'); assert.ok(g.body.lien, 'le lien est toujours là');
+    assert.equal((await ecrire(c, { action: 'contact', actif: true })).code, 503);
+    const v = await publique(jeton); assert.equal(v.code, 200); assert.equal(v.body.contact, false);
+    assert.equal((await deposer(jeton, visiteur({ email: 'sans12@exemple.test' }))).code, 404);
   } finally { H._db(undefined); P._db(undefined); }
 });

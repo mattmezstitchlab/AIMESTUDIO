@@ -10,6 +10,7 @@
 //   POST { action: 'publier', consentement: true }        → un lien public (un seul actif), seulement si la Carte est sur le
 //                                                           compte et a au moins une rubrique « publique » (migration 2026-10-25-11)
 //   POST { action: 'couper' }                             → le lien actif ne mène plus à rien, immédiatement
+//   POST { action: 'contact', actif: true|false }         → recevoir (ou non) des demandes par ce lien (migration 2026-10-25-12)
 // Sans session : 401. Base absente ou migration 2026-10-25-10 non appliquée : 503, dit. Écritures : même origine et JSON
 // (api/_auth/requete.cjs), quota par personne.
 import { personne, _pool } from './_auth/auth.mjs';
@@ -32,8 +33,13 @@ const ligne = async (base, id) => (await base.query('select donnees, rev, maj_le
 const vueSimple = l => l ? { ok: true, carte: l.donnees, rev: l.rev, maj_le: l.maj_le, consentement_le: l.consentement_le, texte: K.TEXTE_CONSENTEMENT } : { ok: true, carte: null, rev: null, maj_le: null, consentement_le: null, texte: K.TEXTE_CONSENTEMENT };
 /* le lien public actif, s'il y en a un ; sans la migration 2026-10-25-11, la publication est dite indisponible (rien ne casse) */
 async function lienDe(base, id) {
-  try { const r = await base.query('select jeton, cree_le, ouvertures from cartes_liens where user_id = $1 and coupe_le is null', [id]); return { lien: r.rows[0] || null, publication: 'disponible' }; }
-  catch (e) { if (e && e.code === '42P01') return { lien: null, publication: 'indisponible' }; throw e; }
+  try { const r = await base.query('select jeton, cree_le, ouvertures, contact from cartes_liens where user_id = $1 and coupe_le is null', [id]); return { lien: r.rows[0] || null, publication: 'disponible', contact: 'disponible' }; }
+  catch (e) {
+    if (e && e.code === '42P01') return { lien: null, publication: 'indisponible', contact: 'indisponible' };
+    /* sans la migration 12 : le lien marche, le contact n'existe pas encore */
+    if (e && e.code === '42703') { const r = await base.query('select jeton, cree_le, ouvertures from cartes_liens where user_id = $1 and coupe_le is null', [id]); return { lien: r.rows[0] || null, publication: 'disponible', contact: 'indisponible' }; }
+    throw e;
+  }
 }
 const vue = async (base, id, l) => Object.assign(vueSimple(l), await lienDe(base, id), { texte_publication: K.TEXTE_PUBLICATION });
 async function couper(base, id) { try { await base.query('update cartes_liens set coupe_le = now() where user_id = $1 and coupe_le is null', [id]); } catch (e) { if (!(e && e.code === '42P01')) throw e; } }
@@ -57,6 +63,15 @@ export default async function carte(req, res) {
       return json(res, 200, await vue(base, u.id, null));
     }
     if (b.action === 'couper') { await couper(base, u.id); return json(res, 200, await vue(base, u.id, await ligne(base, u.id))); }
+    /* recevoir des demandes par mon lien (V1, P3) : un réglage du lien actif ; couper le lien coupe aussi le contact */
+    if (b.action === 'contact') {
+      if (typeof b.actif !== 'boolean') return json(res, 400, { ok: false, raison: 'Réglage invalide.' });
+      try {
+        const r = await base.query('update cartes_liens set contact = $2 where user_id = $1 and coupe_le is null returning jeton', [u.id, b.actif]);
+        if (!r.rows[0]) return json(res, 400, { ok: false, raison: 'Créez d\'abord le lien de votre Carte.' });
+      } catch (e) { if (e && (e.code === '42703' || e.code === '42P01')) return json(res, 503, { ok: false, raison: 'Recevoir des demandes par votre Carte n\'est pas encore disponible ici (migration 2026-10-25-12 à appliquer).' }); throw e; }
+      return json(res, 200, await vue(base, u.id, await ligne(base, u.id)));
+    }
     if (b.action === 'publier') {
       if (b.consentement !== true) return json(res, 400, { ok: false, raison: 'Votre accord est nécessaire pour publier un lien.' });
       const l = await ligne(base, u.id);

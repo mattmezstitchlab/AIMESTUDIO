@@ -1,4 +1,6 @@
-// /api/demandes : les demandes reçues par le formulaire Contact du site (boîte « site »), pour ses propriétaires seulement.
+// /api/demandes : les demandes reçues, boîte par boîte. Celles du formulaire Contact du site (boîte « site ») pour ses propriétaires
+// seulement ; celles écrites à MA Carte par son lien (boîte « compte:<mon id> », V1 P3) pour moi seulement. Chaque demande dit d'où
+// elle vient (via : 'site' | 'carte').
 //   GET                    → la liste, la plus récente d'abord ({ demandes, suivant }) ; ?avant=<suivant> pour la page d'après, ?n= (50 au plus)
 //   GET  ?cle=…            → le détail d'une demande et son historique
 //   POST { action: 'statut', cle, statut }        nouvelle, lue, en_cours, convertie, classee
@@ -14,6 +16,7 @@
 // Ces données ne servent jamais une page publique : une vitrine de l'usage d'AIME par AIME lira d'autres données
 // (fictives ou explicitement autorisées), avec les mêmes composants (docs/DEMANDES.md, « AIME fonctionne avec AIME »).
 import { proprietaire } from './_auth/proprietaire.mjs';
+import { personne } from './_auth/auth.mjs';
 import { _pool } from './_auth/auth.mjs';
 import { creer, Refus } from './_auth/espaces.mjs';
 import R from './_auth/requete.cjs';
@@ -24,8 +27,9 @@ const BOITE = 'site';
 /* qui transforme une demande reçue en projet est le professionnel sollicité : sa place dans le projet est nommée « prestataire »,
    pas par le mot du rôle propriétaire du domaine (« le couple » pour un mariage). Un mot seulement : aucun droit ne change. */
 const RELATION_PROPRIETAIRE = 'prestataire';
-let verifier = proprietaire, db, envoi = null;
+let verifier = proprietaire, lire = personne, db, envoi = null;
 export function _proprietaire(f) { verifier = f || proprietaire; }
+export function _personne(f) { lire = f || personne; }
 export function _db(d) { db = d; }
 export function _fetch(f) { envoi = f; }
 let dbEspaces; export function _dbEspaces(d) { dbEspaces = d; }
@@ -43,56 +47,66 @@ export default async function demandes(req, res) {
   res.setHeader('X-Robots-Tag', 'noindex');
   if (req.method !== 'GET' && req.method !== 'POST') { res.setHeader('Allow', 'GET, POST'); return json(res, 405, { ok: false }); }
   if (req.method === 'POST') { const refus = R.ecriture(req); if (refus) return json(res, ...refus); }
-  let u = null; try { u = await verifier(req); } catch { u = null; }
+  /* les boîtes de la personne (V1, P3) : le site pour son propriétaire (AIME_PROPRIETAIRES), et la boîte de SA Carte ;
+     sans aucune boîte (ni propriétaire du site, ni contact activé, ni demande reçue) : 404, comme avant */
+  let u = null, site = false; try { u = await verifier(req); site = !!u; } catch { u = null; }
+  if (!u) { try { u = await lire(req); } catch { u = null; } }
   if (!u) return json(res, 404, { ok: false });
   const base = db !== undefined ? db : D.base();
   const INDISPONIBLE = { ok: false, raison: 'Les demandes ne sont pas disponibles ici : base injoignable, ou migration 2026-10-25-09 à appliquer.' };
-  if (!base) return json(res, 503, INDISPONIBLE);
+  if (!base) { return site ? json(res, 503, INDISPONIBLE) : json(res, 404, { ok: false }); }
+  const boites = (site ? [BOITE] : []).concat([D.boiteCarte(u.id)]);
   try {
+    if (!site && !(await D.aUneBoite(base, u.id))) return json(res, 404, { ok: false });
+    /* une demande n'est lue ou touchée que si elle est dans une de SES boîtes ; sinon 404, comme si elle n'existait pas */
+    const sienne = async cle => { const b0 = await D.boiteDe(base, cle); return b0 && boites.includes(b0) ? b0 : null; };
     if (req.method === 'GET') {
       const p = parametres(req);
-      if (p.has('cle')) { const d = await D.detail(base, BOITE, p.get('cle')); if (!d) return json(res, 404, { ok: false }); return json(res, 200, { ok: true, demande: d.demande, journal: d.journal, projet: await D.projetDe(base, BOITE, p.get('cle')) }); }
-      const l = await D.lister(base, BOITE, { n: p.get('n'), avant: p.get('avant') });
+      if (p.has('cle')) { const b0 = await sienne(p.get('cle')); const d = b0 && await D.detail(base, b0, p.get('cle')); if (!d) return json(res, 404, { ok: false }); return json(res, 200, { ok: true, demande: Object.assign({ via: b0 === BOITE ? 'site' : 'carte' }, d.demande), journal: d.journal, projet: await D.projetDe(base, b0, p.get('cle')) }); }
+      const l = await D.lister(base, boites, { n: p.get('n'), avant: p.get('avant') });
       return json(res, 200, Object.assign({ ok: true, conservation_mois: D.conservationMois() }, l));
     }
-    const b = await corps(req), cle = String(b.cle || '');
+    const b = await corps(req), cle = String(b.cle || ''), b0 = await sienne(cle);
+    if (!b0) return json(res, 404, { ok: false });
     if (b.action === 'statut') {
       if (!D.STATUTS.includes(b.statut)) return json(res, 400, { ok: false, raison: 'Statut inconnu.' });
-      return (await D.changerStatut(base, BOITE, cle, b.statut, u.id)) ? json(res, 200, { ok: true }) : json(res, 404, { ok: false });
+      return (await D.changerStatut(base, b0, cle, b.statut, u.id)) ? json(res, 200, { ok: true }) : json(res, 404, { ok: false });
     }
     if (b.action === 'note') {
-      const r = await D.changerNote(base, BOITE, cle, b.note, u.id);
+      const r = await D.changerNote(base, b0, cle, b.note, u.id);
       if (r === null) return json(res, 400, { ok: false, raison: 'Note trop longue (2 000 caractères au plus).' });
       return r ? json(res, 200, { ok: true }) : json(res, 404, { ok: false });
     }
     if (b.action === 'renvoyer') {
-      const d = await D.detail(base, BOITE, cle); if (!d) return json(res, 404, { ok: false });
+      const d = await D.detail(base, b0, cle); if (!d) return json(res, 404, { ok: false });
       const x = d.demande;
       if (x.email_statut === 'envoye') return json(res, 409, { ok: false, raison: 'Cet e-mail est déjà parti.' });
       if (x.email_statut === 'en_attente' && Date.now() - new Date(x.recue_le).getTime() < 10 * 60000) return json(res, 409, { ok: false, raison: 'Le premier envoi est peut-être encore en cours : réessayez dans quelques minutes.' });
-      const conf = C.configuration(); if (!conf) return json(res, 503, { ok: false, raison: 'L\'envoi d\'e-mails n\'est pas configuré sur cet environnement.' });
+      const conf0 = C.configuration(); if (!conf0) return json(res, 503, { ok: false, raison: 'L\'envoi d\'e-mails n\'est pas configuré sur cet environnement.' });
+      /* une demande reçue par une Carte part vers l'adresse du compte de cette personne, jamais vers celle du site */
+      const conf = b0 === BOITE ? conf0 : Object.assign({}, conf0, { a: [u.email] });
       /* moins de 23 heures après la réception : la même clé que le premier envoi, Resend ne l'enverra pas deux fois */
       const recent = Date.now() - new Date(x.recue_le).getTime() < 23 * 3600000;
       const idem = recent ? 'contact-' + (await empreinteDe(base, d.id)) : 'contact-renvoi-' + x.cle + '-' + x.email_tentatives;
-      const v = { projet: x.type, prenom: x.prenom, nom: x.nom, email: x.email, tel: x.tel, adresse: x.adresse, livraison: x.livraison, message: x.message };
+      const v = { projet: x.type, prenom: x.prenom, nom: x.nom, email: x.email, tel: x.tel, adresse: x.adresse, livraison: x.livraison, message: x.message, via: b0 === BOITE ? 'site' : 'carte' };
       const r = await C.envoyer(v, idem, conf, envoi);
       await D.noterEnvoi(base, d.id, r, { renvoi: true, par: u.id });
       return r.ok ? json(res, 200, { ok: true, email_statut: 'envoye' }) : json(res, 502, { ok: false, email_statut: 'echec', raison: 'L\'envoi a de nouveau échoué. La demande reste enregistrée.' });
     }
     if (b.action === 'convertir') {
-      const d = await D.detail(base, BOITE, cle); if (!d) return json(res, 404, { ok: false });
+      const d = await D.detail(base, b0, cle); if (!d) return json(res, 404, { ok: false });
       const titre = String(b.titre == null ? '' : b.titre).replace(/[\u0000-\u001F\u007F]/g, ' ').trim().slice(0, 120);
       if (!titre) return json(res, 400, { ok: false, raison: 'Donnez un nom au projet.' });
       const modele = ['mariage', 'seminaire'].includes(b.modele) ? b.modele : undefined;
       let p;
       try { p = await creer(dbEspaces !== undefined ? dbEspaces : _pool(), u, { titre, modele, origine: 'demande-' + d.demande.cle, relation: RELATION_PROPRIETAIRE }); }
       catch (e) { if (e instanceof Refus) return json(res, e.code, { ok: false, raison: e.raison }); throw e; }
-      await D.marquerConvertie(base, BOITE, cle, p.id, u.id);
+      await D.marquerConvertie(base, b0, cle, p.id, u.id);
       return json(res, 200, { ok: true, espace: p.id, titre: p.titre, existant: !!p.existant });
     }
     if (b.action === 'effacer') {
       if (b.confirmation !== true) return json(res, 400, { ok: false, raison: 'Confirmation requise.' });
-      return (await D.effacer(base, BOITE, cle)) ? json(res, 200, { ok: true }) : json(res, 404, { ok: false });
+      return (await D.effacer(base, b0, cle)) ? json(res, 200, { ok: true }) : json(res, 404, { ok: false });
     }
     return json(res, 400, { ok: false, raison: 'Action inconnue.' });
   } catch { return json(res, 503, INDISPONIBLE); }
