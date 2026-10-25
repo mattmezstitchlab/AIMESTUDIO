@@ -41,7 +41,7 @@ test('inscription prestataire : un compte et une activité, aucun projet, aucun 
   assert.equal((await pool.query('select count(*)::int as n from spaces where owner_id = $1', [id])).rows[0].n, 0, 'aucun projet');
   assert.equal((await pool.query('select count(*)::int as n from space_members where user_id = $1', [id])).rows[0].n, 0, 'aucun rôle dans aucun projet');
   assert.equal((await post({ action: 'mes' }, c)).body.espaces.length, 0);
-  assert.deepEqual((await post({ action: 'activites' }, c)).body.activites, [{ metier: 'fleuriste', nom: 'fleuriste', publiee: false }]);
+  assert.deepEqual((await post({ action: 'activites' }, c)).body.activites, [{ metier: 'fleuriste', nom: 'fleuriste', publiee: false, sur_carte: false }]);
 });
 
 test('une activité n\'est jamais publiée ni lisible par un autre compte ; un métier inconnu est refusé ; sans session, rien', opts, async () => {

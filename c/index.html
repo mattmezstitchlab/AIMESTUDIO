@@ -113,8 +113,11 @@ fetch('/api/carte-publique?l='+encodeURIComponent(jeton),{cache:'no-store',crede
  if(x.s!==200){erreur((x.j&&x.j.raison)||'Ce lien ne mène à aucune Carte.');return}
  var rub=x.j.rubriques||[],nom=rub.filter(function(r){return r.cle==='nom'})[0];
  if(nom&&texte(nom.valeur)){N.textContent=texte(nom.valeur);document.title=texte(nom.valeur)+' · Carte AIME'}
- E.textContent=rub.length?'':'Cette Carte ne montre rien publiquement pour l\'instant.';
+ var act=x.j.activites||[];
+ E.textContent=rub.length||act.length?'':'Cette Carte ne montre rien publiquement pour l\'instant.';
  rub.forEach(function(r){if(r.cle==='nom')return;var v=valeur(r.valeur);if(!v)return;var s=el('section');s.setAttribute('aria-labelledby','cp-'+r.cle);var h=el('h2',null,r.nom);h.id='cp-'+r.cle;s.appendChild(h);s.appendChild(v);R.appendChild(s)});
+ /* les activités que la personne a choisi de montrer (V1, P4) */
+ if(act.length){var sa=el('section');sa.setAttribute('aria-labelledby','cp-activites');var ha=el('h2',null,act.length>1?'Activités':'Activité');ha.id='cp-activites';sa.appendChild(ha);var ua=el('ul');act.forEach(function(a){ua.appendChild(el('li',null,a.nom.charAt(0).toUpperCase()+a.nom.slice(1)))});sa.appendChild(ua);R.insertBefore(sa,R.firstChild)}
  document.getElementById('cpNote').hidden=false;
  if(x.j.contact===true)ecrire();
 }).catch(function(){erreur('Réseau indisponible : la Carte n\'a pas pu être chargée.')});

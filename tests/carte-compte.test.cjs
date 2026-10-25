@@ -39,6 +39,7 @@ test.before(async () => {
   await pool.query('truncate cartes').catch(() => {}); await pool.query('truncate quotas').catch(() => {});
   /* rejouable sur la même base : les liens et les demandes des Cartes d'un passage précédent sont effacés */
   await pool.query('truncate cartes_liens').catch(() => {}); await pool.query("delete from demandes where boite like 'compte:%'").catch(() => {});
+  await pool.query("delete from activites where user_id in (select id from \"user\" where email like 'activite.%')").catch(() => {});
 });
 test.after(async () => { if (pool) await pool.end(); });
 
@@ -347,4 +348,67 @@ test('écrire à une Carte : sans la migration 2026-10-25-12, le lien marche, le
     const v = await publique(jeton); assert.equal(v.code, 200); assert.equal(v.body.contact, false);
     assert.equal((await deposer(jeton, visiteur({ email: 'sans12@exemple.test' }))).code, 404);
   } finally { H._db(undefined); P._db(undefined); }
+});
+
+/* ---------- PR P4 : les activités montrées sur ma Carte (migration 2026-10-25-13) ; « publiee » (le futur Registre) n'y joue aucun rôle ---------- */
+let E;
+function act(cookie, body) {
+  return new Promise(d => {
+    const res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } };
+    E.default({ method: 'POST', url: '/api/espaces', body, headers: { origin: BASE, host: 'localhost:8783', 'content-type': 'application/json', cookie } }, res);
+  });
+}
+
+test('activités : ajouter, puis choisir celles montrées sur ma Carte ; le lien public ne montre que celles-là', opts, async () => {
+  E = await import('../api/espaces.mjs');
+  const c = await carteAvecPublic('activite.une@exemple.test', { nom: 'Elio Fictif' }, { nom: 'publique' });
+  for (const m of ['fleuriste', 'dj']) assert.equal((await act(c, { action: 'activite', metier: m })).code, 200, m);
+  const l = await act(c, { action: 'activites' });
+  assert.equal(l.body.presentation, 'disponible'); assert.deepEqual(l.body.activites.map(a => [a.metier, a.sur_carte]), [['fleuriste', false], ['dj', false]], 'rien n\'est montré sans un geste');
+  const jeton = (await ecrire(c, { action: 'publier', consentement: true })).body.lien.jeton;
+  assert.deepEqual((await publique(jeton)).body.activites, [], 'aucune activité cochée : le lien n\'en montre aucune');
+  const r = await act(c, { action: 'activiteCarte', metier: 'dj', montrer: true });
+  assert.equal(r.code, 200); assert.equal(r.body.sur_carte, true); assert.equal(r.body.publiee, false, 'montrer sur ma Carte ne publie pas au Registre');
+  const v = await publique(jeton);
+  assert.deepEqual(v.body.activites.map(a => a.metier), ['dj'], 'seulement l\'activité cochée');
+  assert.ok(!JSON.stringify(v.body).includes('fleuriste'), 'jamais celle qui n\'est pas cochée');
+  await pool.query("update activites set publiee = true where metier = 'fleuriste' and user_id = (select id from \"user\" where email = 'activite.une@exemple.test')");
+  assert.deepEqual((await publique(jeton)).body.activites.map(a => a.metier), ['dj'], '« publiee » (le Registre, à venir) ne montre rien sur la Carte');
+  assert.equal((await act(c, { action: 'activiteCarte', metier: 'dj', montrer: false })).code, 200);
+  assert.deepEqual((await publique(jeton)).body.activites, [], 'décochée : elle disparaît à l\'ouverture suivante');
+});
+
+test('activités : réglages invalides refusés ; chacun ne règle que les siennes', opts, async () => {
+  const c = await connecter('activite.une@exemple.test'), autre = await connecter('activite.autre@exemple.test');
+  assert.equal((await act(c, { action: 'activiteCarte', metier: 'inconnu', montrer: true })).code, 400);
+  assert.equal((await act(c, { action: 'activiteCarte', metier: 'dj', montrer: 'oui' })).code, 400);
+  assert.equal((await act(autre, { action: 'activiteCarte', metier: 'dj', montrer: true })).code, 404, 'l\'autre compte n\'a pas cette activité : la mienne n\'est pas touchée');
+  assert.equal((await pool.query("select sur_carte from activites a join \"user\" u on u.id = a.user_id where u.email = 'activite.une@exemple.test' and metier = 'dj'")).rows[0].sur_carte, false);
+  assert.equal((await act(undefined, { action: 'activiteCarte', metier: 'dj', montrer: true })).code, 401, 'sans session');
+});
+
+test('activités : retirer une activité la retire aussi de ma Carte ; couper le lien ne montre plus rien', opts, async () => {
+  const c = await connecter('activite.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton;
+  await act(c, { action: 'activiteCarte', metier: 'fleuriste', montrer: true });
+  assert.deepEqual((await publique(jeton)).body.activites.map(a => a.metier), ['fleuriste']);
+  const r = await act(c, { action: 'retirerActivite', metier: 'fleuriste' });
+  assert.equal(r.code, 200); assert.equal(r.body.retiree, true);
+  assert.deepEqual((await publique(jeton)).body.activites, []);
+  assert.deepEqual((await act(c, { action: 'activites' })).body.activites.map(a => a.metier), ['dj']);
+  assert.equal((await act(c, { action: 'retirerActivite', metier: 'fleuriste' })).body.retiree, false, 'retirer deux fois : sans erreur, rien de plus');
+  await act(c, { action: 'activiteCarte', metier: 'dj', montrer: true }); await ecrire(c, { action: 'couper' });
+  assert.equal((await publique(jeton)).code, 404, 'lien coupé : aucune activité n\'est plus visible');
+});
+
+test('activités : sans la migration 2026-10-25-13, la liste marche, le réglage est dit indisponible, le lien n\'en montre aucune', opts, async () => {
+  const c = await connecter('activite.une@exemple.test'), jeton = (await ecrire(c, { action: 'publier', consentement: true })).body.lien.jeton;
+  const Ac = await import('../api/_auth/activites.mjs');
+  const faux = { query: async (sql, v) => { if (/column_name = 'sur_carte'/.test(sql)) return { rows: [{ n: 0 }] }; if (/sur_carte/.test(sql)) { const e = new Error('column "sur_carte" does not exist'); e.code = '42703'; throw e; } return pool.query(sql, v); } };
+  E._db(faux); P._db(faux); Ac._oublier();
+  try {
+    const l = await act(c, { action: 'activites' });
+    assert.equal(l.code, 200); assert.equal(l.body.presentation, 'indisponible'); assert.deepEqual(l.body.activites.map(a => a.metier), ['dj']);
+    assert.equal((await act(c, { action: 'activiteCarte', metier: 'dj', montrer: true })).code, 503);
+    const v = await publique(jeton); assert.equal(v.code, 200); assert.deepEqual(v.body.activites, []);
+  } finally { E._db(null); P._db(undefined); Ac._oublier(); }
 });
