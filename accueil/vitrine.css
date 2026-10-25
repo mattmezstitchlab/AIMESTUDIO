@@ -30,7 +30,7 @@ html.calme .v-orbe i{animation:none}
 .v-pil{display:inline-flex;align-items:center;gap:8px;border:1px solid #D4D4E0;border-radius:999px;padding:5px 12px;font:600 12.5px var(--ui);background:#FFFFFF;color:var(--ink);white-space:nowrap}
 .v-k{margin:0;font:600 12.5px var(--ui);letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
 .v-leg{margin:0;font-size:16px;line-height:1.55;color:var(--soft)}
-.v-leg a{color:var(--ink);font-weight:600;text-underline-offset:3px}
+.v-leg a{display:inline-block;padding:4px 0;color:var(--ink);font-weight:600;text-underline-offset:3px}
 .v-pt{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none;background:var(--pt,#767684)}
 .v-carte{background:#FFFFFF;border:1px solid rgba(17,17,24,.10);border-radius:28px;box-shadow:0 2px 6px rgba(17,17,24,.04),0 24px 56px -28px rgba(22,18,52,.22)}
 .v-mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
@@ -163,7 +163,7 @@ html.calme .v-tel .cadre,html.calme .v-scene{transition:none}
 .v-doms li.venir{background:#F7F7FB;border-color:#DCDCE8}
 .v-doms .v-pil{align-self:flex-start}
 .v-doms b{font:400 26px var(--display);letter-spacing:-.02em;margin-top:4px;color:var(--ink)}
-.v-doms a{font:600 14px var(--ui);color:var(--ink)}
+.v-doms a{display:inline-flex;align-items:center;min-height:24px;font:600 14px var(--ui);color:var(--ink)}
 
 /* 7 · l'entrée */
 .v-entree{padding:110px 0 130px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
@@ -201,7 +201,7 @@ html.calme .v-tel .cadre,html.calme .v-scene{transition:none}
 .clair .at-bloc .at-envoyer{background:var(--ink);color:#FFFFFF}
 .clair .at-bloc .at-etat{color:var(--ink)}
 .clair .at-bloc .at-etat.erreur{color:#B91C1C}
-.clair .at-bloc .at-plus{color:var(--ink)}
+.clair .at-bloc .at-plus{display:inline-flex;align-items:center;min-height:24px;color:var(--ink)}
 .clair .vg-b{background:#FFFFFF;border:1px solid rgba(17,17,24,.10);border-radius:20px;padding:10px 10px 14px;box-shadow:0 14px 34px -22px rgba(17,17,24,.22)}
 .clair .vg-t{color:var(--ink);padding:2px 6px 0}
 .clair .vg-d{color:var(--faint);padding:0 6px}

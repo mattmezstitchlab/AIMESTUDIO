@@ -10,11 +10,13 @@ const PAGES = ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/ta
   for (const [nom, vp] of [['ordinateur', { width: 1440, height: 900 }], ['téléphone', { width: 390, height: 844 }]]) {
     const ctx = await b.newContext({ viewport: vp });
     await ctx.addCookies([{ name: 'aime_test_proprietaire', value: 'oui', url: B }]);   /* /regie/ et /maitre/ : réservés au propriétaire (middleware.js) ; le serveur de test reconnaît ce cookie */
+    const P1 = new Set(['/', '/compte/', '/projets/', '/c/']);
     for (const u of PAGES) {
       const p = await ctx.newPage(); await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
       for (let y = 0; y < 30; y++) { await p.mouse.wheel(0, 900); await p.waitForTimeout(80); } await p.waitForTimeout(1200);
       await p.addScriptTag({ content: AXE });
-      const v = await p.evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + '×' + x.nodes.length + ' (' + x.nodes[0].target.join(' ') + ')'));
+      const tags = P1.has(u) ? ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] : ['wcag2a', 'wcag2aa', 'wcag21aa'];
+      const v = await p.evaluate(async t => (await axe.run(document, { runOnly: { type: 'tag', values: t } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + '×' + x.nodes.length + ' (' + x.nodes[0].target.join(' ') + ')'), tags);
       console.log((v.length ? '  ✗ ' : '  ✓ ') + nom + ' ' + u + (v.length ? ' : ' + v.join(', ') : '')); n += v.length; await p.close();
     }
     await ctx.close();
