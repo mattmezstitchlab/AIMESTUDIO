@@ -21,6 +21,9 @@ import D from './_demandes/depot.cjs';
 import C from './_demandes/courriel.cjs';
 
 const BOITE = 'site';
+/* qui transforme une demande reçue en projet est le professionnel sollicité : sa place dans le projet est nommée « prestataire »,
+   pas par le mot du rôle propriétaire du domaine (« le couple » pour un mariage). Un mot seulement : aucun droit ne change. */
+const RELATION_PROPRIETAIRE = 'prestataire';
 let verifier = proprietaire, db, envoi = null;
 export function _proprietaire(f) { verifier = f || proprietaire; }
 export function _db(d) { db = d; }
@@ -82,7 +85,7 @@ export default async function demandes(req, res) {
       if (!titre) return json(res, 400, { ok: false, raison: 'Donnez un nom au projet.' });
       const modele = ['mariage', 'seminaire'].includes(b.modele) ? b.modele : undefined;
       let p;
-      try { p = await creer(dbEspaces !== undefined ? dbEspaces : _pool(), u, { titre, modele, origine: 'demande-' + d.demande.cle }); }
+      try { p = await creer(dbEspaces !== undefined ? dbEspaces : _pool(), u, { titre, modele, origine: 'demande-' + d.demande.cle, relation: RELATION_PROPRIETAIRE }); }
       catch (e) { if (e instanceof Refus) return json(res, e.code, { ok: false, raison: e.raison }); throw e; }
       await D.marquerConvertie(base, BOITE, cle, p.id, u.id);
       return json(res, 200, { ok: true, espace: p.id, titre: p.titre, existant: !!p.existant });
