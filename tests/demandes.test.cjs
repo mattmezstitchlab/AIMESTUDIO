@@ -292,3 +292,16 @@ test('base : demande → projet — le propriétaire crée UN projet (rejouable)
   r = await api({ cookie: proprio, url: '/api/demandes?cle=' + d.cle }); assert.equal(r.body.projet, esp, 'le détail dit quel projet en est né');
   delete process.env.AIME_PROPRIETAIRES;
 });
+
+test('base : deux conversions simultanées de la même demande → un seul projet, un seul passage à « convertie »', opts, async () => {
+  await contact(bon({ email: 'simultane@exemple.test', message: 'Deux clics en même temps sur « Créer le projet », depuis deux onglets.' }));
+  const [d] = await ligne('simultane@exemple.test');
+  const proprio = await connecter('proprio.simultane@exemple.test');
+  process.env.AIME_PROPRIETAIRES = (await pool.query('select id from "user" where email = $1', ['proprio.simultane@exemple.test'])).rows[0].id; M._proprietaire();
+  const rs = await Promise.all([1, 2, 3].map(() => poster({ action: 'convertir', cle: d.cle, titre: 'Projet simultané' }, proprio)));
+  assert.deepEqual(rs.map(r => r.code), [200, 200, 200], 'chaque requête reçoit le projet');
+  assert.equal(new Set(rs.map(r => r.body.espace)).size, 1, 'le même projet pour les trois');
+  assert.equal((await pool.query("select count(*)::int as n from spaces where data->>'origine' = $1", ['demande-' + d.cle])).rows[0].n, 1, 'un seul projet en base');
+  assert.equal((await pool.query("select count(*)::int as n from demandes_journal where demande_id = $1 and quoi = 'statut' and detail->>'a' = 'convertie'", [d.id])).rows[0].n, 1, 'un seul passage à « convertie » dans l\'historique');
+  delete process.env.AIME_PROPRIETAIRES;
+});
