@@ -29,11 +29,17 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     const deborde = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     // pages principales : chargées, sans erreur, sans débordement
     const csp = [];
-    for (const u of ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/tarifs/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/aime/', '/bureau/espace/', '/cube/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
+    for (const u of ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/tarifs/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/lab/grande-partition/', '/point-zero/', '/c/', '/bureau/espace/', '/canevas/', '/reseau/', '/compte/', '/maitre/', '/magazine/', '/magazine/edito.html']) {
       await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(400); ok(!(await deborde()), u + ' sans débordement horizontal');
       for (const v of await p.evaluate(() => window.__csp || [])) csp.push(u + ' : ' + v);
     }
     ok(!csp.length, 'CSP report-only : aucune entorse sur les pages principales' + (csp.length ? ' (' + [...new Set(csp)].join(' ; ') + ')' : ''));
+    // /aime/ et /cube/ redirigent vers l'accueil (fermeture P1), tandis que les scripts /cube/*.js restent servis
+    for (const u of ['/aime/', '/cube/']) {
+      const r = await ctx.request.get(B + u, { maxRedirects: 0 });
+      ok(r.status() === 308 && r.headers()['location'] === '/', u + ' redirige (308) vers /');
+    }
+    ok((await ctx.request.get(B + '/cube/modele.js')).status() === 200, '/cube/modele.js reste servi');
     // Exemples : la mosaïque d'abord, plus de liste répétée en bas, aucune case vide dans la grille
     await p.goto(B + '/exemples/', { waitUntil: 'networkidle' }); await p.waitForTimeout(300);
     const ex = await p.evaluate(() => { const L = [...document.querySelectorAll('.ex-liste > li')], u = document.querySelector('.ex-liste').getBoundingClientRect(), aire = L.reduce((s, x) => { const r = x.getBoundingClientRect(); return s + r.width * r.height; }, 0);

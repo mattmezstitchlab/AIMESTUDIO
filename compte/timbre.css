@@ -21,4 +21,7 @@
 .planche .timbre:hover,.planche .timbre:focus-visible{opacity:1;filter:drop-shadow(0 18px 30px rgba(0,0,0,.6));transform:scale(1.32) translateY(-6%);z-index:5;outline:none}
 .planche .timbre:hover .tb-legende,.planche .timbre:focus-visible .tb-legende,.timbre.legende .tb-legende{opacity:1;transform:none}
 .timbre.mini{--l:30px;--r:2px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}.timbre.mini .tb-legende{display:none}
+.clair .timbre{filter:drop-shadow(0 8px 18px rgba(20,18,52,.18))}
+.clair .timbre.mini{filter:drop-shadow(0 2px 5px rgba(20,18,52,.18))}
+.clair .planche .timbre:focus-visible{outline:2px solid #111116;outline-offset:3px}
 @media (prefers-reduced-motion:reduce){.timbre,.timbre .tb-legende{transition:none}.planche .timbre:hover,.planche .timbre:focus-visible{transform:none}}

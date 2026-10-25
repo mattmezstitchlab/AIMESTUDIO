@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <title>Mon compte · AIME</title>
-<meta name="theme-color" content="#0B0B0E">
+<meta name="theme-color" content="#EDE6FF">
 <link rel="icon" href="data:,">
 <link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -19,13 +19,14 @@
 <script defer src="/_vercel/speed-insights/script.js"></script>
 <link rel="stylesheet" href="/nav/pied-legal.css">
 <style>
-/* un visuel réel, très assourdi, derrière le bloc de connexion */
-.cpt-fond{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(11,11,14,.78),rgba(11,11,14,.95) 70%),url(/media/visuels/fleuriste-terrasse.webp) center 35%/cover no-repeat}
+/* fond clair en dégradé harmonieux (aucune photo) ; .cpt-fond reste fixé derrière pour les repères du parcours */
+.cpt-fond{position:fixed;inset:0;z-index:0;pointer-events:none;background-color:#EDE6FF;
+ background-image:radial-gradient(90% 80% at 8% 8%,#FFC6D6 0%,transparent 58%),radial-gradient(85% 75% at 92% 14%,#BDE9FF 0%,transparent 58%),radial-gradient(95% 85% at 50% 96%,#FFE0AE 0%,transparent 62%),linear-gradient(155deg,#FFD6E4 0%,#E2DAFF 50%,#C9F0FF 100%)}
 /* seuls les blocs statiques passent au-dessus du fond ; l'en-tête (sticky), le lien d'évitement, le toast et le Dock gardent leur position */
 .cpt,body>.pied-legal{position:relative;z-index:1}
 </style>
 </head>
-<body>
+<body class="clair">
 <div class="cpt-fond" aria-hidden="true"></div>
 <a class="evite" href="#contenu">Aller au contenu</a>
 <!-- en haut, seulement le logo : « Mon compte », « Mes projets » et « Se déconnecter » passent par le Dock et son + -->
@@ -88,7 +89,7 @@
 
  <section class="carte-c" id="meDecouvrir" hidden aria-labelledby="t-dec">
   <h2 class="k" id="t-dec">Découvrir AIME</h2>
-  <p class="leg"><a href="/#coeur">Le cœur</a> · <a href="/exemples/">Les exemples</a> · <a href="/capacites/">Toutes les capacités</a> (démonstrations, données fictives)</p>
+  <p class="leg"><a href="/#ecrans">Le cœur</a> · <a href="/exemples/">Les exemples</a> · <a href="/capacites/">Toutes les capacités</a> (démonstrations, données fictives)</p>
  </section>
 
  <section class="carte-c" id="zoneSuppr" hidden aria-labelledby="t-suppr">

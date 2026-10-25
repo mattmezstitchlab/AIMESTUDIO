@@ -69,7 +69,10 @@ test('routes : /bureau/ mène à Mes projets (Mon espace et sa sauvegarde resten
  const v=JSON.parse(fs.readFileSync(R('vercel.json'))),reds=v.redirects||[];
  const re=s=>new RegExp('^'+s.replace(/[.+?^${}|[\]\\]/g,'\\$&').replace(/\/:path\\\*/g,'(?:/.*)?').replace(/:path\*/g,'.*').replace(/\\\(\.\*\)/g,'.*').replace(/\(\.\*\)/g,'.*')+'$');
  const suivre=u=>{const vu=[];for(let i=0;i<12;i++){const r=reds.find(r=>re(r.source).test(u));if(!r)return{fin:u,sauts:vu.length};assert.ok(!vu.includes(u),'boucle sur '+u);vu.push(u);u=r.destination}assert.fail('trop de redirections')};
- assert.equal(suivre('/zero').fin,'/','le contrôle des redirections fonctionne');assert.equal(suivre('/monde/a/b').fin,'/aime/');
+ assert.equal(suivre('/zero').fin,'/','le contrôle des redirections fonctionne');assert.equal(suivre('/monde/a/b').fin,'/');
+ for(const u of ['/aime','/aime/','/aime/index.html','/cube','/cube/','/cube/index.html'])assert.equal(suivre(u).fin,'/',u+' → Accueil (fermeture P1)');
+ assert.ok(fs.existsSync(R('aime/index.html'))&&fs.existsSync(R('cube/index.html')),'les fichiers restent dans le dépôt, seules les adresses publiques redirigent vers /');
+ assert.equal(suivre('/cube/modele.js').sauts,0,'les scripts /cube/*.js restent servis pour /maitre/');
  for(const u of ['/bureau','/bureau/','/bureau/index.html'])assert.equal(suivre(u).fin,'/projets/',u+' → Mes projets');
  for(const u of ['/bureau/espace/'])assert.equal(suivre(u).sauts,0,u+' : la sauvegarde reste servie');
  assert.ok(!fs.existsSync(R('bureau/index.html')),'le Bureau est supprimé (accord de Matt) ; l\'adresse redirige vers Mes projets');

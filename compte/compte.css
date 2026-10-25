@@ -1,12 +1,31 @@
+/* AIME · ME (/compte/), AI (/projets/) et l'écran de projet : thème clair, fond en dégradé de couleur (sans photo),
+   blocs blancs, texte noir (contraste WCAG 2.2 AA). */
+html:has(>body.clair){color-scheme:light;background:#EDE6FF}
+body.clair{color-scheme:light;--fond:#EDE6FF;--panneau:#F7F7FB;--carte:#FFFFFF;--ligne:#D8D8E4;--line:#D8D8E4;
+ --encre:#111116;--doux:#363644;--pale:#454556;--violet:#4C28E8;--cyan:#0E7490;--rose:#BE123C;--ambre:#B45309;--ok:#065F46;--ko:#B91C1C;
+ background-color:#EDE6FF;
+ background-image:radial-gradient(90% 80% at 8% 8%,#FFC6D6 0%,transparent 58%),radial-gradient(85% 75% at 92% 14%,#BDE9FF 0%,transparent 58%),radial-gradient(95% 85% at 50% 96%,#FFE0AE 0%,transparent 62%),linear-gradient(155deg,#FFD6E4 0%,#E2DAFF 50%,#C9F0FF 100%);
+ color:var(--encre)}
+body.clair .tete{background:rgba(255,255,255,.88);border-bottom:1px solid rgba(17,17,24,.09);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+body.clair .evite{background:#111116;color:#FFFFFF}
+body.clair .toast{background:#111116;color:#FFFFFF;box-shadow:0 16px 38px -14px rgba(17,17,24,.35)}
+body.clair .toast.ko{background:#991B1B;color:#FFFFFF}
+body.clair .b{background:#FFFFFF;border-color:#C6C6D4;color:#111116}
+body.clair .b:hover{background:#F3F3FA;border-color:#111116}
+body.clair .b-p{background:#111116;border-color:#111116;color:#FFFFFF}
+body.clair .b-p:hover{background:#272732;border-color:#272732}
+body.clair select,body.clair input:not([type]),body.clair input[type=text],body.clair input[type=email],body.clair input[type=date],body.clair input[type=url],body.clair textarea{
+ font:inherit;color:var(--encre);background:#F7F7FB;border:1px solid #C6C6D4;border-radius:10px;padding:8px 10px;min-height:40px;max-width:100%}
+
 .cpt{display:grid;gap:22px;max-width:960px;margin:0 auto;padding:26px max(16px,env(safe-area-inset-right,0px)) 70px max(16px,env(safe-area-inset-left,0px));outline:none}
-.cpt h1{font:600 28px/1.15 var(--titre);margin:0;text-wrap:balance}
-.cpt #t-cnx,.cpt #t-moi{font:600 24px/1.15 var(--titre);margin:0;text-wrap:balance}
-.cpt-titre{display:grid;gap:4px;margin:4px 0 6px}.cpt-titre .leg{margin:0;color:#A6A6B2}
-.carte-c{border:1px solid var(--ligne);background:var(--carte);border-radius:18px;padding:20px;display:grid;gap:12px}
-.carte-c h3{margin:0;font:600 19px/1.2 var(--titre)}
-.alerte{border:1px solid rgba(253,164,175,.4);color:var(--ko);border-radius:12px;padding:12px 14px;margin:0}
-.bandeau{border:1px solid rgba(34,211,238,.4);color:var(--cyan);border-radius:12px;padding:12px 14px;margin:0}
-.ok{color:var(--ok);margin:0}
+.cpt h1{font:600 28px/1.15 var(--titre);margin:0;text-wrap:balance;color:var(--encre)}
+.cpt #t-cnx,.cpt #t-moi{font:600 24px/1.15 var(--titre);margin:0;text-wrap:balance;color:var(--encre)}
+.cpt-titre{display:grid;gap:4px;margin:4px 0 6px}.cpt-titre .leg{margin:0;color:var(--doux)}
+.carte-c{border:1px solid rgba(17,17,24,.10);background:#FFFFFF;border-radius:20px;padding:20px;display:grid;gap:12px;box-shadow:0 12px 32px -20px rgba(20,18,52,.18)}
+.carte-c h3{margin:0;font:600 19px/1.2 var(--titre);color:var(--encre)}
+.alerte{border:1px solid #FCA5A5;background:#FEF2F2;color:#991B1B;border-radius:12px;padding:12px 14px;margin:0}
+.bandeau{border:1px solid #67E8F9;background:#ECFEFF;color:#155E75;border-radius:12px;padding:12px 14px;margin:0}
+.ok{color:var(--ok);margin:0;font-weight:500}
 .sep{display:flex;align-items:center;gap:10px;color:var(--pale);font-size:12px}.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--ligne)}
 .moi{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
 .moi-t{display:grid;gap:10px;justify-items:center}
@@ -17,73 +36,72 @@
 .lien input{font:13px var(--mono)}
 .gerer{border-top:1px solid var(--ligne);padding-top:10px}.gerer h4{margin:6px 0 0}
 .ligne{font-size:14px;padding:4px 0}.ligne>span:not(.timbre){flex:1;min-width:0;overflow-wrap:anywhere}
-input[type=email]{font:inherit;color:var(--encre);background:var(--carte);border:1px solid var(--ligne);border-radius:10px;padding:8px 10px;min-height:38px;max-width:100%}
-.cpt .carte-c input:not([type]),.cpt .carte-c input[type=email]{background:var(--panneau)}
-.danger{color:var(--ko);border-color:rgba(253,164,175,.5)}.danger:hover{border-color:var(--ko)}
-#zoneSuppr{border-color:rgba(253,164,175,.22)}
+input[type=email]{font:inherit;color:var(--encre);background:#F7F7FB;border:1px solid #C6C6D4;border-radius:10px;padding:8px 10px;min-height:40px;max-width:100%}
+.cpt .carte-c input:not([type]),.cpt .carte-c input[type=email]{background:#F7F7FB}
+.danger,body.clair .danger{background:#FFF1F2;color:#9F1239;border-color:#FDA4AF}.danger:hover,body.clair .danger:hover{background:#FFE4E6;border-color:#BE123C}
+#zoneSuppr{border-color:#FECDD3}
 
 /* l'écran de projet (compte/projet.js) */
 #projet{display:grid;gap:14px}
-.p-onglets{display:flex;flex-wrap:wrap;gap:6px}.p-onglets a{text-decoration:none}.p-onglets a[aria-current=page]{background:var(--encre);color:#0B0B0E;border-color:var(--encre)}
-.p-titre{font:600 22px/1.2 var(--titre);margin:8px 0 0}.p-titre:focus{outline:none}   /* un titre qui reçoit le focus (tabindex -1) pour le lecteur d'écran n'est pas une commande : pas d'anneau */
-.p-texte{font-size:17px;margin:0}.p-fin{margin:0}.p-fin.a-fin{color:var(--cyan)}
+.p-onglets{display:flex;flex-wrap:wrap;gap:6px}.p-onglets a{text-decoration:none}.p-onglets a[aria-current=page]{background:var(--encre);color:#FFFFFF;border-color:var(--encre)}
+.p-titre{font:600 22px/1.2 var(--titre);margin:8px 0 0;color:var(--encre)}.p-titre:focus{outline:none}
+.p-texte{font-size:17px;margin:0}.p-fin{margin:0}.p-fin.a-fin{color:var(--cyan);font-weight:500}
 .p-liste{margin:0;padding-left:20px;display:grid;gap:6px}.p-personnes{list-style:none;padding:0}.p-personnes li{justify-content:space-between;gap:10px}
-.p-journal{margin:0;padding-left:20px;display:grid;gap:8px}.p-ligne.moi{color:var(--encre)}.p-motif{display:block;margin-top:4px;color:var(--doux);font-style:italic}
-#pInviter label>span{font-size:14px}#pInviter select,#pInviter input{font:inherit;color:var(--encre);background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:8px 10px;min-height:40px;max-width:100%}
-.signal summary{cursor:pointer}.signal textarea{font:inherit;color:var(--encre);background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:8px 10px;width:100%}
-.vivant.ko{color:var(--ko)}
+.p-journal{margin:0;padding-left:20px;display:grid;gap:8px}.p-ligne.moi{color:var(--encre);font-weight:500}.p-motif{display:block;margin-top:4px;color:var(--doux);font-style:italic}
+#pInviter label>span{font-size:14px}#pInviter select,#pInviter input{font:inherit;color:var(--encre);background:#F7F7FB;border:1px solid #C6C6D4;border-radius:10px;padding:8px 10px;min-height:40px;max-width:100%}
+.signal summary{cursor:pointer}.signal textarea{font:inherit;color:var(--encre);background:#F7F7FB;border:1px solid #C6C6D4;border-radius:10px;padding:8px 10px;width:100%}
+.vivant{color:var(--encre);font-weight:500}.vivant.ko{color:var(--ko)}
 #projet .leg,#projet .leg a{color:var(--doux)}
 
-/* l'écran de projet (body.en-projet, posé par compte/projet.js) : l'identité du projet dans un bandeau, la zone de travail sur fond plein.
-   La photo de l'espace compte reste la même image, cadrée dans le bandeau et voilée : elle n'est plus derrière le contenu métier. */
+/* l'écran de projet (body.en-projet, posé par compte/projet.js) : bandeau blanc à liseré irisé (plus de photo), zone de travail sur le dégradé */
 body.en-projet .cpt-fond{display:none}
 body.en-projet .cpt{gap:16px}
-body.en-projet .cpt-titre{position:relative;isolation:isolate;overflow:hidden;margin:0;min-height:112px;align-content:end;padding:22px 20px 18px;border:1px solid var(--ligne);border-radius:18px;background:var(--panneau)}
-body.en-projet .cpt-titre::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(11,11,14,.95) 0%,rgba(11,11,14,.86) 50%,rgba(11,11,14,.62) 100%),url(/media/visuels/fleuriste-terrasse.webp) center 38%/cover no-repeat}
-body.en-projet .cpt-titre .leg{color:#D0D0D8}
+body.en-projet .cpt-titre{position:relative;isolation:isolate;overflow:hidden;margin:0;min-height:96px;align-content:end;padding:22px 20px 18px;border:1px solid rgba(17,17,24,.10);border-radius:20px;background:#FFFFFF;box-shadow:0 12px 32px -20px rgba(20,18,52,.18)}
+body.en-projet .cpt-titre::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;z-index:0;background:var(--iris)}
+body.en-projet .cpt-titre .leg{color:var(--doux)}
 body.en-projet #projet{gap:12px}
 body.en-projet #projet>.leg:first-child{margin:0}
-@media (max-width:560px){body.en-projet .cpt-titre{min-height:92px;padding:18px 16px 14px}}
+@media (max-width:560px){body.en-projet .cpt-titre{min-height:84px;padding:18px 16px 14px}}
 /* téléphone (ou écran bas) dans un projet : l'en-tête du site défile avec la page au lieu de rester collé, pour laisser toute la hauteur au travail ;
    seule navigation fixe, le Dock, en bas */
 @media (max-width:560px),(max-height:500px){body.en-projet .tete{position:static}}
 
-/* AI : mon environnement (/projets/) — « À traiter », les demandes reçues et leur détail (architecture AI + ME, 25/10) */
+/* AI : mon environnement (/projets/) — « À traiter », les demandes reçues, les engagements et leur détail */
 #aTraiter{gap:10px}
-.dm{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;
- border:1px solid var(--ligne);background:var(--carte);border-radius:16px;padding:14px 16px;min-height:44px}
-.dm:hover{border-color:var(--doux)}.dm:focus-visible{outline:2px solid var(--encre);outline-offset:2px}
-.dm-t{display:grid;gap:4px;min-width:0}.dm-t b{font-weight:600;overflow-wrap:anywhere}.dm-t span{color:var(--doux);font-size:14px;overflow-wrap:anywhere}
+.dm{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;width:100%;text-align:left;font:inherit;color:var(--encre);cursor:pointer;
+ border:1px solid rgba(17,17,24,.10);background:#FFFFFF;border-radius:16px;padding:14px 16px;min-height:44px;box-shadow:0 8px 24px -18px rgba(20,18,52,.18)}
+.dm:hover{border-color:#111116;background:#FAFAFE}.dm:focus-visible{outline:2px solid var(--encre);outline-offset:2px}
+.dm-t{display:grid;gap:4px;min-width:0}.dm-t b{font-weight:600;overflow-wrap:anywhere;color:var(--encre)}.dm-t span{color:var(--doux);font-size:14px;overflow-wrap:anywhere}
 .dm-e{flex:none;display:grid;gap:4px;justify-items:end;font-size:13px}
-.etiq{border:1px solid var(--ligne);border-radius:999px;padding:2px 10px;white-space:nowrap}
-.etiq.nouvelle{border-color:var(--encre);color:var(--encre)}.etiq.ko{border-color:rgba(253,164,175,.5);color:var(--ko)}
-.ai-traitees summary{cursor:pointer;color:var(--doux);min-height:24px}
+.etiq{border:1px solid #CFCFD9;background:#F4F4FA;color:#363642;border-radius:999px;padding:2px 10px;white-space:nowrap;font-weight:500}
+.etiq.nouvelle{border-color:#C4B5FD;background:#EDE9FE;color:#4C1D95;font-weight:600}.etiq.ko{border-color:#FCA5A5;background:#FEF2F2;color:#991B1B;font-weight:600}
+.ai-traitees summary{cursor:pointer;color:var(--doux);min-height:24px;font-weight:500}
 .ai-traitees[open] .pile{margin-top:10px}
 #demande{display:grid;gap:14px}
 .d-champs{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:8px 16px;margin:0}
-.d-champs dt{color:var(--doux)}.d-champs dd{margin:0;overflow-wrap:anywhere}
+.d-champs dt{color:var(--doux);font-weight:500}.d-champs dd{margin:0;overflow-wrap:anywhere}
 .d-message{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-size:16px;line-height:1.55}
 @media (max-width:520px){.d-champs{grid-template-columns:1fr}.d-champs dd{margin-bottom:6px}.dm{flex-direction:column}.dm-e{justify-items:start;grid-auto-flow:column}}
 
 /* la barre de contexte d'un projet : revenir à AI, ou passer à un autre projet sans quitter l'écran */
 .p-contexte{justify-content:space-between;align-items:center}
-.p-changer summary{cursor:pointer;color:var(--doux);min-height:24px;padding:4px 0}
-.p-changer[open] .cles{margin-top:8px}
+.p-changer summary{cursor:pointer;color:var(--encre);background:#FFFFFF;border:1px solid #C6C6D4;border-radius:999px;min-height:34px;padding:6px 14px;font-weight:600;list-style-position:inside}
+.p-changer[open] .cles{margin-top:8px;padding:8px;background:#FFFFFF;border:1px solid #D8D8E4;border-radius:14px;box-shadow:0 14px 32px -16px rgba(20,18,52,.22)}
 .p-changer .cles button{width:100%;text-align:left}
-/* les légendes de AI et du détail d'une demande : la même couleur lisible que dans un projet (#projet .leg), contraste ≥ 4,5:1 */
-#espaces .leg,#espaces .leg a,#demande .leg,#demande .leg a{color:var(--doux)}
+/* les légendes de AI, ME et projet : contraste ≥ 7:1 sur blanc comme sur le dégradé */
+#espaces .leg,#espaces .leg a,#demande .leg,#demande .leg a,#local .leg,#local .leg a{color:var(--doux)}
 #aTraiter{margin-bottom:18px}
-#demande textarea{font:inherit;color:var(--encre);background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:8px 10px;width:100%;box-sizing:border-box;resize:vertical}
-#demande select{font:inherit;color:var(--encre);background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:6px 10px;min-height:38px}
-/* ME (/compte/) : les légendes lisibles (contraste ≥ 4,5:1), comme dans AI et dans un projet */
+#demande textarea{font:inherit;color:var(--encre);background:#F7F7FB;border:1px solid #C6C6D4;border-radius:10px;padding:8px 10px;width:100%;box-sizing:border-box;resize:vertical}
+#demande select{font:inherit;color:var(--encre);background:#F7F7FB;border:1px solid #C6C6D4;border-radius:10px;padding:6px 10px;min-height:38px}
 #profil .leg,#activites .leg,#meCarte .leg,#meDecouvrir .leg,#meDecouvrir .leg a,#zoneSuppr .leg,#zoneSuppr .leg a{color:var(--doux)}
+.cpt .leg a{color:var(--encre);font-weight:500;text-underline-offset:3px}
 
 /* ME · ma Carte (compte/carte-compte.js) */
 #meCarte .mc-liste{margin:0;padding-left:1.2em;display:grid;gap:4px}
 #meCarte .mc-accord{display:flex;gap:10px;align-items:flex-start}
-#meCarte .mc-accord input{margin-top:3px;flex:none;width:18px;height:18px}
-#meCarte .mc-vis fieldset{border:1px solid var(--ligne);border-radius:12px;padding:10px 14px;display:grid;gap:8px;margin:0;min-width:0}
-#meCarte .mc-vis legend{padding:0 4px}
+#meCarte .mc-accord input{margin-top:3px;flex:none;width:18px;height:18px;accent-color:var(--encre)}
+#meCarte .mc-vis fieldset{border:1px solid var(--ligne);border-radius:12px;padding:10px 14px;display:grid;gap:8px;margin:0;min-width:0;background:#FAFAFE}
+#meCarte .mc-vis legend{padding:0 4px;font-weight:600}
 #meCarte .mc-ligne{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);align-items:center;gap:8px}
 #meCarte .mc-ligne select{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
 @media (max-width:520px){#meCarte .mc-ligne{grid-template-columns:minmax(0,1fr)}}
@@ -97,6 +115,7 @@ body.en-projet #projet>.leg:first-child{margin:0}
 .act-liste li{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:8px 0;border-bottom:1px solid var(--line)}
 .act-liste li b{flex:1 1 140px;min-width:0;overflow-wrap:anywhere}
 .act-c{gap:8px;font-size:14px}
+.act-c input{accent-color:var(--encre)}
 .act-ajout{flex-wrap:wrap;align-items:flex-end;gap:10px}
 .act-ajout label{flex:1 1 200px;min-width:0}
 .act-ajout select{width:100%;min-width:0}

@@ -13,7 +13,11 @@ var PLACES=[
  {id:'editor',nom:'La coordination',place:'Je coordonne',gestes:['Décaler un moment','Basculer en plan B','Inviter des invités']},
  {id:'contributor',nom:'Le DJ',place:'Je contribue',gestes:['Confirmer son horaire','Prendre un engagement','Déposer ses documents']},
  {id:'guest',nom:'L’invitée',place:'Je participe',gestes:['Répondre à l’invitation','Voir le programme public']}];
-var FONDS={owner:'#FFF1F3',editor:'#F1EEFF',contributor:'#FFF6E5',guest:'#E8FAFD'};
+var FONDS={
+ owner:'linear-gradient(140deg,#FFC2D1 0%,#FFE0BE 100%)',
+ editor:'linear-gradient(140deg,#CEC2FF 0%,#C4E8FF 100%)',
+ contributor:'linear-gradient(140deg,#FFD599 0%,#FFC9BE 100%)',
+ guest:'linear-gradient(140deg,#ADEBFF 0%,#C2F5DF 100%)'};
 var MOMENTS=[
  {t:'Brief traiteur',m:810,a:'organisation',l:'Cuisine · organisation seulement'},
  {t:'Installation son',m:840,a:'equipe',l:'Jardin · équipe',resp:'contributor'},
@@ -32,21 +36,38 @@ function composer(place,etat){etat=etat||{};var s=sujet(place),pl=PLACES.filter(
  var decaler=P.can(s,'edit',{type:'event'}).allow;
  return{place:pl,couleur:RL.couleur(place),fond:FONDS[place],vus:vus,caches:MOMENTS.length-vus.length,decaler:decaler}}
 
-/* les sept téléphones : seuls les écrans concernés s'allument */
+/* les sept téléphones : un vrai écran par personne (notification, moments selon ses droits, mission, Dock) */
 var TELS=[
- {id:'mariee',nom:'La mariée',c:'#FB7185',voit:'Tout : programme, réponses, prestataires.'},
- {id:'temoin',nom:'Le témoin',c:'#34D399',voit:'Sa mission, et la surprise.'},
- {id:'invite',nom:'L’invité',c:'#22D3EE',voit:'Le programme public, le lieu.'},
- {id:'coord',nom:'La coordination',c:'#6D4AFF',e:'#FFFFFF',voit:'Le déroulé, l’équipe, le plan B.'},
- {id:'traiteur',nom:'Le traiteur',c:'#F59E0B',voit:'Son service, l’effectif sans noms.'},
- {id:'dj',nom:'Le DJ',c:'#E879F9',voit:'Ses horaires, et ce qui le touche.'},
- {id:'photo',nom:'Le photographe',c:'#60A5FA',voit:'Ses créneaux, l’accès.'}];
+ {id:'mariee',nom:'La mariée',role:'owner',c:'#FB7185',voit:'Tout : programme, réponses, prestataires.',mission:'118 présents · 4 prestataires',missions:{reponse:'119 présents · 4 prestataires',retard:'Dîner décalé · équipe prévenue',pluie:'Plan B actif · Orangerie'},dock:['Accès','Prog.','Pers.'],indices:[0,2]},
+ {id:'temoin',nom:'Le témoin',role:'viewer',c:'#34D399',voit:'Sa mission, et la surprise.',mission:'Discours 21:00 · surprise',missions:{surprise:'Surprise 21:40 · piste prête',pluie:'Cérémonie · Orangerie'},dock:['Accès','Prog.','Surprise'],indices:[2,5]},
+ {id:'invite',nom:'L’invité',role:'guest',c:'#22D3EE',voit:'Le programme public, le lieu.',mission:'Présence confirmée · table 4',missions:{reponse:'Présence enregistrée · merci',pluie:'Rendez-vous · Orangerie'},dock:['Prog.','Lieu','Réponse'],indices:[2,3]},
+ {id:'coord',nom:'La coordination',role:'editor',c:'#6D4AFF',e:'#FFFFFF',voit:'Le déroulé, l’équipe, le plan B.',mission:'7 moments · plan B prêt',missions:{pluie:'Orangerie ouverte à 13:30',retard:'Dîner 19:00 · DJ recalé',surprise:'Créneau 21:40 réservé'},dock:['Déroulé','Équipe','Plan B'],indices:[0,2]},
+ {id:'traiteur',nom:'Le traiteur',role:'contributor',c:'#F59E0B',voit:'Son service, l’effectif sans noms.',mission:'118 couverts, sans noms',missions:{reponse:'119 couverts, sans noms',retard:'Service dîner recalé 19:00'},dock:['Mission','Effectif','Docs'],indices:[3,5]},
+ {id:'dj',nom:'Le DJ',role:'contributor',c:'#E879F9',voit:'Ses horaires, et ce qui le touche.',mission:'Installation 14:00 · bal 22:00',missions:{retard:'Set cocktail +30 min',surprise:'Piste surprise 21:40',pluie:'Sono sous l’Orangerie'},dock:['Mission','Horaires','Docs'],indices:[1,4]},
+ {id:'photo',nom:'Le photographe',role:'contributor',c:'#60A5FA',voit:'Ses créneaux, l’accès.',mission:'Couple 17:30 · contrat signé',missions:{pluie:'Photos sous l’Orangerie'},dock:['Mission','Accès','Docs'],indices:[2,3]}];
 var EVTS=[
  {id:'pluie',t:'Il pleut : cérémonie à l’Orangerie',m:{mariee:'Plan B activé : Orangerie.',temoin:'Rendez-vous à l’Orangerie.',invite:'Cérémonie à l’Orangerie.',coord:'Plan B confirmé à 13 h 02.',traiteur:'Service inchangé.',dj:'Son à installer à l’Orangerie.',photo:'Lumière : Orangerie.'}},
  {id:'retard',t:'Le traiteur annonce 30 min de retard',m:{mariee:'Dîner à 19 h 00.',coord:'Dîner décalé : 19 h 00.',traiteur:'Retard noté, merci.',dj:'Set prolongé de 30 min.'}},
  {id:'surprise',t:'Les témoins préparent une surprise',m:{temoin:'Surprise à 21 h 40.',coord:'5 min réservées à 21 h 40.',dj:'Musique de la surprise.'}},
  {id:'reponse',t:'Un invité confirme sa présence',m:{mariee:'119 présents confirmés.',invite:'Réponse enregistrée.',traiteur:'Effectif : 119 couverts.'}}];
-function telephones(evt){var e=EVTS.filter(function(x){return x.id===evt})[0]||EVTS[0];return TELS.map(function(t){var on=!!e.m[t.id];return{nom:t.nom,c:t.c,e:t.e||'#141416',voit:t.voit,on:on,msg:on?e.m[t.id]:'Écran silencieux.'}})}
+
+function momentsTel(t,evt){
+ var s=sujet(t.role),autorises=MOMENTS.filter(function(x){return lit(s,x)});
+ var choisis=(t.indices||[]).map(function(i){return MOMENTS[i]}).filter(function(x){return x&&autorises.indexOf(x)>=0});
+ if(choisis.length<2)choisis=autorises.slice(0,2);
+ return choisis.slice(0,2).map(function(x){
+  var m=x.m+(evt==='retard'&&x.t==='Dîner'?30:0)+(evt==='retard'&&x.d?15:0);
+  var titre=x.t==='Cérémonie'&&evt==='pluie'?'Cérémonie · Orangerie':x.t;
+  return{heure:hm(m),titre:titre};
+ })}
+
+function telephones(evt){var e=EVTS.filter(function(x){return x.id===evt})[0]||EVTS[0];
+ return TELS.map(function(t){var on=!!e.m[t.id];
+  return{id:t.id,nom:t.nom,role:t.role,c:t.c,e:t.e||'#141416',voit:t.voit,on:on,
+   msg:on?e.m[t.id]:'Aucune alerte pour vous.',
+   mission:(t.missions&&t.missions[e.id])||t.mission,
+   moments:momentsTel(t,e.id),
+   dock:t.dock}})}
 
 if(typeof document==='undefined')return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,composer:composer,telephones:telephones};
 
@@ -57,7 +78,7 @@ function pastille(c){var p=el('span','v-pt');p.style.setProperty('--pt',c);p.set
 var etat={place:'owner',decale:false,planB:false};
 
 function hero(){var z=$('vHero');if(!z)return;var P0=$('vPlaces'),r=composer(etat.place,etat);
- $('vScene').style.background=r.fond;var t=$('vVous');t.textContent=r.place.nom;$('vVousPt').style.setProperty('--pt',r.couleur);
+ $('vScene').style.backgroundColor='#F3EEFF';$('vScene').style.backgroundImage=r.fond;var t=$('vVous');t.textContent=r.place.nom;$('vVousPt').style.setProperty('--pt',r.couleur);
  $('vNb').textContent=r.vus.length+' moments visibles';
  var L=$('vMoments');L.textContent='';r.vus.forEach(function(m){var li=el('li');li.appendChild(el('span','h',m.heure));var d=el('span','t');d.appendChild(el('b',null,m.titre));d.appendChild(el('small',null,m.lieu));li.appendChild(d);if(m.change){var p=el('span','v-pil','mis à jour');p.style.background='#111114';p.style.color='#FFFFFF';p.style.borderColor='#111114';li.appendChild(p)}L.appendChild(li)});
  $('vCache').textContent=r.caches?r.caches+(r.caches>1?' moments ne sont pas envoyés à cette place : ils ne la concernent pas.':' moment n’est pas envoyé à cette place : il ne la concerne pas.'):'Cette place voit tout le programme.';
@@ -70,8 +91,46 @@ function hero(){var z=$('vHero');if(!z)return;var P0=$('vPlaces'),r=composer(eta
  if(!r.decaler)$('vReelDit').textContent='Cette place voit les changements, sans pouvoir les faire.';
  else if(!$('vReelDit').dataset.gardé)$('vReelDit').textContent='Changez quelque chose, puis passez d’une place à l’autre.'}
 function dire(t){var d=$('vReelDit');if(d){d.textContent=t}}
-function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';telephones(evt).forEach(function(t){var li=el('li','v-tel'+(t.on?'':' eteint'));var c=el('div','cadre'),a=el('div','aplat',t.on?'Nouveau':'Rien pour vous');if(t.on){a.style.background=t.c;a.style.color=t.e}c.appendChild(a);c.appendChild(el('p','msg',t.msg));li.appendChild(c);
-  var n=el('p','nom');n.appendChild(pastille(t.c));n.appendChild(document.createTextNode(t.nom));li.appendChild(n);li.appendChild(el('p','voit',t.voit));L.appendChild(li)});
+
+function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';
+ telephones(evt).forEach(function(t){
+  var li=el('li','v-tel'+(t.on?' allume':' eteint'));li.style.setProperty('--role',t.c);
+  var c=el('div','cadre');
+  /* barre supérieure du téléphone */
+  var haut=el('div','vt-haut');
+  haut.appendChild(el('span','vt-heure','9:41'));
+  var prj=el('span','vt-prj');prj.appendChild(pastille(t.c));prj.appendChild(document.createTextNode('Léa & Marc'));haut.appendChild(prj);
+  c.appendChild(haut);
+  /* notification : active sur les écrans concernés, calme sinon */
+  var nf=el('div','vt-notif'+(t.on?' on':''));
+  var nfK=el('span','vt-k',t.on?'Notification':'Silencieux');
+  nf.appendChild(nfK);
+  nf.appendChild(el('p','msg',t.msg));
+  c.appendChild(nf);
+  /* mission selon la place */
+  var ms=el('div','vt-bloc');
+  ms.appendChild(el('span','vt-k','Mission'));
+  ms.appendChild(el('p','vt-mission',t.mission));
+  c.appendChild(ms);
+  /* prochains moments autorisés par permissions.js */
+  var mo=el('div','vt-bloc vt-prog');
+  mo.appendChild(el('span','vt-k','Moments'));
+  var ul=el('ul','vt-moments');
+  t.moments.forEach(function(m){var it=el('li');it.appendChild(el('b',null,m.heure));it.appendChild(el('span',null,m.titre));ul.appendChild(it)});
+  mo.appendChild(ul);
+  c.appendChild(mo);
+  /* mini-Dock du téléphone */
+  var dk=el('div','vt-dock');dk.setAttribute('aria-hidden','true');
+  var g0=el('span','vt-dk on',t.dock[0]);if(t.on)g0.appendChild(el('i','vt-pastille'));
+  dk.appendChild(g0);
+  dk.appendChild(el('span','vt-dk',t.dock[1]));
+  dk.appendChild(el('span','vt-plus','+'));
+  dk.appendChild(el('span','vt-dk',t.dock[2]));
+  c.appendChild(dk);
+  li.appendChild(c);
+  var n=el('p','nom');n.appendChild(pastille(t.c));n.appendChild(document.createTextNode(t.nom));li.appendChild(n);
+  li.appendChild(el('p','voit',t.voit));
+  L.appendChild(li)});
  [].forEach.call(document.querySelectorAll('#vEvts button'),function(b){b.setAttribute('aria-pressed',b.dataset.evt===evt?'true':'false')})}
 
 function monter(){if(!$('vHero'))return;hero();
@@ -80,8 +139,8 @@ function monter(){if(!$('vHero'))return;hero();
  var E=$('vEvts');if(E){EVTS.forEach(function(x){var b=el('button','v-btn2',x.t);b.type='button';b.dataset.evt=x.id;b.onclick=function(){tels(x.id)};E.appendChild(b)});tels('pluie')}
  /* les engagements (P6) : accepter, puis marquer comme tenu */
  [].forEach.call(document.querySelectorAll('[data-eng]'),function(b){b.onclick=function(){var li=b.closest('.v-eng'),e=li.querySelector('.v-pil');
-  if(b.dataset.eng==='propose'){b.dataset.eng='accepte';e.textContent='En cours';e.style.background='#FFF6E5';e.style.borderColor='#FFF6E5';b.textContent='Marquer comme tenu'}
-  else{b.dataset.eng='tenu';e.textContent='Tenu';e.style.background='#E7F8EF';e.style.borderColor='#E7F8EF';b.remove()}}});
+  if(b.dataset.eng==='propose'){b.dataset.eng='accepte';e.textContent='En cours';e.style.background='#FEF3C7';e.style.borderColor='#F59E0B';e.style.color='#78350F';b.textContent='Marquer comme tenu'}
+  else{b.dataset.eng='tenu';e.textContent='Tenu';e.style.background='#D1FAE5';e.style.borderColor='#6EE7B7';e.style.color='#065F46';b.remove()}}});
  var env=$('vEnvoyer');if(env)env.onclick=function(){env.textContent='Envoyé';$('vEnvoiDit').textContent='Arrivée dans son AI, avec vos réponses : '+$('vqDate').value+' · '+$('vqFormule').value+'.'};
  var ag=$('vAgent');if(ag)ag.onclick=function(){var li=document.querySelectorAll('#vEtapes li');[].forEach.call(li,function(x){x.classList.remove('fait');x.firstChild.textContent='·'});
   [].forEach.call(li,function(x,i){setTimeout(function(){x.classList.add('fait');x.firstChild.textContent='✓'},(i+1)*(document.documentElement.classList.contains('calme')?1:550))})}}

@@ -3,7 +3,7 @@
    Échoue (code 1) si une page a une anomalie « critique » ou « sérieuse ». Usage comme parcours.cjs. */
 const { chromium } = require('playwright'); const fs = require('fs');
 const B = process.env.BASE || 'http://localhost:8771', AXE = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
-const PAGES = ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/tarifs/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/point-zero/', '/aime/', '/cube/', '/bureau/espace/', '/canevas/', '/reseau/', '/compte/', '/projets/', '/regie/', '/sites/', '/canevas/?publication=exemple-aime-magazine', '/publication/?exemple=aime-magazine', '/maitre/', '/magazine/', '/magazine/edito.html', '/magazine/point-zero.html', '/magazine/metiers.html'];
+const PAGES = ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/tarifs/', '/exemples/', '/exemples/mosaique/', '/exemples/?u=world', '/exemples/?u=seminaire', '/exemples/?u=g44', '/exemples/?u=stitch', '/exemples/?u=magazine', '/exemples/?u=regie', '/exemples/?u=studio', '/point-zero/', '/c/', '/bureau/espace/', '/canevas/', '/reseau/', '/compte/', '/projets/', '/regie/', '/sites/', '/canevas/?publication=exemple-aime-magazine', '/publication/?exemple=aime-magazine', '/maitre/', '/magazine/', '/magazine/edito.html', '/magazine/point-zero.html', '/magazine/metiers.html'];
 (async () => {
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}); let n = 0;
   PAGES.push('/beta/', '/maitre/attente/');   /* la liste d'attente de la bêta : la page publique et les compteurs du propriétaire */
@@ -14,7 +14,7 @@ const PAGES = ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/ta
       const p = await ctx.newPage(); await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
       for (let y = 0; y < 30; y++) { await p.mouse.wheel(0, 900); await p.waitForTimeout(80); } await p.waitForTimeout(1200);
       await p.addScriptTag({ content: AXE });
-      const v = await p.evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + '×' + x.nodes.length + ' (' + x.nodes[0].target.join(' ') + ')'));
+      const v = await p.evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + '×' + x.nodes.length + ' (' + x.nodes[0].target.join(' ') + ')'));
       console.log((v.length ? '  ✗ ' : '  ✓ ') + nom + ' ' + u + (v.length ? ' : ' + v.join(', ') : '')); n += v.length; await p.close();
     }
     await ctx.close();

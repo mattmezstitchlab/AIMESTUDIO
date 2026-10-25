@@ -188,7 +188,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(JSON.stringify(await dock(pt)) === JSON.stringify(['AI', 'ME']) && (await pt.locator('#dock-site a[data-lieu="me"]').getAttribute('aria-current')) === 'page', 'le Dock : AI · + · ME, ME en cours');
     await pt.waitForSelector('#monTimbre > *', { timeout: 6000 }).catch(() => {});   /* le Timbre se charge après la page : l'attendre, ne pas lire trop tôt */
     ok(await pt.locator('#monTimbre .timbre, #monTimbre > *').count() > 0 && await pt.locator('#cles').isVisible() && await pt.locator('#zoneSuppr').isVisible() && await pt.locator('#seDeconnecter').isVisible(), 'Timbre, clés d\'accès, se déconnecter, supprimer le compte : rien n\'est perdu de « Mon compte »');
-    ok(await pt.locator('#meDecouvrir a[href="/#coeur"]').count() === 1 && await pt.locator('#meDecouvrir a[href="/exemples/"]').count() === 1, 'Le cœur et les exemples, retirés du Dock, restent à un clic depuis ME');
+    ok(await pt.locator('#meDecouvrir a[href="/#ecrans"]').count() === 1 && await pt.locator('#meDecouvrir a[href="/exemples/"]').count() === 1, 'Le cœur et les exemples, retirés du Dock, restent à un clic depuis ME');
     await pt.waitForSelector('#activites:not([hidden])', { timeout: 5000 }).catch(() => {});
     ok(/Aucune activité/.test(await pt.locator('#activites').innerText().catch(() => '')) && await pt.locator('#actAjout').isVisible(), 'sans activité : ME le dit et propose d\'en ajouter (P4), sans liste vide');
     await pt.fill('#nom', 'Matt Test (ME)'); await pt.click('#fNom button[type=submit]'); await attendre(600);

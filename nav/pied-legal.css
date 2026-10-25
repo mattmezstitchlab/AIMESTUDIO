@@ -7,3 +7,8 @@
 .pied-legal span{margin:0 8px}
 /* écran étroit : la ligne passe sur deux rangs ; sans les « · », aucun séparateur ne reste seul en bout de rang */
 @media (max-width:480px){.pied-legal{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 18px}.pied-legal span{display:none}}
+.clair .pied-legal{color:#363642}
+.clair .pied-legal a{color:#111116}
+.clair .pied-legal a:hover{color:#000}
+.clair .pied-legal a:focus-visible{outline-color:#111116}
+
