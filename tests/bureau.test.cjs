@@ -87,12 +87,11 @@ test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
  const ATS=st.match(/const ATELIERS=\{([^\n]*?)\};/);for(const a of A){assert.ok(ATS&&new RegExp('\\b'+a+':\\{').test(ATS[1]),a+' est un atelier connu du Studio');
   assert.ok(!fs.existsSync(R(a+'/index.html')),a+'/index.html : copie revenue');for(const s of ['/'+a,'/'+a+'/'])assert.ok(rw.some(r=>r.source===s&&r.destination==='/studio/'),s+' réécrit vers le Studio')}
  assert.ok(fs.existsSync(R('docs/BUREAU.md')),'les documents de /docs/ restent servis')});
-test('Page Zéro · le cœur de haut en bas : quatre écrans composés par le moteur, puis l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8'),c=fs.readFileSync(R('coeur/coeur.js'),'utf8');
- const ordre=['id="haut"','id="coeur"','id="arrivees"','id="arr-couple"','id="arr-prestataire"','id="arr-invite"','id="arr-coord"','id="ecrans"','id="droits"','id="jourj"','id="partout"','id="contact"'].map(s=>z.indexOf(s));
+test('Accueil clair (25/10, validé par Matt) : de haut en bas, le titre, « Chacun son écran » sur les vraies règles, les sept téléphones, les capacités, la confiance, les domaines, l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8'),v=fs.readFileSync(R('accueil/vitrine.js'),'utf8');
+ const ordre=['id="haut"','id="demo"','id="ecrans"','id="mosaique"','id="capacites"','id="protection"','id="domaines"','id="entree"','id="contact"'].map(s=>z.indexOf(s));
  assert.ok(ordre.every((x,i)=>x>0&&(i===0||x>ordre[i-1])),'les chapitres se suivent de haut en bas');
- assert.equal((z.match(/<iframe [^>]*sandbox="allow-same-origin"/g)||[]).length,4,'quatre écrans, tous sans script (plus d\'aperçu de mini-site)');assert.ok(!/allow-scripts/.test(z));
+ assert.match(z,/On ne peut pas tout être au même moment\.<\/span> Mais on peut être bien plus qu'une seule chose\./,'le manifeste sous AIME®');
  assert.match(z,/Démonstration · données fictives/);assert.ok(!/href="\/synchroview\//.test(z),'SynchroView est réservé au propriétaire du site : l\'accueil n\'y renvoie pas');
- assert.ok(c.includes('Vit.rendre(')&&c.includes('Vit.politique(')&&c.includes('Live.rejouer('),'les vrais moteurs : pages, règles, journal du jour J');assert.ok(!/localStorage\.setItem|fetch\([^)]*method/.test(c),'rien n\'est écrit ni envoyé');
- assert.equal((z.match(/class="ancre[^"]*" [^>]*data-orbe="1"/g)||[]).length,6,'l\'orbe part du point zéro, recueille chaque arrivée puis passe d\'écran en écran');assert.match(c,/function choregraphie\(/);
- assert.ok(!/#7C5CFF|#22D3EE|#FB7185|#F59E0B/i.test(fs.readFileSync(R('coeur/coeur.css'),'utf8')),'le cœur reste monochrome');
- assert.ok(z.indexOf('/regie/scene.js')<z.indexOf('/zero/zero.js'),'la scène passe avant la page : les textes de la régie précèdent les points des « i »')});
+ assert.ok(/P\.can\(s,'read',\{type:'event'/.test(v)&&/P\.can\(s,'edit',\{type:'event'\}\)/.test(v),'« Chacun son écran » : les vraies règles (synchroview/permissions.js)');assert.ok(!/localStorage\.setItem|fetch\(/.test(v),'rien n\'est écrit ni envoyé');
+ assert.ok(z.indexOf('/synchroview/permissions.js')<z.indexOf('/accueil/vitrine.js')&&z.indexOf('/coeur/roles.js')<z.indexOf('/accueil/vitrine.js'),'les règles et les couleurs avant la vitrine');
+ assert.match(z,/<body class="clair">/,'clair : texte noir sur blanc');assert.ok(z.indexOf('/regie/scene.js')>0,'la régie garde la main sur ses textes')});

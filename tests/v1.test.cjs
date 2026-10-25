@@ -17,7 +17,7 @@ test('la mention « où sont mes données » : visible au Point Zéro et sur la 
  for(const p of ['point-zero/index.html','projet/index.html']){const h=lire(p);assert.ok(h.includes('data-donnees'),p);assert.ok(h.includes('/compte/donnees.js'),p)}
  assert.ok(!/Comptes : pas encore/.test(lire('bureau/bureau.js')),'le Bureau ne dit plus que les comptes n\'existent pas');assert.match(lire('bureau/bureau.js'),/ecrireBases\(/)});
 test('contrastes : seuls les gris trop pâles changent ; l\'identité (fonds, encre, accents) reste',()=>{
- assert.match(lire('index.html'),/--desk:#0A0A0C;--ink:#EDEDF0;--soft:#9C9CA8;--faint:#7E7E8A;/);assert.match(lire('regie/regie.css'),/--pale:#8E8E9A;/);
+ assert.match(lire('index.html'),/--desk:#FFFFFF;--ink:#111114;--soft:#4B4B55;--faint:#5B5B66;/,'l\'accueil clair (25/10) : encre noire, gris lisibles sur blanc');assert.match(lire('regie/regie.css'),/--pale:#8E8E9A;/);
  assert.match(lire('aime/index.html'),/\.blk:not\(\.code\) \.bk\{visibility:hidden/);assert.match(lire('aime/index.html'),/class="bk" tabindex="0" role="region"/);
  assert.match(lire('regie/index.html'),/id="apercu" aria-label=/)});
 test('contrôle automatique : suites, parcours navigateur et accessibilité à chaque PR',()=>{const w=lire('.github/workflows/tests.yml');
