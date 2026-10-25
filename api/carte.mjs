@@ -11,12 +11,15 @@
 //                                                           compte et a au moins une rubrique « publique » (migration 2026-10-25-11)
 //   POST { action: 'couper' }                             → le lien actif ne mène plus à rien, immédiatement
 //   POST { action: 'contact', actif: true|false }         → recevoir (ou non) des demandes par ce lien (migration 2026-10-25-12)
+//   POST { action: 'questions', questions: [...] }        → mon formulaire personnel : les questions posées à qui m'écrit par
+//                                                           mon lien (V1, P5, migration 2026-10-25-14 ; règles : api/_carte/formulaire.cjs)
 // Sans session : 401. Base absente ou migration 2026-10-25-10 non appliquée : 503, dit. Écritures : même origine et JSON
 // (api/_auth/requete.cjs), quota par personne.
 import { personne, _pool } from './_auth/auth.mjs';
 import R from './_auth/requete.cjs';
 import Q from './_auth/quotas.cjs';
 import K from './_carte/carte.cjs';
+import F from './_carte/formulaire.cjs';
 import crypto from 'crypto';
 
 let db; export function _db(d) { db = d; }
@@ -41,7 +44,12 @@ async function lienDe(base, id) {
     throw e;
   }
 }
-const vue = async (base, id, l) => Object.assign(vueSimple(l), await lienDe(base, id), { texte_publication: K.TEXTE_PUBLICATION });
+/* mon formulaire personnel (V1, P5) ; sans la migration 2026-10-25-14, il est dit indisponible (rien ne casse) */
+async function questionsDe(base, id) {
+  try { const r = await base.query('select questions from cartes where user_id = $1', [id]); return { questions: F.vuePublique(r.rows[0] && r.rows[0].questions), formulaire: 'disponible' }; }
+  catch (e) { if (e && e.code === '42703') return { questions: [], formulaire: 'indisponible' }; throw e; }
+}
+const vue = async (base, id, l) => Object.assign(vueSimple(l), await lienDe(base, id), await questionsDe(base, id), { texte_publication: K.TEXTE_PUBLICATION });
 async function couper(base, id) { try { await base.query('update cartes_liens set coupe_le = now() where user_id = $1 and coupe_le is null', [id]); } catch (e) { if (!(e && e.code === '42P01')) throw e; } }
 
 export default async function carte(req, res) {
@@ -70,6 +78,17 @@ export default async function carte(req, res) {
         const r = await base.query('update cartes_liens set contact = $2 where user_id = $1 and coupe_le is null returning jeton', [u.id, b.actif]);
         if (!r.rows[0]) return json(res, 400, { ok: false, raison: 'Créez d\'abord le lien de votre Carte.' });
       } catch (e) { if (e && (e.code === '42703' || e.code === '42P01')) return json(res, 503, { ok: false, raison: 'Recevoir des demandes par votre Carte n\'est pas encore disponible ici (migration 2026-10-25-12 à appliquer).' }); throw e; }
+      return json(res, 200, await vue(base, u.id, await ligne(base, u.id)));
+    }
+    /* mon formulaire personnel (V1, P5) : jusqu'à 6 questions, nettoyées ici ; il faut que la Carte soit sur le compte */
+    if (b.action === 'questions') {
+      let qs; try { qs = F.nettoyerQuestions(b.questions); } catch (e) { if (e instanceof K.Refus) return json(res, e.code, { ok: false, raison: e.raison }); throw e; }
+      const q = await Q.quota('carte:enregistrer', u.id, { db: base });
+      if (!q.ok) { res.setHeader('Retry-After', String(q.attente)); return json(res, 429, { ok: false, raison: 'Trop de modifications en peu de temps : réessayez dans un moment.' }); }
+      try {
+        const r = await base.query('update cartes set questions = $2::jsonb, maj_le = now() where user_id = $1 returning user_id', [u.id, JSON.stringify(qs)]);
+        if (!r.rows[0]) return json(res, 400, { ok: false, raison: 'Enregistrez d\'abord votre Carte sur votre compte.' });
+      } catch (e) { if (e && e.code === '42703') return json(res, 503, { ok: false, raison: 'Le formulaire personnel n\'est pas encore disponible ici (migration 2026-10-25-14 à appliquer).' }); throw e; }
       return json(res, 200, await vue(base, u.id, await ligne(base, u.id)));
     }
     if (b.action === 'publier') {
