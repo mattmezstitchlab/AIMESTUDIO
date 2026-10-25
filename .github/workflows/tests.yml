@@ -53,6 +53,8 @@ jobs:
       - run: node --test --test-concurrency=1 tests/demandes.test.cjs
       # la Carte enregistrée sur le compte (migration 2026-10-25-10) : chacun la sienne, accord, nettoyage, deux appareils (409), retrait, suppression du compte
       - run: node --test --test-concurrency=1 tests/carte-compte.test.cjs
+      # les engagements d'un projet (migration 2026-10-25-15) : règles, cinq comptes, accepter / refuser / tenir, retard, journal sans texte, AI
+      - run: node --test --test-concurrency=1 tests/engagements.test.cjs
       # l'état de la production tant que les dernières migrations ne sont pas passées : une seconde base sans les migrations des 24 et 25/10/2026
       - name: Base « ancienne » (sans les dernières migrations)
         run: |
@@ -126,5 +128,7 @@ jobs:
       - run: node tests/navigateur/ai.cjs
       # la Carte dans ME : ordinateur avec une Carte locale, iPhone, iPad, deux comptes, conflit, réseau coupé, retrait
       - run: node tests/navigateur/carte.cjs
+      # les engagements : le couple demande, le DJ (iPhone) accepte depuis AI puis déclare tenu ; axe, débordement, aucun identifiant
+      - run: node tests/navigateur/engagements.cjs
       # le parcours continu, sur UN projet et avec DEUX comptes : Contact → AI (statut, note) → + → projet → invitation → Programme partagé → AI → ME
       - run: node tests/navigateur/continu.cjs
