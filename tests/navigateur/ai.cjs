@@ -154,13 +154,34 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(!/Léa|saxophoniste/.test(await pm.locator('main').innerText()), 'par l\'adresse directe : aucune donnée de la demande');
     await capture(pm, 'AI__iphone__invitee-ai'); await axe(pm, 'AI de l\'invitée (iPhone)');
 
+    console.log('7 bis. Un utilisateur ordinaire (connecté, sans projet ni invitation) : rien d\'autrui');
+    const ord = await contexte({ viewport: { width: 1280, height: 860 } }), po = await connecter(ord, { email: 'ordinaire.ai@exemple.test', nom: 'Oscar Ordinaire' });
+    await po.waitForSelector('#espaces:not([hidden])'); await attendre(600);
+    ok(await po.locator('#aTraiter').isHidden(), 'pas de « À traiter »');
+    ok(/Aucun projet/.test(await po.locator('#liste').innerText()), 'aucun projet : ceux des autres ne lui sont pas montrés');
+    ok((await ord.request.get(B + '/api/demandes')).status() === 404 && (await ord.request.post(B + '/api/demandes', { data: { action: 'statut', cle: dm.cle, statut: 'classee' }, headers: { origin: B } })).status() === 404, '/api/demandes : 404 en lecture et en écriture');
+    await po.goto(B + '/projets/?espace=' + A, { waitUntil: 'networkidle' }); await po.waitForSelector('#pCorps .alerte');
+    ok(!/Mariage New York/.test(await po.locator('#pCorps').innerText()), 'le projet d\'un autre, par l\'adresse directe : refusé, rien affiché');
+    const anon = await contexte({ viewport: { width: 1280, height: 860 } });
+    ok((await anon.request.get(B + '/api/demandes')).status() === 404, 'visiteur sans compte : /api/demandes 404');
+    const pa = await anon.newPage(); await pa.goto(B + '/projets/?demande=' + dm.cle, { waitUntil: 'networkidle' });
+    ok(await pa.locator('#connexion').isVisible() && !/Léa|saxophoniste/.test(await pa.locator('main').innerText()), 'visiteur sans compte : la connexion, aucune donnée');
+
     console.log('8. Le propriétaire sur iPhone : AI, le détail, ME');
     const proT = await contexte(devices['iPhone 13']), pt = await connecter(proT, PROPRIO);
     await pt.waitForSelector('#aTraiter:not([hidden]) #traitees:not([hidden])'); await pt.click('#traitees summary'); await pt.waitForSelector('#traitees [data-demande]');
     await capture(pt, 'AI__iphone__1-ai'); await axe(pt, 'AI (iPhone)');
     const deb = await pt.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1); ok(!deb, 'iPhone : aucun défilement horizontal');
     await pt.click('[data-demande="' + dm.cle + '"]'); await pt.waitForSelector('#dTitre'); await capture(pt, 'AI__iphone__2-demande'); await axe(pt, 'Détail (iPhone)');
-    await pt.goBack(); await pt.waitForSelector('#espaces:not([hidden])');
+    await pt.reload({ waitUntil: 'networkidle' }); await pt.waitForSelector('#dTitre'); ok(/saxophoniste/.test(await pt.locator('#dCorps').innerText()), 'iPhone : actualiser le détail le garde');
+    await pt.goBack(); await pt.waitForSelector('#espaces:not([hidden])'); ok(true, 'iPhone : Retour → AI');
+    await pt.click('#liste [data-ouvrir="' + A + '"]'); await pt.waitForFunction(() => /Mariage New York \(test\)/.test(document.getElementById('tTitre').textContent));
+    await pt.goBack(); await pt.waitForSelector('#espaces:not([hidden])'); await pt.goForward(); await pt.waitForFunction(() => /Mariage New York \(test\)/.test(document.getElementById('tTitre').textContent));
+    ok(true, 'iPhone : Retour puis Suivant entre AI et le projet');
+    await pt.reload({ waitUntil: 'networkidle' }); await pt.waitForFunction(() => /Mariage New York \(test\)/.test(document.getElementById('tTitre').textContent));
+    ok(JSON.stringify(await dock(pt)).includes('Mon accès'), 'iPhone : actualiser le projet le garde, avec son Dock');
+    ok(await pt.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'iPhone : aucun débordement dans le projet');
+    await pt.click('#projet [data-vers-ai]'); await pt.waitForSelector('#espaces:not([hidden])');
     await pt.click('#dock-site a[data-lieu="me"]'); await pt.waitForURL(/\/compte\/$/); await pt.waitForSelector('#profil:not([hidden])');
     ok(true, 'ME : /compte/ s\'ouvre depuis le Dock'); await capture(pt, 'AI__iphone__3-me');
   } catch (e) { echecs++; console.error(e); }
