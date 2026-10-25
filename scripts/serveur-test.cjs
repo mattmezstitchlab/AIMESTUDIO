@@ -7,6 +7,12 @@ const REDIRECTS = (VERCEL.redirects || []).map(r => ({ re: new RegExp('^' + r.so
 const REWRITES = new Map((VERCEL.rewrites || []).filter(r => !r.source.includes(':') && !r.destination.startsWith('/api/')).map(r => [r.source, r.destination]));
 /* les en-têtes de tout le site (vercel.json, source « /(.*) ») : CSP, Referrer-Policy, nosniff, Permissions-Policy, comme sur Vercel */
 const GLOBAUX = (VERCEL.headers || []).filter(h => h.source === '/(.*)').flatMap(h => h.headers);
+/* Aperçu en ligne du bac à sable : la page est montrée dans une iframe d'un autre domaine (« *.e2b.app »),
+   que la CSP frame-ancestors de production refuse. AIME_APERCU=1 ouvre cette seule directive, pour l'aperçu local
+   uniquement : sans la variable, les en-têtes servis restent exactement ceux de vercel.json (tests/entetes.test.cjs),
+   et rien de tout ceci ne part en production (.vercelignore : /scripts). */
+if (process.env.AIME_APERCU === '1') for (const h of GLOBAUX)
+  if (h.key === 'Content-Security-Policy') h.value = h.value.replace(/frame-ancestors[^;]*/, "frame-ancestors 'self' *");
 const T = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.pdf': 'application/pdf', '.xml': 'application/xml', '.mp4': 'video/mp4', '.vtt': 'text/vtt; charset=utf-8' };
 /* les écrans gardés (middleware.js sur Vercel) : la même fonction garder(), mais le « propriétaire » est ici un cookie de test,
    aime_test_proprietaire=oui, que seuls les tests navigateur posent. Ce serveur ne part jamais en production (.vercelignore : /scripts). */
