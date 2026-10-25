@@ -46,7 +46,9 @@ function dockPersonnel(){var d=$('dock-site');if(!d||!window.AIMEPlus)return;AIM
 function route(){var q=new URLSearchParams(location.search),e=q.get('espace'),d=q.get('demande');
  if(e&&UUID.test(e)&&window.AIMEProjet){montrer('projet');return AIMEProjet.ouvrir(e,q.get('page'))}
  if(d&&CLE.test(d)){montrer('demande');return ouvrirDemande(d)}
- montrer('ai');if(ctx.chargerAI)ctx.chargerAI();chargerDemandes()}
+ montrer('ai');if(ctx.chargerAI)ctx.chargerAI();chargerDemandes();chargerEngagements()}
+/* mes engagements ouverts (V1, P6) : un clic ouvre le projet, à « Mon accès », où ils se gèrent */
+function chargerEngagements(){var z=$('aEngagements');if(!z||!window.AIMEEngagements)return;AIMEEngagements.miens(z,{ouvrir:ouvrirProjet})}
 function aller(url){try{history.pushState(null,'',url)}catch(_){location.href=url;return}route();try{window.scrollTo(0,0)}catch(_){}}
 function ouvrirProjet(id){if(!UUID.test(String(id||''))||!window.AIMEProjet)return;montrer('projet');AIMEProjet.ouvrir(id,'acces',{pousser:true});try{window.scrollTo(0,0)}catch(_){}}
 

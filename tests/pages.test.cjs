@@ -144,9 +144,9 @@ test('pages · le Dock de la réponse est composé au serveur (composerReel) : M
   const lea = await d(P.lea), cam = await d(P.camille), lumen = await d(P.lumen), lucie = await d(P.lucie);
   for (const k of [lea, cam, lumen, lucie]) { assert.ok(k && k.reel && !k.public, 'un vrai Dock'); assert.equal(k.lieux[0].gabarit, 'acces'); assert.equal(k.inattendu, true); assert.ok(!k.mention.includes('Démonstration'));
     assert.ok(k.lieux.every(l => ['acces', 'journal', 'personnes'].includes(l.gabarit)), 'seulement les gabarits servis'); }
-  assert.deepEqual(lea.plus.map(a => a.id), ['inviter']); assert.deepEqual(lea.plus[0].roles, ['editor', 'contributor', 'viewer', 'guest']);
+  assert.deepEqual(lea.plus.map(a => a.id), ['inviter', 'engagement'], 'inviter, et prendre un engagement (V1, P6)'); assert.deepEqual(lea.plus[0].roles, ['editor', 'contributor', 'viewer', 'guest']);
   assert.deepEqual(cam.plus[0].roles, ['viewer', 'guest'], 'la coordination n\'invite que lecteurs et invités');
-  assert.deepEqual(lumen.plus, [], 'le prestataire n\'invite personne'); assert.deepEqual(lucie.lieux.map(l => l.gabarit), ['acces', 'journal', 'personnes'], 'l\'invitée : ses trois pages (§ 5 ; Personnes : elle-même seulement)');
+  assert.deepEqual(lumen.plus.map(a => a.id), ['engagement'], 'le prestataire n\'invite personne ; il peut s\'engager (V1, P6)'); assert.deepEqual(lucie.lieux.map(l => l.gabarit), ['acces', 'journal', 'personnes'], 'l\'invitée : ses trois pages (§ 5 ; Personnes : elle-même seulement)');
   assert.deepEqual(lumen.lieux.map(l => l.gabarit), ['acces', 'journal', 'personnes'], 'le prestataire : un chemin visible vers sa page Personnes réduite (§ 5.3)');
   assert.ok(!JSON.stringify(lucie).includes('Inviter') && !JSON.stringify(lumen).includes('Inviter'), 'aucun geste interdit, même en texte');
   assert.equal((await G.projeter(pool, null, { espace: mariage, gabarit: 'acces' })).dock, null, 'le public n\'a pas de Dock de projet');

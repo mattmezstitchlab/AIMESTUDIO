@@ -99,6 +99,27 @@ var MODULES=[
   intentions:[{motif:/\b(inviter|personnes|membres|qui participe)\b/i,action:'lire'}],
   preuves:['api/_auth/pages.mjs','tests/parcours-reel.test.cjs']},
 
+ {id:'engagements',contrat:1,nom:'Engagements',statut:'operationnel',
+  fonction:'Qui doit quoi à qui, et pour quand : une promesse datée entre personnes d\'un même projet, vue seulement par les personnes concernées et l\'organisation.',
+  ressources:[{type:'engagement',etat:'engagements',historique:'audit',dit:'Les engagements du projet. Le journal du projet garde chaque geste et son échéance, jamais le texte.'}],
+  actions:{
+   lire:{regle:['engagement','read'],ecrit:false,nom:'Voir les engagements'},
+   prendre:{regle:['engagement','create'],ecrit:true,journal:'engagement',nom:'Prendre un engagement'},
+   accepter:{regle:['engagement','accept'],ecrit:true,journal:'engagement',nom:'Accepter'},
+   refuser:{regle:['engagement','refuse'],ecrit:true,journal:'engagement',nom:'Refuser'},
+   tenir:{regle:['engagement','keep'],ecrit:true,journal:'engagement',nom:'Marquer comme tenu'},
+   annuler:{regle:['engagement','cancel'],ecrit:true,journal:'engagement',nom:'Annuler'}
+  },
+  acces:'Règles : synchroview/engagements.js, adossées à permissions.js (qui est l\'organisation, qui est membre). Membre actif du projet ; chacun lit les engagements qui le concernent (et l\'organisation, tous). On s\'engage soi-même ; seule l\'organisation demande un engagement à quelqu\'un d\'autre.',
+  presentations:['liste'],prevues:['calendrier','chronologie'],contextes:{preparation:'liste'},
+  /* pas de cinquième lieu dans le Dock (décision de Matt, 24/10) : les engagements vivent dans « Mon accès », et dans AI pour les miens */
+  destination:{gabarit:'acces'},api:'/api/engagements',
+  etats:etats({vide:{dit:'Aucun engagement pour l\'instant.'},conflit:{code:409,dit:'Cet engagement a changé entre-temps : voici la version à jour.'}}),
+  accessibilite:A11Y.concat(['Le retard est dit en toutes lettres, jamais seulement par une couleur']),
+  journal:['engagement'],
+  intentions:[{motif:/\b(engag|promesse|promis|je m'engage|[ée]ch[ée]ance)/i,action:'lire'}],
+  preuves:['api/engagements.mjs','api/_engagements/moteur.mjs','synchroview/engagements.js','tests/engagements.test.cjs']},
+
  {id:'documents',contrat:1,nom:'Documents',statut:'composant',
   fonction:'Partager un document avec les bonnes personnes, et seulement elles.',
   ressources:[{type:'document',etat:null,historique:null,dit:'Les règles d\'accès existent (autorisation explicite) ; aucun stockage serveur encore.'}],
@@ -150,7 +171,9 @@ function module(id){return PAR_ID[id]||null}
 function parGabarit(g){for(var i=0;i<MODULES.length;i++)if(MODULES[i].destination&&MODULES[i].destination.gabarit===g)return MODULES[i];return null}
 /* les gabarits servis à un membre : les modules opérationnels sans condition, puis ceux dont la condition est remplie dans ce projet */
 function servis(actifs){actifs=actifs||{};var ok=MODULES.filter(function(m){return m.statut==='operationnel'&&m.destination.gabarit});
- return ok.filter(function(m){return !m.destination.requiert}).concat(ok.filter(function(m){var r=m.destination.requiert;return r&&actifs[r]===true})).map(function(m){return m.destination.gabarit})}
+ var g=ok.filter(function(m){return !m.destination.requiert}).concat(ok.filter(function(m){var r=m.destination.requiert;return r&&actifs[r]===true})).map(function(m){return m.destination.gabarit});
+ /* deux modules peuvent partager une page (Engagements vit dans « Mon accès ») : une page n'est servie qu'une fois */
+ return g.filter(function(x,i){return g.indexOf(x)===i})}
 function destination(id,espace){var m=module(id);if(!m||!m.destination||!m.destination.gabarit||m.statut!=='operationnel')return null;
  var g=m.destination.gabarit;if(!espace)return'/projets/?module='+encodeURIComponent(id);
  return'/projets/?espace='+encodeURIComponent(espace)+(g==='acces'?'':'&page='+encodeURIComponent(g))}

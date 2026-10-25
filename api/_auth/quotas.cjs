@@ -72,6 +72,7 @@ const QUOTAS = {
   'carte:demande:boite': { max: 20, fenetre: 86400 },/* … et 20 demandes par Carte et par jour, pour qu'aucune personne ne soit submergée */
   'live:act': { max: 30, fenetre: 60 },             /* le direct : 30 actions par adresse IP et par minute */
   'temps:geste': { max: 60, fenetre: 60 },          /* Temps : 60 gestes par personne et par minute (lecture : aucun quota, relue toutes les 2 s) */
+  'engagement:geste': { max: 60, fenetre: 3600 },  /* engagements (V1, P6) : 60 créations ou gestes par personne et par heure */
   'live:passe': { max: 20, fenetre: 60 },           /* … et 20 laissez-passer */
   'attente:ip': { max: 5, fenetre: 3600 },          /* liste d'attente de la bêta : 5 inscriptions par adresse IP et par heure */
   'attente:adresse': { max: 3, fenetre: 86400 },    /* … 3 e-mails de confirmation par adresse et par jour */

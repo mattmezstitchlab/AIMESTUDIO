@@ -6,9 +6,11 @@
 import { createRequire } from 'module';
 import { role, membres, ROLES_INVITES, duree, relationPrete, Refus } from './espaces.mjs';
 import { lire } from './journal.mjs';
+import { pret as engagementsPrets } from '../_engagements/moteur.mjs';
 const require = createRequire(import.meta.url);
 const P = require('../../synchroview/permissions.js');
-const REG = require('../../modules/registre.js');     /* le registre des modules : la seule liste des pages servies (et donc du Dock) */
+const REG = require('../../modules/registre.js');
+const ER = require('../../synchroview/engagements.js');   /* les règles des engagements (V1, P6), adossées à permissions.js */     /* le registre des modules : la seule liste des pages servies (et donc du Dock) */
 
 export const GABARITS = ['acces', 'journal', 'personnes', 'projet', 'deroule', 'documents', 'messages'];
 /* lot 1 : seuls ces gabarits sont servis dans un vrai espace ; les autres répondent 404 (leur bouton n'apparaît pas) */
@@ -71,7 +73,8 @@ export function gestes(s) {
     lire: P.can(s, 'read', { type: 'space' }).allow,
     inviter: peutInviter,                                   /* rôles que cette personne peut inviter (vide : aucun) */
     gerer: P.can(s, 'manage_members', { type: 'space' }).allow,
-    signaler: P.can(s, 'read', { type: 'space' }).allow     /* tout membre peut signaler un accès inattendu */
+    signaler: P.can(s, 'read', { type: 'space' }).allow,    /* tout membre peut signaler un accès inattendu */
+    engager: ER.can(s, 'create', { deQui: s.id }).allow   /* prendre un engagement (V1, P6) */
   };
 }
 
@@ -127,6 +130,14 @@ function phrase(l, moi, nom, mots, rel, proprio) {
     case 'changement_role': return le + qui + ' a changé un rôle (' + role + ').';
     case 'ouverture': return le + 'un accès a été ouvert' + fin + '.';
     case 'fermeture': return le + (vous ? 'votre accès a pris fin (' + (l.detail.raison || 'fin du rôle') + ').' : proprio && cible ? 'l\'accès ' + (/^[aeiouyhâàéèêîïôû]/i.test(qui_part()) ? 'd\'' : 'de ') + qui_part() + ' a pris fin.' : 'un accès a pris fin.');
+    /* les engagements (V1, P6) : le geste et l'échéance, jamais le texte de l'engagement */
+    case 'engagement': {
+      const ech = l.detail.echeance ? ' (échéance le ' + dateFr(l.detail.echeance + 'T12:00:00Z', true) + ')' : '', g = l.detail.geste;
+      const sujet = l.qui === moi ? 'vous avez ' : qui + ' a ';
+      if (g === 'demande') return le + sujet + 'demandé un engagement ' + (vous ? 'de votre part' : 'à ' + nom(cible)) + ech + '.';
+      const verbe = { pris: 'pris un engagement', accepte: 'accepté un engagement', refuse: 'refusé un engagement', tenu: 'tenu un engagement', annule: 'annulé un engagement' }[g] || 'mis à jour un engagement';
+      return le + sujet + verbe + ech + '.';
+    }
     case 'signalement': return le + (l.qui === moi ? 'vous avez signalé un accès inattendu.' : 'un accès inattendu a été signalé.');
     default: return le + 'une action a été inscrite.';
   }
@@ -192,6 +203,8 @@ async function pageAcces(db, c, espace) {
     const a = await actifsDe(db, espace), installe = await db.query("select to_regclass('public.temps_espaces') as t").then(r => !!(r.rows[0] && r.rows[0].t)).catch(() => false);
     if (installe && !a.temps) blocs.push({ id: 'acces-programme', type: 'activer', module: 'temps', texte: 'Ajouter le programme à ce projet', aide: 'Le programme type ' + c.mots.projet + ' : chacun le verra selon ses droits, et vous pourrez décaler chaque moment.' });
   }
+  /* les engagements (V1, P6) : ceux qui me concernent (tous, pour l'organisation) ; la liste et ses gestes viennent de /api/engagements */
+  if (await engagementsPrets(db)) blocs.push({ id: 'acces-engagements', type: 'engagements', texte: 'Engagements' });
   /* jamais masqué (§ 2) */
   blocs.push({ id: 'acces-signaler', type: 'geste', geste: 'signaler', texte: 'Je vois un accès inattendu', aide: 'Le propriétaire lira votre message, pas votre nom.' });
   return { blocs, vide: null };
