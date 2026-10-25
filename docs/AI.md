@@ -24,9 +24,23 @@ est vidé avant que le suivant ne réponde. Le module Temps s'arrête (`arreter`
 contexte qui les a produites. Le parcours `tests/navigateur/ai.cjs` le prouve en retardant volontairement la réponse d'un projet A
 pendant qu'on ouvre B, puis pendant qu'on revient à AI.
 
+## Demande → projet (PR 2)
+
+- Une demande ouverte, pas encore transformée : le + du Dock ajoute **« En faire un projet »**, et rien d'un autre contexte.
+- Le geste ouvre une **confirmation** dans la demande. Le nom (« Mariage · Léa Fictive ») et le domaine sont préremplis par le lecteur
+  d'intention (`projets/intention.js`) ; tout reste modifiable. Rien n'est créé avant « Créer le projet ».
+- Le serveur (`POST /api/demandes { action: 'convertir' }`, propriétaire du site seulement, 404 sinon) crée le projet avec la
+  fonction de création existante (`espaces.creer`) au nom de la personne connectée, qui en est propriétaire.
+- **Un seul projet par demande** : `spaces.data.origine = demande-<clé>` et son index unique (migration 03). Rejouer le geste rouvre
+  le même projet. **Aucune migration nouvelle.**
+- **Rien de personnel n'est copié** dans le projet : seulement le nom et le domaine. Les coordonnées et le message restent dans la
+  demande.
+- La demande passe à « Transformée en projet ». Son historique garde l'identifiant du projet, et son détail mène au projet
+  (« Ouvrir le projet »).
+- Le projet s'ouvre aussitôt, sans rechargement, avec le Dock que le serveur compose pour son propriétaire.
+
 ## Ce qui n'est pas fait ici
 
-- « Créer un projet depuis cette demande » : PR 2.
 - ME v0 (Timbre, activités, sécurité du compte réunis) : PR 3. ME ouvre aujourd'hui « Mon compte ».
 - Les invitations reçues ne sont pas listées dans AI : elles arrivent par un lien (« J'ai reçu une invitation » dans le +).
   Les lister demanderait de les rattacher à une adresse au serveur : une évolution à part.

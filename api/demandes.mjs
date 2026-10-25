@@ -5,12 +5,17 @@
 //   POST { action: 'note', cle, note }            note privée, 2 000 caractères au plus
 //   POST { action: 'renvoyer', cle }              renvoie l'e-mail d'une demande dont l'envoi a échoué ou n'a pas pu partir
 //   POST { action: 'effacer', cle, confirmation: true }   droit à l'effacement : la demande et son historique
+//   POST { action: 'convertir', cle, titre, modele? }     créer un projet depuis la demande (le propriétaire en est propriétaire) ;
+//        rejouable : la même demande ne crée qu'un projet (spaces.data.origine = demande-<clé>, index unique) ; seuls le titre et le
+//        modèle passent dans le projet, jamais les coordonnées de la personne
 // Le droit est décidé ici, côté serveur, à chaque appel : proprietaire(req) (AIME_PROPRIETAIRES), comme /api/maitre.
 // Toute autre personne (sans session, membre ou invitée d'un projet, autre compte) reçoit 404, comme si la route n'existait pas ;
 // le propriétaire reçoit 503 si la base manque ou si la migration n'est pas appliquée. Les écritures passent par la garde même origine et JSON (api/_auth/requete.cjs).
 // Ces données ne servent jamais une page publique : une vitrine de l'usage d'AIME par AIME lira d'autres données
 // (fictives ou explicitement autorisées), avec les mêmes composants (docs/DEMANDES.md, « AIME fonctionne avec AIME »).
 import { proprietaire } from './_auth/proprietaire.mjs';
+import { _pool } from './_auth/auth.mjs';
+import { creer, Refus } from './_auth/espaces.mjs';
 import R from './_auth/requete.cjs';
 import D from './_demandes/depot.cjs';
 import C from './_demandes/courriel.cjs';
@@ -20,6 +25,7 @@ let verifier = proprietaire, db, envoi = null;
 export function _proprietaire(f) { verifier = f || proprietaire; }
 export function _db(d) { db = d; }
 export function _fetch(f) { envoi = f; }
+let dbEspaces; export function _dbEspaces(d) { dbEspaces = d; }
 
 function json(res, code, o) { res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify(o)); }
 async function corps(req) {
@@ -42,7 +48,7 @@ export default async function demandes(req, res) {
   try {
     if (req.method === 'GET') {
       const p = parametres(req);
-      if (p.has('cle')) { const d = await D.detail(base, BOITE, p.get('cle')); if (!d) return json(res, 404, { ok: false }); return json(res, 200, { ok: true, demande: d.demande, journal: d.journal }); }
+      if (p.has('cle')) { const d = await D.detail(base, BOITE, p.get('cle')); if (!d) return json(res, 404, { ok: false }); return json(res, 200, { ok: true, demande: d.demande, journal: d.journal, projet: await D.projetDe(base, BOITE, p.get('cle')) }); }
       const l = await D.lister(base, BOITE, { n: p.get('n'), avant: p.get('avant') });
       return json(res, 200, Object.assign({ ok: true, conservation_mois: D.conservationMois() }, l));
     }
@@ -69,6 +75,17 @@ export default async function demandes(req, res) {
       const r = await C.envoyer(v, idem, conf, envoi);
       await D.noterEnvoi(base, d.id, r, { renvoi: true, par: u.id });
       return r.ok ? json(res, 200, { ok: true, email_statut: 'envoye' }) : json(res, 502, { ok: false, email_statut: 'echec', raison: 'L\'envoi a de nouveau échoué. La demande reste enregistrée.' });
+    }
+    if (b.action === 'convertir') {
+      const d = await D.detail(base, BOITE, cle); if (!d) return json(res, 404, { ok: false });
+      const titre = String(b.titre == null ? '' : b.titre).replace(/[\u0000-\u001F\u007F]/g, ' ').trim().slice(0, 120);
+      if (!titre) return json(res, 400, { ok: false, raison: 'Donnez un nom au projet.' });
+      const modele = ['mariage', 'seminaire'].includes(b.modele) ? b.modele : undefined;
+      let p;
+      try { p = await creer(dbEspaces !== undefined ? dbEspaces : _pool(), u, { titre, modele, origine: 'demande-' + d.demande.cle }); }
+      catch (e) { if (e instanceof Refus) return json(res, e.code, { ok: false, raison: e.raison }); throw e; }
+      await D.marquerConvertie(base, BOITE, cle, p.id, u.id);
+      return json(res, 200, { ok: true, espace: p.id, titre: p.titre, existant: !!p.existant });
     }
     if (b.action === 'effacer') {
       if (b.confirmation !== true) return json(res, 400, { ok: false, raison: 'Confirmation requise.' });

@@ -80,6 +80,8 @@ var ACTIONS={
  creerProjet:{nom:'Créer un projet',geste:'public',href:'/?commencer=1'},
  nouveauProjet:{nom:'Nouveau projet',geste:'public',href:'/projets/?nouveau=1'},
  invitationRecue:{nom:'J\'ai reçu une invitation',geste:'public'},
+ /* le + de AI, une demande ouverte (compte/ai.js) : la confirmation suit, le serveur crée (POST /api/demandes { action: 'convertir' }) */
+ projetDepuisDemande:{nom:'En faire un projet',geste:'public'},
  justificatif:{nom:'Déposer un justificatif',geste:'deposer'},
  ecrireProprietaire:{nom:'Écrire au propriétaire',geste:'repondre'},
  exporter:{nom:'Exporter',geste:'lire'},
