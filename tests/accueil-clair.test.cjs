@@ -139,8 +139,18 @@ test('l\'accueil : clair, lisible, aucune page /aime/ — les cinq temps et l\'i
   assert.ok(!/href="\/aime\/"/.test(z), 'Le Monde AIME (cartes postales, cube) reste à part');
   for (const sec of ['#ecrans', '.v-cinq', '.etape', '#entree', '.v-inscrire']) assert.ok(css.includes(sec), 'mise en page définie pour ' + sec);
   /* 25/10 : sur mobile, l'iPhone est collé en haut ; l'écran est réduit d'un bloc (échelle), jamais écrasé */
-  assert.match(css, /@media \(max-width:900px\)\{[\s\S]*\.v-cinq-tele\{--s:[\d.]+;position:sticky;top:0/, 'sur mobile, le téléphone colle en haut');
-  assert.match(css, /\.v-cinq-tele \.v-p-scene\{width:340px;flex:none;transform:scale\(var\(--s\)\)/, 'l’écran garde ses proportions : il est mis à l’échelle');
+  assert.match(css, /@media \(max-width:900px\)\{[\s\S]*\.v-cinq-tele\{--s:[\d.]+;top:0;/, 'sur mobile, la composition colle en haut');
+  assert.match(css, /\.v-cinq-tele \.v-p-scene\{[^}]*width:340px;[^}]*transform:scale\(var\(--s\)\)/, 'l’écran garde ses proportions : il est mis à l’échelle');
+  /* 26/10 : un vrai iPhone — le rapport de l'écran, l'îlot dynamique, et aucun bloc avec ombre dedans */
+  assert.match(css, /\.v-p-ecran\{[^}]*aspect-ratio:393\/852/, 'l’écran a le rapport d’un iPhone (393 × 852)');
+  assert.match(z, /class="v-p-ile"/, 'l’îlot dynamique est là');
+  assert.match(css, /\.v-p-page\{[^}]*border-radius:0;overflow:hidden\}/, 'une seule surface dans l’écran, sans carte flottante');
+  assert.ok(!/\.v-p-page\{[^}]*box-shadow/.test(css) && !/\.v-p-dock\{[^}]*box-shadow/.test(css), 'aucune ombre dans l’écran');
+  /* l'orbe d'AIME en grand derrière le téléphone */
+  assert.match(z, /<span class="v-cinq-orbe"[^>]*><i><\/i><b><\/b><\/span>/, 'l’orbe est posé derrière l’iPhone');
+  assert.match(css, /\.v-cinq-orbe\{[^}]*border-radius:50%/, 'l’orbe est un disque');
+  assert.match(css, /\.v-cinq-orbe i\{[^}]*conic-gradient/, 'le dégradé de l’orbe');
+  assert.match(css, /html\.calme \.v-cinq-orbe i\{animation:none\}/, 'et il s’arrête quand on réduit les animations');
   /* l'inscription est dans la page, et rien n'est envoyé sans le bouton */
   assert.match(z, /<form id="vInscription"[^>]*novalidate/, 'le formulaire du cinquième temps');
   assert.match(js, /AIMEAttente\.bloc\(f\)/, 'le même service que la capsule, pas un second serveur');

@@ -241,8 +241,8 @@ function poserEtape(i,sec){var L=etapes(),a=L[i];if(!a)return;COURANT=i;
 /* la ligne de lecture : le milieu de l'écran sur un ordinateur ; sous le téléphone collé sur un mobile, là où le
    titre d'une section arrive. C'est la section qui traverse cette ligne qui commande l'écran. */
 function ligneLecture(){var z=document.querySelector('.v-cinq-tele'),h=root.innerHeight||800;
- if(z&&root.matchMedia&&root.matchMedia('(max-width:900px)').matches){var b=z.getBoundingClientRect().bottom;return Math.min(Math.max(b+h*0.2,h*0.36),h*0.82)}
- return h*0.5}
+ var b=z?z.getBoundingClientRect().bottom:h*0.6;   /* la composition (orbe + iPhone) est collée en haut, sur tous les écrans */
+ return Math.min(Math.max(b+h*0.08,h*0.3),h*0.86)}
 function choisirParLecture(){var L=etapes();if(!L.length)return;var y=ligneLecture(),dedans=-1,dernier=-1;
  L.forEach(function(a,i){var r=a.getBoundingClientRect();if(r.top<=y&&r.bottom>=y)dedans=i;if(r.top<=y)dernier=i});
  var i=dedans>=0?dedans:Math.max(0,dernier);
