@@ -266,3 +266,20 @@ test('AIME fonctionne avec AIME : aucune page publique, démonstration ou vitrin
   const fautes = publics.filter(f => fs.readFileSync(path.join(R, f), 'utf8').includes('/api/demandes'));
   assert.deepEqual(fautes, [], 'une vitrine de l\'usage réel lira des données fictives ou autorisées, jamais /api/demandes');
 });
+
+// Deux changements de statut qui se croisent (deux onglets) : la seconde transaction attend la première, puis relit le statut
+// à jour (verrou « for update ») ; sans ce verrou, elle comparait l'ancien statut et écrivait une seconde ligne d'historique.
+test('base : deux changements de statut croisés → une seule ligne d\'historique (verrou sur la demande)', opts, async () => {
+  await contact(bon({ email: 'croise@exemple.test', message: 'Deux onglets ouverts sur la même demande, le même clic au même moment.' }));
+  const [d] = await ligne('croise@exemple.test');
+  const c1 = await pool.connect(), c2 = await pool.connect();
+  try {
+    await c1.query('begin'); await c2.query('begin');
+    assert.equal(await D.changerStatut(c1, 'site', d.cle, 'en_cours', 'u1'), true);
+    const second = D.changerStatut(c2, 'site', d.cle, 'en_cours', 'u2');          // bloqué par le verrou de la première transaction
+    await new Promise(r => setTimeout(r, 200)); await c1.query('commit');
+    assert.equal(await second, true, 'la demande existe toujours'); await c2.query('commit');
+  } finally { c1.release(); c2.release(); }
+  const lignes = (await journal(d.id)).filter(j => j.quoi === 'statut' && j.detail.a === 'en_cours');
+  assert.equal(lignes.length, 1, 'un seul passage à « en_cours » dans l\'historique');
+});
