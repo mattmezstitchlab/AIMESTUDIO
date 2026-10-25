@@ -106,20 +106,6 @@ var RULES={
  candidature:{
   read:function(s,r){if(r.subjectId===s.id)return yes('candidature.read : sa propre candidature');if(ORGA[s.role])return yes('candidature.read : organisation');return no('candidature.read','candidature d\'une autre personne')}
  },
- /* ---- engagements (V1, P6) : une promesse datée entre personnes d'un même projet (« qui doit quoi à qui, pour quand »).
-    ressource : { deQui, pourQui (null = l'organisation du projet), creePar, etat: propose | accepte | refuse | tenu | annule }
-    Un engagement n'est vu que par les personnes concernées et par l'organisation. On s'engage soi-même ; seule l'organisation
-    peut demander un engagement à quelqu'un d'autre, qui l'accepte ou le refuse. Seul celui qui s'est engagé le déclare tenu. ---- */
- engagement:{
-  read:function(s,r){if(r.deQui===s.id||r.pourQui===s.id||r.creePar===s.id)return yes('engagement.read : personne concernée');if(ORGA[s.role])return yes('engagement.read : organisation');return no('engagement.read','engagement entre d\'autres personnes')},
-  create:function(s,r){if(s.role==='guest'||s.role==='viewer')return no('engagement.create',s.role==='guest'?'un invité ne prend pas d\'engagement dans le projet':'consultation seule');
-   if(r.deQui===s.id)return yes('engagement.create : on s\'engage soi-même');if(ORGA[s.role])return yes('engagement.create : l\'organisation demande un engagement');
-   return no('engagement.create','seule l\'organisation demande un engagement à quelqu\'un d\'autre')},
-  accept:function(s,r){if(r.etat!=='propose')return no('engagement.accept','rien à accepter');return r.deQui===s.id?yes('engagement.accept : la personne sollicitée'):no('engagement.accept','seule la personne sollicitée accepte')},
-  refuse:function(s,r){if(r.etat!=='propose')return no('engagement.refuse','rien à refuser');return r.deQui===s.id?yes('engagement.refuse : la personne sollicitée'):no('engagement.refuse','seule la personne sollicitée refuse')},
-  keep:function(s,r){if(r.etat!=='accepte')return no('engagement.keep','seul un engagement accepté peut être tenu');return r.deQui===s.id?yes('engagement.keep : celui qui s\'est engagé'):no('engagement.keep','seul celui qui s\'est engagé le déclare tenu')},
-  cancel:function(s,r){if(r.etat!=='propose'&&r.etat!=='accepte')return no('engagement.cancel','cet engagement est clos');if(r.creePar===s.id)return yes('engagement.cancel : son auteur');if(s.role==='owner')return yes('engagement.cancel : propriétaire');return no('engagement.cancel','réservé à l\'auteur et au propriétaire')}
- },
  /* ---- 4 · paiements : rôle autorisé ET autorisation propre à la transaction ---- */
  payment:{
   read:function(s,r){if(ORGA[s.role])return yes('payment.read : organisation');if(s.role==='contributor'&&r.payeeId===s.id)return yes('payment.read : contributeur, paiement qui lui est destiné');if(r.payerId===s.id)return yes('payment.read : son propre paiement');return no('payment.read','paiement d\'un autre membre')},
