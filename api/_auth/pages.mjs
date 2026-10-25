@@ -9,7 +9,8 @@ import { lire } from './journal.mjs';
 import { pret as engagementsPrets } from '../_engagements/moteur.mjs';
 const require = createRequire(import.meta.url);
 const P = require('../../synchroview/permissions.js');
-const REG = require('../../modules/registre.js');     /* le registre des modules : la seule liste des pages servies (et donc du Dock) */
+const REG = require('../../modules/registre.js');
+const ER = require('../../synchroview/engagements.js');   /* les règles des engagements (V1, P6), adossées à permissions.js */     /* le registre des modules : la seule liste des pages servies (et donc du Dock) */
 
 export const GABARITS = ['acces', 'journal', 'personnes', 'projet', 'deroule', 'documents', 'messages'];
 /* lot 1 : seuls ces gabarits sont servis dans un vrai espace ; les autres répondent 404 (leur bouton n'apparaît pas) */
@@ -73,7 +74,7 @@ export function gestes(s) {
     inviter: peutInviter,                                   /* rôles que cette personne peut inviter (vide : aucun) */
     gerer: P.can(s, 'manage_members', { type: 'space' }).allow,
     signaler: P.can(s, 'read', { type: 'space' }).allow,    /* tout membre peut signaler un accès inattendu */
-    engager: P.can(s, 'create', { type: 'engagement', deQui: s.id }).allow   /* prendre un engagement (V1, P6) */
+    engager: ER.can(s, 'create', { deQui: s.id }).allow   /* prendre un engagement (V1, P6) */
   };
 }
 
