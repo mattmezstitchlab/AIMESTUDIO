@@ -135,3 +135,89 @@ test('base sans la migration 2026-10-25-10 : 503, dit, pour la lecture comme pou
     assert.equal((await ecrire(c, { action: 'enregistrer', carte: maCarte(), consentement: true, rev: null })).code, 503);
   } finally { H._db(undefined); }
 });
+
+/* ---------- PR P2 : le lien public et révocable (migration 2026-10-25-11) ---------- */
+let P;
+function publique(jeton, ip) {
+  return new Promise(d => {
+    const res = { statusCode: 200, h: {}, setHeader(k, v) { this.h[k.toLowerCase()] = v; }, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null, h: this.h }); } };
+    P.default({ method: 'GET', url: '/api/carte-publique?l=' + encodeURIComponent(jeton), headers: { 'x-real-ip': ip || '198.51.100.7' } }, res);
+  });
+}
+async function carteAvecPublic(email, champs, vis) {
+  const c = await connecter(email); const avant = (await lire(c)).body;
+  const x = maCarte(champs); Object.assign(x.visibilite, vis || {});
+  const r = await ecrire(c, { action: 'enregistrer', carte: x, consentement: true, rev: avant.rev });
+  assert.equal(r.code, 200, 'enregistrée'); return c;
+}
+
+test('lien public : exige une Carte sur le compte, l\'accord et au moins une rubrique publique', opts, async () => {
+  P = await import('../api/carte-publique.mjs');
+  const vide = await connecter('lien.vide@exemple.test');
+  assert.equal((await ecrire(vide, { action: 'publier', consentement: true })).code, 400, 'sans Carte sur le compte : refusé');
+  const c = await carteAvecPublic('lien.une@exemple.test', { nom: 'Lina Fictive', intention: 'Chanter aux mariages' }, {});
+  assert.equal((await ecrire(c, { action: 'publier', consentement: true })).code, 400, 'rien de « publique » : refusé, le lien ne montrerait rien');
+  await carteAvecPublic('lien.une@exemple.test', { nom: 'Lina Fictive', intention: 'Chanter aux mariages', naissance: '1990-05-01' }, { nom: 'publique', intention: 'contacts' });
+  assert.equal((await ecrire(c, { action: 'publier' })).code, 400, 'sans accord : refusé');
+  const r = await ecrire(c, { action: 'publier', consentement: true });
+  assert.equal(r.code, 200); assert.match(r.body.lien.jeton, /^[A-Za-z0-9_-]{32}$/); assert.equal(r.body.lien.ouvertures, 0);
+  const r2 = await ecrire(c, { action: 'publier', consentement: true });
+  assert.equal(r2.body.lien.jeton, r.body.lien.jeton, 'un seul lien actif : publier de nouveau rend le même');
+  assert.equal((await pool.query("select count(*)::int as n from cartes_liens l join \"user\" u on u.id = l.user_id where u.email = 'lien.une@exemple.test'")).rows[0].n, 1);
+});
+
+test('lien public : sans compte, seulement les rubriques « publique » ; ni « contacts », ni naissance, ni identifiant, ni adresse', opts, async () => {
+  const c = await connecter('lien.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton;
+  const v = await publique(jeton);
+  assert.equal(v.code, 200); assert.equal(v.h['x-robots-tag'], 'noindex, nofollow'); assert.equal(v.h['cache-control'], 'no-store');
+  assert.deepEqual(v.body.rubriques.map(r => r.cle), ['nom'], 'seulement le nom, marqué « publique »');
+  const texte = JSON.stringify(v.body);
+  assert.ok(!/Chanter|1990|lien\.une@|exemple\.test/.test(texte), 'ni l\'intention (contacts), ni la naissance, ni l\'adresse');
+  const id = (await pool.query("select id from \"user\" where email = 'lien.une@exemple.test'")).rows[0].id;
+  assert.ok(!texte.includes(id), 'jamais l\'identifiant du compte');
+  assert.equal((await lire(c)).body.lien.ouvertures, 1, 'le propriétaire voit qu\'il a été ouvert une fois');
+});
+
+test('lien public : une visibilité changée prend effet à l\'ouverture suivante ; une naissance forcée « publique » n\'est jamais servie', opts, async () => {
+  const c = await carteAvecPublic('lien.une@exemple.test', { nom: 'Lina Fictive', intention: 'Chanter aux mariages', naissance: '1990-05-01' }, { nom: 'publique', intention: 'publique' });
+  const jeton = (await lire(c)).body.lien.jeton;
+  assert.deepEqual((await publique(jeton)).body.rubriques.map(r => r.cle), ['nom', 'intention']);
+  await pool.query("update cartes set donnees = jsonb_set(donnees, '{visibilite,naissance}', '\"publique\"') where user_id = (select id from \"user\" where email = 'lien.une@exemple.test')");
+  assert.ok(!JSON.stringify((await publique(jeton)).body).includes('1990'), 'même forcée en base, la naissance n\'est jamais servie');
+});
+
+test('lien public : couper le lien le rend inutilisable tout de suite ; un nouveau lien a un autre jeton', opts, async () => {
+  const c = await connecter('lien.une@exemple.test'), ancien = (await lire(c)).body.lien.jeton;
+  const r = await ecrire(c, { action: 'couper' }); assert.equal(r.code, 200); assert.equal(r.body.lien, null);
+  const v = await publique(ancien); assert.equal(v.code, 404); assert.match(v.body.raison, /coupé/);
+  const n = await ecrire(c, { action: 'publier', consentement: true }); assert.notEqual(n.body.lien.jeton, ancien, 'nouveau lien, nouveau jeton');
+  assert.equal((await publique(ancien)).code, 404, 'l\'ancien reste mort');
+  assert.equal((await publique(n.body.lien.jeton)).code, 200);
+});
+
+test('lien public : retirer la Carte du compte coupe le lien ; jetons inconnus ou mal formés : 404 sans détail', opts, async () => {
+  const c = await connecter('lien.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton;
+  await ecrire(c, { action: 'retirer', confirmation: true });
+  assert.equal((await publique(jeton)).code, 404);
+  assert.equal((await pool.query('select coupe_le from cartes_liens where jeton = $1', [jeton])).rows[0].coupe_le !== null, true, 'coupé en base');
+  for (const j of ['', 'court', 'x'.repeat(32), '../../etc', 'A'.repeat(65)]) assert.equal((await publique(j)).code, 404, 'jeton « ' + j.slice(0, 12) + ' »');
+});
+
+test('lien public : chacun coupe seulement le sien ; le jeton d\'une autre personne n\'est jamais touché', opts, async () => {
+  const a = await carteAvecPublic('lien.a@exemple.test', { nom: 'Alix' }, { nom: 'publique' }), b = await carteAvecPublic('lien.b@exemple.test', { nom: 'Bastien' }, { nom: 'publique' });
+  const ja = (await ecrire(a, { action: 'publier', consentement: true })).body.lien.jeton, jb = (await ecrire(b, { action: 'publier', consentement: true })).body.lien.jeton;
+  await ecrire(a, { action: 'couper' });
+  assert.equal((await publique(ja)).code, 404); assert.equal((await publique(jb)).code, 200, 'le lien de Bastien marche toujours');
+  assert.equal((await publique(jb)).body.rubriques[0].valeur, 'Bastien');
+});
+
+test('lien public : sans la migration 2026-10-25-11, publier répond 503 dit, la Carte reste lisible, le lien public 404', opts, async () => {
+  const c = await connecter('lien.b@exemple.test');
+  const faux = { query: async (sql, v) => { if (/cartes_liens/.test(sql)) { const e = new Error('relation "cartes_liens" does not exist'); e.code = '42P01'; throw e; } return pool.query(sql, v); } };
+  H._db(faux); P._db(faux);
+  try {
+    const g = await lire(c); assert.equal(g.code, 200); assert.equal(g.body.publication, 'indisponible'); assert.equal(g.body.carte.nom, 'Bastien');
+    assert.equal((await ecrire(c, { action: 'publier', consentement: true })).code, 503);
+    assert.equal((await publique('A'.repeat(32))).code, 404);
+  } finally { H._db(undefined); P._db(undefined); }
+});

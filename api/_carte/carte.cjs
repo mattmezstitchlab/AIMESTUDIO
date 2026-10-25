@@ -73,4 +73,20 @@ function retenus(entree) {
   return r;
 }
 
-module.exports = { nettoyer, retenus, propre, Refus, TEXTE_CONSENTEMENT, JAMAIS_ENVOYES, TAILLE_MAX };
+/* le lien public (PR P2) : ce que montre une Carte à qui a le lien. Seulement les rubriques marquées « publique », jamais une
+   rubrique « jamais publique » (naissance, relations), jamais la photo ni l'historique ; calculé à chaque ouverture */
+const TEXTE_PUBLICATION = 'Je publie par ce lien les rubriques de ma Carte que j\'ai marquées « publique ». Toute personne qui a le lien peut les voir. Je peux couper le lien à tout moment.';
+function vuePublique(donnees) {
+  const rubriques = [];
+  if (!donnees || donnees.format !== 'aime-carte') return { rubriques };
+  for (const k of Object.keys(M.RUBRIQUES)) {
+    if (M.RUBRIQUES[k].jamaisPublique || JAMAIS_ENVOYES.includes(k)) continue;
+    if (!donnees.visibilite || donnees.visibilite[k] !== 'publique') continue;
+    if (!M.rempli(donnees, k)) continue;
+    rubriques.push({ cle: k, nom: M.RUBRIQUES[k].nom, valeur: JSON.parse(JSON.stringify(donnees[k])) });
+  }
+  return { rubriques };
+}
+const publiables = donnees => vuePublique(donnees).rubriques.length;
+
+module.exports = { nettoyer, retenus, propre, vuePublique, publiables, Refus, TEXTE_CONSENTEMENT, TEXTE_PUBLICATION, JAMAIS_ENVOYES, TAILLE_MAX };

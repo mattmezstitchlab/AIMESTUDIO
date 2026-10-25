@@ -7,7 +7,7 @@
 (function () {
 'use strict';
 var K = window.AIMECarte, CLE = 'aime-carte', SAUVEGARDE = 'aime-carte-sauvegarde', RETENUS = { photo: 'la photo', relations: 'les relations', historique: 'l\'historique des versions' };
-var NIVEAUX = { privee: 'Privée', contacts: 'Mes contacts', publique: 'Publique (rien n\'est publié pour l\'instant)' };
+var NIVEAUX = { privee: 'Privée', contacts: 'Mes contacts', publique: 'Publique (visible par mon lien, si j\'en crée un)' };
 var Z = null, compte = null, etat = 'chargement', message = '', occupe = false;
 
 function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
@@ -37,10 +37,10 @@ function resume(c, titre) {
   b.appendChild(l); return b;
 }
 /* l'accord, avant tout envoi : la case, le texte, et ce qui reste sur l'appareil */
-function accord(c, libelle, faire) {
+function accord(c, libelle, faire, texte) {
   var f = el('form', 'pile'), id = 'mcAccord' + Math.floor(Math.random() * 1e6);
   var r = retenus(c); if (r.length) f.appendChild(el('p', 'leg', 'Restent sur cet appareil, jamais envoyés : ' + r.map(function (x) { return RETENUS[x]; }).join(', ') + '.'));
-  var lab = el('label', 'mc-accord'), cb = el('input'); cb.type = 'checkbox'; cb.id = id; cb.setAttribute('aria-required', 'true'); lab.appendChild(cb); lab.appendChild(el('span', null, (compte && compte.texte) || 'J\'enregistre ma Carte sur mon compte.')); f.appendChild(lab);
+  var lab = el('label', 'mc-accord'), cb = el('input'); cb.type = 'checkbox'; cb.id = id; cb.setAttribute('aria-required', 'true'); lab.appendChild(cb); lab.appendChild(el('span', null, texte || (compte && compte.texte) || 'J\'enregistre ma Carte sur mon compte.')); f.appendChild(lab);
   var b = el('button', 'b b-p', libelle); b.type = 'submit'; f.appendChild(b);
   f.onsubmit = function (e) { e.preventDefault(); if (!cb.checked) { dire('Cochez la case pour donner votre accord.', true); cb.focus(); return; } faire(b); };
   return f;
@@ -65,7 +65,7 @@ function visibilites(c) {
     lab.setAttribute('for', s.id); lab.appendChild(el('span', null, K.RUBRIQUES[k].nom)); lab.appendChild(s); fs.appendChild(lab);
   });
   f.appendChild(fs); var b = el('button', 'b b-s', 'Enregistrer ces visibilités'); b.type = 'submit'; f.appendChild(b);
-  f.appendChild(el('p', 'leg', 'Une visibilité ne publie rien : la publication par un lien que vous pourrez couper viendra ensuite.'));
+  f.appendChild(el('p', 'leg', 'Une visibilité ne publie rien à elle seule : seules les rubriques « publique » apparaissent sur le lien, si vous en créez un.'));
   f.onsubmit = function (e) {
     e.preventDefault(); var n = JSON.parse(JSON.stringify(c));
     [].forEach.call(f.querySelectorAll('select'), function (s) { n = K.rendreVisible(n, s.name, s.value); });
@@ -73,6 +73,29 @@ function visibilites(c) {
     enregistrer(n, compte.rev, b);
   };
   return f;
+}
+/* partager ma Carte par un lien (PR P2) : un seul lien actif, créé avec accord, coupé en un geste ; il ne montre que le « publique » */
+function partage(srv) {
+  var z = el('section', 'pile mc-partage'); z.setAttribute('aria-labelledby', 'mcPartageT'); var h = el('h3', null, 'Partager ma Carte par un lien'); h.id = 'mcPartageT'; z.appendChild(h);
+  if (compte.publication === 'indisponible') { z.appendChild(el('p', 'leg', 'Le partage par lien n\'est pas encore disponible ici.')); return z; }
+  var pub = remplies(srv).filter(function (k) { return srv.visibilite[k] === 'publique' && !K.RUBRIQUES[k].jamaisPublique; });
+  var noms = pub.map(function (k) { return K.RUBRIQUES[k].nom; }).join(', ');
+  if (compte.lien) {
+    var url = location.origin + '/c/#' + compte.lien.jeton, lg = el('div', 'lgn mc-lien'), i = el('input'); i.readOnly = true; i.value = url; i.id = 'mcLien'; i.setAttribute('aria-label', 'Le lien public de ma Carte'); lg.appendChild(i);
+    var cp = el('button', 'b b-s', 'Copier'); cp.type = 'button'; cp.onclick = function () { (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () { dire('Lien copié.'); }).catch(function () { i.select(); dire('Lien sélectionné : copiez-le.'); }); }; lg.appendChild(cp); z.appendChild(lg);
+    var o = el('a', 'b b-s', 'Voir ce que le lien montre'); o.href = url; o.target = '_blank'; o.rel = 'noopener noreferrer'; z.appendChild(o);
+    z.appendChild(el('p', 'leg', 'Créé le ' + jour(compte.lien.cree_le) + ' · ouvert ' + compte.lien.ouvertures + ' fois. ' + (noms ? 'Il montre : ' + noms + '.' : 'Il ne montre rien pour l\'instant : aucune rubrique n\'est « publique ».')));
+    var cou = el('button', 'b b-s', 'Couper le lien'); cou.type = 'button';
+    cou.onclick = function () { if (occupe) return; occupe = true; cou.disabled = true; requete({ action: 'couper' }).then(function (r) { occupe = false; cou.disabled = false; if (r.statut === 200) { compte = r.j; afficher(); dire('Le lien est coupé : il ne mène plus à rien.'); } else dire((r.j && r.j.raison) || 'Impossible de couper le lien pour l\'instant.', true); }).catch(function () { occupe = false; cou.disabled = false; dire('Réseau indisponible : le lien n\'a pas été coupé.', true); }); };
+    z.appendChild(cou); return z;
+  }
+  if (!pub.length) { z.appendChild(el('p', 'leg', 'Marquez au moins une rubrique « publique » ci-dessus pour pouvoir partager votre Carte par un lien.')); return z; }
+  z.appendChild(el('p', 'leg', 'Le lien montrera : ' + noms + '. Rien d\'autre.'));
+  z.appendChild(accord(null, 'Créer le lien', function (b) {
+    if (occupe) return; occupe = true; b.disabled = true; dire('Création du lien…');
+    requete({ action: 'publier', consentement: true }).then(function (r) { occupe = false; b.disabled = false; if (r.statut === 200) { compte = r.j; afficher(); dire('Votre lien est prêt. Vous pouvez le couper à tout moment.'); } else dire((r.j && r.j.raison) || 'Le lien n\'a pas pu être créé.', true); }).catch(function () { occupe = false; b.disabled = false; dire('Réseau indisponible : aucun lien n\'a été créé.', true); });
+  }, compte.texte_publication));
+  return z;
 }
 function retirer() {
   var d = el('details', 'mc-retirer'), s = el('summary', null, 'Retirer ma Carte de mon compte'); d.appendChild(s);
@@ -117,11 +140,11 @@ function afficher() {
     C.appendChild(maj); C.appendChild(resume(srv, 'Sur votre compte'));
     var u = el('button', 'b b-p', 'Utiliser ma Carte sur cet appareil'); u.type = 'button';
     u.onclick = function () { if (poserLocale(srv)) { afficher(); dire('Votre Carte est maintenant aussi sur cet appareil.'); } else dire('Cet appareil refuse l\'enregistrement local (navigation privée ?).', true); };
-    C.appendChild(u); var v = visibilites(srv); if (v) C.appendChild(v); C.appendChild(retirer()); return;
+    C.appendChild(u); var v = visibilites(srv); if (v) C.appendChild(v); C.appendChild(partage(srv)); C.appendChild(retirer()); return;
   }
   if (empreinte(loc) === empreinte(srv)) {
     C.appendChild(el('p', null, 'Votre Carte est à jour sur cet appareil et sur votre compte.'));
-    C.appendChild(maj); C.appendChild(resume(srv)); var v2 = visibilites(srv); if (v2) C.appendChild(v2); C.appendChild(retirer()); return;
+    C.appendChild(maj); C.appendChild(resume(srv)); var v2 = visibilites(srv); if (v2) C.appendChild(v2); C.appendChild(partage(srv)); C.appendChild(retirer()); return;
   }
   /* deux versions différentes : on choisit, rien n'est fusionné */
   C.appendChild(el('p', null, 'Votre Carte n\'est pas la même sur cet appareil et sur votre compte. Choisissez la version à garder : l\'autre ne sera pas perdue (la version de cet appareil est sauvegardée avant d\'être remplacée).'));
