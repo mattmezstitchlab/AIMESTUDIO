@@ -118,7 +118,9 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await pd.waitForFunction(() => [...document.querySelectorAll('#dock-site .dock-e .dock-t')].some(x => x.textContent === 'Programme'), null, { timeout: 8000 }).catch(() => {});
     ok((await dock(pd)).includes('Programme'), 'après l\'import, « Programme » rejoint le Dock du projet : ' + (await dock(pd)).join(' · '));
     await lieu(pd, 'Programme').click(); await pd.waitForSelector('.tp-m', { timeout: 8000 });
-    ok((await pd.locator('.tp-m').count()) === 9, 'le propriétaire ouvre le programme type du mariage : 9 moments');
+    /* le programme peut s'afficher en deux temps (copie locale, puis serveur) : on attend le compte final, sans le supposer */
+    await pd.waitForFunction(() => document.querySelectorAll('.tp-m').length === 9, null, { timeout: 8000 }).catch(() => {});
+    const nM = await pd.locator('.tp-m').count(); ok(nM === 9, 'le propriétaire ouvre le programme type du mariage : 9 moments (' + nM + ')');
     await ps.reload({ waitUntil: 'networkidle' }); await ps.waitForFunction(() => [...document.querySelectorAll('#dock-site .dock-e .dock-t')].some(x => x.textContent === 'Programme'), null, { timeout: 8000 }).catch(() => {});
     ok((await dock(ps)).includes('Programme'), 'Sam voit aussi « Programme » dans son Dock');
     await lieu(ps, 'Programme').click(); await ps.waitForSelector('.tp-m', { timeout: 8000 });
