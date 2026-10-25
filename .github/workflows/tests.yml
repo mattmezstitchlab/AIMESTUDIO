@@ -122,3 +122,5 @@ jobs:
       - run: node tests/navigateur/temps.cjs
       # AI, mon environnement : Contact → demande → AI → détail → projets sans rechargement, aucune fuite entre contextes, invitée sans demandes
       - run: node tests/navigateur/ai.cjs
+      # le parcours continu, sur UN projet et avec DEUX comptes : Contact → AI (statut, note) → + → projet → invitation → Programme partagé → AI → ME
+      - run: node tests/navigateur/continu.cjs
