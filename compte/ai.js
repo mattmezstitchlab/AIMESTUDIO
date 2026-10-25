@@ -74,7 +74,10 @@ function afficherDemande(j){var d=j.demande,C=$('dCorps');C.textContent='';
  C.appendChild(el('p','leg',origine(d)+' · reçue le '+jour(d.recue_le,true)));
  var dl=el('dl','d-champs');ligne(dl,'E-mail',d.email,'mailto:'+encodeURIComponent(d.email).replace(/%40/g,'@'));ligne(dl,'Téléphone',d.tel,d.tel?'tel:'+d.tel.replace(/[^0-9+]/g,''):null);
  ligne(dl,'Adresse',d.adresse);ligne(dl,'Livraison souhaitée',d.livraison?jour(d.livraison+'T12:00:00'):null);ligne(dl,'Consentement',d.consentement_le?'donné le '+jour(d.consentement_le,true):null);
- var c1=el('section','carte-c');c1.setAttribute('aria-labelledby','dMsgT');var h1=el('h3',null,'Son message');h1.id='dMsgT';c1.appendChild(h1);c1.appendChild(dl);c1.appendChild(el('p','d-message',d.message));C.appendChild(c1);
+ var c1=el('section','carte-c');c1.setAttribute('aria-labelledby','dMsgT');var h1=el('h3',null,'Son message');h1.id='dMsgT';c1.appendChild(h1);c1.appendChild(dl);
+ /* ses réponses au formulaire personnel de ma Carte (V1, P5) : le libellé tel qu'il était à l'envoi */
+ if(d.reponses&&d.reponses.length){var hr=el('h4',null,'Ses réponses');c1.appendChild(hr);var dr=el('dl','d-champs d-reponses');d.reponses.forEach(function(x){ligne(dr,x.libelle,x.type==='date'&&/^\d{4}-\d{2}-\d{2}$/.test(x.valeur)?jour(x.valeur+'T12:00:00'):String(x.valeur))});c1.appendChild(dr)}
+ c1.appendChild(el('p','d-message',d.message));C.appendChild(c1);
  /* le suivi : deux statuts distincts, la demande et l'e-mail */
  var c2=el('section','carte-c');c2.setAttribute('aria-labelledby','dSuiviT');var h2=el('h3',null,'Suivi');h2.id='dSuiviT';c2.appendChild(h2);
  var fS=el('form','lgn');var lS=el('label',null,'Statut de la demande');lS.setAttribute('for','dStatut');var sel=el('select');sel.id='dStatut';
