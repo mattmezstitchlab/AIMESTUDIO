@@ -86,7 +86,30 @@ Prochaine étape, après votre validation : choisir et brancher l'authentificati
 
 ## 6. Limites
 
-- La Carte est locale à un navigateur tant qu'il n'y a ni compte ni Neon.
+- La Carte est locale à un navigateur tant qu'il n'y a ni compte ni Neon. Avec un compte, elle peut être enregistrée sur le compte, avec accord (§ 5).
 - Le registre réel est vide : il ne contient que des personnes fictives et, au besoin, votre propre Carte publiée localement.
 - La facette du cube est petite (le O du titre). Elle montre l'initiale, les couleurs et l'orbe, pas le détail de la Carte.
 - Sur la landing, la question « Qui êtes-vous ? » (Moi, Pro…) existait déjà. Elle reste posée : la Carte ne se substitue pas au parcours de la landing.
+
+
+## 5. La Carte enregistrée sur le compte (V1, PR P1, 25/10/2026)
+
+Ce qui existe désormais, en plus de la Carte locale :
+
+- **Table `cartes`** (migration `2026-10-25-10-cartes.sql`) : une Carte par compte, une révision côté serveur (`rev`), la date et le texte de l'accord. Elle est effacée avec le compte (`on delete cascade`). Choix fait plutôt que `user_data` (§ 4) : cette table n'existe ni en production ni dans aucune migration ; une table dédiée garde la Carte lisible et ses contraintes explicites.
+- **`/api/carte`** (`api/carte.mjs`) : chacun ne lit et n'écrit que **sa** Carte. L'identité vient de la session, jamais du corps. Sans session : 401. Écritures : même origine et JSON, accord obligatoire, quota `carte:enregistrer`. Si l'appareil enregistre sur une révision périmée : 409 avec la version du compte, jamais d'écrasement silencieux. Base ou migration absente : 503, dit.
+- **Le nettoyage serveur** (`api/_carte/carte.cjs`) applique les règles de `carte/carte.js`, sans second modèle :
+    - la photo, les relations (des données sur d'autres personnes), l'historique et « suite » ne sont jamais envoyés ;
+    - une rubrique jamais publique marquée « publique » est refusée (400) ;
+    - la publication est toujours « non publiée » : le lien public révocable viendra avec la PR P2.
+- **ME** (`compte/carte-compte.js`) présente chaque état avec ses gestes :
+    - aucune Carte : on peut la commencer dans ME ;
+    - Carte sur l'appareil seulement : on voit ce qui sera enregistré et ce qui reste sur l'appareil, puis on donne son accord ;
+    - Carte sur le compte seulement : « Utiliser ma Carte sur cet appareil » ;
+    - identiques : réglage des visibilités ;
+    - différentes : on choisit, sans fusion. La copie locale est sauvegardée dans `aime-carte-sauvegarde` avant d'être remplacée.
+
+  On peut aussi retirer sa Carte du compte : la copie de l'appareil reste. Les erreurs (réseau, 503) le disent ; rien n'est perdu.
+- **Tests** : `tests/carte-compte.test.cjs` (base, vraies sessions) et `tests/navigateur/carte.cjs` (ordinateur, iPhone, iPad, deux comptes, axe).
+
+Toujours hors de cette PR : les liens publics (P2), les demandes adressées à une Carte (P3), la modification des rubriques dans ME (P4) et la photo.

@@ -66,6 +66,7 @@ const QUOTAS = {
   'lien:ip': { max: 10, fenetre: 3600 },            /* liens de connexion (e-mails) : 10 par adresse IP et par heure */
   'espaces:inviter': { max: 60, fenetre: 3600 },    /* invitations : 60 par personne et par heure (et 50 en attente par projet, déjà) */
   'espaces:creer': { max: 10, fenetre: 3600 },      /* projets créés : 10 par personne et par heure */
+  'carte:enregistrer': { max: 60, fenetre: 3600 },  /* la Carte enregistrée sur le compte : 60 enregistrements par personne et par heure */
   'live:act': { max: 30, fenetre: 60 },             /* le direct : 30 actions par adresse IP et par minute */
   'temps:geste': { max: 60, fenetre: 60 },          /* Temps : 60 gestes par personne et par minute (lecture : aucun quota, relue toutes les 2 s) */
   'live:passe': { max: 20, fenetre: 60 },           /* … et 20 laissez-passer */

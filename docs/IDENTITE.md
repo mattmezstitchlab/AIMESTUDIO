@@ -30,6 +30,8 @@ Le Timbre représente l'identité, jamais un rôle. L'inscription ne publie rien
 
 Conclusion : l'identité et le Timbre sont réels ; la Carte n'existe que dans le navigateur, en trois versions ; le Registre et le Réseau sont des démonstrations. On ne crée pas de quatrième système : la Carte A devient la Carte universelle, rattachée au compte.
 
+> Mise à jour du 25/10/2026 (V1, PR P1) : la Carte peut désormais être enregistrée sur le compte, avec accord, et retrouvée sur un autre appareil (table `cartes`, `/api/carte`, ME). Voir docs/CARTE.md § 5.
+
 ## 2. Identité et Timbre
 
 1. **Une identité = un compte** (`user`), indépendant de tout projet. Connexion par lien e-mail ou clé d'accès, déjà en place.

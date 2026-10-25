@@ -40,9 +40,9 @@ test('sans table (migration pas encore appliquée) ou sans base : le compteur re
 });
 
 test('les quotas du site sont en un seul endroit, et chaque fonction concernée passe par lui (plus de compteur en mémoire)', () => {
-  assert.deepEqual(Object.keys(Q.QUOTAS).sort(), ['attente:adresse', 'attente:envois', 'attente:ip', 'contact:ip', 'contact:tous', 'espaces:creer', 'espaces:inviter', 'lien:ip', 'live:act', 'live:passe', 'remontee:personne', 'temps:geste']);
+  assert.deepEqual(Object.keys(Q.QUOTAS).sort(), ['attente:adresse', 'attente:envois', 'attente:ip', 'carte:enregistrer', 'contact:ip', 'contact:tous', 'espaces:creer', 'espaces:inviter', 'lien:ip', 'live:act', 'live:passe', 'remontee:personne', 'temps:geste']);
   const lire = f => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
-  for (const [f, q] of [['api/attente.mjs', 'attente:ip'], ['api/attente.mjs', 'attente:adresse'], ['api/attente.mjs', 'attente:envois'], ['api/contact.js', 'contact:ip'], ['api/remontee.mjs', 'remontee:personne'], ['api/comptes.mjs', 'lien:ip'], ['api/espaces.mjs', 'espaces:inviter'], ['api/live/act.js', 'live:act'], ['api/live/passe.js', 'live:passe'], ['api/temps.mjs', 'temps:geste']])
+  for (const [f, q] of [['api/attente.mjs', 'attente:ip'], ['api/attente.mjs', 'attente:adresse'], ['api/attente.mjs', 'attente:envois'], ['api/contact.js', 'contact:ip'], ['api/remontee.mjs', 'remontee:personne'], ['api/comptes.mjs', 'lien:ip'], ['api/espaces.mjs', 'espaces:inviter'], ['api/live/act.js', 'live:act'], ['api/live/passe.js', 'live:passe'], ['api/temps.mjs', 'temps:geste'], ['api/carte.mjs', 'carte:enregistrer']])
     assert.ok(lire(f).includes("'" + q + "'"), f + ' : ' + q);
   assert.ok(!/parIp|globaux|new Map\(\)/.test(lire('api/contact.js')), 'contact : plus de compteur en mémoire');
   assert.ok(!/const vus = new Map/.test(lire('api/remontee.mjs')), 'remontee : plus de compteur en mémoire');

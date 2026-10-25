@@ -51,6 +51,8 @@ jobs:
       - run: node --test --test-concurrency=1 tests/comptes.test.cjs tests/pages.test.cjs tests/parcours-reel.test.cjs tests/inscription.test.cjs tests/dock-pages.test.cjs tests/ecrans-gardes.test.cjs
       # les demandes du formulaire Contact (migration 2026-10-25-09) : écrites avant l'e-mail, doublons, échecs, droits avec de vraies sessions, conservation
       - run: node --test --test-concurrency=1 tests/demandes.test.cjs
+      # la Carte enregistrée sur le compte (migration 2026-10-25-10) : chacun la sienne, accord, nettoyage, deux appareils (409), retrait, suppression du compte
+      - run: node --test --test-concurrency=1 tests/carte-compte.test.cjs
       # l'état de la production tant que les dernières migrations ne sont pas passées : une seconde base sans les migrations des 24 et 25/10/2026
       - name: Base « ancienne » (sans les dernières migrations)
         run: |
@@ -122,3 +124,5 @@ jobs:
       - run: node tests/navigateur/temps.cjs
       # AI, mon environnement : Contact → demande → AI → détail → projets sans rechargement, aucune fuite entre contextes, invitée sans demandes
       - run: node tests/navigateur/ai.cjs
+      # la Carte dans ME : ordinateur avec une Carte locale, iPhone, iPad, deux comptes, conflit, réseau coupé, retrait
+      - run: node tests/navigateur/carte.cjs
