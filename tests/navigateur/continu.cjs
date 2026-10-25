@@ -61,6 +61,10 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
 
     console.log('3–4. Le propriétaire du site la retrouve dans AI, change son statut, ajoute une note privée');
     const proD = await contexte({ viewport: { width: 1440, height: 900 } }), pd = await connecter(proD, PROPRIO);
+    /* diagnostic du contrôle intermittent « 9 moments » : erreurs de la page et réponses /api non 200, imprimées seulement s'il échoue */
+    const traces = []; pd.on('console', m => { if (m.type() === 'error') traces.push('console: ' + m.text().slice(0, 160)); }); pd.on('pageerror', e => traces.push('erreur: ' + String(e).slice(0, 160)));
+    pd.on('requestfailed', r => { if (/\/api\//.test(r.url())) traces.push('échec ' + r.url().replace(/^https?:\/\/[^/]+/, '').slice(0, 80) + ' ' + (r.failure() || {}).errorText); });
+    pd.on('response', r => { if (/\/api\/(temps|page)/.test(r.url())) traces.push(r.status() + ' ' + r.url().replace(/^https?:\/\/[^/]+/, '').slice(0, 80) + ' @' + Date.now() % 100000); });
     await pd.waitForSelector('#aTraiter:not([hidden]) [data-demande="' + dm.cle + '"]', { timeout: 8000 });
     ok((await titre(pd)) === 'AI' && /Nora Fictive/.test(await pd.locator('#demandes').innerText()), 'AI : la demande de Nora, dans « À traiter »');
     await pd.click('[data-demande="' + dm.cle + '"]'); await pd.waitForSelector('#dStatut');
@@ -121,6 +125,8 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     /* le programme peut s'afficher en deux temps (copie locale, puis serveur) : on attend le compte final, sans le supposer */
     await pd.waitForFunction(() => document.querySelectorAll('.tp-m').length === 9, null, { timeout: 8000 }).catch(() => {});
     const nM = await pd.locator('.tp-m').count(); ok(nM === 9, 'le propriétaire ouvre le programme type du mariage : 9 moments (' + nM + ')');
+    if (nM !== 9) console.log('    traces :\n      ' + traces.slice(-25).join('\n      '));
+    if (nM !== 9) console.log('    diagnostic : ' + pd.url().replace(/^https?:\/\/[^/]+/, '') + ' · ' + JSON.stringify((await pd.locator('#pCorps').innerText().catch(() => '')).slice(0, 300)));
     await ps.reload({ waitUntil: 'networkidle' }); await ps.waitForFunction(() => [...document.querySelectorAll('#dock-site .dock-e .dock-t')].some(x => x.textContent === 'Programme'), null, { timeout: 8000 }).catch(() => {});
     ok((await dock(ps)).includes('Programme'), 'Sam voit aussi « Programme » dans son Dock');
     await lieu(ps, 'Programme').click(); await ps.waitForSelector('.tp-m', { timeout: 8000 });
