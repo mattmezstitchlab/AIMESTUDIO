@@ -122,3 +122,14 @@ Toujours hors de cette PR : les demandes adressées à une Carte (P3), la modifi
 - **La page** `/c/#<jeton>` : le jeton est après le « # », donc il n'est envoyé ni au serveur de la page ni aux sites liés. La page affiche chaque état : chargement, rien de public, lien coupé, lien incomplet, réseau indisponible.
 - **ME** (« Partager ma Carte par un lien ») dit exactement ce que le lien montrera, demande l'accord, puis affiche le lien, le bouton Copier, l'aperçu et le nombre d'ouvertures, et permet de couper le lien.
 - **Tests** : 7 tests sur base dans `tests/carte-compte.test.cjs`, et l'étape 8 de `tests/navigateur/carte.cjs` (iPad, puis iPhone sans compte, coupure immédiate, axe).
+
+## 7. Écrire à une Carte (V1, PR P3, 25/10/2026)
+
+- **Éteint par défaut.** Dans ME, sous le lien public : « Recevoir des demandes par ce lien » (`POST /api/carte { action: 'contact', actif }`). Un réglage du lien actif : couper le lien ferme la porte ; un nouveau lien repart éteint.
+- **Allumé**, la page `/c/#<jeton>` montre « Écrire à cette personne » : prénom, nom, e-mail, téléphone facultatif, message, accord. `POST /api/carte-publique?l=<jeton>`.
+- **La demande** va dans la boîte `compte:<id>` (table `demandes`, migration 09), visible seulement dans l'AI de cette personne, marquée « Via ma Carte ». L'e-mail part à l'adresse de **son compte**, Reply-To le visiteur ; l'adresse de la personne n'est jamais montrée au visiteur. Panne d'e-mail : la demande reste, « Renvoyer » renvoie à la même adresse.
+- **Personne d'autre** ne la voit : ni un autre compte (404), ni le propriétaire du site (sa liste n'a que la boîte `site`).
+- **Protections** : même origine et JSON, 16 Kio, piège à robots, 3 s minimum, `carte:demande:ip` (3 / 10 min), `carte:demande:boite` (20 / jour). Lien inconnu, coupé, ou contact éteint : 404, sans dire lequel.
+- **Migration** `2026-10-25-12-cartes-contact.sql` (une colonne `contact boolean not null default false`). Sans elle : le lien marche, ME dit « pas encore disponible », la page n'a pas de formulaire, rien n'est déposé.
+- **Contrat** : docs/INTERACTIONS.md.
+- **Tests** : `tests/carte-compte.test.cjs` (8 cas P3, vraie base), `tests/navigateur/carte.cjs` étape 9 (iPad propriétaire, iPhone visiteur, axe WCAG 2.2 AA).

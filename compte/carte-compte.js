@@ -85,6 +85,7 @@ function partage(srv) {
     var cp = el('button', 'b b-s', 'Copier'); cp.type = 'button'; cp.onclick = function () { (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () { dire('Lien copié.'); }).catch(function () { i.select(); dire('Lien sélectionné : copiez-le.'); }); }; lg.appendChild(cp); z.appendChild(lg);
     var o = el('a', 'b b-s', 'Voir ce que le lien montre'); o.href = url; o.target = '_blank'; o.rel = 'noopener noreferrer'; z.appendChild(o);
     z.appendChild(el('p', 'leg', 'Créé le ' + jour(compte.lien.cree_le) + ' · ouvert ' + compte.lien.ouvertures + ' fois. ' + (noms ? 'Il montre : ' + noms + '.' : 'Il ne montre rien pour l\'instant : aucune rubrique n\'est « publique ».')));
+    z.appendChild(contact());
     var cou = el('button', 'b b-s', 'Couper le lien'); cou.type = 'button';
     cou.onclick = function () { if (occupe) return; occupe = true; cou.disabled = true; requete({ action: 'couper' }).then(function (r) { occupe = false; cou.disabled = false; if (r.statut === 200) { compte = r.j; afficher(); dire('Le lien est coupé : il ne mène plus à rien.'); } else dire((r.j && r.j.raison) || 'Impossible de couper le lien pour l\'instant.', true); }).catch(function () { occupe = false; cou.disabled = false; dire('Réseau indisponible : le lien n\'a pas été coupé.', true); }); };
     z.appendChild(cou); return z;
@@ -96,6 +97,22 @@ function partage(srv) {
     requete({ action: 'publier', consentement: true }).then(function (r) { occupe = false; b.disabled = false; if (r.statut === 200) { compte = r.j; afficher(); dire('Votre lien est prêt. Vous pouvez le couper à tout moment.'); } else dire((r.j && r.j.raison) || 'Le lien n\'a pas pu être créé.', true); }).catch(function () { occupe = false; b.disabled = false; dire('Réseau indisponible : aucun lien n\'a été créé.', true); });
   }, compte.texte_publication));
   return z;
+}
+/* recevoir des demandes par mon lien (V1, P3) : éteint par défaut ; elles arrivent dans mon AI et à l'adresse de mon compte */
+function contact() {
+  var d = el('div', 'pile mc-contact');
+  if (compte.contact === 'indisponible') { d.appendChild(el('p', 'leg', 'Recevoir des demandes par votre Carte n\'est pas encore disponible ici.')); return d; }
+  var l = el('label', 'lgn'), c = el('input'); c.type = 'checkbox'; c.id = 'mcContact'; c.checked = !!(compte.lien && compte.lien.contact);
+  l.setAttribute('for', 'mcContact'); l.appendChild(c); l.appendChild(el('span', null, 'Recevoir des demandes par ce lien')); d.appendChild(l);
+  d.appendChild(el('p', 'leg', c.checked
+    ? 'Allumé : la page du lien montre un formulaire. Les demandes arrivent dans votre AI et par e-mail à l\'adresse de votre compte, qui n\'est jamais montrée.'
+    : 'Éteint : personne ne peut vous écrire par ce lien.'));
+  c.onchange = function () {
+    if (occupe) { c.checked = !c.checked; return; } occupe = true; c.disabled = true; var voulu = c.checked;
+    requete({ action: 'contact', actif: voulu }).then(function (r) { occupe = false; c.disabled = false; if (r.statut === 200) { compte = r.j; afficher(); var n = document.getElementById('mcContact'); if (n) n.focus(); dire(voulu ? 'Votre Carte reçoit maintenant des demandes.' : 'Votre Carte ne reçoit plus de demandes.'); } else { c.checked = !voulu; dire((r.j && r.j.raison) || 'Réglage impossible pour l\'instant.', true); } })
+      .catch(function () { occupe = false; c.disabled = false; c.checked = !voulu; dire('Réseau indisponible : rien n\'a changé.', true); });
+  };
+  return d;
 }
 function retirer() {
   var d = el('details', 'mc-retirer'), s = el('summary', null, 'Retirer ma Carte de mon compte'); d.appendChild(s);

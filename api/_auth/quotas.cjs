@@ -68,6 +68,8 @@ const QUOTAS = {
   'espaces:creer': { max: 10, fenetre: 3600 },      /* projets créés : 10 par personne et par heure */
   'carte:enregistrer': { max: 60, fenetre: 3600 },  /* la Carte enregistrée sur le compte : 60 enregistrements par personne et par heure */
   'carte:lecture': { max: 120, fenetre: 600 },      /* une Carte ouverte par son lien public : 120 ouvertures par adresse IP et par 10 minutes */
+  'carte:demande:ip': { max: 3, fenetre: 600 },     /* écrire à une Carte : 3 demandes par adresse IP et par 10 minutes (comme Contact) */
+  'carte:demande:boite': { max: 20, fenetre: 86400 },/* … et 20 demandes par Carte et par jour, pour qu'aucune personne ne soit submergée */
   'live:act': { max: 30, fenetre: 60 },             /* le direct : 30 actions par adresse IP et par minute */
   'temps:geste': { max: 60, fenetre: 60 },          /* Temps : 60 gestes par personne et par minute (lecture : aucun quota, relue toutes les 2 s) */
   'live:passe': { max: 20, fenetre: 60 },           /* … et 20 laissez-passer */

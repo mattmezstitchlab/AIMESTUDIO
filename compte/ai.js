@@ -50,9 +50,12 @@ function route(){var q=new URLSearchParams(location.search),e=q.get('espace'),d=
 function aller(url){try{history.pushState(null,'',url)}catch(_){location.href=url;return}route();try{window.scrollTo(0,0)}catch(_){}}
 function ouvrirProjet(id){if(!UUID.test(String(id||''))||!window.AIMEProjet)return;montrer('projet');AIMEProjet.ouvrir(id,'acces',{pousser:true});try{window.scrollTo(0,0)}catch(_){}}
 
-/* ---------- À traiter : les demandes reçues (propriétaire du site seulement : le serveur répond 404 à tout autre) ---------- */
+/* ---------- À traiter : les demandes reçues (celles du site pour son propriétaire, celles de MA Carte pour moi, V1 P3 ;
+   le serveur répond 404 à qui n'a aucune boîte) ---------- */
+/* d'où vient une demande : le formulaire du site (son type), ou ma Carte */
+function origine(d){return d.via==='carte'?'Via ma Carte':(TYPES[d.type]||'Demande')}
 function carte(d){var b=el('button','dm');b.type='button';b.setAttribute('data-demande',d.cle);
- var t=el('span','dm-t');t.appendChild(el('b',null,d.prenom+' '+d.nom));t.appendChild(el('span',null,(TYPES[d.type]||'Demande')+' · reçue le '+jour(d.recue_le)));if(d.extrait)t.appendChild(el('span',null,d.extrait));b.appendChild(t);
+ var t=el('span','dm-t');t.appendChild(el('b',null,d.prenom+' '+d.nom));t.appendChild(el('span',null,origine(d)+' · reçue le '+jour(d.recue_le)));if(d.extrait)t.appendChild(el('span',null,d.extrait));b.appendChild(t);
  var e=el('span','dm-e');e.appendChild(el('span','etiq'+(d.statut==='nouvelle'?' nouvelle':''),STATUTS[d.statut]||d.statut));if(d.email_statut!=='envoye')e.appendChild(el('span','etiq ko',EMAIL[d.email_statut]||d.email_statut));b.appendChild(e);return b}
 function chargerDemandes(){var n=++genListe,z=$('aTraiter');
  return requete('/api/demandes?n=50').then(function(r){if(n!==genListe)return;
@@ -68,7 +71,7 @@ function chargerDemandes(){var n=++genListe,z=$('aTraiter');
 function ligne(dl,k,v,lien){if(!v)return;dl.appendChild(el('dt',null,k));var dd=el('dd');if(lien){var a=el('a',null,v);a.href=lien;dd.appendChild(a)}else dd.textContent=v;dl.appendChild(dd)}
 function afficherDemande(j){var d=j.demande,C=$('dCorps');C.textContent='';
  var h=el('h2','p-titre',d.prenom+' '+d.nom);h.id='dTitre';h.tabIndex=-1;C.appendChild(h);
- C.appendChild(el('p','leg',(TYPES[d.type]||'Demande')+' · reçue le '+jour(d.recue_le,true)));
+ C.appendChild(el('p','leg',origine(d)+' · reçue le '+jour(d.recue_le,true)));
  var dl=el('dl','d-champs');ligne(dl,'E-mail',d.email,'mailto:'+encodeURIComponent(d.email).replace(/%40/g,'@'));ligne(dl,'Téléphone',d.tel,d.tel?'tel:'+d.tel.replace(/[^0-9+]/g,''):null);
  ligne(dl,'Adresse',d.adresse);ligne(dl,'Livraison souhaitée',d.livraison?jour(d.livraison+'T12:00:00'):null);ligne(dl,'Consentement',d.consentement_le?'donné le '+jour(d.consentement_le,true):null);
  var c1=el('section','carte-c');c1.setAttribute('aria-labelledby','dMsgT');var h1=el('h3',null,'Son message');h1.id='dMsgT';c1.appendChild(h1);c1.appendChild(dl);c1.appendChild(el('p','d-message',d.message));C.appendChild(c1);

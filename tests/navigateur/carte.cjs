@@ -15,7 +15,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
   const pg = require('pg'), pool = new pg.Pool({ connectionString: URLT.replace('?sslmode=disable', '') });
   await pool.query('truncate "user", spaces, invitations, live_journal, audit cascade');
-  for (const t of ['quotas', 'cartes_liens', 'cartes']) await pool.query('truncate ' + t).catch(() => {});
+  for (const t of ['quotas', 'cartes_liens', 'cartes', 'demandes cascade']) await pool.query('truncate ' + t).catch(() => {});
   try { fs.unlinkSync(LIENS); } catch {}
   const srv = spawn(process.execPath, [path.join(__dirname, '../../scripts/serveur-test.cjs')], { env: Object.assign({}, process.env, { PORT: String(PORT), HOST: '127.0.0.1', AIME_COMPTES_TEST: '1', AIME_LIENS: LIENS }), stdio: 'inherit' });
   process.on('exit', () => { try { srv.kill(); } catch {} });
@@ -137,6 +137,36 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(/coupé/.test(await pe.locator('.cp-alerte').innerText()) && !/Dominique/.test(await pe.locator('main').innerText()), 'lien coupé : l\'autre appareil ne voit plus rien, immédiatement');
     const pe2 = await ext.newPage(); await pe2.goto(B + '/c/#abc', { waitUntil: 'networkidle' }); await pe2.waitForSelector('.cp-alerte');
     ok(/incomplet/.test(await pe2.locator('.cp-alerte').innerText()), 'un lien tronqué : c\'est dit, sans appel inutile');
+
+    console.log('9. Écrire à une Carte (P3) : éteint par défaut ; allumé dans ME, un visiteur écrit ; la demande arrive dans SON AI');
+    await pi.check('#mcCorps .mc-partage .mc-accord input'); await pi.locator('#mcCorps .mc-partage button[type=submit]').click();
+    await pi.waitForSelector('#mcLien', { timeout: 6000 }); const url2 = await pi.inputValue('#mcLien');
+    ok(!(await pi.isChecked('#mcContact')), 'ME : « Recevoir des demandes » est éteint par défaut');
+    const pv = await ext.newPage(); await pv.goto(url2, { waitUntil: 'networkidle' }); await pv.waitForFunction(() => document.getElementById('cpNom').textContent === 'Dominique Fictif', null, { timeout: 6000 });
+    ok(await pv.locator('#cpEcrire').isHidden(), 'éteint : la page publique ne montre aucun formulaire');
+    await pi.check('#mcContact'); await pi.waitForFunction(() => /reçoit maintenant des demandes/.test(document.getElementById('mcVivant').textContent), null, { timeout: 6000 });
+    ok(await pi.evaluate(() => document.activeElement && document.activeElement.id === 'mcContact'), 'ME : le focus reste sur le réglage');
+    ok((await pool.query('select contact from cartes_liens where coupe_le is null')).rows[0].contact === true, 'allumé en base');
+    await pv.reload({ waitUntil: 'networkidle' }); await pv.waitForSelector('#cpEcrire:not([hidden])', { timeout: 6000 });
+    await pv.click('#cpEnvoyer'); await attendre(100);
+    ok(/Vérifiez/.test(await pv.locator('#cpResultat').innerText()) && await pv.evaluate(() => document.activeElement.id === 'cpPrenom'), 'formulaire vide : les champs sont signalés, le focus va au premier');
+    await pv.fill('#cpPrenom', 'Sacha'); await pv.fill('#cpNom2', 'Visiteur'); await pv.fill('#cpEmail', 'sacha.visiteur@exemple.test');
+    await pv.fill('#cpMessage', 'Bonjour, votre fête de quartier m\'intéresse : puis-je aider à l\'organiser ?'); await pv.check('#cpAccord');
+    await attendre(3200); await pv.click('#cpEnvoyer');
+    await pv.waitForFunction(() => /est envoyé/.test(document.getElementById('cpResultat').textContent), null, { timeout: 6000 });
+    ok(!/dominique\.carte@/.test(await pv.content()), 'le visiteur ne voit jamais l\'adresse de la personne');
+    const dm = (await pool.query("select d.boite, d.prenom, d.email_statut from demandes d join \"user\" u on d.boite = 'compte:' || u.id where u.email = $1", [DEUX.email])).rows;
+    ok(dm.length === 1 && dm[0].prenom === 'Sacha', 'la demande est gardée dans la boîte de SA Carte');
+    ok(await large(pv) <= 1, 'formulaire sur iPhone : aucun défilement horizontal'); await axe(pv, 'Carte publique, formulaire (iPhone)');
+    if (CAP) await pv.screenshot({ path: path.join(CAP, 'CARTE__7-ecrire-iphone.png'), fullPage: true });
+    const pa = await tab.newPage(); await pa.goto(B + '/projets/', { waitUntil: 'networkidle' }); await pa.waitForSelector('#aTraiter:not([hidden]) #demandes .dm-t', { timeout: 8000 });
+    ok(/Via ma Carte/.test(await pa.locator('#demandes').innerText()) && /Sacha Visiteur/.test(await pa.locator('#demandes').innerText()), 'son AI : « Sacha Visiteur · Via ma Carte »');
+    await axe(pa, 'AI, demande reçue par la Carte (iPad)');
+    const autre = await contexte({}); await connecter(autre, UNE);
+    ok((await autre.request.get(B + '/api/demandes')).status() === 404, 'l\'autre compte n\'y a pas accès (404)');
+    await pi.uncheck('#mcContact'); await pi.waitForFunction(() => /ne reçoit plus de demandes/.test(document.getElementById('mcVivant').textContent), null, { timeout: 6000 });
+    await pv.reload({ waitUntil: 'networkidle' }); await pv.waitForFunction(() => document.getElementById('cpNom').textContent === 'Dominique Fictif', null, { timeout: 6000 });
+    ok(await pv.locator('#cpEcrire').isHidden(), 'éteint de nouveau : plus de formulaire');
   } catch (e) { echecs++; console.error(e); }
   await b.close(); await pool.end(); try { srv.kill(); } catch {}
   console.log(echecs ? '\nparcours Carte : ' + echecs + ' échec(s)' : '\nparcours Carte : tout est vert');

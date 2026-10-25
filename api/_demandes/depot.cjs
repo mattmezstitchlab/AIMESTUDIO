@@ -36,9 +36,14 @@ function conservationMois(env = process.env) {
 }
 
 /* l'empreinte anti-doublon : la même que l'Idempotency-Key de Resend (adresse, message, fenêtre de 10 minutes) */
-function empreinte(v, t = Date.now()) {
-  return crypto.createHash('sha256').update([v.email, v.message, Math.floor(t / 600000)].join('|')).digest('hex').slice(0, 48);
+function empreinte(v, t = Date.now(), boite) {
+  /* la boîte du site garde exactement l'empreinte d'avant (même Idempotency-Key) ; une boîte de Carte s'y ajoute (V1, P3) */
+  const parts = [v.email, v.message, Math.floor(t / 600000)]; if (boite && boite !== 'site') parts.push(boite);
+  return crypto.createHash('sha256').update(parts.join('|')).digest('hex').slice(0, 48);
 }
+/* la boîte d'une Carte (V1, P3) : 'compte:<identifiant du compte>', déjà autorisée par la migration 09 */
+const boiteCarte = id => 'compte:' + id;
+const BOITE = /^(site|compte:[A-Za-z0-9_-]{6,128})$/;
 const nouvelleCle = () => crypto.randomBytes(16).toString('base64url').slice(0, 22);
 
 function delai(p, ms = DELAI_MS) {
@@ -59,14 +64,14 @@ async function enregistrer(db, v, emp, opts = {}) {
     const rows = await requete(db,
       `with d as (
          insert into demandes (cle, boite, empreinte, type, prenom, nom, email, tel, adresse, livraison, message, consentement_le)
-         values ($1, 'site', $2, $3, $4, $5, $6, nullif($7, ''), nullif($8, ''), nullif($9, '')::date, $10, now())
+         values ($1, $11, $2, $3, $4, $5, $6, nullif($7, ''), nullif($8, ''), nullif($9, '')::date, $10, now())
          on conflict (empreinte) do nothing
          returning id, cle, email_statut),
        j as (insert into demandes_journal (demande_id, quoi) select id, 'recue' from d)
        select id, cle, email_statut, true as nouvelle from d
        union all
        select id, cle, email_statut, false from demandes where empreinte = $2 and not exists (select 1 from d)`,
-      [opts.cle || nouvelleCle(), emp, v.projet, v.prenom, v.nom, v.email, v.tel || '', v.adresse || '', v.livraison || '', v.message]);
+      [opts.cle || nouvelleCle(), emp, v.projet, v.prenom, v.nom, v.email, v.tel || '', v.adresse || '', v.livraison || '', v.message, BOITE.test(String(opts.boite || '')) ? opts.boite : 'site']);
     const r = rows[0];
     if (!r) return { etat: 'indisponible' };
     purgerDeTempsEnTemps(db);
@@ -105,18 +110,20 @@ function purgerDeTempsEnTemps(db) { if (Date.now() - purgeLe > 3600000) { purgeL
 
 /* ——— lecture et suivi, pour le destinataire seulement (le droit est vérifié par api/demandes.mjs avant chaque appel) ——— */
 const EXTRAIT = 140;
-const ligneListe = r => ({ cle: r.cle, recue_le: r.recue_le, type: r.type, prenom: r.prenom, nom: r.nom, email: r.email,
+const ligneListe = r => ({ cle: r.cle, recue_le: r.recue_le, type: r.type, prenom: r.prenom, nom: r.nom, email: r.email, via: r.boite === 'site' ? 'site' : 'carte',
   statut: r.statut, email_statut: r.email_statut, extrait: r.message.length > EXTRAIT ? r.message.slice(0, EXTRAIT - 1) + '…' : r.message });
 
 /* la liste d'une boîte, la plus récente d'abord, par pages de n (50 au plus) ; avant : le curseur de la page précédente */
+/* boite : une boîte, ou la liste des boîtes de la personne (le site pour son propriétaire, et sa Carte) */
 async function lister(db, boite, { n = 30, avant = null } = {}) {
+  const boites = (Array.isArray(boite) ? boite : [boite]).filter(b => BOITE.test(String(b)));
   n = Math.max(1, Math.min(50, Number(n) || 30));
   let curseur = null;
   if (avant) { const m = /^(\d{13})\.(\d{1,18})$/.exec(String(avant)); if (m) curseur = [new Date(Number(m[1])), m[2]]; }
   const rows = await requete(db,
-    `select id, cle, recue_le, type, prenom, nom, email, statut, email_statut, message from demandes
-     where boite = $1 ${curseur ? 'and (recue_le, id) < ($3, $4::bigint)' : ''}
-     order by recue_le desc, id desc limit $2`, curseur ? [boite, n + 1, curseur[0], curseur[1]] : [boite, n + 1]);
+    `select id, cle, boite, recue_le, type, prenom, nom, email, statut, email_statut, message from demandes
+     where boite = any($1::text[]) ${curseur ? 'and (recue_le, id) < ($3, $4::bigint)' : ''}
+     order by recue_le desc, id desc limit $2`, curseur ? [boites, n + 1, curseur[0], curseur[1]] : [boites, n + 1]);
   const page = rows.slice(0, n), der = page[page.length - 1];
   purgerDeTempsEnTemps(db);
   return { demandes: page.map(ligneListe), suivant: rows.length > n && der ? new Date(der.recue_le).getTime() + '.' + der.id : null };
@@ -177,6 +184,17 @@ async function changerNote(db, boite, cle, note, par) {
 }
 
 /* effacer une demande à la demande de la personne (droit à l'effacement) ; historique compris */
+/* la boîte d'une demande, par sa clé (pour vérifier qu'elle appartient à la personne), ou null */
+async function boiteDe(db, cle) {
+  if (!/^[A-Za-z0-9_-]{16,32}$/.test(String(cle || ''))) return null;
+  const rows = await requete(db, 'select boite from demandes where cle = $1', [cle]); return rows[0] ? rows[0].boite : null;
+}
+/* a-t-elle une boîte de Carte ? le contact activé sur son lien (migration 12), ou déjà une demande reçue par sa Carte */
+async function aUneBoite(db, id) {
+  const b = boiteCarte(id);
+  try { const r = await requete(db, 'select exists (select 1 from demandes where boite = $1) or exists (select 1 from cartes_liens where user_id = $2 and contact) as oui', [b, id]); return !!(r[0] && r[0].oui); }
+  catch (e) { if (e && (e.code === '42P01' || e.code === '42703')) { const r = await requete(db, 'select exists (select 1 from demandes where boite = $1) as oui', [b]); return !!(r[0] && r[0].oui); } throw e; }
+}
 async function effacer(db, boite, cle) {
   const rows = await requete(db, 'with d as (delete from demandes where boite = $1 and cle = $2 returning 1) select count(*)::int as n from d', [boite, cle]);
   return !!(rows[0] && rows[0].n);
@@ -184,6 +202,7 @@ async function effacer(db, boite, cle) {
 
 module.exports = {
   base, conservationMois, empreinte, enregistrer, noterEnvoi, purger, lister, detail, changerStatut, marquerConvertie, projetDe, changerNote, effacer,
+  boiteDe, aUneBoite, boiteCarte,
   STATUTS, EMAIL_STATUTS, CONSERVATION_DEFAUT, DELAI_MS,
   _pool(p) { pool = p; }, _oublier() { tableAbsente = 0; purgeLe = 0; },
 };
