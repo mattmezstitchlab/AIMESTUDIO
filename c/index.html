@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Une Carte AIME</title>
+<meta name="description" content="Une Carte AIME partagée par un lien : seulement ce que la personne a choisi de montrer.">
+<meta name="theme-color" content="#0A0A0C">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:,">
+<link rel="preload" href="/fonts/CalSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/coeur/charte.css">
+<link rel="stylesheet" href="/dock/dock.css">
+<style>
+/* la Carte publique (V1, PR P2) : seulement les rubriques marquées « publique », servies par /api/carte-publique ;
+   le jeton reste après le « # » de l'adresse : il n'est envoyé ni au serveur de cette page ni aux sites liés */
+.cp{padding:clamp(100px,15vh,160px) 0 calc(140px + env(safe-area-inset-bottom,0px))}
+.cp .col{max-width:760px;text-align:left}
+.cp .k{margin:0 0 14px;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
+.cp h1{margin:0;font:400 clamp(36px,6vw,68px)/1.04 var(--display);letter-spacing:-.025em;overflow-wrap:anywhere}
+.cp .intro{margin:16px 0 0;font-size:17px;color:var(--soft)}
+.cp-rub{margin-top:clamp(26px,5vh,40px);display:grid;gap:18px}
+.cp-rub section{border:1px solid var(--line);border-radius:16px;padding:16px 18px;min-width:0}
+.cp-rub h2{margin:0 0 8px;font:600 13px var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--soft)}
+.cp-rub p{margin:0;font-size:17px;overflow-wrap:anywhere}
+.cp-rub ul{margin:0;padding-left:1.2em;display:grid;gap:4px;font-size:17px}
+.cp-rub li{overflow-wrap:anywhere}
+.cp-note{margin-top:28px;font-size:14px;color:var(--soft)}
+.cp-alerte{margin-top:24px;border:1px solid rgba(253,164,175,.4);border-radius:12px;padding:14px 16px;color:#FDA4AF}
+</style>
+</head>
+<body>
+<main id="contenu" class="cp">
+ <div class="col">
+  <p class="k">Carte AIME</p>
+  <h1 id="cpNom">Une Carte AIME</h1>
+  <p class="intro" id="cpEtat" role="status" aria-live="polite">Chargement…</p>
+  <div class="cp-rub" id="cpRub"></div>
+  <p class="cp-note" id="cpNote" hidden>Cette Carte est partagée par un lien. Elle ne montre que ce que la personne a choisi de rendre public, et elle peut couper ce lien à tout moment.</p>
+ </div>
+</main>
+<script>
+(function(){
+'use strict';
+var jeton=(location.hash||'').replace(/^#/,''),E=document.getElementById('cpEtat'),R=document.getElementById('cpRub'),N=document.getElementById('cpNom');
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+/* une valeur de rubrique, quelle que soit sa forme : un texte, une liste, ou des objets (titre, nom, texte) */
+function texte(v){if(v==null)return'';if(typeof v==='string'||typeof v==='number')return String(v);if(typeof v==='object'&&!Array.isArray(v)){var k=['titre','nom','texte','lieu','date'].filter(function(x){return v[x]});return k.map(function(x){return String(v[x])}).join(' · ')}return''}
+function valeur(v){
+ if(Array.isArray(v)){var u=el('ul');v.forEach(function(x){var t=texte(x);if(t)u.appendChild(el('li',null,t))});return u.childNodes.length?u:null}
+ if(v&&typeof v==='object'&&(v.proposees||v.recherchees)){var d=el('div');if((v.proposees||[]).length){d.appendChild(el('p',null,'Propose : '+v.proposees.map(texte).join(', ')))}if((v.recherchees||[]).length){d.appendChild(el('p',null,'Recherche : '+v.recherchees.map(texte).join(', ')))}return d.childNodes.length?d:null}
+ var t=texte(v);return t?el('p',null,t):null}
+function erreur(t){E.textContent='';var a=el('p','cp-alerte',t);a.setAttribute('role','alert');R.textContent='';R.appendChild(a);document.title='Carte introuvable · AIME'}
+if(!/^[A-Za-z0-9_-]{32,64}$/.test(jeton)){E.textContent='';erreur('Ce lien est incomplet : vérifiez qu\'il a été copié en entier.');return}
+fetch('/api/carte-publique?l='+encodeURIComponent(jeton),{cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer'}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){return{s:r.status,j:j}})}).then(function(x){
+ if(x.s!==200){erreur((x.j&&x.j.raison)||'Ce lien ne mène à aucune Carte.');return}
+ var rub=x.j.rubriques||[],nom=rub.filter(function(r){return r.cle==='nom'})[0];
+ if(nom&&texte(nom.valeur)){N.textContent=texte(nom.valeur);document.title=texte(nom.valeur)+' · Carte AIME'}
+ E.textContent=rub.length?'':'Cette Carte ne montre rien publiquement pour l\'instant.';
+ rub.forEach(function(r){if(r.cle==='nom')return;var v=valeur(r.valeur);if(!v)return;var s=el('section');s.setAttribute('aria-labelledby','cp-'+r.cle);var h=el('h2',null,r.nom);h.id='cp-'+r.cle;s.appendChild(h);s.appendChild(v);R.appendChild(s)});
+ document.getElementById('cpNote').hidden=false;
+}).catch(function(){erreur('Réseau indisponible : la Carte n\'a pas pu être chargée.')});
+})();
+</script>
+<script src="/dock/modele.js"></script>
+<script src="/dock/dock.js"></script>
+<script src="/dock/plus.js"></script>
+<div id="dock-site"></div>
+<script>(function(){var el=document.getElementById('dock-site');if(el&&window.AIMEDock&&window.AIMEDockVue){AIMEDockVue.poser(el,AIMEDock.composer({}),{mode:'page',id:'dock-site'});if(window.AIMEPlus)AIMEPlus.brancher(el);document.body.classList.add('avec-dock')}})();</script>
+</body>
+</html>

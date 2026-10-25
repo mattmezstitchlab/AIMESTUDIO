@@ -90,3 +90,6 @@ body.en-projet #projet>.leg:first-child{margin:0}
 #meCarte .mc-deux{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 #meCarte .leg{color:var(--doux)}
 #meCarte h3{margin:0;font-size:1rem}
+#meCarte .mc-partage{border-top:1px solid var(--ligne);padding-top:14px}
+#meCarte .mc-lien{gap:8px;flex-wrap:nowrap;min-width:0}
+#meCarte .mc-lien input{flex:1;min-width:0}

@@ -112,4 +112,13 @@ Ce qui existe désormais, en plus de la Carte locale :
   On peut aussi retirer sa Carte du compte : la copie de l'appareil reste. Les erreurs (réseau, 503) le disent ; rien n'est perdu.
 - **Tests** : `tests/carte-compte.test.cjs` (base, vraies sessions) et `tests/navigateur/carte.cjs` (ordinateur, iPhone, iPad, deux comptes, axe).
 
-Toujours hors de cette PR : les liens publics (P2), les demandes adressées à une Carte (P3), la modification des rubriques dans ME (P4) et la photo.
+Toujours hors de cette PR : les demandes adressées à une Carte (P3), la modification des rubriques dans ME (P4) et la photo. Le lien public est venu avec P2 (§ 6).
+
+## 6. Le lien public et révocable (V1, PR P2, 25/10/2026)
+
+- **Table `cartes_liens`** (migration `2026-10-25-11-cartes-liens.sql`) : un jeton aléatoire de 32 caractères, un seul lien actif par personne (index unique partiel), la date de création, la date de coupure, le texte de l'accord et un compteur d'ouvertures. Aucune adresse IP n'est gardée.
+- **Publier** (`POST /api/carte { action: 'publier', consentement: true }`) : il faut que la Carte soit sur le compte et ait au moins une rubrique « publique ». Publier de nouveau rend le même lien. **Couper** (`{ action: 'couper' }`) prend effet immédiatement. Retirer la Carte du compte coupe aussi son lien.
+- **Lire** (`GET /api/carte-publique?l=<jeton>`, sans compte) : seulement les rubriques « publique », recalculées au serveur à chaque ouverture (`vuePublique` dans `api/_carte/carte.cjs`). Jamais la naissance ni les relations, même forcées en base ; jamais la photo, l'identifiant du compte ni son adresse. Un lien inconnu, coupé ou mal formé répond 404, sans dire lequel. Réponses `noindex`, `no-store`, `no-referrer` ; quota `carte:lecture` par adresse IP.
+- **La page** `/c/#<jeton>` : le jeton est après le « # », donc il n'est envoyé ni au serveur de la page ni aux sites liés. La page affiche chaque état : chargement, rien de public, lien coupé, lien incomplet, réseau indisponible.
+- **ME** (« Partager ma Carte par un lien ») dit exactement ce que le lien montrera, demande l'accord, puis affiche le lien, le bouton Copier, l'aperçu et le nombre d'ouvertures, et permet de couper le lien.
+- **Tests** : 7 tests sur base dans `tests/carte-compte.test.cjs`, et l'étape 8 de `tests/navigateur/carte.cjs` (iPad, puis iPhone sans compte, coupure immédiate, axe).

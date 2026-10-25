@@ -15,7 +15,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
   const pg = require('pg'), pool = new pg.Pool({ connectionString: URLT.replace('?sslmode=disable', '') });
   await pool.query('truncate "user", spaces, invitations, live_journal, audit cascade');
-  for (const t of ['quotas', 'cartes']) await pool.query('truncate ' + t).catch(() => {});
+  for (const t of ['quotas', 'cartes_liens', 'cartes']) await pool.query('truncate ' + t).catch(() => {});
   try { fs.unlinkSync(LIENS); } catch {}
   const srv = spawn(process.execPath, [path.join(__dirname, '../../scripts/serveur-test.cjs')], { env: Object.assign({}, process.env, { PORT: String(PORT), HOST: '127.0.0.1', AIME_COMPTES_TEST: '1', AIME_LIENS: LIENS }), stdio: 'inherit' });
   process.on('exit', () => { try { srv.kill(); } catch {} });
@@ -112,6 +112,31 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     const r = await (await tab.request.get(B + '/api/carte')).json(); ok(r.carte.nom === 'Dominique Fictif' && !JSON.stringify(r).includes('Camille'), 'chacun ne lit que sa Carte');
     ok(await large(pi) <= 1, 'iPad : aucun défilement horizontal'); await capture(pi, 'CARTE__4-ipad'); await axe(pi, 'ME, Carte créée (iPad)');
     const anon = await contexte({}); ok((await anon.request.get(B + '/api/carte')).status() === 401, 'sans session : 401');
+
+    console.log('8. Partager ma Carte par un lien (P2) : seulement le « publique », depuis un autre appareil sans compte ; couper le lien');
+    await pi.selectOption('#mcVis-nom', 'publique'); await pi.selectOption('#mcVis-intention', 'contacts'); await pi.click('#mcCorps .mc-vis button[type=submit]');
+    await pi.waitForFunction(() => /enregistrée sur votre compte/.test(document.getElementById('mcVivant').textContent), null, { timeout: 6000 });
+    await pi.waitForSelector('#mcCorps .mc-partage');
+    ok(/Le lien montrera : Nom d'affichage\. Rien d'autre\./.test(await pi.locator('#mcCorps .mc-partage').innerText()), 'ME dit exactement ce que le lien montrera');
+    await pi.locator('#mcCorps .mc-partage button[type=submit]').click(); await attendre(300);
+    ok((await pool.query('select count(*)::int as n from cartes_liens')).rows[0].n === 0, 'sans la case cochée : aucun lien');
+    await pi.check('#mcCorps .mc-partage .mc-accord input'); await pi.locator('#mcCorps .mc-partage button[type=submit]').click();
+    await pi.waitForSelector('#mcLien', { timeout: 6000 }); const url = await pi.inputValue('#mcLien');
+    ok(/\/c\/#[A-Za-z0-9_-]{32}$/.test(url), 'le lien est prêt : ' + url.replace(/#.*/, '#…'));
+    await capture(pi, 'CARTE__5-ipad-lien'); await axe(pi, 'ME, lien public (iPad)');
+    const ext = await contexte(devices['iPhone 13']), pe = await ext.newPage(); await pe.goto(url, { waitUntil: 'networkidle' });
+    await pe.waitForFunction(() => document.getElementById('cpNom').textContent !== 'Une Carte AIME' || document.querySelector('.cp-alerte'), null, { timeout: 6000 });
+    const vu = await pe.locator('main').innerText();
+    ok((await pe.locator('#cpNom').innerText()) === 'Dominique Fictif' && !/fête de quartier/.test(vu), 'sans compte, sur un autre appareil : le nom (publique), pas l\'intention (« Mes contacts »)');
+    ok((await pe.evaluate(() => document.querySelector('meta[name=robots]').content)) === 'noindex, nofollow', 'la page n\'est jamais indexée');
+    ok(await large(pe) <= 1, 'Carte publique sur iPhone : aucun défilement horizontal'); await axe(pe, 'Carte publique (iPhone)');
+    if (CAP) await pe.screenshot({ path: path.join(CAP, 'CARTE__6-publique-iphone.png') });
+    await pi.click('#mcCorps .mc-partage button:has-text("Couper le lien")');
+    await pi.waitForFunction(() => /coupé/.test(document.getElementById('mcVivant').textContent), null, { timeout: 6000 });
+    await pe.reload({ waitUntil: 'networkidle' }); await pe.waitForSelector('.cp-alerte', { timeout: 6000 });
+    ok(/coupé/.test(await pe.locator('.cp-alerte').innerText()) && !/Dominique/.test(await pe.locator('main').innerText()), 'lien coupé : l\'autre appareil ne voit plus rien, immédiatement');
+    const pe2 = await ext.newPage(); await pe2.goto(B + '/c/#abc', { waitUntil: 'networkidle' }); await pe2.waitForSelector('.cp-alerte');
+    ok(/incomplet/.test(await pe2.locator('.cp-alerte').innerText()), 'un lien tronqué : c\'est dit, sans appel inutile');
   } catch (e) { echecs++; console.error(e); }
   await b.close(); await pool.end(); try { srv.kill(); } catch {}
   console.log(echecs ? '\nparcours Carte : ' + echecs + ' échec(s)' : '\nparcours Carte : tout est vert');
