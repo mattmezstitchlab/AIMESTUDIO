@@ -110,7 +110,7 @@ var MODULES=[
    tenir:{regle:['engagement','keep'],ecrit:true,journal:'engagement',nom:'Marquer comme tenu'},
    annuler:{regle:['engagement','cancel'],ecrit:true,journal:'engagement',nom:'Annuler'}
   },
-  acces:'Membre actif du projet ; chacun lit les engagements qui le concernent (et l\'organisation, tous). On s\'engage soi-même ; seule l\'organisation demande un engagement à quelqu\'un d\'autre.',
+  acces:'Règles : synchroview/engagements.js, adossées à permissions.js (qui est l\'organisation, qui est membre). Membre actif du projet ; chacun lit les engagements qui le concernent (et l\'organisation, tous). On s\'engage soi-même ; seule l\'organisation demande un engagement à quelqu\'un d\'autre.',
   presentations:['liste'],prevues:['calendrier','chronologie'],contextes:{preparation:'liste'},
   /* pas de cinquième lieu dans le Dock (décision de Matt, 24/10) : les engagements vivent dans « Mon accès », et dans AI pour les miens */
   destination:{gabarit:'acces'},api:'/api/engagements',
@@ -118,7 +118,7 @@ var MODULES=[
   accessibilite:A11Y.concat(['Le retard est dit en toutes lettres, jamais seulement par une couleur']),
   journal:['engagement'],
   intentions:[{motif:/\b(engag|promesse|promis|je m'engage|[ée]ch[ée]ance)/i,action:'lire'}],
-  preuves:['api/engagements.mjs','api/_engagements/moteur.mjs','synchroview/permissions.js','tests/engagements.test.cjs']},
+  preuves:['api/engagements.mjs','api/_engagements/moteur.mjs','synchroview/engagements.js','tests/engagements.test.cjs']},
 
  {id:'documents',contrat:1,nom:'Documents',statut:'composant',
   fonction:'Partager un document avec les bonnes personnes, et seulement elles.',
