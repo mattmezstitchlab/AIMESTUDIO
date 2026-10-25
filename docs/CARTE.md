@@ -133,3 +133,13 @@ Toujours hors de cette PR : les demandes adressées à une Carte (P3), la modifi
 - **Migration** `2026-10-25-12-cartes-contact.sql` (une colonne `contact boolean not null default false`). Sans elle : le lien marche, ME dit « pas encore disponible », la page n'a pas de formulaire, rien n'est déposé.
 - **Contrat** : docs/INTERACTIONS.md.
 - **Tests** : `tests/carte-compte.test.cjs` (8 cas P3, vraie base), `tests/navigateur/carte.cjs` étape 9 (iPad propriétaire, iPhone visiteur, axe WCAG 2.2 AA).
+
+## 8. Activités sur ma Carte et le + de ME (V1, PR P4, 25/10/2026)
+
+- **Mes activités** (ME) : ajouter un métier (liste de `vitrine/metiers.json`), le retirer, et cocher **« Montrer sur ma Carte »**.
+- **« Sur ma Carte » n'est pas « publiée »** (décision de Matt, 25/10) : `activites.sur_carte` (migration `2026-10-25-13-activites-carte.sql`) dit qu'une activité apparaît sur le **lien public de ma Carte**, s'il existe. La colonne `publiee` reste réservée au Registre, qui aura son propre geste et son propre accord ; elle ne montre rien sur la Carte (test).
+- Le lien public (`/api/carte-publique`) sert `activites: [{ metier, nom }]` : seulement les activités cochées, de cette personne, jamais son identifiant. Décocher, retirer l'activité ou couper le lien : elle disparaît à l'ouverture suivante.
+- **Modifier ma Carte** dans ME : nom, intention, compétences, centres d'intérêt, territoires. Chaque modification est une version (`carte.js`), va sur cet appareil et sur le compte ; les visibilités ne changent pas (une nouvelle rubrique est privée).
+- **Le + de ME** : « Modifier ma Carte » · « Ajouter une activité » · « Partager ma Carte ». Chaque geste mène à sa place dans ME et y met le focus ; rien ne s'enregistre sans le bouton. « Nouveau projet » et l'invitation restent dans le + de AI.
+- Sans la migration 13 : la liste marche, « Montrer sur ma Carte » est grisé et dit indisponible (503 au serveur), le lien ne montre aucune activité.
+- Tests : `tests/carte-compte.test.cjs` (4 cas P4), `tests/navigateur/carte.cjs` étape 10 (iPad, iPhone visiteur, axe).

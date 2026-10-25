@@ -57,6 +57,7 @@ Règles :
 - Tout est privé par défaut. Rien n'est obligatoire.
 - `naissance` et `relations` ne sont jamais publiables, ni partageables avec un projet sans geste explicite.
 - **Plusieurs activités** sur une même Carte (ex. saxophoniste et graphiste), chacune avec ses compétences, sa zone et ses disponibilités. **Chaque activité se publie indépendamment** : une personne peut apparaître dans le Registre pour une activité et rester invisible pour les autres. Dépublier une activité ne touche pas aux autres.
+  - V1 (P4, 25/10/2026) : **montrer une activité sur ma Carte** (`activites.sur_carte`, son lien public) est un geste distinct de la **publier au Registre** (`activites.publiee`, à venir, avec son propre accord). L'un n'entraîne jamais l'autre.
 - **Préréglages, plus tard** (« ce que je montre à mes projets professionnels ») : ils pré-cochent des rubriques, la personne valide ; jamais de publication automatique.
 - La Carte n'accorde **aucun rôle** et n'est jamais lue pour décider d'un droit.
 - Passage du navigateur au compte : à la connexion, AIME propose d'importer la Carte locale (`aime-carte`, puis B et C), **avec l'accord explicite de la personne** ; rien n'est envoyé sans ce geste ; la copie locale peut ensuite être effacée par la personne.

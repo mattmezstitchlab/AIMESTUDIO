@@ -189,7 +189,8 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await pt.waitForSelector('#monTimbre > *', { timeout: 6000 }).catch(() => {});   /* le Timbre se charge après la page : l'attendre, ne pas lire trop tôt */
     ok(await pt.locator('#monTimbre .timbre, #monTimbre > *').count() > 0 && await pt.locator('#cles').isVisible() && await pt.locator('#zoneSuppr').isVisible() && await pt.locator('#seDeconnecter').isVisible(), 'Timbre, clés d\'accès, se déconnecter, supprimer le compte : rien n\'est perdu de « Mon compte »');
     ok(await pt.locator('#meDecouvrir a[href="/#coeur"]').count() === 1 && await pt.locator('#meDecouvrir a[href="/exemples/"]').count() === 1, 'Le cœur et les exemples, retirés du Dock, restent à un clic depuis ME');
-    ok(await pt.locator('#activites').isHidden(), 'sans activité : pas de section vide');
+    await pt.waitForSelector('#activites:not([hidden])', { timeout: 5000 }).catch(() => {});
+    ok(/Aucune activité/.test(await pt.locator('#activites').innerText().catch(() => '')) && await pt.locator('#actAjout').isVisible(), 'sans activité : ME le dit et propose d\'en ajouter (P4), sans liste vide');
     await pt.fill('#nom', 'Matt Test (ME)'); await pt.click('#fNom button[type=submit]'); await attendre(600);
     await pt.reload({ waitUntil: 'networkidle' }); await pt.waitForSelector('#profil:not([hidden])');
     ok((await pt.inputValue('#nom')) === 'Matt Test (ME)', 'le nom modifié dans ME est gardé au serveur (après rechargement)');

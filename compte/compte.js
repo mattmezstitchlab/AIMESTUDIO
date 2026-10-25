@@ -96,17 +96,40 @@ function chargerEspaces(){espaces('mes').then(function(r){var L=$('liste');L.tex
   var a=el('div','lgn');var o=el('a','b b-p','Ouvrir');var dest=MODULE&&window.AIMEModules&&AIMEModules.destination(MODULE,s.id);o.href=dest||'/projets/?espace='+encodeURIComponent(s.id);if(!dest)o.setAttribute('data-ouvrir',s.id);   /* sans rechargement (compte/ai.js) */
   o.setAttribute('aria-label','Ouvrir « '+s.titre+' »');a.appendChild(o);if(s.modele){var l=el('a','b b-s','Le direct');l.href='/live/?espace='+encodeURIComponent(s.id);a.appendChild(l)}h.appendChild(a);c.appendChild(h);L.appendChild(c)})}).catch(function(e){toast(e.message,true)})}
 
-/* ---------- mes activités (prestataire) : un métier, non publié ; les missions arrivent par invitation ---------- */
-var NOMS_METIERS={};
-/* montrer : dans ME, la liste ; dans AI, seulement le mot de bienvenue après « Je suis… » (l'activité vit dans ME) */
-function chargerActivites(montrer){espaces('activites').then(function(r){var L=r.activites||[],z=$('activites');
+/* ---------- mes activités (prestataire) : un métier ; les missions arrivent par invitation ---------- */
+/* V1, P4 : dans ME, on ajoute, on retire, et on choisit celles montrées sur sa Carte (le lien public, s'il existe ; jamais le Registre).
+   montrer : dans ME, la section ; dans AI, seulement le mot de bienvenue après « Je suis… » (l'activité vit dans ME) */
+var METIERS=null;
+function metiers(){return METIERS?Promise.resolve(METIERS):fetch('/vitrine/metiers.json',{cache:'force-cache'}).then(function(r){return r.json()}).then(function(j){return METIERS=(j.metiers||[]).map(function(m){return{id:m.id,nom:m.nom}})}).catch(function(){return[]})}
+function maj(t){return t.charAt(0).toUpperCase()+t.slice(1)}
+function chargerActivites(montrer,focus){return espaces('activites').then(function(r){var L=r.activites||[],z=$('activites');
  if(!montrer){if(BIENVENUE){var n0=(L.filter(function(a){return a.metier===BIENVENUE})[0]||{}).nom;if(n0)toast('Votre espace '+n0+' est créé. Il se trouve dans ME.')}return}
- if(!L.length){z.hidden=true;return}
- z.hidden=false;var ul=$('mesActivites');ul.textContent='';
- L.forEach(function(a){var li=el('li','lgn');li.appendChild(el('b',null,a.nom.charAt(0).toUpperCase()+a.nom.slice(1)));li.appendChild(el('span','leg',a.publiee?'publiée':'non publiée'));ul.appendChild(li)});
+ z.hidden=false;var ul=$('mesActivites');ul.textContent='';var dispo=r.presentation!=='indisponible';
+ $('actVide').hidden=!!L.length;
+ L.forEach(function(a){var li=el('li','act-l');var n=el('b',null,maj(a.nom));n.id='act-n-'+a.metier;li.appendChild(n);
+  var lab=el('label','lgn act-c');var c=el('input');c.type='checkbox';c.id='act-c-'+a.metier;c.checked=!!a.sur_carte;c.disabled=!dispo;c.setAttribute('aria-describedby','act-n-'+a.metier);lab.setAttribute('for',c.id);lab.appendChild(c);lab.appendChild(el('span',null,'Montrer sur ma Carte'));li.appendChild(lab);
+  c.onchange=function(){var v=c.checked;c.disabled=true;espaces('activiteCarte',{metier:a.metier,montrer:v}).then(function(){c.disabled=false;toast(v?maj(a.nom)+' apparaît sur votre Carte (son lien public, s\'il existe).':maj(a.nom)+' n\'apparaît plus sur votre Carte.')}).catch(function(e){c.disabled=false;c.checked=!v;toast(e.message,true)})};
+  var x=el('button','b b-s','Retirer');x.type='button';x.setAttribute('aria-label','Retirer l\'activité '+a.nom);
+  x.onclick=function(){confirmer(x,'Confirmer : retirer',function(){x.disabled=true;espaces('retirerActivite',{metier:a.metier}).then(function(){toast(maj(a.nom)+' est retirée de vos activités.');chargerActivites(true,'actAjout')}).catch(function(e){x.disabled=false;toast(e.message,true)})})};
+  li.appendChild(x);ul.appendChild(li)});
+ $('actIndispo').hidden=dispo;
  var m=$('invitezMoi'),site=location.origin;
  m.href='mailto:?subject='+encodeURIComponent('Invitez-moi sur AIME')+'&body='+encodeURIComponent('Bonjour,\n\nPour préparer votre mariage ensemble, invitez-moi dans votre projet AIME : créez-le sur '+site+'/ (« Futurs mariés »), puis Personnes → Inviter, avec mon adresse.\n\nÀ bientôt !');
-}).catch(function(){})}
+ return metiers().then(function(M){var s=$('actAjout'),pris=L.map(function(a){return a.metier});s.textContent='';var o0=el('option',null,'Choisir un métier…');o0.value='';s.appendChild(o0);
+  M.filter(function(m){return pris.indexOf(m.id)<0}).forEach(function(m){var o=el('option',null,maj(m.nom));o.value=m.id;s.appendChild(o)});
+  $('fActivite').hidden=s.options.length<2;if(focus&&$(focus))$(focus).focus()})
+}).catch(function(e){var z=$('activites');if(montrer&&z){z.hidden=false;$('actIndispo').hidden=false;$('actIndispo').textContent=e.message}})}
+if($('fActivite'))$('fActivite').onsubmit=function(e){e.preventDefault();var s=$('actAjout'),b=this.querySelector('button');if(!s.value){toast('Choisissez un métier.',true);s.focus();return}b.disabled=true;var nom=s.options[s.selectedIndex].text;
+ espaces('activite',{metier:s.value}).then(function(){b.disabled=false;toast(nom+' est ajoutée à vos activités. Elle n\'est montrée nulle part tant que vous ne cochez pas « Montrer sur ma Carte ».');chargerActivites(true,'actAjout')}).catch(function(err){b.disabled=false;toast(err.message,true)})};
+
+/* ---------- le + de ME (V1, P4) : chaque geste mène à sa place dans ME, et y met le focus ; rien ne s'enregistre sans le bouton ---------- */
+function versME(id){var cible=null,dit='';
+ if(id==='modifierCarte'){var d=$('mcModifier');if(d){d.open=true;cible=$('mcmNom')}else{cible=document.querySelector('#mcCorps input, #mcCorps button');dit='Créez ou enregistrez d\'abord votre Carte sur votre compte : vous pourrez ensuite la modifier ici.'}}
+ else if(id==='ajouterActivite'){var f=$('fActivite');if(f&&!f.hidden)cible=$('actAjout');else{cible=$('t-act');dit='Toutes les activités proposées sont déjà dans votre liste.'}}
+ else if(id==='partagerCarte'){var p=document.querySelector('#mcCorps .mc-partage');if(p)cible=p.querySelector('input, button, a');else{cible=document.querySelector('#mcCorps input, #mcCorps button');dit='Enregistrez d\'abord votre Carte sur votre compte pour pouvoir la partager.'}}
+ if(cible){if(!cible.hasAttribute('tabindex')&&/^H\d$/.test(cible.tagName))cible.setAttribute('tabindex','-1');cible.scrollIntoView({block:'center'});try{cible.focus({preventScroll:true})}catch(_){cible.focus()}}
+ if(dit)toast(dit)}
+if(!PROJETS)document.addEventListener('aime:dock-geste',function(e){var id=e.detail&&e.detail.id;if(id==='modifierCarte'||id==='ajouterActivite'||id==='partagerCarte'){e.preventDefault();versME(id)}})
 
 /* ma Carte (compte/carte-compte.js) : sur cet appareil et sur mon compte, avec mon accord ; sans le module, l'ancien avis local */
 function carteLocale(){var z=$('meCarte');if(!z)return;if(window.AIMECarteCompte){AIMECarteCompte.monter(z);return}var v=null;try{v=localStorage.getItem('aime-carte')}catch(_){v=null}z.hidden=!v}

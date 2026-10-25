@@ -82,6 +82,10 @@ var ACTIONS={
  invitationRecue:{nom:'J\'ai reçu une invitation',geste:'public'},
  /* le + de AI, une demande ouverte (compte/ai.js) : la confirmation suit, le serveur crée (POST /api/demandes { action: 'convertir' }) */
  projetDepuisDemande:{nom:'En faire un projet',geste:'public'},
+ /* le + de ME (V1, P4, critère 2.10) : modifier ma Carte, ajouter une activité, la partager (compte/compte.js les rend vivants) */
+ modifierCarte:{nom:'Modifier ma Carte',geste:'public'},
+ ajouterActivite:{nom:'Ajouter une activité',geste:'public'},
+ partagerCarte:{nom:'Partager ma Carte',geste:'public'},
  justificatif:{nom:'Déposer un justificatif',geste:'deposer'},
  ecrireProprietaire:{nom:'Écrire au propriétaire',geste:'repondre'},
  exporter:{nom:'Exporter',geste:'lire'},

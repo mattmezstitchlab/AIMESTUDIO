@@ -74,6 +74,33 @@ function visibilites(c) {
   };
   return f;
 }
+/* modifier ma Carte dans ME (V1, P4, critère 2.10) : quelques rubriques en texte ; chaque modification crée une version (carte.js),
+   va sur cet appareil (s'il a une copie) et sur le compte, sans toucher aux visibilités ni à la photo */
+var LISTES = { competences: 'Compétences', interets: 'Centres d\'intérêt', territoires: 'Territoires' };
+function modifier(c) {
+  var d = el('details', 'mc-modifier'); d.id = 'mcModifier'; var sm = el('summary', null, 'Modifier ma Carte'); d.appendChild(sm);
+  var f = el('form', 'pile'); d.appendChild(f);
+  function champ(id, lib, val, max, aide) {
+    var l = el('label', 'pile'); l.setAttribute('for', id); l.appendChild(el('span', null, lib)); var i = el('input'); i.id = id; i.maxLength = max; i.value = val || ''; l.appendChild(i);
+    if (aide) { var a = el('span', 'leg', aide); a.id = id + '-aide'; i.setAttribute('aria-describedby', a.id); l.appendChild(a); } f.appendChild(l); return i;
+  }
+  var nom = champ('mcmNom', 'Nom d\'affichage', c.nom, 80), it = champ('mcmIntention', 'Intention', c.intention, 200), L = {};
+  Object.keys(LISTES).forEach(function (k) {
+    var v = Array.isArray(c[k]) ? c[k] : []; if (v.some(function (x) { return typeof x !== 'string'; })) return;   /* une liste d'objets se modifie ailleurs : on n'y touche pas */
+    L[k] = champ('mcm-' + k, LISTES[k], v.join(', '), 600, 'Séparées par des virgules.');
+  });
+  var b = el('button', 'b b-p', 'Enregistrer les modifications'); b.type = 'submit'; f.appendChild(b);
+  f.appendChild(el('p', 'leg', 'Les visibilités ne changent pas : une rubrique privée le reste.'));
+  f.onsubmit = function (e) {
+    e.preventDefault(); if (!nom.value.trim()) { dire('Donnez un nom d\'affichage.', true); nom.focus(); return; }
+    var champs = { nom: nom.value.trim(), intention: it.value.trim() };
+    Object.keys(L).forEach(function (k) { champs[k] = L[k].value.split(',').map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 50); });
+    var jourIso = new Date().toISOString().slice(0, 10), n = K.modifier(c, champs, 'Modification dans ME', jourIso);
+    var loc = locale(); if (loc) poserLocale(K.modifier(loc, champs, 'Modification dans ME', jourIso));
+    enregistrer(n, compte.rev, b);
+  };
+  return d;
+}
 /* partager ma Carte par un lien (PR P2) : un seul lien actif, créé avec accord, coupé en un geste ; il ne montre que le « publique » */
 function partage(srv) {
   var z = el('section', 'pile mc-partage'); z.setAttribute('aria-labelledby', 'mcPartageT'); var h = el('h3', null, 'Partager ma Carte par un lien'); h.id = 'mcPartageT'; z.appendChild(h);
@@ -84,7 +111,7 @@ function partage(srv) {
     var url = location.origin + '/c/#' + compte.lien.jeton, lg = el('div', 'lgn mc-lien'), i = el('input'); i.readOnly = true; i.value = url; i.id = 'mcLien'; i.setAttribute('aria-label', 'Le lien public de ma Carte'); lg.appendChild(i);
     var cp = el('button', 'b b-s', 'Copier'); cp.type = 'button'; cp.onclick = function () { (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () { dire('Lien copié.'); }).catch(function () { i.select(); dire('Lien sélectionné : copiez-le.'); }); }; lg.appendChild(cp); z.appendChild(lg);
     var o = el('a', 'b b-s', 'Voir ce que le lien montre'); o.href = url; o.target = '_blank'; o.rel = 'noopener noreferrer'; z.appendChild(o);
-    z.appendChild(el('p', 'leg', 'Créé le ' + jour(compte.lien.cree_le) + ' · ouvert ' + compte.lien.ouvertures + ' fois. ' + (noms ? 'Il montre : ' + noms + '.' : 'Il ne montre rien pour l\'instant : aucune rubrique n\'est « publique ».')));
+    z.appendChild(el('p', 'leg', 'Créé le ' + jour(compte.lien.cree_le) + ' · ouvert ' + compte.lien.ouvertures + ' fois. ' + (noms ? 'Il montre : ' + noms + ', et les activités cochées « Montrer sur ma Carte ».' : 'Il ne montre aucune rubrique pour l\'instant (aucune n\'est « publique ») ; seulement les activités cochées « Montrer sur ma Carte ».')));
     z.appendChild(contact());
     var cou = el('button', 'b b-s', 'Couper le lien'); cou.type = 'button';
     cou.onclick = function () { if (occupe) return; occupe = true; cou.disabled = true; requete({ action: 'couper' }).then(function (r) { occupe = false; cou.disabled = false; if (r.statut === 200) { compte = r.j; afficher(); dire('Le lien est coupé : il ne mène plus à rien.'); } else dire((r.j && r.j.raison) || 'Impossible de couper le lien pour l\'instant.', true); }).catch(function () { occupe = false; cou.disabled = false; dire('Réseau indisponible : le lien n\'a pas été coupé.', true); }); };
@@ -157,11 +184,11 @@ function afficher() {
     C.appendChild(maj); C.appendChild(resume(srv, 'Sur votre compte'));
     var u = el('button', 'b b-p', 'Utiliser ma Carte sur cet appareil'); u.type = 'button';
     u.onclick = function () { if (poserLocale(srv)) { afficher(); dire('Votre Carte est maintenant aussi sur cet appareil.'); } else dire('Cet appareil refuse l\'enregistrement local (navigation privée ?).', true); };
-    C.appendChild(u); var v = visibilites(srv); if (v) C.appendChild(v); C.appendChild(partage(srv)); C.appendChild(retirer()); return;
+    C.appendChild(u); C.appendChild(modifier(srv)); var v = visibilites(srv); if (v) C.appendChild(v); C.appendChild(partage(srv)); C.appendChild(retirer()); return;
   }
   if (empreinte(loc) === empreinte(srv)) {
     C.appendChild(el('p', null, 'Votre Carte est à jour sur cet appareil et sur votre compte.'));
-    C.appendChild(maj); C.appendChild(resume(srv)); var v2 = visibilites(srv); if (v2) C.appendChild(v2); C.appendChild(partage(srv)); C.appendChild(retirer()); return;
+    C.appendChild(maj); C.appendChild(resume(srv)); C.appendChild(modifier(srv)); var v2 = visibilites(srv); if (v2) C.appendChild(v2); C.appendChild(partage(srv)); C.appendChild(retirer()); return;
   }
   /* deux versions différentes : on choisit, rien n'est fusionné */
   C.appendChild(el('p', null, 'Votre Carte n\'est pas la même sur cet appareil et sur votre compte. Choisissez la version à garder : l\'autre ne sera pas perdue (la version de cet appareil est sauvegardée avant d\'être remplacée).'));
