@@ -39,7 +39,7 @@ a{color:inherit}
 <link rel="stylesheet" href="/attente/attente.css">
 <link rel="stylesheet" href="/dock/dock.css">
 <link rel="stylesheet" href="/nav/pied-legal.css">
-<link rel="stylesheet" href="/accueil/vitrine.css?v=2">
+<link rel="stylesheet" href="/accueil/vitrine.css?v=3">
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
@@ -76,7 +76,7 @@ a{color:inherit}
   <form id="atBloc" class="at-bloc-f" novalidate>
    <p class="at-titre" id="atBlocT"><b>La bêta ouvre bientôt.</b> Soyez prévenu en premier.</p>
    <div class="js-champ"><label class="sr" for="atBlocEmail">Adresse e-mail</label><input id="atBlocEmail" type="email" name="email" autocomplete="email" inputmode="email" placeholder="vous@exemple.fr" required maxlength="254"><button type="submit">Me prévenir</button></div>
-   <label class="at-ok"><input type="checkbox" name="consentement"> <span>J'accepte de recevoir un e-mail à l'ouverture de la bêta.</span></label>
+   <label class="at-ok"><input type="checkbox" name="consentement"> <span>Recevoir l'e-mail d'ouverture de la bêta</span></label>
    <div class="piege" aria-hidden="true"><label for="atBlocSite">Ne pas remplir</label><input id="atBlocSite" name="site_web" tabindex="-1" autocomplete="off"></div>
    <p class="at-etat" role="status" aria-live="polite"></p>
   </form>
@@ -158,7 +158,7 @@ a{color:inherit}
     </div>
    </div>
   </div>
-  <p class="v-leg" style="text-align:center;margin:18px auto 0;font-size:14px;max-width:760px">Ici, les vraies règles d'accès, avec des données fictives. Dans un vrai projet, le serveur compose la page de chacun selon son rôle, à partir de la même source : ce qu'une place ne voit pas ne lui est jamais envoyé. L'Orbe, elle, explique les droits et propose les gestes.</p>
+  <p class="v-leg" style="text-align:center;margin:16px auto 0;font-size:14px;max-width:680px">Les vraies règles d'accès, avec des données fictives : le serveur compose la page de chacun selon son rôle, et ce qu'une place ne voit pas ne lui est jamais envoyé. L'Orbe, elle, explique les droits et propose les gestes.</p>
  </div>
 </section>
 
@@ -301,7 +301,7 @@ a{color:inherit}
 <script src="/projets/projets.js"></script>
 <script src="/compte/creer.js"></script>
 <script src="/accueil/liste.js"></script>
-<script src="/accueil/capsule.js?v=2"></script>
+<script src="/accueil/capsule.js?v=3"></script>
 <script src="/attente/attente.js"></script>
 <script>(function(){var f=document.getElementById('atBloc');if(f&&window.AIMEAttente)AIMEAttente.bloc(f)})();</script>
 <script src="/accueil/demo.js"></script>
@@ -311,8 +311,9 @@ a{color:inherit}
 <script src="/modules/radial/noyau.js"></script>
 <script src="/modules/temps/moteur.js"></script>
 <script src="/modules/temps/cercle.js"></script>
-<script src="/accueil/temps.js?v=2"></script>
-<script src="/accueil/vitrine.js?v=2"></script>
+<script src="/accueil/temps.js?v=3"></script>
+<script src="/accueil/vitrine.js?v=3"></script>
+<script src="/accueil/reveler.js?v=3"></script>
 <!-- la régie applique ses textes et son orbe ; la coque de l'OS ne recouvre la page que si ?coque=1 est demandé -->
 <script src="/regie/donnees.js"></script>
 <script src="/nav/registre.js"></script>

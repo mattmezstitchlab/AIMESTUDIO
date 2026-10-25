@@ -45,7 +45,8 @@ test('accueil : la capsule du haut porte « Je suis… » et le seul champ de la
   const b = haut.slice(i, haut.indexOf('</aside>', i));
   assert.match(texte(b), /La bêta ouvre bientôt\. Soyez prévenu en premier\./);
   assert.match(b, /<input id="atBlocEmail" type="email"[^>]*required/);
-  assert.match(b, /<input type="checkbox" name="consentement"> <span>J'accepte de recevoir un e-mail à l'ouverture de la bêta\.<\/span>/);
+  assert.match(b, /<input type="checkbox" name="consentement"> <span>Recevoir l'e-mail d'ouverture de la bêta<\/span>/, 'la capsule dit le consentement en une ligne courte');
+  assert.match(lire('beta/index.html'), /<span>J'accepte de recevoir un e-mail à l'ouverture de la bêta\.<\/span>/, 'la page /beta/ garde la phrase entière');
   assert.match(b, /name="site_web"/); assert.match(b, /href="\/beta\/"/);
   assert.match(s, /AIMEAttente\.bloc\(f\)/);
   assert.match(lire('attente/attente.js'), /place: choix\.value/);
