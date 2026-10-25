@@ -100,7 +100,7 @@ var FAMILLES={
  'Équipe':{lieux:['notifications','mapart','messages','calendrier'],plus:['tache','ecrire','deposer'],garde:'Aucun accès aux paiements par défaut.'},
  'Contributeur':{lieux:['notifications','mission','documents','messages'],plus:['deposer','retard','ecrireCoordination'],garde:'Effectifs seulement, jamais la liste nominative.'},
  'Destinataire':{lieux:['programme','mareponse','lieu','messages'],plus:['confirmer','ecrireOrganisateurs'],garde:'Ne voit que sa propre réponse ; aucun compteur de ce qui existe ailleurs.'},
- 'Public':{lieux:['coeur','exemples','compte'],plus:['creerProjet','invitationRecue'],garde:'Aucune donnée personnelle.',public:true},
+ 'Public':{lieux:['ai','me'],plus:['creerProjet','invitationRecue'],garde:'Aucune donnée personnelle.',public:true},   /* AI · + · ME partout (décision de Matt, 25/10/2026) : sans compte, AI et ME mènent à la connexion */
  'Public connecté':{lieux:['ai','me'],plus:['nouveauProjet','invitationRecue'],garde:'Aucune donnée d\'un projet hors du projet.',public:true},
  'Financeur':{lieux:['notifications','budgetfinance','justificatifs'],plus:['justificatif','ecrireProprietaire'],garde:'Voit des montants, pas les invités.'},
  'Contrôleur':{lieux:['controle','exports','journal'],plus:['exporter','demanderPiece'],garde:'Lecture seule ; affiche « accès jusqu\'au … ».'},

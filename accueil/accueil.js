@@ -30,7 +30,7 @@ $('acOui').addEventListener('click',function(){var b=this;b.disabled=true;
   var X=window.AIMETaxonomie,cat=X?X.categorie($('acCategorie').value):null,t=I.TYPES.filter(function(x){return x.id===$('acType').value})[0]||{id:'autre',modele:cat?cat.modele:'libre'};
   var l={texte:lecture?lecture.texte:'',type:t.id,modele:t.modele,titre:$('acTitre').value.trim()||'Mon projet',date:$('acDate').value,lieu:$('acLieu').value.trim(),invites:+$('acInvites').value||null,personnes:lecture?lecture.personnes:[],categorie:cat?cat.id:'autre',schemaType:cat?cat.schemaType:'Event',mode:lecture?lecture.mode:'Sur place',acces:$('acAcces').value};
   var p=P.versProjet(l),m=MODELES.filter(function(x){return x.id===t.modele})[0],s=P.versSite(p,S,m),r=D.enregistrer(p,s);
-  if(!r.ok){dire(r.raison);return}projet=r.projet;brancher(projet);dire('Projet « '+projet.titre+' » enregistré dans ce navigateur. Pour le partager, créez votre compte : « J\'ai un compte », dans le Dock.')})
+  if(!r.ok){dire(r.raison);return}projet=r.projet;brancher(projet);dire('Projet « '+projet.titre+' » enregistré dans ce navigateur. Pour le partager, créez votre compte : « ME », dans le Dock.')})
  .catch(function(){dire('La page n\'a pas pu être composée (connexion ?). Réessayez.')}).then(function(){b.disabled=false})});
 
 /* les démonstrations plus bas (regards, jour J, supports) lisent le projet de la personne, pas un exemple */
