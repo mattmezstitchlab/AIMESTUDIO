@@ -56,22 +56,25 @@ async function requete(db, sql, params) {
 function noterAbsence(e) { if (e && e.code === '42P01') tableAbsente = Date.now(); }
 const utilisable = db => !!db && Date.now() - tableAbsente > 60000;
 
-/* enregistrer une demande validée (valeurs de valider() dans api/contact.js).
+/* enregistrer une demande validée (valeurs de valider() dans api/contact.js) ; opts : { boite, cle, reponses: [{ libelle, type, valeur }] }.
    → { etat: 'nouvelle' | 'existante', id, cle, email_statut } | { etat: 'indisponible' } ; ne lève jamais. */
 async function enregistrer(db, v, emp, opts = {}) {
   if (!utilisable(db)) return { etat: 'indisponible' };
+  /* les réponses au formulaire personnel d'une Carte (V1, P5, migration 14) : seulement quand il y en a ; sinon la requête d'avant */
+  const rep = Array.isArray(opts.reponses) && opts.reponses.length > 0;
   try {
     const rows = await requete(db,
       `with d as (
-         insert into demandes (cle, boite, empreinte, type, prenom, nom, email, tel, adresse, livraison, message, consentement_le)
-         values ($1, $11, $2, $3, $4, $5, $6, nullif($7, ''), nullif($8, ''), nullif($9, '')::date, $10, now())
+         insert into demandes (cle, boite, empreinte, type, prenom, nom, email, tel, adresse, livraison, message, consentement_le${rep ? ', reponses' : ''})
+         values ($1, $11, $2, $3, $4, $5, $6, nullif($7, ''), nullif($8, ''), nullif($9, '')::date, $10, now()${rep ? ', $12::jsonb' : ''})
          on conflict (empreinte) do nothing
          returning id, cle, email_statut),
        j as (insert into demandes_journal (demande_id, quoi) select id, 'recue' from d)
        select id, cle, email_statut, true as nouvelle from d
        union all
        select id, cle, email_statut, false from demandes where empreinte = $2 and not exists (select 1 from d)`,
-      [opts.cle || nouvelleCle(), emp, v.projet, v.prenom, v.nom, v.email, v.tel || '', v.adresse || '', v.livraison || '', v.message, BOITE.test(String(opts.boite || '')) ? opts.boite : 'site']);
+      [opts.cle || nouvelleCle(), emp, v.projet, v.prenom, v.nom, v.email, v.tel || '', v.adresse || '', v.livraison || '', v.message, BOITE.test(String(opts.boite || '')) ? opts.boite : 'site']
+        .concat(rep ? [JSON.stringify(opts.reponses)] : []));
     const r = rows[0];
     if (!r) return { etat: 'indisponible' };
     purgerDeTempsEnTemps(db);
@@ -136,7 +139,7 @@ async function detail(db, boite, cle) {
   const r = rows[0]; if (!r) return null;
   const j = await requete(db, 'select quand, quoi, par, detail from demandes_journal where demande_id = $1 order by quand, id', [r.id]);
   return { id: Number(r.id), demande: { cle: r.cle, recue_le: r.recue_le, type: r.type, prenom: r.prenom, nom: r.nom, email: r.email, tel: r.tel, adresse: r.adresse,
-    livraison: r.livraison ? toISODate(r.livraison) : null, message: r.message, consentement_le: r.consentement_le, statut: r.statut, note: r.note,
+    livraison: r.livraison ? toISODate(r.livraison) : null, message: r.message, reponses: Array.isArray(r.reponses) ? r.reponses : null, consentement_le: r.consentement_le, statut: r.statut, note: r.note,
     email_statut: r.email_statut, email_tentatives: r.email_tentatives, email_dernier_essai: r.email_dernier_essai, email_envoye_le: r.email_envoye_le, email_code: r.email_code,
     derniere_activite: r.derniere_activite, conserver_jusqu_au: new Date(new Date(r.derniere_activite).setMonth(new Date(r.derniere_activite).getMonth() + conservationMois())).toISOString() },
     journal: j.map(x => ({ quand: x.quand, quoi: x.quoi, par: x.par, detail: x.detail })) };
