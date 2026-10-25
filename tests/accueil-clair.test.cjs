@@ -18,29 +18,33 @@ function contraste(a, b) {
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
 
-test("l'accueil allégé : trois téléphones d'abord (les concernés), les autres sur demande, et le film à part", () => {
+test("l'accueil : une seule page, cinq temps, un seul iPhone — ni vidéo, ni couleur d'accent en plus de l'orbe", () => {
   const z = lire('index.html'), css = lire('accueil/vitrine.css'), js = lire('accueil/vitrine.js');
-  assert.match(z, /<button type="button" class="v-btn2" id="vTelsTous" aria-pressed="false" aria-controls="vTels">/, 'un seul bouton pour ouvrir les autres écrans');
-  assert.match(css, /\.v-tels:not\(\.tous\) \.v-tel\.cache\{display:none\}/, 'les écrans non concernés sont masqués, pas grisés');
-  assert.match(js, /el\('li','v-tel'\+\(t\.on\?' allume':' eteint'\)\+\(t\.on\?'':' cache'\)\)/, 'la classe est posée sur ceux qui ne réagissent pas');
-  const surprise = V.telephones('surprise');
-  assert.equal(surprise.filter(t => t.on).length, 3, 'la surprise ne réveille que trois écrans');
-  assert.equal(surprise.length - surprise.filter(t => t.on).length, 4, 'quatre restent silencieux : c’est ce que dit le bouton');
   /* 25/10 (soir) : plus aucune vidéo de présentation — la page s'allège */
   assert.ok(!/<video|data-video|id="lecteur"/.test(z), 'aucune vidéo de présentation sur l’accueil');
   assert.ok(!/\.v-film|\.vg-b|\.lecteur/.test(css), 'ni leurs styles');
-  /* un chapeau, plus un slogan, au-dessus des trois cartes */
-  assert.match(z, /<h2 class="v-kick" id="tCap">Ce que le produit sait faire<\/h2>/);
-  assert.ok(!z.includes('Une architecture.'), 'le troisième slogan a disparu');
-  assert.ok(!z.includes('Créer. Relier. Transformer.'), 'les trois mots sous le manifeste aussi');
+  /* 25/10 (nuit) : cinq temps, un seul iPhone, un seul titre de niveau 1 */
+  assert.equal((z.match(/<article class="etape"/g) || []).length, 5, 'cinq temps exactement');
+  assert.equal((z.match(/class="v-p-scene"/g) || []).length, 1, 'un seul iPhone');
+  assert.equal((z.match(/<h1\b/g) || []).length, 1, 'un seul titre de niveau 1');
+  assert.ok(!/id="vTels"|id="mosaique"|id="v-rangs"/.test(z), 'les sept téléphones, le carrousel et les anciennes sections ont quitté la page');
+  /* chaque section dit ce que le téléphone doit montrer : le temps lu choisit l'écran */
+  for (const a of ['data-etape', 'data-place', 'data-niveau', 'data-onglet'])
+    assert.ok(z.includes(a), a + ' : la section déclare son écran');
+  assert.match(js, /getAttribute\('data-place'\)/, 'la place vient de la section');
+  assert.match(js, /getAttribute\('data-onglet'\)/, 'l’onglet aussi');
   /* une seule couleur d'accent : celle de l'orbe */
   assert.match(css, /--accent:#111114/, 'l’accent est défini une fois : le noir (25/10, le bleu-violet ne va pas)');
   assert.match(css, /\.clair \.bouton,\.v-btn\{[^}]*background:#111114/, 'les boutons principaux sont noirs (25/10 : le bleu-violet ne va pas)');
+  /* les données des sept places restent la source de la démonstration (telephones() est pur) */
+  const surprise = V.telephones('surprise');
+  assert.equal(surprise.filter(t => t.on).length, 3, 'la surprise ne réveille que trois écrans');
+  assert.equal(surprise.length - surprise.filter(t => t.on).length, 4, 'quatre restent silencieux');
 });
 
 test("l'iPhone de « Chacun son écran » : un fond par place, et le vrai cadran Circle (modules/temps/cercle.js)", () => {
   const z = lire('index.html'), css = lire('accueil/vitrine.css'), C = require('../modules/temps/cercle.js');
-  assert.match(z, /<div class="v-hero" id="vHero">/, 'un seul écran, plus le grand bloc vertical');
+  assert.match(z, /<div class="v-cinq-tele">[\s\S]*<div class="v-p-scene">/, 'un seul iPhone, et il reste en place pendant que le texte défile');
   assert.ok(!/v-fonds|data-fond/.test(z), 'plus de fond en couleur derrière l’écran (25/10, soir)');
   assert.match(z, /<svg class="v-p-cadran" id="vCercle"[^>]*role="group"/, 'le cadran de l iPhone est un groupe nommé (ses arcs sont les boutons)');
   /* 25/10 : le cadran est seul dans l'iPhone, plus de liste de moments en dessous */
@@ -57,7 +61,7 @@ test("l'iPhone de « Chacun son écran » : un fond par place, et le vrai cadran
   const bal = V.cadran('owner').moments.find(m => m.id === 'bal');
   assert.deepEqual([bal.debut, bal.fin, bal.dm, bal.fm], ['22:00', '01:00', 1320, 1500], 'le bal finit après minuit');
   assert.equal(V.cadran('guest').moments.length, 4, 'une place ne dessine que ce qu elle reçoit');
-  assert.match(lire('accueil/vitrine.js'), /r\.decaler&&etat\.planB\?'Revenir au jardin':'Il pleut : basculer en plan B'/, 'une place qui ne peut pas basculer ne lit pas « Revenir au jardin »');
+  assert.match(lire('accueil/vitrine.js'), /etat\.decale=a\.getAttribute\('data-decale'\)==='true'/, 'le changement se lit dans la section, pas dans un bouton');
   const js = lire('accueil/temps.js'), v = lire('accueil/vitrine.js');
   assert.match(v, /AIMETempsAccueil\.dessiner|root\.AIMETempsAccueil\.dessiner/, 'le même dessin que l aperçu public');
   /* le cadran n'est jamais recopié : il vient de AIMETempsAccueil.dessiner. Seules les icônes du Dock sont dessinées ici. */
@@ -104,12 +108,14 @@ test('les sept téléphones : un vrai écran par personne (mission, moments filt
   const invite = surprise.find(x => x.id === 'invite');
   assert.deepEqual(invite.moments.map(m => m.titre), ['Cérémonie', 'Cocktail'], 'l\'invité ne voit que ses moments publics');
   const js = lire('accueil/vitrine.js'), css = lire('accueil/vitrine.css'), z = lire('index.html');
-  assert.ok(!/\.aplat\b/.test(js), 'plus de carré de couleur vide dans les 7 téléphones');
-  for (const cls of ['vt-haut', 'vt-notif', 'vt-bloc', 'vt-moments']) assert.ok(js.includes(cls) && css.includes('.' + cls), cls + ' rendu et stylé');
-  /* le Dock est UN composant : AI | + | ME dans les sept téléphones comme dans l'iPhone du héros */
+  /* 25/10 (nuit) : la page ne dessine plus sept téléphones — un seul iPhone. Ce qui reste testé ici, c'est la donnée
+     des sept places (mission, moments filtrés, ce que chacune voit), pas leur mise en page. */
+  assert.ok(!/id="vTels"/.test(z), 'plus de grille de sept téléphones');
+  for (const cls of ['v-p-haut', 'v-p-page', 'v-p-liste']) assert.ok(z.includes(cls) || css.includes('.' + cls), cls + ' rendu et stylé');
+  /* le Dock est UN composant : AI | + | ME, dans l'iPhone comme partout ailleurs */
   assert.match(js, /function poserDocks\(\)/, 'un seul dessin de Dock');
   assert.match(js, /\['ai','AI'\],null,\['me','ME'\]/, 'AI, +, ME');
-  assert.ok((z.match(/class="v-p-dock"/g) || []).length >= 2, 'le Dock est dans les deux grands écrans');
+  assert.equal((z.match(/class="v-p-dock"/g) || []).length, 1, 'un seul Dock : celui de l’iPhone');
   /* le 25/10 : AI est le tableau de bord (le mois, puis la date ouverte en profondeur), le + choisit la place */
   const cal = V.calendrier(V.JOUR.annee, V.JOUR.mois);
   assert.equal(cal.cases.filter(Boolean).length, new Date(V.JOUR.annee, V.JOUR.mois + 1, 0).getDate(), 'le mois compte tous ses jours');
@@ -117,7 +123,7 @@ test('les sept téléphones : un vrai écran par personne (mission, moments filt
   assert.equal(cal.cases[0], null, 'la grille commence un lundi (cases vides avant le 1er)');
   for (const k of ['v-cal-jour', 'v-onglet', 'data-vue="programme"', 'data-vue="cercle"', 'data-vue="personnes"', 'id="vRetour"', 'id="vPersonnes"', 'id="vListe"'])
     assert.ok(z.includes(k) || css.includes('.' + k), 'le jour ouvert : ' + k);
-  assert.ok((z.match(/class="v-onglet"/g) || []).length >= 5, 'les onglets sont dans AI et dans le Temps');
+  assert.equal((z.match(/class="v-onglet"/g) || []).length, 3, 'trois onglets : Programme, Circle, Personnes');
   assert.match(js, /etat\.onglet/, 'l\'onglet actif commande le corps');
   assert.match(js, /data-ai="basculer"|ai==='basculer'/, 'AI ramène au calendrier');
   assert.match(js, /v-plus-i/, 'le + ouvre la liste des places');
@@ -126,21 +132,26 @@ test('les sept téléphones : un vrai écran par personne (mission, moments filt
   assert.ok(!/fetch\(/.test(js) && !/localStorage\.setItem/.test(js), 'la vitrine n\'écrit rien et n\'envoie rien');
 });
 
-test('l\'accueil : clair, dégradés francs, le manifeste, la mosaïque gardée, l\'agent dit « En préparation », aucune page /aime/', () => {
-  const z = lire('index.html'), css = lire('accueil/vitrine.css');
-  assert.match(z, /<body class="clair">/); assert.match(z, /id="vTels"/); assert.match(z, /href="\/exemples\/mosaique\/"/);
-  assert.match(z, /Agent <span class="v-pil"[^>]*>En préparation<\/span>/, 'rien n\'est simulé comme existant');
+test('l\'accueil : clair, lisible, aucune page /aime/ — les cinq temps et l\'inscription dans la page', () => {
+  const z = lire('index.html'), css = lire('accueil/vitrine.css'), js = lire('accueil/vitrine.js');
+  assert.match(z, /<body class="clair">/); assert.match(z, /<main id="haut">/);
+  assert.match(z, /id="ecrans"/); assert.match(z, /id="entree"/);
   assert.ok(!/href="\/aime\/"/.test(z), 'Le Monde AIME (cartes postales, cube) reste à part');
-  for (const sec of ['.clair .zero', '#ecrans', '#mosaique', '#capacites', '#temps', '#domaines', '#entree']) {
-    assert.ok(css.includes(sec), 'fond dégradé défini pour ' + sec);
-  }
-  assert.ok(!/\.v-tel\.eteint\{[^}]*opacity:/.test(css) && !/\.v-doms li\.venir\{[^}]*opacity:/.test(css), 'aucune baisse d\'opacité qui dégraderait le contraste AA');
+  for (const sec of ['#ecrans', '.v-cinq', '.etape', '#entree', '.v-inscrire']) assert.ok(css.includes(sec), 'mise en page définie pour ' + sec);
+  /* 25/10 : sur mobile, l'iPhone est collé en haut ; l'écran est réduit d'un bloc (échelle), jamais écrasé */
+  assert.match(css, /@media \(max-width:900px\)\{[\s\S]*\.v-cinq-tele\{--s:[\d.]+;position:sticky;top:0/, 'sur mobile, le téléphone colle en haut');
+  assert.match(css, /\.v-cinq-tele \.v-p-scene\{width:340px;flex:none;transform:scale\(var\(--s\)\)/, 'l’écran garde ses proportions : il est mis à l’échelle');
+  /* l'inscription est dans la page, et rien n'est envoyé sans le bouton */
+  assert.match(z, /<form id="vInscription"[^>]*novalidate/, 'le formulaire du cinquième temps');
+  assert.match(js, /AIMEAttente\.bloc\(f\)/, 'le même service que la capsule, pas un second serveur');
+  assert.ok(!/localStorage\.setItem/.test(js) && !/fetch\(/.test(js), 'la vitrine n\'écrit rien et n\'envoie rien elle-même');
 });
 
-test('l\'accueil remplace le carrousel coloré par le vrai aperçu du Temps : programme filtré et Circle', () => {
+test('l\'accueil montre le Temps dans l\'iPhone : le cadran du module, une seule fois, et la bonne vue', () => {
   const z = lire('index.html'), css = lire('accueil/vitrine.css'), A = require('../accueil/temps.js'), D = require('../modules/temps/demo-camille-gabriel.json');
-  const s = z.slice(z.indexOf('<!-- 5'), z.indexOf('<!-- 6'));
-  for (const t of ['Le Temps', 'Programme', 'Circle', 'Jour J', 'Retrouver le Temps dans AI', 'tempsDemoQui', 'tempsDemoSvg']) assert.ok(s.includes(t), t);
+  const s = z.slice(z.indexOf('id="ecrans"'), z.indexOf('</section>'));
+  for (const t of ['v-p-scene', 'v-p-cadran', 'Circle', 'Programme', 'Jour J']) assert.ok(s.includes(t), t);
+  assert.ok(!/tempsDemoSvg|tempsDemoQui/.test(z), 'l’ancien aperçu du Temps a quitté la page : le cadran vit dans l’iPhone');
   assert.ok(!s.includes('v-rangs') && !css.includes('.v-rangs'), 'plus de cartes colorées horizontales');
   assert.ok(z.indexOf('/live/modele.js') < z.indexOf('/modules/temps/moteur.js') && z.indexOf('/modules/temps/moteur.js') < z.indexOf('/accueil/temps.js'), 'les moteurs existants chargent avant l’aperçu');
   const invitee = A.preparer(D, 'emma'), proprietaire = A.preparer(D, 'camille');

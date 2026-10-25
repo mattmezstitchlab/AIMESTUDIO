@@ -6,12 +6,8 @@
   var d = document.documentElement;
   if (!('IntersectionObserver' in window)) return;
   if (d.classList.contains('calme') || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-  var CIBLES = ['#ecrans .v-titre', '#ecrans .v-hero', '#ecrans > .v-col > .v-leg',
-    '#mosaique .v-tete', '#mosaique .v-evts', '#mosaique .v-tels',
-    '#capacites .v-titre', '#capacites .v-cap',
-    '#temps .v-tete-temps', '#temps .v-temps-vitrine',
-    '#domaines .v-tete', '#domaines .v-doms > li',
-    '#entree > *'];
+  /* la page des cinq temps (25/10) : les titres et les sous-titres se posent, le téléphone reste en place */
+  var CIBLES = ['#ecrans .etape > h1', '#ecrans .etape > h2', '#ecrans .etape > p', '#entree > *'];
   var vus = [];
   CIBLES.forEach(function (s) {
     [].forEach.call(document.querySelectorAll(s), function (e, i) {

@@ -46,14 +46,17 @@ test('le Bureau devient « Mes projets » : connecté, on arrive sur /projets/ ;
   assert.ok(require('../dock/modele.js').composer({ famille: 'Public connecté' }).lieux.some(e => e.href === '/projets/'), 'connecté : Mes projets est un lieu du Dock');
 });
 
-test('l\'accueil met le Temps au premier plan : programme, Circle et accès AI ; l\'invitée n\'est pas témoin', () => {
+test('l\'accueil met le Temps au premier plan : le jour, le cercle et les personnes dans un seul iPhone ; l\'invitée n\'est pas témoin', () => {
   const z = lire('index.html'), c = lire('coeur/coeur.js'), m = lire('vitrine/scenarios/mariage.json');
   for (const t of [z, c, m]) { assert.ok(!/L'orbe recueille|L\\?'orbe compose/.test(t.replace(/\/\*[\s\S]*?\*\//g, ''))); }
-  assert.match(z, /le serveur compose la page de chacun selon son rôle/); assert.match(z, /L'Orbe, elle, explique les droits et propose les gestes/);
-  const p = z.slice(z.indexOf('<!-- 5'), z.indexOf('<!-- 6'));
-  for (const t of ['Le Temps', 'Programme', 'Circle', 'Jour J', 'Retrouver le Temps dans AI', 'vue filtrée ne reçoit pas les moments cachés']) assert.ok(p.includes(t), t);
-  assert.ok(!p.includes('v-rangs') && !lire('accueil/vitrine.css').includes('.v-rangs'), 'les cartes horizontales de couleurs ont été remplacées par l\'aperçu Temps');
-  assert.match(z, /id="domaines"[\s\S]*séminaire, une formation, une association[\s\S]*href="\/exemples\/"/);
+  const p = z.slice(z.indexOf('id="ecrans"'), z.indexOf('</section>'));
+  for (const t of ['Un projet.', 'Le jour J, dans l’ordre.', 'Le déroulé,', 'Le réel bouge.', 'Deux minutes,',
+    'Programme', 'Circle', 'Personnes', 'v-p-cadran', 'vInscription'])
+    assert.ok(p.includes(t), t);
+  assert.ok(!p.includes('v-rangs') && !lire('accueil/vitrine.css').includes('.v-rangs'), 'les cartes horizontales de couleurs ont quitté la page');
+  /* chaque temps dit ce qu'il montre : un seul téléphone, l'écran vient de la section lue */
+  assert.equal((p.match(/<article class="etape"/g) || []).length, 5, 'cinq temps');
+  assert.equal((p.match(/class="v-p-scene"/g) || []).length, 1, 'un seul iPhone');
   assert.ok(!/Témoin/.test(z) && !/"Témoin"/.test(m), 'Lucie est invitée, pas témoin');
   assert.match(z, /data-value="maries"[^>]*><span class="jl-pt" aria-hidden="true"><\/span><span class="jl-t">Futurs mariés<\/span>/, 'l\'accueil commence par « Je suis… » (PR C)');
 });

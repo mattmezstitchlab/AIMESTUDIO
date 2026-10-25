@@ -23,34 +23,28 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
   const ctx = {}, page = {};
   try {
-    /* 0. l'accueil public : l'aperçu du Temps se choisit et se zoome, sans compte et sans base */
-    console.log('Accueil : choisir un moment, zoomer, revenir');
+    /* 0. l'accueil public : le cadran vit dans l'iPhone des cinq temps ; on le lit, on le touche, sans compte et sans base */
+    console.log('Accueil : le cercle dans l’iPhone, un arc choisi, le détail annoncé');
     const ctxA = await b.newContext({ locale: 'fr-FR', viewport: { width: 1440, height: 900 } }), pa = await ctxA.newPage();
     await pa.goto(B + '/', { waitUntil: 'networkidle' });
-    await pa.waitForSelector('#tempsDemoMoments button', { timeout: 8000 });
-    ok((await pa.locator('#tempsDemoMoments button').count()) === 9, 'accueil : Camille voit 9 moments dans le Programme');
-    await pa.getByRole('button', { name: 'Circle', exact: true }).click();
-    await pa.waitForSelector('#tempsDemoSvg .v-td-arc');
-    ok((await pa.locator('#tempsDemoSvg .v-td-arc').count()) === 9, 'accueil : Circle dessine les 9 moments de la vue');
-    ok((await pa.locator('#tempsDemoMoments').isHidden()), 'accueil : en Circle, pas de liste sous le cadran');
-    await pa.locator('#tempsDemoSvg .v-td-arc[data-id="cocktail"]').focus(); await pa.keyboard.press('Enter');
-    await pa.waitForFunction(() => /Cadran restreint à 15:30 – 19:00/.test(document.querySelector('#tempsDemoLegende').textContent), null, { timeout: 5000 });
-    ok(true, 'accueil : choisir « Cocktail » resserre le cadran sur 15:30 – 19:00');
-    ok((await pa.locator('#tempsDemoSvg .v-td-arc[aria-pressed="true"]').count()) === 1, 'accueil : le cadran marque l’arc choisi (aria-pressed)');
-    ok(!(await pa.locator('#tempsDemoJour').isHidden()), 'accueil : « Revenir à la journée entière » apparaît');
-    ok(/Cocktail · 16:00 – 18:30/.test(await pa.locator('#tempsDemoDetail').innerText()), 'accueil : le détail annonce le moment choisi');
-    ok((await pa.locator('#tempsDemoSvg .v-td-arc').count()) < 9, 'accueil : le cadran zoomé ne montre que sa fenêtre');
-    await pa.locator('#tempsDemoJour').click();
-    await pa.waitForFunction(() => /journée de 24 heures/.test(document.querySelector('#tempsDemoSvgT').textContent), null, { timeout: 5000 });
-    ok((await pa.locator('#tempsDemoSvg .v-td-arc').count()) === 9 && await pa.locator('#tempsDemoJour').isHidden(), 'accueil : la journée entière revient, le bouton disparaît');
-    await pa.locator('#tempsDemoQui').selectOption('emma');
-    await pa.waitForFunction(() => document.querySelectorAll('#tempsDemoSvg .v-td-arc').length === 5, null, { timeout: 5000 });
-    const nomsA = await pa.locator('#tempsDemoSvg .v-td-arc').evaluateAll(ns => ns.map(n => n.getAttribute('aria-label')));
-    ok(!nomsA.some(n => /Installation des prestataires|Point coordination et traiteur|Set acoustique|Démontage/.test(n)), 'accueil (Emma) : seuls ses 5 moments sont proposés');
-    ok((await pa.locator('#tempsDemoSvg .v-td-arc').count()) === 5, 'accueil (Emma) : le cadran ne dessine que ses 5 moments');
+    await pa.waitForSelector('#vCercle .v-td-arc', { timeout: 8000 });
+    const allerTemps = async n => { await pa.evaluate(n => { const a = document.querySelectorAll('.etape')[n - 1]; window.scrollTo({ top: a.getBoundingClientRect().top + scrollY - innerHeight * 0.45, behavior: 'instant' }); }, n); await attendre(300); };
+    /* le troisième temps : le cercle, sur le cocktail */
+    await allerTemps(3);
+    await pa.waitForFunction(() => !document.getElementById('vVueCercle').hidden, null, { timeout: 5000 });
+    ok((await pa.locator('#vCercle .v-td-arc').count()) === 7, 'accueil : le couple voit 7 moments, donc 7 arcs');
+    ok((await pa.locator('#vCercle .v-td-arc[aria-pressed="true"]').count()) === 1, 'accueil : le cercle marque le moment choisi (aria-pressed)');
+    ok(/Cocktail · 16:00 – 18:30/.test(await pa.locator('#vCercleDit').innerText()), 'accueil : le détail annonce le moment choisi');
+    await pa.locator('#vCercle .v-td-arc[data-id="diner"]').focus(); await pa.keyboard.press('Enter');
+    await pa.waitForFunction(() => /Dîner · 18:30/.test(document.getElementById('vCercleDit').textContent), null, { timeout: 5000 });
+    ok(true, 'accueil : au clavier, Entrée choisit un autre arc et le détail suit');
+    /* le quatrième temps : l'invitée — le cadran ne dessine que ce qu'elle reçoit */
+    await allerTemps(4);
+    await pa.waitForFunction(() => /L’invitée/.test(document.getElementById('vVous').textContent), null, { timeout: 5000 });
+    ok((await pa.locator('#vCercle .v-td-arc').count()) === 4, 'accueil : l’invitée ne reçoit que ses 4 moments');
     await pa.addScriptTag({ content: AXE });
-    const vA = await pa.evaluate(async () => (await axe.run(document.querySelector('#temps'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ')'));
-    ok(!vA.length, 'accueil, la section Temps : ' + (vA.length ? vA.join(', ') : 'aucune anomalie bloquante'));
+    const vA = await pa.evaluate(async () => (await axe.run(document.querySelector('#vEtapes'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ')'));
+    ok(!vA.length, 'accueil, les cinq textes : ' + (vA.length ? vA.join(', ') : 'aucune anomalie bloquante'));
     await ctxA.close();
     /* 1. six vraies sessions, par lien magique (les liens sont écrits dans un fichier par le serveur de test) */
     for (const p of DEMO.personnes) {

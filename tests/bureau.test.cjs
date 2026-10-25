@@ -90,10 +90,11 @@ test('Studio : un seul fichier, chaque atelier garde son adresse',()=>{
  const ATS=st.match(/const ATELIERS=\{([^\n]*?)\};/);for(const a of A){assert.ok(ATS&&new RegExp('\\b'+a+':\\{').test(ATS[1]),a+' est un atelier connu du Studio');
   assert.ok(!fs.existsSync(R(a+'/index.html')),a+'/index.html : copie revenue');for(const s of ['/'+a,'/'+a+'/'])assert.ok(rw.some(r=>r.source===s&&r.destination==='/studio/'),s+' réécrit vers le Studio')}
  assert.ok(fs.existsSync(R('docs/BUREAU.md')),'les documents de /docs/ restent servis')});
-test('Accueil clair (25/10, validé par Matt) : de haut en bas, le titre, « Chacun son écran » sur les vraies règles, les téléphones, les capacités, le Temps, les domaines, l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8'),v=fs.readFileSync(R('accueil/vitrine.js'),'utf8');
- const ordre=['id="haut"','id="demo"','id="ecrans"','id="mosaique"','id="capacites"','id="temps"','id="domaines"','id="entree"','id="contact"'].map(s=>z.indexOf(s));
+test('Accueil clair (25/10, validé par Matt) : une seule page, cinq temps et un seul iPhone, les vraies règles, l\'entrée',()=>{const z=fs.readFileSync(R('index.html'),'utf8'),v=fs.readFileSync(R('accueil/vitrine.js'),'utf8');
+ const ordre=['id="haut"','id="ecrans"','id="temps"','id="entree"','id="contact"'].map(s=>z.indexOf(s));
  assert.ok(ordre.every((x,i)=>x>0&&(i===0||x>ordre[i-1])),'les chapitres se suivent de haut en bas');
- assert.match(z,/On ne peut pas tout être au même moment\.<\/span> Mais on peut être bien plus qu'une seule chose\./,'le manifeste sous AIME®');
+ assert.match(z,/<h1 id="tCinq">Un projet\.<br>Chacun son écran\.<\/h1>/,'le titre unique, dans le premier temps');
+ assert.equal((z.match(/<article class="etape"/g)||[]).length,5,'cinq temps, pas un de plus');
  assert.match(z,/Démonstration · données fictives/);assert.ok(!/href="\/synchroview\//.test(z),'SynchroView est réservé au propriétaire du site : l\'accueil n\'y renvoie pas');
  assert.ok(/P\.can\(s,'read',\{type:'event'/.test(v)&&/P\.can\(s,'edit',\{type:'event'\}\)/.test(v),'« Chacun son écran » : les vraies règles (synchroview/permissions.js)');assert.ok(!/localStorage\.setItem|fetch\(/.test(v),'rien n\'est écrit ni envoyé');
  assert.ok(z.indexOf('/synchroview/permissions.js')<z.indexOf('/accueil/vitrine.js')&&z.indexOf('/coeur/roles.js')<z.indexOf('/accueil/vitrine.js'),'les règles et les couleurs avant la vitrine');

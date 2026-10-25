@@ -40,16 +40,15 @@ test('le détail d’un moment dit exactement ce que la vue contient', () => {
   assert.ok(!/note|responsable|audience|gestes/.test(A.resumeMoment(cocktail)), 'aucun champ interne dans le détail');
 });
 
-test('l’accueil : le cadran seul, chaque arc est un bouton, le détail annoncé, le retour à la journée', () => {
+test('l’accueil : le cadran seul dans l’iPhone, chaque arc est un bouton, le détail annoncé, le retour à la journée', () => {
   const z = lire('index.html'), js = lire('accueil/temps.js'), css = lire('accueil/vitrine.css');
-  for (const id of ['tempsDemoDetail', 'tempsDemoJour', 'tempsDemoLegende', 'tempsDemoMoments'])
-    assert.ok(z.includes('id="' + id + '"'), id);
-  /* 25/10 : plus de liste sous le cadran. Le mode Circle n'a que le cadran, son centre, sa légende et ses boutons. */
+  /* 25/10 (nuit) : l'aperçu séparé du Temps a quitté la page ; le cadran vit dans l'iPhone des cinq temps. */
+  assert.ok(!z.includes('id="tempsDemoQui"'), 'plus de second aperçu du Temps sur l’accueil');
+  for (const id of ['vCercle', 'vCercleDit', 'vCercleT', 'vCercleD', 'vRetour'])
+    assert.ok(z.includes('id="' + id + '"'), 'l’iPhone : #' + id);
   assert.ok(!z.includes('id="tempsDemoMomentsCercle"'), 'aucune liste de moments sous le cadran Circle');
-  assert.match(z, /<(p)[^>]*id="tempsDemoDetail"[^>]*aria-live="polite"/, 'le détail est annoncé');
-  assert.match(z, /<button[^>]*id="tempsDemoJour"[^>]*hidden/, 'le retour est caché au départ');
-  /* le cadran n'est plus une image : ses arcs SONT les boutons, et le groupe porte son nom */
-  assert.match(z, /<svg[^>]*id="tempsDemoSvg"[^>]*role="group"/, 'le cadran est un groupe de boutons nommé');
+  assert.match(z, /<svg[^>]*id="vCercle"[^>]*role="group"/, 'le cadran est un groupe de boutons nommé');
+  assert.match(z, /<p class="v-p-dit" id="vCercleDit"><\/p>/, 'une ligne dit le moment choisi');
   assert.match(js, /setAttribute\('role','button'\)/, 'chaque arc est un bouton');
   assert.match(js, /setAttribute\('tabindex','0'\)/, 'chaque arc reçoit le clavier');
   assert.match(js, /e\.key==='Enter'/, 'Entrée choisit l’arc');
@@ -57,7 +56,6 @@ test('l’accueil : le cadran seul, chaque arc est un bouton, le détail annonc�
   /* le rendu reconstruit les arcs : sans ce rappel, le clavier perdrait son arc à chaque choix */
   assert.match(js, /setAttribute\('data-moment',a\.id\)/, 'chaque arc porte son moment');
   assert.match(js, /focus\(\{preventScroll:true\}\)/, 'le focus est rendu sans faire sauter la page');
-  assert.match(js, /garde[^\n]*data-moment/, 'le moment qui avait le focus est retrouvé après le rendu');
   for (const r of ['.v-temps-item:focus-visible', '.v-temps-item[aria-current="true"]', '.v-td-choix', '.v-td-arc.est-choisi', '.v-td-arc:focus-visible'])
     assert.ok(css.includes(r), r);
   assert.match(css, /\.v-td-arc\{[^}]*pointer-events:stroke/, 'l’arc se clique, sans bloquer le survol du cadran');

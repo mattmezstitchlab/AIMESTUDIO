@@ -84,7 +84,7 @@
     var focus = { email: function () { email.focus(); }, place: function () { choix.focus(); }, consentement: function () { consent.focus(); } };
     brancher(f, function () {
       if (!email.checkValidity() || !email.value.trim()) { dire(etat, MSG.email, true); email.focus(); return null; }
-      if (!choix || !choix.value) { dire(etat, 'Choisissez d\'abord votre place dans « Je suis… », juste au-dessus.', true); if (choix) { choix.scrollIntoView({ block: 'center' }); choix.focus({ preventScroll: true }); } return null; }
+      if (!choix || !choix.value) { dire(etat, 'Choisissez votre place dans « Je suis… », avant d\'envoyer.', true); if (choix) { choix.scrollIntoView({ block: 'center' }); choix.focus({ preventScroll: true }); } return null; }
       if (!consent.checked) { dire(etat, MSG.consentement, true); consent.focus(); return null; }
       return { email: adresse(f), place: choix.value, consentement: true, souhaits: [] };
     }, focus);

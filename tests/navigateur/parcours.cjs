@@ -226,35 +226,29 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     ok(/Moteurs/.test(await p.textContent('#mc-pan h2')), 'Cube Maître : au clavier, une face ouvre sa fiche');
     await p.goto(B + '/canevas/?maitre=sante&de=/maitre/', { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
     ok(/Cube Maître/.test(await p.textContent('.cv-titre')), 'Canevas : le Cube Maître s\'ouvre déplié');
-    // L'accueil clair (25/10) : « Un projet. Chacun son écran. » sur les vraies règles ; le réel bouge, chacun le sait
-    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#vCercle .v-td-arc'); await p.waitForTimeout(300);
-    /* le cadran est seul (25/10) : ce sont ses arcs qui disent ce que la place reçoit */
-    const nb = async () => p.evaluate(() => document.querySelectorAll('#vCercle .v-td-arc').length);
-    /* la place se choisit dans le + du Dock (le 25/10 : « le + c'est là qu'on sélectionne le mode de rôle ») */
-    const choisirPlace = async pl => { await p.click('#vHero .v-p-dk-plus'); await p.waitForSelector('#vHero .v-plus-i'); await p.click('#vHero .v-plus-i[data-place="' + pl + '"]'); await p.waitForTimeout(160); };
-    const vu = {}; for (const pl of ['owner', 'editor', 'contributor', 'guest']) { await choisirPlace(pl); vu[pl] = await nb(); }
-    ok(vu.owner === 7 && vu.editor === 7 && vu.contributor === 6 && vu.guest === 4, 'Accueil : chaque place reçoit sa page (7, 7, 6, 4 moments)');
-    ok(await p.evaluate(() => document.getElementById('vDecaler').disabled), 'Accueil : l\'invitée ne peut pas décaler');
-    await choisirPlace('editor'); await p.click('#vDecaler'); await p.click('#vPlanB'); await choisirPlace('guest'); await p.waitForTimeout(150);
-    /* toucher un arc dit le moment en toutes lettres sous le cadran : l'invitée voit l'horaire décalé et le plan B */
-    const lireArc = async id => p.evaluate(id => { const a = document.querySelector('#vCercle .v-td-arc[data-moment="' + id + '"]'); a.dispatchEvent(new MouseEvent('click', { bubbles: true })); return document.getElementById('vCercleDit').textContent; }, id);
-    const ditCocktail = await lireArc('cocktail'), ditCeremonie = await lireArc('ceremonie');
-    ok(/16:15/.test(ditCocktail) && /Orangerie/.test(ditCeremonie), 'Accueil : écrit une fois par la coordination, vu par l\'invitée (16:15, Orangerie)');
-    /* AI est le tableau de bord : le mois, la date du jour J, et le jour ouvert en profondeur avec ses onglets */
-    await p.click('#vHero .v-cal-jour'); await p.waitForTimeout(200);
-    ok(await p.evaluate(() => !document.getElementById('vVueJour').hidden && document.getElementById('vVueCalendrier').hidden), 'Accueil : une date du calendrier ouvre le jour en profondeur');
-    await p.click('#vHero .v-onglet[data-vue="programme"]'); await p.waitForTimeout(150);
-    ok(await p.evaluate(() => document.querySelectorAll('#vListe .v-p-m').length) === 4, 'Accueil : l\'onglet Programme liste ce que l\'invitée voit (4 moments)');
-    await p.click('#vHero .v-onglet[data-vue="personnes"]'); await p.waitForTimeout(150);
-    ok(await p.evaluate(() => document.querySelectorAll('#vPersonnes .v-p-pers').length) === 4, 'Accueil : l\'onglet Personnes dit qui est dans le jour');
-    await p.click('#vHero .v-onglet[data-vue="cercle"]'); await p.click('#vRetour'); await p.waitForTimeout(200);
-    ok(await p.evaluate(() => !document.getElementById('vVueCalendrier').hidden), 'Accueil : le retour ramène au mois');
-    await p.click('#vHero .v-cal-jour'); await p.waitForTimeout(200); await p.click('#vHero button.v-p-dk[aria-label^="AI"]'); await p.waitForTimeout(200);
-    ok(await p.evaluate(() => !document.getElementById('vVueCalendrier').hidden), 'Accueil : AI ramène au calendrier');
-    await p.click('#vHero .v-cal-jour'); await p.waitForTimeout(200);
-    await p.click('#vEvts [data-evt="surprise"]'); await p.waitForTimeout(150);
-    ok(await p.evaluate(() => document.querySelectorAll('#vTels .v-tel:not(.eteint)').length === 3 && document.querySelectorAll('#vTels .v-tel').length === 7), 'Accueil : sept téléphones, seuls les trois concernés s\'allument');
-    ok(!(await deborde()), 'Accueil (chacun son écran) : sans débordement horizontal');
+    // L'accueil clair (25/10, nuit) : une seule page, cinq temps, un seul iPhone qui change d'écran
+    await p.goto(B + '/', { waitUntil: 'networkidle' });
+    await p.waitForSelector('#vCercle .v-td-arc');
+    const etape = async n => { await p.evaluate(n => { const a = document.querySelectorAll('.etape')[n - 1]; window.scrollTo({ top: a.getBoundingClientRect().top + scrollY - innerHeight * 0.45, behavior: 'instant' }); }, n); await p.waitForTimeout(350); };
+    const etatIphone = () => p.evaluate(() => ({ n: document.getElementById('vEtape').textContent, cal: !document.getElementById('vVueCalendrier').hidden, jour: !document.getElementById('vVueJour').hidden, cercle: !document.getElementById('vVueCercle').hidden, pers: !document.getElementById('vVuePersonnes').hidden, qui: document.getElementById('vVous').textContent, liste: document.querySelectorAll('#vListe .v-p-m').length, gens: document.querySelectorAll('#vPersonnes .v-p-pers').length }));
+    ok(await p.evaluate(() => document.querySelectorAll('.etape').length === 5 && document.querySelectorAll('.v-p-scene').length === 1), 'Accueil : cinq temps, un seul iPhone');
+    await etape(1); let e = await etatIphone();
+    ok(e.n === '01' && e.cal && !e.jour, 'Accueil : le premier temps montre le mois dans l’iPhone');
+    await etape(2); e = await etatIphone();
+    ok(e.n === '02' && e.jour && !e.cal && e.liste === 7, 'Accueil : le deuxième temps ouvre le jour J, 7 moments pour le couple');
+    await etape(3); e = await etatIphone();
+    ok(e.n === '03' && e.cercle && /Cocktail · 16:00 – 18:30/.test(await p.evaluate(() => document.getElementById('vCercleDit').textContent)), 'Accueil : le troisième temps arrête le cercle sur le cocktail');
+    await etape(4); e = await etatIphone();
+    ok(e.n === '04' && /L’invitée/.test(e.qui) && e.liste === 4 && /16:15/.test(await p.evaluate(() => document.getElementById('vListe').textContent)), 'Accueil : le quatrième temps montre l’invitée, 4 moments, le cocktail à 16:15');
+    await etape(5); e = await etatIphone();
+    ok(e.n === '05' && e.pers && e.gens === 4, 'Accueil : le cinquième temps ouvre les personnes');
+    ok(await p.evaluate(async () => { const b = document.querySelector('#vInscription button'); b.scrollIntoView({ block: 'center', behavior: 'instant' }); await new Promise(r => requestAnimationFrame(r)); const d = document.querySelector('#dock-site .dock').getBoundingClientRect().top, r = b.getBoundingClientRect(); return r.height >= 44 && r.bottom <= d + 1; }), 'Accueil (1280) : « Me prévenir » garde 44 px et reste au-dessus du Dock');
+    /* la place se choisit dans le + du Dock : le téléphone suit, sans rien écrire */
+    await etape(2);
+    await p.click('.v-cinq-tele .v-p-dk-plus'); await p.waitForSelector('.v-cinq-tele .v-plus-i');
+    await p.click('.v-cinq-tele .v-plus-i[data-place="guest"]'); await p.waitForTimeout(250);
+    ok(await p.evaluate(() => document.getElementById('vVous').textContent === 'L’invitée' && document.querySelectorAll('#vListe .v-p-m').length === 4), 'Accueil : choisir l’invitée dans le + recompose l’écran (4 moments)');
+    ok(!(await deborde()), 'Accueil (cinq temps) : sans débordement horizontal');
     // Les exemples : la même mécanique avec six rôles (World), six écrans composés par le moteur
     await p.goto(B + '/exemples/?u=world', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(1200);
     ok((await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /Inès &amp; Théo|Inès & Théo/.test(document.body.textContent))))).filter(Boolean).length === 6, 'Exemples : six écrans composés depuis la même source (World)');

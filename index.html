@@ -85,211 +85,85 @@ a{color:inherit}
  </div>
 </header>
 
-<main>
-<!-- 1 · le titre, le manifeste, puis « Je suis… », la démonstration et la liste d'attente (les vidéos sont retirées, 25/10) -->
-<section class="zero" id="haut" aria-labelledby="t-zero">
- <span class="v-orbe" aria-hidden="true"><i></i><b></b></span>
- <div class="col">
-  <h1 id="t-zero">AIME<sup>®</sup></h1>
-  <p class="intention" data-regie="intention"><span class="gris">On ne peut pas tout être au même moment.</span> Mais on peut être bien plus qu'une seule chose.</p>
- </div>
- <!-- la démo : les téléphones du mariage, le rôle choisi au centre (accueil/demo.js, vitrine/metiers.json) -->
- <section class="dm" id="demo" hidden aria-labelledby="dmTete">
-  <p class="dm-tete" id="dmTete"></p>
-  <div class="dm-bande" tabindex="0" role="region" aria-label="Les téléphones de la démonstration ; faites défiler"><ul class="dm-tels"></ul></div>
-  <p class="dm-etat" id="dmEtat" aria-live="polite"></p>
-  <div class="dm-ctrl"><button type="button" class="dm-go" id="dmGo">Activer la démo</button><button type="button" class="dm-son" id="dmSon" aria-pressed="false" hidden>Couper le son</button></div>
-  <p class="dm-note">Démonstration · données fictives (Léa &amp; Marc). Rien n'est enregistré ni envoyé.</p>
-  <div class="js-suite" id="jsSuite"></div>
-  <form class="js-lien" id="jsLien" hidden novalidate>
-   <p id="jsLienT"></p>
-   <div class="js-champ"><label class="sr" for="jsEmail">Adresse e-mail</label><input id="jsEmail" type="email" autocomplete="email" placeholder="vous@exemple.fr" required><button type="submit">Recevoir le lien</button></div>
-   <p class="js-envoye" id="jsEnvoye" role="status" hidden></p>
-   <p class="js-legal">Pas de mot de passe. Votre adresse sert à faire fonctionner votre compte. <a href="/confidentialite/">Confidentialité</a></p>
-  </form>
-  <p class="vivant" id="jsVivant" role="status" aria-live="polite"></p>
- </section>
-</section>
-
-<!-- 2 · Un projet. Chacun son écran. Le produit en héros, sur les vraies règles (accueil/vitrine.js : synchroview/permissions.js, coeur/roles.js) -->
-<section class="v-sec" id="ecrans" aria-labelledby="tEcrans" style="padding-top:48px">
+<main id="haut">
+<!-- la page tient en cinq temps : un seul iPhone, qui reste en place, et cinq titres qui défilent.
+     Chaque temps choisit l'écran du téléphone ; les règles sont celles de synchroview/permissions.js, rien n'est envoyé. -->
+<section class="v-sec v-cinq-sec" id="ecrans" aria-labelledby="tCinq">
  <div class="v-col">
-  <h2 class="v-titre" id="tEcrans"><span class="gris">Un projet.</span> Chacun son écran.</h2>
-  <!-- un seul iPhone, écran blanc : la page se compose pour la place choisie, et le cadran est celui du module Temps
-       (modules/temps/cercle.js, dessiné par accueil/temps.js). Rien n'est envoyé : les règles sont celles de synchroview/permissions.js. -->
-  <div class="v-hero" id="vHero">
-   <div class="v-p-scene">
-    <div class="v-p-cadre">
-     <div class="v-p-ecran">
-      <div class="v-p-haut"><span class="v-p-heure">9:41</span><span class="v-p-prj"><span class="v-pt" id="vVousPt" aria-hidden="true"></span>Mariage Camille &amp; Gabriel</span><span class="v-p-ondes" aria-hidden="true"></span></div>
-      <div class="v-p-page" aria-live="polite">
-       <div class="v-page-t"><button type="button" class="v-retour" id="vRetour" aria-label="Revenir au calendrier">‹</button><p style="margin:0;flex:1;min-width:0"><span class="v-k" id="vPageK">AI · ce qui est prévu</span><span class="d" id="vVous">Le couple</span></p><span class="v-pil" id="vNb"></span></div>
-       <!-- AI, le tableau de bord : le mois, et le jour J qu'on ouvre -->
-       <div class="v-p-cal" id="vVueCalendrier">
-        <p class="v-cal-tete"><b id="vCalTitre">Juin 2027</b><span>1 date</span></p>
-        <div class="v-cal-j" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-        <div class="v-cal-grille" id="vCal" role="group" aria-label="Les dates du mois"></div>
-        <p class="v-cal-leg">Tout ce qui est prévu, jour par jour. Une date pleine s’ouvre.</p>
-        <p class="v-cal-suite"><span id="vCalQuand"></span><button type="button" class="v-ouvrir" id="vOuvrir">Ouvrir le jour ›</button></p>
-       </div>
-       <!-- la date ouverte : le jour en profondeur, et ses onglets -->
-       <div class="v-p-jour" id="vVueJour" hidden>
-        <div class="v-onglets" role="group" aria-label="Vues du jour">
-         <button type="button" class="v-onglet" data-vue="programme" aria-pressed="false">Programme</button>
-         <button type="button" class="v-onglet" data-vue="cercle" aria-pressed="true">Circle</button>
-         <button type="button" class="v-onglet" data-vue="personnes" aria-pressed="false">Personnes</button>
-        </div>
-        <figure class="v-p-cadran-figure" id="vVueCercle">
-         <svg class="v-p-cadran" id="vCercle" viewBox="0 0 1000 1000" role="group" aria-labelledby="vCercleT vCercleD"><title id="vCercleT">Circle · journée de 24 heures</title><desc id="vCercleD">Le programme de cette place sur le cadran du module Temps.</desc></svg>
-         <p class="v-p-dit" id="vCercleDit"></p>
-        </figure>
-        <div class="v-p-liste-boite" id="vVueProgramme" hidden><ol class="v-p-liste" id="vListe"></ol></div>
-        <div class="v-p-personnes-boite" id="vVuePersonnes" hidden><ul class="v-p-personnes" id="vPersonnes"></ul></div>
-        <p class="v-p-cache" id="vCache"></p>
-       </div>
-      </div>
-      <div class="v-p-dock" data-plus="places" data-ai="basculer" role="group" aria-label="Dock"></div>
-     </div>
-    </div>
-   </div>
-   <div class="v-hero-reglages">
-    <p class="v-k">Place</p>
-    <p class="v-place-actuelle" id="vPlaces" role="status"></p>
-    <p class="v-leg-s">Le + du Dock change de place : AI, Programme et Circle se recomposent.</p>
-    <p class="v-k">Ce que cette place peut faire</p>
-    <ul class="v-gestes" id="vGestes"></ul>
-    <div class="v-reel">
-     <p class="v-k">Le réel bouge</p>
-     <button type="button" class="v-btn2" id="vDecaler" aria-pressed="false">Décaler le cocktail de 15 min</button>
-     <button type="button" class="v-btn2" id="vPlanB" aria-pressed="false">Il pleut : basculer en plan B</button>
-     <p class="v-dit" id="vReelDit" role="status"></p>
-    </div>
-   </div>
-  </div>
-  <p class="v-leg" style="text-align:center;margin:16px auto 0;font-size:14px;max-width:680px">Les vraies règles d'accès, avec des données fictives : le serveur compose la page de chacun selon son rôle, et ce qu'une place ne voit pas ne lui est jamais envoyé. L'Orbe, elle, explique les droits et propose les gestes.</p>
- </div>
-</section>
-
-<!-- 3 · les sept téléphones (la mosaïque, gardée) : seuls les écrans concernés s'allument -->
-<section class="v-sec v-alt" id="mosaique" aria-labelledby="tMosa">
- <div class="v-col">
-  <div class="v-tete"><h2 id="tMosa">Le réel bouge,<br>chacun le sait.</h2><p class="v-leg">Sept personnes, sept téléphones, un seul mariage. Quand quelque chose arrive, seuls les écrans concernés s'allument. Choisissez ce qui arrive : les autres restent silencieux.</p></div>
-  <div class="v-evts" id="vEvts" role="group" aria-label="Ce qui arrive"></div>
-  <ul class="v-tels" id="vTels" aria-live="polite"></ul>
-  <div class="v-tels-ctrl"><button type="button" class="v-btn2" id="vTelsTous" aria-pressed="false" aria-controls="vTels">Voir les sept téléphones</button></div>
-  <p class="v-leg" style="margin-top:22px;font-size:14px"><a href="/exemples/mosaique/">Voir la mosaïque en grand</a></p>
- </div>
-</section>
-
-<!-- 4 · une capacité par carte, chacune vivante -->
-<section class="v-sec" id="capacites" aria-labelledby="tCap" style="padding-bottom:40px">
- <div class="v-col v-caps">
-  <h2 class="v-kick" id="tCap">Ce que le produit sait faire</h2>
-  <article class="v-carte v-cap ambre" aria-labelledby="tEng">
-   <div><p class="v-k">Engagements</p><h3 id="tEng">Qui doit quoi,<br>pour quand.</h3><p class="v-leg">Une promesse datée entre deux personnes du projet. Seules elles, et l'organisation, la voient. Le retard est dit en toutes lettres.</p></div>
-   <div>
-    <div class="v-eng"><span class="v-pt" style="--pt:#F59E0B" aria-hidden="true"></span><div><p><b>Envoyer la playlist du bal</b></p><p class="q">Le DJ envers le couple · échéance le 1er juin</p></div><span class="v-pil" style="background:#F1EEFF;border-color:#F1EEFF">En attente de réponse</span><button type="button" class="v-btn" style="min-height:40px;padding:0 16px" data-eng="propose">Accepter</button></div>
-    <div class="v-eng"><span class="v-pt" style="--pt:#6D4AFF" aria-hidden="true"></span><div><p><b>Confirmer le nombre de couverts</b></p><p class="q">La coordination envers le traiteur · échéance le 20 mai</p></div><span class="v-pil" style="background:#FFF6E5;border-color:#FFF6E5">En cours</span><button type="button" class="v-btn" style="min-height:40px;padding:0 16px" data-eng="accepte">Marquer comme tenu</button></div>
-    <div class="v-eng"><span class="v-pt" style="--pt:#FB7185" aria-hidden="true"></span><div><p><b>Envoyer les faire-part</b></p><p class="q">Le couple envers l'organisation · échéance le 2 mars</p></div><span class="v-pil" style="background:#FFE4E8;border-color:#FFE4E8">En retard</span></div>
-   </div>
-  </article>
-  <article class="v-carte v-cap violet" aria-labelledby="tCarte">
-   <div><p class="v-k">ME · ma Carte</p><h3 id="tCarte">Votre Carte reçoit.<br>Vous décidez.</h3><p class="v-leg">Un lien que vous pouvez couper à tout moment. Vos questions, posées à qui vous écrit. Sa demande arrive dans votre AI, avec ses réponses. Votre adresse n'est jamais montrée.</p></div>
-   <div>
-    <form class="v-form" aria-label="Écrire à une Carte (démonstration)" onsubmit="return false">
-     <p class="d" style="margin:0;font-size:22px">Écrire à Matt</p>
-     <label for="vqDate">Date de l'événement<input id="vqDate" type="text" value="12/06/2027"></label>
-     <label for="vqFormule">Formule<select id="vqFormule"><option>Cérémonie</option><option>Cocktail</option><option selected>Soirée</option></select></label>
-     <label for="vqMsg">Votre message<textarea id="vqMsg" rows="3">Bonjour, seriez-vous libre pour jouer le 12 juin ?</textarea></label>
-     <button type="button" class="v-btn" id="vEnvoyer">Envoyer</button>
-     <p id="vEnvoiDit" role="status" style="margin:0;font-size:13px;color:var(--faint)">Démonstration : rien n'est envoyé.</p>
-    </form>
-   </div>
-  </article>
-  <article class="v-carte v-cap cyan" aria-labelledby="tAgent">
-   <div><p class="v-k" style="display:flex;align-items:center;gap:10px">Agent <span class="v-pil" style="letter-spacing:0;text-transform:none">En préparation</span></p><h3 id="tAgent">Votre agent.<br>Dans vos projets.</h3><p class="v-leg">Demandez en une phrase. L'agent fait les gestes un par un, avec les mêmes règles que vous : il ne peut rien de plus que vous, et chaque geste s'inscrit au journal.</p></div>
-   <div>
-    <div class="v-agent"><p style="font-size:12.5px;color:var(--faint);margin-bottom:8px">Vous</p><p class="v-mono" style="font-size:16px;line-height:1.55">Crée le projet depuis la demande de Sacha, invite le DJ et demande-lui la playlist avant le 1er juin.</p>
-     <ul class="v-etapes" id="vEtapes"><li class="v-pil v-mono"><span>·</span> créer le projet</li><li class="v-pil v-mono"><span>·</span> inviter le DJ</li><li class="v-pil v-mono"><span>·</span> demander l'engagement</li><li class="v-pil v-mono"><span>·</span> inscrire au journal</li></ul></div>
-    <p style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button type="button" class="v-btn2" id="vAgent">Montrer les étapes</button><span style="font-size:13.5px;color:var(--faint)">Une démonstration : l'agent n'est pas encore branché.</span></p>
-   </div>
-  </article>
- </div>
-</section>
-
-<!-- 5 · Le Temps quitte les coulisses : Programme et Circle, sur les données d'exemple du module -->
-<section class="v-sec" id="temps" aria-labelledby="tTemps" style="padding-top:56px">
- <div class="v-col">
-  <div class="v-tete v-tete-temps">
-   <div><p class="v-k">Le Temps · Programme et Circle</p><h2 id="tTemps">Le déroulé, en un cercle.</h2></div>
-   <p class="v-leg">La liste pour le détail, le cercle pour comprendre d'un regard. Les horaires sont ceux du Jour J : aucune date n'est ajoutée à la démonstration.</p>
-  </div>
-  <div class="v-temps-vitrine">
-   <div class="v-temps-produit">
-    <div class="v-p-scene v-temps-scene">
+  <div class="v-cinq">
+   <div class="v-cinq-tele">
+    <div class="v-p-scene">
      <div class="v-p-cadre">
       <div class="v-p-ecran">
-       <div class="v-p-haut"><span class="v-p-heure">9:41</span><span class="v-p-prj"><span class="v-pt" aria-hidden="true" style="--pt:#6D4AFF"></span>Mariage Camille &amp; Gabriel</span><span class="v-p-ondes" aria-hidden="true"></span></div>
-       <div class="v-temps-page">
-        <p class="v-temps-jour">Jour J</p>
-        <div class="v-onglets" role="group" aria-label="Vues du jour">
-         <button type="button" class="v-onglet" data-temps-mode="liste" aria-pressed="false" disabled>Programme</button>
-         <button type="button" class="v-onglet" data-temps-mode="cercle" aria-pressed="true" disabled>Circle</button>
+       <div class="v-p-haut"><span class="v-p-heure">9:41</span><span class="v-p-prj"><span class="v-pt" id="vVousPt" aria-hidden="true"></span>Mariage Camille &amp; Gabriel</span><span class="v-p-ondes" aria-hidden="true"></span></div>
+       <div class="v-p-page" aria-live="polite">
+        <div class="v-page-t"><button type="button" class="v-retour" id="vRetour" aria-label="Revenir au calendrier">‹</button><p style="margin:0;flex:1;min-width:0"><span class="v-k" id="vPageK">Jour J</span><span class="d" id="vVous">Le couple</span></p><span class="v-pil" id="vNb"></span></div>
+        <!-- AI, le tableau de bord : le mois, et le jour J qu'on ouvre -->
+        <div class="v-p-cal" id="vVueCalendrier">
+         <p class="v-cal-tete"><b id="vCalTitre">Juin 2027</b><span>1 date</span></p>
+         <div class="v-cal-j" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+         <div class="v-cal-grille" id="vCal" role="group" aria-label="Les dates du mois"></div>
+         <p class="v-cal-suite"><span id="vCalQuand"></span><button type="button" class="v-ouvrir" id="vOuvrir">Ouvrir le jour ›</button></p>
         </div>
-        <section class="v-temps-vue" id="tempsDemoListe" aria-label="Programme en liste">
-         <ol class="v-temps-liste" id="tempsDemoMoments"></ol>
-        </section>
-        <section class="v-temps-vue" id="tempsDemoCercle" aria-label="Programme sur le cadran Circle" hidden>
-         <figure class="v-temps-figure">
-          <svg class="v-temps-cadran" id="tempsDemoSvg" viewBox="0 0 1000 1000" role="group" aria-labelledby="tempsDemoSvgT tempsDemoSvgD">
-           <title id="tempsDemoSvgT">Circle · journée de 24 heures</title>
-           <desc id="tempsDemoSvgD">Le cadran du programme sera affiché ici.</desc>
-          </svg>
-          <p class="v-temps-detail" id="tempsDemoDetail" role="status" aria-live="polite">Rien n’est choisi : le cadran montre la journée entière.</p>
-          <button type="button" class="v-temps-jourbtn" id="tempsDemoJour" hidden>Revenir à la journée entière</button>
-          <figcaption id="tempsDemoLegende">Touchez un arc (ou Tab puis Entrée) : le cadran s’arrête dessus.</figcaption>
+        <!-- la date ouverte : le jour en profondeur, et ses onglets -->
+        <div class="v-p-jour" id="vVueJour" hidden>
+         <div class="v-onglets" role="group" aria-label="Vues du jour">
+          <button type="button" class="v-onglet" data-vue="programme" aria-pressed="true">Programme</button>
+          <button type="button" class="v-onglet" data-vue="cercle" aria-pressed="false">Circle</button>
+          <button type="button" class="v-onglet" data-vue="personnes" aria-pressed="false">Personnes</button>
+         </div>
+         <!-- « tout ce qui est prévu » d'abord : la liste du jour ; le cercle est l'autre vue, on y entre par un moment -->
+         <div class="v-p-liste-boite" id="vVueProgramme"><ol class="v-p-liste" id="vListe"></ol></div>
+         <figure class="v-p-cadran-figure" id="vVueCercle" hidden>
+          <svg class="v-p-cadran" id="vCercle" viewBox="0 0 1000 1000" role="group" aria-labelledby="vCercleT vCercleD"><title id="vCercleT">Circle · journée de 24 heures</title><desc id="vCercleD">Le programme de cette place sur le cadran du module Temps.</desc></svg>
+          <p class="v-p-dit" id="vCercleDit"></p>
          </figure>
-        </section>
+         <div class="v-p-personnes-boite" id="vVuePersonnes" hidden><ul class="v-p-personnes" id="vPersonnes"></ul></div>
+         <p class="v-p-cache" id="vCache"></p>
+        </div>
        </div>
-       <div class="v-p-dock" data-plus="personnes" role="group" aria-label="Dock"></div>
+       <div class="v-p-dock" data-plus="places" data-ai="basculer" role="group" aria-label="Dock"></div>
       </div>
      </div>
     </div>
-    <select id="tempsDemoQui" hidden aria-label="Place de la démonstration"><option>Chargement…</option></select>
-    <p class="v-temps-etat" id="tempsDemoEtat" role="status" aria-live="polite">La démonstration utilise les règles de visibilité du module Temps.</p>
+    <p class="v-cinq-jauge"><span id="vEtape">01</span><span class="v-cinq-sur">/ 05</span><span id="vEtapeNom">Le mois</span></p>
+    <p class="v-cinq-note">Démonstration · données fictives, rien n’est envoyé.</p>
    </div>
-   <aside class="v-temps-explication" aria-labelledby="tempsExplicationT">
-    <p class="v-k">Le même Temps, deux repères</p>
-    <h3 id="tempsExplicationT">Programme ou Circle.</h3>
-    <p class="v-leg">La liste détaille, Circle situe. Une journée, des moments, un cercle : comme une montre, on comprend sans lire. Choisissez un moment : son arc s'entoure et le cadran se resserre sur son heure ; « Revenir à la journée entière » rend les 24 heures. Une vue filtrée ne reçoit pas les moments cachés.</p>
-    <p class="v-temps-note">Cet aperçu est fictif et sans date : il montre les horaires du Jour J. Dans AI, retrouvez les programmes actifs de vos projets et ouvrez directement leur page Temps.</p>
-    <div class="v-temps-liens"><a class="v-btn" href="/projets/">Retrouver le Temps dans AI</a><a class="v-btn2" href="#ecrans">Voir comment les accès s'appliquent</a></div>
-   </aside>
+   <div class="v-cinq-texte" id="vEtapes">
+    <article class="etape" data-etape="1" data-nom="Le mois" data-place="owner" data-niveau="calendrier">
+     <h1 id="tCinq">Un projet.<br>Chacun son écran.</h1>
+     <p>Le même mariage, vu depuis la place du couple, de la coordination, du DJ ou de l’invitée. Ce qu’une place ne voit pas ne lui est jamais envoyé.</p>
+    </article>
+    <article class="etape" data-etape="2" data-nom="Le jour J" data-place="owner" data-niveau="jour" data-onglet="programme">
+     <h2>Le jour J, dans l’ordre.</h2>
+     <p>Les moments, leurs heures, leurs lieux. Une ligne, et on sait tout : 15:00 la cérémonie, 16:00 le cocktail, 22:00 le bal.</p>
+    </article>
+    <article class="etape" id="temps" data-etape="3" data-nom="Le cercle" data-place="owner" data-niveau="jour" data-onglet="cercle" data-choisi="cocktail">
+     <h2>Le déroulé,<br>en un cercle.</h2>
+     <p>24 heures, un arc par moment. Touchez un arc : le cercle s’arrête dessus, et le reste du jour s’efface.</p>
+    </article>
+    <article class="etape" data-etape="4" data-nom="Le changement" data-place="guest" data-niveau="jour" data-onglet="programme" data-decale="true">
+     <h2>Le réel bouge.<br>Chacun le sait.</h2>
+     <p>Un retard, la pluie, une salle : l’écran concerné change à l’instant. L’invitée lit 16:15, et rien des trois moments qui ne la concernent pas.</p>
+    </article>
+    <article class="etape" data-etape="5" data-nom="Votre projet" data-place="owner" data-niveau="jour" data-onglet="personnes">
+     <h2>Deux minutes,<br>et c’est parti.</h2>
+     <p>Laissez votre adresse : nous vous écrivons à l’ouverture de la bêta. Pas de carte, pas de mot de passe.</p>
+     <div class="v-inscrire" id="entree">
+      <form id="vInscription" class="v-inscrire-f" novalidate>
+       <label class="sr" for="vInscrireEmail">Votre adresse e-mail</label>
+       <div class="v-inscrire-l"><input id="vInscrireEmail" type="email" name="email" autocomplete="email" inputmode="email" placeholder="vous@exemple.fr" required maxlength="254"><button type="submit">Me prévenir</button></div>
+       <label class="v-inscrire-c"><input type="checkbox" name="consentement"> <span>Recevoir l’e-mail d’ouverture de la bêta</span></label>
+       <div class="piege" aria-hidden="true"><label for="vInscrireSite">Ne pas remplir</label><input id="vInscrireSite" name="site_web" tabindex="-1" autocomplete="off"></div>
+       <p class="at-etat" id="vInscrireEtat" role="status" aria-live="polite"></p>
+      </form>
+     </div>
+    </article>
+   </div>
   </div>
  </div>
 </section>
-
-<!-- 6 · pas seulement un mariage (sans simuler ce qui n'existe pas) -->
-<section class="v-sec v-alt" id="domaines" aria-labelledby="tDom">
- <div class="v-col">
-  <div class="v-tete"><h2 id="tDom">Pas seulement un mariage.</h2><p class="v-leg">La même architecture sert d'autres moments de vie : un séminaire, une formation, une association. Chacun garde ses places, ses règles et son programme.</p></div>
-  <ul class="v-doms">
-   <li class="v-carte"><span class="v-pil" style="background:#E7F8EF;border-color:#E7F8EF">Disponible</span><b>Mariage</b><span class="v-leg" style="font-size:14px">Le couple, la coordination, les prestataires, les invités.</span></li>
-   <li class="v-carte"><span class="v-pil" style="background:#F1EEFF;border-color:#F1EEFF">Exemple</span><b>Séminaire</b><span class="v-leg" style="font-size:14px">L'organisation, l'agence, les intervenants, les participants.</span><a href="/exemples/">Voir les exemples</a></li>
-   <li class="v-carte venir"><span class="v-pil" style="background:#F0F0F3;border-color:#F0F0F3">À venir</span><b>Sortie collective</b><span class="v-leg" style="font-size:14px">Un organisateur, des accompagnateurs, des participants.</span></li>
-   <li class="v-carte venir"><span class="v-pil" style="background:#F0F0F3;border-color:#F0F0F3">À venir</span><b>Soirée au restaurant</b><span class="v-leg" style="font-size:14px">Une réservation, une salle, des convives.</span></li>
-   <li class="v-carte venir"><span class="v-pil" style="background:#F0F0F3;border-color:#F0F0F3">Possibilité</span><b>Et la suite</b><span class="v-leg" style="font-size:14px">Chaque nouveau domaine garde la même architecture.</span></li>
-  </ul>
- </div>
-</section>
-
-<!-- 7 · l'entrée -->
-<section class="v-entree" id="entree" aria-labelledby="tEntree">
- <span class="v-orbe" style="width:72px;height:72px" aria-hidden="true"><i></i><b></b></span>
- <h2 id="tEntree">Tout commence<br>par une intention.</h2>
- <p class="v-leg" style="font-size:17px;max-width:520px">Choisissez votre place en haut de la page, ou entrez dans votre espace : AI pour ce qui vous concerne — vos programmes, vos projets —, ME pour votre Carte.</p>
- <p style="margin:0;display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="v-btn" href="#jsChoix">Choisir ma place</a><a class="v-btn2" href="/projets/">Entrer dans AI</a></p>
-</section>
+</main>
 
 <footer class="pied-site" id="contact">
  <div class="col">
@@ -313,7 +187,6 @@ a{color:inherit}
   <div class="pied-bas"><span>AIME<sup>®</sup> · 2026</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
  </div>
 </footer>
-</main>
 
 <script src="/contrats/projet.js"></script>
 <script src="/synchroview/permissions.js"></script>
