@@ -1,6 +1,7 @@
 /* AIME · le Dock public et son + (docs/IDENTITE.md § 6 ; décision de Matt du 24/10).
    Le Dock garde les lieux, le + garde les actions : aucune destination du Dock dans le +.
-     pas connecté : Le cœur · Exemples · + · J'ai un compte          ; le + : « Créer un projet » · « J'ai reçu une invitation »
+     pas connecté : AI · + · ME (AI et ME mènent à la connexion)        ; le + : « Créer un projet » · « J'ai reçu une invitation »
+     Le cœur et les exemples restent sur la landing (/#coeur, /exemples/) et dans ME (« Découvrir AIME »).
      connecté     : AI · + · ME (25/10) ; le + : « Nouveau projet » · « J'ai reçu une invitation » (AI y ajoute ses gestes de contexte)
      dans un projet : le Dock que le serveur compose (compte/projet.js), avec les seuls gestes du rôle ; ce fichier n'y est pas branché.
    « Créer un projet » fait défiler jusqu'à « Je suis… » et l'ouvre (ailleurs, y conduit) ; « Nouveau projet » ouvre la création de Mes projets

@@ -79,7 +79,7 @@ Un métier précis n'a pas son propre dock : il prend celui de sa famille, avec 
 | Équipe | Notifications · Ma part · + · Messages · Calendrier | Ajouter une tâche · Écrire · Déposer | Aucun accès aux paiements par défaut |
 | Contributeur, prestataire | Notifications · Mission · + · Documents · Messages | Déposer un document · Signaler un retard · Écrire à la coordination | Effectifs seulement, jamais la liste nominative |
 | Destinataire | Programme · Ma réponse · + · Lieu · Messages | Confirmer ma présence · Écrire aux organisateurs · Signaler un accès inattendu | Ne voit que sa propre réponse ; aucun compteur de ce qui existe ailleurs |
-| Public (sans compte) | Le cœur · Exemples · + · J'ai un compte | Créer un projet · J'ai reçu une invitation | Aucune donnée personnelle ; asymétrique, sans bouton fictif, en attendant la page Modules |
+| Public (sans compte) | AI · + · ME (25/10 ; avant : Le cœur · Exemples · + · J'ai un compte). Sans compte, AI et ME mènent à la connexion | Créer un projet · J'ai reçu une invitation | Aucune donnée personnelle ; asymétrique, sans bouton fictif, en attendant la page Modules |
 | Public connecté (hors projet) | AI · + · ME (25/10 ; avant : Le cœur · Exemples · + · Mes projets · Mon compte) | Nouveau projet · J'ai reçu une invitation | Aucune donnée d'un projet hors du projet ; symétrique |
 | Financeur | Notifications · Budget financé · + · Justificatifs | Déposer un justificatif · Écrire au propriétaire | Voit des montants, pas les invités ; AIME ne garde que le statut des paiements |
 | Contrôleur, observateur | Ce qu'il contrôle · + · Exports · Journal | Exporter · Demander une pièce | Lecture seule ; affiche « accès jusqu'au … » |
@@ -102,7 +102,7 @@ Le dock se branche sur les rôles lus dans `space_members` (`api/_auth/espaces.m
 | contributor | Contributeur | Notifications · Mission · + · Documents · Messages | Portée par mission partielle |
 | viewer | Contrôleur | Ce qu'il contrôle · + · Exports · Journal | Ne pas en faire une lecture générique ; durée : faite (#90) |
 | guest | Destinataire | Programme · Ma réponse · + · Lieu · Messages | — |
-| (sans session) | Public | Le cœur · Exemples · + · J'ai un compte | Navigation du site |
+| (sans session) | Public | AI · + · ME | Navigation du site |
 | (connecté, hors projet) | Public connecté | AI · + · ME | Dans un projet, le Dock que le serveur compose (`/api/page`) remplace celui-ci |
 
 « Propriétaire du site » (`api/_auth/proprietaire.mjs`) est distinct d'un owner d'espace : il reçoit le dock de la Régie, jamais celui d'un projet client.
@@ -203,7 +203,7 @@ Reste : l'étape 2 (le contrat serveur, `GET /api/dock` composé depuis `space_m
 
 | Situation | Dock | Le + |
 |---|---|---|
-| Sans compte | Le cœur · Exemples · + · J'ai un compte | Créer un projet · J'ai reçu une invitation |
+| Sans compte | AI · + · ME | Créer un projet · J'ai reçu une invitation |
 | Connecté, hors projet | AI · + · ME (décision du 25/10, docs/AI.md) | Nouveau projet · J'ai reçu une invitation |
 | Dans un projet | Le Dock composé par le serveur pour le rôle (`/api/page`, `composerReel`) : Mon accès · Journal · Personnes | Les seuls gestes accordés au rôle (Inviter, s'il est permis) |
 | Plus tard, avec la page Modules (pas maintenant) | Le cœur · Exemples · + · Modules · Compte | La place de Mes projets sera décidée à ce moment-là |
@@ -242,3 +242,6 @@ Reste : l'étape 2 (le contrat serveur, `GET /api/dock` composé depuis `space_m
 - [ ] Le marié : co-propriétaire dès la création, ou invité par la mariée ?
 - [ ] Les parents qui financent : rôle Financeur dès la première version, ou plus tard ?
 - [x] Sur ordinateur : **dock flottant en bas** (Matt, 24/10).
+
+
+> **25/10/2026 — AI · + · ME partout** (demande de Matt) : le même Dock pour tout le monde, avec ou sans compte. Sans compte, AI (`/projets/`) et ME (`/compte/`) mènent à la connexion. Le cœur et les exemples restent sur la landing (`/#coeur`, `/exemples/`) et dans ME (« Découvrir AIME »). Une seule définition : la famille `Public` de `dock/modele.js`.
