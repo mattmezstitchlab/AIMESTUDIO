@@ -161,7 +161,7 @@ html.calme .v-fond{transition:none}
 .vt-plus{width:20px;height:20px;border-radius:50%;border:1.5px solid transparent;background:linear-gradient(#111116,#111116) padding-box,var(--conic) border-box;color:#FFFFFF;font:700 12px/17px var(--ui);display:grid;place-items:center}
 .v-tel .nom{margin:2px 0 0;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--ink)}
 .v-tel .voit{margin:-4px 0 0;font-size:12.5px;line-height:1.35;color:var(--soft)}
-html.calme .v-tel .cadre,html.calme .v-scene{transition:none}
+html.calme .v-tel .cadre{transition:none}
 
 /* 4 · une capacité par carte : blocs blancs nets sur le dégradé */
 .v-caps{display:flex;flex-direction:column;gap:28px}
