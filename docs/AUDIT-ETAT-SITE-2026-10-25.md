@@ -37,7 +37,7 @@ La CI applique les fichiers par ordre alphabétique — `comptes.sql`, puis `liv
 
 ### 2. Confirmer les migrations et variables de production
 
-Le dépôt contient des migrations jusqu’à `2026-10-25-15-engagements.sql` (les `09` à `15` ajoutent demandes, Carte, liens, formulaire et engagements ; `08` est réservé au Calendrier). Les fonctions concernées annoncent une indisponibilité si les tables/colonnes ne sont pas présentes. La présence des fichiers dans Git ne prouve pas qu’ils ont été appliqués sur la base de production.
+Le dépôt contient des migrations jusqu’à `2026-10-25-15-engagements.sql` (les `09` à `15` ajoutent demandes, Carte, liens, formulaire et engagements ; `08`, écrite le 25/10 au soir, porte la date du Jour J — `docs/TEMPS.md` § 10). Les fonctions concernées annoncent une indisponibilité si les tables/colonnes ne sont pas présentes. La présence des fichiers dans Git ne prouve pas qu’ils ont été appliqués sur la base de production.
 
 **À faire :**
 
@@ -53,6 +53,8 @@ La Carte personnelle peut maintenant être enregistrée dans Neon avec consentem
 Par ailleurs, `docs/DEMANDES.md` indique que la conservation par défaut de **24 mois est une proposition à valider juridiquement**, alors que les textes publics l’annoncent déjà comme une durée établie.
 
 **À faire :** compléter la notice (stockage sur le compte, visibilité du lien, révocation, données reçues, destinataires, durées et suppression), faire valider la durée et les formulations avant l’ouverture à de vraies demandes, puis ajouter des tests automatiques qui couvrent aussi le parcours Carte. Les tests légaux actuels vérifient surtout le formulaire Contact et la cohérence de sa durée.
+
+**Fait le 25/10 (soir)** : la notice porte une section « Votre Carte et son lien public » (accord daté, photo et relations jamais envoyées, jeton après `#`, coupure, ouvertures sans IP, aucune promesse de registre), les demandes reçues (six questions, Resend, 24 mois identiques au code), les engagements, et une section « Combien de temps » / « Tout effacer » complétée ; `tests/pages-legales.test.cjs` confronte ces textes au code. **Reste ouvert :** la durée de 24 mois à valider juridiquement, et la recette réelle sur preview.
 
 ### 4. Rendre les tests de base obligatoires pour fusionner
 

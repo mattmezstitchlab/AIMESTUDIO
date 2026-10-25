@@ -47,6 +47,8 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
 
  /* ---------- ce qui a changé entre deux vues : annoncé, jamais seulement montré ---------- */
  function changements(av,ap){if(!av)return[];var M={};av.moments.forEach(function(m){M[m.id]=m});var out=[];
+  /* la date du Jour J (migration 08) : annoncée comme le reste, sans être un moment */
+  if(av.jour!==ap.jour){var dj=ap.jour?(dateDe(ap)||ap.jour):null;out.push(dj?('Jour J daté au '+dj):'Jour J de nouveau sans date')}
   ap.moments.forEach(function(m){var x=M[m.id];if(!x)return;if(x.debut!==m.debut)out.push('« '+m.titre+' » : '+m.debut+' (au lieu de '+x.debut+')');else if(x.lieu!==m.lieu)out.push('« '+m.titre+' » : '+m.lieu);else if(x.fait!==m.fait&&m.fait)out.push('« '+m.titre+' » est fait')});return out}
 
  function geste(action,p,quoi){if(etat.occupe)return;etat.occupe=true;
@@ -98,6 +100,22 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
  /* la date du programme : centrale, et le futur point d'entrée du Calendrier. Tant que les moments n'ont pas de date en base
     (migration 08, PR Calendrier), le programme est « Jour J » ; rien n'est inventé. */
  function dateDe(v){if(!v||!v.jour)return null;try{return new Date(v.jour+'T12:00:00Z').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})}catch(_){return null}}
+ /* à combien de jours du Jour J on est : « Jour J », « J-12 », « J+3 ». Midi UTC des deux côtés : aucun fuseau ne décale */
+ function relatifDe(v){if(!v||!v.jour)return null;try{var a=Date.parse(v.jour+'T12:00:00Z'),b=Date.parse(new Date().toISOString().slice(0,10)+'T12:00:00Z'),n=Math.round((a-b)/86400000);
+  return n===0?'Jour J':(n>0?'J-'+n:'J+'+(-n))}catch(_){return null}}
+ /* la date du Jour J : en toutes lettres, puis sa distance ; qui peut la fixer la fixe ici (migration 08, propriétaire) */
+ function poserJour(v){jourEl.textContent='';var t=dateDe(v),r=relatifDe(v);
+  jourEl.appendChild(el('span',null,t?(t+(r?' · '+r:'')):'Jour J'));
+  if(!v.peutDater)return;var b=bouton(v.jour?'Changer la date':'Fixer la date du Jour J','b-s');b.classList.add('tp-jour-b');
+  b.onclick=function(){formulaireJour(v)};jourEl.appendChild(b)}
+ function formulaireJour(v){var f=el('form','lgn tp-jour-f'),lab=el('label','sr','Date du Jour J'),i=el('input');i.type='date';i.id='tpJourChamp';i.required=true;i.value=v.jour||'';
+  lab.setAttribute('for','tpJourChamp');var ok=bouton(v.jour?'Enregistrer la date':'Fixer la date','b-p');ok.type='submit';
+  f.appendChild(lab);f.appendChild(i);f.appendChild(ok);
+  if(v.jour){var x=bouton('Retirer','b-s');x.type='button';x.onclick=function(){dater(null)};f.appendChild(x)}
+  f.onsubmit=function(e){e.preventDefault();dater(i.value||null)};jourEl.textContent='';jourEl.appendChild(f);i.focus()}
+ function dater(jour){envoyer({action:'dater',espace:espace,jour:jour,rev:etat.rev}).then(function(j){
+  if(j._code===200){var t=jour?'Date du Jour J enregistrée.':'Date du Jour J retirée.';annoncer(t);dire(t);relire(true)}
+  else { dire(j.raison||'Date refusée.',true); if(j._code===409) relire(true); }}).catch(function(){dire('Serveur injoignable.',true)})}
  function cercle(v){var K=window.AIMECercle,z=el('div','tp-cercle');if(!K||!window.AIMERadial||!window.AIMERadial.interactions){z.appendChild(el('p','alerte','Le cadran n\'a pas pu être chargé : la Liste reste disponible.'));return z}
   if(!v.moments.length){z.appendChild(el('p','leg','Aucun moment à afficher.'));return z}
   var narrow=window.matchMedia&&window.matchMedia('(max-width: 560px)').matches,M=narrow?K.modele(v,{couloirs:3,epaisseur:60,rayon:366,ecart:8}):K.modele(v,{couloirs:4}),C=M.centre;
@@ -170,11 +188,11 @@ function monter(zone,o){var espace=o.espace,dire=o.dire||function(){},cx=lireCon
 
  function afficher(){var f=document.activeElement,cle=f&&f.getAttribute&&f.closest&&f.closest('[data-id]')?f.closest('[data-id]').dataset.id+'|'+(f.getAttribute('aria-label')||f.textContent):null;
   corps.textContent='';
-  if(etat.actif===false){var c=el('div','carte-c');c.appendChild(el('p',null,'Aucun programme dans ce projet pour l\'instant.'));
+  if(etat.actif===false){jourEl.textContent='';var c=el('div','carte-c');c.appendChild(el('p',null,'Aucun programme dans ce projet pour l\'instant.'));
    if(etat.peutActiver){c.appendChild(el('p','leg','Importez le programme type de votre domaine : vous pourrez ensuite décaler chaque moment, et chacun verra les changements selon ses droits.'));
     var b=bouton('Importer le programme type','b-p');b.onclick=function(){b.disabled=true;envoyer({action:'activer',espace:espace}).then(function(j){if(j._code===200){annoncer('Programme importé.');dire('Programme importé : '+j.moments+' moments.');if(window.AIMEProjet&&AIMEProjet.ouvrir)AIMEProjet.ouvrir(espace,'deroule');else relire(true)}else{b.disabled=false;dire(j.raison||'Import refusé.',true)}})};c.appendChild(b)}
    corps.appendChild(c);return}
-  var v=etat.vue;if(!v)return;poserModes();jourEl.textContent=dateDe(v)||'Jour J';
+  var v=etat.vue;if(!v)return;poserModes();poserJour(v);
   if(etat.mode!=='comparer'){
    if(v.propositions.length){var pr=el('div','carte-c tp-props');pr.appendChild(el('h3','k','À décider'));v.propositions.forEach(function(p){var l=el('div','lgn');l.appendChild(el('span',null,p.texte));
      var ok=bouton('Décaler de '+p.minutes+' min','b-p');ok.onclick=function(){geste(p.geste.action,p.geste.p,'Proposition appliquée')};l.appendChild(ok);pr.appendChild(l)});

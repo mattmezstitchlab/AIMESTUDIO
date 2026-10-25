@@ -20,6 +20,12 @@ var GESTES=['retarder','fait','planB','confirmer'];
 var JOUR_MAX=2879;
 
 function fmt(min){return L.fmt(min)}
+/* la date du Jour J (migration 08) : une date réelle, au format AAAA-MM-JJ ; rien d'autre n'est accepté */
+var JOUR_ISO=/^\d{4}-\d{2}-\d{2}$/;
+function dateValide(j){if(typeof j!=='string'||!JOUR_ISO.test(j))return false;var p=j.split('-').map(Number),t=new Date(Date.UTC(p[0],p[1]-1,p[2]));
+ return t.getUTCFullYear()===p[0]&&t.getUTCMonth()===p[1]-1&&t.getUTCDate()===p[2]&&p[0]>=2000&&p[0]<=2100}
+/* la même date, en toutes lettres (midi UTC : aucun décalage de fuseau ne change le jour affiché) */
+function dateFr(j){if(!dateValide(j))return null;return new Date(j+'T12:00:00Z').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})}
 function ressource(m){return{type:'event',id:m.id,public:m.audience==='public',assigneeId:m.responsable||null,authorId:null}}
 /* lire un moment : la règle du programme (event.read) PUIS son audience (item.read) ; les deux doivent passer */
 function lisible(s,m,P){return !!(s&&s.role&&P.can(s,'read',ressource(m)).allow&&P.can(s,'read',{type:'item',audience:m.audience}).allow)}
@@ -93,8 +99,8 @@ function vue(prog,s,P){if(!s||!s.role)return null;var eq=equipe(s,P),org=orga(s,
   if(eq&&m.note)o.note=m.note;                                            /* les consignes d'équipe restent à l'équipe */
   if(m.responsable){if(m.responsable===s.id)o.responsable='moi';else if(org)o.responsable=m.responsable}   /* qui porte quoi : l'organisation, ou soi-même */
   return o});
- return{rev:prog.rev,role:s.role,moments:M,propositions:propositions(prog,s,P,V),aConfirmer:M.filter(function(m){return m.aConfirmer}).map(function(m){return m.id}),
-  peutComparer:peutComparer(s,P).allow,equipe:eq}}
+ return{rev:prog.rev,role:s.role,jour:dateValide(prog.jour)?prog.jour:null,moments:M,propositions:propositions(prog,s,P,V),aConfirmer:M.filter(function(m){return m.aConfirmer}).map(function(m){return m.id}),
+  peutComparer:peutComparer(s,P).allow,peutDater:P.can(s,'manage_members',{type:'space'}).allow,equipe:eq}}
 
 /* la Comparaison ne crée aucun privilège : la vue de la cible, coupée à ce que le demandeur lit lui-même, champ par champ */
 function comparer(prog,demandeur,cibleId,P){var d=peutComparer(demandeur,P);if(!d.allow)return{ok:false,code:403,raison:d.reason};
@@ -114,6 +120,8 @@ function comparer(prog,demandeur,cibleId,P){var d=peutComparer(demandeur,P);if(!
 function historique(lignes,prog,s,P,noms){noms=noms||{};var M={};prog.moments.forEach(function(m){M[m.id]=m});var org=orga(s,P);
  return(lignes||[]).map(function(l){var base={rev:Number(l.rev),action:l.action,le:l.le||null,moi:l.qui===s.id,qui:l.qui===s.id?'vous':(noms[l.qui]||'une personne')};
   if(l.action==='importer')return org?Object.assign(base,{moments:[],texte:'Programme importé ('+((l.p&&l.p.moments)||[]).length+' moments).'}):null;
+  /* la date du Jour J : un changement de projet, sans moment touché ; seul qui peut la lire dans l'historique la voit */
+  if(l.action==='dater')return P.can(s,'manage_members',{type:'space'}).allow?Object.assign(base,{moments:[],texte:(l.p&&l.p.jour)?('« Jour J » fixé au '+(dateFr(l.p.jour)||l.p.jour)+'.'):'« Jour J » retiré : le programme reste sans date.'}):null;
   if(l.action==='confirmer'){var c=M[l.p&&l.p.moment];if(!c||!lisible(s,c,P)||!(org||l.qui===s.id))return null;return Object.assign(base,{moments:[{id:c.id,titre:c.titre}],texte:'Nouvel horaire de « '+c.titre+' » confirmé.'})}
   var vus=(l.effets||[]).filter(function(f){return M[f.id]&&lisible(s,M[f.id],P)});if(!vus.length)return null;
   var mo=vus.map(function(f){var m=M[f.id];return{id:f.id,titre:m.titre,avant:fmt(m.debut+f.avant.decalage),apres:fmt(m.debut+f.apres.decalage),fait:f.apres.fait,planB:f.apres.planBActif}});
@@ -144,5 +152,5 @@ function reconstruire(lignes){var L2=(lignes||[]).slice().sort(function(a,b){ret
    etat[f.id]={decalage:f.apres.decalage,fait:f.apres.fait,planBActif:f.apres.planBActif,majRev:r}})});
  return{rev:rev,moments:etat||{},confirmations:conf}}
 
-return{peutComparer:peutComparer,peutConfirmer:peutConfirmer,AUDIENCES:AUDIENCES,GESTES:GESTES,importer:importer,lisible:lisible,ressource:ressource,decider:decider,conflit:conflit,vue:vue,comparer:comparer,propositions:propositions,historique:historique,reconstruire:reconstruire,fmt:fmt,debutEff:debutEff,finEff:finEff};
+return{peutComparer:peutComparer,peutConfirmer:peutConfirmer,dateValide:dateValide,dateFr:dateFr,AUDIENCES:AUDIENCES,GESTES:GESTES,importer:importer,lisible:lisible,ressource:ressource,decider:decider,conflit:conflit,vue:vue,comparer:comparer,propositions:propositions,historique:historique,reconstruire:reconstruire,fmt:fmt,debutEff:debutEff,finEff:finEff};
 });

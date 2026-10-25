@@ -23,7 +23,7 @@ Dock (dock/modele.js composerReel)   Atlas (/capacites/, capacites/modules.js)  
 - **Le registre** (`modules/registre.js`) décrit chaque module : identifiant, fonction, ressources, actions et la règle de `permissions.js` qui décide chacune, présentations, contextes, destination, états, accessibilité, journal, intentions, preuves. Statuts : `operationnel` (Temps, Mon accès, Journal, Personnes), `composant` (Documents, Finances), `documente` (Messages). Le serveur en tire les pages servies (`pagesDe`), donc le Dock ; l'Atlas l'affiche ; l'écran de projet en tire ses pages.
 - **Pas de quatrième Dock** : le Dock unifié existant sait déjà poser un lieu pour toute page servie. Le Programme apparaît dans le Dock quand le serveur sert la page `deroule`, c'est-à-dire quand le projet a un programme.
 - **Découverte** : l'accueil présente une démonstration du Programme et de Circle à partir de la fixture fictive et des moteurs purs existants (`accueil/temps.js`). La légende est une liste de boutons : choisir un moment annonce son détail (`aria-live`), souligne son arc et, sur Circle, resserre le cadran sur sa fenêtre (`fenetre()`, 30 min de marge, arrondie à la demi-heure) ; « Revenir à la journée entière » rend les 24 heures. Le cadran reste une image (`role="img"`) : le clavier passe par les boutons, aucun arc n'est focusable. AI (`/projets/`) agrège les programmes actifs via `GET /api/temps?resume=1`, recalculés avec les droits de chaque personne ; les liens ouvrent directement Programme ou Circle dans le projet.
-- **Pas de calendrier inventé** : la synthèse AI affiche le « Jour J » et les heures stockées ; elle ne crée ni date de projet ni date par moment. Le modèle actuel reste daté « Jour J » jusqu'à l'évolution calendrier documentée (migration 08).
+- **Pas de calendrier inventé** : la synthèse AI affiche le « Jour J » et les heures stockées ; elle ne crée aucune date. Depuis la migration 08 (§ 10), une **date de Jour J facultative** peut exister par projet : elle n'est alors affichée que parce qu'une personne l'a fixée, et le champ disparaît de la synthèse quand elle est retirée.
 - **Intentions sans IA** : `AIMEModules.intention("Léa décale le cocktail")` → `{ module: 'temps', action: 'retarder' }`, par motifs déterministes et testés.
 
 ### Navigation (correction du 24/10, revue de Matt)
@@ -58,7 +58,7 @@ Dock (dock/modele.js composerReel)   Atlas (/capacites/, capacites/modules.js)  
   - La légende ne nomme que les états présents.
   - En paysage, le cadran et le panneau se placent côte à côte.
   - Sur téléphone, l'en-tête du site défile au lieu de rester collé : le Dock est la seule zone fixe.
-  - La date du programme est affichée : « Jour J » tant que la migration 08 n'a pas donné de date aux moments. C'est le futur accès au Calendrier.
+  - La date du programme est affichée : « Jour J » tant qu'aucune date n'est fixée, sinon en toutes lettres et avec sa distance (« samedi 12 juin 2027 · J-36 »). Le propriétaire la fixe depuis l'en-tête (migration 08, § 10).
   - La barre « AIME » qui traversait le cadran sur une capture était l'en-tête collant figé par la capture « page entière », pas un défaut à l'écran.
 
 ## 2. Source de vérité
@@ -115,20 +115,33 @@ Un geste = une transaction PostgreSQL :
 
 `db/migrations/2026-10-24-07-temps.sql` : rejouable, en ajout seul. À appliquer par l'agent Neon après fusion, d'abord sur une branche de test, puis en production. Aucune action manuelle dans la console.
 
+`db/migrations/2026-10-25-08-temps-jour.sql` (calendrier, § 10) : une colonne `temps_espaces.jour_j date` et sa plage, en ajout seul et rejouable. Sans elle, tout fonctionne comme avant et la date est dite « pas encore installée ».
+
 ## 9. Tests
 
 | Fichier | Ce qu'il prouve |
 |---|---|
-| `tests/temps-moteur.test.cjs` | registre (contrat, règles existantes, noms du Dock, intentions), vues par rôle, cascade, refus, conflit, confirmation, Comparaison par intersection, historique, reconstruction |
-| `tests/temps.test.cjs` (base) | six vrais comptes, propagation, persistance (autre connexion), refus serveur, conflit entre deux instances, révisions uniques, atomicité (pannes simulées), Comparaison, historique, isolation, import concurrent, ancien direct fermé, contraintes SQL, cohérence |
+| `tests/temps-moteur.test.cjs` | registre (contrat, règles existantes, noms du Dock, intentions), vues par rôle, cascade, refus, conflit, confirmation, Comparaison par intersection, historique, reconstruction, date du Jour J (date réelle, qui la fixe, ce qu'elle raconte) |
+| `tests/temps.test.cjs` (base) | six vrais comptes, propagation, persistance (autre connexion), refus serveur, conflit entre deux instances, révisions uniques, atomicité (pannes simulées), Comparaison, historique, isolation, import concurrent, ancien direct fermé, contraintes SQL, cohérence, date du Jour J (403/400/409, journal, synthèse) |
 | `tests/socle-ancien.test.cjs` | base sans la migration : 503, rien d'autre ne change |
-| `tests/navigateur/temps.cjs` (base + navigateur) | le parcours de bout en bout : six navigateurs (ordinateur, iPhone, iPad), propagation sans rechargement, proposition, confirmation, refus forcé, rechargement, chronologie, Comparaison, historique, axe-core WCAG 2.1 AA |
+| `tests/navigateur/temps.cjs` (base + navigateur) | le parcours de bout en bout : six navigateurs (ordinateur, iPhone, iPad), propagation sans rechargement, proposition, confirmation, refus forcé, rechargement, chronologie, Comparaison, historique, date du Jour J fixée puis retirée, axe-core WCAG 2.1 AA |
 
-## 10. Ce qui manque (honnêtement)
+## 10. Calendrier daté (migration 08, 25/10/2026)
+
+- **Une date par projet, facultative** : `temps_espaces.jour_j date` (`db/migrations/2026-10-25-08-temps-jour.sql`, en ajout seul, plage 2000–2100). Les heures restent des minutes depuis minuit de ce jour-là (0 à 2879) : un moment qui commence à 01:00 le lendemain s'écrit déjà 1500, sans seconde date à tenir.
+- **Rien n'est inventé** : sans date, l'écran et la synthèse disent « Jour J », comme avant. La date n'apparaît que si une personne l'a fixée ; la démonstration (`modules/temps/demo-camille-gabriel.json`) reste sans date.
+- **Qui** : le propriétaire du projet (`space.manage_members`, la règle déjà utilisée pour importer le programme et comparer les vues). Une coordination, un prestataire, une invitée ne la fixent pas (403) ; tous les membres la lisent.
+- **Comment** : `POST /api/temps { action: 'dater', espace, jour: 'AAAA-MM-JJ', rev }`, ou `jour: null` pour la retirer. Date réelle exigée (le 30 février est refusé) et plage fermée ; `rev` périmée → 409, rien n'est écrit. La révision avance de 1 et la ligne `dater` entre au journal avec `{ jour }` et **aucun effet sur les moments** : `reconstruire()` et `verifier()` restent exacts.
+- **Où ça se voit** : l'en-tête du Programme (`samedi 12 juin 2027 · J-36`), le centre et le titre du cadran Circle, la carte « Mes programmes » d'AI (`Jour J · samedi 12 juin 2027`), et l'historique pour le propriétaire (« « Jour J » fixé au samedi 12 juin 2027. »).
+- **Sans la migration 08** : lecture et gestes fonctionnent comme avant ; la date est dite « pas encore installée » (503) et aucun champ `jour` n'est ajouté.
+- **Ce n'est pas encore** : une grille mensuelle, des dates par moment au-delà de J+1, les échéances des engagements (`docs/ENGAGEMENTS.md`) et un rappel avant le jour J.
+
+## 11. Ce qui manque (honnêtement)
 
 - **Démonstration sur la preview** : les comptes fictifs ne reçoivent pas de lien de connexion. La démonstration complète tourne en test (base de test + navigateurs). Sur la preview, on peut l'essayer avec de vrais comptes de test sur un vrai projet (« Ajouter le programme à ce projet »).
 - **Surprises cachées au couple** : l'audience « organisation » inclut le propriétaire. Une restriction par personne (masquer à quelqu'un) demandera une table de restrictions (prochaine phase, avec les responsabilités multiples).
 - **Responsabilités multiples** : un membre a toujours un seul rôle ; un moment a au plus un responsable (`moments.responsable`). La table `responsabilites` du plan n'est pas encore créée : elle sera utile quand un deuxième module en aura besoin.
 - **Créer, supprimer ou renommer un moment** : pas encore. Seuls l'import, le décalage, le plan B, « fait » et la confirmation existent.
+- **Calendrier complet** : une date de Jour J par projet (§ 10), mais pas de grille mensuelle, pas de date par moment au-delà de J+1, pas d'échéance d'engagement dans le programme.
 - **Temps réel** : relecture toutes les 2 s, pas de connexion poussée.
 - **Le direct (jour J)** : pas encore réécrit sur cette ressource. La chronologie du Programme en est la première présentation.

@@ -53,7 +53,8 @@ var MODULES=[
    planB:{regle:['event','edit'],ecrit:true,journal:'planB',conflit:true,nom:'Basculer en plan B'},
    confirmer:{regle:['event','read'],condition:'responsable du moment',ecrit:true,journal:'confirmer',nom:'Confirmer le nouvel horaire'},
    comparer:{regle:['space','manage_members'],ecrit:false,nom:'Comparer les vues'},
-   activer:{regle:['space','manage_members'],ecrit:true,journal:'importer',nom:'Importer le programme type'}
+   activer:{regle:['space','manage_members'],ecrit:true,journal:'importer',nom:'Importer le programme type'},
+   dater:{regle:['space','manage_members'],ecrit:true,journal:'dater',nom:'Fixer la date du Jour J'}
   },
   acces:'Membre actif du projet (space_members, date de fin comprise) ; règles relues à chaque appel. Visibilité : event.read, puis l\'audience du moment (item.read).',
   presentations:['liste','cercle','comparaison'],
@@ -63,7 +64,7 @@ var MODULES=[
   api:'/api/temps',
   etats:etats({conflit:{code:409,dit:'Le programme a changé entre-temps : voici la version à jour, rien n\'a été enregistré.'},vide:{dit:'Aucun programme dans ce projet pour l\'instant.'}}),
   accessibilite:A11Y.concat(['Les heures sont du texte, jamais seulement une couleur ou une position']),
-  journal:['importer','retarder','fait','planB','confirmer'],
+  journal:['importer','retarder','fait','planB','confirmer','dater'],
   intentions:[
    {motif:/\b(d[ée]cal|retard|avanc|repouss)/i,action:'retarder'},
    {motif:/\b(confirmer|j'ai vu|bien re[çc]u)\b/i,action:'confirmer'},

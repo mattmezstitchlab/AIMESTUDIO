@@ -220,3 +220,37 @@ test('temps · à la fin, le journal rejoué redonne exactement la table', opts,
   const v = await M.verifier(pool, espace); assert.equal(v.ok, true, JSON.stringify(v.ecarts));
   assert.equal(v.rev, await n('select rev::int as n from temps_espaces where space_id = $1', [espace]));
 });
+
+test('temps · la date du Jour J (migration 08) : le propriétaire la fixe, tous la lisent, le journal la garde', opts, async () => {
+  const depart = await lire('camille');
+  assert.equal(depart.body.vue.jour, null, 'au départ, aucune date : l’écran dit « Jour J »');
+  const rev0 = depart.body.rev;
+  /* la règle : space.manage_members, celle du propriétaire ; tout le reste est refusé sans rien écrire */
+  assert.equal((await poster('lea', { action: 'dater', espace, jour: '2027-06-12', rev: rev0 })).code, 403, 'une coordination ne fixe pas la date');
+  assert.equal((await poster('emma', { action: 'dater', espace, jour: '2027-06-12', rev: rev0 })).code, 403, 'une invitée non plus');
+  for (const mauvais of ['2027-02-30', '2027-6-12', '12/06/2027', '1999-12-31', '2101-01-01'])
+    assert.equal((await poster('camille', { action: 'dater', espace, jour: mauvais, rev: rev0 })).code, 400, mauvais);
+  assert.equal((await poster('camille', { action: 'dater', espace, jour: null })).code, 400, 'la révision vue est exigée');
+  /* le propriétaire fixe la date */
+  const ok = await poster('camille', { action: 'dater', espace, jour: '2027-06-12', rev: rev0 });
+  assert.equal(ok.code, 200); assert.equal(ok.body.jour, '2027-06-12'); assert.equal(ok.body.rev, rev0 + 1);
+  for (const k of Object.keys(C)) if (k !== 'reel') assert.equal((await lire(k)).body.vue.jour, '2027-06-12', k + ' lit la date');
+  /* la révision avance, le journal garde la ligne, aucun moment n’est touché */
+  assert.equal(await n("select count(*)::int as n from live_journal where espace = $1 and action = 'dater' and rev = $2", [espace, rev0 + 1]), 1);
+  assert.equal(await n('select count(*)::int as n from moments where space_id = $1 and maj_rev = $2', [espace, rev0 + 1]), 0, 'la date ne touche aucun moment');
+  /* la synthèse de AI porte la date ; le journal la dit en toutes lettres pour le propriétaire */
+  const res = await appel(TP.default, { method: 'GET', url: '/api/temps?resume=1', headers: H(C.camille) });
+  const p = res.body.programmes.find(x => x.espace === espace);
+  assert.equal(p.jour, '2027-06-12');
+  const jr = await appel(TP.default, { method: 'GET', url: '/api/temps?espace=' + espace + '&journal=1', headers: H(C.camille) });
+  assert.ok(jr.body.lignes.some(l => l.action === 'dater' && /12 juin 2027/.test(l.texte)), 'l’historique dit la date en toutes lettres');
+  /* une révision périmée est refusée : rien ne s’écrase */
+  assert.equal((await poster('camille', { action: 'dater', espace, jour: '2027-06-13', rev: rev0 })).code, 409);
+  assert.equal((await lire('camille')).body.vue.jour, '2027-06-12', 'la date n’a pas bougé');
+  /* retirer la date : l’écran redit « Jour J », la synthèse n’a plus de champ date */
+  const off = await poster('camille', { action: 'dater', espace, jour: null, rev: rev0 + 1 });
+  assert.equal(off.code, 200); assert.equal(off.body.jour, null);
+  assert.equal((await lire('emma')).body.vue.jour, null);
+  const res2 = await appel(TP.default, { method: 'GET', url: '/api/temps?resume=1', headers: H(C.camille) });
+  assert.equal(Object.hasOwn(res2.body.programmes.find(x => x.espace === espace), 'jour'), false, 'sans date, la synthèse n’invente aucun champ');
+});

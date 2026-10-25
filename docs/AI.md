@@ -11,8 +11,9 @@ Décision de Matt du 25/10/2026. Référence : le document « AIME — AI + ME :
   - « À traiter » : les demandes reçues. Seulement pour qui en reçoit (propriétaire du site, `/api/demandes`) ; la section
     n'existe pas pour les autres.
   - **Mes programmes** : synthèse des programmes Temps actifs, regroupés par projet. `GET /api/temps?resume=1` les recalcule
-    pour la personne connectée avec les mêmes règles serveur que chaque programme ; aucun champ caché ni date de calendrier
-    n'est ajouté. Chaque projet ouvre directement Programme ou Circle.
+    pour la personne connectée avec les mêmes règles serveur que chaque programme ; aucun champ caché n'est ajouté et aucune
+    date n'est inventée. Quand une date de Jour J a été fixée (migration 08, propriétaire du projet), la carte l'affiche en
+    toutes lettres ; sans date, elle dit « Jour J ». Chaque projet ouvre directement Programme ou Circle.
   - Mes projets et participations, « Sur cet appareil » (les activités sont dans ME, PR 3).
 - **Le détail d'une demande** (`/projets/?demande=<clé>`) : le message, les deux statuts (la demande, l'e-mail), la note privée,
   « Renvoyer l'e-mail » après un échec, l'historique. Ouvrir une demande nouvelle la marque « lue » au serveur.

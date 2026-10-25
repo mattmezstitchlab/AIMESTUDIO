@@ -80,7 +80,7 @@ Un test vérifie qu'aucune page publique, démonstration ou vitrine n'appelle `/
 
 ## Migration
 
-`db/migrations/2026-10-25-09-demandes.sql`. Le numéro 08 reste réservé au Calendrier (`docs/TEMPS.md`). Elle est rejouable :
+`db/migrations/2026-10-25-09-demandes.sql`. Le numéro 08 est pris par la date du Jour J (`docs/TEMPS.md` § 10). Elle est rejouable :
 la CI la joue deux fois.
 
 Pour l'agent Neon :

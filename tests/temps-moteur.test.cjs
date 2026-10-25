@@ -173,3 +173,32 @@ test('historique : le journal filtré pour chacun ; reconstruire redonne exactem
   assert.equal(h('emma')[0].qui, 'Léa');
   assert.equal(T.historique(lignes, p, S(p, 'emma'), P, {})[0].qui, 'une personne', 'sans droit de voir le nom : anonyme');
 });
+
+test('la date du Jour J (migration 08) : une date réelle, portée par la vue, racontée par l’historique', () => {
+  const p = programme();
+  assert.equal(T.vue(p, S(p, 'camille'), P).jour, null, 'sans date : « Jour J », rien n’est inventé');
+  p.jour = '2027-06-12';
+  const v = T.vue(p, S(p, 'camille'), P);
+  assert.equal(v.jour, '2027-06-12');
+  assert.equal(v.peutDater, true, 'le propriétaire fixe la date');
+  for (const k of ['lea', 'alex', 'sarah', 'emma']) assert.equal(T.vue(p, S(p, k), P).peutDater, false, k + ' ne la fixe pas');
+  for (const k of Object.keys(IDS)) assert.equal(T.vue(p, S(p, k), P).jour, '2027-06-12', k + ' lit la même date');
+  /* une date impossible n’entre jamais dans la vue, même forcée en base */
+  for (const faux of ['2027-02-30', '2027-6-12', '12/06/2027', '', null, 20270612, '1999-12-31', '2101-01-01', '2027-06-12T10:00:00Z'])
+    assert.equal(T.vue(Object.assign({}, p, { jour: faux }), S(p, 'camille'), P).jour, null, String(faux));
+  assert.equal(T.dateFr('2027-06-12'), 'samedi 12 juin 2027');
+  assert.equal(T.dateFr('2027-02-30'), null);
+  /* l’historique : la date en toutes lettres, sans moment touché, lisible seulement par qui peut la fixer */
+  const lignes = [{ rev: 2, action: 'dater', qui: IDS.camille, p: { jour: '2027-06-12' }, le: '2027-01-01T10:00:00Z' }];
+  const h = k => T.historique(lignes, p, S(p, k), P);
+  assert.equal(h('camille')[0].texte, '« Jour J » fixé au samedi 12 juin 2027.');
+  assert.deepEqual(h('camille')[0].moments, []);
+  assert.equal(h('lea').length, 0, 'l’historique de la date reste au propriétaire');
+  assert.match(T.historique([{ rev: 3, action: 'dater', qui: IDS.camille, p: { jour: null } }], p, S(p, 'camille'), P)[0].texte, /resté sans date|retiré/);
+  /* la reconstruction du journal ne s’arrête pas sur cette ligne : aucun moment n’est touché */
+  const journal = [{ rev: 1, action: 'importer', qui: IDS.camille, p: { moments: T.importer(D, IDS) } },
+    { rev: 2, action: 'dater', qui: IDS.camille, p: { jour: '2027-06-12' }, effets: [] }];
+  const r = T.reconstruire(journal);
+  assert.equal(r.rev, 2);
+  assert.deepEqual(Object.keys(r.moments).sort(), D.moments.map(m => m.id).sort(), 'la date ne crée ni ne retire aucun moment');
+});

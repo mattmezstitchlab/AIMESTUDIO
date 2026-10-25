@@ -10,7 +10,12 @@
 .tp-modes .b:focus-visible{outline:2px solid #4C28E8;outline-offset:2px}
 @media (pointer:coarse){.tp-modes .b{min-height:44px}}
 
-.tp-jour{margin:0;font:600 13px var(--ui);letter-spacing:.06em;text-transform:uppercase;color:#383846}
+.tp-jour{margin:0;font:600 13px var(--ui);letter-spacing:.06em;text-transform:uppercase;color:#383846;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+/* fixer la date du Jour J (propriétaire, migration 08) : le formulaire échappe aux capitales de la ligne */
+.tp-jour-f{display:flex;flex-wrap:wrap;align-items:center;gap:8px;letter-spacing:normal;text-transform:none}
+.tp-jour-f input{min-height:40px;padding:0 10px;border:1px solid #C6C6D4;border-radius:10px;background:#FFFFFF;color:#111116;font:500 14px var(--ui);letter-spacing:normal;text-transform:none}
+.tp-jour-f input:focus-visible{outline:3px solid #4C28E8;outline-offset:2px}
+.tp-jour-b{min-height:40px}
 .tp-liste{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .tp-m{border:1px solid var(--tp-bord);background:#FFFFFF;border-radius:20px;padding:16px 18px;display:grid;gap:6px;box-shadow:var(--tp-ombre);transition:box-shadow .2s,border-color .2s}
 .tp-m.decale{border-color:#67E8F9;box-shadow:var(--tp-ombre),inset 4px 0 0 var(--tp-accent)}

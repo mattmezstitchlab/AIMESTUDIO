@@ -23,7 +23,24 @@ const refus = (code, raison) => { throw new Refus(code, raison); };
 /* le module est-il installé sur cette base ? (migration 2026-10-24-07) ; sinon 503, et rien d'autre ne change */
 /* « installé » est retenu ; « pas installé » seulement une minute, pour qu'une instance chaude voie la migration dès qu'elle est passée */
 let PRET = null, VU = 0;
-export function _oublier() { PRET = null; }
+/* la date du Jour J (migration 08) : sa présence est retenue comme celle du module ; son absence ne casse rien, elle rend
+   seulement le geste impossible (503) et laisse la vue sans « jour » */
+let DATE = null, VUD = 0;
+export function _oublier() { PRET = null; DATE = null; }
+export async function pretDate(db) {
+  if (DATE === true || (DATE === false && Date.now() - VUD < 60000)) return DATE;
+  try { const { rows } = await db.query("select exists(select 1 from information_schema.columns where table_schema = 'public' and table_name = 'temps_espaces' and column_name = 'jour_j') as j"); DATE = !!rows[0].j; }
+  catch { DATE = false; }
+  VUD = Date.now(); return DATE;
+}
+async function exigerDate(db) { if (!(await pretDate(db))) refus(503, 'La date du Jour J n\'est pas encore installée sur cet environnement.'); }
+const JOUR_ISO = /^\d{4}-\d{2}-\d{2}$/;
+/* une date réelle (le 30 février n'existe pas) et dans la plage de la contrainte SQL */
+export function dateValide(j) {
+  if (typeof j !== 'string' || !JOUR_ISO.test(j)) return false;
+  const [a, m, d] = j.split('-').map(Number), t = new Date(Date.UTC(a, m - 1, d));
+  return t.getUTCFullYear() === a && t.getUTCMonth() === m - 1 && t.getUTCDate() === d && a >= 2000 && a <= 2100;
+}
 export async function pret(db) {
   if (PRET === true || (PRET === false && Date.now() - VU < 60000)) return PRET;
   try { const { rows } = await db.query("select to_regclass('public.temps_espaces') as e, to_regclass('public.moments') as m, exists(select 1 from information_schema.columns where table_schema = 'public' and table_name = 'live_journal' and column_name = 'effets') as j"); PRET = !!(rows[0].e && rows[0].m && rows[0].j); }
@@ -49,16 +66,17 @@ const ligneMoment = m => ({ id: m.id, titre: m.titre, lieu: m.lieu, debut: m.deb
 
 /* le programme d'un projet, tel que la base le tient (dans la transaction quand il y en a une) */
 async function charger(db, espace, rev) {
-  const d = await duree(db);
-  const [{ rows: M }, { rows: mb }, { rows: cf }, { rows: im }] = await Promise.all([
+  const d = await duree(db), avecDate = await pretDate(db);
+  const [{ rows: M }, { rows: jo }, { rows: mb }, { rows: cf }, { rows: im }] = await Promise.all([
     db.query('select * from moments where space_id = $1 order by position, id', [espace]),
+    db.query(avecDate ? "select to_char(jour_j, 'YYYY-MM-DD') as jour from temps_espaces where space_id = $1" : 'select null::text as jour where $1 is not null', [espace]),
     db.query('select user_id, role from space_members m where m.space_id = $1' + (d ? ' and (m.jusqu_au is null or m.jusqu_au > now())' : ''), [espace]),
     db.query("select qui, p->>'moment' as moment, max(rev) as rev from live_journal where espace = $1 and action = 'confirmer' and rev is not null group by 1, 2", [espace]),
     db.query("select min(rev) as rev from live_journal where espace = $1 and action = 'importer'", [espace])]);
   const membres = {}, confirmations = {};
   mb.forEach(x => { membres[x.user_id] = x.role; });
   cf.forEach(x => { (confirmations[x.qui] = confirmations[x.qui] || {})[x.moment] = Number(x.rev); });
-  return { rev, moments: M.map(ligneMoment), membres, confirmations, revImport: im[0] && im[0].rev ? Number(im[0].rev) : 0 };
+  return { rev, jour: jo[0] && jo[0].jour ? jo[0].jour : null, moments: M.map(ligneMoment), membres, confirmations, revImport: im[0] && im[0].rev ? Number(im[0].rev) : 0 };
 }
 
 /* GET : la vue de la personne connectée ; « depuis » = la révision qu'elle a déjà : rien d'autre ne repart si rien n'a changé */
@@ -93,6 +111,8 @@ export async function resumer(db, u) {
           moments: r.vue.moments.map(m => ({ id: m.id, titre: m.titre, lieu: m.lieu, debut: m.debut, fin: m.fin,
             finApresMinuit: m.fm >= 1440, fait: !!m.fait, decalage: m.decalage, prevu: m.prevu, planBActif: !!m.planBActif }))
         };
+        /* la date du Jour J seulement si elle est fixée : la synthèse n'en invente jamais (test) */
+        if (r.vue.jour) programmes[i].jour = r.vue.jour;
       } catch (e) {
         if (e instanceof Refus && (e.code === 403 || e.code === 404)) continue; /* retrait / fin de rôle pendant la synthèse */
         throw e;
@@ -187,6 +207,32 @@ export async function activer(pool, u, { espace }) {
       return { rev: 1, moments: lignes.length };
     });
   } catch (e) { if (e && e.code === '23505') throw new Refus(409, 'Ce projet a déjà son programme.'); throw e; }
+}
+
+/* POST dater : la date du Jour J d'un projet (migration 08). Réservée au propriétaire (space.manage_members, la règle déjà
+   utilisée pour comparer les vues). Inscrite au journal avec sa révision, comme tout changement : rien n'est écrit à part.
+   `jour: null` retire la date et l'écran redit « Jour J ». */
+export async function dater(pool, u, { espace, jour, rev }) {
+  await exigerPret(pool); await exigerDate(pool);
+  const vu = Number(rev);
+  if (!Number.isInteger(vu) || vu < 0) refus(400, 'Révision vue manquante : rechargez le programme.');
+  const j = jour == null || jour === '' ? null : String(jour);
+  if (j !== null && !dateValide(j)) refus(400, 'Date invalide : attendu une date réelle, au format AAAA-MM-JJ, entre 2000 et 2100.');
+  return enTransaction(pool, async db => {
+    if (!UUID.test(String(espace || ''))) refus(404, 'Projet introuvable.');
+    const { rows: lk } = await db.query('select rev from temps_espaces where space_id = $1 for update', [espace]);
+    const c = await contexte(db, u, espace);                       /* le rôle relu sous le verrou */
+    if (!c.actif || !lk[0]) refus(404, 'Aucun programme dans ce projet.');
+    const d = P.can(c.s, 'manage_members', { type: 'space' });
+    if (!d.allow) { const e = new Refus(403, 'Fixer la date du Jour J est réservé au propriétaire.'); e.regle = d.rule; throw e; }
+    const actuel = Number(lk[0].rev);
+    if (vu !== actuel) throw new Refus(409, 'Le programme a changé entre-temps : rechargez-le, rien n\'a été enregistré.');
+    const nouveau = actuel + 1;
+    await db.query('update temps_espaces set jour_j = $2, rev = $3 where space_id = $1', [espace, j, nouveau]);
+    await db.query("insert into live_journal (espace, qui, action, p, t, rev, effets) values ($1, $2, 'dater', $3::jsonb, 0, $4, '[]'::jsonb)",
+      [espace, u.id, JSON.stringify({ jour: j }), nouveau]);
+    return { rev: nouveau, jour: j };
+  });
 }
 
 /* le projet de démonstration (scripts/temps-demo.mjs et tests) : des comptes de démonstration seulement, jamais en production */

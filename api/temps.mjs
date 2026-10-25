@@ -5,13 +5,14 @@
 //   GET  ?resume=1                       → les programmes actifs de AI, chaque moment filtré pour la personne connectée
 //   POST { action: 'geste', espace, geste: { action, p }, rev }  → { rev, touches } ; 409 si le programme a changé entre-temps
 //   POST { action: 'activer', espace }   → le propriétaire importe le programme type de son domaine
+//   POST { action: 'dater', espace, jour, rev } → le propriétaire fixe (ou retire, jour: null) la date du Jour J (migration 08)
 // 401 sans session · 404 projet inconnu, rôle échu, moment invisible · 403 règle refusée · 503 module non installé.
 // Les anciennes routes du direct (/api/live/*) ne changent pas.
 import { auth, personne, _pool } from './_auth/auth.mjs';
 import { Refus } from './_auth/espaces.mjs';
 import R from './_auth/requete.cjs';
 import Q from './_auth/quotas.cjs';
-import { lire, resumer, historique, comparer, geste, activer } from './_temps/moteur.mjs';
+import { lire, resumer, historique, comparer, geste, activer, dater } from './_temps/moteur.mjs';
 function json(res, code, o) { res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify(o)); }
 async function corps(req) {
   if (req.body && typeof req.body === 'object') return req.body;
@@ -37,10 +38,11 @@ export default async function temps(req, res) {
       return json(res, 200, Object.assign({ ok: true }, await lire(base, u, { espace, depuis: q.has('depuis') ? q.get('depuis') : null })));
     }
     b = await corps(req);
-    if (b.action !== 'geste' && b.action !== 'activer') return json(res, 400, { ok: false, raison: 'Action inconnue.' });
+    if (b.action !== 'geste' && b.action !== 'activer' && b.action !== 'dater') return json(res, 400, { ok: false, raison: 'Action inconnue.' });
     const qt = await Q.quota('temps:geste', u.id, { db: base });
     if (!qt.ok) { res.setHeader('Retry-After', String(qt.attente)); return json(res, 429, { ok: false, raison: 'Trop de changements en peu de temps : patientez un instant.' }); }
     if (b.action === 'activer') return json(res, 200, Object.assign({ ok: true }, await activer(base, u, { espace: b.espace })));
+    if (b.action === 'dater') return json(res, 200, Object.assign({ ok: true }, await dater(base, u, { espace: b.espace, jour: b.jour, rev: b.rev })));
     return json(res, 200, Object.assign({ ok: true }, await geste(base, u, { espace: b.espace, geste: b.geste, rev: b.rev })));
   } catch (e) {
     if (e instanceof Refus) {

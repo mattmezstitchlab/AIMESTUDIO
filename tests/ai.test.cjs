@@ -34,3 +34,18 @@ test('AI rassemble les programmes Temps filtrés par le serveur et ouvre Program
   assert.match(moteur, /export async function resumer[\s\S]*await lire\(db, u,[\s\S]*r\.vue\.moments/);
   assert.match(a, /genTemps\+\+|genTemps/,'une réponse d’AI ne survit pas au changement de contexte');
 });
+
+test('AI · la date du Jour J : affichée quand le serveur la donne, jamais fabriquée', () => {
+  const a = code('compte/ai.js'), moteur = lire('api/_temps/moteur.mjs'), T = lire('modules/temps/vue.js');
+  /* la carte : « Jour J » seul sans date ; « Jour J · samedi 12 juin 2027 » quand elle est fixée */
+  assert.match(a, /p\.jour\?'Jour J · '\+dateTemps\(p\.jour\):'Jour J'/);
+  assert.match(a, /toLocaleDateString\('fr-FR',\{[^}]*timeZone:'UTC'\}/, 'midi UTC : le fuseau ne décale pas le jour affiché');
+  /* le serveur n’ajoute le champ que s’il existe en base (migration 08), et le geste est réservé au propriétaire */
+  assert.match(moteur, /if \(r\.vue\.jour\) programmes\[i\]\.jour = r\.vue\.jour/);
+  assert.match(moteur, /manage_members[\s\S]*Fixer la date du Jour J est réservé au propriétaire/);
+  assert.match(moteur, /dateValide\(j\)[\s\S]*AAAA-MM-JJ/);
+  /* l’écran de projet : la date en toutes lettres, sa distance, et le geste seulement pour qui peut */
+  assert.match(T, /function relatifDe\(v\)[\s\S]*'J-'/);
+  assert.match(T, /if\(!v\.peutDater\)return/);
+  assert.match(T, /action:'dater'/);
+});
