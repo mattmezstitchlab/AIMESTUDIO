@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Une Carte AIME</title>
 <meta name="description" content="Une Carte AIME partagée par un lien : seulement ce que la personne a choisi de montrer.">
-<meta name="theme-color" content="#0A0A0C">
+<meta name="theme-color" content="#EDE6FF">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="data:,">
@@ -14,34 +14,42 @@
 <link rel="stylesheet" href="/coeur/charte.css">
 <link rel="stylesheet" href="/dock/dock.css">
 <style>
-/* la Carte publique (V1, PR P2) : seulement les rubriques marquées « publique », servies par /api/carte-publique ;
+/* la Carte publique (V1, PR P2) : thème clair aligné sur ME (dégradé harmonieux, blocs blancs, texte noir) ;
+   seulement les rubriques marquées « publique », servies par /api/carte-publique ;
    le jeton reste après le « # » de l'adresse : il n'est envoyé ni au serveur de cette page ni aux sites liés */
-.cp{padding:clamp(100px,15vh,160px) 0 calc(140px + env(safe-area-inset-bottom,0px))}
+html:has(>body.clair){color-scheme:light;background:#EDE6FF}
+body.clair{color-scheme:light;--desk:#FFFFFF;--ink:#111116;--soft:#363644;--faint:#454556;--line:#D8D8E4;
+ background-color:#EDE6FF;
+ background-image:radial-gradient(90% 80% at 8% 8%,#FFC6D6 0%,transparent 58%),radial-gradient(85% 75% at 92% 14%,#BDE9FF 0%,transparent 58%),radial-gradient(95% 85% at 50% 96%,#FFE0AE 0%,transparent 62%),linear-gradient(155deg,#FFD6E4 0%,#E2DAFF 50%,#C9F0FF 100%);
+ color:var(--ink)}
+body.clair :focus-visible{outline:2px solid #4C28E8;outline-offset:3px}
+.cp{padding:clamp(84px,13vh,140px) 0 calc(140px + env(safe-area-inset-bottom,0px))}
 .cp .col{max-width:760px;text-align:left}
 .cp .k{margin:0 0 14px;font:600 12.5px var(--ui);letter-spacing:.32em;text-transform:uppercase;color:var(--soft)}
-.cp h1{margin:0;font:400 clamp(36px,6vw,68px)/1.04 var(--display);letter-spacing:-.025em;overflow-wrap:anywhere}
+.cp h1{margin:0;font:400 clamp(36px,6vw,68px)/1.04 var(--display);letter-spacing:-.025em;overflow-wrap:anywhere;color:var(--ink)}
 .cp .intro{margin:16px 0 0;font-size:17px;color:var(--soft)}
 .cp-rub{margin-top:clamp(26px,5vh,40px);display:grid;gap:18px}
-.cp-rub section{border:1px solid var(--line);border-radius:16px;padding:16px 18px;min-width:0}
+.cp-rub section{background:#FFFFFF;border:1px solid rgba(17,17,24,.10);border-radius:20px;padding:18px 20px;min-width:0;box-shadow:0 12px 32px -20px rgba(20,18,52,.18)}
 .cp-rub h2{margin:0 0 8px;font:600 13px var(--ui);letter-spacing:.18em;text-transform:uppercase;color:var(--soft)}
-.cp-rub p{margin:0;font-size:17px;overflow-wrap:anywhere}
-.cp-rub ul{margin:0;padding-left:1.2em;display:grid;gap:4px;font-size:17px}
+.cp-rub p{margin:0;font-size:17px;overflow-wrap:anywhere;color:var(--ink)}
+.cp-rub ul{margin:0;padding-left:1.2em;display:grid;gap:4px;font-size:17px;color:var(--ink)}
 .cp-rub li{overflow-wrap:anywhere}
 .cp-note{margin-top:28px;font-size:14px;color:var(--soft)}
-.cp-alerte{margin-top:24px;border:1px solid rgba(253,164,175,.4);border-radius:12px;padding:14px 16px;color:#FDA4AF}
+.cp-alerte{margin-top:24px;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:14px;padding:14px 16px;color:#991B1B;font-weight:500}
 /* écrire à la personne (V1, PR P3) : seulement si elle l'a permis ; le contrat est celui du formulaire Contact (docs/INTERACTIONS.md) */
-.cp-ecrire{margin-top:clamp(30px,6vh,48px);border-top:1px solid var(--line);padding-top:24px}
-.cp-ecrire h2{margin:0 0 6px;font:400 clamp(24px,3.4vw,32px)/1.15 var(--display)}
+.cp-ecrire{margin-top:clamp(30px,6vh,48px);background:#FFFFFF;border:1px solid rgba(17,17,24,.10);border-radius:24px;padding:24px;box-shadow:0 14px 36px -22px rgba(20,18,52,.20)}
+.cp-ecrire h2{margin:0 0 6px;font:400 clamp(24px,3.4vw,32px)/1.15 var(--display);color:var(--ink)}
 .cp-ecrire form{display:grid;gap:14px;margin-top:16px}
 .cp-ecrire .cp-paire{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
-.cp-ecrire label{display:grid;gap:6px;font-size:14px;color:var(--soft);min-width:0}
-.cp-ecrire input,.cp-ecrire textarea,.cp-ecrire select{width:100%;min-width:0;box-sizing:border-box;font:16px var(--ui);color:inherit;background:transparent;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.cp-ecrire label{display:grid;gap:6px;font-size:14px;color:var(--soft);font-weight:500;min-width:0}
+.cp-ecrire input,.cp-ecrire textarea,.cp-ecrire select{width:100%;min-width:0;box-sizing:border-box;font:16px var(--ui);color:var(--ink);background:#F7F7FB;border:1px solid #C6C6D4;border-radius:12px;padding:12px 14px}
 .cp-ecrire textarea{min-height:140px;resize:vertical}
-.cp-ecrire .accord{display:flex;gap:10px;align-items:flex-start;color:inherit}
-.cp-ecrire .accord input{width:20px;height:20px;flex:none;margin-top:2px;padding:0}
-.cp-ecrire .err{color:#FDA4AF;font-size:13.5px}
+.cp-ecrire .accord{display:flex;gap:10px;align-items:flex-start;color:var(--ink);font-weight:400}
+.cp-ecrire .accord input{width:20px;height:20px;flex:none;margin-top:2px;padding:0;accent-color:var(--ink)}
+.cp-ecrire .err{color:#B91C1C;font-size:13.5px;font-weight:500}
 .cp-ecrire .piege{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.cp-ecrire button{justify-self:start;font:600 15px var(--ui);padding:12px 20px;border-radius:999px;border:0;background:var(--ink);color:var(--desk);cursor:pointer}
+.cp-ecrire button{justify-self:start;font:600 15px var(--ui);padding:12px 22px;border-radius:999px;border:0;background:var(--ink);color:#FFFFFF;cursor:pointer}
+.cp-ecrire button:hover{background:#272732}
 .cp-ecrire button[disabled]{opacity:.6;cursor:default}
 /* le formulaire personnel (V1, PR P5) : les questions choisies par la personne, au-dessus du message */
 .cp-questions{display:grid;gap:14px}
@@ -49,7 +57,7 @@
 .cp-questions .fac{color:var(--soft);font-weight:400}
 </style>
 </head>
-<body>
+<body class="clair">
 <main id="contenu" class="cp">
  <div class="col">
   <p class="k">Carte AIME</p>

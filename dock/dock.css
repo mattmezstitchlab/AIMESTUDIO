@@ -75,3 +75,22 @@ html.avec-dock,html:has(>body.avec-dock){scroll-padding-bottom:calc(96px + env(s
 @media (max-width:560px){.dock-page .dock-c{position:static}.dock-page .dock-menu.dock-carte{left:50%;bottom:calc(100% + 10px)}}
 @media (prefers-reduced-motion:reduce){.dock-carte:not([hidden]){animation:none}}
 html.calme .dock-carte:not([hidden]){animation:none}
+/* Pages en thème clair (accueil, AI, ME, projet, Carte publique) : barre blanche, encre noire, + irisé inchangé */
+.clair .dock-zone{--dk-fond:rgba(255,255,255,.96);--dk-bord:#D4D4E0;--dk-ic:#111116;--dk-lib:#4A4A58;--dk-actif:#111116;--dk-surf:#EFEFF6}
+.clair .dock-zone .dock{-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 16px 42px -14px rgba(20,18,46,.22)}
+.clair .dock-zone .dock-t{color:#4A4A58}
+.clair .dock-zone .dock-e[aria-current] .dock-t,.clair .dock-zone .dock-e:hover .dock-t{color:#111116;font-weight:600}
+.clair .dock-zone.dock-ecran .dock-m,.clair .dock-zone.dock-page .dock-m{background:rgba(255,255,255,.94);color:#363642}
+.clair .dock-zone .dock-menu,.clair .dock-zone .dock-menu.dock-carte{background:#FFFFFF;border-color:#CFCFD9;box-shadow:0 24px 56px -16px rgba(20,18,46,.26)}
+.clair .dock-zone .dock-g{background:#F7F7FB;border-color:#DDDDE8;color:#111116}
+.clair .dock-zone .dock-g:hover{background:#EFEFF7;border-color:#B4B4C6}
+.clair .dock-zone .dock-g small,.clair .dock-zone .dock-g-alerte{color:#454552}
+.clair .dock-zone .dock-conf{background:#FFFFFF;border-color:#CFCFD9;box-shadow:0 24px 56px -16px rgba(20,18,46,.26)}
+.clair .dock-zone .dock-conf [data-conf="oui"]{background:#111116;color:#FFFFFF;border-color:#111116}
+.clair .dock-zone .dock-s:not(:empty){background:#111116;border-color:#111116;color:#FFFFFF}
+.clair .dock-zone .dock-inv input{background:#F7F7FB;border-color:#C4C4D4;color:#111116}
+.clair .dock-zone .dock-inv input:focus{outline-color:#111116}
+.clair .dock-zone .dock-inv button{background:#111116;color:#FFFFFF}
+.clair .dock-zone .dock-inv .dock-inv-e{color:#9A3412}
+.clair .dock-zone :focus-visible{outline-color:#111116}
+

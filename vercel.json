@@ -157,84 +157,114 @@
       "permanent": false
     },
     {
+      "source": "/aime",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/aime/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/aime/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/cube",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/cube/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/cube/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/monde",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/monde/",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/monde/:path*",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/monde/:path*/",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/site",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/site/",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/site/:path*",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/site/:path*/",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/socle",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/socle/",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/socle/:path*",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/socle/:path*/",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/orb/naissance",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/orb/naissance/",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/orb/naissance/:path*",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/lab/orb/naissance/:path*/",
-      "destination": "/aime/",
-      "permanent": false
+      "destination": "/",
+      "permanent": true
     },
     {
       "source": "/v1",

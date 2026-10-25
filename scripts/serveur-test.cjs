@@ -3,6 +3,7 @@
 const http = require('http'), fs = require('fs'), path = require('path');
 const ROOT = path.resolve(process.env.ROOT || path.join(__dirname, '..')), PORT = +(process.env.PORT || 8771), HOST = process.env.HOST || '0.0.0.0';
 const VERCEL = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+const REDIRECTS = (VERCEL.redirects || []).map(r => ({ re: new RegExp('^' + r.source.replace(/:[a-z]+\*/gi, '\0').replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\0/g, '.*') + '$'), dst: r.destination, code: r.permanent ? 308 : 307 }));
 const REWRITES = new Map((VERCEL.rewrites || []).filter(r => !r.source.includes(':') && !r.destination.startsWith('/api/')).map(r => [r.source, r.destination]));
 /* les en-têtes de tout le site (vercel.json, source « /(.*) ») : CSP, Referrer-Policy, nosniff, Permissions-Policy, comme sur Vercel */
 const GLOBAUX = (VERCEL.headers || []).filter(h => h.source === '/(.*)').flatMap(h => h.headers);
@@ -27,6 +28,8 @@ http.createServer((req, res) => {
 }).listen(PORT, HOST, () => console.log('serveur de test sur ' + HOST + ':' + PORT));
 function servir(req, res) {
   const u = new URL(req.url, 'http://x'); let p; try { p = decodeURIComponent(u.pathname); } catch { res.writeHead(400); return res.end(); }
+  const red = REDIRECTS.find(r => r.re.test(p));
+  if (red) { res.writeHead(red.code, { Location: red.dst }); return res.end(); }
   const pCle = p.length > 1 ? p.replace(/\/+$/, '') : p;
   if (REWRITES.has(p)) p = REWRITES.get(p);
   else if (REWRITES.has(pCle)) p = REWRITES.get(pCle);

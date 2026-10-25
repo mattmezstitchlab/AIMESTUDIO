@@ -39,7 +39,7 @@ var E=[
  ['accessibilite','Atelier Accessibilité','/accessibilite/','Le studio, côté accessibilité','creation','realiser','disponible'],
  ['image','Atelier Image','/image/','Le studio, côté image','creation','realiser','disponible'],
  ['infinity','AIME INFINITY','/infinity/','Le jeu de l\'onde','jeux','realiser','experimental',true],
- ['aime','Lab · Le Monde AIME','/aime/','L\'ancienne grande présentation, le cube, l\'orbe','jeux','experimenter','experimental'],
+ ['aime','Lab · Le Monde AIME','/aime/','L\'ancienne grande présentation, le cube, l\'orbe','jeux','experimenter','experimental','interne'],
  ['orb','Lab · AIME ORB','/lab/orb/','L\'orbe, son terrain de jeu','jeux','experimenter','experimental'],
  ['infinity-lab','Lab · INFINITY','/infinity/lab/','Les règles du jeu, en essai','jeux','experimenter','experimental'],
  ['sante','Système nerveux','/sante/','Comprendre les parcours et les connexions','jeux','experimenter','experimental',true],
