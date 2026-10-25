@@ -61,7 +61,8 @@ test("l'iPhone de « Chacun son écran » : un fond par place, et le vrai cadran
   assert.match(lire('accueil/vitrine.js'), /r\.decaler&&etat\.planB\?'Revenir au jardin':'Il pleut : basculer en plan B'/, 'une place qui ne peut pas basculer ne lit pas « Revenir au jardin »');
   const js = lire('accueil/temps.js'), v = lire('accueil/vitrine.js');
   assert.match(v, /AIMETempsAccueil\.dessiner|root\.AIMETempsAccueil\.dessiner/, 'le même dessin que l aperçu public');
-  assert.ok(!/createElementNS|svgEl\(/.test(v), 'aucun cadran recopié dans la vitrine');
+  /* le cadran n'est jamais recopié : il vient de AIMETempsAccueil.dessiner. Seules les icônes du Dock sont dessinées ici. */
+  assert.ok(!/arcPathAt|polarXY|svgEl\(/.test(v), 'aucun cadran recopié dans la vitrine');
   assert.match(js, /return\{[^}]*dessiner:dessiner/, 'le dessin est partagé');
 });
 
@@ -94,7 +95,7 @@ test('les sept téléphones : un vrai écran par personne (mission, moments filt
     for (const x of t) {
       assert.ok(x.mission && x.mission.length > 6, x.nom + ' a une mission affichée');
       assert.ok(Array.isArray(x.moments) && x.moments.length === 2, x.nom + ' montre 2 moments à venir');
-      assert.ok(Array.isArray(x.dock) && x.dock.length === 3, x.nom + ' a son mini-Dock');
+      assert.ok(x.voit && x.role, x.nom + ' dit ce qu\'elle voit et son rôle (le Dock est le même pour tous)');
       for (const m of x.moments) assert.ok(m.heure && m.titre, x.nom + ' (' + x.role + ') affiche heure et titre : ' + m.titre);
     }
   }
@@ -103,9 +104,13 @@ test('les sept téléphones : un vrai écran par personne (mission, moments filt
   assert.equal(mariee.on, false, 'la surprise ne sonne pas chez la mariée');
   const invite = surprise.find(x => x.id === 'invite');
   assert.deepEqual(invite.moments.map(m => m.titre), ['Cérémonie', 'Cocktail'], 'l\'invité ne voit que ses moments publics');
-  const js = lire('accueil/vitrine.js'), css = lire('accueil/vitrine.css');
+  const js = lire('accueil/vitrine.js'), css = lire('accueil/vitrine.css'), z = lire('index.html');
   assert.ok(!/\.aplat\b/.test(js), 'plus de carré de couleur vide dans les 7 téléphones');
-  for (const cls of ['vt-haut', 'vt-notif', 'vt-bloc', 'vt-moments', 'vt-dock']) assert.ok(js.includes(cls) && css.includes('.' + cls), cls + ' rendu et stylé');
+  for (const cls of ['vt-haut', 'vt-notif', 'vt-bloc', 'vt-moments']) assert.ok(js.includes(cls) && css.includes('.' + cls), cls + ' rendu et stylé');
+  /* le Dock est UN composant : AI | + | ME dans les sept téléphones comme dans l'iPhone du héros */
+  assert.match(js, /function poserDocks\(\)/, 'un seul dessin de Dock');
+  assert.match(js, /\['ai','AI'\],null,\['me','ME'\]/, 'AI, +, ME');
+  assert.ok((z.match(/class="v-p-dock"/g) || []).length >= 2, 'le Dock est dans les deux grands écrans');
 });
 
 test('l\'accueil : clair, dégradés francs, le manifeste, la mosaïque gardée, l\'agent dit « En préparation », aucune page /aime/', () => {

@@ -125,10 +125,9 @@ function monter(){
   dessiner(s,modeleCercle(vue,m?fenetreMoment(m):null),{choisi:choisi,qui:info.personne.nom,choisir:choisir,noms:noms,ids:{titre:'tempsDemoSvgT',desc:'tempsDemoSvgD'}})}
  function afficherApercu(){
   if(!D)return;var info;try{info=preparer(D,choix)}catch(e){majTexte(e.message);return}
-  var who=$('tempsDemoPlace'),n=$('tempsDemoNombre'),panelL=$('tempsDemoListe'),panelC=$('tempsDemoCercle'),titre=$('tempsDemoTitre');
+  var panelL=$('tempsDemoListe'),panelC=$('tempsDemoCercle'),titre=$('tempsDemoTitre');
   if(choisi&&!momentDe(info.vue,choisi))choisi=null;   /* la place a changé : un moment qu'elle ne voit pas ne reste pas choisi */
-  if(who)who.textContent=info.personne.nom+' · '+((deps.Roles&&deps.Roles.de(info.personne.role).nom)||info.personne.role);
-  if(n)n.textContent=info.vue.moments.length+' moment'+(info.vue.moments.length===1?'':'s')+' visible'+(info.vue.moments.length===1?'':'s');
+  /* l'écran ne porte plus qu'un titre : la place est dite par le réglage, dehors (« Voir depuis ») */
   if(titre)titre.textContent=mode==='cercle'?'Circle':'Programme';
   if(panelL)panelL.hidden=mode!=='liste';if(panelC)panelC.hidden=mode!=='cercle';
   var actif=root.document.activeElement, garde=actif&&actif.getAttribute?actif.getAttribute('data-moment'):null;
@@ -141,7 +140,7 @@ function monter(){
   if(jour)jour.hidden=!(mode==='cercle'&&m);
   if(cap)cap.textContent=(mode==='cercle'&&m)
    ? 'Cadran restreint à '+deps.C.hm(fenetreMoment(m).debut)+' – '+deps.C.hm(fenetreMoment(m).fin)+' (heure de fin comprise) ; « Revenir à la journée entière » rend les 24 heures.'
-   : 'Chaque moment est un arc à son heure : touchez-le (ou Tab puis Entrée) et le cadran s’arrête dessus.';
+   : 'Touchez un arc (ou Tab puis Entrée) : le cadran s’arrête dessus.';
   var caches=Math.max(0,info.total-info.vue.moments.length);
   majTexte(caches?info.vue.moments.length+' moments visibles. '+caches+' autre'+(caches===1?'':'s')+' '+(caches===1?'n’est':'ne sont')+' pas envoyé'+(caches===1?'':'s')+' à cette place.':'Cette place voit les '+info.total+' moments du programme.');
  }

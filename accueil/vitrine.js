@@ -47,13 +47,13 @@ function cadran(place,etat){var r=composer(place,etat);
 
 /* les sept téléphones : un vrai écran par personne (notification, moments selon ses droits, mission, Dock) */
 var TELS=[
- {id:'mariee',nom:'La mariée',role:'owner',c:'#FB7185',voit:'Tout : programme, réponses, prestataires.',mission:'118 présents · 4 prestataires',missions:{reponse:'119 présents · 4 prestataires',retard:'Dîner décalé · équipe prévenue',pluie:'Plan B actif · Orangerie'},dock:['Accès','Prog.','Pers.'],indices:[0,2]},
- {id:'temoin',nom:'Le témoin',role:'viewer',c:'#34D399',voit:'Sa mission, et la surprise.',mission:'Discours 21:00 · surprise',missions:{surprise:'Surprise 21:40 · piste prête',pluie:'Cérémonie · Orangerie'},dock:['Accès','Prog.','Surprise'],indices:[2,5]},
- {id:'invite',nom:'L’invité',role:'guest',c:'#22D3EE',voit:'Le programme public, le lieu.',mission:'Présence confirmée · table 4',missions:{reponse:'Présence enregistrée · merci',pluie:'Rendez-vous · Orangerie'},dock:['Prog.','Lieu','Réponse'],indices:[2,3]},
- {id:'coord',nom:'La coordination',role:'editor',c:'#6D4AFF',e:'#FFFFFF',voit:'Le déroulé, l’équipe, le plan B.',mission:'7 moments · plan B prêt',missions:{pluie:'Orangerie ouverte à 13:30',retard:'Dîner 19:00 · DJ recalé',surprise:'Créneau 21:40 réservé'},dock:['Déroulé','Équipe','Plan B'],indices:[0,2]},
- {id:'traiteur',nom:'Le traiteur',role:'contributor',c:'#F59E0B',voit:'Son service, l’effectif sans noms.',mission:'118 couverts, sans noms',missions:{reponse:'119 couverts, sans noms',retard:'Service dîner recalé 19:00'},dock:['Mission','Effectif','Docs'],indices:[3,5]},
- {id:'dj',nom:'Le DJ',role:'contributor',c:'#E879F9',voit:'Ses horaires, et ce qui le touche.',mission:'Installation 14:00 · bal 22:00',missions:{retard:'Set cocktail +30 min',surprise:'Piste surprise 21:40',pluie:'Sono sous l’Orangerie'},dock:['Mission','Horaires','Docs'],indices:[1,4]},
- {id:'photo',nom:'Le photographe',role:'contributor',c:'#60A5FA',voit:'Ses créneaux, l’accès.',mission:'Couple 17:30 · contrat signé',missions:{pluie:'Photos sous l’Orangerie'},dock:['Mission','Accès','Docs'],indices:[2,3]}];
+ {id:'mariee',nom:'La mariée',role:'owner',c:'#FB7185',voit:'Tout : programme, réponses, prestataires.',mission:'118 présents · 4 prestataires',missions:{reponse:'119 présents · 4 prestataires',retard:'Dîner décalé · équipe prévenue',pluie:'Plan B actif · Orangerie'},indices:[0,2]},
+ {id:'temoin',nom:'Le témoin',role:'viewer',c:'#34D399',voit:'Sa mission, et la surprise.',mission:'Discours 21:00 · surprise',missions:{surprise:'Surprise 21:40 · piste prête',pluie:'Cérémonie · Orangerie'},indices:[2,5]},
+ {id:'invite',nom:'L’invité',role:'guest',c:'#22D3EE',voit:'Le programme public, le lieu.',mission:'Présence confirmée · table 4',missions:{reponse:'Présence enregistrée · merci',pluie:'Rendez-vous · Orangerie'},indices:[2,3]},
+ {id:'coord',nom:'La coordination',role:'editor',c:'#6D4AFF',e:'#FFFFFF',voit:'Le déroulé, l’équipe, le plan B.',mission:'7 moments · plan B prêt',missions:{pluie:'Orangerie ouverte à 13:30',retard:'Dîner 19:00 · DJ recalé',surprise:'Créneau 21:40 réservé'},indices:[0,2]},
+ {id:'traiteur',nom:'Le traiteur',role:'contributor',c:'#F59E0B',voit:'Son service, l’effectif sans noms.',mission:'118 couverts, sans noms',missions:{reponse:'119 couverts, sans noms',retard:'Service dîner recalé 19:00'},indices:[3,5]},
+ {id:'dj',nom:'Le DJ',role:'contributor',c:'#E879F9',voit:'Ses horaires, et ce qui le touche.',mission:'Installation 14:00 · bal 22:00',missions:{retard:'Set cocktail +30 min',surprise:'Piste surprise 21:40',pluie:'Sono sous l’Orangerie'},indices:[1,4]},
+ {id:'photo',nom:'Le photographe',role:'contributor',c:'#60A5FA',voit:'Ses créneaux, l’accès.',mission:'Couple 17:30 · contrat signé',missions:{pluie:'Photos sous l’Orangerie'},indices:[2,3]}];
 var EVTS=[
  {id:'pluie',t:'Il pleut : cérémonie à l’Orangerie',m:{mariee:'Plan B activé : Orangerie.',temoin:'Rendez-vous à l’Orangerie.',invite:'Cérémonie à l’Orangerie.',coord:'Plan B confirmé à 13 h 02.',traiteur:'Service inchangé.',dj:'Son à installer à l’Orangerie.',photo:'Lumière : Orangerie.'}},
  {id:'retard',t:'Le traiteur annonce 30 min de retard',m:{mariee:'Dîner à 19 h 00.',coord:'Dîner décalé : 19 h 00.',traiteur:'Retard noté, merci.',dj:'Set prolongé de 30 min.'}},
@@ -75,8 +75,7 @@ function telephones(evt){var e=EVTS.filter(function(x){return x.id===evt})[0]||E
   return{id:t.id,nom:t.nom,role:t.role,c:t.c,e:t.e||'#141416',voit:t.voit,on:on,
    msg:on?e.m[t.id]:'Aucune alerte pour vous.',
    mission:(t.missions&&t.missions[e.id])||t.mission,
-   moments:momentsTel(t,e.id),
-   dock:t.dock}})}
+   moments:momentsTel(t,e.id)}})}
 
 if(typeof document==='undefined')return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,composer:composer,cadran:cadran,telephones:telephones};
 
@@ -118,6 +117,16 @@ function dessinerCadran(r){var S=$('vCercle');if(!S||!C)return;
    var a=$('vCercle')&&$('vCercle').querySelector('.v-td-arc[data-moment="'+id+'"]');if(a){try{a.focus({preventScroll:true})}catch(_){a.focus()}}},
   ids:{titre:'vCercleT',desc:'vCercleD'}})}
 function dire(t){var d=$('vReelDit');if(d){d.textContent=t}}
+/* Le Dock du produit, le même partout : AI | + | ME (docs/DOCK.md, entrées `ai` et `me`). Décoratif dans une démonstration :
+   les écrans sont des images du produit, pas des navigations. Un seul dessin, posé dans chaque écran (accueil/temps.js). */
+var ICONES={ai:'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',me:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21c.8-4 4-6.5 8-6.5s7.2 2.5 8 6.5'};
+function iconeDock(nom){var s=document.createElementNS('http://www.w3.org/2000/svg','svg'),c=document.createElementNS('http://www.w3.org/2000/svg','path');
+ s.setAttribute('class','v-p-dk-i');s.setAttribute('viewBox','0 0 24 24');c.setAttribute('d',ICONES[nom]);s.appendChild(c);return s}
+function poserDocks(){[].forEach.call(document.querySelectorAll('.v-p-dock'),function(z){
+ if(z.childNodes.length)return;   /* déjà posé (rendu refait) */
+ [['ai','AI'],null,['me','ME']].forEach(function(x){
+  var e=el('span','v-p-dk');if(!x){e.className='v-p-dk v-p-dk-plus';e.appendChild(el('i'));z.appendChild(e);return}
+  e.appendChild(iconeDock(x[0]));var t=el('b','v-p-dk-t',x[1]);e.appendChild(t);z.appendChild(e)})})}
 
 function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';
  telephones(evt).forEach(function(t){
@@ -146,19 +155,15 @@ function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';
   t.moments.forEach(function(m){var it=el('li');it.appendChild(el('b',null,m.heure));it.appendChild(el('span',null,m.titre));ul.appendChild(it)});
   mo.appendChild(ul);
   c.appendChild(mo);
-  /* mini-Dock du téléphone */
-  var dk=el('div','vt-dock');dk.setAttribute('aria-hidden','true');
-  var g0=el('span','vt-dk on',t.dock[0]);if(t.on)g0.appendChild(el('i','vt-pastille'));
-  dk.appendChild(g0);
-  dk.appendChild(el('span','vt-dk',t.dock[1]));
-  dk.appendChild(el('span','vt-plus','+'));
-  dk.appendChild(el('span','vt-dk',t.dock[2]));
+  /* le Dock du produit, identique dans les sept écrans */
+  var dk=el('div','v-p-dock');dk.setAttribute('aria-hidden','true');
   c.appendChild(dk);
   li.appendChild(c);
   var n=el('p','nom');n.appendChild(pastille(t.c));n.appendChild(document.createTextNode(t.nom));li.appendChild(n);
   li.appendChild(el('p','voit',t.voit));
   L.appendChild(li)});
  [].forEach.call(document.querySelectorAll('#vEvts button'),function(b){b.setAttribute('aria-pressed',b.dataset.evt===evt?'true':'false')});
+ poserDocks();
  reglerTels($('vTels').classList.contains('tous'))}
 /* les écrans qui réagissent d'abord ; les autres (qui restent silencieux) sur demande, pour que la leçon se voie */
 function reglerTels(tous){var L=$('vTels'),b=$('vTelsTous');if(!L||!b)return;
@@ -167,7 +172,7 @@ function reglerTels(tous){var L=$('vTels'),b=$('vTelsTous');if(!L||!b)return;
  b.hidden=!tous&&!n;   /* tout le monde est concerné : il n'y a rien à ouvrir */
  b.textContent=tous?'Voir seulement les écrans concernés':'Voir les '+n+' autres téléphones'}
 
-function monter(){if(!$('vHero'))return;hero();
+function monter(){if(!$('vHero'))return;hero();poserDocks();
  $('vDecaler').onclick=function(){etat.decale=!etat.decale;$('vReelDit').dataset.gardé='1';hero();dire(etat.decale?'Écrit une fois : le cocktail passe à 16:15 sur chaque écran qui le voit.':'Le cocktail revient à 16:00.')};
  $('vPlanB').onclick=function(){etat.planB=!etat.planB;$('vReelDit').dataset.gardé='1';hero();dire(etat.planB?'Plan B : la cérémonie passe à l’Orangerie, pour chaque place qui la voit.':'Retour au jardin.')};
  var E=$('vEvts');if(E){EVTS.forEach(function(x){var b=el('button','v-btn2',x.t);b.type='button';b.dataset.evt=x.id;b.onclick=function(){tels(x.id)};E.appendChild(b)});tels('surprise')}

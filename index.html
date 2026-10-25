@@ -39,7 +39,7 @@ a{color:inherit}
 <link rel="stylesheet" href="/attente/attente.css">
 <link rel="stylesheet" href="/dock/dock.css">
 <link rel="stylesheet" href="/nav/pied-legal.css">
-<link rel="stylesheet" href="/accueil/vitrine.css?v=5">
+<link rel="stylesheet" href="/accueil/vitrine.css?v=6">
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
@@ -136,6 +136,7 @@ a{color:inherit}
        </figure>
        <p class="v-p-cache" id="vCache"></p>
       </div>
+      <div class="v-p-dock" aria-hidden="true"></div>
      </div>
     </div>
    </div>
@@ -207,46 +208,51 @@ a{color:inherit}
 <section class="v-sec" id="temps" aria-labelledby="tTemps" style="padding-top:56px">
  <div class="v-col">
   <div class="v-tete v-tete-temps">
-   <div><p class="v-k">Le Temps · Programme / calendrier · Circle</p><h2 id="tTemps">Le déroulé, à votre place.</h2></div>
-   <p class="v-leg">Un même programme, en liste ou sur le cadran Circle. Les horaires sont ceux du Jour J : aucune date n'est ajoutée à la démonstration.</p>
+   <div><p class="v-k">Le Temps · Programme et Circle</p><h2 id="tTemps">Le déroulé, en un cercle.</h2></div>
+   <p class="v-leg">La liste pour le détail, le cercle pour comprendre d'un regard. Les horaires sont ceux du Jour J : aucune date n'est ajoutée à la démonstration.</p>
   </div>
   <div class="v-temps-vitrine">
-   <div class="v-temps-produit v-p-produit">
-    <div class="v-temps-fen"><span class="v-p-heure">9:41</span><span>Mariage Camille &amp; Gabriel · démonstration</span><span class="v-p-ondes" aria-hidden="true"></span></div>
-    <div class="v-temps-corps">
-     <div class="v-temps-haut">
-      <div><span class="v-temps-jour">Jour J</span><h3 id="tempsDemoTitre">Programme</h3><p id="tempsDemoPlace">Chargement de la démonstration…</p></div>
-      <span class="v-pil" id="tempsDemoNombre" role="status" aria-live="polite">Démonstration</span>
+   <div class="v-temps-produit">
+    <!-- les réglages de la démonstration restent dehors : l'écran ne montre que le produit -->
+    <div class="v-temps-commandes">
+     <div class="v-temps-modes" role="group" aria-label="Présentation du programme">
+      <button type="button" class="v-temps-mode" data-temps-mode="liste" aria-pressed="true" disabled>Programme</button>
+      <button type="button" class="v-temps-mode" data-temps-mode="cercle" aria-pressed="false" disabled>Circle</button>
      </div>
-     <div class="v-temps-commandes">
-      <label for="tempsDemoQui">Voir depuis la place de</label>
-      <select id="tempsDemoQui" disabled><option>Chargement…</option></select>
-      <div class="v-temps-modes" role="group" aria-label="Présentation du programme">
-       <button type="button" class="v-btn2" data-temps-mode="liste" aria-pressed="true" disabled>Programme</button>
-       <button type="button" class="v-btn2" data-temps-mode="cercle" aria-pressed="false" disabled>Circle</button>
+     <p class="v-temps-qui"><label for="tempsDemoQui">Voir depuis</label><select id="tempsDemoQui" disabled><option>Chargement…</option></select></p>
+    </div>
+    <div class="v-p-scene v-temps-scene">
+     <div class="v-p-cadre">
+      <div class="v-p-ecran">
+       <div class="v-p-haut"><span class="v-p-heure">9:41</span><span class="v-p-prj"><span class="v-pt" aria-hidden="true" style="--pt:#6D4AFF"></span>Mariage Camille &amp; Gabriel</span><span class="v-p-ondes" aria-hidden="true"></span></div>
+       <div class="v-temps-page">
+        <p class="v-temps-jour">Jour J</p>
+        <h3 id="tempsDemoTitre">Programme</h3>
+        <section class="v-temps-vue" id="tempsDemoListe" aria-label="Programme en liste">
+         <ol class="v-temps-liste" id="tempsDemoMoments"></ol>
+        </section>
+        <section class="v-temps-vue" id="tempsDemoCercle" aria-label="Programme sur le cadran Circle" hidden>
+         <figure class="v-temps-figure">
+          <svg class="v-temps-cadran" id="tempsDemoSvg" viewBox="0 0 1000 1000" role="group" aria-labelledby="tempsDemoSvgT tempsDemoSvgD">
+           <title id="tempsDemoSvgT">Circle · journée de 24 heures</title>
+           <desc id="tempsDemoSvgD">Le cadran du programme sera affiché ici.</desc>
+          </svg>
+          <p class="v-temps-detail" id="tempsDemoDetail" role="status" aria-live="polite">Rien n’est choisi : le cadran montre la journée entière.</p>
+          <button type="button" class="v-temps-jourbtn" id="tempsDemoJour" hidden>Revenir à la journée entière</button>
+          <figcaption id="tempsDemoLegende">Touchez un arc (ou Tab puis Entrée) : le cadran s’arrête dessus.</figcaption>
+         </figure>
+        </section>
+       </div>
+       <div class="v-p-dock" aria-hidden="true"></div>
       </div>
      </div>
-     <section class="v-temps-vue" id="tempsDemoListe" aria-label="Programme en liste">
-      <ol class="v-temps-liste" id="tempsDemoMoments"></ol>
-     </section>
-     <section class="v-temps-vue" id="tempsDemoCercle" aria-label="Programme sur le cadran Circle" hidden>
-      <figure class="v-temps-figure">
-       <svg class="v-temps-cadran" id="tempsDemoSvg" viewBox="0 0 1000 1000" role="group" aria-labelledby="tempsDemoSvgT tempsDemoSvgD">
-        <title id="tempsDemoSvgT">Circle · journée de 24 heures</title>
-        <desc id="tempsDemoSvgD">Le cadran du programme sera affiché ici.</desc>
-       </svg>
-       <p class="v-temps-detail" id="tempsDemoDetail" role="status" aria-live="polite">Rien n’est choisi : le cadran montre la journée entière.</p>
-       <button type="button" class="v-btn2 v-temps-jour" id="tempsDemoJour" hidden>Revenir à la journée entière</button>
-       <figcaption id="tempsDemoLegende">Chaque moment est un arc à son heure : touchez-le (ou Tab puis Entrée) et le cadran s’arrête dessus.</figcaption>
-      </figure>
-     </section>
-     <p class="v-temps-etat" id="tempsDemoEtat" role="status" aria-live="polite">La démonstration utilise les règles de visibilité du module Temps.</p>
     </div>
+    <p class="v-temps-etat" id="tempsDemoEtat" role="status" aria-live="polite">La démonstration utilise les règles de visibilité du module Temps.</p>
    </div>
    <aside class="v-temps-explication" aria-labelledby="tempsExplicationT">
     <p class="v-k">Le même Temps, deux repères</p>
     <h3 id="tempsExplicationT">Programme ou Circle.</h3>
-    <p class="v-leg">La liste détaille les moments visibles. Circle les place sur une journée de 24 heures, sans changer les règles d'accès. Choisissez un moment : son arc se souligne et le cadran se resserre sur son heure ; « Revenir à la journée entière » rend les 24 heures. Une vue filtrée ne reçoit pas les moments cachés.</p>
+    <p class="v-leg">La liste détaille, Circle situe. Une journée, des moments, un cercle : comme une montre, on comprend sans lire. Choisissez un moment : son arc s'entoure et le cadran se resserre sur son heure ; « Revenir à la journée entière » rend les 24 heures. Une vue filtrée ne reçoit pas les moments cachés.</p>
     <p class="v-temps-note">Cet aperçu est fictif et sans date : il montre les horaires du Jour J. Dans AI, retrouvez les programmes actifs de vos projets et ouvrez directement leur page Temps.</p>
     <div class="v-temps-liens"><a class="v-btn" href="/projets/">Retrouver le Temps dans AI</a><a class="v-btn2" href="#ecrans">Voir comment les accès s'appliquent</a></div>
    </aside>
@@ -306,7 +312,7 @@ a{color:inherit}
 <script src="/projets/projets.js"></script>
 <script src="/compte/creer.js"></script>
 <script src="/accueil/liste.js"></script>
-<script src="/accueil/capsule.js?v=5"></script>
+<script src="/accueil/capsule.js?v=6"></script>
 <script src="/attente/attente.js"></script>
 <script>(function(){var f=document.getElementById('atBloc');if(f&&window.AIMEAttente)AIMEAttente.bloc(f)})();</script>
 <script src="/accueil/demo.js"></script>
@@ -316,9 +322,9 @@ a{color:inherit}
 <script src="/modules/radial/noyau.js"></script>
 <script src="/modules/temps/moteur.js"></script>
 <script src="/modules/temps/cercle.js"></script>
-<script src="/accueil/temps.js?v=5"></script>
-<script src="/accueil/vitrine.js?v=5"></script>
-<script src="/accueil/reveler.js?v=5"></script>
+<script src="/accueil/temps.js?v=6"></script>
+<script src="/accueil/vitrine.js?v=6"></script>
+<script src="/accueil/reveler.js?v=6"></script>
 <!-- la régie applique ses textes et son orbe ; la coque de l'OS ne recouvre la page que si ?coque=1 est demandé -->
 <script src="/regie/donnees.js"></script>
 <script src="/nav/registre.js"></script>
