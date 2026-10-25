@@ -23,6 +23,34 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
   const ctx = {}, page = {};
   try {
+    /* 0. l'accueil public : l'aperçu du Temps se choisit et se zoome, sans compte et sans base */
+    console.log('Accueil : choisir un moment, zoomer, revenir');
+    const ctxA = await b.newContext({ locale: 'fr-FR', viewport: { width: 1440, height: 900 } }), pa = await ctxA.newPage();
+    await pa.goto(B + '/', { waitUntil: 'networkidle' });
+    await pa.waitForSelector('#tempsDemoMoments button', { timeout: 8000 });
+    ok((await pa.locator('#tempsDemoMoments button').count()) === 9, 'accueil : Camille voit 9 moments dans le Programme');
+    await pa.getByRole('button', { name: 'Circle', exact: true }).click();
+    await pa.waitForSelector('#tempsDemoMomentsCercle button');
+    ok((await pa.locator('#tempsDemoSvg .v-td-arc').count()) === 9, 'accueil : Circle dessine les 9 moments de la vue');
+    await pa.getByRole('button', { name: /^Cocktail / }).focus(); await pa.keyboard.press('Enter');
+    await pa.waitForFunction(() => /Cadran restreint à 15:30 – 19:00/.test(document.querySelector('#tempsDemoLegende').textContent), null, { timeout: 5000 });
+    ok(true, 'accueil : choisir « Cocktail » resserre le cadran sur 15:30 – 19:00');
+    ok((await pa.locator('#tempsDemoMomentsCercle button[aria-current="true"]').count()) === 1, 'accueil : la légende marque le moment choisi (aria-current)');
+    ok(!(await pa.locator('#tempsDemoJour').isHidden()), 'accueil : « Revenir à la journée entière » apparaît');
+    ok(/Cocktail · 16:00 – 18:30/.test(await pa.locator('#tempsDemoDetail').innerText()), 'accueil : le détail annonce le moment choisi');
+    ok((await pa.locator('#tempsDemoSvg .v-td-arc').count()) < 9, 'accueil : le cadran zoomé ne montre que sa fenêtre');
+    await pa.locator('#tempsDemoJour').click();
+    await pa.waitForFunction(() => /journée de 24 heures/.test(document.querySelector('#tempsDemoSvgT').textContent), null, { timeout: 5000 });
+    ok((await pa.locator('#tempsDemoSvg .v-td-arc').count()) === 9 && await pa.locator('#tempsDemoJour').isHidden(), 'accueil : la journée entière revient, le bouton disparaît');
+    await pa.locator('#tempsDemoQui').selectOption('emma');
+    await pa.waitForFunction(() => document.querySelectorAll('#tempsDemoMomentsCercle button').length === 5, null, { timeout: 5000 });
+    const nomsA = await pa.locator('#tempsDemoMomentsCercle button').evaluateAll(ns => ns.map(n => n.getAttribute('aria-label')));
+    ok(!nomsA.some(n => /Installation des prestataires|Point coordination et traiteur|Set acoustique|Démontage/.test(n)), 'accueil (Emma) : seuls ses 5 moments sont proposés');
+    ok((await pa.locator('#tempsDemoSvg .v-td-arc').count()) === 5, 'accueil (Emma) : le cadran ne dessine que ses 5 moments');
+    await pa.addScriptTag({ content: AXE });
+    const vA = await pa.evaluate(async () => (await axe.run(document.querySelector('#temps'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ')'));
+    ok(!vA.length, 'accueil, la section Temps : ' + (vA.length ? vA.join(', ') : 'aucune anomalie bloquante'));
+    await ctxA.close();
     /* 1. six vraies sessions, par lien magique (les liens sont écrits dans un fichier par le serveur de test) */
     for (const p of DEMO.personnes) {
       ctx[p.cle] = await b.newContext(Object.assign({ locale: 'fr-FR', extraHTTPHeaders: { 'x-forwarded-for': '203.0.113.' + (10 + DEMO.personnes.indexOf(p)) } }, APPAREILS[p.cle]));   /* une adresse par personne (limites de Better Auth) */

@@ -225,7 +225,9 @@ a{color:inherit}
         <title id="tempsDemoSvgT">Circle · journée de 24 heures</title>
         <desc id="tempsDemoSvgD">Le cadran du programme sera affiché ici.</desc>
        </svg>
-       <figcaption>Les mêmes horaires restent listés sous le cadran.</figcaption>
+       <p class="v-temps-detail" id="tempsDemoDetail" role="status" aria-live="polite">Choisissez un moment : le cadran s’y arrête.</p>
+       <button type="button" class="v-btn2 v-temps-jour" id="tempsDemoJour" hidden>Revenir à la journée entière</button>
+       <figcaption id="tempsDemoLegende">Les mêmes horaires restent listés sous le cadran ; choisissez-en un pour y zoomer.</figcaption>
       </figure>
       <ol class="v-temps-liste v-temps-legende" id="tempsDemoMomentsCercle" aria-label="Horaires affichés sur Circle"></ol>
      </section>
@@ -235,7 +237,7 @@ a{color:inherit}
    <aside class="v-temps-explication" aria-labelledby="tempsExplicationT">
     <p class="v-k">Le même Temps, deux repères</p>
     <h3 id="tempsExplicationT">Programme ou Circle.</h3>
-    <p class="v-leg">La liste détaille les moments visibles. Circle les place sur une journée de 24 heures, sans changer les règles d'accès. Une vue filtrée ne reçoit pas les moments cachés.</p>
+    <p class="v-leg">La liste détaille les moments visibles. Circle les place sur une journée de 24 heures, sans changer les règles d'accès. Choisissez un moment : son arc se souligne et le cadran se resserre sur son heure ; « Revenir à la journée entière » rend les 24 heures. Une vue filtrée ne reçoit pas les moments cachés.</p>
     <p class="v-temps-note">Cet aperçu est fictif et sans date : il montre les horaires du Jour J. Dans AI, retrouvez les programmes actifs de vos projets et ouvrez directement leur page Temps.</p>
     <div class="v-temps-liens"><a class="v-btn" href="/projets/">Retrouver le Temps dans AI</a><a class="v-btn2" href="#ecrans">Voir comment les accès s'appliquent</a></div>
    </aside>

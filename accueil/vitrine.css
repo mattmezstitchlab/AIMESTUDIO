@@ -172,8 +172,13 @@ html.calme .v-tel .cadre,html.calme .v-scene{transition:none}
 .v-temps-modes .v-btn2[aria-pressed="true"]{background:#111116;border-color:#111116;color:#FFFFFF}
 .v-temps-vue{margin-top:18px}
 .v-temps-liste{list-style:none;margin:0;padding:0;display:grid}
-.v-temps-item{display:grid;grid-template-columns:minmax(108px,auto) minmax(0,1fr);gap:12px;padding:12px 4px;border-bottom:1px solid #ECECF2}
-.v-temps-item:last-child{border-bottom:0}
+.v-temps-liste>li{margin:0;min-width:0}
+/* chaque moment est un bouton : la légende est le chemin clavier du cadran (lui reste une image, role="img") */
+.v-temps-item{display:grid;grid-template-columns:minmax(108px,auto) minmax(0,1fr);gap:12px;width:100%;padding:12px 8px;border:0;border-bottom:1px solid #ECECF2;border-radius:10px;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.v-temps-liste>li:last-child .v-temps-item{border-bottom:0}
+.v-temps-item:hover{background:#F7F5FF}
+.v-temps-item:focus-visible{outline:3px solid #4C28E8;outline-offset:2px}
+.v-temps-item[aria-current="true"]{background:#F1EEFF;box-shadow:inset 3px 0 0 #4C28E8}
 .v-temps-h{font:600 13px/1.45 ui-monospace,"SF Mono",Menlo,Consolas,monospace;color:#242431;white-space:nowrap}
 .v-temps-item-texte{min-width:0;display:grid;gap:3px}
 .v-temps-item-texte b{font-size:14px;font-weight:600;line-height:1.35;color:var(--ink)}
@@ -186,13 +191,20 @@ html.calme .v-tel .cadre,html.calme .v-scene{transition:none}
 .v-td-piste{fill:none;stroke:#F0F0F6}
 .v-td-tick{stroke:#C7C7D3;stroke-width:2}.v-td-tick.fort{stroke:#666675;stroke-width:3}
 .v-td-heure{fill:#4B4B5B;font:600 34px var(--ui);letter-spacing:.02em}
-.v-td-arc{fill:none;stroke:#6D4AFF;stroke-width:31;stroke-linecap:round}
+.v-td-arc{fill:none;stroke:#6D4AFF;stroke-width:31;stroke-linecap:round;pointer-events:stroke;cursor:pointer}
+/* le moment choisi : un halo sombre derrière son arc, et son arc assombri (le trait ne porte pas seul l'information :
+   la ligne correspondante est aussi marquée aria-current et le détail est annoncé en aria-live) */
+.v-td-choix{fill:none;stroke:#111116;stroke-width:52;stroke-linecap:round;pointer-events:none}
+.v-td-arc.est-choisi,.v-td-arc.est-survole{stroke:#111116}
+.v-td-heure-zoom{font:600 27px var(--ui)}
 .v-td-prevu{fill:none;stroke:#4C28E8;stroke-width:8;stroke-dasharray:10 10;stroke-linecap:round}
 .v-td-zone{fill:none;stroke:#B45309;stroke-width:8;stroke-dasharray:5 8;stroke-linecap:round}
 .v-td-centre{fill:#111116;font:700 32px var(--ui);letter-spacing:.14em}
 .v-td-sous{fill:#454556;font:500 28px var(--ui)}
 .v-td-plus{fill:#4B4B5B;font:600 24px var(--ui)}
-.v-temps-figure figcaption{margin:0 0 10px;font-size:13px;color:#454556}
+.v-temps-figure figcaption{margin:10px 0 0;font-size:13px;line-height:1.45;color:#454556}
+.v-temps-detail{margin:10px auto 0;max-width:430px;min-height:1.5em;font-size:13px;line-height:1.45;color:#242431;text-align:center}
+.v-temps-jour{margin:10px 0 0}
 .v-temps-legende{border-top:1px solid #ECECF2}
 .v-temps-etat{min-height:1.5em;margin:12px 0 0;font-size:13px;line-height:1.45;color:#454556}
 .v-temps-explication{display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding:clamp(24px,4vw,38px);background:#F8F8FC;border-left:1px solid #E6E6EE}
