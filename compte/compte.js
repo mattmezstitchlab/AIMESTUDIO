@@ -108,8 +108,8 @@ function chargerActivites(montrer){espaces('activites').then(function(r){var L=r
  m.href='mailto:?subject='+encodeURIComponent('Invitez-moi sur AIME')+'&body='+encodeURIComponent('Bonjour,\n\nPour préparer votre mariage ensemble, invitez-moi dans votre projet AIME : créez-le sur '+site+'/ (« Futurs mariés »), puis Personnes → Inviter, avec mon adresse.\n\nÀ bientôt !');
 }).catch(function(){})}
 
-/* une Carte créée dans ce navigateur (carte/carte.js, « aime-carte ») : dite, jamais envoyée ; le rattachement consenti viendra */
-function carteLocale(){var z=$('meCarte');if(!z)return;var v=null;try{v=localStorage.getItem('aime-carte')}catch(_){v=null}z.hidden=!v}
+/* ma Carte (compte/carte-compte.js) : sur cet appareil et sur mon compte, avec mon accord ; sans le module, l'ancien avis local */
+function carteLocale(){var z=$('meCarte');if(!z)return;if(window.AIMECarteCompte){AIMECarteCompte.monter(z);return}var v=null;try{v=localStorage.getItem('aime-carte')}catch(_){v=null}z.hidden=!v}
 
 /* ---------- sur cet appareil : les anciens essais de ce navigateur (accueil d'avant le 24/10) ----------
    Rien n'est perdu ni envoyé : ils restent dans ce navigateur, et ne partent au serveur que par un geste explicite (« Créer dans mon compte »). */

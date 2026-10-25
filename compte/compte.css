@@ -77,3 +77,16 @@ body.en-projet #projet>.leg:first-child{margin:0}
 #demande select{font:inherit;color:var(--encre);background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:6px 10px;min-height:38px}
 /* ME (/compte/) : les légendes lisibles (contraste ≥ 4,5:1), comme dans AI et dans un projet */
 #profil .leg,#activites .leg,#meCarte .leg,#meDecouvrir .leg,#meDecouvrir .leg a,#zoneSuppr .leg,#zoneSuppr .leg a{color:var(--doux)}
+
+/* ME · ma Carte (compte/carte-compte.js) */
+#meCarte .mc-liste{margin:0;padding-left:1.2em;display:grid;gap:4px}
+#meCarte .mc-accord{display:flex;gap:10px;align-items:flex-start}
+#meCarte .mc-accord input{margin-top:3px;flex:none;width:18px;height:18px}
+#meCarte .mc-vis fieldset{border:1px solid var(--ligne);border-radius:12px;padding:10px 14px;display:grid;gap:8px;margin:0;min-width:0}
+#meCarte .mc-vis legend{padding:0 4px}
+#meCarte .mc-ligne{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);align-items:center;gap:8px}
+#meCarte .mc-ligne select{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+@media (max-width:520px){#meCarte .mc-ligne{grid-template-columns:minmax(0,1fr)}}
+#meCarte .mc-deux{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+#meCarte .leg{color:var(--doux)}
+#meCarte h3{margin:0;font-size:1rem}
