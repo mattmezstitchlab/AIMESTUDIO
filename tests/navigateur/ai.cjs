@@ -106,7 +106,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await pd.goBack(); await pd.waitForSelector('#espaces:not([hidden])'); ok((await pd.locator('#tTitre').innerText()) === 'AI', 'Retour : AI');
     await pd.goForward(); await pd.waitForFunction(() => /Mariage New York/.test(document.getElementById('tTitre').textContent)); ok(true, 'Suivant : le projet');
     await pd.click('#projet [data-vers-ai]'); await pd.waitForSelector('#espaces:not([hidden])'); ok(await marque(pd), '« ← AI » : sans rechargement');
-    await pd.reload({ waitUntil: 'networkidle' }); await pd.waitForSelector('#aTraiter:not([hidden]) [data-demande]');
+    await pd.reload({ waitUntil: 'networkidle' }); await pd.waitForSelector('#aTraiter:not([hidden]) [data-demande]'); await pd.waitForSelector('#liste article');
     ok((await pd.locator('#liste').innerText()).includes('Mariage New York'), 'après rechargement : la demande et les projets sont toujours là (persistance)');
 
     console.log('7. Une personne invitée : sa perspective, ni « À traiter » ni demandes');
