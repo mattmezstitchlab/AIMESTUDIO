@@ -19,7 +19,7 @@ html.calme .v-orbe i{animation:none}
 /* la capsule du haut (25/10) : le logo, qui ouvre la liste « Je suis… » ; la place ; le seul champ de la bêta.
    Elle colle en haut sans rien recouvrir : elle tient dans le flux, et le Dock garde la navigation. */
 .clair .barre{position:sticky;top:0;z-index:40;display:block;padding:10px max(10px,env(safe-area-inset-left,0px)) 0 max(10px,env(safe-area-inset-right,0px))}
-.clair .barre::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(17,17,20,.08);opacity:0;z-index:-1}
+.clair .barre::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(17,17,20,.08);opacity:1;z-index:-1}
 .clair .cap{display:flex;align-items:center;gap:10px;max-width:1180px;margin:0 auto;padding:7px 9px;background:#FFFFFF;border:1px solid rgba(17,17,20,.12);border-radius:999px;box-shadow:0 12px 34px -22px rgba(17,17,20,.34)}
 .clair .barre .mk{display:inline-flex;align-items:center;gap:9px;flex:none;min-height:44px;padding:3px 8px 3px 3px;border:0;border-radius:999px;background:none;color:var(--ink);font:400 19px var(--display);letter-spacing:-.01em;cursor:pointer}
 .clair .barre .mk:hover{background:#F3F3F8}
@@ -48,6 +48,8 @@ html.calme .v-orbe i{animation:none}
 .v-col{max-width:1280px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 .v-titre{margin:0 0 32px;text-align:center;font:400 clamp(40px,6vw,76px)/1 var(--display);letter-spacing:-.025em;color:var(--ink)}
 .v-sec{padding:92px 0;position:relative}
+/* la capsule colle en haut : une ancre ne se pose pas dessous */
+.clair .v-sec,.clair .zero,.v-entree,.pied-site{scroll-margin-top:96px}
 
 /* Les sept sections en dégradés francs et harmonieux (contrastes >= 7:1 avec --ink et --soft) */
 .clair .zero{min-height:auto;padding:34px 0 60px;gap:22px;background-color:#FFD9E4;
@@ -68,7 +70,7 @@ html.calme .v-orbe i{animation:none}
 
 /* 2 · un projet, chacun son écran : un seul iPhone. Le fond change avec la place, la page se compose pour elle,
    et le cadran est celui du module Temps (mêmes arcs, mêmes couleurs, mêmes règles). */
-.v-hero{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:clamp(22px,4vw,52px);align-items:center;justify-items:center}
+.v-hero{display:grid;grid-template-columns:minmax(0,340px) minmax(0,460px);gap:clamp(24px,5vw,72px);align-items:center;justify-content:center;justify-items:stretch}
 .v-p-scene{position:relative;width:min(100%,340px);padding:9px;border-radius:52px;background:#111114;box-shadow:0 0 0 1px rgba(17,17,20,.55),0 40px 80px -44px rgba(22,18,52,.6)}
 .v-p-cadre{position:relative;border-radius:44px;overflow:hidden;background:#FFFFFF;isolation:isolate}
 .v-fonds{position:absolute;inset:0;z-index:0}
@@ -89,6 +91,10 @@ html.calme .v-orbe i{animation:none}
 .v-page-t .v-pil{font-size:10px;padding:3px 8px;white-space:normal;text-align:right;max-width:96px;line-height:1.2}
 .v-p-cadran-figure{margin:0;padding:6px 8px 0}
 .v-p-cadran{display:block;width:100%;max-width:252px;height:auto;margin:0 auto;overflow:visible}
+.v-p-cadran .v-td-face{fill:#FCFBFF;stroke:#DEDCF0}
+.v-p-cadran .v-td-anneau{stroke:#EAE7F8}
+.v-p-cadran .v-td-piste{stroke:#EFEDFA}
+.v-p-cadran .v-td-tick{stroke:#BDBBCF}
 .v-p-cadran .v-td-heure{font-size:44px}
 .v-p-cadran .v-td-centre{font-size:46px}
 .v-p-cadran .v-td-sous{font-size:38px}
@@ -194,7 +200,8 @@ html.calme .v-tel .cadre{transition:none}
 #temps .v-tete-temps>p{max-width:440px}
 .v-temps-vitrine{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.85fr);gap:clamp(20px,3vw,40px);align-items:start;overflow:visible}
 .v-temps-produit{min-width:0;width:min(100%,400px);margin:0 auto;background:#FFFFFF;border:8px solid #111114;border-radius:46px;overflow:hidden;box-shadow:0 40px 80px -46px rgba(22,18,52,.55)}
-.v-temps-produit .v-temps-fen{justify-content:space-between;padding:9px 16px}
+.v-temps-produit .v-temps-fen{justify-content:space-between;gap:8px;padding:9px 14px}
+.v-temps-produit .v-temps-fen>span:last-of-type{flex:1;min-width:0;text-align:center;font-size:11px;line-height:1.3}
 .v-p-produit .v-temps-corps{padding:18px 14px 16px}
 .v-p-produit .v-temps-haut{flex-direction:column;gap:8px}
 .v-p-produit .v-temps-haut h3{font-size:26px}
@@ -260,7 +267,7 @@ html.calme .v-tel .cadre{transition:none}
 .v-temps-jour{margin:10px 0 0}
 .v-temps-legende{border-top:1px solid #ECECF2}
 .v-temps-etat{min-height:1.5em;margin:12px 0 0;font-size:13px;line-height:1.45;color:#454556}
-.v-temps-explication{display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding:clamp(24px,4vw,38px);background:#F8F8FC;border-left:1px solid #E6E6EE}
+.v-temps-explication{display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding:clamp(24px,4vw,38px);background:#FFFFFF;border:1px solid rgba(17,17,20,.10);border-radius:26px;box-shadow:0 2px 6px rgba(17,17,24,.04),0 24px 56px -34px rgba(22,18,52,.24)}
 .v-temps-explication .v-k{font-size:11.5px;letter-spacing:.18em}
 .v-temps-explication h3{margin:0;font:400 clamp(30px,4vw,44px)/1.05 var(--display);letter-spacing:-.02em;color:var(--ink)}
 .v-temps-explication .v-leg{font-size:15.5px}
@@ -304,8 +311,8 @@ html.calme .v-tel .cadre{transition:none}
 .clair .js-champ button{background:var(--ink);color:#FFFFFF}
 .clair .js-envoye{color:#065F46!important}
 /* la bêta, en bref, dans la capsule : le champ, le consentement, rien de plus (le formulaire complet reste sur /beta/) */
-.clair .cap .at-bloc{flex:0 1 auto;min-width:0;margin-left:auto;display:flex;align-items:center;gap:8px}
-.clair .cap .at-bloc-f{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.clair .cap .at-bloc{flex:0 1 auto;width:auto;max-width:none;min-width:0;margin:0 0 0 auto;display:flex;align-items:center;gap:10px}
+.clair .cap .at-bloc-f{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;justify-content:flex-end}
 .clair .cap .at-titre{display:none}   /* la phrase reste le nom accessible du bloc ; la capsule ne montre que le champ */
 .clair .cap .js-champ{padding:3px;border-radius:999px;background:#F7F7FB;border:1px solid #C6C6D4;flex-wrap:nowrap}
 .clair .cap .js-champ input{padding:6px 10px;font-size:14px;min-width:0;width:15ch}
@@ -316,16 +323,19 @@ html.calme .v-tel .cadre{transition:none}
 .clair .cap .at-etat.erreur{color:#B91C1C}
 .clair .cap .at-plus{font:500 11px var(--ui);color:var(--ink);text-underline-offset:2px;white-space:nowrap}
 @media (max-width:1000px){
+ .clair .barre{position:static}
+ .clair .barre::before{display:none}
  .clair .cap{flex-wrap:wrap;border-radius:22px;padding:6px 8px;gap:6px}
  .cap .js-choix{flex:1 1 auto;width:auto;min-width:0}
- .clair .cap .at-bloc{flex:1 1 100%;margin:0;border-top:1px solid #EFEFF5;padding-top:6px}
- .clair .cap .at-bloc-f{justify-content:flex-start;flex-wrap:wrap;gap:6px}
+ .clair .cap .at-bloc{flex:1 1 100%;flex-wrap:wrap;margin:0;border-top:1px solid #EFEFF5;padding-top:5px}
+ .clair .cap .at-bloc-f{justify-content:flex-start;flex-wrap:wrap;gap:5px 6px}
  .clair .cap .at-titre{display:none}
- .clair .cap .js-champ{flex:1 1 auto;min-width:0}
- .clair .cap .js-champ input{flex:1;width:auto}
- .clair .cap .at-ok{order:3;flex:1 1 140px;max-width:none}
- .clair .cap .at-etat{order:4;text-align:left}
- .clair .cap .at-plus{order:4;flex:0 0 auto;font-size:10px}
+ .clair .cap .js-champ{flex:1 1 100%;min-width:0;flex-direction:row;padding:2px}
+ .clair .cap .js-champ input{flex:1 1 auto;width:auto;min-width:0;padding:5px 8px;font-size:13.5px}
+ .clair .cap .js-champ button{flex:none;min-height:34px;padding:0 12px;font-size:12.5px}
+ .clair .cap .at-ok{order:3;flex:1 1 100%;max-width:none;font-size:10.5px}
+ .clair .cap .at-etat{order:5;flex:1 1 100%;text-align:left}
+ .clair .cap .at-plus{order:4;flex:1 1 100%;font-size:10.5px;text-align:right}
 }
 .clair .vg-b{background:#FFFFFF;border:1px solid rgba(17,17,24,.10);border-radius:20px;padding:10px 10px 14px;box-shadow:0 14px 34px -22px rgba(17,17,24,.22)}
 .clair .vg-t{color:var(--ink);padding:2px 6px 0}

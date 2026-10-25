@@ -100,7 +100,8 @@ function hero(){if(!$('vHero'))return;var r=composer(etat.place,etat);
  if(P0)[].forEach.call(P0.querySelectorAll('.v-place'),function(b){b.setAttribute('aria-pressed',b.dataset.place===etat.place?'true':'false')});
  var G=$('vGestes');if(G){G.textContent='';r.place.gestes.forEach(function(g){G.appendChild(el('li',null,g))})}
  $('vDecaler').disabled=!r.decaler;$('vPlanB').disabled=!r.decaler;$('vDecaler').setAttribute('aria-pressed',etat.decale?'true':'false');$('vPlanB').setAttribute('aria-pressed',etat.planB?'true':'false');
- $('vPlanB').textContent=etat.planB?'Revenir au jardin':'Il pleut : basculer en plan B';
+ /* le retour au jardin ne se propose qu'à qui peut basculer : une place qui ne fait que lire garde le libellé neutre */
+ $('vPlanB').textContent=r.decaler&&etat.planB?'Revenir au jardin':'Il pleut : basculer en plan B';
  if(!r.decaler)$('vReelDit').textContent='Cette place voit les changements, sans pouvoir les faire.';
  else if(!$('vReelDit').dataset.gardé)$('vReelDit').textContent='Changez quelque chose, puis passez d’une place à l’autre.'}
 /* le cadran de l'iPhone : le modèle de modules/temps/cercle.js, dessiné par accueil/temps.js (le même dessin que l'aperçu) */

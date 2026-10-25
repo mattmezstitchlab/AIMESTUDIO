@@ -33,6 +33,7 @@ test("l'iPhone de « Chacun son écran » : un fond par place, et le vrai cadran
   const bal = V.cadran('owner').moments.find(m => m.id === 'bal');
   assert.deepEqual([bal.debut, bal.fin, bal.dm, bal.fm], ['22:00', '01:00', 1320, 1500], 'le bal finit après minuit');
   assert.equal(V.cadran('guest').moments.length, 4, 'une place ne dessine que ce qu elle reçoit');
+  assert.match(lire('accueil/vitrine.js'), /r\.decaler&&etat\.planB\?'Revenir au jardin':'Il pleut : basculer en plan B'/, 'une place qui ne peut pas basculer ne lit pas « Revenir au jardin »');
   const js = lire('accueil/temps.js'), v = lire('accueil/vitrine.js');
   assert.match(v, /AIMETempsAccueil\.dessiner|root\.AIMETempsAccueil\.dessiner/, 'le même dessin que l aperçu public');
   assert.ok(!/createElementNS|svgEl\(/.test(v), 'aucun cadran recopié dans la vitrine');

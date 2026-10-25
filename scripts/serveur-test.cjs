@@ -64,5 +64,7 @@ function servir(req, res) {
   if (p.startsWith('/api/')) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end('{}'); }
   let f = path.join(ROOT, p); if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
   if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
-  fs.readFile(f, (e, d) => { if (e) { res.writeHead(404); return res.end('404'); } res.writeHead(200, { 'Content-Type': T[path.extname(f)] || 'application/octet-stream' }); res.end(d); });
+  /* aucun cache pour les fichiers servis en local : après une refonte, l'aperçu montre tout de suite le bon CSS et les bons scripts
+     (le HTML porte en plus un ?v= sur les fichiers de l'accueil) */
+  fs.readFile(f, (e, d) => { if (e) { res.writeHead(404, { 'Cache-Control': 'no-store' }); return res.end('404'); } res.writeHead(200, { 'Content-Type': T[path.extname(f)] || 'application/octet-stream', 'Cache-Control': 'no-store, max-age=0' }); res.end(d); });
 }
