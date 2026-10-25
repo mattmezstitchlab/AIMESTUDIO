@@ -43,7 +43,11 @@ test("l'iPhone de « Chacun son écran » : un fond par place, et le vrai cadran
   const z = lire('index.html'), css = lire('accueil/vitrine.css'), C = require('../modules/temps/cercle.js');
   assert.match(z, /<div class="v-hero" id="vHero">/, 'un seul écran, plus le grand bloc vertical');
   assert.deepEqual([...z.matchAll(/data-fond="([a-z]+)"/g)].map(m => m[1]), V.PLACES.map(p => p.id), 'un fond par place, dans l ordre des places');
-  assert.match(z, /<svg class="v-p-cadran" id="vCercle"[^>]*role="img"/, 'le cadran de l iPhone est une image nommée');
+  assert.match(z, /<svg class="v-p-cadran" id="vCercle"[^>]*role="group"/, 'le cadran de l iPhone est un groupe nommé (ses arcs sont les boutons)');
+  /* 25/10 : le cadran est seul dans l'iPhone, plus de liste de moments en dessous */
+  assert.ok(!z.includes('id="vMoments"'), 'aucune liste de moments sous le cadran');
+  assert.match(z, /<p class="v-p-dit" id="vCercleDit"><\/p>/, 'une ligne dit le moment choisi (la page est déjà une zone vivante)');
+  assert.match(lire('accueil/vitrine.js'), /noms\[m\.id\]=m\.titre/, 'chaque arc porte son nom accessible');
   for (const r of ['.v-fond.on', '.v-p-cadran', '.v-p-ecran']) assert.ok(css.includes(r), r + ' stylé');
   for (const pl of V.PLACES) {
     const k = V.cadran(pl.id), M = C.modele(k, { rayon: 352, epaisseur: 40, ecart: 9 });

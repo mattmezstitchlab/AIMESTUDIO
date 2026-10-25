@@ -227,13 +227,17 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     await p.goto(B + '/canevas/?maitre=sante&de=/maitre/', { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
     ok(/Cube Maître/.test(await p.textContent('.cv-titre')), 'Canevas : le Cube Maître s\'ouvre déplié');
     // L'accueil clair (25/10) : « Un projet. Chacun son écran. » sur les vraies règles ; le réel bouge, chacun le sait
-    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#vMoments li'); await p.waitForTimeout(300);
-    const nb = async () => p.evaluate(() => document.querySelectorAll('#vMoments li').length);
+    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#vCercle .v-td-arc'); await p.waitForTimeout(300);
+    /* le cadran est seul (25/10) : ce sont ses arcs qui disent ce que la place reçoit */
+    const nb = async () => p.evaluate(() => document.querySelectorAll('#vCercle .v-td-arc').length);
     const vu = {}; for (const pl of ['owner', 'editor', 'contributor', 'guest']) { await p.click('#vPlaces [data-place="' + pl + '"]'); await p.waitForTimeout(120); vu[pl] = await nb(); }
     ok(vu.owner === 7 && vu.editor === 7 && vu.contributor === 6 && vu.guest === 4, 'Accueil : chaque place reçoit sa page (7, 7, 6, 4 moments)');
     ok(await p.evaluate(() => document.getElementById('vDecaler').disabled), 'Accueil : l\'invitée ne peut pas décaler');
     await p.click('#vPlaces [data-place="editor"]'); await p.click('#vDecaler'); await p.click('#vPlanB'); await p.click('#vPlaces [data-place="guest"]'); await p.waitForTimeout(150);
-    ok(await p.evaluate(() => /16:15/.test(document.getElementById('vMoments').textContent) && /Orangerie/.test(document.getElementById('vMoments').textContent)), 'Accueil : écrit une fois par la coordination, vu par l\'invitée (16:15, Orangerie)');
+    /* toucher un arc dit le moment en toutes lettres sous le cadran : l'invitée voit l'horaire décalé et le plan B */
+    const lireArc = async id => p.evaluate(id => { const a = document.querySelector('#vCercle .v-td-arc[data-moment="' + id + '"]'); a.dispatchEvent(new MouseEvent('click', { bubbles: true })); return document.getElementById('vCercleDit').textContent; }, id);
+    const ditCocktail = await lireArc('cocktail'), ditCeremonie = await lireArc('ceremonie');
+    ok(/16:15/.test(ditCocktail) && /Orangerie/.test(ditCeremonie), 'Accueil : écrit une fois par la coordination, vu par l\'invitée (16:15, Orangerie)');
     await p.click('#vEvts [data-evt="surprise"]'); await p.waitForTimeout(150);
     ok(await p.evaluate(() => document.querySelectorAll('#vTels .v-tel:not(.eteint)').length === 3 && document.querySelectorAll('#vTels .v-tel').length === 7), 'Accueil : sept téléphones, seuls les trois concernés s\'allument');
     ok(!(await deborde()), 'Accueil (chacun son écran) : sans débordement horizontal');

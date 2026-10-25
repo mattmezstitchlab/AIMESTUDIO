@@ -39,7 +39,7 @@ a{color:inherit}
 <link rel="stylesheet" href="/attente/attente.css">
 <link rel="stylesheet" href="/dock/dock.css">
 <link rel="stylesheet" href="/nav/pied-legal.css">
-<link rel="stylesheet" href="/accueil/vitrine.css?v=4">
+<link rel="stylesheet" href="/accueil/vitrine.css?v=5">
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
@@ -131,9 +131,9 @@ a{color:inherit}
       <div class="v-p-page" aria-live="polite">
        <div class="v-page-t"><p style="margin:0;flex:1;min-width:0"><span class="v-k">Vous êtes</span><span class="d" id="vVous">Le couple</span></p><span class="v-pil" id="vNb"></span></div>
        <figure class="v-p-cadran-figure">
-        <svg class="v-p-cadran" id="vCercle" viewBox="0 0 1000 1000" role="img" aria-labelledby="vCercleT vCercleD"><title id="vCercleT">Circle · journée de 24 heures</title><desc id="vCercleD">Le programme de cette place sur le cadran du module Temps.</desc></svg>
+        <svg class="v-p-cadran" id="vCercle" viewBox="0 0 1000 1000" role="group" aria-labelledby="vCercleT vCercleD"><title id="vCercleT">Circle · journée de 24 heures</title><desc id="vCercleD">Le programme de cette place sur le cadran du module Temps.</desc></svg>
+        <p class="v-p-dit" id="vCercleDit"></p>
        </figure>
-       <ul class="v-moments" id="vMoments"></ul>
        <p class="v-p-cache" id="vCache"></p>
       </div>
      </div>
@@ -231,15 +231,14 @@ a{color:inherit}
      </section>
      <section class="v-temps-vue" id="tempsDemoCercle" aria-label="Programme sur le cadran Circle" hidden>
       <figure class="v-temps-figure">
-       <svg class="v-temps-cadran" id="tempsDemoSvg" viewBox="0 0 1000 1000" role="img" aria-labelledby="tempsDemoSvgT tempsDemoSvgD">
+       <svg class="v-temps-cadran" id="tempsDemoSvg" viewBox="0 0 1000 1000" role="group" aria-labelledby="tempsDemoSvgT tempsDemoSvgD">
         <title id="tempsDemoSvgT">Circle · journée de 24 heures</title>
         <desc id="tempsDemoSvgD">Le cadran du programme sera affiché ici.</desc>
        </svg>
-       <p class="v-temps-detail" id="tempsDemoDetail" role="status" aria-live="polite">Choisissez un moment : le cadran s’y arrête.</p>
+       <p class="v-temps-detail" id="tempsDemoDetail" role="status" aria-live="polite">Rien n’est choisi : le cadran montre la journée entière.</p>
        <button type="button" class="v-btn2 v-temps-jour" id="tempsDemoJour" hidden>Revenir à la journée entière</button>
-       <figcaption id="tempsDemoLegende">Les mêmes horaires restent listés sous le cadran ; choisissez-en un pour y zoomer.</figcaption>
+       <figcaption id="tempsDemoLegende">Chaque moment est un arc à son heure : touchez-le (ou Tab puis Entrée) et le cadran s’arrête dessus.</figcaption>
       </figure>
-      <ol class="v-temps-liste v-temps-legende" id="tempsDemoMomentsCercle" aria-label="Horaires affichés sur Circle"></ol>
      </section>
      <p class="v-temps-etat" id="tempsDemoEtat" role="status" aria-live="polite">La démonstration utilise les règles de visibilité du module Temps.</p>
     </div>
@@ -307,7 +306,7 @@ a{color:inherit}
 <script src="/projets/projets.js"></script>
 <script src="/compte/creer.js"></script>
 <script src="/accueil/liste.js"></script>
-<script src="/accueil/capsule.js?v=4"></script>
+<script src="/accueil/capsule.js?v=5"></script>
 <script src="/attente/attente.js"></script>
 <script>(function(){var f=document.getElementById('atBloc');if(f&&window.AIMEAttente)AIMEAttente.bloc(f)})();</script>
 <script src="/accueil/demo.js"></script>
@@ -317,9 +316,9 @@ a{color:inherit}
 <script src="/modules/radial/noyau.js"></script>
 <script src="/modules/temps/moteur.js"></script>
 <script src="/modules/temps/cercle.js"></script>
-<script src="/accueil/temps.js?v=4"></script>
-<script src="/accueil/vitrine.js?v=4"></script>
-<script src="/accueil/reveler.js?v=4"></script>
+<script src="/accueil/temps.js?v=5"></script>
+<script src="/accueil/vitrine.js?v=5"></script>
+<script src="/accueil/reveler.js?v=5"></script>
 <!-- la régie applique ses textes et son orbe ; la coque de l'OS ne recouvre la page que si ?coque=1 est demandé -->
 <script src="/regie/donnees.js"></script>
 <script src="/nav/registre.js"></script>

@@ -97,8 +97,9 @@ html.calme .v-orbe i{animation:none}
 .v-page-t .v-k{display:block;font-size:9.5px;letter-spacing:.18em}
 .v-page-t #vVous{display:block;font-size:20px;line-height:1.1;margin-top:2px;color:var(--ink)}
 .v-page-t .v-pil{font-size:10px;padding:3px 8px;white-space:normal;text-align:right;max-width:96px;line-height:1.2}
-.v-p-cadran-figure{margin:0;padding:6px 8px 0}
-.v-p-cadran{display:block;width:100%;max-width:252px;height:auto;margin:0 auto;overflow:visible}
+/* le cadran prend la place laissée par la liste : il se cale sur la largeur de l'écran et se centre dans la hauteur libre */
+.v-p-cadran-figure{margin:0;padding:6px 6px 0;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.v-p-cadran{display:block;width:100%;height:auto;max-height:100%;margin:0 auto;overflow:visible}
 .v-p-cadran .v-td-face{fill:#FCFBFF;stroke:#DEDCF0}
 .v-p-cadran .v-td-anneau{stroke:#EAE7F8}
 .v-p-cadran .v-td-piste{stroke:#EFEDFA}
@@ -107,21 +108,10 @@ html.calme .v-orbe i{animation:none}
 .v-p-cadran .v-td-centre{font-size:46px}
 .v-p-cadran .v-td-sous{font-size:38px}
 .v-p-cadran .v-td-plus{font-size:34px}
-.v-p-cadran .v-td-arc{pointer-events:none;cursor:default}
-.v-p-page .v-moments{padding:2px 12px 0;overflow-y:auto;min-height:0;flex:1;scrollbar-width:none}
-.v-p-page .v-moments::-webkit-scrollbar{display:none}
-.v-moments{list-style:none;margin:0;padding:8px 20px}
-.v-moments li{display:flex;gap:14px;align-items:baseline;padding:12px 0;border-bottom:1px solid #EFEFF5}
-.v-moments li:last-child{border-bottom:0}
-.v-moments .h{width:58px;flex:none;font:600 15px ui-monospace,"SF Mono",Menlo,Consolas,monospace;color:var(--ink)}
-.v-moments .t{flex:1;min-width:0}
-.v-moments b{display:block;font-size:16px;color:var(--ink)}
-.v-moments small{display:block;font-size:13.5px;color:var(--faint)}
-.v-p-page .v-moments li{padding:7px 0;gap:9px}
-.v-p-page .v-moments .h{width:42px;font-size:11.5px}
-.v-p-page .v-moments b{font-size:12.5px;line-height:1.25}
-.v-p-page .v-moments small{font-size:11px;line-height:1.3}
-.v-p-page .v-moments .v-pil{font-size:9px;padding:2px 6px}
+.v-p-cadran .v-td-arc{pointer-events:stroke;cursor:pointer}
+.v-p-cadran .v-td-arc:focus-visible{stroke:#111116;stroke-width:46;outline:none}
+/* plus de liste sous le cadran : une ligne dit le moment choisi (le cadran grandit d'autant) */
+.v-p-dit{margin:0;padding:8px 7px 0;min-height:2.5em;font-size:11px;line-height:1.35;color:#242431;text-align:center}
 .v-p-cache{margin:0;padding:8px 13px 11px;font-size:10.5px;line-height:1.35;color:#3E3E4E;border-top:1px solid #F0F0F6}
 .v-hero-reglages{width:100%;max-width:440px;display:flex;flex-direction:column;gap:10px;padding:22px;background:#FFFFFF;border:1px solid rgba(17,17,20,.10);border-radius:26px;box-shadow:0 2px 6px rgba(17,17,24,.04),0 24px 56px -34px rgba(22,18,52,.24)}
 .v-hero-reglages .v-k{font-size:11px}
@@ -278,8 +268,10 @@ html.calme .v-tel .cadre{transition:none}
 .v-td-arc{fill:none;stroke:#6D4AFF;stroke-width:31;stroke-linecap:round;pointer-events:stroke;cursor:pointer}
 /* le moment choisi : un halo sombre derrière son arc, et son arc assombri (le trait ne porte pas seul l'information :
    la ligne correspondante est aussi marquée aria-current et le détail est annoncé en aria-live) */
-.v-td-choix{fill:none;stroke:#111116;stroke-width:52;stroke-linecap:round;pointer-events:none}
+.v-td-choix{fill:none;stroke:#111116;stroke-width:46;stroke-linecap:round;pointer-events:none;opacity:.10}   /* un halo, pas un anneau noir */
 .v-td-arc.est-choisi,.v-td-arc.est-survole{stroke:#111116}
+/* le clavier voit son arc : il s'épaissit et s'assombrit (pas de cadre : un contour SVG dessine une boîte) */
+.v-td-arc:focus-visible{stroke:#111116;stroke-width:44;outline:none}
 .v-td-heure-zoom{font:600 27px var(--ui)}
 .v-td-prevu{fill:none;stroke:#4C28E8;stroke-width:8;stroke-dasharray:10 10;stroke-linecap:round}
 .v-td-zone{fill:none;stroke:#B45309;stroke-width:8;stroke-dasharray:5 8;stroke-linecap:round}
@@ -289,7 +281,8 @@ html.calme .v-tel .cadre{transition:none}
 .v-temps-figure figcaption{margin:10px 0 0;font-size:13px;line-height:1.45;color:#454556}
 .v-temps-detail{margin:10px auto 0;max-width:430px;min-height:1.5em;font-size:13px;line-height:1.45;color:#242431;text-align:center}
 .v-temps-jour{margin:10px 0 0}
-.v-temps-legende{border-top:1px solid #ECECF2}
+/* « Revenir à la journée entière » ne s'affiche que quand le cadran est resserré : [hidden] doit gagner contre .v-btn2 */
+.v-temps-vue [hidden]{display:none!important}
 .v-temps-etat{min-height:1.5em;margin:12px 0 0;font-size:13px;line-height:1.45;color:#454556}
 .v-temps-explication{display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:clamp(22px,3vw,32px);background:#FFFFFF;border:1px solid rgba(17,17,20,.09);border-radius:22px;box-shadow:0 1px 2px rgba(17,17,20,.04),0 20px 44px -34px rgba(22,18,52,.22)}
 .v-temps-explication .v-k{font-size:11.5px;letter-spacing:.18em}

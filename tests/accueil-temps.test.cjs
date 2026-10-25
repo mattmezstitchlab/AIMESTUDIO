@@ -1,8 +1,8 @@
 /* L'accueil, section Temps : l'aperçu se choisit et se zoome.
    Ce que ces tests protègent : la fenêtre de zoom ne dépasse jamais 24 h et garde la fin après minuit ; le cadran zoomé
    ne dessine que la vue filtrée reçue du moteur (jamais un moment qu'une place ne reçoit pas) ; le détail annoncé et le
-   nom accessible des boutons disent la même chose que la vue ; le cadran reste une image (role="img"), la légende est le
-   chemin clavier ; aucune règle de visibilité n'est recopiée dans le navigateur. */
+   nom accessible des boutons disent la même chose que la vue ; en Circle le cadran est seul (25/10), ses arcs sont les
+   boutons et le chemin clavier ; aucune règle de visibilité n'est recopiée dans le navigateur. */
 const { test } = require('node:test'), assert = require('node:assert/strict'), fs = require('fs'), path = require('path');
 const lire = f => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
 const A = require('../accueil/temps.js'), D = require('../modules/temps/demo-camille-gabriel.json'), C = require('../modules/temps/cercle.js');
@@ -40,21 +40,25 @@ test('le détail d’un moment dit exactement ce que la vue contient', () => {
   assert.ok(!/note|responsable|audience|gestes/.test(A.resumeMoment(cocktail)), 'aucun champ interne dans le détail');
 });
 
-test('l’accueil : légende de boutons, détail annoncé, retour à la journée ; le cadran reste une image', () => {
+test('l’accueil : le cadran seul, chaque arc est un bouton, le détail annoncé, le retour à la journée', () => {
   const z = lire('index.html'), js = lire('accueil/temps.js'), css = lire('accueil/vitrine.css');
-  for (const id of ['tempsDemoDetail', 'tempsDemoJour', 'tempsDemoLegende', 'tempsDemoMoments', 'tempsDemoMomentsCercle'])
+  for (const id of ['tempsDemoDetail', 'tempsDemoJour', 'tempsDemoLegende', 'tempsDemoMoments'])
     assert.ok(z.includes('id="' + id + '"'), id);
+  /* 25/10 : plus de liste sous le cadran. Le mode Circle n'a que le cadran, son centre, sa légende et ses boutons. */
+  assert.ok(!z.includes('id="tempsDemoMomentsCercle"'), 'aucune liste de moments sous le cadran Circle');
   assert.match(z, /<(p)[^>]*id="tempsDemoDetail"[^>]*aria-live="polite"/, 'le détail est annoncé');
   assert.match(z, /<button[^>]*id="tempsDemoJour"[^>]*hidden/, 'le retour est caché au départ');
-  assert.match(z, /<svg[^>]*id="tempsDemoSvg"[^>]*role="img"/, 'le cadran reste une image pour les technologies d’assistance');
-  assert.ok(!/setAttribute\('tabindex'/.test(js), 'aucun arc focusable : le clavier passe par les boutons de la légende');
-  assert.match(js, /createElement\('button'|el\('button'/, 'la légende est faite de vrais boutons');
-  assert.match(js, /'aria-current','true'/, 'le moment choisi est marqué');
-  /* le rendu reconstruit la liste : sans ce rappel, le clavier perdrait sa ligne à chaque choix */
-  assert.match(js, /setAttribute\('data-moment',m\.id\)/, 'chaque bouton porte son moment');
+  /* le cadran n'est plus une image : ses arcs SONT les boutons, et le groupe porte son nom */
+  assert.match(z, /<svg[^>]*id="tempsDemoSvg"[^>]*role="group"/, 'le cadran est un groupe de boutons nommé');
+  assert.match(js, /setAttribute\('role','button'\)/, 'chaque arc est un bouton');
+  assert.match(js, /setAttribute\('tabindex','0'\)/, 'chaque arc reçoit le clavier');
+  assert.match(js, /e\.key==='Enter'/, 'Entrée choisit l’arc');
+  assert.match(js, /setAttribute\('aria-pressed',a\.id===choix/, 'le moment choisi est marqué');
+  /* le rendu reconstruit les arcs : sans ce rappel, le clavier perdrait son arc à chaque choix */
+  assert.match(js, /setAttribute\('data-moment',a\.id\)/, 'chaque arc porte son moment');
   assert.match(js, /focus\(\{preventScroll:true\}\)/, 'le focus est rendu sans faire sauter la page');
   assert.match(js, /garde[^\n]*data-moment/, 'le moment qui avait le focus est retrouvé après le rendu');
-  for (const r of ['.v-temps-item:focus-visible', '.v-temps-item[aria-current="true"]', '.v-td-choix', '.v-td-arc.est-choisi'])
+  for (const r of ['.v-temps-item:focus-visible', '.v-temps-item[aria-current="true"]', '.v-td-choix', '.v-td-arc.est-choisi', '.v-td-arc:focus-visible'])
     assert.ok(css.includes(r), r);
   assert.match(css, /\.v-td-arc\{[^}]*pointer-events:stroke/, 'l’arc se clique, sans bloquer le survol du cadran');
 });

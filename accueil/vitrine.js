@@ -84,14 +84,17 @@ if(typeof document==='undefined')return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,
 function $(id){return document.getElementById(id)}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function pastille(c){var p=el('span','v-pt');p.style.setProperty('--pt',c);p.setAttribute('aria-hidden','true');return p}
-var etat={place:'owner',decale:false,planB:false};
+var etat={place:'owner',decale:false,planB:false,choisi:null};
 
 function hero(){if(!$('vHero'))return;var r=composer(etat.place,etat);
+ if(etat.choisi&&!r.vus.some(function(m){return m.id===etat.choisi}))etat.choisi=null;   /* la place a changé : un moment qu'elle ne voit pas ne reste pas choisi */
  /* le fond : une couche par place, celle de la place choisie s'allume (les autres s'éteignent) */
  [].forEach.call(document.querySelectorAll('.v-fond'),function(f){var on=f.getAttribute('data-fond')===etat.place;f.classList.toggle('on',on);if(on)f.style.backgroundImage=r.fond});
  $('vVous').textContent=r.place.nom;$('vVousPt').style.setProperty('--pt',r.couleur);
  $('vNb').textContent=r.vus.length+' moments visibles';
- var L=$('vMoments');L.textContent='';r.vus.forEach(function(m){var li=el('li');li.appendChild(el('span','h',m.heure));var d=el('span','t');d.appendChild(el('b',null,m.titre));d.appendChild(el('small',null,m.lieu));li.appendChild(d);if(m.change){var p=el('span','v-pil','mis à jour');p.style.background='#111114';p.style.color='#FFFFFF';p.style.borderColor='#111114';li.appendChild(p)}L.appendChild(li)});
+ /* plus de liste sous le cadran (25/10) : le cadran est seul, et c'est lui qu'on touche. Une ligne dit le moment choisi. */
+ var choisi=etat.choisi?r.vus.filter(function(m){return m.id===etat.choisi})[0]:null,dit=$('vCercleDit');
+ if(dit)dit.textContent=choisi?(choisi.titre+' · '+choisi.debut+' – '+choisi.fin+' · '+choisi.lieu+(choisi.change?' · mis à jour':'')):'Touchez un arc : son heure, son titre et son lieu s’affichent ici.';
  $('vCache').textContent=r.caches?r.caches+(r.caches>1?' moments ne sont pas envoyés à cette place : ils ne la concernent pas.':' moment n’est pas envoyé à cette place : il ne la concerne pas.'):'Cette place voit tout le programme.';
  dessinerCadran(r);
  var P0=$('vPlaces');
@@ -108,7 +111,12 @@ function hero(){if(!$('vHero'))return;var r=composer(etat.place,etat);
 function dessinerCadran(r){var S=$('vCercle');if(!S||!C)return;
  var dessin=root.AIMETempsAccueil&&root.AIMETempsAccueil.dessiner;
  if(!dessin)return;
- dessin(S,C.modele(cadran(etat.place,etat),{rayon:352,epaisseur:40,ecart:9}),{qui:'la place « '+r.place.nom+' »',ids:{titre:'vCercleT',desc:'vCercleD'}})}
+ var noms={};r.vus.forEach(function(m){noms[m.id]=m.titre+' · '+m.debut+' – '+m.fin+' · '+m.lieu+(m.change?' · mis à jour':'')});
+ /* le cadran de l'iPhone se touche comme celui du module : même nom accessible, même clic, même Entrée */
+ dessin(S,C.modele(cadran(etat.place,etat),{rayon:352,epaisseur:40,ecart:9}),{choisi:etat.choisi,qui:'la place « '+r.place.nom+' »',noms:noms,
+  choisir:function(id){etat.choisi=etat.choisi===id?null:id;hero();
+   var a=$('vCercle')&&$('vCercle').querySelector('.v-td-arc[data-moment="'+id+'"]');if(a){try{a.focus({preventScroll:true})}catch(_){a.focus()}}},
+  ids:{titre:'vCercleT',desc:'vCercleD'}})}
 function dire(t){var d=$('vReelDit');if(d){d.textContent=t}}
 
 function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';
