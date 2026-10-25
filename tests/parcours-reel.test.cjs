@@ -54,7 +54,7 @@ test('réel · A ferme son navigateur et se reconnecte : il retrouve le même pr
   assert.ok(mes.body.espaces.some(e => e.id === projet && e.role === 'owner' && e.modele === 'mariage'));
   const p = await page(projet, 'acces', S.a);
   assert.equal(p.code, 200); assert.ok(p.body.dock && p.body.dock.reel); assert.equal(p.body.dock.lieux[0].gabarit, 'acces');
-  assert.deepEqual(p.body.dock.plus.map(g => g.id), ['inviter'], 'le propriétaire peut inviter');
+  assert.deepEqual(p.body.dock.plus.map(g => g.id), ['inviter', 'engagement'], 'le propriétaire peut inviter et s\'engager (V1, P6)');
 });
 
 test('réel · A invite B avec la relation « témoin » ; B accepte et voit sa perspective et son Dock', opts, async () => {
@@ -66,7 +66,7 @@ test('réel · A invite B avec la relation « témoin » ; B accepte et voit sa 
   const p = await page(projet, 'acces', S.b);
   assert.equal(p.code, 200); assert.equal(p.body.blocs.find(b => b.id === 'acces-role').relation, 'témoin', 'la relation nomme le rôle');
   assert.match(textes(p), /Vous êtes témoin du mariage/); assert.ok(!/prestataire/.test(textes(p))); assert.equal(p.body.mots.role, 'Témoin', 'l\'en-tête nomme la relation');
-  assert.ok(p.body.dock && p.body.dock.reel && p.body.dock.plus.length === 0, 'le Dock de B : aucun geste d\'invitation');
+  assert.ok(p.body.dock && p.body.dock.reel && !p.body.dock.plus.some(g => g.id === 'inviter'), 'le Dock de B : aucun geste d\'invitation');
   assert.equal(p.body.blocs.find(b => b.id === 'acces-signaler').aide, 'Le propriétaire lira votre message, pas votre nom.');
   const pers = await page(projet, 'personnes', S.a);
   assert.ok(pers.body.blocs.find(b => b.type === 'liste').personnes.some(x => x.nom === 'Bruno' && x.relation === 'témoin'));
