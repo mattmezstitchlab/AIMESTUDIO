@@ -123,9 +123,12 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await pd.click('#pCorps button:has-text("Importer le programme type")');
     await pd.waitForFunction(() => [...document.querySelectorAll('#dock-site .dock-e .dock-t')].some(x => x.textContent === 'Programme'), null, { timeout: 8000 }).catch(() => {});
     ok((await dock(pd)).includes('Programme'), 'après l\'import, « Programme » rejoint le Dock du projet : ' + (await dock(pd)).join(' · '));
-    await lieu(pd, 'Programme').click(); await pd.waitForSelector('.tp-m', { timeout: 8000 });
-    /* le programme peut s'afficher en deux temps (copie locale, puis serveur) : on attend le compte final, sans le supposer */
-    await pd.waitForFunction(() => document.querySelectorAll('.tp-m').length === 9, null, { timeout: 15000 }).catch(() => {});   /* une lecture perdue est relancée après 6 s (modules/temps/vue.js) */
+    /* l'import ouvre déjà le Programme ; le clic sur « Programme » le recompose (nouvelle page, nouveau module, nouvelle lecture).
+       On marque l'ancien module pour ne compter QUE le nouveau : compter entre les deux lisait l'ancien puis « Chargement… » (0) */
+    await pd.evaluate(() => { const m = document.querySelector('#pCorps .p-module'); if (m) m.dataset.ancien = '1'; });
+    await lieu(pd, 'Programme').click();
+    await pd.waitForFunction(() => !document.querySelector('#pCorps .p-module[data-ancien]') && document.querySelectorAll('#pCorps .tp-m').length > 0, null, { timeout: 15000 }).catch(() => {});
+    await pd.waitForFunction(() => document.querySelectorAll('#pCorps .tp-m').length === 9, null, { timeout: 15000 }).catch(() => {});
     const nM = await pd.locator('.tp-m').count(); ok(nM === 9, 'le propriétaire ouvre le programme type du mariage : 9 moments (' + nM + ')');
     if (nM !== 9) console.log('    traces :\n      ' + traces.slice(-25).join('\n      ') + '\n    en vol (sans réponse) :\n      ' + [...enVol.values()].join('\n      '));
     if (nM !== 9) {
