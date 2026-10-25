@@ -12,7 +12,7 @@ t('Accueil (docs/IDENTITE.md) : en haut, seulement le logo ; le + et « J\'ai un
  for(const f of ['index.html','exemples/index.html','capacites/index.html','contact/index.html']){const z=lire(f),haut=z.match(/<header class="barre">[\s\S]*?<\/header>/)[0];
   assert.ok(!/MON BUREAU|AIME STUDIO/.test(haut),f);assert.ok(!haut.includes('id="porte"'),f+' : pas de second +');assert.ok(!/compte-d|J'ai un compte/.test(haut),f+' : « J\'ai un compte » est dans le Dock');
   assert.ok(!/AIMEPorte\.monter/.test(z),f);assert.ok(z.includes('/dock/plus.js')&&/AIMEPlus\.brancher\(el\)/.test(z),f+' : le + unique du Dock')}
- const D=require('../dock/modele.js');assert.ok(D.composer({}).lieux.some(e=>e.id==='compte'&&e.href==='/compte/'),'« J\'ai un compte » dans le Dock public');
+ const D=require('../dock/modele.js');assert.ok(D.composer({}).lieux.some(e=>e.id==='me'&&e.href==='/compte/'),'« ME » mène au compte depuis le Dock public');
  assert.ok(/INVIT|invitation/.test(lire('compte/compte.js')),'le lien d\'invitation reste traité par la page compte')});
 t('la porte ne reste que sur le Canevas ; l\'accueil, le Point Zéro et la Grande Partition ont le + unique du Dock',()=>{for(const f of ['point-zero/index.html','lab/grande-partition/index.html']){const h=lire(f);assert.ok(!h.includes('AIMEPorte.monter')&&!h.includes('id="porte"'),f+' : plus de seconde porte');assert.match(h,/AIMEPlus\.brancher\(el\)/,f+' : le + unique du Dock')}for(const f of ['canevas/index.html']){const h=lire(f);assert.ok(h.includes('/porte/porte.js')&&h.includes('/porte/porte.css'),f);assert.ok(!/\.ap-b\{/.test(h),f+' ne recopie pas le style')}});
 t('parcours d\'identité : Better Auth seul authentifie, le timbre existant, les six formes',()=>{const pz=lire('pointzero/pz.js');

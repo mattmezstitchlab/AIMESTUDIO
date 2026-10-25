@@ -10,7 +10,7 @@ test('dock : chaque rôle serveur a un instantané stable (entrées et gestes du
  assert.equal(inst('contributor'),'notifications,mission,documents,messages | deposer,retard,ecrireCoordination');
  assert.equal(inst('viewer'),'controle,exports,journal | exporter,demanderPiece');
  assert.equal(inst('guest'),'programme,mareponse,lieu,messages | confirmer,ecrireOrganisateurs');
- assert.equal(inst(undefined),'coeur,exemples,compte | creerProjet,invitationRecue','le Lab sort de la navigation publique (brief du 24/10)');
+ assert.equal(inst(undefined),'ai,me | creerProjet,invitationRecue','sans compte : AI · + · ME, comme partout (décision du 25/10/2026)');
 });
 
 test('dock : la réponse d\'une invitée ne contient ni Budget, ni Personnes, ni aucun nom d\'entrée interdite, même en texte',()=>{
@@ -126,7 +126,7 @@ test('dock réel : chaque nom de lieu des docks se rattache à un gabarit (ou es
 test('le Dock public et son + (décision de Matt, 24/10) : le Dock garde les lieux, le + garde les actions ; jamais /#entrer ni le Timbre',()=>{
  const P=require('../dock/plus.js'),D=require('../dock/modele.js');
  const pub=D.composer({famille:P.etat(null).famille}),con=D.composer({famille:P.etat({connecte:true}).famille});
- assert.deepEqual(pub.lieux.map(x=>x.nom),['Le cœur','Exemples','J\'ai un compte'],'pas connecté : asymétrique, sans bouton fictif');
+ assert.deepEqual(pub.lieux.map(x=>x.nom),['AI','ME'],'pas connecté : AI · + · ME, le même Dock partout (25/10/2026)');
  assert.deepEqual(con.lieux.map(x=>x.nom),['AI','ME'],'connecté : AI | + | ME (architecture de convergence, 25/10)');
  assert.deepEqual(con.lieux.map(x=>x.href),['/projets/','/compte/'],'les adresses d\'avant sont gardées');
  assert.deepEqual(pub.plus.map(x=>x.nom),['Créer un projet','J\'ai reçu une invitation']);assert.deepEqual(con.plus.map(x=>x.nom),['Nouveau projet','J\'ai reçu une invitation']);
@@ -157,7 +157,7 @@ test('les mots du Dock (24/10) : un mot court par icône, le nom en aria-label, 
  assert.equal(D.ENTREES.mareponse.nom,'Réponse');assert.equal(D.ENTREES.calendrier.nom,'Agenda');
  const h=V.html(D.composer({famille:'Public connecté'}),{id:'m',actif:'coeur'});
  for(const n of ['AI, mon environnement','ME, ma Carte'])assert.ok(h.includes('aria-label="'+n+'"'),n+' : AI et ME se disent en entier au lecteur d\'écran');
- for(const n of ['Le cœur','Exemples'])assert.ok(V.html(D.composer({}),{id:'p'}).includes('aria-label="'+n+'"'),n+' : le nom, tel qu\'on l\'écrit');
+ for(const n of ['AI, mon environnement','ME, ma Carte'])assert.ok(V.html(D.composer({}),{id:'p'}).includes('aria-label="'+n+'"'),n+' : le nom dit, tel qu\'on l\'entend');
  assert.match(c,/\.dock-zone \.dock-t\{font:500 11px/);assert.match(c,/\.dock-zone \.dock-e\[aria-current\] \.dock-t[^{]*\{color:#fff/);assert.match(c,/\.dock-ecran \.dock-t\{position:absolute;width:1px/,'téléphone réduit : icônes seules');
  assert.ok(!/\.dock-page \.dock-t\{white-space:normal/.test(c),'jamais de retour à la ligne');
  assert.match(lire('exemples/mosaique/index.html'),/\.dk > span:not\(\.badge\) \{ position: absolute; width: 1px/);assert.match(lire('accueil/je-suis.css'),/\.dm-tel:not\(\.choisi\) \.dk>span:not\(\.badge\)\{display:none\}/);

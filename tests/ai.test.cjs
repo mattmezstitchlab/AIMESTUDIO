@@ -6,7 +6,7 @@ const lire = f => fs.readFileSync(path.join(__dirname, '..', f), 'utf8'), code =
 test('le Dock connecté : AI · + · ME, aux adresses d\'avant ; le Dock public ne change pas', () => {
   const D = require('../dock/modele.js'), con = D.composer({ famille: 'Public connecté' }), pub = D.composer({});
   assert.deepEqual(con.lieux.map(x => [x.nom, x.href, x.dit]), [['AI', '/projets/', 'AI, mon environnement'], ['ME', '/compte/', 'ME, ma Carte']]);
-  assert.deepEqual(pub.lieux.map(x => x.nom), ['Le cœur', 'Exemples', 'J\'ai un compte'], 'sans compte : les exemples restent dans le Dock');
+  assert.deepEqual(pub.lieux.map(x => x.nom), ['AI', 'ME'], 'sans compte : AI · + · ME aussi (les exemples restent sur la landing et dans ME)');
   assert.match(lire('compte/index.html'), /href="\/exemples\/">les exemples<\/a>/, 'connecté : les exemples restent à un clic depuis AI');
 });
 

@@ -43,7 +43,7 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.waitForTimeout(500);
     ok(await p.evaluate(() => !document.querySelector('.barre #porte, .barre .compte-d') && !document.getElementById('entrer')), 'accueil : en haut seulement le logo, plus de « Et maintenant ? »');
     // le Dock public et la carte du + (décision de Matt, 24/10) : le Dock garde les lieux, le + garde les actions
-    ok(await p.evaluate(() => [...document.querySelectorAll('#dock-site .dock-e .dock-t')].map(x => x.textContent).join(' · ') === 'Le cœur · Exemples · J\'ai un compte'), 'Dock, pas connecté : Le cœur · Exemples · + · J\'ai un compte');
+    ok(await p.evaluate(() => [...document.querySelectorAll('#dock-site .dock-e .dock-t')].map(x => x.textContent).join(' · ') === 'AI · ME'), 'Dock, pas connecté : AI · + · ME (comme connecté) · J\'ai un compte');
     await p.click('#dock-site .dock-plus'); await p.waitForTimeout(300);
     const carte = await p.evaluate(() => { const m = document.querySelector('#dock-site .dock-menu'), g = [...m.querySelectorAll('.dock-g')].map(a => a.textContent.trim()), d = document.querySelector('#dock-site .dock').getBoundingClientRect(), r = m.getBoundingClientRect(), lieux = [...document.querySelectorAll('#dock-site .dock-e .dock-t')].map(x => x.textContent);
       return { g, dessus: r.bottom <= d.top + 1 && r.top >= 0 && r.left >= 0 && r.right <= innerWidth, carte: m.classList.contains('dock-carte'), double: g.some(x => lieux.includes(x)) }; });
