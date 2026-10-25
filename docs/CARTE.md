@@ -143,3 +143,13 @@ Toujours hors de cette PR : les demandes adressées à une Carte (P3), la modifi
 - **Le + de ME** : « Modifier ma Carte » · « Ajouter une activité » · « Partager ma Carte ». Chaque geste mène à sa place dans ME et y met le focus ; rien ne s'enregistre sans le bouton. « Nouveau projet » et l'invitation restent dans le + de AI.
 - Sans la migration 13 : la liste marche, « Montrer sur ma Carte » est grisé et dit indisponible (503 au serveur), le lien ne montre aucune activité.
 - Tests : `tests/carte-compte.test.cjs` (4 cas P4), `tests/navigateur/carte.cjs` étape 10 (iPad, iPhone visiteur, axe).
+
+## 9. Mon formulaire personnel (V1, PR P5, 25/10/2026)
+
+- **Mes questions** (ME, sous « Recevoir des demandes par ce lien », visible quand c'est allumé) : jusqu'à **6 questions**, chacune avec un libellé (120 caractères), un type (**texte court**, **date**, **nombre**, **choix dans une liste** de 2 à 8 réponses) et « réponse obligatoire » (non par défaut). Un brouillon : rien ne part sans « Enregistrer mes questions ». `POST /api/carte { action: 'questions', questions }`.
+- **Où elles vivent** : `cartes.questions` (migration `2026-10-25-14-cartes-questions.sql`). Couper puis recréer le lien ne les efface pas ; retirer la Carte du compte, si.
+- **Les règles** sont au serveur, en un seul endroit (`api/_carte/formulaire.cjs`) : nettoyage des questions (rien d'inconnu gardé, réponses vides et doublons retirés, 8 Kio au plus), validation des réponses contre les questions **actuelles** lues en base, jamais celles envoyées par le navigateur.
+- **La page du lien** `/c/#<jeton>` pose les questions au-dessus du message, seulement si le contact est allumé (`GET /api/carte-publique` → `questions`). Une question obligatoire vide, une date impossible, un choix hors liste ou un nombre invalide : 422, champ par champ (`q:<id>`), rien n'est gardé. Si la personne a changé ses questions entre-temps, la page le dit.
+- **Les réponses** sont gardées sur la demande (`demandes.reponses`) avec le **libellé tel qu'il était à l'envoi** : modifier ou retirer une question plus tard ne change pas le sens d'une demande reçue. Seulement les questions répondues ; une réponse à une question inconnue est ignorée. Elles apparaissent dans l'AI (« Ses réponses ») et dans l'e-mail, y compris après « Renvoyer ».
+- **Sans la migration 14** : ME dit « pas encore disponible », le lien et le formulaire de P3 marchent comme avant.
+- **Tests** : `tests/carte-compte.test.cjs` (8 cas P5, vraie base), `tests/navigateur/carte.cjs` étape 11 (iPad propriétaire, iPhone visiteur, axe WCAG 2.2 AA).

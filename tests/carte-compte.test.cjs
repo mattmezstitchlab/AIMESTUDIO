@@ -412,3 +412,112 @@ test('activités : sans la migration 2026-10-25-13, la liste marche, le réglage
     const v = await publique(jeton); assert.equal(v.code, 200); assert.deepEqual(v.body.activites, []);
   } finally { E._db(null); P._db(undefined); Ac._oublier(); }
 });
+
+/* ---------- PR P5 : mon formulaire personnel (migration 2026-10-25-14) : mes questions, posées à qui m'écrit par mon lien ---------- */
+const QUESTIONS = [
+  { libelle: 'Date de l\'événement', type: 'date', requise: true },
+  { libelle: 'Formule', type: 'choix', choix: ['Cérémonie', 'Cocktail', 'Soirée', 'Cocktail', ''], requise: true, pirate: 'jamais gardé' },
+  { libelle: 'Nombre d\'invités', type: 'nombre' },
+  { libelle: 'Lieu', type: 'texte' },
+];
+async function carteFormulaire(email) {
+  const c = await carteAvecPublic(email, { nom: 'Lou Fictive' }, { nom: 'publique' });
+  const jeton = (await ecrire(c, { action: 'publier', consentement: true })).body.lien.jeton;
+  assert.equal((await ecrire(c, { action: 'contact', actif: true })).code, 200);
+  return { c, jeton };
+}
+
+test('formulaire : il faut une Carte sur le compte ; les questions sont nettoyées au serveur, chacun les siennes', opts, async () => {
+  await pool.query('truncate quotas').catch(() => {}); Qm._oublier();
+  const sans = await connecter('form.sans@exemple.test');
+  assert.equal((await ecrire(sans, { action: 'questions', questions: QUESTIONS })).code, 400, 'sans Carte : refusé');
+  const { c } = await carteFormulaire('form.une@exemple.test');
+  assert.deepEqual((await lire(c)).body.questions, [], 'aucune question au départ'); assert.equal((await lire(c)).body.formulaire, 'disponible');
+  const r = await ecrire(c, { action: 'questions', questions: QUESTIONS });
+  assert.equal(r.code, 200);
+  const q = r.body.questions;
+  assert.equal(q.length, 4); assert.ok(q.every(x => /^q[a-z0-9]{1,12}$/.test(x.id)), 'chaque question reçoit un identifiant');
+  assert.deepEqual(q[1].choix, ['Cérémonie', 'Cocktail', 'Soirée'], 'réponses vides et doublons retirés'); assert.equal(q[1].pirate, undefined, 'rien d\'inconnu n\'est gardé');
+  assert.equal(q[2].requise, false, 'facultative sans choix explicite');
+  assert.deepEqual((await lire(c)).body.questions, q, 'relues telles quelles');
+  const autre = await connecter('form.sans@exemple.test');
+  assert.deepEqual((await lire(autre)).body.questions, [], 'une autre personne ne voit pas ces questions');
+});
+
+test('formulaire : questions invalides refusées (trop, type inconnu, libellé vide, choix insuffisants), rien n\'est changé', opts, async () => {
+  const c = await connecter('form.une@exemple.test'), avant = (await lire(c)).body.questions;
+  const sept = Array.from({ length: 7 }, (_, i) => ({ libelle: 'Question ' + i, type: 'texte' }));
+  for (const qs of [sept, [{ libelle: 'Couleur', type: 'couleur' }], [{ libelle: ' ', type: 'texte' }], [{ libelle: 'Formule', type: 'choix', choix: ['Seule'] }], 'pas une liste', [{ libelle: 'x'.repeat(121), type: 'texte' }]]) {
+    assert.equal((await ecrire(c, { action: 'questions', questions: qs })).code, 400, JSON.stringify(qs).slice(0, 60));
+  }
+  assert.deepEqual((await lire(c)).body.questions, avant);
+});
+
+test('formulaire : le lien ne montre les questions que si la personne reçoit des demandes', opts, async () => {
+  const c = await connecter('form.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton;
+  const v = await publique(jeton); assert.equal(v.code, 200); assert.equal(v.body.questions.length, 4);
+  assert.deepEqual(Object.keys(v.body.questions[1]).sort(), ['choix', 'id', 'libelle', 'requise', 'type'], 'les questions, rien d\'autre');
+  await ecrire(c, { action: 'contact', actif: false });
+  assert.deepEqual((await publique(jeton)).body.questions, [], 'contact éteint : aucune question');
+  await ecrire(c, { action: 'contact', actif: true });
+});
+
+test('formulaire : réponses validées au serveur contre les questions actuelles ; une erreur ne garde rien', opts, async () => {
+  const c = await connecter('form.une@exemple.test'), b = (await lire(c)).body, jeton = b.lien.jeton, [qd, qf, qn] = b.questions;
+  const avant = (await demandesDe('form.une@exemple.test')).length;
+  let r = await deposer(jeton, visiteur({ email: 'f1@exemple.test' }));
+  assert.equal(r.code, 422); assert.ok(r.body.champs['q:' + qd.id] && r.body.champs['q:' + qf.id], 'les questions obligatoires sont exigées');
+  r = await deposer(jeton, visiteur({ email: 'f2@exemple.test', reponses: { [qd.id]: '2027-02-30', [qf.id]: 'Brunch', [qn.id]: 'beaucoup' } }));
+  assert.equal(r.code, 422); assert.deepEqual(Object.keys(r.body.champs).sort(), ['q:' + qd.id, 'q:' + qf.id, 'q:' + qn.id].sort(), 'date impossible, choix hors liste, nombre invalide');
+  assert.equal((await demandesDe('form.une@exemple.test')).length, avant, 'rien n\'est gardé');
+});
+
+test('formulaire : les réponses arrivent avec la demande, dans l\'AI et l\'e-mail, avec le libellé tel qu\'il était', opts, async () => {
+  const c = await connecter('form.une@exemple.test'), b = (await lire(c)).body, jeton = b.lien.jeton, [qd, qf, qn] = b.questions; courriels = [];
+  const r = await deposer(jeton, visiteur({ email: 'f3@exemple.test', reponses: { [qd.id]: '2027-06-12', [qf.id]: 'Soirée', [qn.id]: '120', qinconnue: 'ignorée' } }));
+  assert.equal(r.code, 200);
+  const ligne = (await demandesDe('form.une@exemple.test')).pop();
+  assert.deepEqual(ligne.reponses, [{ libelle: 'Date de l\'événement', type: 'date', valeur: '2027-06-12' }, { libelle: 'Formule', type: 'choix', valeur: 'Soirée' }, { libelle: 'Nombre d\'invités', type: 'nombre', valeur: '120' }],
+    'seulement les questions répondues, jamais une réponse inconnue');
+  assert.equal(courriels.length, 1); assert.match(courriels[0].text, /Ses réponses :\nDate de l'événement : 12\/06\/2027\nFormule : Soirée\nNombre d'invités : 120/);
+  assert.match(courriels[0].html, /Ses réponses/);
+  /* la personne modifie ensuite sa question : la demande reçue garde son sens */
+  const qs = b.questions.map(q => q.id === qf.id ? Object.assign({}, q, { libelle: 'Moment souhaité' }) : q);
+  assert.equal((await ecrire(c, { action: 'questions', questions: qs })).code, 200);
+  const l = await mesDemandes(c), d = await mesDemandes(c, { q: '?cle=' + l.body.demandes[0].cle });
+  assert.equal(d.code, 200); assert.equal(d.body.demande.reponses[1].libelle, 'Formule', 'le libellé de l\'envoi');
+  assert.equal((await lire(c)).body.questions[1].libelle, 'Moment souhaité');
+  /* « Renvoyer » reprend les réponses */
+  await pool.query("update demandes set email_statut = 'echec' where cle = $1", [l.body.demandes[0].cle]); courriels = [];
+  assert.equal((await mesDemandes(c, { method: 'POST', body: { action: 'renvoyer', cle: l.body.demandes[0].cle } })).code, 200);
+  assert.match(courriels[0].text, /Ses réponses :/);
+});
+
+test('formulaire : sans question, la demande est celle de P3 (aucune réponse gardée)', opts, async () => {
+  const c = await connecter('form.une@exemple.test');
+  assert.equal((await ecrire(c, { action: 'questions', questions: [] })).code, 200);
+  const jeton = (await lire(c)).body.lien.jeton;
+  assert.deepEqual((await publique(jeton)).body.questions, []);
+  assert.equal((await deposer(jeton, visiteur({ email: 'f4@exemple.test', reponses: { qquelconque: 'x' } }))).code, 200);
+  assert.equal((await demandesDe('form.une@exemple.test')).pop().reponses, null);
+});
+
+test('formulaire : retirer la Carte du compte efface aussi ses questions', opts, async () => {
+  const { c } = await carteFormulaire('form.deux@exemple.test');
+  await ecrire(c, { action: 'questions', questions: [{ libelle: 'Lieu', type: 'texte' }] });
+  assert.equal((await ecrire(c, { action: 'retirer', confirmation: true })).code, 200);
+  const r = await ecrire(c, { action: 'enregistrer', carte: maCarte(), consentement: true, rev: null });
+  assert.equal(r.code, 200); assert.deepEqual(r.body.questions, [], 'une Carte réenregistrée repart sans question');
+});
+
+test('formulaire : sans la migration 2026-10-25-14, ME le dit indisponible, le lien et le contact de P3 marchent', opts, async () => {
+  const c = await connecter('form.une@exemple.test'), jeton = (await lire(c)).body.lien.jeton;
+  const faux = { query: async (sql, v) => { if (/\bquestions\b/.test(sql)) { const e = new Error('column "questions" does not exist'); e.code = '42703'; throw e; } return pool.query(sql, v); } };
+  H._db(faux); P._db(faux);
+  try {
+    const g = await lire(c); assert.equal(g.code, 200); assert.equal(g.body.formulaire, 'indisponible'); assert.deepEqual(g.body.questions, []);
+    assert.equal((await ecrire(c, { action: 'questions', questions: [] })).code, 503);
+    const v = await publique(jeton); assert.equal(v.code, 200); assert.equal(v.body.contact, true); assert.deepEqual(v.body.questions, []);
+    assert.equal((await deposer(jeton, visiteur({ email: 'sans14@exemple.test' }))).code, 200, 'la demande de P3 passe toujours');
+  } finally { H._db(undefined); P._db(undefined); }
+});

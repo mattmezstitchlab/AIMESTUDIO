@@ -9,10 +9,14 @@
 // visiteur). Seulement si le lien est actif ET que « recevoir des demandes » est allumé (migration 2026-10-25-12) ; sinon 404, sans
 // dire pourquoi. Le contrat est celui du formulaire Contact (api/contact.js valider, docs/INTERACTIONS.md) ; protections : même
 // origine et JSON, taille bornée, piège à robots, délai minimal, 3 demandes par IP et 10 minutes, 20 par Carte et par jour.
+// Formulaire personnel (V1, P5, migration 2026-10-25-14) : quand le contact est allumé, GET sert aussi les questions de la personne,
+// et POST accepte { reponses: { <id>: valeur } }, validées au serveur contre les questions ACTUELLES (api/_carte/formulaire.cjs),
+// gardées sur la demande avec leur libellé et reprises dans l'e-mail.
 import { _pool } from './_auth/auth.mjs';
 import Q from './_auth/quotas.cjs';
 import R from './_auth/requete.cjs';
 import K from './_carte/carte.cjs';
+import F from './_carte/formulaire.cjs';
 import D from './_demandes/depot.cjs';
 import C from './_demandes/courriel.cjs';
 import contact from './contact.js';
@@ -45,28 +49,37 @@ async function deposer(req, res, base, jeton) {
   if (b === null) return json(res, 413, { ok: false, erreur: 'taille' });
   if (!b || typeof b !== 'object' || Array.isArray(b)) return json(res, 400, { ok: false, erreur: 'format' });
   let lien;
+  /* les questions de la personne viennent de la base (migration 14), jamais du navigateur ; sans elle, aucune question */
+  const sql = q => `select l.user_id, u.email${q ? ', c.questions' : ''} from cartes_liens l join cartes c on c.user_id = l.user_id join "user" u on u.id = l.user_id
+        where l.jeton = $1 and l.coupe_le is null and l.contact`;
   try {
-    lien = (await base.query(`select l.user_id, u.email from cartes_liens l join cartes c on c.user_id = l.user_id join "user" u on u.id = l.user_id
-        where l.jeton = $1 and l.coupe_le is null and l.contact`, [jeton])).rows[0] || null;
+    try { lien = (await base.query(sql(true), [jeton])).rows[0] || null; }
+    catch (e) { if (e && e.code === '42703') lien = (await base.query(sql(false), [jeton])).rows[0] || null; else throw e; }
   } catch (e) { if (e && (e.code === '42P01' || e.code === '42703')) return json(res, 404, FERME); throw e; }
   if (!lien) return json(res, 404, FERME);
   /* pièges à robots : « reçu » sans rien garder ni envoyer, pour ne rien leur apprendre (comme Contact) */
   if (String(b.site_web || '').trim() || !(Number(b.duree) >= DELAI_MIN_MS)) return json(res, 200, { ok: true });
   /* le même contrat que Contact ; une Carte n'a ni type de demande, ni adresse, ni date de livraison */
   const r = contact.valider(Object.assign({}, b, { projet: 'projet', adresse: '', livraison: '' }));
-  if (!r.ok) { if (r.erreurs.consentement) r.erreurs.consentement = 'Cochez la case pour que la personne puisse vous répondre.'; return json(res, 422, { ok: false, erreur: 'champs', champs: r.erreurs }); }
+  const rq = F.validerReponses(lien.questions, b.reponses);
+  if (!r.ok || !rq.ok) {
+    const champs = Object.assign({}, r.ok ? {} : r.erreurs, rq.ok ? {} : rq.erreurs);
+    if (champs.consentement) champs.consentement = 'Cochez la case pour que la personne puisse vous répondre.';
+    return json(res, 422, { ok: false, erreur: 'champs', champs });
+  }
+  const reponses = rq.valeurs.length ? rq.valeurs : null;
   const boite = D.boiteCarte(lien.user_id);
   const q = await Q.quota('carte:demande:ip', Q.ipDe(req), { db: base });
   const qb = q.ok ? await Q.quota('carte:demande:boite', boite, { db: base }) : q;
   if (!q.ok || !qb.ok) { const attente = q.ok ? qb.attente : q.attente; res.setHeader('Retry-After', String(attente)); return json(res, 429, { ok: false, erreur: 'limite', attente }); }
   const v = r.valeurs, emp = D.empreinte(v, Date.now(), boite);
-  const enr = await D.enregistrer(base, v, emp, { boite });
+  const enr = await D.enregistrer(base, v, emp, { boite, reponses });
   /* une demande à une Carte n'existe que gardée : sans base, on ne l'envoie pas à moitié */
   if (enr.etat === 'indisponible') return json(res, 503, { ok: false, erreur: 'indisponible' });
   if (enr.etat === 'existante' && enr.email_statut === 'envoye') return json(res, 200, { ok: true });
   const conf0 = C.configuration();
   if (!conf0 || !lien.email) { await D.noterEnvoi(base, enr.id, { nonConfigure: true }); return json(res, 200, { ok: true }); }
-  const fin = await C.envoyer(Object.assign({}, v, { via: 'carte' }), 'carte-' + emp, Object.assign({}, conf0, { a: [lien.email] }), envoi);
+  const fin = await C.envoyer(Object.assign({}, v, { via: 'carte', reponses }), 'carte-' + emp, Object.assign({}, conf0, { a: [lien.email] }), envoi);
   await D.noterEnvoi(base, enr.id, fin);
   if (!fin.ok) console.error(fin.code === 'reseau' ? 'carte: service d\'envoi injoignable' : 'carte: envoi refusé, statut ' + fin.code);
   return json(res, 200, { ok: true });   /* gardée dans l'AI de la personne, même si l'e-mail a échoué */
@@ -87,7 +100,10 @@ export default async function cartePublique(req, res) {
     if (!l) return json(res, 404, INTROUVABLE);
     /* les activités que la personne a cochées « sur ma Carte » (V1, P4) : un métier et son nom, rien d'autre ; jamais l'identifiant */
     let activites = []; try { activites = await surCarte(base, l.user_id); } catch { activites = []; }
-    return json(res, 200, Object.assign({ ok: true }, K.vuePublique(l.donnees), { activites, contact: l.contact === true }));
+    /* le formulaire personnel (V1, P5) : seulement si la personne reçoit des demandes ; sans la migration 14, aucune question */
+    let questions = [];
+    if (l.contact === true) { try { questions = F.vuePublique((await base.query('select questions from cartes where user_id = $1', [l.user_id])).rows[0]?.questions); } catch { questions = []; } }
+    return json(res, 200, Object.assign({ ok: true }, K.vuePublique(l.donnees), { activites, contact: l.contact === true, questions }));
   } catch (e) {
     if (e && e.code === '42P01') return json(res, 404, INTROUVABLE);
     return json(res, 503, { ok: false, raison: 'Cette Carte ne peut pas être affichée pour l\'instant.' });

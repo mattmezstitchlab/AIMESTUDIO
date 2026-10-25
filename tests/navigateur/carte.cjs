@@ -195,6 +195,34 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(/DJ/.test(vu2) && !/platines/.test(vu2), 'le lien montre l\'activité cochée, pas les compétences (privées)'); await ecran(pv, 'CARTE__13-publique-activite');
     await pi.uncheck('#act-c-dj'); await attendre(600); await pv.reload({ waitUntil: 'networkidle' }); await pv.waitForFunction(() => document.getElementById('cpNom').textContent === 'Dominique Fictif', null, { timeout: 6000 });
     ok(!(await pv.locator('#cp-activites').count()), 'décochée : l\'activité disparaît du lien');
+
+    console.log('11. Mon formulaire personnel (P5) : poser mes questions dans ME ; le visiteur y répond ; les réponses arrivent avec sa demande');
+    await pi.check('#mcContact'); await pi.waitForFunction(() => /reçoit maintenant des demandes/.test(document.getElementById('mcVivant').textContent), null, { timeout: 6000 });
+    await pi.waitForSelector('.mc-form #mfAjouter', { timeout: 6000 });
+    await pi.click('#mfAjouter'); ok(await pi.evaluate(() => document.activeElement.id === 'mfL0'), '« Ajouter une question » : le focus va au libellé');
+    await pi.fill('#mfL0', 'Date de l\'événement'); await pi.selectOption('#mfT0', 'date'); await pi.check('#mfR0');
+    await pi.click('#mfAjouter'); await pi.fill('#mfL1', 'Formule'); await pi.selectOption('#mfT1', 'choix'); await pi.waitForSelector('#mfC1');
+    ok(await pi.inputValue('#mfL0') === 'Date de l\'événement' && await pi.isChecked('#mfR0'), 'changer un type ne perd pas ce qui est déjà saisi');
+    await pi.fill('#mfC1', 'Cérémonie\nCocktail\nSoirée');
+    ok(await large(pi) <= 1, 'éditeur de questions sur iPad : aucun défilement horizontal'); await axe(pi, 'ME, mes questions (iPad)'); await ecran(pi, 'CARTE__14-mes-questions', '.mc-form');
+    await pi.click('.mc-form button[type=submit]'); await pi.waitForFunction(() => /questions sont enregistrées/.test(document.getElementById('mcVivant').textContent), null, { timeout: 6000 });
+    const qb = (await pool.query('select c.questions from cartes c join "user" u on u.id = c.user_id where u.email = $1', [DEUX.email])).rows[0].questions;
+    ok(qb.length === 2 && qb[0].type === 'date' && qb[0].requise === true && JSON.stringify(qb[1].choix) === '["Cérémonie","Cocktail","Soirée"]', 'enregistrées sur le compte, telles que saisies');
+    await pv.reload({ waitUntil: 'networkidle' }); await pv.waitForSelector('#cpQ0', { timeout: 6000 });
+    ok(/Date de l'événement/.test(await pv.locator('#cpQuestions').innerText()) && /Formule \(facultatif\)/.test(await pv.locator('#cpQuestions').innerText()), 'le visiteur voit les questions, la facultative est dite');
+    await pv.fill('#cpPrenom', 'Alix'); await pv.fill('#cpNom2', 'Visiteuse'); await pv.fill('#cpEmail', 'alix.visiteuse@exemple.test');
+    await pv.fill('#cpMessage', 'Bonjour, nous préparons une fête et votre Carte nous intéresse beaucoup.'); await pv.check('#cpAccord');
+    await attendre(3100); await pv.click('#cpEnvoyer');
+    ok(/Répondez/.test(await pv.locator('#cpQ0E').innerText()) && await pv.evaluate(() => document.activeElement.id === 'cpQ0'), 'question obligatoire vide : signalée, le focus y va');
+    await pv.fill('#cpQ0', '2027-06-12'); await pv.selectOption('#cpQ1', 'Soirée'); await pv.click('#cpEnvoyer');
+    await pv.waitForFunction(() => /est envoyé/.test(document.getElementById('cpResultat').textContent), null, { timeout: 6000 });
+    ok(await large(pv) <= 1, 'questions sur iPhone : aucun défilement horizontal'); await axe(pv, 'Carte publique, questions (iPhone)');
+    if (CAP) await pv.screenshot({ path: path.join(CAP, 'CARTE__15-questions-iphone.png'), fullPage: true });
+    const rp = (await pool.query("select d.reponses from demandes d join \"user\" u on d.boite = 'compte:' || u.id where u.email = $1 and d.prenom = 'Alix'", [DEUX.email])).rows[0];
+    ok(rp && JSON.stringify((rp.reponses || []).map(x => ({ libelle: x.libelle, type: x.type, valeur: x.valeur }))) === JSON.stringify([{ libelle: 'Date de l\'événement', type: 'date', valeur: '2027-06-12' }, { libelle: 'Formule', type: 'choix', valeur: 'Soirée' }]), 'les réponses sont gardées avec la demande');
+    const cleA = (await (await tab.request.get(B + '/api/demandes')).json()).demandes.filter(x => x.prenom === 'Alix')[0].cle;
+    const da = await (await tab.request.get(B + '/api/demandes?cle=' + cleA)).json();
+    ok(da.demande.reponses && da.demande.reponses.length === 2, 'son AI reçoit les réponses avec la demande');
   } catch (e) { echecs++; console.error(e); }
   await b.close(); await pool.end(); try { srv.kill(); } catch {}
   console.log(echecs ? '\nparcours Carte : ' + echecs + ' échec(s)' : '\nparcours Carte : tout est vert');

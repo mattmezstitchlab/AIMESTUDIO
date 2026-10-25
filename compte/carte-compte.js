@@ -134,12 +134,64 @@ function contact() {
   d.appendChild(el('p', 'leg', c.checked
     ? 'Allumé : la page du lien montre un formulaire. Les demandes arrivent dans votre AI et par e-mail à l\'adresse de votre compte, qui n\'est jamais montrée.'
     : 'Éteint : personne ne peut vous écrire par ce lien.'));
+  if (c.checked) d.appendChild(compte.formulaire === 'indisponible' ? el('p', 'leg', 'Poser vos propres questions n\'est pas encore disponible ici.') : formulaire());
   c.onchange = function () {
     if (occupe) { c.checked = !c.checked; return; } occupe = true; c.disabled = true; var voulu = c.checked;
     requete({ action: 'contact', actif: voulu }).then(function (r) { occupe = false; c.disabled = false; if (r.statut === 200) { compte = r.j; afficher(); var n = document.getElementById('mcContact'); if (n) n.focus(); dire(voulu ? 'Votre Carte reçoit maintenant des demandes.' : 'Votre Carte ne reçoit plus de demandes.'); } else { c.checked = !voulu; dire((r.j && r.j.raison) || 'Réglage impossible pour l\'instant.', true); } })
       .catch(function () { occupe = false; c.disabled = false; c.checked = !voulu; dire('Réseau indisponible : rien n\'a changé.', true); });
   };
   return d;
+}
+/* mon formulaire personnel (V1, P5) : jusqu'à 6 questions posées à qui m'écrit par mon lien, au-dessus de son message.
+   Le serveur nettoie et décide (api/_carte/formulaire.cjs) ; ici, un brouillon qui ne part qu'avec « Enregistrer mes questions ». */
+var TYPES_Q = { texte: 'Texte court', date: 'Date', nombre: 'Nombre', choix: 'Choix dans une liste' }, MAX_Q = 6, brouillon = null;
+function lireBrouillon(z) {
+  if (!z || !brouillon) return;
+  brouillon.forEach(function (q, i) {
+    var l = z.querySelector('#mfL' + i), t = z.querySelector('#mfT' + i), r = z.querySelector('#mfR' + i), c = z.querySelector('#mfC' + i);
+    if (l) q.libelle = l.value; if (t) q.type = t.value; if (r) q.requise = r.checked; if (c) q.choix = c.value.split('\n');
+  });
+}
+function formulaire() {
+  if (!brouillon) brouillon = (compte.questions || []).map(function (q) { return { id: q.id, libelle: q.libelle, type: q.type, requise: !!q.requise, choix: (q.choix || []).slice() }; });
+  var z = el('form', 'pile mc-form'); z.setAttribute('aria-labelledby', 'mfTitre'); z.noValidate = true;
+  var h = el('h4', null, 'Mes questions'); h.id = 'mfTitre'; z.appendChild(h);
+  z.appendChild(el('p', 'leg', 'Posées à qui vous écrit par ce lien, au-dessus de son message. Ses réponses arrivent avec sa demande. ' + MAX_Q + ' questions au plus ; aucune n\'est obligatoire sans votre choix.'));
+  function dessiner() {
+    var vieux = z.querySelector('.mf-liste'); if (vieux) z.removeChild(vieux);
+    var liste = el('div', 'pile mf-liste'); z.insertBefore(liste, z.querySelector('.mf-actions'));
+    if (!brouillon.length) liste.appendChild(el('p', 'leg', 'Aucune question pour l\'instant : la page du lien ne montre que le formulaire habituel.'));
+    brouillon.forEach(function (q, i) {
+      var f = el('fieldset', 'pile mf-q'); f.appendChild(el('legend', null, 'Question ' + (i + 1)));
+      var ll = el('label', 'pile', 'Libellé'), li = el('input'); li.id = 'mfL' + i; li.maxLength = 120; li.value = q.libelle || ''; li.setAttribute('aria-required', 'true'); ll.htmlFor = li.id; ll.appendChild(li); f.appendChild(ll);
+      var lt = el('label', 'pile', 'Type de réponse'), st = el('select'); st.id = 'mfT' + i; Object.keys(TYPES_Q).forEach(function (k) { var o = el('option', null, TYPES_Q[k]); o.value = k; st.appendChild(o); }); st.value = q.type || 'texte'; lt.htmlFor = st.id; lt.appendChild(st); f.appendChild(lt);
+      st.onchange = function () { lireBrouillon(z); dessiner(); var n = z.querySelector('#mfT' + i); if (n) n.focus(); };
+      if ((q.type || 'texte') === 'choix') { var lc = el('label', 'pile', 'Réponses proposées, une par ligne (2 à 8)'), tc = el('textarea'); tc.id = 'mfC' + i; tc.rows = 4; tc.value = (q.choix || []).join('\n'); lc.htmlFor = tc.id; lc.appendChild(tc); f.appendChild(lc); }
+      var lr = el('label', 'lgn'), cr = el('input'); cr.type = 'checkbox'; cr.id = 'mfR' + i; cr.checked = !!q.requise; lr.htmlFor = cr.id; lr.appendChild(cr); lr.appendChild(el('span', null, 'Réponse obligatoire')); f.appendChild(lr);
+      var rt = el('button', 'b b-s', 'Retirer cette question'); rt.type = 'button';
+      rt.onclick = function () { lireBrouillon(z); brouillon.splice(i, 1); dessiner(); var a = z.querySelector('#mfAjouter'); if (a) a.focus(); dire('Question retirée (pas encore enregistré).'); };
+      f.appendChild(rt); liste.appendChild(f);
+    });
+    var aj = z.querySelector('#mfAjouter'); if (aj) aj.disabled = brouillon.length >= MAX_Q;
+  }
+  var act = el('div', 'lgn mf-actions');
+  var ajouter = el('button', 'b b-s', 'Ajouter une question'); ajouter.type = 'button'; ajouter.id = 'mfAjouter';
+  ajouter.onclick = function () { lireBrouillon(z); if (brouillon.length >= MAX_Q) return; brouillon.push({ libelle: '', type: 'texte', requise: false, choix: [] }); dessiner(); var n = z.querySelector('#mfL' + (brouillon.length - 1)); if (n) n.focus(); };
+  var ok = el('button', 'b b-p', 'Enregistrer mes questions'); ok.type = 'submit';
+  act.appendChild(ajouter); act.appendChild(ok); z.appendChild(act); dessiner();
+  z.onsubmit = function (e) {
+    e.preventDefault(); if (occupe) return; lireBrouillon(z);
+    var vide = brouillon.map(function (q) { return (q.libelle || '').trim(); }).indexOf('');
+    if (vide >= 0) { dire('Donnez un libellé à la question ' + (vide + 1) + ', ou retirez-la.', true); var n = z.querySelector('#mfL' + vide); if (n) n.focus(); return; }
+    occupe = true; ok.disabled = true; dire('Enregistrement de vos questions…');
+    var envoi = brouillon.map(function (q) { var o = { libelle: q.libelle, type: q.type, requise: !!q.requise }; if (q.id) o.id = q.id; if (q.type === 'choix') o.choix = (q.choix || []).map(function (x) { return x.trim(); }).filter(Boolean); return o; });
+    requete({ action: 'questions', questions: envoi }).then(function (r) {
+      occupe = false; ok.disabled = false;
+      if (r.statut === 200) { compte = r.j; brouillon = null; afficher(); var t = document.getElementById('mfTitre'); if (t) { t.tabIndex = -1; t.focus(); } dire(envoi.length ? 'Vos questions sont enregistrées : la page du lien les pose désormais.' : 'Plus aucune question : la page du lien montre le formulaire habituel.'); return; }
+      dire((r.j && r.j.raison) || 'Vos questions n\'ont pas pu être enregistrées pour l\'instant.', true);
+    }).catch(function () { occupe = false; ok.disabled = false; dire('Réseau indisponible : vos questions n\'ont pas été enregistrées. Elles restent ici.', true); });
+  };
+  return z;
 }
 function retirer() {
   var d = el('details', 'mc-retirer'), s = el('summary', null, 'Retirer ma Carte de mon compte'); d.appendChild(s);

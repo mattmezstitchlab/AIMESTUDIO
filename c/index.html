@@ -35,7 +35,7 @@
 .cp-ecrire form{display:grid;gap:14px;margin-top:16px}
 .cp-ecrire .cp-paire{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
 .cp-ecrire label{display:grid;gap:6px;font-size:14px;color:var(--soft);min-width:0}
-.cp-ecrire input,.cp-ecrire textarea{width:100%;min-width:0;box-sizing:border-box;font:16px var(--ui);color:inherit;background:transparent;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.cp-ecrire input,.cp-ecrire textarea,.cp-ecrire select{width:100%;min-width:0;box-sizing:border-box;font:16px var(--ui);color:inherit;background:transparent;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .cp-ecrire textarea{min-height:140px;resize:vertical}
 .cp-ecrire .accord{display:flex;gap:10px;align-items:flex-start;color:inherit}
 .cp-ecrire .accord input{width:20px;height:20px;flex:none;margin-top:2px;padding:0}
@@ -43,6 +43,10 @@
 .cp-ecrire .piege{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .cp-ecrire button{justify-self:start;font:600 15px var(--ui);padding:12px 20px;border-radius:999px;border:0;background:var(--ink);color:var(--desk);cursor:pointer}
 .cp-ecrire button[disabled]{opacity:.6;cursor:default}
+/* le formulaire personnel (V1, PR P5) : les questions choisies par la personne, au-dessus du message */
+.cp-questions{display:grid;gap:14px}
+.cp-questions:empty{display:none}
+.cp-questions .fac{color:var(--soft);font-weight:400}
 </style>
 </head>
 <body>
@@ -64,6 +68,7 @@
      <label for="cpEmail">E-mail<input id="cpEmail" name="email" type="email" autocomplete="email" maxlength="160" aria-required="true" aria-describedby="cpEmailE"><span class="err" id="cpEmailE"></span></label>
      <label for="cpTel">Téléphone (facultatif)<input id="cpTel" name="tel" type="tel" autocomplete="tel" maxlength="30" aria-describedby="cpTelE"><span class="err" id="cpTelE"></span></label>
     </div>
+    <div class="cp-questions" id="cpQuestions"></div>
     <label for="cpMessage">Votre message<textarea id="cpMessage" name="message" maxlength="4000" aria-required="true" aria-describedby="cpMessageE"></textarea><span class="err" id="cpMessageE"></span></label>
     <div class="piege" aria-hidden="true"><label for="cpSite">Site web<input id="cpSite" name="site_web" tabindex="-1" autocomplete="off"></label></div>
     <label class="accord" for="cpAccord"><input id="cpAccord" type="checkbox" aria-required="true" aria-describedby="cpAccordE"><span>J'accepte que mon message et mes coordonnées soient transmis à cette personne pour qu'elle me réponde.</span></label>
@@ -87,21 +92,27 @@ function valeur(v){
  if(v&&typeof v==='object'&&(v.proposees||v.recherchees)){var d=el('div');if((v.proposees||[]).length){d.appendChild(el('p',null,'Propose : '+v.proposees.map(texte).join(', ')))}if((v.recherchees||[]).length){d.appendChild(el('p',null,'Recherche : '+v.recherchees.map(texte).join(', ')))}return d.childNodes.length?d:null}
  var t=texte(v);return t?el('p',null,t):null}
 function erreur(t){E.textContent='';var a=el('p','cp-alerte',t);a.setAttribute('role','alert');R.textContent='';R.appendChild(a);document.title='Carte introuvable · AIME'}
-function ecrire(){
+function ecrire(questions){
  var S=document.getElementById('cpEcrire'),F=document.getElementById('cpForm'),B=document.getElementById('cpEnvoyer'),O=document.getElementById('cpResultat'),t0=Date.now(),occupe=false;
  var champs={prenom:'cpPrenom',nom:'cpNom2',email:'cpEmail',tel:'cpTel',message:'cpMessage',consentement:'cpAccord'};
+ /* les questions de la personne (V1, P5) : chacune devient un champ, dont l'erreur se range sous la clé « q:<id> » */
+ var Qz=document.getElementById('cpQuestions');Qz.textContent='';
+ (questions||[]).forEach(function(q,i){var id='cpQ'+i,l=el('label'),t=el('span',null,q.libelle);l.htmlFor=id;if(!q.requise)t.appendChild(el('span','fac',' (facultatif)'));l.appendChild(t);
+  var c;if(q.type==='choix'){c=el('select');var o0=el('option',null,'Choisir…');o0.value='';c.appendChild(o0);q.choix.forEach(function(x){var o=el('option',null,x);o.value=x;c.appendChild(o)})}
+  else{c=el('input');c.type=q.type==='date'?'date':'text';if(q.type==='nombre')c.inputMode='decimal';if(q.type==='texte')c.maxLength=300}
+  c.id=id;c.dataset.q=q.id;if(q.requise)c.setAttribute('aria-required','true');c.setAttribute('aria-describedby',id+'E');l.appendChild(c);var e=el('span','err');e.id=id+'E';l.appendChild(e);Qz.appendChild(l);champs['q:'+q.id]=id});
  function v(id){return document.getElementById(id).value}
  function poser(e){Object.keys(champs).forEach(function(k){var c=document.getElementById(champs[k]),m=document.getElementById(champs[k]+'E');m.textContent=(e&&e[k])||'';if(e&&e[k])c.setAttribute('aria-invalid','true');else c.removeAttribute('aria-invalid')});var p=e&&Object.keys(champs).filter(function(k){return e[k]})[0];if(p)document.getElementById(champs[p]).focus()}
  S.hidden=false;
  F.onsubmit=function(ev){ev.preventDefault();if(occupe)return;
-  var c={prenom:v('cpPrenom'),nom:v('cpNom2'),email:v('cpEmail'),tel:v('cpTel'),message:v('cpMessage'),consentement:document.getElementById('cpAccord').checked,site_web:v('cpSite'),duree:Date.now()-t0};
-  var e={};if(!c.prenom.trim())e.prenom='Indiquez votre prénom.';if(!c.nom.trim())e.nom='Indiquez votre nom.';if(!/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(c.email.trim()))e.email='Adresse e-mail invalide.';if(c.message.trim().length<20)e.message='Décrivez votre demande en quelques phrases (20 caractères au moins).';if(!c.consentement)e.consentement='Cochez la case pour que la personne puisse vous répondre.';
+  var c={prenom:v('cpPrenom'),nom:v('cpNom2'),email:v('cpEmail'),tel:v('cpTel'),message:v('cpMessage'),consentement:document.getElementById('cpAccord').checked,site_web:v('cpSite'),duree:Date.now()-t0,reponses:{}};
+  var e={};(questions||[]).forEach(function(q,i){var x=v('cpQ'+i).trim();if(x)c.reponses[q.id]=x;else if(q.requise)e['q:'+q.id]='Répondez à cette question.'});if(!c.prenom.trim())e.prenom='Indiquez votre prénom.';if(!c.nom.trim())e.nom='Indiquez votre nom.';if(!/^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(c.email.trim()))e.email='Adresse e-mail invalide.';if(c.message.trim().length<20)e.message='Décrivez votre demande en quelques phrases (20 caractères au moins).';if(!c.consentement)e.consentement='Cochez la case pour que la personne puisse vous répondre.';
   if(Object.keys(e).length){poser(e);O.textContent='Vérifiez les champs signalés.';return}
   poser(null);occupe=true;B.disabled=true;O.textContent='Envoi…';
   fetch('/api/carte-publique?l='+encodeURIComponent(jeton),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c),cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer'}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){return{s:r.status,j:j}})}).then(function(x){
    occupe=false;B.disabled=false;
    if(x.s===200){F.reset();t0=Date.now();O.textContent='Votre message est envoyé. La personne vous répondra à l\'adresse indiquée.';return}
-   if(x.s===422){poser(x.j.champs);O.textContent='Vérifiez les champs signalés.';return}
+   if(x.s===422){var inconnus=Object.keys(x.j.champs||{}).filter(function(k){return!champs[k]});poser(x.j.champs);O.textContent=inconnus.length?'Les questions de cette personne viennent de changer : rechargez la page pour les voir. Copiez votre message avant.':'Vérifiez les champs signalés.';return}
    if(x.s===429){O.textContent='Trop de messages en peu de temps : réessayez dans un moment. Votre texte est toujours là.';return}
    if(x.s===404){O.textContent=(x.j&&x.j.raison)||'Cette Carte ne reçoit pas de demandes pour l\'instant.';return}
    O.textContent='Le message n\'a pas pu être envoyé pour l\'instant. Votre texte est toujours là : réessayez plus tard.';
@@ -119,7 +130,7 @@ fetch('/api/carte-publique?l='+encodeURIComponent(jeton),{cache:'no-store',crede
  /* les activités que la personne a choisi de montrer (V1, P4) */
  if(act.length){var sa=el('section');sa.setAttribute('aria-labelledby','cp-activites');var ha=el('h2',null,act.length>1?'Activités':'Activité');ha.id='cp-activites';sa.appendChild(ha);var ua=el('ul');act.forEach(function(a){ua.appendChild(el('li',null,a.nom.charAt(0).toUpperCase()+a.nom.slice(1)))});sa.appendChild(ua);R.insertBefore(sa,R.firstChild)}
  document.getElementById('cpNote').hidden=false;
- if(x.j.contact===true)ecrire();
+ if(x.j.contact===true)ecrire(x.j.questions);
 }).catch(function(){erreur('Réseau indisponible : la Carte n\'a pas pu être chargée.')});
 })();
 </script>

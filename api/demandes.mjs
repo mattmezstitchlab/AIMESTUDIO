@@ -88,7 +88,7 @@ export default async function demandes(req, res) {
       /* moins de 23 heures après la réception : la même clé que le premier envoi, Resend ne l'enverra pas deux fois */
       const recent = Date.now() - new Date(x.recue_le).getTime() < 23 * 3600000;
       const idem = recent ? 'contact-' + (await empreinteDe(base, d.id)) : 'contact-renvoi-' + x.cle + '-' + x.email_tentatives;
-      const v = { projet: x.type, prenom: x.prenom, nom: x.nom, email: x.email, tel: x.tel, adresse: x.adresse, livraison: x.livraison, message: x.message, via: b0 === BOITE ? 'site' : 'carte' };
+      const v = { projet: x.type, prenom: x.prenom, nom: x.nom, email: x.email, tel: x.tel, adresse: x.adresse, livraison: x.livraison, message: x.message, via: b0 === BOITE ? 'site' : 'carte', reponses: x.reponses };
       const r = await C.envoyer(v, idem, conf, envoi);
       await D.noterEnvoi(base, d.id, r, { renvoi: true, par: u.id });
       return r.ok ? json(res, 200, { ok: true, email_statut: 'envoye' }) : json(res, 502, { ok: false, email_statut: 'echec', raison: 'L\'envoi a de nouveau échoué. La demande reste enregistrée.' });
