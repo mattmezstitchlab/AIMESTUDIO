@@ -39,7 +39,7 @@ a{color:inherit}
 <link rel="stylesheet" href="/attente/attente.css">
 <link rel="stylesheet" href="/dock/dock.css">
 <link rel="stylesheet" href="/nav/pied-legal.css">
-<link rel="stylesheet" href="/accueil/vitrine.css?v=6">
+<link rel="stylesheet" href="/accueil/vitrine.css?v=7">
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
@@ -129,20 +129,39 @@ a{color:inherit}
      <div class="v-p-ecran">
       <div class="v-p-haut"><span class="v-p-heure">9:41</span><span class="v-p-prj"><span class="v-pt" id="vVousPt" aria-hidden="true"></span>Mariage Camille &amp; Gabriel</span><span class="v-p-ondes" aria-hidden="true"></span></div>
       <div class="v-p-page" aria-live="polite">
-       <div class="v-page-t"><p style="margin:0;flex:1;min-width:0"><span class="v-k">Vous êtes</span><span class="d" id="vVous">Le couple</span></p><span class="v-pil" id="vNb"></span></div>
-       <figure class="v-p-cadran-figure">
-        <svg class="v-p-cadran" id="vCercle" viewBox="0 0 1000 1000" role="group" aria-labelledby="vCercleT vCercleD"><title id="vCercleT">Circle · journée de 24 heures</title><desc id="vCercleD">Le programme de cette place sur le cadran du module Temps.</desc></svg>
-        <p class="v-p-dit" id="vCercleDit"></p>
-       </figure>
-       <p class="v-p-cache" id="vCache"></p>
+       <div class="v-page-t"><button type="button" class="v-retour" id="vRetour" aria-label="Revenir au calendrier">‹</button><p style="margin:0;flex:1;min-width:0"><span class="v-k" id="vPageK">AI · ce qui est prévu</span><span class="d" id="vVous">Le couple</span></p><span class="v-pil" id="vNb"></span></div>
+       <!-- AI, le tableau de bord : le mois, et le jour J qu'on ouvre -->
+       <div class="v-p-cal" id="vVueCalendrier">
+        <p class="v-cal-tete"><b id="vCalTitre">Juin 2027</b><span>1 date</span></p>
+        <div class="v-cal-j" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+        <div class="v-cal-grille" id="vCal" role="group" aria-label="Les dates du mois"></div>
+        <p class="v-cal-leg">Tout ce qui est prévu, jour par jour. Une date pleine s’ouvre.</p>
+        <p class="v-cal-suite"><span id="vCalQuand"></span><button type="button" class="v-ouvrir" id="vOuvrir">Ouvrir le jour ›</button></p>
+       </div>
+       <!-- la date ouverte : le jour en profondeur, et ses onglets -->
+       <div class="v-p-jour" id="vVueJour" hidden>
+        <div class="v-onglets" role="group" aria-label="Vues du jour">
+         <button type="button" class="v-onglet" data-vue="programme" aria-pressed="false">Programme</button>
+         <button type="button" class="v-onglet" data-vue="cercle" aria-pressed="true">Circle</button>
+         <button type="button" class="v-onglet" data-vue="personnes" aria-pressed="false">Personnes</button>
+        </div>
+        <figure class="v-p-cadran-figure" id="vVueCercle">
+         <svg class="v-p-cadran" id="vCercle" viewBox="0 0 1000 1000" role="group" aria-labelledby="vCercleT vCercleD"><title id="vCercleT">Circle · journée de 24 heures</title><desc id="vCercleD">Le programme de cette place sur le cadran du module Temps.</desc></svg>
+         <p class="v-p-dit" id="vCercleDit"></p>
+        </figure>
+        <div class="v-p-liste-boite" id="vVueProgramme" hidden><ol class="v-p-liste" id="vListe"></ol></div>
+        <div class="v-p-personnes-boite" id="vVuePersonnes" hidden><ul class="v-p-personnes" id="vPersonnes"></ul></div>
+        <p class="v-p-cache" id="vCache"></p>
+       </div>
       </div>
-      <div class="v-p-dock" aria-hidden="true"></div>
+      <div class="v-p-dock" data-plus="places" data-ai="basculer" role="group" aria-label="Dock"></div>
      </div>
     </div>
    </div>
    <div class="v-hero-reglages">
-    <p class="v-k">Places</p>
-    <div class="v-places" id="vPlaces" role="group" aria-label="Voir le projet depuis la place de"></div>
+    <p class="v-k">Place</p>
+    <p class="v-place-actuelle" id="vPlaces" role="status"></p>
+    <p class="v-leg-s">Le + du Dock change de place : AI, Programme et Circle se recomposent.</p>
     <p class="v-k">Ce que cette place peut faire</p>
     <ul class="v-gestes" id="vGestes"></ul>
     <div class="v-reel">
@@ -213,21 +232,16 @@ a{color:inherit}
   </div>
   <div class="v-temps-vitrine">
    <div class="v-temps-produit">
-    <!-- les réglages de la démonstration restent dehors : l'écran ne montre que le produit -->
-    <div class="v-temps-commandes">
-     <div class="v-temps-modes" role="group" aria-label="Présentation du programme">
-      <button type="button" class="v-temps-mode" data-temps-mode="liste" aria-pressed="true" disabled>Programme</button>
-      <button type="button" class="v-temps-mode" data-temps-mode="cercle" aria-pressed="false" disabled>Circle</button>
-     </div>
-     <p class="v-temps-qui"><label for="tempsDemoQui">Voir depuis</label><select id="tempsDemoQui" disabled><option>Chargement…</option></select></p>
-    </div>
     <div class="v-p-scene v-temps-scene">
      <div class="v-p-cadre">
       <div class="v-p-ecran">
        <div class="v-p-haut"><span class="v-p-heure">9:41</span><span class="v-p-prj"><span class="v-pt" aria-hidden="true" style="--pt:#6D4AFF"></span>Mariage Camille &amp; Gabriel</span><span class="v-p-ondes" aria-hidden="true"></span></div>
        <div class="v-temps-page">
         <p class="v-temps-jour">Jour J</p>
-        <h3 id="tempsDemoTitre">Programme</h3>
+        <div class="v-onglets" role="group" aria-label="Vues du jour">
+         <button type="button" class="v-onglet" data-temps-mode="liste" aria-pressed="true" disabled>Programme</button>
+         <button type="button" class="v-onglet" data-temps-mode="cercle" aria-pressed="false" disabled>Circle</button>
+        </div>
         <section class="v-temps-vue" id="tempsDemoListe" aria-label="Programme en liste">
          <ol class="v-temps-liste" id="tempsDemoMoments"></ol>
         </section>
@@ -243,10 +257,11 @@ a{color:inherit}
          </figure>
         </section>
        </div>
-       <div class="v-p-dock" aria-hidden="true"></div>
+       <div class="v-p-dock" data-plus="personnes" role="group" aria-label="Dock"></div>
       </div>
      </div>
     </div>
+    <select id="tempsDemoQui" hidden aria-label="Place de la démonstration"><option>Chargement…</option></select>
     <p class="v-temps-etat" id="tempsDemoEtat" role="status" aria-live="polite">La démonstration utilise les règles de visibilité du module Temps.</p>
    </div>
    <aside class="v-temps-explication" aria-labelledby="tempsExplicationT">
@@ -312,7 +327,7 @@ a{color:inherit}
 <script src="/projets/projets.js"></script>
 <script src="/compte/creer.js"></script>
 <script src="/accueil/liste.js"></script>
-<script src="/accueil/capsule.js?v=6"></script>
+<script src="/accueil/capsule.js?v=7"></script>
 <script src="/attente/attente.js"></script>
 <script>(function(){var f=document.getElementById('atBloc');if(f&&window.AIMEAttente)AIMEAttente.bloc(f)})();</script>
 <script src="/accueil/demo.js"></script>
@@ -322,9 +337,9 @@ a{color:inherit}
 <script src="/modules/radial/noyau.js"></script>
 <script src="/modules/temps/moteur.js"></script>
 <script src="/modules/temps/cercle.js"></script>
-<script src="/accueil/temps.js?v=6"></script>
-<script src="/accueil/vitrine.js?v=6"></script>
-<script src="/accueil/reveler.js?v=6"></script>
+<script src="/accueil/temps.js?v=7"></script>
+<script src="/accueil/vitrine.js?v=7"></script>
+<script src="/accueil/reveler.js?v=7"></script>
 <!-- la régie applique ses textes et son orbe ; la coque de l'OS ne recouvre la page que si ?coque=1 est demandé -->
 <script src="/regie/donnees.js"></script>
 <script src="/nav/registre.js"></script>

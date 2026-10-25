@@ -145,3 +145,6 @@ Un geste = une transaction PostgreSQL :
 - **Calendrier complet** : une date de Jour J par projet (§ 10), mais pas de grille mensuelle, pas de date par moment au-delà de J+1, pas d'échéance d'engagement dans le programme.
 - **Temps réel** : relecture toutes les 2 s, pas de connexion poussée.
 - **Le direct (jour J)** : pas encore réécrit sur cette ressource. La chronologie du Programme en est la première présentation.
+
+> **25/10/2026 (soir) — les onglets entrent dans l'écran.** La démo du Temps n'a plus de réglages à côté du téléphone : `Programme` et `Circle` sont deux onglets au-dessus du contenu (`button.v-onglet[data-temps-mode]`, `aria-pressed`), et la place se choisit dans le `+` du Dock (`Voir depuis`). Le `select#tempsDemoQui` reste dans le DOM, masqué : c'est lui que le `+` pilote et que les tests interrogent. Dans l'iPhone du héros, le même vocabulaire : AI ouvre le calendrier, une date ouvre le jour (onglets `Programme | Circle | Personnes`), le `+` choisit la place (voir docs/DOCK.md).
+

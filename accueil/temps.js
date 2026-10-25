@@ -125,10 +125,9 @@ function monter(){
   dessiner(s,modeleCercle(vue,m?fenetreMoment(m):null),{choisi:choisi,qui:info.personne.nom,choisir:choisir,noms:noms,ids:{titre:'tempsDemoSvgT',desc:'tempsDemoSvgD'}})}
  function afficherApercu(){
   if(!D)return;var info;try{info=preparer(D,choix)}catch(e){majTexte(e.message);return}
-  var panelL=$('tempsDemoListe'),panelC=$('tempsDemoCercle'),titre=$('tempsDemoTitre');
+  var panelL=$('tempsDemoListe'),panelC=$('tempsDemoCercle');
   if(choisi&&!momentDe(info.vue,choisi))choisi=null;   /* la place a changé : un moment qu'elle ne voit pas ne reste pas choisi */
-  /* l'écran ne porte plus qu'un titre : la place est dite par le réglage, dehors (« Voir depuis ») */
-  if(titre)titre.textContent=mode==='cercle'?'Circle':'Programme';
+  /* l'onglet dit la vue (Programme ou Circle) ; la place se choisit dans le + du Dock */
   if(panelL)panelL.hidden=mode!=='liste';if(panelC)panelC.hidden=mode!=='cercle';
   var actif=root.document.activeElement, garde=actif&&actif.getAttribute?actif.getAttribute('data-moment'):null;
   liste(info.vue,'tempsDemoMoments');   /* Circle n'a pas de liste : le cadran est seul (les arcs sont les boutons) */

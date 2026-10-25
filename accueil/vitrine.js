@@ -77,29 +77,88 @@ function telephones(evt){var e=EVTS.filter(function(x){return x.id===evt})[0]||E
    mission:(t.missions&&t.missions[e.id])||t.mission,
    moments:momentsTel(t,e.id)}})}
 
-if(typeof document==='undefined')return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,composer:composer,cadran:cadran,telephones:telephones};
+/* le jour J de la démonstration : une seule date au programme, juin 2027 (samedi 12) */
+var JOUR={annee:2027,mois:5,jour:12},MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],SEMAINE=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
+if(typeof document==='undefined')return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,JOUR:JOUR,calendrier:calendrier,composer:composer,cadran:cadran,telephones:telephones};
 
 /* ---------- le navigateur ---------- */
 function $(id){return document.getElementById(id)}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function pastille(c){var p=el('span','v-pt');p.style.setProperty('--pt',c);p.setAttribute('aria-hidden','true');return p}
-var etat={place:'owner',decale:false,planB:false,choisi:null};
+var etat={place:'owner',decale:false,planB:false,choisi:null,niveau:'jour',onglet:'cercle'};
+/* AI est le tableau de bord : le mois, semaine par semaine (lundi d'abord). Pur, testé sous node. */
+function calendrier(annee,mois){
+ var premier=(new Date(annee,mois,1).getDay()+6)%7,nb=new Date(annee,mois+1,0).getDate(),cases=[],d;
+ for(d=0;d<premier;d++)cases.push(null);
+ for(d=1;d<=nb;d++)cases.push({jour:d,jourJ:annee===JOUR.annee&&mois===JOUR.mois&&d===JOUR.jour,weekend:(d+premier-1)%7>4});
+ return{annee:annee,mois:mois,titre:MOIS[mois]+' '+annee,nb:nb,cases:cases,date:JOUR};
+}
+function dateLongue(){return SEMAINE[(new Date(JOUR.annee,JOUR.mois,JOUR.jour).getDay()+6)%7]+' '+JOUR.jour+' '+MOIS[JOUR.mois]}
 
+/* le calendrier d'AI : les jours du mois, le jour J est le seul qui soit plein (les autres dates sont vides) */
+function ouvrirJour(){etat.niveau='jour';etat.onglet='cercle';hero();
+ var t=$('vHero').querySelector('.v-onglet[data-vue="cercle"]');if(t)try{t.focus({preventScroll:true})}catch(_){t.focus()}}
+function peindreCalendrier(){
+ var G=$('vCal');if(!G)return;
+ var M=calendrier(JOUR.annee,JOUR.mois),T=$('vCalTitre');
+ if(T)T.textContent=M.titre;
+ if(G.getAttribute('data-mois')===M.titre&&G.childNodes.length)return;   /* même mois : déjà dessiné */
+ G.setAttribute('data-mois',M.titre);G.textContent='';
+ M.cases.forEach(function(c){
+  if(!c){var v=el('span','v-cal-vide');v.setAttribute('aria-hidden','true');G.appendChild(v);return}
+  if(!c.jourJ){var x=el('span','v-cal-j'+(c.weekend?' we':''),String(c.jour));x.setAttribute('aria-hidden','true');G.appendChild(x);return}
+  var b=el('button','v-cal-jour');b.type='button';b.setAttribute('aria-label','Ouvrir le '+dateLongue());
+  b.appendChild(el('b',null,String(c.jour)));b.appendChild(el('i','v-cal-point'));
+  b.onclick=function(){ouvrirJour()};
+  G.appendChild(b)})}
+/* la ligne du calendrier : la date et ce qu'elle contient pour cette place */
+function peindreSuite(n){var q=$('vCalQuand');if(q)q.textContent=dateLongue()+' · '+n+(n>1?' moments':' moment')}
+/* l'onglet Personnes : qui est dans ce jour, et ce que chacun en voit (composer(), donc permissions.js) */
+function peindrePersonnes(){
+ var L=$('vPersonnes');if(!L||L.getAttribute('data-place')===etat.place&&L.childNodes.length)return;
+ L.setAttribute('data-place',etat.place);L.textContent='';
+ PLACES.forEach(function(p){
+  var n=composer(p.id,etat).vus.length,li=el('li'),b=el('button','v-p-pers');b.type='button';
+  b.setAttribute('aria-pressed',p.id===etat.place?'true':'false');
+  b.appendChild(pastille(RL.couleur(p.id)));
+  var t=el('span','v-p-pers-t');t.appendChild(el('b',null,p.nom));t.appendChild(el('small',null,n+(n>1?' moments':' moment')));
+  b.appendChild(t);
+  b.onclick=function(){etat.place=p.id;hero();dire(p.nom+' : '+n+' moments dans ce jour.')};
+  li.appendChild(b);L.appendChild(li)})}
+/* AI est le tableau de bord : ce qui est prévu pour cette place (l'onglet Programme), et la même chose sur le cadran
+   (l'onglet Circle). Le + du Dock choisit la place ; tout ce qui suit en dépend — c'est la même règle que le serveur. */
 function hero(){if(!$('vHero'))return;var r=composer(etat.place,etat);
  if(etat.choisi&&!r.vus.some(function(m){return m.id===etat.choisi}))etat.choisi=null;   /* la place a changé : un moment qu'elle ne voit pas ne reste pas choisi */
  /* le fond : une couche par place, celle de la place choisie s'allume (les autres s'éteignent) */
  [].forEach.call(document.querySelectorAll('.v-fond'),function(f){var on=f.getAttribute('data-fond')===etat.place;f.classList.toggle('on',on);if(on)f.style.backgroundImage=r.fond});
  $('vVous').textContent=r.place.nom;$('vVousPt').style.setProperty('--pt',r.couleur);
- $('vNb').textContent=r.vus.length+' moments visibles';
- /* plus de liste sous le cadran (25/10) : le cadran est seul, et c'est lui qu'on touche. Une ligne dit le moment choisi. */
+ $('vNb').textContent=r.vus.length+' moments';
+ /* AI est le calendrier ; une date ouvre le jour en profondeur, et l'onglet commande le corps */
+ var cal=$('vVueCalendrier'),jv=$('vVueJour'),k=$('vPageK');
+ if(cal)cal.hidden=etat.niveau!=='calendrier';if(jv)jv.hidden=etat.niveau!=='jour';
+ if(k)k.textContent=etat.niveau==='calendrier'?'AI · ce qui est prévu':'Jour J';
+ if($('vRetour'))$('vRetour').hidden=etat.niveau!=='jour';   /* le retour n'existe que dans la date ouverte */
+ [].forEach.call($('vHero').querySelectorAll('.v-onglet'),function(b){b.setAttribute('aria-pressed',b.getAttribute('data-vue')===etat.onglet?'true':'false')});
+ var vueC=$('vVueCercle'),vueP=$('vVueProgramme'),vueX=$('vVuePersonnes');
+ if(vueC)vueC.hidden=etat.onglet!=='cercle';if(vueP)vueP.hidden=etat.onglet!=='programme';if(vueX)vueX.hidden=etat.onglet!=='personnes';
+ peindreCalendrier();peindreSuite(r.vus.length);peindrePersonnes();
+ /* la place en cours se lit dans la carte ; elle se change dans le + */
+ var PA=$('vPlaces');if(PA){PA.textContent='';PA.appendChild(pastille(r.couleur));var pn=el('b',null,r.place.nom);PA.appendChild(pn)}
+ /* « ce qui est prévu » : les mêmes moments que le cadran, jamais une autre liste */
+ var LB=$('vListe');
+ if(LB){LB.textContent='';r.vus.forEach(function(m){
+  var li=el('li'),b=el('button','v-p-m');b.type='button';b.setAttribute('aria-label',m.titre+' · '+m.debut+' – '+m.fin+' · '+m.lieu+(m.change?' · mis à jour':''));
+  b.appendChild(el('time','v-p-h',m.debut));
+  var t=el('span','v-p-t');t.appendChild(el('b',null,m.titre));t.appendChild(el('small',null,m.lieu));b.appendChild(t);
+  if(m.change)b.appendChild(el('span','v-p-maj','mis à jour'));
+  /* entrer en profondeur : la ligne ouvre le même moment sur le cercle */
+  b.onclick=function(){etat.choisi=m.id;etat.onglet='cercle';hero();var a=$('vCercle')&&$('vCercle').querySelector('.v-td-arc[data-moment="'+m.id+'"]');if(a){try{a.focus({preventScroll:true})}catch(_){a.focus()}}};
+  li.appendChild(b);LB.appendChild(li)})}
+ /* une ligne dit le moment choisi (le cadran est seul, sans liste en dessous) */
  var choisi=etat.choisi?r.vus.filter(function(m){return m.id===etat.choisi})[0]:null,dit=$('vCercleDit');
  if(dit)dit.textContent=choisi?(choisi.titre+' · '+choisi.debut+' – '+choisi.fin+' · '+choisi.lieu+(choisi.change?' · mis à jour':'')):'Touchez un arc : son heure, son titre et son lieu s’affichent ici.';
  $('vCache').textContent=r.caches?r.caches+(r.caches>1?' moments ne sont pas envoyés à cette place : ils ne la concernent pas.':' moment n’est pas envoyé à cette place : il ne la concerne pas.'):'Cette place voit tout le programme.';
  dessinerCadran(r);
- var P0=$('vPlaces');
- if(P0&&!P0.childNodes.length)PLACES.forEach(function(p){var b=el('button','v-place');b.type='button';b.dataset.place=p.id;b.appendChild(pastille(RL.couleur(p.id)));b.appendChild(el('span',null,p.nom));b.appendChild(el('small',null,p.place));
-  b.onclick=function(){etat.place=p.id;hero();dire(p.nom+' : la page se compose pour cette place.')};P0.appendChild(b)});
- if(P0)[].forEach.call(P0.querySelectorAll('.v-place'),function(b){b.setAttribute('aria-pressed',b.dataset.place===etat.place?'true':'false')});
  var G=$('vGestes');if(G){G.textContent='';r.place.gestes.forEach(function(g){G.appendChild(el('li',null,g))})}
  $('vDecaler').disabled=!r.decaler;$('vPlanB').disabled=!r.decaler;$('vDecaler').setAttribute('aria-pressed',etat.decale?'true':'false');$('vPlanB').setAttribute('aria-pressed',etat.planB?'true':'false');
  /* le retour au jardin ne se propose qu'à qui peut basculer : une place qui ne fait que lire garde le libellé neutre */
@@ -124,9 +183,51 @@ function iconeDock(nom){var s=document.createElementNS('http://www.w3.org/2000/s
  s.setAttribute('class','v-p-dk-i');s.setAttribute('viewBox','0 0 24 24');c.setAttribute('d',ICONES[nom]);s.appendChild(c);return s}
 function poserDocks(){[].forEach.call(document.querySelectorAll('.v-p-dock'),function(z){
  if(z.childNodes.length)return;   /* déjà posé (rendu refait) */
+ var genre=z.getAttribute('data-plus');
+ var ai=z.getAttribute('data-ai');
  [['ai','AI'],null,['me','ME']].forEach(function(x){
-  var e=el('span','v-p-dk');if(!x){e.className='v-p-dk v-p-dk-plus';e.appendChild(el('i'));z.appendChild(e);return}
+  var e=el('span','v-p-dk');e.setAttribute('aria-hidden','true');
+  if(x&&x[0]==='ai'&&ai==='basculer'){var ba=el('button','v-p-dk');ba.type='button';ba.setAttribute('aria-label','AI, le calendrier du projet');
+   ba.onclick=function(){etat.niveau=etat.niveau==='calendrier'?'jour':'calendrier';hero()};
+   ba.appendChild(iconeDock('ai'));ba.appendChild(el('b','v-p-dk-t','AI'));z.appendChild(ba);return}
+  if(!x){
+   if(genre){var b=el('button','v-p-dk v-p-dk-plus');b.type='button';b.setAttribute('aria-haspopup','true');b.setAttribute('aria-expanded','false');
+    b.setAttribute('aria-label',genre==='personnes'?'Choisir la place de la démonstration':'Choisir ma place');
+    b.onclick=function(){plus(z,b)};b.removeAttribute('aria-hidden');e=b}
+   else{e.className='v-p-dk v-p-dk-plus'}   /* sans place à choisir, le + reste une image du Dock */
+   e.appendChild(el('i'));z.appendChild(e);return}
   e.appendChild(iconeDock(x[0]));var t=el('b','v-p-dk-t',x[1]);e.appendChild(t);z.appendChild(e)})})}
+/* ---------- le + : c'est là qu'on choisit son rôle (docs/DOCK.md) ----------
+   Dans AI, la place décide de tout : ce que l'onglet Programme liste, ce que Circle dessine, ce que la carte autorise. */
+function itemsPlus(genre){
+ if(genre==='personnes'){var P=(root.AIMETempsAccueil&&root.AIMETempsAccueil.PERSONNES)||[],sel=$('tempsDemoQui');
+  return P.map(function(p){return{id:p.cle,nom:p.libelle,actif:!!sel&&sel.value===p.cle}})}
+ return PLACES.map(function(p){return{id:p.id,nom:p.nom,couleur:RL.couleur(p.id),actif:etat.place===p.id}})}
+function choisirPlus(genre,id){
+ if(genre==='personnes'){var sel=$('tempsDemoQui');if(sel){sel.value=id;sel.dispatchEvent(new Event('change'))}return}
+ var p=PLACES.filter(function(x){return x.id===id})[0];etat.place=id;hero();if(p)dire(p.nom+' : AI, Programme et Circle se composent pour cette place.')}
+function fermerPlus(z,rendre){var m=z.querySelector('.v-plus');if(m&&m.parentNode)m.parentNode.removeChild(m);
+ var b=z.querySelector('.v-p-dk-plus');if(b){b.setAttribute('aria-expanded','false');if(rendre)try{b.focus()}catch(_){}}}
+function plus(z,bouton){
+ if(z.querySelector('.v-plus')){fermerPlus(z,true);return}
+ var genre=z.getAttribute('data-plus'),items=itemsPlus(genre),m=el('div','v-plus');
+ m.setAttribute('role','menu');m.setAttribute('aria-label',genre==='personnes'?'Choisir la place de la démonstration':'Choisir ma place');
+ m.appendChild(el('p','v-plus-t',genre==='personnes'?'Voir depuis':'Je suis…'));
+ items.forEach(function(it){var b=el('button','v-plus-i');b.type='button';b.setAttribute('role','menuitemradio');
+  b.setAttribute('aria-checked',it.actif?'true':'false');b.dataset.place=it.id;
+  if(it.couleur)b.appendChild(pastille(it.couleur));
+  b.appendChild(el('span',null,it.nom));
+  b.onclick=function(){fermerPlus(z);choisirPlus(genre,it.id);var bb=z.querySelector('.v-p-dk-plus');if(bb)try{bb.focus()}catch(_){}};
+  m.appendChild(b)});
+ z.appendChild(m);bouton.setAttribute('aria-expanded','true');
+ var actif=m.querySelector('[aria-checked="true"]')||m.querySelector('.v-plus-i');if(actif)actif.focus();
+ m.addEventListener('keydown',function(e){var L=[].slice.call(m.querySelectorAll('.v-plus-i')),i=L.indexOf(document.activeElement);
+  if(e.key==='ArrowDown'){e.preventDefault();(L[i+1]||L[0]).focus()}
+  else if(e.key==='ArrowUp'){e.preventDefault();(L[i-1]||L[L.length-1]).focus()}
+  else if(e.key==='Escape'){e.preventDefault();fermerPlus(z,true)}
+  else if(e.key==='Tab'){fermerPlus(z)}});
+ setTimeout(function(){var dehors=function(e){if(!z.contains(e.target)){fermerPlus(z);document.removeEventListener('pointerdown',dehors,true)}};
+  document.addEventListener('pointerdown',dehors,true)},0)}
 
 function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';
  telephones(evt).forEach(function(t){
@@ -173,6 +274,9 @@ function reglerTels(tous){var L=$('vTels'),b=$('vTelsTous');if(!L||!b)return;
  b.textContent=tous?'Voir seulement les écrans concernés':'Voir les '+n+' autres téléphones'}
 
 function monter(){if(!$('vHero'))return;hero();poserDocks();
+ [].forEach.call($('vHero').querySelectorAll('.v-onglet'),function(b){b.onclick=function(){var v=b.getAttribute('data-vue');etat.onglet=v==='programme'?'programme':v==='personnes'?'personnes':'cercle';etat.niveau='jour';hero()}});
+ if($('vOuvrir'))$('vOuvrir').onclick=ouvrirJour;
+ if($('vRetour'))$('vRetour').onclick=function(){etat.niveau='calendrier';hero();var g=$('vCal');if(g){var d=g.querySelector('.v-cal-jour');if(d)try{d.focus({preventScroll:true})}catch(_){d.focus()}}};
  $('vDecaler').onclick=function(){etat.decale=!etat.decale;$('vReelDit').dataset.gardé='1';hero();dire(etat.decale?'Écrit une fois : le cocktail passe à 16:15 sur chaque écran qui le voit.':'Le cocktail revient à 16:00.')};
  $('vPlanB').onclick=function(){etat.planB=!etat.planB;$('vReelDit').dataset.gardé='1';hero();dire(etat.planB?'Plan B : la cérémonie passe à l’Orangerie, pour chaque place qui la voit.':'Retour au jardin.')};
  var E=$('vEvts');if(E){EVTS.forEach(function(x){var b=el('button','v-btn2',x.t);b.type='button';b.dataset.evt=x.id;b.onclick=function(){tels(x.id)};E.appendChild(b)});tels('surprise')}
@@ -185,5 +289,5 @@ function monter(){if(!$('vHero'))return;hero();poserDocks();
  var ag=$('vAgent');if(ag)ag.onclick=function(){var li=document.querySelectorAll('#vEtapes li');[].forEach.call(li,function(x){x.classList.remove('fait');x.firstChild.textContent='·'});
   [].forEach.call(li,function(x,i){setTimeout(function(){x.classList.add('fait');x.firstChild.textContent='✓'},(i+1)*(document.documentElement.classList.contains('calme')?1:550))})}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',monter);else monter();
-return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,composer:composer,cadran:cadran,telephones:telephones};
+return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,JOUR:JOUR,calendrier:calendrier,composer:composer,cadran:cadran,telephones:telephones};
 });

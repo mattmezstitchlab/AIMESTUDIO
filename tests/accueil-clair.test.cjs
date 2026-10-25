@@ -111,6 +111,20 @@ test('les sept téléphones : un vrai écran par personne (mission, moments filt
   assert.match(js, /function poserDocks\(\)/, 'un seul dessin de Dock');
   assert.match(js, /\['ai','AI'\],null,\['me','ME'\]/, 'AI, +, ME');
   assert.ok((z.match(/class="v-p-dock"/g) || []).length >= 2, 'le Dock est dans les deux grands écrans');
+  /* le 25/10 : AI est le tableau de bord (le mois, puis la date ouverte en profondeur), le + choisit la place */
+  const cal = V.calendrier(V.JOUR.annee, V.JOUR.mois);
+  assert.equal(cal.cases.filter(Boolean).length, new Date(V.JOUR.annee, V.JOUR.mois + 1, 0).getDate(), 'le mois compte tous ses jours');
+  assert.equal(cal.cases.filter(c => c && c.jourJ).length, 1, 'une seule date pleine : le jour J');
+  assert.equal(cal.cases[0], null, 'la grille commence un lundi (cases vides avant le 1er)');
+  for (const k of ['v-cal-jour', 'v-onglet', 'data-vue="programme"', 'data-vue="cercle"', 'data-vue="personnes"', 'id="vRetour"', 'id="vPersonnes"', 'id="vListe"'])
+    assert.ok(z.includes(k) || css.includes('.' + k), 'le jour ouvert : ' + k);
+  assert.ok((z.match(/class="v-onglet"/g) || []).length >= 5, 'les onglets sont dans AI et dans le Temps');
+  assert.match(js, /etat\.onglet/, 'l\'onglet actif commande le corps');
+  assert.match(js, /data-ai="basculer"|ai==='basculer'/, 'AI ramène au calendrier');
+  assert.match(js, /v-plus-i/, 'le + ouvre la liste des places');
+  assert.match(js, /menuitemradio/, 'le choix de la place est un menu de rôles, pas un bouton muet');
+  assert.match(js, /choisirPlus/, 'choisir une place recompose AI');
+  assert.ok(!/fetch\(/.test(js) && !/localStorage\.setItem/.test(js), 'la vitrine n\'écrit rien et n\'envoie rien');
 });
 
 test('l\'accueil : clair, dégradés francs, le manifeste, la mosaïque gardée, l\'agent dit « En préparation », aucune page /aime/', () => {

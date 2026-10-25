@@ -99,7 +99,7 @@ html.calme .v-orbe i{animation:none}
 .v-page-t .v-pil{font-size:11px;padding:4px 9px;white-space:normal;text-align:right;max-width:104px;line-height:1.25}
 /* le cadran prend la place laissée par la liste : il se cale sur la largeur de l'écran et se centre dans la hauteur libre */
 .v-p-cadran-figure{margin:0;padding:6px 6px 0;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.v-p-cadran{display:block;width:100%;height:auto;max-height:100%;margin:0 auto;overflow:visible}
+.v-p-cadran{display:block;width:100%;height:auto;max-height:100%;min-height:0;margin:0 auto;overflow:visible}
 .v-p-cadran .v-td-face{fill:#FCFBFF;stroke:#DEDCF0}
 .v-p-cadran .v-td-anneau{stroke:#EAE7F8}
 .v-p-cadran .v-td-piste{stroke:#EFEDFA}
@@ -110,16 +110,91 @@ html.calme .v-orbe i{animation:none}
 .v-p-cadran .v-td-plus{font-size:34px}
 .v-p-cadran .v-td-arc{pointer-events:stroke;cursor:pointer}
 .v-p-cadran .v-td-arc:focus-visible{stroke:#111116;stroke-width:46;outline:none}
+/* les onglets du jour, dans l'écran : Programme (ce qui est prévu) · Circle (le même, sur le cadran) */
+.v-onglets{display:flex;gap:3px;flex:none;margin:0 13px 6px;padding:3px;border-radius:11px;background:#EFEFF5;border:1px solid #E4E4EE}
+.v-onglet{flex:1 1 0;min-width:0;min-height:30px;padding:0 8px;border:0;border-radius:8px;background:none;font:600 12.5px/1 var(--ui);color:#4A4A58;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v-onglet[aria-pressed="true"]{background:#FFFFFF;color:var(--ink);box-shadow:0 1px 2px rgba(17,17,20,.14)}
+.v-onglet:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+/* AI, le tableau de bord : le mois. Le jour J est la seule date pleine ; les autres sont vides */
+.v-p-ecran [hidden]{display:none!important}   /* le niveau fermé ne prend pas de place (display:flex ignorerait [hidden]) */
+.v-p-cal{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:10px 12px 12px;overflow-y:auto;scrollbar-width:none}
+.v-p-cal::-webkit-scrollbar{display:none}
+.v-cal-tete{margin:0;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.v-cal-tete b{font:600 15px/1.2 var(--ui);color:var(--ink)}
+.v-cal-tete span{font:500 11px/1.2 var(--ui);color:var(--soft)}
+.v-cal-j{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:2px}
+.v-cal-j span{text-align:center;font:700 9.5px/1.2 var(--ui);letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+.v-cal-grille{flex:1;min-height:0;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;gap:2px}
+.v-cal-suite{margin:8px 0 0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid #EFEFF5}
+.v-cal-suite span{font:600 12px/1.25 var(--ui);color:var(--ink)}
+.v-ouvrir{flex:none;min-height:30px;padding:0 11px;border:1px solid #D8D8E4;border-radius:999px;background:#FFFFFF;font:600 12px var(--ui);color:var(--ink);cursor:pointer}
+.v-ouvrir:hover{border-color:var(--accent);color:var(--accent-fonce)}
+.v-ouvrir:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.v-cal-j,.v-cal-vide{min-height:0;display:grid;place-items:center;font:500 12.5px/1 var(--ui);color:#6B6B7B}
+.v-cal-j.we{color:#9B9BA8}
+
+.v-cal-jour{position:relative;place-self:center;width:100%;height:100%;max-width:34px;max-height:34px;display:grid;place-items:center;gap:0;padding:0;border:0;border-radius:9px;background:#111116;color:#FFFFFF;font:700 12.5px/1 var(--ui);cursor:pointer}
+.v-cal-jour i{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#FFFFFF;opacity:.85}
+.v-cal-jour:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.v-cal-leg{margin:2px 0 0;font:400 11.5px/1.35 var(--ui);color:#4B4B5B}
+/* la date ouverte : le jour en profondeur */
+.v-p-jour{flex:1;min-height:0;display:flex;flex-direction:column}
+.v-retour{flex:none;width:28px;height:28px;padding:0 0 2px;border:0;border-radius:9px;background:#F1F1F7;font:600 17px/1 var(--ui);color:var(--ink);cursor:pointer}
+.v-retour:hover{background:#E9E9F2}
+.v-retour:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+/* l'onglet Personnes : qui est dans ce jour, et combien chacun en voit */
+.v-p-personnes-boite{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding:0 8px}
+.v-p-personnes-boite::-webkit-scrollbar{display:none}
+.v-p-personnes{list-style:none;margin:0;padding:0;display:grid}
+.v-p-pers{display:flex;align-items:center;gap:9px;width:100%;padding:10px 6px;border:0;border-bottom:1px solid #EFEFF5;border-radius:9px;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.v-p-personnes>li:last-child .v-p-pers{border-bottom:0}
+.v-p-pers:hover{background:#F7F5FF}
+.v-p-pers:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.v-p-pers[aria-pressed="true"]{background:#F1EEFF;box-shadow:inset 3px 0 0 var(--accent)}
+.v-p-pers .v-pt{width:11px;height:11px;flex:none}
+.v-p-pers-t{min-width:0;display:grid;gap:1px}
+.v-p-pers-t b{font-size:13.5px;font-weight:600;line-height:1.25;color:var(--ink)}
+.v-p-pers-t small{font-size:11.5px;line-height:1.25;color:#4B4B5B}
+/* ce qui est prévu, dans l'écran : la même liste que le cadran, jamais une autre */
+.v-p-liste-boite{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;padding:0 8px}
+.v-p-liste-boite::-webkit-scrollbar{display:none}
+.v-p-liste{list-style:none;margin:0;padding:0;display:grid}
+.v-p-m{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:baseline;gap:8px;width:100%;padding:9px 5px;border:0;border-bottom:1px solid #EFEFF5;border-radius:9px;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.v-p-liste>li:last-child .v-p-m{border-bottom:0}
+.v-p-m:hover{background:#F7F5FF}
+.v-p-m:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.v-p-h{font:600 12px/1.3 ui-monospace,"SF Mono",Menlo,monospace;color:#242431;white-space:nowrap}
+.v-p-t{min-width:0;display:grid;gap:1px}
+.v-p-t b{font-size:13.5px;font-weight:600;line-height:1.25;color:var(--ink);overflow-wrap:anywhere}
+.v-p-t small{font-size:11.5px;line-height:1.25;color:#4B4B5B;overflow-wrap:anywhere}
+.v-p-maj{font:600 10px/1.2 var(--ui);color:var(--accent-fonce)}
 /* plus de liste sous le cadran : une ligne dit le moment choisi (le cadran grandit d'autant) */
-.v-p-dit{margin:0;padding:9px 7px 0;min-height:2.5em;font-size:12.5px;line-height:1.35;color:#242431;text-align:center}
+.v-p-dit{margin:0;padding:7px 7px 0;min-height:0;font-size:12.5px;line-height:1.35;color:#242431;text-align:center}
 .v-p-cache{margin:0;padding:9px 13px 11px;font-size:11.5px;line-height:1.35;color:#3E3E4E;border-top:1px solid #F0F0F6}
 /* le Dock du produit, dans l'écran : AI | + | ME — les couleurs du Dock clair du site (dock/dock.css, .clair) */
 .v-p-dock{display:flex;align-items:center;justify-content:space-between;gap:4px;flex:none;padding:7px 12px;border-radius:22px;background:rgba(255,255,255,.97);border:1px solid #D4D4E0;box-shadow:0 10px 26px -16px rgba(20,18,46,.28)}
-.v-p-dk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:1 1 0;min-width:0;font:500 10px/1 var(--ui);letter-spacing:.02em;color:#4A4A58}
+.v-p-dk{display:flex;flex-direction:column;border-radius:10px;align-items:center;justify-content:center;gap:3px;flex:1 1 0;min-width:0;font:500 10px/1 var(--ui);letter-spacing:.02em;color:#4A4A58}
 .v-p-dk-i{width:18px;height:18px;fill:none;stroke:#111116;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .v-p-dk-plus{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid transparent;background:linear-gradient(#111116,#111116) padding-box,conic-gradient(#FB7185,#F59E0B,#34D399,#22D3EE,#7C5CFF,#FB7185) border-box;position:relative}
 .v-p-dk-plus i::before,.v-p-dk-plus i::after{content:"";position:absolute;left:50%;top:50%;width:13px;height:2px;border-radius:2px;background:#FFFFFF;transform:translate(-50%,-50%)}
 .v-p-dk-plus i::after{transform:translate(-50%,-50%) rotate(90deg)}
+button.v-p-dk-plus{cursor:pointer;padding:0}
+button.v-p-dk-plus:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.v-p-dock{position:relative}
+/* le + ouvre le choix de la place : ce n'est pas une attribution, c'est une démonstration */
+.v-plus{position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);z-index:4;width:min(268px,86vw);padding:7px;border-radius:16px;background:#FFFFFF;border:1px solid #D8D8E4;box-shadow:0 22px 48px -24px rgba(20,18,46,.42);display:grid;gap:1px}
+.v-plus-t{margin:2px 6px 5px;font:700 10px/1.2 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+.v-plus-i{display:flex;align-items:center;gap:9px;width:100%;min-height:36px;padding:0 9px;border:0;border-radius:10px;background:none;font:500 13.5px var(--ui);color:var(--ink);text-align:left;cursor:pointer}
+.v-plus-i .v-pt{width:10px;height:10px;flex:none}
+.v-plus-i span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v-plus-i:hover{background:#F5F4FA}
+.v-plus-i:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.v-plus-i[aria-checked="true"]{background:#111116;color:#FFFFFF}
+.v-plus-i[aria-checked="true"]:hover{background:#111116}
+/* la place en cours, dans la carte */
+.v-place-actuelle{margin:0;display:flex;align-items:center;gap:9px;min-height:44px;padding:0 14px;border:1px solid rgba(17,17,20,.12);border-radius:999px;background:#FFFFFF;font:500 15px var(--ui);color:var(--ink);align-self:flex-start}
+.v-place-actuelle .v-pt{width:11px;height:11px;flex:none}
+.v-leg-s{margin:0;font:400 14px/1.45 var(--ui);color:var(--soft)}
 .v-hero-reglages{width:100%;max-width:440px;display:flex;flex-direction:column;gap:10px;padding:22px;background:#FFFFFF;border:1px solid rgba(17,17,20,.10);border-radius:26px;box-shadow:0 2px 6px rgba(17,17,24,.04),0 24px 56px -34px rgba(22,18,52,.24)}
 .v-hero-reglages .v-k{font-size:11px}
 .v-places{display:flex;flex-wrap:wrap;gap:8px}
@@ -225,19 +300,14 @@ html.calme .v-tel .cadre{transition:none}
    d'état, titre, vue, Dock AI | + | ME — et les réglages de la démonstration restent dehors, à taille lisible. */
 .v-temps-vitrine{display:grid;grid-template-columns:minmax(0,420px) minmax(280px,.85fr);gap:clamp(24px,4vw,56px);align-items:start;justify-items:center;overflow:visible}
 .v-temps-produit{min-width:0;width:100%;display:flex;flex-direction:column;align-items:center;gap:18px}
-.v-temps-commandes{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 16px;width:100%}
-.v-temps-modes{display:inline-flex;gap:2px;padding:4px;border-radius:999px;background:#E7E7EE;border:1px solid #DEDEE8}
-.v-temps-mode{min-height:40px;padding:0 20px;border:0;border-radius:999px;background:none;font:600 15px var(--ui);color:#3E3E4E;cursor:pointer}
-.v-temps-mode[aria-pressed="true"]{background:#FFFFFF;color:var(--ink);box-shadow:0 1px 3px rgba(17,17,20,.16)}
-.v-temps-mode:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.v-temps-qui{margin:0;display:inline-flex;align-items:center;gap:10px;font:500 15px var(--ui);color:var(--soft)}
-.v-temps-qui select{min-height:40px;max-width:230px;padding:0 12px;border:1px solid #C6C6D4;border-radius:12px;background:#FFFFFF;color:var(--ink);font:500 15px var(--ui)}
 /* le téléphone */
 .v-temps-scene{width:min(100%,340px)}
 .v-temps-page{flex:1;min-height:0;display:flex;flex-direction:column;gap:2px;padding:16px 14px 12px;background:#FFFFFF;border-radius:26px;box-shadow:0 18px 40px -30px rgba(17,17,20,.5);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
 .v-temps-page::-webkit-scrollbar{display:none}
 .v-temps-jour{margin:0;font:700 11px/1.2 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--accent-fonce)}
-.v-temps-page h3{margin:0 0 8px;font:400 28px/1.05 var(--display);letter-spacing:-.02em;color:var(--ink)}
+/* les mêmes onglets que dans AI, au-dessus du contenu (l'onglet actif commande le corps) */
+.v-temps-page .v-onglets{margin:8px 0 10px;padding:3px;border-radius:12px}
+.v-temps-page .v-onglet{min-height:32px;font-size:13px}
 .v-temps-vue{min-width:0}
 .v-temps-liste{list-style:none;margin:0;padding:0;display:grid}
 .v-temps-liste>li{margin:0;min-width:0}

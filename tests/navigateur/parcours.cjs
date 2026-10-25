@@ -230,14 +230,28 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#vCercle .v-td-arc'); await p.waitForTimeout(300);
     /* le cadran est seul (25/10) : ce sont ses arcs qui disent ce que la place reçoit */
     const nb = async () => p.evaluate(() => document.querySelectorAll('#vCercle .v-td-arc').length);
-    const vu = {}; for (const pl of ['owner', 'editor', 'contributor', 'guest']) { await p.click('#vPlaces [data-place="' + pl + '"]'); await p.waitForTimeout(120); vu[pl] = await nb(); }
+    /* la place se choisit dans le + du Dock (le 25/10 : « le + c'est là qu'on sélectionne le mode de rôle ») */
+    const choisirPlace = async pl => { await p.click('#vHero .v-p-dk-plus'); await p.waitForSelector('#vHero .v-plus-i'); await p.click('#vHero .v-plus-i[data-place="' + pl + '"]'); await p.waitForTimeout(160); };
+    const vu = {}; for (const pl of ['owner', 'editor', 'contributor', 'guest']) { await choisirPlace(pl); vu[pl] = await nb(); }
     ok(vu.owner === 7 && vu.editor === 7 && vu.contributor === 6 && vu.guest === 4, 'Accueil : chaque place reçoit sa page (7, 7, 6, 4 moments)');
     ok(await p.evaluate(() => document.getElementById('vDecaler').disabled), 'Accueil : l\'invitée ne peut pas décaler');
-    await p.click('#vPlaces [data-place="editor"]'); await p.click('#vDecaler'); await p.click('#vPlanB'); await p.click('#vPlaces [data-place="guest"]'); await p.waitForTimeout(150);
+    await choisirPlace('editor'); await p.click('#vDecaler'); await p.click('#vPlanB'); await choisirPlace('guest'); await p.waitForTimeout(150);
     /* toucher un arc dit le moment en toutes lettres sous le cadran : l'invitée voit l'horaire décalé et le plan B */
     const lireArc = async id => p.evaluate(id => { const a = document.querySelector('#vCercle .v-td-arc[data-moment="' + id + '"]'); a.dispatchEvent(new MouseEvent('click', { bubbles: true })); return document.getElementById('vCercleDit').textContent; }, id);
     const ditCocktail = await lireArc('cocktail'), ditCeremonie = await lireArc('ceremonie');
     ok(/16:15/.test(ditCocktail) && /Orangerie/.test(ditCeremonie), 'Accueil : écrit une fois par la coordination, vu par l\'invitée (16:15, Orangerie)');
+    /* AI est le tableau de bord : le mois, la date du jour J, et le jour ouvert en profondeur avec ses onglets */
+    await p.click('#vHero .v-cal-jour'); await p.waitForTimeout(200);
+    ok(await p.evaluate(() => !document.getElementById('vVueJour').hidden && document.getElementById('vVueCalendrier').hidden), 'Accueil : une date du calendrier ouvre le jour en profondeur');
+    await p.click('#vHero .v-onglet[data-vue="programme"]'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => document.querySelectorAll('#vListe .v-p-m').length) === 4, 'Accueil : l\'onglet Programme liste ce que l\'invitée voit (4 moments)');
+    await p.click('#vHero .v-onglet[data-vue="personnes"]'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => document.querySelectorAll('#vPersonnes .v-p-pers').length) === 4, 'Accueil : l\'onglet Personnes dit qui est dans le jour');
+    await p.click('#vHero .v-onglet[data-vue="cercle"]'); await p.click('#vRetour'); await p.waitForTimeout(200);
+    ok(await p.evaluate(() => !document.getElementById('vVueCalendrier').hidden), 'Accueil : le retour ramène au mois');
+    await p.click('#vHero .v-cal-jour'); await p.waitForTimeout(200); await p.click('#vHero button.v-p-dk[aria-label^="AI"]'); await p.waitForTimeout(200);
+    ok(await p.evaluate(() => !document.getElementById('vVueCalendrier').hidden), 'Accueil : AI ramène au calendrier');
+    await p.click('#vHero .v-cal-jour'); await p.waitForTimeout(200);
     await p.click('#vEvts [data-evt="surprise"]'); await p.waitForTimeout(150);
     ok(await p.evaluate(() => document.querySelectorAll('#vTels .v-tel:not(.eteint)').length === 3 && document.querySelectorAll('#vTels .v-tel').length === 7), 'Accueil : sept téléphones, seuls les trois concernés s\'allument');
     ok(!(await deborde()), 'Accueil (chacun son écran) : sans débordement horizontal');
