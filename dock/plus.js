@@ -1,14 +1,14 @@
 /* AIME · le Dock public et son + (docs/IDENTITE.md § 6 ; décision de Matt du 24/10).
    Le Dock garde les lieux, le + garde les actions : aucune destination du Dock dans le +.
      pas connecté : Le cœur · Exemples · + · J'ai un compte          ; le + : « Créer un projet » · « J'ai reçu une invitation »
-     connecté     : Le cœur · Exemples · + · Mes projets · Mon compte ; le + : « Nouveau projet » · « J'ai reçu une invitation »
+     connecté     : AI · + · ME (25/10) ; le + : « Nouveau projet » · « J'ai reçu une invitation » (AI y ajoute ses gestes de contexte)
      dans un projet : le Dock que le serveur compose (compte/projet.js), avec les seuls gestes du rôle ; ce fichier n'y est pas branché.
    « Créer un projet » fait défiler jusqu'à « Je suis… » et l'ouvre (ailleurs, y conduit) ; « Nouveau projet » ouvre la création de Mes projets
    (compte/creer.js) ; « J'ai reçu une invitation » ouvre un champ pour coller le lien, qui mène à /projets/?invitation=… : sans session,
    on se connecte et le parcours reprend sur l'invitation. Le + ne donne aucun droit : le serveur revérifie tout.
    AIMEPlus.etat(info)   → { mode, famille, gestes:[ids] }   (pur, testé sous node)
    AIMEPlus.jeton(texte) → le jeton d'un lien d'invitation collé, ou null (pur, testé sous node)
-   AIMEPlus.brancher(el) → lit /api/identite ; connecté, repose le Dock avec Mes projets et Mon compte, et rend le + vivant */
+   AIMEPlus.brancher(el) → lit /api/identite ; connecté, repose le Dock AI · + · ME, et rend le + vivant */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.AIMEPlus=factory()})(typeof self!=='undefined'?self:this,function(){'use strict';
 var COMMENCER='/?commencer=1',JETON=/^[A-Za-z0-9_-]{20,100}$/;
 function etat(info){var c=!!(info&&info.connecte);
@@ -41,7 +41,7 @@ function brancher(el){if(!el||typeof fetch!=='function')return Promise.resolve(n
  return fetch('/api/identite',{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.ok?r.json():{connecte:false}}).catch(function(){return{connecte:false}}).then(function(info){
   var e=etat(info);
   /* connecté : le Dock devient symétrique, avec une vraie destination de chaque côté du + */
-  if(e.mode==='connecte'&&root.AIMEDock&&root.AIMEDockVue){var o=el._dockOpts||{mode:'page',id:'dock-site'},actif=/^\/projets/.test(location.pathname)?'mesprojets':/^\/compte/.test(location.pathname)?'moncompte':o.actif;
+  if(e.mode==='connecte'&&root.AIMEDock&&root.AIMEDockVue){var o=el._dockOpts||{mode:'page',id:'dock-site'},actif=/^\/projets/.test(location.pathname)?'ai':/^\/compte/.test(location.pathname)?'me':o.actif;
    root.AIMEDockVue.poser(el,root.AIMEDock.composer({famille:e.famille}),Object.assign({},o,{actif:actif}))}
   var b=el.querySelector('.dock-plus');if(b)b.setAttribute('aria-label',e.mode==='connecte'?'Nouveau projet ou invitation reçue':'Créer un projet ou ouvrir une invitation');
   return e})}

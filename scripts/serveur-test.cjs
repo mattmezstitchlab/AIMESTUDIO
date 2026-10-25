@@ -32,7 +32,11 @@ function servir(req, res) {
   else if (REWRITES.has(pCle)) p = REWRITES.get(pCle);
   const m = /^\/travaux\/?([^/]*)\/?$/.exec(p), f0 = path.join(ROOT, p);
   if (m && !(fs.existsSync(f0) && fs.statSync(f0).isFile())) { const h = require(path.join(ROOT, 'api/travaux.js')); req.url = '/api/travaux' + (m[1] ? '?p=' + m[1] : ''); return h(req, res); }
-  if (p === '/api/contact') { const h = require(path.join(ROOT, 'api/contact.js')); return h(req, res); }
+  /* le formulaire Contact : comme sur Vercel, un corps JSON lu d'avance et res.status().json() ; avec AIME_COMPTES_TEST, la demande
+     est enregistrée dans la base de TEST (jamais la production) ; sans clé Resend, l'e-mail est noté « non configuré » */
+  if (p === '/api/contact') { let b = ''; req.on('data', c => (b += c)); req.on('end', () => { const h = require(path.join(ROOT, 'api/contact.js'));
+    const r = { statusCode: 200, setHeader: (k, v) => res.setHeader(k, v), status(c) { this.statusCode = c; return this; }, json(o) { res.writeHead(this.statusCode, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); } };
+    Promise.resolve(COMPTES).then(() => h({ method: req.method, body: b, headers: req.headers, socket: req.socket }, r)).catch(() => { res.writeHead(500); res.end(); }); }); return; }
   if (p.startsWith('/api/sv/')) {
     let b = ''; req.on('data', c => (b += c)); req.on('end', () => {
       let h; try { h = require(path.join(ROOT, 'api/sv', path.basename(p) + '.js')); } catch { res.writeHead(404); return res.end(); }

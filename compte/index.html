@@ -74,8 +74,14 @@
   <div class="lgn" id="suppr2" hidden><span class="leg">Confirmez : tout sera effacé, sans retour possible.</span><button class="b b-s danger" type="button" id="supprOui">Oui, tout supprimer</button><button class="b b-s" type="button" id="supprNon">Annuler</button></div>
  </section>
 
- <section id="espaces" hidden aria-labelledby="t-esp">
-  <div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-esp">Mes projets</h2></div>
+ <!-- AI : mon environnement. « À traiter » n'existe que pour qui reçoit des demandes (le serveur répond 404 à tous les autres) -->
+ <section id="espaces" hidden aria-labelledby="tTitre">
+  <section class="pile" id="aTraiter" hidden aria-labelledby="t-traiter">
+   <h2 class="k" id="t-traiter">À traiter</h2>
+   <div class="pile" id="demandes"></div>
+   <details class="ai-traitees" id="traitees" hidden><summary id="traiteesT">Demandes traitées</summary><div class="pile" id="demandesTraitees"></div></details>
+  </section>
+  <div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-esp">Mes projets et participations</h2></div>
   <!-- un prestataire : ses activités (un métier, non publié), et ses missions qui arrivent par invitation -->
   <div class="carte-c" id="activites" hidden aria-labelledby="t-act">
    <h3 id="t-act">Mon activité</h3>
@@ -87,6 +93,14 @@
    <label class="sr" for="eModele">Domaine du projet</label><select id="eModele"><option value="mariage">Mariage</option><option value="seminaire">Séminaire</option></select>
    <button class="b b-p" type="submit">Créer le projet</button></form>
   <div class="pile" id="liste"></div>
+  <p class="leg">Pour partir d'un modèle ou voir comment un projet se partage : <a href="/exemples/">les exemples</a> et <a href="/capacites/">toutes les capacités</a> (démonstrations, données fictives).</p>
+ </section>
+
+ <!-- le détail d'une demande reçue (AI) : ce que la personne a écrit, les deux statuts (la demande, l'e-mail) et l'historique -->
+ <section id="demande" hidden aria-labelledby="dTitre">
+  <p class="leg"><a href="/projets/" data-vers-ai>← AI</a></p>
+  <div class="pile" id="dCorps"></div>
+  <p class="vivant" id="dVivant" role="status" aria-live="polite"></p>
  </section>
 
  <!-- sur cet appareil : les anciens essais de ce navigateur ; rien n'est envoyé sans le geste « Créer dans mon compte » -->
@@ -98,7 +112,9 @@
 
  <!-- l'écran de projet : Mon accès, Journal, Personnes, composés par le serveur (compte/projet.js) -->
  <section id="projet" hidden aria-labelledby="tTitre">
-  <p class="leg"><a href="/projets/">← Mes projets</a></p>
+  <!-- la barre de contexte : revenir à AI, ou passer à un autre projet, sans quitter l'écran -->
+  <div class="lgn p-contexte"><a class="b b-s" href="/projets/" data-vers-ai>← AI</a>
+   <details class="p-changer" id="pChanger"><summary>Changer de projet</summary><ul class="cles" id="pChangerListe"></ul></details></div>
   <div class="pile" id="pCorps"></div>
   <p class="vivant" id="pVivant" role="status" aria-live="polite"></p>
  </section>
@@ -118,6 +134,7 @@
 <script src="/modules/temps/cercle.js"></script>
 <script src="/modules/temps/vue.js"></script>
 <script src="/compte/projet.js"></script>
+<script src="/compte/ai.js"></script>
 <script src="/compte/compte.js"></script>
 <script src="/dock/modele.js"></script>
 <script src="/dock/dock.js"></script>

@@ -10,7 +10,10 @@ function $(id){return document.getElementById(id)}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function date(d){return d?new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}):''}
 var espace=null,courant='acces',rep=null,dockPose=false;
-function dire(t,ko){var s=$('pVivant');if(!s)return;s.className='vivant'+(ko?' ko':'');s.textContent='';setTimeout(function(){s.textContent=t},30)}
+/* la génération du contexte : chaque ouverture (ou fermeture) en commence une nouvelle ; une réponse d'une génération passée
+   (un projet quitté, une page quittée) est ignorée. Aucune donnée d'un projet ne s'affiche dans un autre, même si le réseau répond tard. */
+var gen=0;
+function dire(t,ko){var s=$('pVivant');if(!s)return;s.className='vivant'+(ko?' ko':'');s.textContent='';var n=gen;setTimeout(function(){if(n===gen)s.textContent=t},30)}   /* une annonce n'apparaît que dans le contexte qui l'a produite */
 function post(b){return fetch('/api/espaces',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)})
  .then(function(r){return r.json().catch(function(){return{}}).then(function(j){if(r.status!==200||!j.ok)throw new Error(j.raison||('Erreur '+r.status));return j})})}
 function lire(g){return fetch('/api/page?espace='+encodeURIComponent(espace)+'&gabarit='+encodeURIComponent(g),{credentials:'same-origin',cache:'no-store'})
@@ -86,9 +89,12 @@ function composerPage(garder){var C=$('pCorps');C.textContent='';
  var lignes=null;(rep.blocs||[]).forEach(function(b){var f=RENDU[b.type];if(!f)return;var n=garder&&b.id==='personnes-inviter'?garder:f(b);if(!n)return;if(b.type==='ligne'){if(!lignes){lignes=el('ol','p-journal');C.appendChild(lignes)}lignes.appendChild(n)}else C.appendChild(n)});
  if(rep.vide)C.appendChild(el('p','leg',rep.vide))}
 
-function ouvrir(id,g,o){o=o||{};if(module_){module_.arreter();module_=null}espace=id;courant=GAB.indexOf(g)>=0?g:'acces';var P=$('projet');if(!P)return Promise.resolve();
+function ouvrir(id,g,o){o=o||{};if(module_){module_.arreter();module_=null}var autre=id!==espace,n=++gen;espace=id;courant=GAB.indexOf(g)>=0?g:'acces';var P=$('projet');if(!P)return Promise.resolve();
  P.hidden=false;document.body.classList.add('en-projet');if($('espaces'))$('espaces').hidden=true;
+ /* un autre projet : tout ce qui venait du précédent disparaît AVANT la réponse (titre, blocs, Dock, annonces) */
+ if(autre){rep=null;dock();$('tTitre').textContent='Projet';$('tSous').textContent='';var c=$('pCorps');c.textContent='';c.appendChild(el('p','leg','Chargement du projet…'));var v=$('pVivant');if(v)v.textContent=''}
  return lire(courant).then(function(j){
+  if(n!==gen)return;   /* un autre contexte a été ouvert entre-temps : cette réponse ne s'affiche pas */
   if(j._code!==200||!j.ok){rep=null;dock();$('pCorps').textContent='';$('pCorps').appendChild(el('p','alerte',j._code===404?'Ce projet est introuvable, ou votre accès a pris fin.':(j.raison||'Le projet n\'a pas pu être chargé.')));return}
   rep=j;$('tTitre').textContent=(j.mots&&j.mots.projet)||'Projet';$('tSous').textContent=(j.mots&&j.mots.role)||'';document.title=((j.mots&&j.mots.projet)||'Projet')+' · AIME';
   /* le retour du navigateur revient à la page précédente du projet : chaque passage d'une page à l'autre (Dock, repli) est une entrée d'historique */
@@ -96,14 +102,20 @@ function ouvrir(id,g,o){o=o||{};if(module_){module_.arreter();module_=null}espac
   /* le contexte d'un module (mode, moment, échelle, jour) survit au rechargement de SA page ; il ne suit pas vers une autre page */
   var ici=new URLSearchParams(location.search);if(ici.get('espace')===espace&&(ici.get('page')||'acces')===courant)['vue','moment','echelle','jour'].forEach(function(k){var v=ici.get(k);if(v&&/^[A-Za-z0-9-]{1,60}$/.test(v))adr+='&'+k+'='+encodeURIComponent(v)});if(o.pousser&&location.pathname+location.search!==adr)history.pushState({espace:espace,page:courant},'',adr);else history.replaceState({espace:espace,page:courant},'',adr)}catch(_){}
   composerPage();dock();var t=$('pTitre');if(t)t.focus({preventScroll:true})})
- .catch(function(){$('pCorps').textContent='';$('pCorps').appendChild(el('p','alerte','Serveur injoignable. Réessayez dans un instant.'))})}
+ .catch(function(){if(n!==gen)return;$('pCorps').textContent='';$('pCorps').appendChild(el('p','alerte','Serveur injoignable. Réessayez dans un instant.'))})}
+
+/* quitter le projet (retour à AI, ouverture d'une demande) : le module s'arrête, toute réponse en vol est ignorée, rien ne reste à l'écran */
+function fermer(){gen++;if(module_){module_.arreter();module_=null}espace=null;rep=null;var c=$('pCorps');if(c)c.textContent='';var v=$('pVivant');if(v)v.textContent='';
+ var P=$('projet');if(P)P.hidden=true;document.body.classList.remove('en-projet');var ch=$('pChanger');if(ch)ch.open=false}
 
 /* après un geste (invitation créée, membre retiré, invitation annulée) : la page en cours est relue au serveur et ses blocs reposés,
    sans quitter la page ni perdre le lien d'invitation qui vient d'être créé ; le focus reste où il était quand c'est possible */
-function rafraichir(){if(!espace)return Promise.resolve();var f=document.activeElement,garder=$('pInviter');
- return lire(courant).then(function(j){if(j._code!==200||!j.ok)return ouvrir(espace,courant);rep=j;var y=window.scrollY;composerPage(garder);dock();window.scrollTo(0,y);
+function rafraichir(){if(!espace)return Promise.resolve();var f=document.activeElement,garder=$('pInviter'),n=gen;
+ return lire(courant).then(function(j){if(n!==gen)return;if(j._code!==200||!j.ok)return ouvrir(espace,courant);rep=j;var y=window.scrollY;composerPage(garder);dock();window.scrollTo(0,y);
   if(f&&document.body.contains(f))f.focus({preventScroll:true});else{var t=$('pTitre');if(t)t.focus({preventScroll:true})}}).catch(function(){})}
 
-window.addEventListener('popstate',function(){var q=new URLSearchParams(location.search),id=q.get('espace');if(espace&&id===espace)ouvrir(espace,q.get('page')||'acces')});
-window.AIMEProjet={ouvrir:ouvrir,rafraichir:rafraichir,RENDU:RENDU};
+/* le retour du navigateur : compte/compte.js lit l'adresse et choisit le contexte (AI, une demande, un projet et sa page) ;
+   sans lui (page isolée), on garde l'ancien comportement : les pages du même projet */
+window.addEventListener('popstate',function(){if(window.AIMEAI)return;var q=new URLSearchParams(location.search),id=q.get('espace');if(espace&&id===espace)ouvrir(espace,q.get('page')||'acces')});
+window.AIMEProjet={ouvrir:ouvrir,fermer:fermer,rafraichir:rafraichir,courant:function(){return espace},RENDU:RENDU};
 })();

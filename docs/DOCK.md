@@ -80,7 +80,7 @@ Un métier précis n'a pas son propre dock : il prend celui de sa famille, avec 
 | Contributeur, prestataire | Notifications · Mission · + · Documents · Messages | Déposer un document · Signaler un retard · Écrire à la coordination | Effectifs seulement, jamais la liste nominative |
 | Destinataire | Programme · Ma réponse · + · Lieu · Messages | Confirmer ma présence · Écrire aux organisateurs · Signaler un accès inattendu | Ne voit que sa propre réponse ; aucun compteur de ce qui existe ailleurs |
 | Public (sans compte) | Le cœur · Exemples · + · J'ai un compte | Créer un projet · J'ai reçu une invitation | Aucune donnée personnelle ; asymétrique, sans bouton fictif, en attendant la page Modules |
-| Public connecté (hors projet) | Le cœur · Exemples · + · Mes projets · Mon compte | Nouveau projet · J'ai reçu une invitation | Aucune donnée d'un projet hors du projet ; symétrique |
+| Public connecté (hors projet) | AI · + · ME (25/10 ; avant : Le cœur · Exemples · + · Mes projets · Mon compte) | Nouveau projet · J'ai reçu une invitation | Aucune donnée d'un projet hors du projet ; symétrique |
 | Financeur | Notifications · Budget financé · + · Justificatifs | Déposer un justificatif · Écrire au propriétaire | Voit des montants, pas les invités ; AIME ne garde que le statut des paiements |
 | Contrôleur, observateur | Ce qu'il contrôle · + · Exports · Journal | Exporter · Demander une pièce | Lecture seule ; affiche « accès jusqu'au … » |
 | Garant, modérateur | Signalements · + · Contenus publics · Journal | Masquer un contenu public · Répondre à un signalement | N'accède pas aux contenus privés par confort |
@@ -103,7 +103,7 @@ Le dock se branche sur les rôles lus dans `space_members` (`api/_auth/espaces.m
 | viewer | Contrôleur | Ce qu'il contrôle · + · Exports · Journal | Ne pas en faire une lecture générique ; durée : faite (#90) |
 | guest | Destinataire | Programme · Ma réponse · + · Lieu · Messages | — |
 | (sans session) | Public | Le cœur · Exemples · + · J'ai un compte | Navigation du site |
-| (connecté, hors projet) | Public connecté | Le cœur · Exemples · + · Mes projets · Mon compte | Dans un projet, le Dock que le serveur compose (`/api/page`) remplace celui-ci |
+| (connecté, hors projet) | Public connecté | AI · + · ME | Dans un projet, le Dock que le serveur compose (`/api/page`) remplace celui-ci |
 
 « Propriétaire du site » (`api/_auth/proprietaire.mjs`) est distinct d'un owner d'espace : il reçoit le dock de la Régie, jamais celui d'un projet client.
 
@@ -204,7 +204,7 @@ Reste : l'étape 2 (le contrat serveur, `GET /api/dock` composé depuis `space_m
 | Situation | Dock | Le + |
 |---|---|---|
 | Sans compte | Le cœur · Exemples · + · J'ai un compte | Créer un projet · J'ai reçu une invitation |
-| Connecté, hors projet | Le cœur · Exemples · + · Mes projets · Mon compte | Nouveau projet · J'ai reçu une invitation |
+| Connecté, hors projet | AI · + · ME (décision du 25/10, docs/AI.md) | Nouveau projet · J'ai reçu une invitation |
 | Dans un projet | Le Dock composé par le serveur pour le rôle (`/api/page`, `composerReel`) : Mon accès · Journal · Personnes | Les seuls gestes accordés au rôle (Inviter, s'il est permis) |
 | Plus tard, avec la page Modules (pas maintenant) | Le cœur · Exemples · + · Modules · Compte | La place de Mes projets sera décidée à ce moment-là |
 
