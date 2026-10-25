@@ -105,6 +105,11 @@
    <div class="pile" id="demandes"></div>
    <details class="ai-traitees" id="traitees" hidden><summary id="traiteesT">Demandes traitées</summary><div class="pile" id="demandesTraitees"></div></details>
   </section>
+  <!-- mes engagements ouverts, tous projets confondus (V1, P6) : la section n'existe que s'il y en a -->
+  <section class="pile" id="aEngagements" hidden aria-labelledby="t-eng">
+   <h2 class="k" id="t-eng">Mes engagements</h2>
+   <div class="pile ai-eng-liste"></div>
+  </section>
   <div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-esp">Mes projets et participations</h2></div>
   <form class="carte-c lgn" id="fEspace"><label class="sr" for="eTitre">Nom du nouveau projet</label><input id="eTitre" maxlength="120" placeholder="Nom d'un nouveau projet (le mariage de…, le séminaire…)" style="flex:1;min-width:220px" required>
    <label class="sr" for="eModele">Domaine du projet</label><select id="eModele"><option value="mariage">Mariage</option><option value="seminaire">Séminaire</option></select>
@@ -153,6 +158,7 @@
 <script src="/modules/radial/interactions.js"></script>
 <script src="/modules/temps/cercle.js"></script>
 <script src="/modules/temps/vue.js"></script>
+<script src="/compte/engagements.js"></script>
 <script src="/compte/projet.js"></script>
 <script src="/compte/ai.js"></script>
 <script src="/carte/carte.js"></script>

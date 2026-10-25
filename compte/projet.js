@@ -6,6 +6,7 @@
 /* les pages qu'un projet peut servir : celles du registre des modules (modules/registre.js) ; le serveur décide lesquelles CE projet sert */
 var GAB=window.AIMEModules?AIMEModules.servis({temps:true}):['acces','journal','personnes'];
 var module_=null;   /* le module monté dans la page en cours (Temps), arrêté quand on change de page */
+var eng_=null;      /* les engagements montés dans « Mon accès » (V1, P6) */
 function $(id){return document.getElementById(id)}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function date(d){return d?new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}):''}
@@ -28,6 +29,7 @@ function dock(){var z=$('dock-site');if(!z||!window.AIMEDockVue)return;
  z.addEventListener('aime:dock-lieu',function(e){var l=(rep&&rep.dock&&rep.dock.lieux||[]).filter(function(x){return x.id===e.detail.id})[0];if(!l||!l.gabarit)return;e.preventDefault();ouvrir(espace,l.gabarit,{pousser:true})});
  z.addEventListener('aime:dock-geste',function(e){var id=e.detail.id;
   if(id==='inviter'){e.preventDefault();ouvrir(espace,'personnes',{pousser:true}).then(function(){var f=$('pInviter');if(f){f.scrollIntoView({block:'center'});var s=f.querySelector('select,input');if(s)s.focus()}})}
+  else if(id==='engagement'){e.preventDefault();ouvrir(espace,'acces',{pousser:true}).then(function(){var n=0;(function voir(){var t=$('pEngTitre');if(t){t.scrollIntoView({block:'center'});t.focus();return}if(++n<30)setTimeout(voir,100)})()})}
   else if(id==='inattendu'){e.preventDefault();ouvrir(espace,'acces',{pousser:true}).then(function(){var d=$('pSignaler');if(d){d.open=true;d.scrollIntoView({block:'center'});var t=d.querySelector('textarea');if(t)t.focus()}})}})}
 
 /* ---------- les blocs ---------- */
@@ -41,6 +43,8 @@ var RENDU={
  activer:function(b){var c=el('div','carte-c');c.appendChild(el('p',null,b.texte));if(b.aide)c.appendChild(el('p','leg',b.aide));var bt=el('button','b b-p','Importer le programme type');bt.type='button';
   bt.onclick=function(){bt.disabled=true;fetch('/api/temps',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'activer',espace:espace})}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){
    if(r.status===200&&j.ok){dire('Programme ajouté : '+j.moments+' moments.');ouvrir(espace,'deroule',{pousser:true})}else{bt.disabled=false;dire(j.raison||'Import refusé.',true)}})}).catch(function(){bt.disabled=false;dire('Serveur injoignable.',true)})};c.appendChild(bt);return c},
+ /* les engagements (V1, P6) : la liste et ses gestes viennent de /api/engagements (compte/engagements.js) */
+ engagements:function(){var z=el('div','p-module');if(eng_){eng_.arreter();eng_=null}if(window.AIMEEngagements)eng_=AIMEEngagements.monter(z,{espace:espace,dire:dire});else z.appendChild(el('p','leg','Les engagements ne sont pas disponibles dans cette page.'));return z},
  module:function(b){var z=el('div','p-module');if(module_){module_.arreter();module_=null}if(b.module==='temps'&&window.AIMETemps)module_=AIMETemps.monter(z,{espace:espace,dire:dire});else z.appendChild(el('p','leg','Ce module n\'est pas disponible dans cette page.'));return z},
  personne:function(b){var d=el('div','carte-c');d.appendChild(el('p',null,b.nom+(b.moi?' (vous)':'')+(b.relation?' · '+b.relation:'')));return d},
  liste:function(b){var c=el('div','carte-c');c.appendChild(el('h2','k','Les personnes du projet'));var u=el('ul','p-liste p-personnes');
@@ -89,7 +93,7 @@ function composerPage(garder){var C=$('pCorps');C.textContent='';
  var lignes=null;(rep.blocs||[]).forEach(function(b){var f=RENDU[b.type];if(!f)return;var n=garder&&b.id==='personnes-inviter'?garder:f(b);if(!n)return;if(b.type==='ligne'){if(!lignes){lignes=el('ol','p-journal');C.appendChild(lignes)}lignes.appendChild(n)}else C.appendChild(n)});
  if(rep.vide)C.appendChild(el('p','leg',rep.vide))}
 
-function ouvrir(id,g,o){o=o||{};if(module_){module_.arreter();module_=null}var autre=id!==espace,n=++gen;espace=id;courant=GAB.indexOf(g)>=0?g:'acces';var P=$('projet');if(!P)return Promise.resolve();
+function ouvrir(id,g,o){o=o||{};if(module_){module_.arreter();module_=null}if(eng_){eng_.arreter();eng_=null}var autre=id!==espace,n=++gen;espace=id;courant=GAB.indexOf(g)>=0?g:'acces';var P=$('projet');if(!P)return Promise.resolve();
  P.hidden=false;document.body.classList.add('en-projet');if($('espaces'))$('espaces').hidden=true;
  /* un autre projet : tout ce qui venait du précédent disparaît AVANT la réponse (titre, blocs, Dock, annonces) */
  if(autre){rep=null;dock();$('tTitre').textContent='Projet';$('tSous').textContent='';var c=$('pCorps');c.textContent='';c.appendChild(el('p','leg','Chargement du projet…'));var v=$('pVivant');if(v)v.textContent=''}
@@ -105,7 +109,7 @@ function ouvrir(id,g,o){o=o||{};if(module_){module_.arreter();module_=null}var a
  .catch(function(){if(n!==gen)return;$('pCorps').textContent='';$('pCorps').appendChild(el('p','alerte','Serveur injoignable. Réessayez dans un instant.'))})}
 
 /* quitter le projet (retour à AI, ouverture d'une demande) : le module s'arrête, toute réponse en vol est ignorée, rien ne reste à l'écran */
-function fermer(){gen++;if(module_){module_.arreter();module_=null}espace=null;rep=null;var c=$('pCorps');if(c)c.textContent='';var v=$('pVivant');if(v)v.textContent='';
+function fermer(){gen++;if(module_){module_.arreter();module_=null}if(eng_){eng_.arreter();eng_=null}espace=null;rep=null;var c=$('pCorps');if(c)c.textContent='';var v=$('pVivant');if(v)v.textContent='';
  var P=$('projet');if(P)P.hidden=true;document.body.classList.remove('en-projet');var ch=$('pChanger');if(ch)ch.open=false}
 
 /* après un geste (invitation créée, membre retiré, invitation annulée) : la page en cours est relue au serveur et ses blocs reposés,
