@@ -7,7 +7,7 @@
 - Un engagement : un texte court (« Envoyer la playlist du bal »), **qui s'engage**, **envers qui** (une personne du projet, ou l'organisation du projet), une **échéance** (un jour, entre aujourd'hui et trois ans).
 - États : **en attente de réponse** (demandé par l'organisation), **en cours** (accepté), **tenu**, **refusé**, **annulé**. « En retard » n'est pas un état : il se calcule (en cours, échéance passée) et se dit en toutes lettres.
 
-## Qui peut quoi (synchroview/permissions.js, type `engagement`)
+## Qui peut quoi (`synchroview/engagements.js`, adossé à `permissions.js`)
 
 | Geste | Qui |
 |---|---|
@@ -18,13 +18,13 @@
 | Marquer comme tenu | celui qui s'est engagé seulement, quand il est en cours |
 | Annuler | l'auteur, ou le propriétaire, tant qu'il n'est pas clos |
 
-Le serveur relit le rôle (date de fin comprise) et la règle à chaque appel, dans une transaction qui verrouille l'engagement. Mauvaise personne : 403 ; mauvais moment (déjà accepté, déjà clos) : 409 ; hors de portée : 404, comme s'il n'existait pas.
+`synchroview/permissions.js` reste la source des droits et n'est pas modifié (fichier protégé) : les règles des engagements vivent dans `synchroview/engagements.js`, qui lui demande qui est l'organisation (`event.create`) et qui est membre (`space.read`). Le serveur relit le rôle (date de fin comprise) et la règle à chaque appel, dans une transaction qui verrouille l'engagement. Mauvaise personne : 403 ; mauvais moment (déjà accepté, déjà clos) : 409 ; hors de portée : 404, comme s'il n'existait pas.
 
 ## Où on le voit (sans cinquième lieu dans le Dock)
 
 - **Dans un projet, « Mon accès »** : la liste que je peux lire, ses gestes, et le formulaire. Le **+** du Dock propose « Prendre un engagement » à qui en a le droit (pas à l'invité).
 - **Dans AI, « Mes engagements »** : mes engagements ouverts dans tous mes projets (ce que je dois, ce qu'on me doit nommément), avec « Réponse attendue ». Un toucher ouvre le projet.
-- **Le journal du projet** dit chaque geste et l'échéance (« Alex a tenu un engagement (échéance le 4 décembre 2026) »), **jamais le texte**.
+- **Le journal du projet** (`api/_auth/journal.mjs` est protégé et ne change pas : le moteur écrit la même forme de ligne dans `audit`) dit chaque geste et l'échéance (« Alex a tenu un engagement (échéance le 4 décembre 2026) »), **jamais le texte**.
 
 ## Confidentialité
 
