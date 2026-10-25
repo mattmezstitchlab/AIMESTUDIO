@@ -45,6 +45,8 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     // le Dock public et la carte du + (décision de Matt, 24/10) : le Dock garde les lieux, le + garde les actions
     ok(await p.evaluate(() => [...document.querySelectorAll('#dock-site .dock-e .dock-t')].map(x => x.textContent).join(' · ') === 'AI · ME'), 'Dock, pas connecté : AI · + · ME (comme connecté) · J\'ai un compte');
     await p.click('#dock-site .dock-plus'); await p.waitForTimeout(300);
+    /* la carte s'ouvre avec une animation (0,2 s) : on mesure une fois qu'elle est finie, pas pendant (CI lente) */
+    await p.waitForFunction(() => { const m = document.querySelector('#dock-site .dock-menu'); return m && !m.hidden && m.getAnimations().every(a => a.playState === 'finished'); }, null, { timeout: 5000 });
     const carte = await p.evaluate(() => { const m = document.querySelector('#dock-site .dock-menu'), g = [...m.querySelectorAll('.dock-g')].map(a => a.textContent.trim()), d = document.querySelector('#dock-site .dock').getBoundingClientRect(), r = m.getBoundingClientRect(), lieux = [...document.querySelectorAll('#dock-site .dock-e .dock-t')].map(x => x.textContent);
       return { g, dessus: r.bottom <= d.top + 1 && r.top >= 0 && r.left >= 0 && r.right <= innerWidth, carte: m.classList.contains('dock-carte'), double: g.some(x => lieux.includes(x)) }; });
     ok(carte.carte && carte.g.join(' · ') === 'Créer un projet · J\'ai reçu une invitation' && !carte.double, 'le + : une carte, deux gestes, aucune entrée du Dock en double (' + carte.g.join(' · ') + ')');
