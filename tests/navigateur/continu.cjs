@@ -128,6 +128,11 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await pd.waitForFunction(() => document.querySelectorAll('.tp-m').length === 9, null, { timeout: 15000 }).catch(() => {});   /* une lecture perdue est relancée après 6 s (modules/temps/vue.js) */
     const nM = await pd.locator('.tp-m').count(); ok(nM === 9, 'le propriétaire ouvre le programme type du mariage : 9 moments (' + nM + ')');
     if (nM !== 9) console.log('    traces :\n      ' + traces.slice(-25).join('\n      ') + '\n    en vol (sans réponse) :\n      ' + [...enVol.values()].join('\n      '));
+    if (nM !== 9) {
+      const actv = (await pool.query("select state, wait_event_type || ':' || wait_event as attente, round(extract(epoch from now() - query_start))::int as s, left(regexp_replace(query, '\\s+', ' ', 'g'), 90) as q from pg_stat_activity where datname = current_database() and pid <> pg_backend_pid() order by query_start")).rows;
+      console.log('    base :\n      ' + actv.map(r => [r.state, r.attente, r.s + ' s', r.q].join(' · ')).join('\n      '));
+      console.log('    page : ' + JSON.stringify(await pd.evaluate(() => ({ visible: document.visibilityState, maintenant: Date.now() % 100000 }))));
+    }
     if (nM !== 9) console.log('    diagnostic : ' + pd.url().replace(/^https?:\/\/[^/]+/, '') + ' · ' + JSON.stringify((await pd.locator('#pCorps').innerText().catch(() => '')).slice(0, 300)));
     await ps.reload({ waitUntil: 'networkidle' }); await ps.waitForFunction(() => [...document.querySelectorAll('#dock-site .dock-e .dock-t')].some(x => x.textContent === 'Programme'), null, { timeout: 8000 }).catch(() => {});
     ok((await dock(ps)).includes('Programme'), 'Sam voit aussi « Programme » dans son Dock');
