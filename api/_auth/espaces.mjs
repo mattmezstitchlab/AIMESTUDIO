@@ -113,6 +113,8 @@ export async function creer(db, u, b) {
   const kind = KINDS.includes(b.kind) ? b.kind : 'evenement', modele = MODELES.includes(b.modele) ? b.modele : null;
   if (b.origine != null && !ORIGINE.test(String(b.origine))) refus(400, 'Origine invalide.');
   const origine = b.origine != null ? String(b.origine) : null;
+  /* la relation du propriétaire lui-même (facultative) : un mot qui le nomme dans le projet, jamais un droit (comme à l'invitation) */
+  const relation = b.relation != null ? motRelation(b.relation) : null, rp = relation ? await relationPrete(db) : false;
   /* l'espace, son propriétaire et la ligne du journal : ensemble, ou rien */
   const faire = () => enTransaction(db, async c => {
     /* sans doublon : la même origine, pour le même propriétaire, rend le projet déjà créé (aucune nouvelle ligne, aucun journal) */
@@ -124,7 +126,8 @@ export async function creer(db, u, b) {
     if (n[0].n >= MAX_ESPACES) refus(429, 'Vous avez atteint le nombre maximal d\'espaces.');
     const donnees = Object.assign({}, modele ? { modele } : {}, origine ? { origine } : {});
     const { rows } = await c.query('insert into spaces (kind, title, owner_id, data) values ($1, $2, $3, $4::jsonb) returning id', [kind, titre, u.id, JSON.stringify(donnees)]);
-    await c.query('insert into space_members (space_id, user_id, role) values ($1, $2, \'owner\')', [rows[0].id, u.id]);
+    if (rp) await c.query('insert into space_members (space_id, user_id, role, relation) values ($1, $2, \'owner\', $3)', [rows[0].id, u.id, relation]);
+    else await c.query('insert into space_members (space_id, user_id, role) values ($1, $2, \'owner\')', [rows[0].id, u.id]);
     const journal = await inscrire(c, { qui: u.id, espace: rows[0].id, action: 'creation', cible: u.id, detail: { role: 'owner' } });
     return { id: rows[0].id, titre, kind, modele, role: 'owner', journal };
   });
@@ -258,4 +261,6 @@ export async function signaler(db, u, b) {
   return { signale: true, journal, prevenu };
 }
 
-export const ACTIONS = { mes, creer, inviter, rejoindre, membres, retirer, annuler, acces, journal, signaler };
+/* par l'API publique, creer ne reçoit pas de relation : seul le serveur nomme le propriétaire (une demande transformée en projet) */
+const creerPublic = (db, u, b) => creer(db, u, Object.assign({}, b, { relation: undefined }));
+export const ACTIONS = { mes, creer: creerPublic, inviter, rejoindre, membres, retirer, annuler, acces, journal, signaler };

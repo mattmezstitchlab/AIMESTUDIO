@@ -126,3 +126,5 @@ jobs:
       - run: node tests/navigateur/ai.cjs
       # la Carte dans ME : ordinateur avec une Carte locale, iPhone, iPad, deux comptes, conflit, réseau coupé, retrait
       - run: node tests/navigateur/carte.cjs
+      # le parcours continu, sur UN projet et avec DEUX comptes : Contact → AI (statut, note) → + → projet → invitation → Programme partagé → AI → ME
+      - run: node tests/navigateur/continu.cjs

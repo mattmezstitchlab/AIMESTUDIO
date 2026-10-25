@@ -340,3 +340,33 @@ test('base : deux marquages « convertie » croisés → une seule ligne d\'hist
   const lignes = (await journal(d.id)).filter(j => j.quoi === 'statut' && j.detail.a === 'convertie');
   assert.equal(lignes.length, 1, 'un seul passage à « convertie » dans l\'historique');
 });
+
+// Le propriétaire du site qui transforme une demande en projet est le professionnel sollicité, pas « le couple » (mot du rôle
+// propriétaire dans le domaine mariage). Sa place est nommée par une relation neutre enregistrée à la création, comme pour
+// tout membre invité ; elle ne change aucun droit. Constaté dans le parcours continu (tests/navigateur/continu.cjs), 25/10/2026.
+test('base : demande → projet — le propriétaire est nommé « prestataire », jamais « le couple » ; ses droits restent ceux du propriétaire', opts, async () => {
+  await contact(bon({ email: 'libelle@exemple.test', message: 'Nous préparons un mariage fictif et cherchons un saxophoniste pour le cocktail.' }));
+  const [d] = await ligne('libelle@exemple.test');
+  const proprio = await connecter('proprio.libelle@exemple.test');
+  const u = (await pool.query('select id, name, email from "user" where email = $1', ['proprio.libelle@exemple.test'])).rows[0];
+  process.env.AIME_PROPRIETAIRES = u.id; M._proprietaire();
+  const r = await poster({ action: 'convertir', cle: d.cle, titre: 'Mariage · Libellé', modele: 'mariage' }, proprio);
+  assert.equal(r.code, 200);
+  const m = (await pool.query('select role, relation from space_members where space_id = $1 and user_id = $2', [r.body.espace, u.id])).rows[0];
+  assert.deepEqual(m, { role: 'owner', relation: 'prestataire' }, 'propriétaire du projet, nommé « prestataire »');
+  const P = await import('../api/_auth/pages.mjs');
+  const acces = await P.projeter(pool, u, { espace: r.body.espace, gabarit: 'acces' });
+  const phrase = acces.blocs.find(b => b.id === 'acces-role').texte;
+  assert.equal(phrase, 'Vous êtes prestataire : « Mariage · Libellé » est votre projet.');
+  assert.ok(!/couple/i.test(JSON.stringify(acces.mots)), 'l\'en-tête ne dit pas « le couple » : ' + JSON.stringify(acces.mots));
+  assert.ok(acces.blocs.find(b => b.id === 'acces-gestes').verbes.includes('gérer les membres et les invitations'), 'les droits du propriétaire sont intacts');
+  delete process.env.AIME_PROPRIETAIRES;
+});
+
+test('base : par l\'API publique /api/espaces, « creer » ignore toute relation envoyée par le navigateur', opts, async () => {
+  const c = await connecter('relation.publique@exemple.test');
+  const req = { method: 'POST', url: '/api/espaces', headers: { origin: BASE, host: 'localhost:8781', 'content-type': 'application/json', cookie: c }, body: { action: 'creer', titre: 'Projet public', relation: 'reine' } };
+  const r = await new Promise(d => { const res = { statusCode: 200, setHeader() {}, end(t) { d({ code: this.statusCode, body: t ? JSON.parse(t) : null }); } }; E.default(req, res); });
+  assert.equal(r.code, 200);
+  assert.equal((await pool.query('select relation from space_members where space_id = $1', [r.body.id])).rows[0].relation, null, 'aucune relation imposée par le client');
+});
