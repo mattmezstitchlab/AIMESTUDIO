@@ -147,6 +147,24 @@ async function changerStatut(db, boite, cle, statut, par) {
   return !!(rows[0] && rows[0].existe);
 }
 
+/* transformée en projet : le statut « convertie » et, dans l'historique, l'identifiant du projet créé (aucune donnée personnelle).
+   Rejouable : déjà convertie vers ce projet, rien ne change ; renvoie false si la demande n'existe pas dans cette boîte. */
+async function marquerConvertie(db, boite, cle, espace, par) {
+  const rows = await requete(db,
+    `with a as (select id, statut from demandes where boite = $1 and cle = $2),
+     d as (update demandes set statut = 'convertie', derniere_activite = now() from a where demandes.id = a.id and a.statut <> 'convertie' returning demandes.id, a.statut as avant),
+     j as (insert into demandes_journal (demande_id, quoi, par, detail) select id, 'statut', $4, jsonb_build_object('de', avant, 'a', 'convertie', 'espace', $3::text) from d)
+     select (select count(*) from a)::int as existe`, [boite, cle, String(espace), par]);
+  return !!(rows[0] && rows[0].existe);
+}
+
+/* le projet déjà créé depuis cette demande, s'il y en a un (lu dans l'historique) */
+async function projetDe(db, boite, cle) {
+  const rows = await requete(db, `select j.detail->>'espace' as espace from demandes_journal j join demandes d on d.id = j.demande_id
+    where d.boite = $1 and d.cle = $2 and j.quoi = 'statut' and j.detail ? 'espace' order by j.quand desc, j.id desc limit 1`, [boite, cle]);
+  return rows[0] ? rows[0].espace : null;
+}
+
 /* la note privée (2 000 caractères au plus) ; l'historique dit qu'elle a changé, jamais ce qu'elle contient */
 async function changerNote(db, boite, cle, note, par) {
   const t = String(note == null ? '' : note).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '').trim();
@@ -165,7 +183,7 @@ async function effacer(db, boite, cle) {
 }
 
 module.exports = {
-  base, conservationMois, empreinte, enregistrer, noterEnvoi, purger, lister, detail, changerStatut, changerNote, effacer,
+  base, conservationMois, empreinte, enregistrer, noterEnvoi, purger, lister, detail, changerStatut, marquerConvertie, projetDe, changerNote, effacer,
   STATUTS, EMAIL_STATUTS, CONSERVATION_DEFAUT, DELAI_MS,
   _pool(p) { pool = p; }, _oublier() { tableAbsente = 0; purgeLe = 0; },
 };

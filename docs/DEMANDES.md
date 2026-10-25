@@ -67,6 +67,7 @@ boîtes, par exemple celles du mini-site d'un utilisateur (`compte:<id>`), sans 
 | `POST { action: 'note', cle, note }` | note privée, 2 000 caractères au plus |
 | `POST { action: 'renvoyer', cle }` | renvoyer l'e-mail après un échec (409 s'il est déjà parti) |
 | `POST { action: 'effacer', cle, confirmation: true }` | droit à l'effacement |
+| `POST { action: 'convertir', cle, titre, modele? }` | créer un projet depuis la demande (un seul, rejouable) ; seuls le nom et le domaine passent dans le projet |
 
 L'écran qui affiche les demandes est **Ma Carte** (PR 2), avec le gabarit « Un Dock, un centre ». Cette PR n'ajoute aucun
 tableau de bord.

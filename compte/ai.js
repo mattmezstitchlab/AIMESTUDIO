@@ -10,7 +10,10 @@
    AIMEAI.route()                 lit l'adresse et montre le bon contexte (aussi au retour du navigateur)
    AIMEAI.montrer(z)              'ai' | 'demande' | 'projet' : les sections, le Dock, et la fermeture du contexte quitté
    AIMEAI.ouvrirProjet(id)        ouvre un projet sans recharger (une entrée d'historique)
-   AIMEAI.surDemande(f)           f(demande | null) à chaque changement de demande ouverte (le + contextuel s'y branche) */
+   AIMEAI.surDemande(f)           f(demande | null) à chaque changement de demande ouverte (le + contextuel s'y branche)
+   Le + de AI (PR 2) : une demande ouverte, et pas encore transformée, ajoute « En faire un projet ». Le geste ouvre une
+   confirmation (titre et domaine préremplis, modifiables) ; rien n'est créé avant « Créer le projet ». Le serveur crée le projet au nom
+   de la personne connectée et n'en crée qu'un par demande (POST /api/demandes { action: 'convertir' }). */
 (function(){'use strict';
 if(!/^\/projets\/?$/.test(location.pathname))return;
 var CLE=/^[A-Za-z0-9_-]{16,32}$/,UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -84,6 +87,10 @@ function afficherDemande(j){var d=j.demande,C=$('dCorps');C.textContent='';
  fN.onsubmit=function(e){e.preventDefault();bN.disabled=true;var n=gen;requete('/api/demandes',{corps:{action:'note',cle:d.cle,note:ta.value}}).then(function(r){if(n!==gen)return;bN.disabled=false;dire(r.statut===200?'Note enregistrée.':((r.j&&r.j.raison)||'Note refusée.'),r.statut!==200)}).catch(function(){bN.disabled=false;dire('Serveur injoignable.',true)})};
  if(d.conserver_jusqu_au)c2.appendChild(el('p','leg','Conservée jusqu\'au '+jour(d.conserver_jusqu_au)+' sans nouvelle activité, puis effacée avec son historique.'));
  C.appendChild(c2);
+ /* le projet né de cette demande, s'il existe ; sinon, où se trouve le geste */
+ if(j.projet&&UUID.test(j.projet)){var c4=el('section','carte-c');c4.setAttribute('aria-labelledby','dProjetT');var h4=el('h3',null,'Le projet créé depuis cette demande');h4.id='dProjetT';c4.appendChild(h4);
+  var bo=el('button','b b-p','Ouvrir le projet');bo.type='button';bo.setAttribute('data-ouvrir',j.projet);var so=el('span');so.appendChild(bo);c4.appendChild(so);C.insertBefore(c4,c2)}
+ else if(d.statut!=='convertie')c2.appendChild(el('p','leg','Pour en faire un projet : le + du Dock, « En faire un projet ».'));
  var c3=el('section','carte-c');c3.setAttribute('aria-labelledby','dHistT');var h3=el('h3',null,'Historique');h3.id='dHistT';c3.appendChild(h3);var ol=el('ol','p-journal');
  (j.journal||[]).forEach(function(x){var t=QUOI[x.quoi]||x.quoi;if(x.quoi==='statut'&&x.detail&&x.detail.a)t+=' : '+(STATUTS[x.detail.de]||x.detail.de)+' → '+(STATUTS[x.detail.a]||x.detail.a);if(x.detail&&x.detail.code)t+=' (code '+x.detail.code+')';
   ol.appendChild(el('li','p-ligne',jour(x.quand,true)+' · '+t))});c3.appendChild(ol);C.appendChild(c3)}
@@ -95,6 +102,30 @@ function ouvrirDemande(cle){var n=++gen,C=$('dCorps');C.textContent='';C.appendC
   /* consulter une demande nouvelle la marque « lue » (au serveur, inscrit à l'historique) */
   if(r.j.demande.statut==='nouvelle')requete('/api/demandes',{corps:{action:'statut',cle:cle,statut:'lue'}}).then(function(x){if(x.statut===200&&n===gen)recharger(cle)}).catch(function(){})})
  .catch(function(){if(n!==gen)return;C.textContent='';C.appendChild(el('p','alerte','Serveur injoignable. Réessayez dans un instant.'))})}
+
+/* ---------- Demande → projet (PR 2) : le + propose, la personne confirme, le serveur crée ---------- */
+var GESTE='projetDepuisDemande';
+function poserPlus(d){var z=$('dock-site');if(!z||!window.AIMEDock||!window.AIMEDockVue||document.body.classList.contains('en-projet'))return;
+ if(!d&&!z.querySelector('[data-geste="'+GESTE+'"]'))return;   /* rien à retirer : le Dock personnel reste tel que dock/plus.js l'a posé */
+ var c=AIMEDock.composer({famille:'Public connecté'});
+ if(d&&d.statut!=='convertie')c.plus.unshift({id:GESTE,nom:'En faire un projet',geste:'public',href:null,sensible:false});
+ AIMEDockVue.poser(z,c,{mode:'page',id:'dock-site',actif:'ai'});
+ var b=z.querySelector('.dock-plus');if(b)b.setAttribute('aria-label',d&&d.statut!=='convertie'?'Gestes : en faire un projet, nouveau projet, invitation reçue':'Nouveau projet ou invitation reçue')}
+function proposer(d){var I=window.AIMEIntention,lu=null;try{lu=I?I.lire(d.message):null}catch(_){lu=null}
+ var modele=lu&&(lu.modele==='mariage'||lu.modele==='seminaire')?lu.modele:'';
+ return{titre:((lu&&lu.nomType&&modele?lu.nomType:TYPES[d.type]||'Projet')+' · '+d.prenom+' '+d.nom).slice(0,120),modele:modele}}
+function convertir(){var d=ouverte;if(!d||d.statut==='convertie')return;var C=$('dCorps');if(!C)return;var deja=$('dConvertir');if(deja){var t0=deja.querySelector('input');if(t0)t0.focus();return}
+ var p=proposer(d),f=el('form','carte-c pile');f.id='dConvertir';f.setAttribute('aria-labelledby','dConvT');var h=el('h3',null,'Créer un projet depuis cette demande');h.id='dConvT';f.appendChild(h);
+ f.appendChild(el('p','leg','Rien n\'est créé avant votre confirmation. Vous serez propriétaire du projet. Seuls son nom et son domaine y entrent : les coordonnées de la personne restent dans la demande.'));
+ var l1=el('label','pile');l1.appendChild(el('span',null,'Nom du projet'));var ti=el('input');ti.maxLength=120;ti.required=true;ti.value=p.titre;ti.id='dConvTitre';l1.appendChild(ti);f.appendChild(l1);
+ var l2=el('label','pile');l2.appendChild(el('span',null,'Domaine'));var se=el('select');se.id='dConvModele';[['','Autre (sans programme type)'],['mariage','Mariage'],['seminaire','Séminaire']].forEach(function(o){var x=el('option',null,o[1]);x.value=o[0];if(o[0]===p.modele)x.selected=true;se.appendChild(x)});l2.appendChild(se);f.appendChild(l2);
+ var lg=el('div','lgn');var ok=el('button','b b-p','Créer le projet');ok.type='submit';var an=el('button','b b-s','Annuler');an.type='button';lg.appendChild(ok);lg.appendChild(an);f.appendChild(lg);
+ an.onclick=function(){f.remove();dire('Annulé. Rien n\'a été créé.');var t=$('dTitre');if(t)t.focus({preventScroll:true})};
+ f.onsubmit=function(e){e.preventDefault();var titre=ti.value.trim();if(!titre){ti.focus();return}ok.disabled=true;an.disabled=true;var n=gen;
+  requete('/api/demandes',{corps:{action:'convertir',cle:d.cle,titre:titre,modele:se.value||undefined}}).then(function(r){if(n!==gen)return;
+   if(r.statut===200&&r.j&&r.j.ok){projetsConnus=null;dire(r.j.existant?'Ce projet existait déjà : il s\'ouvre.':'Projet créé.');ouvrirProjet(r.j.espace);return}
+   ok.disabled=false;an.disabled=false;dire((r.j&&r.j.raison)||'Création impossible.',true)}).catch(function(){if(n!==gen)return;ok.disabled=false;an.disabled=false;dire('Serveur injoignable.',true)})};
+ var suivi=C.querySelector('[aria-labelledby="dSuiviT"]');C.insertBefore(f,suivi||null);f.scrollIntoView({block:'center'});ti.focus();ti.select()}
 
 /* ---------- changer de projet sans quitter l'écran ---------- */
 function remplirChanger(){var L=$('pChangerListe');if(!L)return;
@@ -110,6 +141,8 @@ function monter(o){ctx=o||{};if(monte)return;monte=true;
   var dm=e.target.closest('[data-demande]');if(dm){e.preventDefault();aller('/projets/?demande='+encodeURIComponent(dm.getAttribute('data-demande')));return}
   var op=e.target.closest('[data-ouvrir]');if(op){e.preventDefault();ouvrirProjet(op.getAttribute('data-ouvrir'));return}});
  var ch=$('pChanger');if(ch)ch.addEventListener('toggle',function(){if(ch.open)remplirChanger()});
+ abonnes.push(poserPlus);
+ var z=$('dock-site');if(z)z.addEventListener('aime:dock-geste',function(e){if(e.detail&&e.detail.id===GESTE){e.preventDefault();convertir()}});
  window.addEventListener('popstate',route)}
 
 window.AIMEAI={monter:monter,route:route,montrer:montrer,ouvrirProjet:ouvrirProjet,projets:function(l){projetsConnus=l||null},

@@ -266,3 +266,29 @@ test('AIME fonctionne avec AIME : aucune page publique, démonstration ou vitrin
   const fautes = publics.filter(f => fs.readFileSync(path.join(R, f), 'utf8').includes('/api/demandes'));
   assert.deepEqual(fautes, [], 'une vitrine de l\'usage réel lira des données fictives ou autorisées, jamais /api/demandes');
 });
+
+test('base : demande → projet — le propriétaire crée UN projet (rejouable), sans coordonnées copiées ; personne d\'autre ne le peut', opts, async () => {
+  await contact(bon({ email: 'conversion@exemple.test', message: 'Nous préparons un mariage fictif à New York et cherchons un saxophoniste.' }));
+  const [d] = await ligne('conversion@exemple.test');
+  const proprio = await connecter('proprio.conversion@exemple.test'), autre = await connecter('autre.conversion@exemple.test');
+  const id = (await pool.query('select id from "user" where email = $1', ['proprio.conversion@exemple.test'])).rows[0].id;
+  process.env.AIME_PROPRIETAIRES = id; M._proprietaire();
+  assert.equal((await poster({ action: 'convertir', cle: d.cle, titre: 'Mariage · Camille Fictif' }, autre)).code, 404, 'un autre compte : 404');
+  assert.equal((await poster({ action: 'convertir', cle: d.cle, titre: '  ' }, proprio)).code, 400, 'un nom est exigé');
+  assert.equal((await poster({ action: 'convertir', cle: 'inexistante000000000', titre: 'X' }, proprio)).code, 404);
+  let r = await poster({ action: 'convertir', cle: d.cle, titre: 'Mariage · Camille Fictif', modele: 'mariage' }, proprio);
+  assert.equal(r.code, 200); assert.equal(r.body.existant, false); const esp = r.body.espace;
+  const s = (await pool.query('select title, owner_id, data from spaces where id = $1', [esp])).rows[0];
+  assert.equal(s.title, 'Mariage · Camille Fictif'); assert.equal(s.owner_id, id, 'le propriétaire de la session en est propriétaire');
+  assert.deepEqual(s.data, { modele: 'mariage', origine: 'demande-' + d.cle });
+  assert.ok(!JSON.stringify(s).includes('conversion@exemple.test') && !JSON.stringify(s).includes('saxophoniste'), 'aucune coordonnée ni message copiés dans le projet');
+  assert.equal((await pool.query("select role from space_members where space_id = $1", [esp])).rows.map(x => x.role).join(), 'owner', 'seul membre : le propriétaire');
+  assert.equal((await ligne('conversion@exemple.test'))[0].statut, 'convertie');
+  r = await poster({ action: 'convertir', cle: d.cle, titre: 'Un autre nom' }, proprio);
+  assert.equal(r.code, 200); assert.equal(r.body.espace, esp); assert.equal(r.body.existant, true, 'rejoué : le même projet, aucun doublon');
+  assert.equal((await pool.query("select count(*)::int as n from spaces where data->>'origine' = $1", ['demande-' + d.cle])).rows[0].n, 1);
+  const j = (await pool.query("select detail from demandes_journal where demande_id = $1 and quoi = 'statut'", [d.id])).rows;
+  assert.deepEqual(j.map(x => x.detail), [{ de: 'nouvelle', a: 'convertie', espace: esp }], 'l\'historique garde le lien vers le projet, une seule fois');
+  r = await api({ cookie: proprio, url: '/api/demandes?cle=' + d.cle }); assert.equal(r.body.projet, esp, 'le détail dit quel projet en est né');
+  delete process.env.AIME_PROPRIETAIRES;
+});
