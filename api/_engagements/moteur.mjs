@@ -1,14 +1,14 @@
 // AIME · les engagements d'un projet (V1, PR P6) : « qui doit quoi à qui, pour quand ». Partie serveur : lire, verrouiller, écrire,
-// filtrer. Les droits viennent TOUS de synchroview/permissions.js (type « engagement ») ; le rôle, de space_members (date de fin
+// filtrer. Les droits viennent de synchroview/engagements.js, adossé à synchroview/permissions.js (fichier protégé, inchangé) ; le rôle, de space_members (date de fin
 // comprise), relu dans la transaction de chaque geste. Le navigateur ne reçoit jamais un identifiant de compte : les personnes sont
 // désignées par une référence opaque, propre au projet (ref), recalculée ici.
 // db : un pg.Pool (query + connect).
 import { createRequire } from 'module';
 import crypto from 'crypto';
 import { role, enTransaction, duree, Refus } from '../_auth/espaces.mjs';
-import { inscrire } from '../_auth/journal.mjs';
 const require = createRequire(import.meta.url);
-const P = require('../../synchroview/permissions.js');
+const P = require('../../synchroview/permissions.js');          /* la source des droits : qui voit qui (member.read) */
+const ER = require('../../synchroview/engagements.js');         /* les règles des engagements, adossées à permissions.js */
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const CLE = /^[A-Za-z0-9_-]{16,32}$/, REF = /^[a-f0-9]{16}$/;
@@ -19,6 +19,17 @@ export const GESTES = { accepter: ['accept', 'accepte'], refuser: ['refuse', 're
 const REQUIS = { accepter: ['propose'], refuser: ['propose'], tenir: ['accepte'], annuler: ['propose', 'accepte'] };   /* l'état où chaque geste a un sens */
 const refus = (code, raison) => { throw new Refus(code, raison); };
 const texte = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max + 1);
+
+/* le journal du projet (table audit, en ajout seul) : une ligne « engagement » par geste, avec son échéance, jamais le texte.
+   api/_auth/journal.mjs est un fichier protégé (sa liste d'actions ne change pas) : on écrit ici la même forme de ligne,
+   que sa lecture (lire) et la page Journal (pages.mjs) savent déjà rendre. Sans la table du journal, rien n'est écrit. */
+let JOURNAL = null;
+async function journaliser(db, { qui, espace, cible, detail }) {
+  if (JOURNAL === null) { try { const r = await db.query("select to_regclass('public.audit') as t, exists(select 1 from pg_trigger where tgname = 'audit_ajout_seul') as g"); JOURNAL = !!(r.rows[0] && r.rows[0].t && r.rows[0].g); } catch { JOURNAL = false; } }
+  if (!JOURNAL) return false;
+  await db.query('insert into audit (user_id, space_id, action, detail) values ($1, $2, $3, $4::jsonb)', [qui || null, espace, 'engagement', JSON.stringify(Object.assign({}, detail, cible ? { cible } : {}))]);
+  return true;
+}
 
 /* installé ? (migration 2026-10-25-15) ; « pas installé » n'est retenu qu'une minute */
 let PRET = null, VU = 0;
@@ -62,7 +73,7 @@ async function membres(db, s, espace) {
   rows.forEach(x => { actifs[x.user_id] = x.role; if (P.can(s, 'read', { type: 'member', subjectId: x.user_id, role: x.role }).allow) noms[x.user_id] = x.name || (x.email || '').split('@')[0]; });
   return { noms, actifs };
 }
-const ressource = e => ({ type: 'engagement', deQui: e.de_qui, pourQui: e.pour_qui, creePar: e.cree_par, etat: e.etat });
+const ressource = e => ({ deQui: e.de_qui, pourQui: e.pour_qui, creePar: e.cree_par, etat: e.etat });
 const ANONYME = 'une personne du projet';
 function vue(e, s, noms, auj) {
   const r = ressource(e), qui = id => (id === s.id ? 'vous' : (noms[id] || ANONYME));
@@ -71,7 +82,7 @@ function vue(e, s, noms, auj) {
     ref: e.id, titre: e.titre, echeance: ech, etat: e.etat, enRetard: e.etat === 'accepte' && ech < auj,
     deQui: qui(e.de_qui), pourQui: e.pour_qui ? qui(e.pour_qui) : 'l\'organisation du projet',
     moi: e.de_qui === s.id ? 'de' : e.pour_qui === s.id ? 'pour' : null,
-    gestes: Object.keys(GESTES).filter(g => P.can(s, GESTES[g][0], r).allow)
+    gestes: Object.keys(GESTES).filter(g => ER.can(s, GESTES[g][0], r).allow)
   };
 }
 /* l'ordre de lecture : d'abord ce qui attend une réponse, puis ce qui est en cours (par échéance), puis ce qui est clos */
@@ -84,9 +95,9 @@ export async function lister(db, u, { espace }) {
   const s = await contexte(db, u, espace);
   const { noms, actifs } = await membres(db, s, espace), auj = aujourdhui();
   const { rows } = await db.query('select * from engagements where space_id = $1 order by echeance, cree_le limit $2', [espace, MAX_PAR_PROJET]);
-  const liste = rows.filter(e => P.can(s, 'read', ressource(e)).allow).map(e => vue(e, s, noms, auj)).sort(trier);
-  const peutPrendre = P.can(s, 'create', { type: 'engagement', deQui: s.id }).allow;
-  const peutDemander = P.can(s, 'create', { type: 'engagement', deQui: '\u0000autre' }).allow;
+  const liste = rows.filter(e => ER.can(s, 'read', ressource(e)).allow).map(e => vue(e, s, noms, auj)).sort(trier);
+  const peutPrendre = ER.can(s, 'create', { deQui: s.id }).allow;
+  const peutDemander = ER.can(s, 'create', { deQui: '\u0000autre' }).allow;
   /* les personnes proposées : celles dont cette personne voit le nom (jamais d'identifiant de compte) */
   const personnes = Object.keys(noms).filter(id => id !== s.id && actifs[id]).map(id => ({ ref: refDe(espace, id), nom: noms[id] })).sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
   return { engagements: liste, peutPrendre, peutDemander, personnes: peutPrendre || peutDemander ? personnes : [], aujourdhui: auj };
@@ -103,7 +114,7 @@ export async function miens(db, u) {
   const sortie = [];
   for (const e of rows) {
     const s = { id: u.id, role: e.role };
-    if (!P.can(s, 'read', ressource(e)).allow) continue;
+    if (!ER.can(s, 'read', ressource(e)).allow) continue;
     if (!parProjet[e.space_id]) parProjet[e.space_id] = (await membres(db, s, e.space_id)).noms;
     sortie.push(Object.assign(vue(e, s, parProjet[e.space_id], auj), { espace: e.space_id, projet: e.projet }));
   }
@@ -129,7 +140,7 @@ export async function creer(db, u, b) {
     const pourQui = b.pour != null ? trouver(String(b.pour)) : null;
     if (b.pour != null && !pourQui) refus(400, 'Cette personne n\'est pas (ou plus) dans le projet.');
     if (pourQui && pourQui === deQui) refus(400, 'On ne s\'engage pas envers soi-même.');
-    const d = P.can(s, 'create', { type: 'engagement', deQui, pourQui, creePar: s.id });
+    const d = ER.can(s, 'create', { deQui, pourQui, creePar: s.id });
     if (!d.allow) refus(403, d.reason);
     const { rows: n } = await c.query("select count(*)::int as n from engagements where space_id = $1 and etat in ('propose', 'accepte')", [b.espace]);
     if (n[0].n >= MAX_PAR_PROJET) refus(429, 'Trop d\'engagements ouverts dans ce projet.');
@@ -138,7 +149,7 @@ export async function creer(db, u, b) {
     await c.query('insert into engagements (id, space_id, titre, de_qui, pour_qui, echeance, etat, cree_par) values ($1, $2, $3, $4, $5, $6::date, $7, $8)',
       [id, b.espace, titre, deQui, pourQui, ech, etat, s.id]);
     /* le journal : un geste et une échéance, jamais le texte de l'engagement ; la personne qui s'engage peut le lire */
-    await inscrire(c, { qui: s.id, espace: b.espace, action: 'engagement', cible: deQui, detail: { geste: etat === 'accepte' ? 'pris' : 'demande', echeance: ech } });
+    await journaliser(c, { qui: s.id, espace: b.espace, cible: deQui, detail: { geste: etat === 'accepte' ? 'pris' : 'demande', echeance: ech } });
     return { ref: id, etat };
   });
 }
@@ -153,13 +164,13 @@ export async function agir(db, u, b) {
     const { rows } = await c.query('select * from engagements where id = $1 and space_id = $2 for update', [b.ref, b.espace]);
     const e = rows[0];
     /* inconnu ou hors de sa portée : la même réponse */
-    if (!e || !P.can(s, 'read', ressource(e)).allow) refus(404, 'Engagement introuvable.');
+    if (!e || !ER.can(s, 'read', ressource(e)).allow) refus(404, 'Engagement introuvable.');
     if (b.rev != null && Number(b.rev) !== e.rev) refus(409, 'Cet engagement a changé entre-temps : voici la version à jour.');
-    const d = P.can(s, g[0], ressource(e));
+    const d = ER.can(s, g[0], ressource(e));
     /* le mauvais moment (déjà accepté, déjà clos…) : 409 ; la mauvaise personne : 403 */
     if (!d.allow) refus(REQUIS[b.geste].includes(e.etat) ? 403 : 409, d.reason);
     await c.query('update engagements set etat = $2, maj_le = now(), rev = rev + 1 where id = $1', [e.id, g[1]]);
-    await inscrire(c, { qui: s.id, espace: b.espace, action: 'engagement', cible: e.de_qui === s.id ? (e.pour_qui || e.cree_par) : e.de_qui, detail: { geste: g[1], echeance: jourIso(e.echeance) } });
+    await journaliser(c, { qui: s.id, espace: b.espace, cible: e.de_qui === s.id ? (e.pour_qui || e.cree_par) : e.de_qui, detail: { geste: g[1], echeance: jourIso(e.echeance) } });
     return { ref: e.id, etat: g[1], rev: e.rev + 1 };
   });
 }
