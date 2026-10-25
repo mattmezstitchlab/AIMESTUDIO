@@ -10,7 +10,7 @@ Décision de Matt du 25/10/2026. Référence : le document « AIME — AI + ME :
 - **AI** (`/projets/`) :
   - « À traiter » : les demandes reçues. Seulement pour qui en reçoit (propriétaire du site, `/api/demandes`) ; la section
     n'existe pas pour les autres.
-  - Mes projets et participations, mes activités, « Sur cet appareil ».
+  - Mes projets et participations, « Sur cet appareil » (les activités sont dans ME, PR 3).
 - **Le détail d'une demande** (`/projets/?demande=<clé>`) : le message, les deux statuts (la demande, l'e-mail), la note privée,
   « Renvoyer l'e-mail » après un échec, l'historique. Ouvrir une demande nouvelle la marque « lue » au serveur.
 - **Sans rechargement.** Ouvrir un projet, une demande, revenir à AI, changer de projet : un seul écran. Chaque passage est une
@@ -39,9 +39,19 @@ pendant qu'on ouvre B, puis pendant qu'on revient à AI.
   (« Ouvrir le projet »).
 - Le projet s'ouvre aussitôt, sans rechargement, avec le Dock que le serveur compose pour son propriétaire.
 
+## ME v0 (PR 3)
+
+- **ME** (`/compte/`, l'adresse d'avant) réunit ce qui existait sur deux écrans : le Timbre (photo, nom), **mes activités** (déplacées
+  d'AI vers ME : elles disent ce que je suis), les clés d'accès, la déconnexion, la suppression du compte. Rien n'est retiré de
+  « Mon compte ».
+- « Découvrir AIME » : Le cœur, les exemples et toutes les capacités, qui ont quitté le Dock connecté, restent à un clic depuis ME.
+- **Ma Carte sur cet appareil** : si une Carte existe dans ce navigateur (`aime-carte`), ME le dit. Elle n'est **ni lue ni envoyée**.
+  Son rattachement au compte, avec l'accord de la personne, est une étape suivante, marquée « en conception ».
+- Corrigé au passage : sur iPhone, le bloc du Timbre débordait de 43 px (une colonne réduite à 158 px pour un champ de 200 px).
+- **Aucune donnée nouvelle au serveur, aucune migration.**
+
 ## Ce qui n'est pas fait ici
 
-- ME v0 (Timbre, activités, sécurité du compte réunis) : PR 3. ME ouvre aujourd'hui « Mon compte ».
 - Les invitations reçues ne sont pas listées dans AI : elles arrivent par un lien (« J'ai reçu une invitation » dans le +).
   Les lister demanderait de les rattacher à une adresse au serveur : une évolution à part.
 

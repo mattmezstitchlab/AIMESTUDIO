@@ -75,3 +75,5 @@ body.en-projet #projet>.leg:first-child{margin:0}
 #aTraiter{margin-bottom:18px}
 #demande textarea{font:inherit;color:var(--encre);background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:8px 10px;width:100%;box-sizing:border-box;resize:vertical}
 #demande select{font:inherit;color:var(--encre);background:var(--panneau);border:1px solid var(--ligne);border-radius:10px;padding:6px 10px;min-height:38px}
+/* ME (/compte/) : les légendes lisibles (contraste ≥ 4,5:1), comme dans AI et dans un projet */
+#profil .leg,#activites .leg,#meCarte .leg,#meDecouvrir .leg,#meDecouvrir .leg a,#zoneSuppr .leg,#zoneSuppr .leg a{color:var(--doux)}
