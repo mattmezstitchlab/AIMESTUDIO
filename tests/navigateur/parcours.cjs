@@ -95,7 +95,9 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
         V.poser(el, D.composer({}), { mode: 'page', id: 'dock-site', actif: 'coeur' }); return R; });
       for (const m of mots) ok(m.ok && m.aria, 'Dock ' + m.n + ' (393 px) : chaque mot sur une ligne, sans débordement, ' + (m.min ? 'en minuscules, 11 px' : 'en capitales') + ' ; nom en minuscules dans aria-label (' + m.mots + ')');
       await choisir(t, 'maries'); await t.waitForSelector('#demo .dm-tel.choisi'); await t.waitForTimeout(500);
-      const dessus = sel => t.evaluate(async s => { const x = document.querySelector(s); x.scrollIntoView({ block: 'nearest' }); await new Promise(r => setTimeout(r, 120)); const d = document.querySelector('#dock-site .dock').getBoundingClientRect().top, r = x.getBoundingClientRect(); return r.height > 0 && r.bottom <= d + 1 && r.top >= 0; }, sel);
+      // Mesurer la position finale, pas une étape du défilement CSS animé (variable selon la CI).
+      const dessus = sel => t.evaluate(async s => { const x = document.querySelector(s); x.scrollIntoView({ block: 'nearest', behavior: 'instant' }); await new Promise(r => requestAnimationFrame(r)); const d = document.querySelector('#dock-site .dock').getBoundingClientRect().top, r = x.getBoundingClientRect(); return r.height > 0 && r.bottom <= d + 1 && r.top >= 0; }, sel);
+      ok(await t.$eval('#jsCreer', x => x.getBoundingClientRect().height >= 44), 'accueil (393×659) : « Créer » garde une cible tactile de 44 px au moins');
       ok(await dessus('#jsCreer'), 'accueil (393×659) : « Créer notre mariage », sous la démo, reste au-dessus du Dock');
       ok(api.every(x => x === 'GET /api/identite'), 'accueil : aucun appel au serveur avant « Créer » (seul le Dock lit /api/identite)' + (api.length ? ' (' + [...new Set(api)].join(', ') + ')' : ''));
       await t.click('#jsCreer'); await t.waitForSelector('#jsLien:not([hidden])', { timeout: 4000 }).catch(() => {});
@@ -104,7 +106,7 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
       ok(!api.some(x => /espaces|sign-in/.test(x)), 'accueil : rien n\'est créé ni envoyé avant l\'adresse');
       // pied légal (393×659) : en bas de chaque page publique, la ligne reste au-dessus du Dock, lisible et cliquable ; Speed Insights chargé sans erreur
       for (const u of ['/', '/exemples/', '/exemples/mosaique/', '/contact/', '/compte/', '/projets/', '/confidentialite/', '/mentions-legales/', '/tarifs/']) {
-        await t.goto(B + u, { waitUntil: 'networkidle' }); await t.waitForTimeout(300); await t.evaluate(() => scrollTo(0, document.documentElement.scrollHeight)); await t.waitForTimeout(300);
+        await t.goto(B + u, { waitUntil: 'networkidle' }); await t.waitForTimeout(300); await t.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })); await t.waitForTimeout(300);
         ok(await t.evaluate(() => { const n = document.querySelector('.pied-legal'), d = document.querySelector('#dock-site .dock'); if (!n) return false; const r = n.getBoundingClientRect(), bas = d ? d.getBoundingClientRect().top : innerHeight; const liens = [...n.querySelectorAll('a')]; return r.height > 0 && r.bottom <= bas + 1 && r.left >= 0 && r.right <= innerWidth && liens.length === 4 && liens.every(a => { const q = a.getBoundingClientRect(), x = q.left + q.width / 2, y = q.top + q.height / 2; return document.elementFromPoint(x, y) === a; }); }), u + ' (393×659) : « Tarifs · Mentions légales · Confidentialité · Contact » au-dessus du Dock, chaque lien cliquable');
         ok(await t.evaluate(() => typeof window.si === 'function' && !!document.querySelector('script[src="/_vercel/speed-insights/script.js"]')), u + ' : Speed Insights présent');
       }

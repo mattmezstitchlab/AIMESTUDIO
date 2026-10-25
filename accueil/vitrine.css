@@ -22,8 +22,8 @@ html.calme .v-orbe i{animation:none}
 .clair .barre::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid #ECECF0;opacity:0;transition:opacity .4s;z-index:-1}
 .clair .barre .mk{pointer-events:auto;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font:400 19px var(--display);letter-spacing:-.01em;background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:999px;padding:8px 16px 8px 10px;box-shadow:0 8px 30px -18px rgba(17,17,20,.35)}
 .clair .barre .mk sup{font-size:9px}
-.v-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:#FFFFFF!important;font:600 15px var(--ui);cursor:pointer;text-decoration:none}
-.v-btn:hover{background:#2A2A31}
+.clair .bouton,.v-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:#FFFFFF!important;font:600 15px var(--ui);cursor:pointer;text-decoration:none}
+.clair .bouton:hover,.v-btn:hover{background:#2A2A31}
 .v-btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid #D6D6DD;background:#FFFFFF;color:var(--ink);font:600 14.5px var(--ui);cursor:pointer;text-decoration:none}
 .v-btn2:hover{border-color:var(--ink)}
 .v-btn2[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
