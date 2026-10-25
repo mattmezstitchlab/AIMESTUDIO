@@ -56,6 +56,22 @@ pendant qu'on ouvre B, puis pendant qu'on revient à AI.
 - Corrigé au passage : sur iPhone, le bloc du Timbre débordait de 43 px (une colonne réduite à 158 px pour un champ de 200 px).
 - **Aucune donnée nouvelle au serveur, aucune migration.**
 
+## Avant la connexion (25/10)
+
+- **AI et ME ont un contenu dès l'arrivée**, même sans compte : `compte/decouverte.js` écrit ce que l'écran réunit, avec
+  un état par carte et des liens réels. Le contenu est posé **avant** l'appel de session et reste quand la réponse est
+  401, quand les comptes ne sont pas ouverts (503) ou quand le serveur ne répond pas ; la seule issue qui le retire est
+  une session ouverte, qui cède la place à l'écran de la personne.
+- **Rien n'est présenté comme disponible à tort** : « L'agent AIME » est « En préparation » et le dit (« l'agent qui les
+  exécute n'est pas branché ») ; aucun registre public n'est annoncé, puisque aucun n'existe ; la Carte dit « sans la photo
+  ni les relations » ; la durée des demandes (24 mois) est celle du code.
+- **ME a son nom dès l'arrivée** (titre « ME »), au lieu de « Mon compte » jusqu'à la connexion.
+- **Le menu de ME, en clair** : six boutons sous le Timbre — Modifier ma Carte · Ajouter une activité · Partager ma Carte ·
+  Exporter ma Carte · Mes clés d'accès · Mes questions — qui passent tous par la même fonction que le + du Dock et mettent
+  le focus à leur place. « Exporter ma Carte » fabrique un fichier JSON dans le navigateur, sans aucun appel serveur.
+- Tests : `tests/decouverte.test.cjs` (les deux écrans, les états, les liens réels, l'ordre « contenu avant session »,
+  les quatre issues, le menu de ME) et la vérification jsdom hors dépôt (401, 503, serveur injoignable, connecté, export).
+
 ## Ce qui n'est pas fait ici
 
 - Les invitations reçues ne sont pas listées dans AI : elles arrivent par un lien (« J'ai reçu une invitation » dans le +).

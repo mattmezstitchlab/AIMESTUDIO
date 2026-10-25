@@ -3,7 +3,7 @@
      pas connecté : AI · + · ME (AI et ME mènent à la connexion)        ; le + : « Créer un projet » · « J'ai reçu une invitation »
      Le cœur et les exemples restent sur la landing (/#coeur, /exemples/) et dans ME (« Découvrir AIME »).
      connecté     : AI · + · ME (25/10) ; le + : « Nouveau projet » · « J'ai reçu une invitation » (AI y ajoute ses gestes de contexte ;
-                    dans ME, seulement « Modifier ma Carte » · « Ajouter une activité » · « Partager ma Carte », V1 P4)
+                    dans ME : « Modifier ma Carte » · « Ajouter une activité » · « Partager ma Carte » · « Exporter ma Carte »)
      dans un projet : le Dock que le serveur compose (compte/projet.js), avec les seuls gestes du rôle ; ce fichier n'y est pas branché.
    « Créer un projet » fait défiler jusqu'à « Je suis… » et l'ouvre (ailleurs, y conduit) ; « Nouveau projet » ouvre la création de Mes projets
    (compte/creer.js) ; « J'ai reçu une invitation » ouvre un champ pour coller le lien, qui mène à /projets/?invitation=… : sans session,
@@ -12,7 +12,7 @@
    AIMEPlus.jeton(texte) → le jeton d'un lien d'invitation collé, ou null (pur, testé sous node)
    AIMEPlus.brancher(el) → lit /api/identite ; connecté, repose le Dock AI · + · ME, et rend le + vivant */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.AIMEPlus=factory()})(typeof self!=='undefined'?self:this,function(){'use strict';
-var COMMENCER='/?commencer=1',JETON=/^[A-Za-z0-9_-]{20,100}$/,ME=['modifierCarte','ajouterActivite','partagerCarte'];
+var COMMENCER='/?commencer=1',JETON=/^[A-Za-z0-9_-]{20,100}$/,ME=['modifierCarte','ajouterActivite','partagerCarte','exporterCarte'];
 function etat(info){var c=!!(info&&info.connecte);
  return c?{mode:'connecte',famille:'Public connecté',gestes:['nouveauProjet','invitationRecue']}:{mode:'public',famille:'Public',gestes:['creerProjet','invitationRecue']}}
 /* un lien collé : https://…/projets/?invitation=XXXX (ou /compte/?invitation=…), ou le jeton seul ; rien d'autre n'est suivi */
@@ -48,7 +48,7 @@ function brancher(el){if(!el||typeof fetch!=='function')return Promise.resolve(n
    /* dans ME, le + ne garde que les gestes de ma Carte (V1, P4) ; « Nouveau projet » et l'invitation restent dans le + de AI */
    if(actif==='me')c.plus=ME.map(function(id){var a=root.AIMEDock.ACTIONS&&root.AIMEDock.ACTIONS[id];return{id:id,nom:a?a.nom:id,geste:'public',href:null,sensible:false}});
    root.AIMEDockVue.poser(el,c,Object.assign({},o,{actif:actif}))}
-  var b=el.querySelector('.dock-plus'),me=e.mode==='connecte'&&/^\/compte/.test(location.pathname);if(b)b.setAttribute('aria-label',me?'Gestes : modifier ma Carte, ajouter une activité, partager ma Carte':e.mode==='connecte'?'Nouveau projet ou invitation reçue':'Créer un projet ou ouvrir une invitation');
+  var b=el.querySelector('.dock-plus'),me=e.mode==='connecte'&&/^\/compte/.test(location.pathname);if(b)b.setAttribute('aria-label',me?'Gestes : modifier ma Carte, ajouter une activité, partager ma Carte, exporter ma Carte':e.mode==='connecte'?'Nouveau projet ou invitation reçue':'Créer un projet ou ouvrir une invitation');
   return e})}
 var root=typeof self!=='undefined'?self:{};
 /* arrivée par « ?commencer=1 » : « Je suis… » */

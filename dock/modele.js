@@ -86,6 +86,8 @@ var ACTIONS={
  modifierCarte:{nom:'Modifier ma Carte',geste:'public'},
  ajouterActivite:{nom:'Ajouter une activité',geste:'public'},
  partagerCarte:{nom:'Partager ma Carte',geste:'public'},
+ /* emporter ce qui est sur cet appareil : un fichier, aucun serveur (compte/compte.js) */
+ exporterCarte:{nom:'Exporter ma Carte',geste:'public'},
  justificatif:{nom:'Déposer un justificatif',geste:'deposer'},
  ecrireProprietaire:{nom:'Écrire au propriétaire',geste:'repondre'},
  exporter:{nom:'Exporter',geste:'lire'},

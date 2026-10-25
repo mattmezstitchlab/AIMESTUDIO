@@ -46,6 +46,9 @@
  </form>
  <p class="bandeau" id="invite" hidden>Vous avez reçu une invitation dans un espace AIME. Connectez-vous avec l'adresse qui l'a reçue pour la rejoindre.</p>
 
+ <!-- ce qui attend la personne, écrit même sans compte : contenu réel, états honnêtes, liens réels (compte/decouverte.js) -->
+ <section class="dec" id="decouverte" aria-labelledby="tDecouverte"></section>
+
  <section class="carte-c" id="connexion" hidden aria-labelledby="t-cnx">
   <h2 id="t-cnx">Se connecter</h2>
   <p class="leg">Pas de mot de passe : un lien de connexion vous est envoyé par e-mail, puis vous pouvez ajouter une clé d'accès (Face ID, Touch ID, empreinte, code de l'appareil).</p>
@@ -66,6 +69,12 @@
     <div class="pile"><h2 class="k" style="margin:8px 0 0">Clés d'accès</h2><ul class="cles" id="cles"></ul><span><button class="b b-s" type="button" id="ajCle">+ Ajouter une clé d'accès sur cet appareil</button></span></div>
    </div>
   </div>
+ </section>
+
+ <!-- le menu de ME (connecté) : les gestes de ma Carte et de mes accès, en clair, à côté du + du Dock (compte/compte.js) -->
+ <section class="dec-menu" id="menuME" hidden aria-labelledby="tMenuME">
+  <h2 class="k" id="tMenuME">Que voulez-vous faire ?</h2>
+  <div class="dec-liens" id="menuMELiens"></div>
  </section>
 
  <!-- ME v0 : ce que je suis (activités, métiers), ce qui existe dans ce navigateur, et le reste d'AIME ; rien de nouveau au serveur -->
@@ -170,6 +179,7 @@
 <script src="/compte/ai.js"></script>
 <script src="/carte/carte.js"></script>
 <script src="/compte/carte-compte.js"></script>
+<script src="/compte/decouverte.js"></script>
 <script src="/compte/compte.js"></script>
 <script src="/dock/modele.js"></script>
 <script src="/dock/dock.js"></script>

@@ -41,6 +41,35 @@ input[type=email]{font:inherit;color:var(--encre);background:#F7F7FB;border:1px 
 .danger,body.clair .danger{background:#FFF1F2;color:#9F1239;border-color:#FDA4AF}.danger:hover,body.clair .danger:hover{background:#FFE4E6;border-color:#BE123C}
 #zoneSuppr{border-color:#FECDD3}
 
+/* ce qui attend la personne, même sans compte (compte/decouverte.js) : des cartes, un état par carte, des liens réels.
+   Le fond est blanc sur le dégradé clair ; chaque état porte aussi son mot, la couleur ne dit jamais seule. */
+.dec{display:grid;gap:14px}
+.dec-tete{display:grid;gap:6px}
+.dec-tete h2{margin:0;font:600 22px/1.2 var(--titre);color:var(--encre)}
+.dec-tete p{margin:0;max-width:62ch}
+.dec-grille{list-style:none;margin:0;padding:0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(236px,1fr))}
+.dec-carte{display:grid;gap:8px;align-content:start;padding:16px;border:1px solid rgba(17,17,24,.10);border-radius:16px;background:#FFFFFF;box-shadow:0 10px 26px -22px rgba(20,18,52,.35)}
+.dec-haut{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.dec-carte h3{margin:0;font:600 17px/1.25 var(--titre);color:var(--encre)}
+.dec-carte p{margin:0;font-size:14px;line-height:1.55;color:var(--doux)}
+.dec-etat{flex:none;border:1px solid #C6C6D4;border-radius:999px;padding:3px 9px;font:600 12px/1.3 var(--ui);color:#242431;background:#F4F4F8}
+.dec-etat.etat-disponible{background:#E7F8EF;border-color:#B7E8CD;color:#14532D}
+.dec-etat.etat-preparation{background:#F1EEFF;border-color:#D6CDFF;color:#3B238F}
+.dec-etat.etat-demonstration{background:#FFF7E6;border-color:#F2DFB0;color:#7A4A05}
+.dec-liens{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 0}
+.dec-liens a{text-decoration:none}
+.dec-sans{display:grid;gap:8px;padding:14px 16px;border:1px dashed rgba(17,17,24,.22);border-radius:16px;background:rgba(255,255,255,.72)}
+.dec-sans h3{margin:0;font:600 15px/1.3 var(--titre);color:var(--encre)}
+.dec-sans ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.dec-sans a{text-decoration:none}
+.dec-note{margin:0;font-size:13px;line-height:1.5;color:var(--faint,#5A5A6E)}
+/* le menu de ME, connecté : les mêmes gestes que le +, écrits en clair (compte/compte.js) */
+.dec-menu{display:grid;gap:10px;padding:16px;border:1px solid rgba(17,17,24,.10);border-radius:16px;background:rgba(255,255,255,.72)}
+.dec-menu h2{margin:0;font:600 15px/1.3 var(--titre);color:var(--encre)}
+.dec-menu button{background:#FFFFFF}
+.dec-menu button:hover{background:#F4F1FF;border-color:#B9A8FF}
+@media (max-width:560px){.dec-grille{grid-template-columns:1fr}}
+
 /* l'écran de projet (compte/projet.js) */
 #projet{display:grid;gap:14px}
 .p-onglets{display:flex;flex-wrap:wrap;gap:6px}.p-onglets a{text-decoration:none}.p-onglets a[aria-current=page]{background:var(--encre);color:#FFFFFF;border-color:var(--encre)}

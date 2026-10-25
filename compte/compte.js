@@ -25,15 +25,26 @@ if(INVIT)$('invite').hidden=false;
 if(PROJETS){document.title='AI · AIME';$('tTitre').textContent='AI';$('tSous').textContent='Ce qui vous concerne : demandes, programmes, projets, activités'}
 if(Q.get('supprime'))toast('Votre compte a été supprimé. Merci d\'être passé par AIME.');
 else if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
+/* ---------- ce qui attend la personne, avant même la réponse du serveur ----------
+   Écrit dans le document dès l'arrivée : la page a un contenu même si la session échoue (401), si les comptes ne sont pas
+   ouverts sur cet environnement (503) ou si le serveur ne répond pas. Quand la personne est connectée, ce bloc laisse la
+   place à ce qu'elle vient voir. */
+var ECRAN=PROJETS?'ai':'me';
+function poserDecouverte(){if(window.AIMEDecouverte){try{return AIMEDecouverte.monter(ECRAN)}catch(e){return null}}return null}
+function cacherDecouverte(){var z=$('decouverte');if(z)z.hidden=true}
+/* ME a son nom dès l'arrivée, connecté ou non */
+if(!PROJETS){document.title='ME · AIME';$('tTitre').textContent='ME';$('tSous').textContent='Votre Carte : votre Timbre, vos activités, vos accès';}
+poserDecouverte();
+
 function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime','nouvel','creer','origine','activite','bienvenue'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
 
 /* ---------- au chargement : la session ---------- */
 requete('/api/auth/get-session').then(function(r){
- if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=(r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.';if(PROJETS)surCetAppareil(false);return}
- if(!r.j||!r.j.user){$('connexion').hidden=false;if(PROJETS&&!OUVRIR&&!INVIT&&!CREER&&!ACTIVITE)surCetAppareil(false);if(CREER||ACTIVITE)$('depuisAccueil').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
- moi=r.j.user;afficherProfil();inviterNom();$('profil').hidden=PROJETS;$('espaces').hidden=!PROJETS;$('zoneSuppr').hidden=PROJETS;
+ if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=((r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.')+' Ce que '+(PROJETS?'AI':'ME')+' réunit reste visible ci-dessous.';poserDecouverte();if(PROJETS)surCetAppareil(false);return}
+ if(!r.j||!r.j.user){poserDecouverte();$('connexion').hidden=false;if(PROJETS&&!OUVRIR&&!INVIT&&!CREER&&!ACTIVITE)surCetAppareil(false);if(CREER||ACTIVITE)$('depuisAccueil').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
+ moi=r.j.user;cacherDecouverte();afficherProfil();inviterNom();$('profil').hidden=PROJETS;$('espaces').hidden=!PROJETS;$('zoneSuppr').hidden=PROJETS;
  /* ME (/compte/) : ma Carte et mon compte, réunis (ME v0, 25/10) : Timbre, nom, activités, clés d'accès, déconnexion, suppression */
- if(!PROJETS){document.title='ME · AIME';$('tTitre').textContent='ME';$('tSous').textContent='Votre Carte : Timbre, activités, accès et sécurité du compte';$('meDecouvrir').hidden=false;carteLocale()}
+ if(!PROJETS){$('tSous').textContent='Votre Carte : Timbre, activités, accès et sécurité du compte';$('meDecouvrir').hidden=false;poserMenuME();carteLocale()}
  (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' ».');$('invite').hidden=true;if(x.espace)OUVRIR=x.espace}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
   .then(function(){
    /* « Créer notre mariage » : la seule fonction de création, sans doublon (l'origine vient de l'accueil) ; puis l'écran du projet */
@@ -46,7 +57,7 @@ requete('/api/auth/get-session').then(function(r){
     if(OUVRIR&&!new URLSearchParams(location.search).get('espace')){AIMEAI.montrer('projet');PJ.ouvrir(OUVRIR,Q.get('page'))}else AIMEAI.route();
     if(/[?&]nouveau=1\b/.test(location.search)){var t0=$('eTitre');if(t0){t0.scrollIntoView({block:'center'});t0.focus()}}}
    else if(PROJETS&&OUVRIR&&PJ)PJ.ouvrir(OUVRIR,Q.get('page'));else if(PROJETS){chargerEspaces();if(BIENVENUE)chargerActivites(false);surCetAppareil(true);if(/[?&]nouveau=1\b/.test(location.search)){var t=$('eTitre');if(t){t.scrollIntoView({block:'center'});t.focus()}}}else{chargerCles();chargerActivites(true)}})
-}).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.';if(PROJETS)surCetAppareil(false)});
+}).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant. Le contenu ci-dessous reste consultable.';poserDecouverte();if(PROJETS)surCetAppareil(false)});
 
 /* ---------- se connecter ---------- */
 $('fLien').onsubmit=function(e){e.preventDefault();var b=this.querySelector('button');b.disabled=true;var cb='/projets/'+(INVIT?'?invitation='+encodeURIComponent(INVIT):OUVRIR?'?espace='+OUVRIR:CREER?'?creer=mariage&origine='+encodeURIComponent(CREER):ACTIVITE?'?activite='+encodeURIComponent(ACTIVITE):'');
@@ -122,14 +133,51 @@ function chargerActivites(montrer,focus){return espaces('activites').then(functi
 if($('fActivite'))$('fActivite').onsubmit=function(e){e.preventDefault();var s=$('actAjout'),b=this.querySelector('button');if(!s.value){toast('Choisissez un métier.',true);s.focus();return}b.disabled=true;var nom=s.options[s.selectedIndex].text;
  espaces('activite',{metier:s.value}).then(function(){b.disabled=false;toast(nom+' est ajoutée à vos activités. Elle n\'est montrée nulle part tant que vous ne cochez pas « Montrer sur ma Carte ».');chargerActivites(true,'actAjout')}).catch(function(err){b.disabled=false;toast(err.message,true)})};
 
+/* le menu de ME (25/10) : les mêmes gestes que le + du Dock, en clair, plus les clés d'accès et les questions.
+   Chaque bouton mène à sa place dans ME et y met le focus (versME) ; aucun ne fait rien d'autre. */
+var MENU_ME=[
+ ['modifierCarte','Modifier ma Carte'],
+ ['ajouterActivite','Ajouter une activité'],
+ ['partagerCarte','Partager ma Carte'],
+ ['exporterCarte','Exporter ma Carte'],
+ ['mesCles','Mes clés d\'accès'],
+ ['mesQuestions','Mes questions']
+];
+function poserMenuME(){
+ var z=$('menuME'),L=$('menuMELiens');if(!z||!L)return;
+ L.textContent='';
+ MENU_ME.forEach(function(g){
+  var b=el('button','b b-s',g[1]);b.type='button';b.setAttribute('data-menu-me',g[0]);
+  b.onclick=function(){versME(g[0])};L.appendChild(b)});
+ z.hidden=false}
+
+/* exporter ma Carte (25/10) : un fichier JSON des données de CET appareil, fabriqué dans le navigateur.
+   Aucun appel serveur, aucun envoi : c'est la promesse « vos données restent chez vous » rendue utilisable. */
+function carteDeLEAppareil(){var v=null;try{v=JSON.parse(localStorage.getItem('aime-carte')||'null')}catch(_){v=null}return v&&typeof v==='object'&&v.format==='aime-carte'?v:null}
+function exporterCarte(){
+ var c=carteDeLEAppareil();
+ if(!c){var z=$('meCarte');if(z&&!z.hidden)z.scrollIntoView({block:'center'});
+  toast('Aucune Carte sur cet appareil à exporter pour l\'instant. Votre Carte se crée d\'abord sur votre compte.',true);return}
+ if(typeof Blob!=='function'||typeof URL==='undefined'||!URL.createObjectURL){toast('Ce navigateur ne permet pas de fabriquer le fichier ici.',true);return}
+ var nom='aime-carte-'+String(c.id||'carte').replace(/[^A-Za-z0-9_-]/g,'').slice(0,40)+'-'+new Date().toISOString().slice(0,10)+'.json',a=document.createElement('a');
+ try{a.href=URL.createObjectURL(new Blob([JSON.stringify(c,null,2)],{type:'application/json'}))}catch(_){toast('Export impossible dans ce navigateur.',true);return}
+ a.download=nom;a.rel='noopener';a.style.display='none';document.body.appendChild(a);a.click();
+ setTimeout(function(){try{URL.revokeObjectURL(a.href)}catch(_){}a.remove()},0);
+ toast('Carte exportée : '+nom+'. Le fichier reste chez vous, rien n\'est envoyé.');
+}
+
 /* ---------- le + de ME (V1, P4) : chaque geste mène à sa place dans ME, et y met le focus ; rien ne s'enregistre sans le bouton ---------- */
 function versME(id){var cible=null,dit='';
  if(id==='modifierCarte'){var d=$('mcModifier');if(d){d.open=true;cible=$('mcmNom')}else{cible=document.querySelector('#mcCorps input, #mcCorps button');dit='Créez ou enregistrez d\'abord votre Carte sur votre compte : vous pourrez ensuite la modifier ici.'}}
  else if(id==='ajouterActivite'){var f=$('fActivite');if(f&&!f.hidden)cible=$('actAjout');else{cible=$('t-act');dit='Toutes les activités proposées sont déjà dans votre liste.'}}
+ else if(id==='exporterCarte'){exporterCarte();return}
+ else if(id==='mesCles'){cible=$('ajCle');dit=cible&&!cible.hidden?'':'Ajoutez d\'abord une clé d\'accès depuis un appareil qui sait en créer une.'}
+ else if(id==='mesQuestions'){cible=document.getElementById('mfTitre')||document.querySelector('#mcCorps .mc-partage');dit=cible?'':'Les questions se posent sous « Recevoir des demandes par ce lien », quand il est allumé.'}
+ else if(id==='mesEngagements'){cible=$('t-eng')||$('aEngagements');dit='Vos engagements apparaissent dans AI, avec les projets où ils vivent.'}
  else if(id==='partagerCarte'){var p=document.querySelector('#mcCorps .mc-partage');if(p)cible=p.querySelector('input, button, a');else{cible=document.querySelector('#mcCorps input, #mcCorps button');dit='Enregistrez d\'abord votre Carte sur votre compte pour pouvoir la partager.'}}
  if(cible){if(!cible.hasAttribute('tabindex')&&/^H\d$/.test(cible.tagName))cible.setAttribute('tabindex','-1');cible.scrollIntoView({block:'center'});try{cible.focus({preventScroll:true})}catch(_){cible.focus()}}
  if(dit)toast(dit)}
-if(!PROJETS)document.addEventListener('aime:dock-geste',function(e){var id=e.detail&&e.detail.id;if(id==='modifierCarte'||id==='ajouterActivite'||id==='partagerCarte'){e.preventDefault();versME(id)}})
+if(!PROJETS)document.addEventListener('aime:dock-geste',function(e){var id=e.detail&&e.detail.id;if(MENU_ME.some(function(g){return g[0]===id})){e.preventDefault();versME(id)}})
 
 /* ma Carte (compte/carte-compte.js) : sur cet appareil et sur mon compte, avec mon accord ; sans le module, l'ancien avis local */
 function carteLocale(){var z=$('meCarte');if(!z)return;if(window.AIMECarteCompte){AIMECarteCompte.monter(z);return}var v=null;try{v=localStorage.getItem('aime-carte')}catch(_){v=null}z.hidden=!v}
