@@ -67,6 +67,16 @@
   compact.hidden=true;original.hidden=false;panel.hidden=false;stage=0;types();update();
  }
  document.addEventListener('openaime:compose',openCompact);
+ // Switching to another typed object hides the contact interface, preserving
+ // the local draft. A click on the post-it can reopen it without leaving the page.
+ document.addEventListener('aime:capsule', e=>{
+   if(!e.detail || e.detail.type==='contact')return;
+   panel.hidden=true;
+   compact.hidden=true;
+   status.hidden=true;
+   original.hidden=false;
+ });
+
  $('noteBack').addEventListener('click',closeAll);
  $('noteDiscard').addEventListener('click',()=>{if(subject.value&&!window.confirm('Effacer l’objet de votre demande ?'))return;subject.value='';status.hidden=true;subject.focus()});
  compact.addEventListener('submit',e=>{e.preventDefault();openPanel()});
