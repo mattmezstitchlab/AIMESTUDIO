@@ -66,10 +66,21 @@ test('l\'accueil : clair, dégradés francs, le manifeste, la mosaïque gardée,
   assert.match(z, /<body class="clair">/); assert.match(z, /id="vTels"/); assert.match(z, /href="\/exemples\/mosaique\/"/);
   assert.match(z, /Agent <span class="v-pil"[^>]*>En préparation<\/span>/, 'rien n\'est simulé comme existant');
   assert.ok(!/href="\/aime\/"/.test(z), 'Le Monde AIME (cartes postales, cube) reste à part');
-  for (const sec of ['.clair .zero', '#ecrans', '#mosaique', '#capacites', '#protection', '#domaines', '#entree']) {
+  for (const sec of ['.clair .zero', '#ecrans', '#mosaique', '#capacites', '#temps', '#domaines', '#entree']) {
     assert.ok(css.includes(sec), 'fond dégradé défini pour ' + sec);
   }
   assert.ok(!/\.v-tel\.eteint\{[^}]*opacity:/.test(css) && !/\.v-doms li\.venir\{[^}]*opacity:/.test(css), 'aucune baisse d\'opacité qui dégraderait le contraste AA');
+});
+
+test('l\'accueil remplace le carrousel coloré par le vrai aperçu du Temps : programme filtré et Circle', () => {
+  const z = lire('index.html'), css = lire('accueil/vitrine.css'), A = require('../accueil/temps.js'), D = require('../modules/temps/demo-camille-gabriel.json');
+  const s = z.slice(z.indexOf('<!-- 5'), z.indexOf('<!-- 6'));
+  for (const t of ['Le Temps', 'Programme', 'Circle', 'Jour J', 'Retrouver le Temps dans AI', 'tempsDemoQui', 'tempsDemoSvg']) assert.ok(s.includes(t), t);
+  assert.ok(!s.includes('v-rangs') && !css.includes('.v-rangs'), 'plus de cartes colorées horizontales');
+  assert.ok(z.indexOf('/live/modele.js') < z.indexOf('/modules/temps/moteur.js') && z.indexOf('/modules/temps/moteur.js') < z.indexOf('/accueil/temps.js'), 'les moteurs existants chargent avant l’aperçu');
+  const invitee = A.preparer(D, 'emma'), proprietaire = A.preparer(D, 'camille');
+  assert.equal(proprietaire.vue.moments.length, 9); assert.deepEqual(invitee.vue.moments.map(m => m.id), ['ceremonie', 'cocktail', 'diner', 'discours', 'bal']);
+  assert.deepEqual(A.modeleCercle(invitee.vue).arcs.map(a => a.id), invitee.vue.moments.map(m => m.id), 'Circle dessine exactement la même vue autorisée');
 });
 
 test('AI, ME, l\'écran de projet (Programme compris) et /c/ partagent le même langage clair (dégradé sans photo, blocs blancs, texte noir, contraste AA)', () => {

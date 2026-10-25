@@ -1,6 +1,6 @@
 /* AIME · AI, mon environnement (/projets/) : architecture de convergence AI + ME, décision de Matt du 25/10/2026.
    Un seul écran pour trois contextes, choisis par l'adresse, sans rechargement :
-     /projets/                     AI : « À traiter » (demandes reçues), mes projets et participations, mes activités
+     /projets/                     AI : « À traiter », mes programmes Temps, mes projets et participations, mes activités
      /projets/?demande=<clé>       le détail d'une demande reçue (le serveur dit si j'ai le droit de la lire : 404 sinon)
      /projets/?espace=<id>&page=…  un projet, avec le Dock que le serveur compose pour mon rôle (compte/projet.js)
    Rien n'est décidé ici : chaque lecture et chaque geste repartent au serveur, qui revérifie tout.
@@ -22,7 +22,7 @@ var STATUTS={nouvelle:'Nouvelle',lue:'Lue',en_cours:'En cours',convertie:'Transf
 var EMAIL={en_attente:'E-mail en cours d\'envoi',envoye:'E-mail envoyé',echec:'E-mail non parti',non_configure:'E-mail non configuré'};
 var QUOI={recue:'Demande reçue',email_envoye:'E-mail envoyé',email_echec:'L\'e-mail n\'est pas parti',email_non_configure:'E-mail non configuré sur ce site',renvoi:'E-mail renvoyé',statut:'Statut changé',note:'Note modifiée'};
 var ACTIVES=['nouvelle','lue','en_cours'];
-var gen=0,genListe=0,ctx={},ouverte=null,abonnes=[],monte=false,projetsConnus=null;
+var gen=0,genListe=0,genTemps=0,ctx={},ouverte=null,abonnes=[],monte=false,projetsConnus=null,resumesTemps=null,erreurTemps=false;
 function $(id){return document.getElementById(id)}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function requete(u,o){o=o||{};return fetch(u,{method:o.corps?'POST':'GET',credentials:'same-origin',cache:'no-store',headers:o.corps?{'Content-Type':'application/json'}:{},body:o.corps?JSON.stringify(o.corps):undefined})
@@ -32,12 +32,12 @@ function dire(t,ko){var s=$('dVivant');if(!s)return;s.className='vivant'+(ko?' k
 function annoncer(d){ouverte=d;abonnes.forEach(function(f){try{f(d)}catch(_){}})}
 
 /* ---------- les contextes ---------- */
-function titres(z,d){var T=$('tTitre'),S=$('tSous');if(z==='ai'){T.textContent='AI';S.textContent='Ce qui vous concerne : demandes, projets, activités';document.title='AI · AIME'}
+function titres(z,d){var T=$('tTitre'),S=$('tSous');if(z==='ai'){T.textContent='AI';S.textContent='Ce qui vous concerne : demandes, programmes, projets, activités';document.title='AI · AIME'}
  else if(z==='demande'){T.textContent='AI';S.textContent='Une demande reçue';document.title=(d?d.prenom+' '+d.nom+' · ':'')+'Demande · AIME'}}
 function montrer(z){
  if(z!=='projet'&&window.AIMEProjet)AIMEProjet.fermer();   /* le projet quitté s'arrête, sa réponse en vol est ignorée */
  if(z!=='demande'){gen++;var c=$('dCorps');if(c)c.textContent='';if(ouverte)annoncer(null)}
- if(z!=='ai')genListe++;   /* une liste en cours de chargement ne s'affiche plus sur un autre contexte */
+ if(z!=='ai'){genListe++;genTemps++;resumesTemps=null;erreurTemps=false;var at=$('aTemps'),al=$('tempsProgrammes'),ae=$('tempsEtat');if(at)at.hidden=true;if(al)al.textContent='';if(ae)ae.textContent=''}   /* aucune synthèse d'un ancien contexte ne reste à l'écran */
  $('espaces').hidden=z!=='ai';$('demande').hidden=z!=='demande';if(z!=='ai'&&$('local'))$('local').hidden=true;
  var ch=$('pChanger');if(ch)ch.open=false;
  if(z!=='projet'){titres(z);dockPersonnel()}}
@@ -46,9 +46,27 @@ function dockPersonnel(){var d=$('dock-site');if(!d||!window.AIMEPlus)return;AIM
 function route(){var q=new URLSearchParams(location.search),e=q.get('espace'),d=q.get('demande');
  if(e&&UUID.test(e)&&window.AIMEProjet){montrer('projet');return AIMEProjet.ouvrir(e,q.get('page'))}
  if(d&&CLE.test(d)){montrer('demande');return ouvrirDemande(d)}
- montrer('ai');if(ctx.chargerAI)ctx.chargerAI();chargerDemandes();chargerEngagements()}
+ montrer('ai');if(ctx.chargerAI)ctx.chargerAI();chargerDemandes();chargerEngagements();chargerTemps()}
 /* mes engagements ouverts (V1, P6) : un clic ouvre le projet, à « Mon accès », où ils se gèrent */
 function chargerEngagements(){var z=$('aEngagements');if(!z||!window.AIMEEngagements)return;AIMEEngagements.miens(z,{ouvrir:ouvrirProjet})}
+var ROLES_TEMPS={owner:'Organisation',editor:'Coordination',contributor:'Contribution',viewer:'Lecture seule',guest:'Invité'};
+function lienTemps(p,vue){var href=window.AIMEModules&&AIMEModules.destination('temps',p.espace);if(!href)href='/projets/?espace='+encodeURIComponent(p.espace)+'&page=deroule';return href+(vue==='cercle'?'&vue=cercle':'')}
+function ligneTemps(m){var li=el('li','ai-temps-moment'),h=el('time','ai-temps-heure',m.debut+' – '+m.fin+(m.finApresMinuit?' · lendemain':''));h.setAttribute('datetime',m.debut);li.appendChild(h);
+ var d=el('span','ai-temps-detail');d.appendChild(el('b',null,m.titre));if(m.lieu)d.appendChild(el('span',null,m.lieu));if(m.decalage)d.appendChild(el('span',null,'Horaire modifié · prévu '+m.prevu));if(m.fait)d.appendChild(el('span',null,'Fait'));if(m.planBActif)d.appendChild(el('span',null,'Lieu de repli activé'));li.appendChild(d);return li}
+function carteTemps(p){var c=el('article','ai-temps-carte'),haut=el('div','ai-temps-entete'),titre=el('div','ai-temps-projet'),nom=el('h3',null,p.titre),modele={mariage:'Mariage',seminaire:'Séminaire'}[p.modele]||'Projet';
+ titre.appendChild(nom);titre.appendChild(el('p',null,modele+' · '+(ROLES_TEMPS[p.role]||p.role)+' · Jour J'));haut.appendChild(titre);haut.appendChild(el('span','ai-temps-badge',p.moments.length+' moment'+(p.moments.length===1?'':'s')+' visible'+(p.moments.length===1?'':'s')));c.appendChild(haut);
+ if(!p.moments.length)c.appendChild(el('p','leg','Aucun moment visible dans ce programme.'));
+ else{var visibles=p.moments.slice(0,4),ul=el('ol','ai-temps-horaires');visibles.forEach(function(m){ul.appendChild(ligneTemps(m))});c.appendChild(ul);
+  if(p.moments.length>visibles.length){var details=el('details','ai-temps-more'),som=el('summary',null,'Voir les '+(p.moments.length-visibles.length)+' autres moments');details.appendChild(som);var reste=el('ol','ai-temps-horaires');p.moments.slice(visibles.length).forEach(function(m){reste.appendChild(ligneTemps(m))});details.appendChild(reste);c.appendChild(details)}}
+ var actions=el('div','ai-temps-actions'),a=el('a','b b-s','Ouvrir le programme');a.href=lienTemps(p,'liste');a.setAttribute('data-ouvrir-temps',p.espace);a.setAttribute('data-vue-temps','liste');actions.appendChild(a);
+ var b=el('a','b b-s','Ouvrir Circle');b.href=lienTemps(p,'cercle');b.setAttribute('data-ouvrir-temps',p.espace);b.setAttribute('data-vue-temps','cercle');actions.appendChild(b);c.appendChild(actions);return c}
+function poserTemps(){var z=$('aTemps'),L=$('tempsProgrammes'),E=$('tempsEtat');if(!z||!L||!E)return;L.textContent='';
+ if(resumesTemps&&resumesTemps.length){z.hidden=false;E.textContent='Horaires du Jour J, regroupés par projet et limités à ce que le serveur vous autorise à voir.';resumesTemps.forEach(function(p){L.appendChild(carteTemps(p))});return}
+ if(erreurTemps){if(projetsConnus&&projetsConnus.length){z.hidden=false;E.textContent='Le Temps ne peut pas être chargé pour le moment. Vos projets restent accessibles ci-dessous.'}else z.hidden=true;return}
+ if(resumesTemps&&projetsConnus&&projetsConnus.length){z.hidden=false;E.textContent='Aucun programme actif à afficher pour le moment. Les programmes de vos projets apparaîtront ici lorsqu’ils seront disponibles.';return}
+ if(projetsConnus&&projetsConnus.length){z.hidden=false;E.textContent='Chargement des programmes de vos projets…';return}z.hidden=true}
+function chargerTemps(){var n=++genTemps;resumesTemps=null;erreurTemps=false;poserTemps();return requete('/api/temps?resume=1').then(function(r){if(n!==genTemps)return;
+ if(r.statut===200&&r.j&&r.j.ok&&Array.isArray(r.j.programmes))resumesTemps=r.j.programmes;else erreurTemps=true;poserTemps()}).catch(function(){if(n!==genTemps)return;erreurTemps=true;poserTemps()})}
 function aller(url){try{history.pushState(null,'',url)}catch(_){location.href=url;return}route();try{window.scrollTo(0,0)}catch(_){}}
 function ouvrirProjet(id){if(!UUID.test(String(id||''))||!window.AIMEProjet)return;montrer('projet');AIMEProjet.ouvrir(id,'acces',{pousser:true});try{window.scrollTo(0,0)}catch(_){}}
 
@@ -147,12 +165,13 @@ function monter(o){ctx=o||{};if(monte)return;monte=true;
   var a=e.target.closest('[data-vers-ai],#dock-site a[data-lieu="ai"]');if(a){e.preventDefault();aller('/projets/');return}
   var np=e.target.closest('#dock-site a[data-geste="nouveauProjet"]');if(np){e.preventDefault();aller('/projets/');var t=$('eTitre');if(t){t.scrollIntoView({block:'center'});t.focus()}return}
   var dm=e.target.closest('[data-demande]');if(dm){e.preventDefault();aller('/projets/?demande='+encodeURIComponent(dm.getAttribute('data-demande')));return}
+  var tp=e.target.closest('[data-ouvrir-temps]');if(tp){e.preventDefault();var espace=tp.getAttribute('data-ouvrir-temps'),vue=tp.getAttribute('data-vue-temps');if(UUID.test(espace||''))aller('/projets/?espace='+encodeURIComponent(espace)+'&page=deroule'+(vue==='cercle'?'&vue=cercle':''));return}
   var op=e.target.closest('[data-ouvrir]');if(op){e.preventDefault();ouvrirProjet(op.getAttribute('data-ouvrir'));return}});
  var ch=$('pChanger');if(ch)ch.addEventListener('toggle',function(){if(ch.open)remplirChanger()});
  abonnes.push(poserPlus);
  var z=$('dock-site');if(z)z.addEventListener('aime:dock-geste',function(e){if(e.detail&&e.detail.id===GESTE){e.preventDefault();convertir()}});
  window.addEventListener('popstate',route)}
 
-window.AIMEAI={monter:monter,route:route,montrer:montrer,ouvrirProjet:ouvrirProjet,projets:function(l){projetsConnus=l||null},
+window.AIMEAI={monter:monter,route:route,montrer:montrer,ouvrirProjet:ouvrirProjet,projets:function(l){projetsConnus=l||null;if(!l){resumesTemps=null;erreurTemps=false;genTemps++}poserTemps()},
  surDemande:function(f){if(typeof f==='function')abonnes.push(f)},ouverte:function(){return ouverte},aller:aller};
 })();

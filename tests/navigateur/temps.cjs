@@ -39,6 +39,19 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     const comptes = {}; for (const p of DEMO.personnes) comptes[p.cle] = (await pool.query('select id, email from "user" where email = $1', [p.email])).rows[0];
     const { espace } = await M.semerDemo(A._pool(), DEMO, comptes);
     const programme = B + '/projets/?espace=' + espace + '&page=deroule';
+    console.log('AI : les programmes actifs sont retrouvables, avec la même vue filtrée');
+    const attendusAI = { camille: 9, gabriel: 9, lea: 9, alex: 8, sarah: 8, emma: 5 };
+    for (const k of Object.keys(page)) {
+      await page[k].goto(B + '/projets/', { waitUntil: 'networkidle' });
+      await page[k].waitForSelector('#aTemps:not([hidden]) .ai-temps-carte', { timeout: 8000 });
+      const carte = page[k].locator('#aTemps .ai-temps-carte').first(), texteAI = await carte.innerText();
+      ok((await carte.locator('.ai-temps-badge').innerText()).includes(String(attendusAI[k])), k + ' : AI montre ' + attendusAI[k] + ' moments visibles, pas un programme élargi');
+      ok(/Ouvrir le programme/.test(texteAI) && /Ouvrir Circle/.test(texteAI), k + ' : les deux vues sont directement retrouvables dans AI');
+      if (k === 'emma') ok(!/Installation des prestataires|Point coordination|Bars ouverts|prise 16 A/.test(texteAI), 'Emma : AI ne révèle aucun moment ou détail hors de sa vue');
+    }
+    await page.emma.locator('#aTemps [data-vue-temps="cercle"]').first().click();
+    await page.emma.waitForSelector('.tp-arc');
+    ok(/page=deroule/.test(page.emma.url()) && /vue=cercle/.test(page.emma.url()), 'AI ouvre Circle dans le projet et garde sa vue dans l\'adresse');
     const capture = async (k, nom) => { if (CAP) { fs.mkdirSync(CAP, { recursive: true }); await page[k].screenshot({ path: path.join(CAP, nom + '.png'), fullPage: true });
       const y = await page[k].evaluate(() => scrollY); await page[k].evaluate(() => scrollTo(0, 0)); await page[k].screenshot({ path: path.join(CAP, nom + '__ecran.png') }); await page[k].evaluate(v => scrollTo(0, v), y); } };   /* la page entière, et ce que l'écran montre (Dock compris) */
     const texte = k => page[k].locator('#pCorps').innerText();

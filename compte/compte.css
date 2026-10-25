@@ -66,8 +66,33 @@ body.en-projet #projet>.leg:first-child{margin:0}
    seule navigation fixe, le Dock, en bas */
 @media (max-width:560px),(max-height:500px){body.en-projet .tete{position:static}}
 
-/* AI : mon environnement (/projets/) — « À traiter », les demandes reçues, les engagements et leur détail */
+/* AI : mon environnement (/projets/) — programmes, demandes, engagements et projets */
 #aTraiter{gap:10px}
+#aTemps{gap:12px;margin-bottom:18px}
+.ai-temps-tete{display:flex;justify-content:space-between;gap:16px}
+.ai-temps-tete>div{max-width:720px}
+.ai-temps-k{margin:0 0 4px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--violet)}
+#t-temps{margin:0}
+.ai-temps-tete .leg{margin:6px 0 0;color:var(--doux)}
+.ai-temps-etat{min-height:1.4em;margin:0;color:var(--doux)}
+.ai-temps-liste{gap:12px}
+.ai-temps-carte{display:grid;gap:12px;border:1px solid rgba(17,17,24,.10);border-radius:18px;padding:18px;background:#FFFFFF;box-shadow:0 8px 24px -18px rgba(20,18,52,.18)}
+.ai-temps-entete{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.ai-temps-projet{min-width:0}
+.ai-temps-projet h3{margin:0;font:600 18px/1.25 var(--titre);color:var(--encre);overflow-wrap:anywhere}
+.ai-temps-projet p{margin:4px 0 0;font-size:13.5px;color:var(--doux)}
+.ai-temps-badge{flex:none;border:1px solid #D8D8E4;border-radius:999px;padding:5px 10px;background:#F7F7FB;color:#363644;font-size:12.5px;font-weight:600}
+.ai-temps-horaires{list-style:none;margin:0;padding:0;display:grid}
+.ai-temps-moment{display:grid;grid-template-columns:minmax(112px,auto) minmax(0,1fr);gap:12px;padding:10px 2px;border-top:1px solid #ECECF2}
+.ai-temps-heure{font:600 13px/1.45 ui-monospace,"SF Mono",Menlo,Consolas,monospace;color:#242431;white-space:nowrap}
+.ai-temps-detail{min-width:0;display:grid;gap:3px}
+.ai-temps-detail b{font-weight:600;line-height:1.35;color:var(--encre)}
+.ai-temps-detail span{font-size:13px;line-height:1.35;color:var(--doux);overflow-wrap:anywhere}
+.ai-temps-more summary{cursor:pointer;min-height:34px;padding:8px 2px;color:var(--encre);font-weight:600;text-underline-offset:3px}
+.ai-temps-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.ai-temps-actions a{text-decoration:none}
+.ai-temps-actions a:focus-visible{outline:2px solid var(--encre);outline-offset:2px}
+@media (max-width:560px){.ai-temps-entete{flex-direction:column}.ai-temps-moment{grid-template-columns:minmax(94px,auto) minmax(0,1fr);gap:8px;padding:9px 0}.ai-temps-heure{font-size:12px}.ai-temps-actions{display:grid}.ai-temps-actions a{width:100%;box-sizing:border-box}}
 .dm{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;width:100%;text-align:left;font:inherit;color:var(--encre);cursor:pointer;
  border:1px solid rgba(17,17,24,.10);background:#FFFFFF;border-radius:16px;padding:14px 16px;min-height:44px;box-shadow:0 8px 24px -18px rgba(20,18,52,.18)}
 .dm:hover{border-color:#111116;background:#FAFAFE}.dm:focus-visible{outline:2px solid var(--encre);outline-offset:2px}

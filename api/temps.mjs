@@ -2,6 +2,7 @@
 //   GET  ?espace=<uuid>[&depuis=<rev>]   → { actif, rev, vue } (ou { inchange: true } si rien n'a bougé depuis cette révision)
 //   GET  ?espace=<uuid>&journal=1        → l'historique, filtré pour cette personne
 //   GET  ?espace=<uuid>&comparer=[<id>]  → (propriétaire) la liste des personnes, ou la vue de l'une, coupée à la sienne
+//   GET  ?resume=1                       → les programmes actifs de AI, chaque moment filtré pour la personne connectée
 //   POST { action: 'geste', espace, geste: { action, p }, rev }  → { rev, touches } ; 409 si le programme a changé entre-temps
 //   POST { action: 'activer', espace }   → le propriétaire importe le programme type de son domaine
 // 401 sans session · 404 projet inconnu, rôle échu, moment invisible · 403 règle refusée · 503 module non installé.
@@ -10,7 +11,7 @@ import { auth, personne, _pool } from './_auth/auth.mjs';
 import { Refus } from './_auth/espaces.mjs';
 import R from './_auth/requete.cjs';
 import Q from './_auth/quotas.cjs';
-import { lire, historique, comparer, geste, activer } from './_temps/moteur.mjs';
+import { lire, resumer, historique, comparer, geste, activer } from './_temps/moteur.mjs';
 function json(res, code, o) { res.statusCode = code; res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify(o)); }
 async function corps(req) {
   if (req.body && typeof req.body === 'object') return req.body;
@@ -30,6 +31,7 @@ export default async function temps(req, res) {
   try {
     if (req.method === 'GET') {
       const q = new URL(req.url || '/', 'http://local').searchParams, espace = String(q.get('espace') || '');
+      if (q.has('resume') && !q.has('espace')) return json(res, 200, Object.assign({ ok: true }, await resumer(base, u)));
       if (q.has('journal')) return json(res, 200, Object.assign({ ok: true }, await historique(base, u, { espace })));
       if (q.has('comparer')) return json(res, 200, Object.assign({ ok: true }, await comparer(base, u, { espace, cible: q.get('comparer') || null })));
       return json(res, 200, Object.assign({ ok: true }, await lire(base, u, { espace, depuis: q.has('depuis') ? q.get('depuis') : null })));

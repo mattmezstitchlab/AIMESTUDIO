@@ -22,6 +22,8 @@ Dock (dock/modele.js composerReel)   Atlas (/capacites/, capacites/modules.js)  
 
 - **Le registre** (`modules/registre.js`) décrit chaque module : identifiant, fonction, ressources, actions et la règle de `permissions.js` qui décide chacune, présentations, contextes, destination, états, accessibilité, journal, intentions, preuves. Statuts : `operationnel` (Temps, Mon accès, Journal, Personnes), `composant` (Documents, Finances), `documente` (Messages). Le serveur en tire les pages servies (`pagesDe`), donc le Dock ; l'Atlas l'affiche ; l'écran de projet en tire ses pages.
 - **Pas de quatrième Dock** : le Dock unifié existant sait déjà poser un lieu pour toute page servie. Le Programme apparaît dans le Dock quand le serveur sert la page `deroule`, c'est-à-dire quand le projet a un programme.
+- **Découverte** : l'accueil présente une démonstration du Programme et de Circle à partir de la fixture fictive et des moteurs purs existants (`accueil/temps.js`). AI (`/projets/`) agrège les programmes actifs via `GET /api/temps?resume=1`, recalculés avec les droits de chaque personne ; les liens ouvrent directement Programme ou Circle dans le projet.
+- **Pas de calendrier inventé** : la synthèse AI affiche le « Jour J » et les heures stockées ; elle ne crée ni date de projet ni date par moment. Le modèle actuel reste daté « Jour J » jusqu'à l'évolution calendrier documentée (migration 08).
 - **Intentions sans IA** : `AIMEModules.intention("Léa décale le cocktail")` → `{ module: 'temps', action: 'retarder' }`, par motifs déterministes et testés.
 
 ### Navigation (correction du 24/10, revue de Matt)

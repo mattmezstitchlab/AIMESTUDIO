@@ -8,7 +8,7 @@
 //  * le navigateur ne reçoit que la vue calculée pour lui (et la Comparaison, coupée à ce que le demandeur lit lui-même) ;
 //  * un projet de démonstration (origine « demo ») n'est ouvert qu'aux comptes de démonstration, et réciproquement.
 import { createRequire } from 'module';
-import { role, enTransaction, relationPrete, duree, Refus } from '../_auth/espaces.mjs';
+import { role, enTransaction, relationPrete, duree, Refus, ACTIF } from '../_auth/espaces.mjs';
 import { inscrire } from '../_auth/journal.mjs';
 const require = createRequire(import.meta.url);
 const P = require('../../synchroview/permissions.js');
@@ -69,6 +69,38 @@ export async function lire(db, u, { espace, depuis }) {
   if (depuis != null && Number(depuis) === c.rev) return { actif: true, rev: c.rev, inchange: true };
   const prog = await charger(db, espace, c.rev);
   return { actif: true, rev: c.rev, demo: c.origine === 'demo', vue: T.vue(prog, c.s, P) };
+}
+
+/* AI : les programmes actifs des espaces de la personne, chacun recalculé par la même vue filtrée que /api/temps?espace=….
+   La synthèse ne renvoie ni notes d'équipe, ni responsabilités ou actions ; le navigateur ne choisit jamais les moments visibles. */
+export async function resumer(db, u) {
+  await exigerPret(db);
+  const d = await duree(db), origine = estDemo(u) ? "and t.origine = 'demo'" : "and t.origine <> 'demo'";
+  const { rows } = await db.query(`select s.id, s.title, s.data->>'modele' as modele
+    from spaces s join space_members m on m.space_id = s.id
+    join temps_espaces t on t.space_id = s.id
+    where m.user_id = $1 ${d ? ACTIF : ''} ${origine}
+    order by s.created_at desc limit 100`, [u.id]);
+  const programmes = new Array(rows.length); let prochain = 0;
+  async function ouvrier() {
+    while (prochain < rows.length) {
+      const i = prochain++, s = rows[i];
+      try {
+        const r = await lire(db, u, { espace: s.id, depuis: null });
+        if (!r.actif || !r.vue) continue;
+        programmes[i] = {
+          espace: s.id, titre: s.title, modele: s.modele || null, rev: r.rev, role: r.vue.role,
+          moments: r.vue.moments.map(m => ({ id: m.id, titre: m.titre, lieu: m.lieu, debut: m.debut, fin: m.fin,
+            finApresMinuit: m.fm >= 1440, fait: !!m.fait, decalage: m.decalage, prevu: m.prevu, planBActif: !!m.planBActif }))
+        };
+      } catch (e) {
+        if (e instanceof Refus && (e.code === 403 || e.code === 404)) continue; /* retrait / fin de rôle pendant la synthèse */
+        throw e;
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(5, rows.length) }, ouvrier));
+  return { programmes: programmes.filter(Boolean) };
 }
 
 /* les noms que cette personne a le droit de voir (member.read), pour le journal et la Comparaison */

@@ -101,6 +101,12 @@
 
  <!-- AI : mon environnement. « À traiter » n'existe que pour qui reçoit des demandes (le serveur répond 404 à tous les autres) -->
  <section id="espaces" hidden aria-labelledby="tTitre">
+  <!-- Le Temps : synthèse des programmes actifs, calculés par le serveur avec les droits de chaque projet -->
+  <section class="pile" id="aTemps" hidden aria-labelledby="t-temps">
+   <div class="ai-temps-tete"><div><p class="ai-temps-k">Le Temps</p><h2 class="k" id="t-temps">Mes programmes</h2><p class="leg">Les horaires visibles dans vos projets, rassemblés ici comme calendrier du Jour J. Ouvrez Programme ou Circle pour retrouver le module complet ; aucune date n'est ajoutée à cette synthèse.</p></div></div>
+   <p class="ai-temps-etat leg" id="tempsEtat" role="status" aria-live="polite"></p>
+   <div class="pile ai-temps-liste" id="tempsProgrammes"></div>
+  </section>
   <section class="pile" id="aTraiter" hidden aria-labelledby="t-traiter">
    <h2 class="k" id="t-traiter">À traiter</h2>
    <div class="pile" id="demandes"></div>

@@ -193,18 +193,53 @@ a{color:inherit}
  </div>
 </section>
 
-<!-- 5 · ce qui protège vos données, dans un vrai projet, aujourd'hui (rien d'autre que ce qui existe) -->
-<section class="v-sec" id="protection" aria-labelledby="tDetails" style="padding-top:56px">
+<!-- 5 · Le Temps quitte les coulisses : Programme et Circle, sur les données d'exemple du module -->
+<section class="v-sec" id="temps" aria-labelledby="tTemps" style="padding-top:56px">
  <div class="v-col">
-  <h2 class="v-titre" id="tDetails" style="font-size:clamp(36px,5vw,64px)">La confiance, dans chaque détail.</h2>
-  <dl class="v-rangs" tabindex="0" aria-label="Ce qui protège vos données ; faites défiler">
-   <div class="v-carte"><span class="ic" style="background:#E7F8EF" aria-hidden="true"><span class="v-pt" style="--pt:#34D399"></span></span><dt>Composé par le serveur</dt><dd class="v-leg">Ce qu'un écran ne montre pas n'est pas masqué : il ne lui est jamais envoyé.</dd></div>
-   <div class="v-carte"><span class="ic" style="background:#E8FAFD" aria-hidden="true"><span class="v-pt" style="--pt:#22D3EE"></span></span><dt>Un journal en ajout seul</dt><dd class="v-leg">Qui a fait quoi, et quand. Jamais le texte d'un message ou d'un engagement.</dd></div>
-   <div class="v-carte"><span class="ic" style="background:#FFF6E5" aria-hidden="true"><span class="v-pt" style="--pt:#F59E0B"></span></span><dt>Des accès qui expirent</dt><dd class="v-leg">Une place peut durer jusqu'à une date. Après, elle vaut absence.</dd></div>
-   <div class="v-carte"><span class="ic" style="background:#FFF1F3" aria-hidden="true"><span class="v-pt" style="--pt:#FB7185"></span></span><dt>Je vois un accès inattendu</dt><dd class="v-leg">Chacun peut le signaler. Le propriétaire lit le message, pas le nom.</dd></div>
-   <div class="v-carte"><span class="ic" style="background:#F1EEFF" aria-hidden="true"><span class="v-pt" style="--pt:#6D4AFF"></span></span><dt>Un lien que vous coupez</dt><dd class="v-leg">Votre Carte se partage par un lien. Coupé, il ne mène plus à rien, tout de suite.</dd></div>
-   <div class="v-carte"><span class="ic" style="background:#EAF2FE" aria-hidden="true"><span class="v-pt" style="--pt:#60A5FA"></span></span><dt>Accessible</dt><dd class="v-leg">Clavier, lecteur d'écran, contrastes : chaque parcours est vérifié WCAG 2.2 AA.</dd></div>
-  </dl>
+  <div class="v-tete v-tete-temps">
+   <div><p class="v-k">Le Temps · Programme / calendrier · Circle</p><h2 id="tTemps">Le déroulé, à votre place.</h2></div>
+   <p class="v-leg">Un même programme, en liste ou sur le cadran Circle. Les horaires sont ceux du Jour J : aucune date n'est ajoutée à la démonstration.</p>
+  </div>
+  <div class="v-carte v-temps-vitrine">
+   <div class="v-temps-produit">
+    <div class="v-temps-fen"><span class="v-feux" aria-hidden="true"><i></i><i></i><i></i></span><span>Mariage Camille &amp; Gabriel · démonstration, données fictives</span></div>
+    <div class="v-temps-corps">
+     <div class="v-temps-haut">
+      <div><span class="v-temps-jour">Jour J</span><h3 id="tempsDemoTitre">Programme</h3><p id="tempsDemoPlace">Chargement de la démonstration…</p></div>
+      <span class="v-pil" id="tempsDemoNombre" role="status" aria-live="polite">Démonstration</span>
+     </div>
+     <div class="v-temps-commandes">
+      <label for="tempsDemoQui">Voir depuis la place de</label>
+      <select id="tempsDemoQui" disabled><option>Chargement…</option></select>
+      <div class="v-temps-modes" role="group" aria-label="Présentation du programme">
+       <button type="button" class="v-btn2" data-temps-mode="liste" aria-pressed="true" disabled>Programme</button>
+       <button type="button" class="v-btn2" data-temps-mode="cercle" aria-pressed="false" disabled>Circle</button>
+      </div>
+     </div>
+     <section class="v-temps-vue" id="tempsDemoListe" aria-label="Programme en liste">
+      <ol class="v-temps-liste" id="tempsDemoMoments"></ol>
+     </section>
+     <section class="v-temps-vue" id="tempsDemoCercle" aria-label="Programme sur le cadran Circle" hidden>
+      <figure class="v-temps-figure">
+       <svg class="v-temps-cadran" id="tempsDemoSvg" viewBox="0 0 1000 1000" role="img" aria-labelledby="tempsDemoSvgT tempsDemoSvgD">
+        <title id="tempsDemoSvgT">Circle · journée de 24 heures</title>
+        <desc id="tempsDemoSvgD">Le cadran du programme sera affiché ici.</desc>
+       </svg>
+       <figcaption>Les mêmes horaires restent listés sous le cadran.</figcaption>
+      </figure>
+      <ol class="v-temps-liste v-temps-legende" id="tempsDemoMomentsCercle" aria-label="Horaires affichés sur Circle"></ol>
+     </section>
+     <p class="v-temps-etat" id="tempsDemoEtat" role="status" aria-live="polite">La démonstration utilise les règles de visibilité du module Temps.</p>
+    </div>
+   </div>
+   <aside class="v-temps-explication" aria-labelledby="tempsExplicationT">
+    <p class="v-k">Le même Temps, deux repères</p>
+    <h3 id="tempsExplicationT">Programme ou Circle.</h3>
+    <p class="v-leg">La liste détaille les moments visibles. Circle les place sur une journée de 24 heures, sans changer les règles d'accès. Une vue filtrée ne reçoit pas les moments cachés.</p>
+    <p class="v-temps-note">Cet aperçu est fictif et sans date : il montre les horaires du Jour J. Dans AI, retrouvez les programmes actifs de vos projets et ouvrez directement leur page Temps.</p>
+    <div class="v-temps-liens"><a class="v-btn" href="/projets/">Retrouver le Temps dans AI</a><a class="v-btn2" href="#ecrans">Voir comment les accès s'appliquent</a></div>
+   </aside>
+  </div>
  </div>
 </section>
 
@@ -226,7 +261,7 @@ a{color:inherit}
 <section class="v-entree" id="entree" aria-labelledby="tEntree">
  <span class="v-orbe" style="width:72px;height:72px" aria-hidden="true"><i></i><b></b></span>
  <h2 id="tEntree">Tout commence<br>par une intention.</h2>
- <p class="v-leg" style="font-size:17px;max-width:520px">Choisissez votre place en haut de la page, ou entrez dans votre espace : AI pour ce qui vous concerne, ME pour votre Carte.</p>
+ <p class="v-leg" style="font-size:17px;max-width:520px">Choisissez votre place en haut de la page, ou entrez dans votre espace : AI pour ce qui vous concerne — vos programmes, vos projets —, ME pour votre Carte.</p>
  <p style="margin:0;display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="v-btn" href="#jsChoix">Choisir ma place</a><a class="v-btn2" href="/projets/">Entrer dans AI</a></p>
 </section>
 
@@ -254,6 +289,11 @@ a{color:inherit}
 <script src="/accueil/demo.js"></script>
 <script src="/accueil/je-suis.js"></script>
 <script src="/coeur/roles.js"></script>
+<script src="/live/modele.js"></script>
+<script src="/modules/radial/noyau.js"></script>
+<script src="/modules/temps/moteur.js"></script>
+<script src="/modules/temps/cercle.js"></script>
+<script src="/accueil/temps.js"></script>
 <script src="/accueil/vitrine.js"></script>
 <!-- la régie applique ses textes et son orbe ; la coque de l'OS ne recouvre la page que si ?coque=1 est demandé -->
 <script src="/regie/donnees.js"></script>

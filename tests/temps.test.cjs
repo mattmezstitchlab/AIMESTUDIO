@@ -51,6 +51,22 @@ test('temps · chacun lit le même programme, réduit à ses droits, depuis la b
   assert.equal(moment(v.camille, 'cocktail').debut, '16:00');
 });
 
+test('temps · AI reçoit les programmes actifs, déjà filtrés par personne, sans notes ni date inventée', opts, async () => {
+  for (const k of ['camille', 'lea', 'alex', 'emma']) {
+    const r = await appel(TP.default, { method: 'GET', url: '/api/temps?resume=1', headers: H(C[k]) });
+    assert.equal(r.code, 200, k); assert.equal(r.body.programmes.length, 1, k);
+    const p = r.body.programmes[0]; assert.equal(p.espace, espace); assert.equal(p.rev, 1);
+    assert.deepEqual(p.moments.map(m => m.id), ids((await lire(k)).body.vue), k + ' : exactement sa vue');
+    assert.ok(!Object.hasOwn(p, 'date') && !Object.hasOwn(p, 'jour'), 'aucune date ajoutée automatiquement');
+    assert.ok(!/note|responsable|audience|gestes/.test(JSON.stringify(p)), 'la synthèse AI ne renvoie pas les champs non nécessaires');
+    if (k === 'emma') assert.ok(!/brief-traiteur|Bars ouverts|prise 16 A|Livraisons/.test(JSON.stringify(p)), 'l\'invitée ne reçoit que son programme public');
+    if (k === 'camille') assert.equal(p.moments.find(m => m.id === 'bal').finApresMinuit, true, 'le bal garde le passage après minuit');
+  }
+  await pool.query('insert into space_members (space_id, user_id, role) values ($1, $2, $3)', [espace, U.reel.id, 'viewer']);
+  try { const r = await appel(TP.default, { method: 'GET', url: '/api/temps?resume=1', headers: H(C.reel) }); assert.equal(r.code, 200); assert.deepEqual(r.body.programmes, [], 'un compte réel ne reçoit jamais la démonstration, même membre par erreur'); }
+  finally { await pool.query('delete from space_members where space_id = $1 and user_id = $2', [espace, U.reel.id]); }
+});
+
 test('temps · Léa décale le cocktail de 15 min : écrit, journalisé, propagé, persistant, et le dîner reste une proposition', opts, async () => {
   const r = await geste('lea', 'retarder', { moment: 'cocktail', minutes: 15 }, 1);
   assert.equal(r.code, 200, JSON.stringify(r.body)); assert.equal(r.body.rev, 2); assert.deepEqual(r.body.touches, ['cocktail']);

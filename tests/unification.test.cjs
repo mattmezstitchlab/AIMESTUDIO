@@ -46,13 +46,13 @@ test('le Bureau devient « Mes projets » : connecté, on arrive sur /projets/ ;
   assert.ok(require('../dock/modele.js').composer({ famille: 'Public connecté' }).lieux.some(e => e.href === '/projets/'), 'connecté : Mes projets est un lieu du Dock');
 });
 
-test('le texte de l\'accueil dit ce qui existe : le serveur compose, l\'Orbe explique ; ce qui protège ; d\'autres domaines ; l\'invitée n\'est pas témoin', () => {
+test('l\'accueil met le Temps au premier plan : programme, Circle et accès AI ; l\'invitée n\'est pas témoin', () => {
   const z = lire('index.html'), c = lire('coeur/coeur.js'), m = lire('vitrine/scenarios/mariage.json');
   for (const t of [z, c, m]) { assert.ok(!/L'orbe recueille|L\\?'orbe compose/.test(t.replace(/\/\*[\s\S]*?\*\//g, ''))); }
   assert.match(z, /le serveur compose la page de chacun selon son rôle/); assert.match(z, /L'Orbe, elle, explique les droits et propose les gestes/);
-  const p = z.match(/<section class="v-sec" id="protection"[\s\S]*?<\/section>/)[0];
-  for (const t of ['Composé par le serveur', 'Un journal en ajout seul', 'Des accès qui expirent', 'Je vois un accès inattendu', 'Un lien que vous coupez', 'Accessible']) assert.ok(p.includes(t), t);
-  assert.equal((p.match(/<dt>/g) || []).length, 6, 'rien d\'autre que ce qui existe (le lien coupable : P2 ; l\'accessibilité : parcours axe)');
+  const p = z.slice(z.indexOf('<!-- 5'), z.indexOf('<!-- 6'));
+  for (const t of ['Le Temps', 'Programme', 'Circle', 'Jour J', 'Retrouver le Temps dans AI', 'vue filtrée ne reçoit pas les moments cachés']) assert.ok(p.includes(t), t);
+  assert.ok(!p.includes('v-rangs') && !lire('accueil/vitrine.css').includes('.v-rangs'), 'les cartes horizontales de couleurs ont été remplacées par l\'aperçu Temps');
   assert.match(z, /id="domaines"[\s\S]*séminaire, une formation, une association[\s\S]*href="\/exemples\/"/);
   assert.ok(!/Témoin/.test(z) && !/"Témoin"/.test(m), 'Lucie est invitée, pas témoin');
   assert.match(z, /data-value="maries"[^>]*><span class="jl-pt" aria-hidden="true"><\/span><span class="jl-t">Futurs mariés<\/span>/, 'l\'accueil commence par « Je suis… » (PR C)');

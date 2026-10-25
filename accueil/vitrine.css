@@ -44,7 +44,7 @@ html.calme .v-orbe i{animation:none}
 #ecrans{background-color:#D8D0FF;background-image:linear-gradient(145deg,#D5CCFF 0%,#C6E9FF 52%,#FFD5E2 100%)}
 #mosaique{background-color:#C6EAFF;background-image:linear-gradient(150deg,#BAE7FF 0%,#D6CEFF 52%,#FFC9DB 100%)}
 #capacites{background-color:#FFE0BA;background-image:linear-gradient(145deg,#FFD8A8 0%,#FFC8DA 50%,#D5CDFF 100%)}
-#protection{background-color:#C2F0DF;background-image:linear-gradient(145deg,#B8EEDB 0%,#C2EAFF 52%,#DBD3FF 100%)}
+#temps{background-color:#C2F0DF;background-image:linear-gradient(145deg,#B8EEDB 0%,#C2EAFF 52%,#DBD3FF 100%)}
 #domaines{background-color:#DBD3FF;background-image:linear-gradient(145deg,#D4CBFF 0%,#FFC9DC 52%,#FFE2B6 100%)}
 #entree{background-color:#FFD4E0;background-image:linear-gradient(140deg,#FFC4D5 0%,#FFE0B2 38%,#D4CBFF 72%,#BDEAFF 100%)}
 
@@ -149,13 +149,60 @@ html.calme .v-tel .cadre,html.calme .v-scene{transition:none}
 .v-etapes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;list-style:none;padding:0}
 .v-etapes li.fait{background:#D1FAE5;border-color:#6EE7B7;color:#065F46}
 
-/* 5 · les détails de confiance */
-.v-rangs{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 18px;list-style:none;margin:0}
-.v-rangs>div{flex:0 0 300px;scroll-snap-align:start;padding:26px;display:flex;flex-direction:column;gap:10px;border-radius:24px;background:#FFFFFF}
-.v-rangs dt{font-size:18px;font-weight:600;margin-top:6px;color:var(--ink)}
-.v-rangs dd{margin:0}
-.v-rangs .ic{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center}
-.v-rangs .ic .v-pt{width:14px;height:14px}
+/* 5 · Le Temps : une même ressource, en Programme ou sur le cadran Circle */
+#temps .v-tete-temps{margin-bottom:26px}
+#temps .v-tete-temps .v-k{margin:0 0 10px}
+#temps .v-tete-temps h2{max-width:700px;margin:0;font:400 clamp(38px,5vw,64px)/1.02 var(--display);letter-spacing:-.025em;color:var(--ink)}
+#temps .v-tete-temps>p{max-width:440px}
+.v-temps-vitrine{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,.8fr);overflow:hidden}
+.v-temps-produit{min-width:0;background:#FFFFFF}
+.v-temps-fen{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid #E6E6EE;background:#FFFFFF}
+.v-temps-fen .v-feux i:nth-child(1){background:#FF5F57}.v-temps-fen .v-feux i:nth-child(2){background:#FEBC2E}.v-temps-fen .v-feux i:nth-child(3){background:#28C840}
+.v-temps-fen>span:last-child{flex:1;min-width:0;text-align:center;font-size:12.5px;color:var(--faint)}
+.v-temps-corps{padding:24px clamp(16px,3vw,30px) 20px}
+.v-temps-haut{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.v-temps-haut h3{margin:3px 0 4px;font:400 clamp(24px,3vw,34px)/1.1 var(--display);letter-spacing:-.02em;color:var(--ink)}
+.v-temps-haut p{margin:0;color:var(--faint);font-size:14px}
+.v-temps-jour{font:700 11px/1.2 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:#4C28E8}
+#tempsDemoNombre{flex:none;white-space:normal}
+.v-temps-commandes{display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:center;gap:10px 14px;padding:14px 0;border-top:1px solid #ECECF2;border-bottom:1px solid #ECECF2}
+.v-temps-commandes label{font-size:13.5px;font-weight:600;color:var(--ink)}
+.v-temps-commandes select{width:100%;min-width:0;min-height:44px;padding:0 12px;border:1px solid #C6C6D4;border-radius:12px;background:#FFFFFF;color:var(--ink);font:500 14px var(--ui)}
+.v-temps-modes{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.v-temps-modes .v-btn2[aria-pressed="true"]{background:#111116;border-color:#111116;color:#FFFFFF}
+.v-temps-vue{margin-top:18px}
+.v-temps-liste{list-style:none;margin:0;padding:0;display:grid}
+.v-temps-item{display:grid;grid-template-columns:minmax(108px,auto) minmax(0,1fr);gap:12px;padding:12px 4px;border-bottom:1px solid #ECECF2}
+.v-temps-item:last-child{border-bottom:0}
+.v-temps-h{font:600 13px/1.45 ui-monospace,"SF Mono",Menlo,Consolas,monospace;color:#242431;white-space:nowrap}
+.v-temps-item-texte{min-width:0;display:grid;gap:3px}
+.v-temps-item-texte b{font-size:14px;font-weight:600;line-height:1.35;color:var(--ink)}
+.v-temps-lieu,.v-temps-changement{font-size:12.5px;line-height:1.35;color:#454556;overflow-wrap:anywhere}
+.v-temps-changement{font-weight:600}
+.v-temps-figure{margin:0 auto;max-width:430px;text-align:center}
+.v-temps-cadran{display:block;width:min(100%,430px);height:auto;margin:0 auto;overflow:visible}
+.v-td-face{fill:#FFFFFF;stroke:#D8D8E4;stroke-width:2}
+.v-td-anneau{fill:none;stroke:#EFEFF5;stroke-width:2}
+.v-td-piste{fill:none;stroke:#F0F0F6}
+.v-td-tick{stroke:#C7C7D3;stroke-width:2}.v-td-tick.fort{stroke:#666675;stroke-width:3}
+.v-td-heure{fill:#4B4B5B;font:600 34px var(--ui);letter-spacing:.02em}
+.v-td-arc{fill:none;stroke:#6D4AFF;stroke-width:31;stroke-linecap:round}
+.v-td-prevu{fill:none;stroke:#4C28E8;stroke-width:8;stroke-dasharray:10 10;stroke-linecap:round}
+.v-td-zone{fill:none;stroke:#B45309;stroke-width:8;stroke-dasharray:5 8;stroke-linecap:round}
+.v-td-centre{fill:#111116;font:700 32px var(--ui);letter-spacing:.14em}
+.v-td-sous{fill:#454556;font:500 28px var(--ui)}
+.v-td-plus{fill:#4B4B5B;font:600 24px var(--ui)}
+.v-temps-figure figcaption{margin:0 0 10px;font-size:13px;color:#454556}
+.v-temps-legende{border-top:1px solid #ECECF2}
+.v-temps-etat{min-height:1.5em;margin:12px 0 0;font-size:13px;line-height:1.45;color:#454556}
+.v-temps-explication{display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding:clamp(24px,4vw,38px);background:#F8F8FC;border-left:1px solid #E6E6EE}
+.v-temps-explication .v-k{font-size:11.5px;letter-spacing:.18em}
+.v-temps-explication h3{margin:0;font:400 clamp(30px,4vw,44px)/1.05 var(--display);letter-spacing:-.02em;color:var(--ink)}
+.v-temps-explication .v-leg{font-size:15.5px}
+.v-temps-note{margin:0;padding-left:12px;border-left:3px solid #6D4AFF;font-size:13.5px;line-height:1.5;color:#363644}
+.v-temps-liens{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+@media (max-width:1000px){.v-temps-vitrine{grid-template-columns:minmax(0,1fr)}.v-temps-explication{border-left:0;border-top:1px solid #E6E6EE}}
+@media (max-width:560px){.v-temps-fen{padding:12px 10px}.v-temps-fen>span:last-child{font-size:11px}.v-temps-corps{padding:18px 14px}.v-temps-haut{flex-direction:column;gap:8px}.v-temps-commandes{grid-template-columns:minmax(0,1fr);gap:8px}.v-temps-modes{grid-column:auto}.v-temps-item{grid-template-columns:minmax(92px,auto) minmax(0,1fr);gap:8px;padding:11px 0}.v-temps-h{font-size:12px}.v-temps-item-texte b{font-size:13.5px}.v-temps-liens{width:100%}.v-temps-liens a{width:100%;box-sizing:border-box}.v-temps-explication{padding:24px 18px}}
 
 /* 6 · les domaines */
 .v-doms{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;list-style:none;margin:0;padding:0}

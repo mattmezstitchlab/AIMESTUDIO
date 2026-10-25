@@ -24,3 +24,13 @@ test('AI n\'écrit jamais de HTML venu du serveur, et ne décide d\'aucun droit'
   assert.ok(!/AIME_PROPRIETAIRES|proprietaire/.test(a), 'le droit de lire les demandes est décidé au serveur (404 sinon)');
   assert.match(a, /r\.statut===404\|\|r\.statut===405\)\{z\.hidden=true;return\}/, 'sans boîte de demandes : la section n\'existe pas');
 });
+
+test('AI rassemble les programmes Temps filtrés par le serveur et ouvre Programme ou Circle dans le bon projet', () => {
+  const a = code('compte/ai.js'), h = lire('compte/index.html'), api = lire('api/temps.mjs'), moteur = lire('api/_temps/moteur.mjs');
+  assert.match(h, /id="aTemps"[\s\S]*id="tempsProgrammes"/);
+  assert.match(a, /requete\('\/api\/temps\?resume=1'\)/);
+  assert.match(a, /data-ouvrir-temps/); assert.match(a, /page=deroule[\s\S]*vue=cercle/);
+  assert.match(api, /q\.has\('resume'\).*resumer\(base, u\)/);
+  assert.match(moteur, /export async function resumer[\s\S]*await lire\(db, u,[\s\S]*r\.vue\.moments/);
+  assert.match(a, /genTemps\+\+|genTemps/,'une réponse d’AI ne survit pas au changement de contexte');
+});

@@ -22,7 +22,7 @@ var Q=new URLSearchParams(location.search),
  /* venus de l'accueil (« Je suis… ») : créer le mariage, ou enregistrer l'activité d'un prestataire, une fois la session ouverte */
  CREER=Q.get('creer')==='mariage'&&/^[A-Za-z0-9_-]{6,80}$/.test(Q.get('origine')||'')?Q.get('origine'):null,ACTIVITE=/^[a-z][a-z-]{1,39}$/.test(Q.get('activite')||'')?Q.get('activite'):null,BIENVENUE=/^[a-z][a-z-]{1,39}$/.test(Q.get('bienvenue')||'')?Q.get('bienvenue'):null,INVIT=/^[A-Za-z0-9_-]{20,100}$/.test(Q.get('invitation')||'')?Q.get('invitation'):null,MODULE=window.AIMEModules&&AIMEModules.destination(Q.get('module')||'')?Q.get('module'):null,OUVRIR=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(Q.get('espace')||'')?Q.get('espace'):null,moi=null;
 if(INVIT)$('invite').hidden=false;
-if(PROJETS){document.title='AI · AIME';$('tTitre').textContent='AI';$('tSous').textContent='Ce qui vous concerne : demandes, projets, activités'}
+if(PROJETS){document.title='AI · AIME';$('tTitre').textContent='AI';$('tSous').textContent='Ce qui vous concerne : demandes, programmes, projets, activités'}
 if(Q.get('supprime'))toast('Votre compte a été supprimé. Merci d\'être passé par AIME.');
 else if(Q.get('erreur')||Q.get('error'))toast('Ce lien de connexion n\'est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau.',true);
 function nettoyerAdresse(){var u=new URL(location.href);['invitation','erreur','error','error_description','supprime','nouvel','creer','origine','activite','bienvenue'].forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,'',u.pathname+u.search)}
