@@ -26,29 +26,28 @@ test("l'accueil allégé : trois téléphones d'abord (les concernés), les autr
   const surprise = V.telephones('surprise');
   assert.equal(surprise.filter(t => t.on).length, 3, 'la surprise ne réveille que trois écrans');
   assert.equal(surprise.length - surprise.filter(t => t.on).length, 4, 'quatre restent silencieux : c’est ce que dit le bouton');
-  /* le film quitte le haut de page : il devient une section discrète, après les domaines */
-  assert.ok(!z.slice(z.indexOf('id="haut"'), z.indexOf('id="ecrans"')).includes('class="vg"'), 'plus de vidéos dans le premier écran');
-  assert.match(z, /<section class="v-sec v-film"[\s\S]*class="vg"/, 'le film a sa section');
-  assert.ok(z.indexOf('id="domaines"') < z.indexOf('v-film'), 'le film passe après les domaines');
+  /* 25/10 (soir) : plus aucune vidéo de présentation — la page s'allège */
+  assert.ok(!/<video|data-video|id="lecteur"/.test(z), 'aucune vidéo de présentation sur l’accueil');
+  assert.ok(!/\.v-film|\.vg-b|\.lecteur/.test(css), 'ni leurs styles');
   /* un chapeau, plus un slogan, au-dessus des trois cartes */
   assert.match(z, /<h2 class="v-kick" id="tCap">Ce que le produit sait faire<\/h2>/);
   assert.ok(!z.includes('Une architecture.'), 'le troisième slogan a disparu');
   assert.ok(!z.includes('Créer. Relier. Transformer.'), 'les trois mots sous le manifeste aussi');
   /* une seule couleur d'accent : celle de l'orbe */
-  assert.match(css, /--accent:#4C28E8/, 'l’accent est défini une fois');
-  assert.match(css, /\.clair \.bouton,\.v-btn\{[^}]*background:var\(--accent\)/, 'les boutons prennent l’accent');
+  assert.match(css, /--accent:#111114/, 'l’accent est défini une fois : le noir (25/10, le bleu-violet ne va pas)');
+  assert.match(css, /\.clair \.bouton,\.v-btn\{[^}]*background:#111114/, 'les boutons principaux sont noirs (25/10 : le bleu-violet ne va pas)');
 });
 
 test("l'iPhone de « Chacun son écran » : un fond par place, et le vrai cadran Circle (modules/temps/cercle.js)", () => {
   const z = lire('index.html'), css = lire('accueil/vitrine.css'), C = require('../modules/temps/cercle.js');
   assert.match(z, /<div class="v-hero" id="vHero">/, 'un seul écran, plus le grand bloc vertical');
-  assert.deepEqual([...z.matchAll(/data-fond="([a-z]+)"/g)].map(m => m[1]), V.PLACES.map(p => p.id), 'un fond par place, dans l ordre des places');
+  assert.ok(!/v-fonds|data-fond/.test(z), 'plus de fond en couleur derrière l’écran (25/10, soir)');
   assert.match(z, /<svg class="v-p-cadran" id="vCercle"[^>]*role="group"/, 'le cadran de l iPhone est un groupe nommé (ses arcs sont les boutons)');
   /* 25/10 : le cadran est seul dans l'iPhone, plus de liste de moments en dessous */
   assert.ok(!z.includes('id="vMoments"'), 'aucune liste de moments sous le cadran');
   assert.match(z, /<p class="v-p-dit" id="vCercleDit"><\/p>/, 'une ligne dit le moment choisi (la page est déjà une zone vivante)');
   assert.match(lire('accueil/vitrine.js'), /noms\[m\.id\]=m\.titre/, 'chaque arc porte son nom accessible');
-  for (const r of ['.v-fond.on', '.v-p-cadran', '.v-p-ecran']) assert.ok(css.includes(r), r + ' stylé');
+  for (const r of ['.v-p-cadran', '.v-p-ecran']) assert.ok(css.includes(r), r + ' stylé');
   for (const pl of V.PLACES) {
     const k = V.cadran(pl.id), M = C.modele(k, { rayon: 352, epaisseur: 40, ecart: 9 });
     assert.deepEqual(k.moments.map(m => m.id), V.composer(pl.id).vus.map(m => m.id), pl.id + ' : le cadran reçoit exactement la vue de la place');

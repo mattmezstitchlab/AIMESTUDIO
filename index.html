@@ -86,7 +86,7 @@ a{color:inherit}
 </header>
 
 <main>
-<!-- 1 · le titre, le manifeste, puis « Je suis… », la démonstration, la liste d'attente et les vidéos (inchangés) -->
+<!-- 1 · le titre, le manifeste, puis « Je suis… », la démonstration et la liste d'attente (les vidéos sont retirées, 25/10) -->
 <section class="zero" id="haut" aria-labelledby="t-zero">
  <span class="v-orbe" aria-hidden="true"><i></i><b></b></span>
  <div class="col">
@@ -115,17 +115,11 @@ a{color:inherit}
 <section class="v-sec" id="ecrans" aria-labelledby="tEcrans" style="padding-top:48px">
  <div class="v-col">
   <h2 class="v-titre" id="tEcrans"><span class="gris">Un projet.</span> Chacun son écran.</h2>
-  <!-- un seul iPhone : le fond change avec la place, la page se compose pour elle, et le cadran est celui du module Temps
+  <!-- un seul iPhone, écran blanc : la page se compose pour la place choisie, et le cadran est celui du module Temps
        (modules/temps/cercle.js, dessiné par accueil/temps.js). Rien n'est envoyé : les règles sont celles de synchroview/permissions.js. -->
   <div class="v-hero" id="vHero">
    <div class="v-p-scene">
     <div class="v-p-cadre">
-     <div class="v-fonds" aria-hidden="true">
-      <span class="v-fond" data-fond="owner"></span>
-      <span class="v-fond" data-fond="editor"></span>
-      <span class="v-fond" data-fond="contributor"></span>
-      <span class="v-fond" data-fond="guest"></span>
-     </div>
      <div class="v-p-ecran">
       <div class="v-p-haut"><span class="v-p-heure">9:41</span><span class="v-p-prj"><span class="v-pt" id="vVousPt" aria-hidden="true"></span>Mariage Camille &amp; Gabriel</span><span class="v-p-ondes" aria-hidden="true"></span></div>
       <div class="v-p-page" aria-live="polite">
@@ -289,18 +283,7 @@ a{color:inherit}
  </div>
 </section>
 
-<!-- 7 · le film, en deux pilules discrètes : rien en lecture automatique, sous-titres par défaut (media/) -->
-<section class="v-sec v-film" aria-labelledby="tFilm">
- <div class="v-col">
-  <h2 class="v-kick" id="tFilm">Le film</h2>
-  <ul class="vg" aria-label="Vidéos">
-    <li><button type="button" class="vg-b" data-video="aime-film" data-vtt data-titre="AIME en 2 minutes"><span class="vg-img"><img src="/media/aime-film.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">AIME en 2 minutes</span><span class="vg-d">2 min 22 · sous-titrée</span></button></li>
-    <li><button type="button" class="vg-b" data-video="aime-accueil" data-vtt data-titre="L'accueil en 45 secondes"><span class="vg-img"><img src="/media/aime-accueil.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">L'accueil en 45 secondes</span><span class="vg-d">45 s · sous-titrée</span></button></li>
-   </ul>
- </div>
-</section>
-
-<!-- 8 · l'entrée -->
+<!-- 7 · l'entrée -->
 <section class="v-entree" id="entree" aria-labelledby="tEntree">
  <span class="v-orbe" style="width:72px;height:72px" aria-hidden="true"><i></i><b></b></span>
  <h2 id="tEntree">Tout commence<br>par une intention.</h2>
@@ -310,14 +293,27 @@ a{color:inherit}
 
 <footer class="pied-site" id="contact">
  <div class="col">
-  <p class="sorties-note">Les démonstrations tournent dans ce navigateur, avec des données fictives.</p>
-  <nav class="pied-legal" aria-label="Informations légales"><a href="/tarifs/">Tarifs</a><span aria-hidden="true">·</span><a href="/mentions-legales/">Mentions légales</a><span aria-hidden="true">·</span><a href="/confidentialite/">Confidentialité</a><span aria-hidden="true">·</span><a href="/contact/">Contact</a></nav>
-<div class="pied-bas"><span>AIME®</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
+  <div class="pied-haut">
+   <div class="pied-marque">
+    <p class="pied-logo"><span class="pied-orbe" aria-hidden="true"><i></i><b></b></span>AIME<sup>®</sup></p>
+    <p class="pied-dit">Un projet.<br>Chacun son écran.</p>
+    <p class="sorties-note">Les démonstrations tournent dans ce navigateur, avec des données fictives.</p>
+   </div>
+   <nav class="pied-col" aria-label="Le produit">
+    <p class="pied-t">Le produit</p>
+    <a href="/projets/">AI</a>
+    <a href="/compte/">ME</a>
+    <a href="/exemples/">Exemples</a>
+   </nav>
+   <div class="pied-col">
+    <p class="pied-t">Informations légales</p>
+    <nav class="pied-legal" aria-label="Informations légales"><a href="/tarifs/">Tarifs</a><span aria-hidden="true">·</span><a href="/mentions-legales/">Mentions légales</a><span aria-hidden="true">·</span><a href="/confidentialite/">Confidentialité</a><span aria-hidden="true">·</span><a href="/contact/">Contact</a></nav>
+   </div>
+  </div>
+  <div class="pied-bas"><span>AIME<sup>®</sup> · 2026</span><button type="button" id="calme" aria-pressed="false">Réduire les animations</button></div>
  </div>
 </footer>
 </main>
-<!-- le lecteur : se ferme avec Échap, le bouton ou un clic à côté ; au-dessus du Dock (couche supérieure) -->
-<dialog class="lecteur" id="lecteur" aria-labelledby="lecteurT"><div class="lecteur-in"><div class="lecteur-tete"><h2 id="lecteurT"></h2><button type="button" id="lecteurFermer">Fermer<span class="sr"> la vidéo</span></button></div><video id="lecteurVideo" controls playsinline preload="none"></video></div></dialog>
 
 <script src="/contrats/projet.js"></script>
 <script src="/synchroview/permissions.js"></script>

@@ -15,11 +15,6 @@ var PLACES=[
  {id:'editor',nom:'La coordination',place:'Je coordonne',gestes:['Décaler un moment','Basculer en plan B','Inviter des invités']},
  {id:'contributor',nom:'Le DJ',place:'Je contribue',gestes:['Confirmer son horaire','Prendre un engagement','Déposer ses documents']},
  {id:'guest',nom:'L’invitée',place:'Je participe',gestes:['Répondre à l’invitation','Voir le programme public']}];
-var FONDS={
- owner:'linear-gradient(140deg,#FFC2D1 0%,#FFE0BE 100%)',
- editor:'linear-gradient(140deg,#CEC2FF 0%,#C4E8FF 100%)',
- contributor:'linear-gradient(140deg,#FFD599 0%,#FFC9BE 100%)',
- guest:'linear-gradient(140deg,#ADEBFF 0%,#C2F5DF 100%)'};
 /* dur : la durée du moment, en minutes ; c'est elle qui donne son arc au cadran (le bal finit après minuit) */
 var MOMENTS=[
  {id:'brief',t:'Brief traiteur',m:810,dur:30,a:'organisation',l:'Cuisine · organisation seulement'},
@@ -38,7 +33,7 @@ function composer(place,etat){etat=etat||{};var s=sujet(place),pl=PLACES.filter(
   return{id:x.id,titre:x.t,heure:hm(dep),debut:hm(dep),fin:hm(fin),dm:dep,fm:fin,decalage:dec,
    lieu:x.b&&etat.planB?x.b:(dec?x.l+' · décalé de 15 min':x.l),change:!!ch}});
  var decaler=P.can(s,'edit',{type:'event'}).allow;
- return{place:pl,couleur:RL.couleur(place),fond:FONDS[place],vus:vus,caches:MOMENTS.length-vus.length,decaler:decaler}}
+ return{place:pl,couleur:RL.couleur(place),vus:vus,caches:MOMENTS.length-vus.length,decaler:decaler}}
 /* la vue du cadran : exactement les moments que la place reçoit, au format que modules/temps/cercle.js attend.
    Rien n'est recalculé : ce sont les mêmes moments, ni plus (une place ne reçoit pas ce qu'elle ne lit pas) ni moins. */
 function cadran(place,etat){var r=composer(place,etat);
@@ -79,7 +74,7 @@ function telephones(evt){var e=EVTS.filter(function(x){return x.id===evt})[0]||E
 
 /* le jour J de la démonstration : une seule date au programme, juin 2027 (samedi 12) */
 var JOUR={annee:2027,mois:5,jour:12},MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],SEMAINE=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
-if(typeof document==='undefined')return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,JOUR:JOUR,calendrier:calendrier,composer:composer,cadran:cadran,telephones:telephones};
+if(typeof document==='undefined')return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,JOUR:JOUR,calendrier:calendrier,teinte:teinte,composer:composer,cadran:cadran,telephones:telephones};
 
 /* ---------- le navigateur ---------- */
 function $(id){return document.getElementById(id)}
@@ -129,8 +124,6 @@ function peindrePersonnes(){
    (l'onglet Circle). Le + du Dock choisit la place ; tout ce qui suit en dépend — c'est la même règle que le serveur. */
 function hero(){if(!$('vHero'))return;var r=composer(etat.place,etat);
  if(etat.choisi&&!r.vus.some(function(m){return m.id===etat.choisi}))etat.choisi=null;   /* la place a changé : un moment qu'elle ne voit pas ne reste pas choisi */
- /* le fond : une couche par place, celle de la place choisie s'allume (les autres s'éteignent) */
- [].forEach.call(document.querySelectorAll('.v-fond'),function(f){var on=f.getAttribute('data-fond')===etat.place;f.classList.toggle('on',on);if(on)f.style.backgroundImage=r.fond});
  $('vVous').textContent=r.place.nom;$('vVousPt').style.setProperty('--pt',r.couleur);
  $('vNb').textContent=r.vus.length+' moments';
  /* AI est le calendrier ; une date ouvre le jour en profondeur, et l'onglet commande le corps */
@@ -179,6 +172,10 @@ function dire(t){var d=$('vReelDit');if(d){d.textContent=t}}
 /* Le Dock du produit, le même partout : AI | + | ME (docs/DOCK.md, entrées `ai` et `me`). Décoratif dans une démonstration :
    les écrans sont des images du produit, pas des navigations. Un seul dessin, posé dans chaque écran (accueil/temps.js). */
 var ICONES={ai:'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',me:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21c.8-4 4-6.5 8-6.5s7.2 2.5 8 6.5'};
+/* la teinte d'une place : son rôle (coeur/roles.js) mélangé à du blanc — le fond des sept téléphones */
+function teinte(hex,p){var m=/^#?([0-9a-f]{6})$/i.exec(hex||'');if(!m)return '#FFFFFF';
+ var n=parseInt(m[1],16),r=(n>>16)&255,v=(n>>8)&255,b=n&255,mel=function(x){return Math.round(255-(255-x)*p)};
+ return '#'+[mel(r),mel(v),mel(b)].map(function(x){return Math.max(0,Math.min(255,x)).toString(16).padStart(2,'0')}).join('')}
 function iconeDock(nom){var s=document.createElementNS('http://www.w3.org/2000/svg','svg'),c=document.createElementNS('http://www.w3.org/2000/svg','path');
  s.setAttribute('class','v-p-dk-i');s.setAttribute('viewBox','0 0 24 24');c.setAttribute('d',ICONES[nom]);s.appendChild(c);return s}
 function poserDocks(){[].forEach.call(document.querySelectorAll('.v-p-dock'),function(z){
@@ -186,17 +183,17 @@ function poserDocks(){[].forEach.call(document.querySelectorAll('.v-p-dock'),fun
  var genre=z.getAttribute('data-plus');
  var ai=z.getAttribute('data-ai');
  [['ai','AI'],null,['me','ME']].forEach(function(x){
-  var e=el('span','v-p-dk');e.setAttribute('aria-hidden','true');
+  var e=el('span','v-p-dk');e.setAttribute('aria-hidden','true');e.title=x?x[1]:'';
   if(x&&x[0]==='ai'&&ai==='basculer'){var ba=el('button','v-p-dk');ba.type='button';ba.setAttribute('aria-label','AI, le calendrier du projet');
    ba.onclick=function(){etat.niveau=etat.niveau==='calendrier'?'jour':'calendrier';hero()};
-   ba.appendChild(iconeDock('ai'));ba.appendChild(el('b','v-p-dk-t','AI'));z.appendChild(ba);return}
+   ba.appendChild(iconeDock('ai'));z.appendChild(ba);return}
   if(!x){
    if(genre){var b=el('button','v-p-dk v-p-dk-plus');b.type='button';b.setAttribute('aria-haspopup','true');b.setAttribute('aria-expanded','false');
     b.setAttribute('aria-label',genre==='personnes'?'Choisir la place de la démonstration':'Choisir ma place');
     b.onclick=function(){plus(z,b)};b.removeAttribute('aria-hidden');e=b}
    else{e.className='v-p-dk v-p-dk-plus'}   /* sans place à choisir, le + reste une image du Dock */
    e.appendChild(el('i'));z.appendChild(e);return}
-  e.appendChild(iconeDock(x[0]));var t=el('b','v-p-dk-t',x[1]);e.appendChild(t);z.appendChild(e)})})}
+  e.appendChild(iconeDock(x[0]));z.appendChild(e)})})}
 /* ---------- le + : c'est là qu'on choisit son rôle (docs/DOCK.md) ----------
    Dans AI, la place décide de tout : ce que l'onglet Programme liste, ce que Circle dessine, ce que la carte autorise. */
 function itemsPlus(genre){
@@ -232,6 +229,8 @@ function plus(z,bouton){
 function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';
  telephones(evt).forEach(function(t){
   var li=el('li','v-tel'+(t.on?' allume':' eteint')+(t.on?'':' cache'));li.style.setProperty('--role',t.c);
+  li.style.setProperty('--role-fond',teinte(t.c,.20));   /* le fond du téléphone, pas un liseré */
+  li.style.setProperty('--role-fond-doux',teinte(t.c,.08));
   var c=el('div','cadre');
   /* barre supérieure du téléphone */
   var haut=el('div','vt-haut');
@@ -289,5 +288,5 @@ function monter(){if(!$('vHero'))return;hero();poserDocks();
  var ag=$('vAgent');if(ag)ag.onclick=function(){var li=document.querySelectorAll('#vEtapes li');[].forEach.call(li,function(x){x.classList.remove('fait');x.firstChild.textContent='·'});
   [].forEach.call(li,function(x,i){setTimeout(function(){x.classList.add('fait');x.firstChild.textContent='✓'},(i+1)*(document.documentElement.classList.contains('calme')?1:550))})}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',monter);else monter();
-return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,JOUR:JOUR,calendrier:calendrier,composer:composer,cadran:cadran,telephones:telephones};
+return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,JOUR:JOUR,calendrier:calendrier,teinte:teinte,composer:composer,cadran:cadran,telephones:telephones};
 });

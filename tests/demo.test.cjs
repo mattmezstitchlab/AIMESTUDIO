@@ -83,14 +83,11 @@ test('le serveur : une activité n\'accepte que les métiers du fichier, et ne t
   assert.match(code('api/espaces.mjs'), /Object\.hasOwn\(ACTIONS, b\.action\)/, 'une action héritée d\'Object n\'est pas une action');
 });
 
-test('les vidéos : deux vignettes, fichiers présents dans media/, pas de lecture automatique, preload="none", sous-titres', () => {
+test('plus de vidéos de présentation : ni lecture automatique, ni lecteur, ni fichier chargé', () => {
   const h = lire('index.html');
-  for (const [n, t] of [['aime-film', 'AIME en 2 minutes'], ['aime-accueil', 'L\'accueil en 45 secondes']]) {
-    assert.match(h, new RegExp('data-video="' + n + '" data-vtt data-titre="' + t.replace(/'/g, "'") + '"'));
-    for (const ext of ['.mp4', '.jpg', '.fr.vtt']) assert.ok(fs.existsSync(path.join(__dirname, '..', 'media', n + ext)), n + ext);
-    assert.match(lire('media/' + n + '.fr.vtt'), /^WEBVTT/);
-    assert.ok(fs.statSync(path.join(__dirname, '..', 'media', n + '.mp4')).size < 25e6, n + ' : moins de 25 Mo');
-  }
-  assert.match(h, /<video id="lecteurVideo" controls playsinline preload="none"><\/video>/); assert.ok(!/autoplay/.test(h));
-  const j = code('accueil/je-suis.js'); assert.match(j, /tr\.default=true/); assert.match(j, /e\.key==='Escape'/); assert.match(j, /dlg\.addEventListener\('cancel'/);
+  assert.ok(!/<video/i.test(h) && !/data-video/.test(h), 'aucune balise vidéo ni vignette sur l’accueil');
+  assert.ok(!/id="lecteur"/.test(h), 'le lecteur modal a disparu');
+  const j = code('accueil/je-suis.js');
+  assert.ok(!/lecteurVideo|data-video/.test(j), 'plus un seul gestionnaire de vidéo dans le script');
+  assert.ok(!/autoplay/.test(h), 'rien ne démarre tout seul');
 });

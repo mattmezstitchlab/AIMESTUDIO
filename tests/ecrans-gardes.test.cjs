@@ -17,7 +17,7 @@ const matcher = () => { const m = lire('middleware.js').match(/matcher:\s*\['((?
 test('middleware.js : le matcher prend toute adresse qui peut mener aux écrans, même encodée ; aucune base ni secret chargés', async () => {
   const { ECRANS, estGarde } = await E(), s = lire('middleware.js'), re = matcher();
   for (const p of [...ECRANS, ...DETOURS]) { assert.ok(re.test(p), 'le middleware est appelé : ' + p); assert.ok(estGarde(p), 'et la garde reconnaît : ' + p); }
-  for (const p of ['/regie/regie.js', '/maitre/maitre.css', '/fonts/InterVariable-latin.woff2', '/media/aime-film.mp4', '/api/identite', '/_vercel/speed-insights/script.js'])
+  for (const p of ['/regie/regie.js', '/maitre/maitre.css', '/fonts/InterVariable-latin.woff2', '/media/visuels/traiteur.webp', '/api/identite', '/_vercel/speed-insights/script.js'])
     assert.ok(!re.test(p), 'ressource ou API, sans middleware : ' + p);
   assert.ok(re.test('/%72egie/regie.js'), 'un « % » dans le chemin : le middleware décide, toujours');
   assert.match(s, /runtime:\s*'nodejs'/);

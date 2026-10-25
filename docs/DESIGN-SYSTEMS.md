@@ -98,3 +98,11 @@ Pour Pro Atelier, le relief est `#1C6E80`, qui atteint 5,27:1.
 - le gel de plusieurs révisions d'un même système (une seule révision existe, la 1.0.0) ;
 - les autres réalisations (Cube, sites de l'ancien générateur) ;
 - la Régie, qui garde ses ambiances.
+
+## 25/10/2026 (soir) — décisions de Matt sur l'accueil
+
+- **Plus de fond en couleur derrière l'écran du héros** : l'écran est blanc, c'est le cadre noir qui le tient. La couleur d'une place passe désormais dans le **fond** des sept téléphones (teinte douce calculée depuis `coeur/roles.js`), plus dans un **liseré**.
+- **Les boutons principaux sont noirs** (`#111114`, survol `#000000`) : le bleu-violet `#4C28E8` ne va pas. `--accent` vaut donc `#111114` ; la seule couleur reste l'orbe et le + irisé. Les états choisis passent au gris (`#F4F4F8`) avec un filet noir.
+- **Plus de vidéos de présentation** : la section « Le film » et son lecteur sont retirés, les mp4/jpg/vtt aussi. La page s'allège ; la démonstration suffit.
+- **Le pied de page est refait** : la marque et l'orbe, « Un projet. Chacun son écran. », deux colonnes (Le produit · Informations légales), une ligne du bas (AIME® · 2026, « Réduire les animations »). Le `nav.pied-legal` garde ses quatre liens dans l'ordre pour `tests/pages-legales.test.cjs`.
+

@@ -6,7 +6,7 @@
    - invité·e : « Ce rôle arrive par invitation », sans inscription.
    Le choix ne donne aucun rôle : seule la personne qui crée un projet en devient propriétaire, parce que le serveur le crée.
    Aucun appel au serveur avant le clic sur « Créer » ; aucune donnée de démo n'est copiée dans un vrai compte.
-   Les vidéos : deux vignettes, un lecteur qui se ferme avec Échap, sous-titres par défaut (quand le .vtt est là), rien en lecture automatique. */
+   Plus de vidéos de présentation (25/10, soir) : la page s'allège, il ne reste que la démonstration. */
 (function(){'use strict';
 var $=function(i){return document.getElementById(i)},C=window.AIMECreer,D=window.AIMEDemo;
 var choix=$('jsChoix'),zone=$('demo');if(!choix||!zone||!D)return;
@@ -69,18 +69,4 @@ $('dmSon').addEventListener('click',function(){if(!demo)return;var m=demo.couper
 /* un choix déjà fait (retour arrière du navigateur) : la démo suit */
 if(choix.value)montrer(choix.value);
 
-/* ---------- les vidéos ---------- */
-var dlg=$('lecteur'),video=$('lecteurVideo'),ouvreur=null;
-function fermer(){if(!dlg.open)return;try{video.pause()}catch(e){}video.removeAttribute('src');[].forEach.call(video.querySelectorAll('track'),function(t){t.remove()});video.load();if(dlg.close)dlg.close();else dlg.removeAttribute('open');document.body.classList.remove('lecteur-ouvert');if(ouvreur)ouvreur.focus()}
-[].forEach.call(document.querySelectorAll('[data-video]'),function(b){b.addEventListener('click',function(){ouvreur=b;var n=b.getAttribute('data-video');
- $('lecteurT').textContent=b.getAttribute('data-titre');video.setAttribute('poster','/media/'+n+'.jpg');video.setAttribute('preload','none');video.src='/media/'+n+'.mp4';
- /* les sous-titres, affichés par défaut, dès que leur fichier est déposé dans media/ (data-vtt sur la vignette) */
- if(b.hasAttribute('data-vtt')){var tr=document.createElement('track');tr.kind='subtitles';tr.srclang='fr';tr.label='Français';tr.src='/media/'+n+'.fr.vtt';tr.default=true;video.appendChild(tr)}
- if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','');document.body.classList.add('lecteur-ouvert');
- video.addEventListener('loadedmetadata',function x(){video.removeEventListener('loadedmetadata',x);if(video.textTracks[0])video.textTracks[0].mode='showing'});
- $('lecteurFermer').focus()})});
-$('lecteurFermer').addEventListener('click',fermer);
-dlg.addEventListener('cancel',function(e){e.preventDefault();fermer()});
-dlg.addEventListener('keydown',function(e){if(e.key==='Escape'){e.preventDefault();fermer()}});
-dlg.addEventListener('click',function(e){if(e.target===dlg)fermer()});
 })();

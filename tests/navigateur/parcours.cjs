@@ -299,11 +299,8 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     await p.click('#dmSon'); ok(await p.getAttribute('#dmSon', 'aria-pressed') === 'true', 'Accueil : le son se coupe');
     await p.waitForFunction(() => document.querySelectorAll('#demo .nt').length > 0, null, { timeout: 15000 }).catch(() => {});
     ok(await p.evaluate(() => document.querySelectorAll('#demo .nt').length > 0), 'Accueil : les notifications arrivent sur les téléphones concernés');
-    // les deux vidéos : rien en lecture automatique, preload="none", sous-titres par défaut, Échap ferme
-    await p.click('[data-video="aime-film"]'); await p.waitForTimeout(300);
-    ok(await p.evaluate(() => { const d = document.getElementById('lecteur'), v = document.getElementById('lecteurVideo'), tr = v.querySelector('track'); return d.open && v.paused && v.preload === 'none' && !v.autoplay && /aime-film\.mp4$/.test(v.src) && tr && tr.default && tr.srclang === 'fr'; }), 'Accueil : la vidéo s\'ouvre sans lecture automatique, preload="none", sous-titres par défaut');
-    await p.keyboard.press('Escape'); await p.waitForTimeout(200);
-    ok(await p.evaluate(() => !document.getElementById('lecteur').open && document.activeElement && document.activeElement.getAttribute('data-video') === 'aime-film'), 'Accueil : Échap ferme le lecteur et rend le focus à la vignette');
+    // plus de vidéos de présentation : la section et son lecteur ont disparu
+    ok(await p.evaluate(() => !document.querySelector('[data-video]') && !document.getElementById('lecteur') && !document.querySelector('video')), 'Accueil : aucune vidéo de présentation');
     ok(await p.evaluate(() => !document.getElementById('acApercu') && ![...document.querySelectorAll('a[href]')].some(a => /\/(sites|studio|canevas|bureau|lab|aime)\//.test(a.getAttribute('href')))), 'Accueil : ni aperçu de mini-site ni lien vers les outils mis de côté');
     // les anciens essais de ce navigateur : rien ne se perd, ils paraissent dans Mes projets, « Sur cet appareil », sans être envoyés
     await p.goto(B + '/projets/', { waitUntil: 'networkidle' });
