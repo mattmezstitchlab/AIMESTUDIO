@@ -18,6 +18,27 @@ function contraste(a, b) {
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
 
+test("l'accueil allégé : trois téléphones d'abord (les concernés), les autres sur demande, et le film à part", () => {
+  const z = lire('index.html'), css = lire('accueil/vitrine.css'), js = lire('accueil/vitrine.js');
+  assert.match(z, /<button type="button" class="v-btn2" id="vTelsTous" aria-pressed="false" aria-controls="vTels">/, 'un seul bouton pour ouvrir les autres écrans');
+  assert.match(css, /\.v-tels:not\(\.tous\) \.v-tel\.cache\{display:none\}/, 'les écrans non concernés sont masqués, pas grisés');
+  assert.match(js, /el\('li','v-tel'\+\(t\.on\?' allume':' eteint'\)\+\(t\.on\?'':' cache'\)\)/, 'la classe est posée sur ceux qui ne réagissent pas');
+  const surprise = V.telephones('surprise');
+  assert.equal(surprise.filter(t => t.on).length, 3, 'la surprise ne réveille que trois écrans');
+  assert.equal(surprise.length - surprise.filter(t => t.on).length, 4, 'quatre restent silencieux : c’est ce que dit le bouton');
+  /* le film quitte le haut de page : il devient une section discrète, après les domaines */
+  assert.ok(!z.slice(z.indexOf('id="haut"'), z.indexOf('id="ecrans"')).includes('class="vg"'), 'plus de vidéos dans le premier écran');
+  assert.match(z, /<section class="v-sec v-film"[\s\S]*class="vg"/, 'le film a sa section');
+  assert.ok(z.indexOf('id="domaines"') < z.indexOf('v-film'), 'le film passe après les domaines');
+  /* un chapeau, plus un slogan, au-dessus des trois cartes */
+  assert.match(z, /<h2 class="v-kick" id="tCap">Ce que le produit sait faire<\/h2>/);
+  assert.ok(!z.includes('Une architecture.'), 'le troisième slogan a disparu');
+  assert.ok(!z.includes('Créer. Relier. Transformer.'), 'les trois mots sous le manifeste aussi');
+  /* une seule couleur d'accent : celle de l'orbe */
+  assert.match(css, /--accent:#4C28E8/, 'l’accent est défini une fois');
+  assert.match(css, /\.clair \.bouton,\.v-btn\{[^}]*background:var\(--accent\)/, 'les boutons prennent l’accent');
+});
+
 test("l'iPhone de « Chacun son écran » : un fond par place, et le vrai cadran Circle (modules/temps/cercle.js)", () => {
   const z = lire('index.html'), css = lire('accueil/vitrine.css'), C = require('../modules/temps/cercle.js');
   assert.match(z, /<div class="v-hero" id="vHero">/, 'un seul écran, plus le grand bloc vertical');

@@ -39,7 +39,7 @@ a{color:inherit}
 <link rel="stylesheet" href="/attente/attente.css">
 <link rel="stylesheet" href="/dock/dock.css">
 <link rel="stylesheet" href="/nav/pied-legal.css">
-<link rel="stylesheet" href="/accueil/vitrine.css?v=3">
+<link rel="stylesheet" href="/accueil/vitrine.css?v=4">
 <script>window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };</script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
@@ -92,7 +92,6 @@ a{color:inherit}
  <div class="col">
   <h1 id="t-zero">AIME<sup>®</sup></h1>
   <p class="intention" data-regie="intention"><span class="gris">On ne peut pas tout être au même moment.</span> Mais on peut être bien plus qu'une seule chose.</p>
-  <p class="trois" data-regie="trois">Créer. Relier. Transformer.</p>
  </div>
  <!-- la démo : les téléphones du mariage, le rôle choisi au centre (accueil/demo.js, vitrine/metiers.json) -->
  <section class="dm" id="demo" hidden aria-labelledby="dmTete">
@@ -110,11 +109,6 @@ a{color:inherit}
   </form>
   <p class="vivant" id="jsVivant" role="status" aria-live="polite"></p>
  </section>
- <!-- deux vidéos, à la place des exemples : rien en lecture automatique, sous-titres par défaut (media/) -->
- <ul class="vg" aria-label="Vidéos">
-  <li><button type="button" class="vg-b" data-video="aime-film" data-vtt data-titre="AIME en 2 minutes"><span class="vg-img"><img src="/media/aime-film.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">AIME en 2 minutes</span><span class="vg-d">2 min 22 · sous-titrée</span></button></li>
-  <li><button type="button" class="vg-b" data-video="aime-accueil" data-vtt data-titre="L'accueil en 45 secondes"><span class="vg-img"><img src="/media/aime-accueil.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">L'accueil en 45 secondes</span><span class="vg-d">45 s · sous-titrée</span></button></li>
- </ul>
 </section>
 
 <!-- 2 · Un projet. Chacun son écran. Le produit en héros, sur les vraies règles (accueil/vitrine.js : synchroview/permissions.js, coeur/roles.js) -->
@@ -165,9 +159,10 @@ a{color:inherit}
 <!-- 3 · les sept téléphones (la mosaïque, gardée) : seuls les écrans concernés s'allument -->
 <section class="v-sec v-alt" id="mosaique" aria-labelledby="tMosa">
  <div class="v-col">
-  <div class="v-tete"><h2 id="tMosa">Le réel bouge,<br>chacun le sait.</h2><p class="v-leg">Sept personnes, sept téléphones, un seul mariage. Quand quelque chose arrive, seuls les écrans concernés s'allument. Choisissez ce qui arrive.</p></div>
+  <div class="v-tete"><h2 id="tMosa">Le réel bouge,<br>chacun le sait.</h2><p class="v-leg">Sept personnes, sept téléphones, un seul mariage. Quand quelque chose arrive, seuls les écrans concernés s'allument. Choisissez ce qui arrive : les autres restent silencieux.</p></div>
   <div class="v-evts" id="vEvts" role="group" aria-label="Ce qui arrive"></div>
   <ul class="v-tels" id="vTels" aria-live="polite"></ul>
+  <div class="v-tels-ctrl"><button type="button" class="v-btn2" id="vTelsTous" aria-pressed="false" aria-controls="vTels">Voir les sept téléphones</button></div>
   <p class="v-leg" style="margin-top:22px;font-size:14px"><a href="/exemples/mosaique/">Voir la mosaïque en grand</a></p>
  </div>
 </section>
@@ -175,7 +170,7 @@ a{color:inherit}
 <!-- 4 · une capacité par carte, chacune vivante -->
 <section class="v-sec" id="capacites" aria-labelledby="tCap" style="padding-bottom:40px">
  <div class="v-col v-caps">
-  <h2 class="v-titre" id="tCap" style="margin-bottom:12px"><span class="gris">Une architecture.</span> Plusieurs gestes.</h2>
+  <h2 class="v-kick" id="tCap">Ce que le produit sait faire</h2>
   <article class="v-carte v-cap ambre" aria-labelledby="tEng">
    <div><p class="v-k">Engagements</p><h3 id="tEng">Qui doit quoi,<br>pour quand.</h3><p class="v-leg">Une promesse datée entre deux personnes du projet. Seules elles, et l'organisation, la voient. Le retard est dit en toutes lettres.</p></div>
    <div>
@@ -274,7 +269,18 @@ a{color:inherit}
  </div>
 </section>
 
-<!-- 7 · l'entrée -->
+<!-- 7 · le film, en deux pilules discrètes : rien en lecture automatique, sous-titres par défaut (media/) -->
+<section class="v-sec v-film" aria-labelledby="tFilm">
+ <div class="v-col">
+  <h2 class="v-kick" id="tFilm">Le film</h2>
+  <ul class="vg" aria-label="Vidéos">
+    <li><button type="button" class="vg-b" data-video="aime-film" data-vtt data-titre="AIME en 2 minutes"><span class="vg-img"><img src="/media/aime-film.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">AIME en 2 minutes</span><span class="vg-d">2 min 22 · sous-titrée</span></button></li>
+    <li><button type="button" class="vg-b" data-video="aime-accueil" data-vtt data-titre="L'accueil en 45 secondes"><span class="vg-img"><img src="/media/aime-accueil.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">L'accueil en 45 secondes</span><span class="vg-d">45 s · sous-titrée</span></button></li>
+   </ul>
+ </div>
+</section>
+
+<!-- 8 · l'entrée -->
 <section class="v-entree" id="entree" aria-labelledby="tEntree">
  <span class="v-orbe" style="width:72px;height:72px" aria-hidden="true"><i></i><b></b></span>
  <h2 id="tEntree">Tout commence<br>par une intention.</h2>
@@ -301,7 +307,7 @@ a{color:inherit}
 <script src="/projets/projets.js"></script>
 <script src="/compte/creer.js"></script>
 <script src="/accueil/liste.js"></script>
-<script src="/accueil/capsule.js?v=3"></script>
+<script src="/accueil/capsule.js?v=4"></script>
 <script src="/attente/attente.js"></script>
 <script>(function(){var f=document.getElementById('atBloc');if(f&&window.AIMEAttente)AIMEAttente.bloc(f)})();</script>
 <script src="/accueil/demo.js"></script>
@@ -311,9 +317,9 @@ a{color:inherit}
 <script src="/modules/radial/noyau.js"></script>
 <script src="/modules/temps/moteur.js"></script>
 <script src="/modules/temps/cercle.js"></script>
-<script src="/accueil/temps.js?v=3"></script>
-<script src="/accueil/vitrine.js?v=3"></script>
-<script src="/accueil/reveler.js?v=3"></script>
+<script src="/accueil/temps.js?v=4"></script>
+<script src="/accueil/vitrine.js?v=4"></script>
+<script src="/accueil/reveler.js?v=4"></script>
 <!-- la régie applique ses textes et son orbe ; la coque de l'OS ne recouvre la page que si ?coque=1 est demandé -->
 <script src="/regie/donnees.js"></script>
 <script src="/nav/registre.js"></script>

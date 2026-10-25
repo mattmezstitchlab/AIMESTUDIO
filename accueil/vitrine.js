@@ -113,7 +113,7 @@ function dire(t){var d=$('vReelDit');if(d){d.textContent=t}}
 
 function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';
  telephones(evt).forEach(function(t){
-  var li=el('li','v-tel'+(t.on?' allume':' eteint'));li.style.setProperty('--role',t.c);
+  var li=el('li','v-tel'+(t.on?' allume':' eteint')+(t.on?'':' cache'));li.style.setProperty('--role',t.c);
   var c=el('div','cadre');
   /* barre supérieure du téléphone */
   var haut=el('div','vt-haut');
@@ -150,12 +150,20 @@ function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';
   var n=el('p','nom');n.appendChild(pastille(t.c));n.appendChild(document.createTextNode(t.nom));li.appendChild(n);
   li.appendChild(el('p','voit',t.voit));
   L.appendChild(li)});
- [].forEach.call(document.querySelectorAll('#vEvts button'),function(b){b.setAttribute('aria-pressed',b.dataset.evt===evt?'true':'false')})}
+ [].forEach.call(document.querySelectorAll('#vEvts button'),function(b){b.setAttribute('aria-pressed',b.dataset.evt===evt?'true':'false')});
+ reglerTels($('vTels').classList.contains('tous'))}
+/* les écrans qui réagissent d'abord ; les autres (qui restent silencieux) sur demande, pour que la leçon se voie */
+function reglerTels(tous){var L=$('vTels'),b=$('vTelsTous');if(!L||!b)return;
+ L.classList.toggle('tous',!!tous);b.setAttribute('aria-pressed',tous?'true':'false');
+ var n=L.querySelectorAll('.v-tel.cache').length;
+ b.hidden=!tous&&!n;   /* tout le monde est concerné : il n'y a rien à ouvrir */
+ b.textContent=tous?'Voir seulement les écrans concernés':'Voir les '+n+' autres téléphones'}
 
 function monter(){if(!$('vHero'))return;hero();
  $('vDecaler').onclick=function(){etat.decale=!etat.decale;$('vReelDit').dataset.gardé='1';hero();dire(etat.decale?'Écrit une fois : le cocktail passe à 16:15 sur chaque écran qui le voit.':'Le cocktail revient à 16:00.')};
  $('vPlanB').onclick=function(){etat.planB=!etat.planB;$('vReelDit').dataset.gardé='1';hero();dire(etat.planB?'Plan B : la cérémonie passe à l’Orangerie, pour chaque place qui la voit.':'Retour au jardin.')};
- var E=$('vEvts');if(E){EVTS.forEach(function(x){var b=el('button','v-btn2',x.t);b.type='button';b.dataset.evt=x.id;b.onclick=function(){tels(x.id)};E.appendChild(b)});tels('pluie')}
+ var E=$('vEvts');if(E){EVTS.forEach(function(x){var b=el('button','v-btn2',x.t);b.type='button';b.dataset.evt=x.id;b.onclick=function(){tels(x.id)};E.appendChild(b)});tels('surprise')}
+ var TB=$('vTelsTous');if(TB)TB.onclick=function(){reglerTels(!$('vTels').classList.contains('tous'));if(TB.getAttribute('aria-pressed')==='false')$('vEvts').scrollIntoView({block:'nearest'})};
  /* les engagements (P6) : accepter, puis marquer comme tenu */
  [].forEach.call(document.querySelectorAll('[data-eng]'),function(b){b.onclick=function(){var li=b.closest('.v-eng'),e=li.querySelector('.v-pil');
   if(b.dataset.eng==='propose'){b.dataset.eng='accepte';e.textContent='En cours';e.style.background='#FEF3C7';e.style.borderColor='#F59E0B';e.style.color='#78350F';b.textContent='Marquer comme tenu'}
