@@ -265,6 +265,8 @@ function composerReel(d){
  lieux.sort(function(a,b){return servis.indexOf(a.gabarit)-servis.indexOf(b.gabarit)});
  var plus=[];
  if(g.inviter.length&&vus.personnes)plus.push({id:'inviter',nom:'Inviter',geste:'inviter',sensible:true,roles:g.inviter.slice(),gabarit:'personnes'});
+ /* prendre un engagement (V1, P6) : dans « Mon accès », seulement si permissions.js l'accorde à ce rôle */
+ if(g.engager&&vus.acces)plus.push({id:'engagement',nom:'Prendre un engagement',geste:'engagement',sensible:false,gabarit:'acces'});
  var notes=(d.notifications||[]).filter(function(n){return n&&n.a==='moi'}).length;
  var mention=[];if(d.fin){var f=new Date(d.fin);if(!isNaN(f))mention.push((fam==='Contrôleur'?'Accès':'Rôle')+' jusqu\'au '+f.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}))}
  return{famille:fam,nom:(inst&&inst.nom)||d.nom||fam,lieux:lieux,plus:plus,inattendu:!!g.signaler,pastille:vus.journal?notes:0,mention:mention,garde:F.garde,public:false,reel:true};
