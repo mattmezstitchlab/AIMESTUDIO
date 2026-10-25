@@ -32,6 +32,8 @@ requete('/api/auth/get-session').then(function(r){
  if(r.statut===503||r.statut===404){$('ferme').hidden=false;$('ferme').textContent=(r.j&&r.j.raison)||'Les comptes ne sont pas encore ouverts sur cet environnement.';if(PROJETS)surCetAppareil(false);return}
  if(!r.j||!r.j.user){$('connexion').hidden=false;if(PROJETS&&!OUVRIR&&!INVIT&&!CREER&&!ACTIVITE)surCetAppareil(false);if(CREER||ACTIVITE)$('depuisAccueil').hidden=false;if(!W||!window.PublicKeyCredential)$('cPasskey').hidden=true;return}
  moi=r.j.user;afficherProfil();inviterNom();$('profil').hidden=PROJETS;$('espaces').hidden=!PROJETS;$('zoneSuppr').hidden=PROJETS;
+ /* ME (/compte/) : ma Carte et mon compte, réunis (ME v0, 25/10) : Timbre, nom, activités, clés d'accès, déconnexion, suppression */
+ if(!PROJETS){document.title='ME · AIME';$('tTitre').textContent='ME';$('tSous').textContent='Votre Carte : Timbre, activités, accès et sécurité du compte';$('meDecouvrir').hidden=false;carteLocale()}
  (INVIT?espaces('rejoindre',{jeton:INVIT}).then(function(x){toast('Bienvenue dans « '+x.titre+' ».');$('invite').hidden=true;if(x.espace)OUVRIR=x.espace}).catch(function(e){toast(e.message,true);$('invite').hidden=true}):Promise.resolve())
   .then(function(){
    /* « Créer notre mariage » : la seule fonction de création, sans doublon (l'origine vient de l'accueil) ; puis l'écran du projet */
@@ -40,10 +42,10 @@ requete('/api/auth/get-session').then(function(r){
    if(PROJETS&&ACTIVITE&&C)return C.activite(ACTIVITE).then(function(){BIENVENUE=ACTIVITE}).catch(function(e){toast(e.message,true)})})
   .then(function(){var nv=(Q.get('nouvel')||'').trim().slice(0,120);if(nv){$('eTitre').value=nv;toast('Un projet venu du Point Zéro : vérifiez son nom, puis créez l\'espace.')}nettoyerAdresse();
    /* AI : un seul écran pour AI, une demande et un projet (compte/ai.js) ; l'adresse choisit le contexte, sans rechargement ensuite */
-   if(PROJETS&&window.AIMEAI&&PJ){AIMEAI.monter({chargerAI:function(){chargerEspaces();chargerActivites();surCetAppareil(true)}});
+   if(PROJETS&&window.AIMEAI&&PJ){if(BIENVENUE)chargerActivites(false);AIMEAI.monter({chargerAI:function(){chargerEspaces();surCetAppareil(true)}});
     if(OUVRIR&&!new URLSearchParams(location.search).get('espace')){AIMEAI.montrer('projet');PJ.ouvrir(OUVRIR,Q.get('page'))}else AIMEAI.route();
     if(/[?&]nouveau=1\b/.test(location.search)){var t0=$('eTitre');if(t0){t0.scrollIntoView({block:'center'});t0.focus()}}}
-   else if(PROJETS&&OUVRIR&&PJ)PJ.ouvrir(OUVRIR,Q.get('page'));else if(PROJETS){chargerEspaces();chargerActivites();surCetAppareil(true);if(/[?&]nouveau=1\b/.test(location.search)){var t=$('eTitre');if(t){t.scrollIntoView({block:'center'});t.focus()}}}else chargerCles()})
+   else if(PROJETS&&OUVRIR&&PJ)PJ.ouvrir(OUVRIR,Q.get('page'));else if(PROJETS){chargerEspaces();if(BIENVENUE)chargerActivites(false);surCetAppareil(true);if(/[?&]nouveau=1\b/.test(location.search)){var t=$('eTitre');if(t){t.scrollIntoView({block:'center'});t.focus()}}}else{chargerCles();chargerActivites(true)}})
 }).catch(function(){$('ferme').hidden=false;$('ferme').textContent='Serveur injoignable. Réessayez dans un instant.';if(PROJETS)surCetAppareil(false)});
 
 /* ---------- se connecter ---------- */
@@ -96,12 +98,18 @@ function chargerEspaces(){espaces('mes').then(function(r){var L=$('liste');L.tex
 
 /* ---------- mes activités (prestataire) : un métier, non publié ; les missions arrivent par invitation ---------- */
 var NOMS_METIERS={};
-function chargerActivites(){espaces('activites').then(function(r){var L=r.activites||[],z=$('activites');if(!L.length){z.hidden=true;return}
+/* montrer : dans ME, la liste ; dans AI, seulement le mot de bienvenue après « Je suis… » (l'activité vit dans ME) */
+function chargerActivites(montrer){espaces('activites').then(function(r){var L=r.activites||[],z=$('activites');
+ if(!montrer){if(BIENVENUE){var n0=(L.filter(function(a){return a.metier===BIENVENUE})[0]||{}).nom;if(n0)toast('Votre espace '+n0+' est créé. Il se trouve dans ME.')}return}
+ if(!L.length){z.hidden=true;return}
  z.hidden=false;var ul=$('mesActivites');ul.textContent='';
  L.forEach(function(a){var li=el('li','lgn');li.appendChild(el('b',null,a.nom.charAt(0).toUpperCase()+a.nom.slice(1)));li.appendChild(el('span','leg',a.publiee?'publiée':'non publiée'));ul.appendChild(li)});
  var m=$('invitezMoi'),site=location.origin;
  m.href='mailto:?subject='+encodeURIComponent('Invitez-moi sur AIME')+'&body='+encodeURIComponent('Bonjour,\n\nPour préparer votre mariage ensemble, invitez-moi dans votre projet AIME : créez-le sur '+site+'/ (« Futurs mariés »), puis Personnes → Inviter, avec mon adresse.\n\nÀ bientôt !');
- if(BIENVENUE){var n=(L.filter(function(a){return a.metier===BIENVENUE})[0]||{}).nom;if(n)toast('Votre espace '+n+' est créé.')}}).catch(function(){})}
+}).catch(function(){})}
+
+/* une Carte créée dans ce navigateur (carte/carte.js, « aime-carte ») : dite, jamais envoyée ; le rattachement consenti viendra */
+function carteLocale(){var z=$('meCarte');if(!z)return;var v=null;try{v=localStorage.getItem('aime-carte')}catch(_){v=null}z.hidden=!v}
 
 /* ---------- sur cet appareil : les anciens essais de ce navigateur (accueil d'avant le 24/10) ----------
    Rien n'est perdu ni envoyé : ils restent dans ce navigateur, et ne partent au serveur que par un geste explicite (« Créer dans mon compte »). */

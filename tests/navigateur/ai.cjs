@@ -161,7 +161,24 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await pt.click('[data-demande="' + dm.cle + '"]'); await pt.waitForSelector('#dTitre'); await capture(pt, 'AI__iphone__2-demande'); await axe(pt, 'Détail (iPhone)');
     await pt.goBack(); await pt.waitForSelector('#espaces:not([hidden])');
     await pt.click('#dock-site a[data-lieu="me"]'); await pt.waitForURL(/\/compte\/$/); await pt.waitForSelector('#profil:not([hidden])');
-    ok(true, 'ME : /compte/ s\'ouvre depuis le Dock'); await capture(pt, 'AI__iphone__3-me');
+    console.log('9. ME : Timbre, nom, activités, clés d\'accès, sécurité, réunis');
+    ok((await pt.locator('#tTitre').innerText()) === 'ME', 'ME : le titre');
+    ok(JSON.stringify(await dock(pt)) === JSON.stringify(['AI', 'ME']) && (await pt.locator('#dock-site a[data-lieu="me"]').getAttribute('aria-current')) === 'page', 'le Dock : AI · + · ME, ME en cours');
+    ok(await pt.locator('#monTimbre .timbre, #monTimbre > *').count() > 0 && await pt.locator('#cles').isVisible() && await pt.locator('#zoneSuppr').isVisible() && await pt.locator('#seDeconnecter').isVisible(), 'Timbre, clés d\'accès, se déconnecter, supprimer le compte : rien n\'est perdu de « Mon compte »');
+    ok(await pt.locator('#meDecouvrir a[href="/#coeur"]').count() === 1 && await pt.locator('#meDecouvrir a[href="/exemples/"]').count() === 1, 'Le cœur et les exemples, retirés du Dock, restent à un clic depuis ME');
+    ok(await pt.locator('#activites').isHidden(), 'sans activité : pas de section vide');
+    await pt.fill('#nom', 'Matt Test (ME)'); await pt.click('#fNom button[type=submit]'); await attendre(600);
+    await pt.reload({ waitUntil: 'networkidle' }); await pt.waitForSelector('#profil:not([hidden])');
+    ok((await pt.inputValue('#nom')) === 'Matt Test (ME)', 'le nom modifié dans ME est gardé au serveur (après rechargement)');
+    await capture(pt, 'AI__iphone__3-me'); await axe(pt, 'ME (iPhone)');
+    await pool.query("insert into activites (user_id, metier) values ($1, 'musicien') on conflict do nothing", [PROPRIO.id]).catch(() => {});
+    await pt.reload({ waitUntil: 'networkidle' }); await pt.waitForSelector('#activites:not([hidden])', { timeout: 5000 }).catch(() => {});
+    ok(/Musicien|musicien/i.test(await pt.locator('#activites').innerText().catch(() => '')), 'une activité déclarée apparaît dans ME');
+    ok(await pt.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'ME sur iPhone : aucun défilement horizontal');
+    await pt.click('#dock-site a[data-lieu="ai"]'); await pt.waitForURL(/\/projets\/$/); await pt.waitForSelector('#espaces:not([hidden])');
+    ok(await pt.locator('#activites').isHidden(), 'AI ne montre pas les activités (elles vivent dans ME)');
+    const meD = await proD.newPage(); await meD.goto(B + '/compte/', { waitUntil: 'networkidle' }); await meD.waitForSelector('#profil:not([hidden])');
+    await capture(meD, 'AI__ordinateur__4-me'); await axe(meD, 'ME (ordinateur)');
   } catch (e) { echecs++; console.error(e); }
   await b.close(); await pool.end(); try { srv.kill(); } catch {}
   console.log(echecs ? '\nparcours AI : ' + echecs + ' échec(s)' : '\nparcours AI : tout est vert');

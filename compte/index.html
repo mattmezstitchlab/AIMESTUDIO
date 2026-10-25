@@ -58,13 +58,31 @@
  <section class="carte-c" id="profil" hidden aria-labelledby="t-moi">
   <div class="moi">
    <div class="moi-t"><div id="monTimbre"></div><label class="b b-s">Changer la photo<input type="file" id="photo" accept="image/*" hidden></label><button class="b b-s" type="button" id="sansPhoto" hidden>Retirer la photo</button><a class="b b-s" id="monTimbreLien" href="/point-zero/?intention=identite">Mon timbre</a><button class="b b-s" type="button" id="seDeconnecter">Se déconnecter</button></div>
-   <div class="pile" style="flex:1;min-width:0">
+   <div class="pile" style="flex:1 1 240px;min-width:0">
     <h2 id="t-moi">Bonjour<span id="bonjour"></span></h2>
     <p class="leg" id="monEmail"></p>
     <form class="lgn" id="fNom"><label class="sr" for="nom">Votre nom</label><input id="nom" maxlength="80" placeholder="Votre nom, tel que les autres le verront" style="flex:1;min-width:200px"><button class="b" type="submit">Enregistrer</button></form>
     <div class="pile"><h2 class="k" style="margin:8px 0 0">Clés d'accès</h2><ul class="cles" id="cles"></ul><span><button class="b b-s" type="button" id="ajCle">+ Ajouter une clé d'accès sur cet appareil</button></span></div>
    </div>
   </div>
+ </section>
+
+ <!-- ME v0 : ce que je suis (activités, métiers), ce qui existe dans ce navigateur, et le reste d'AIME ; rien de nouveau au serveur -->
+ <section class="carte-c" id="activites" hidden aria-labelledby="t-act">
+  <h2 class="k" id="t-act">Mes activités</h2>
+  <ul class="cles" id="mesActivites"></ul>
+  <p class="leg">Vos missions arrivent quand des mariés ou une coordination vous invitent. Votre activité n'est publiée nulle part.</p>
+  <span><a class="b b-s" id="invitezMoi" href="mailto:">Invitez-moi sur AIME</a></span>
+ </section>
+
+ <section class="carte-c" id="meCarte" hidden aria-labelledby="t-carte">
+  <h2 class="k" id="t-carte">Ma Carte sur cet appareil</h2>
+  <p class="leg">Une Carte AIME a été créée dans ce navigateur. Elle y reste : elle n'est pas encore rattachée à votre compte, et rien n'en est envoyé. La rattacher à votre compte, avec votre accord, est la prochaine étape de ME (en conception).</p>
+ </section>
+
+ <section class="carte-c" id="meDecouvrir" hidden aria-labelledby="t-dec">
+  <h2 class="k" id="t-dec">Découvrir AIME</h2>
+  <p class="leg"><a href="/#coeur">Le cœur</a> · <a href="/exemples/">Les exemples</a> · <a href="/capacites/">Toutes les capacités</a> (démonstrations, données fictives)</p>
  </section>
 
  <section class="carte-c" id="zoneSuppr" hidden aria-labelledby="t-suppr">
@@ -82,13 +100,6 @@
    <details class="ai-traitees" id="traitees" hidden><summary id="traiteesT">Demandes traitées</summary><div class="pile" id="demandesTraitees"></div></details>
   </section>
   <div class="lgn" style="justify-content:space-between"><h2 class="k" id="t-esp">Mes projets et participations</h2></div>
-  <!-- un prestataire : ses activités (un métier, non publié), et ses missions qui arrivent par invitation -->
-  <div class="carte-c" id="activites" hidden aria-labelledby="t-act">
-   <h3 id="t-act">Mon activité</h3>
-   <ul class="cles" id="mesActivites"></ul>
-   <p class="leg">Vos missions arrivent quand des mariés ou une coordination vous invitent. Votre activité n'est publiée nulle part.</p>
-   <span><a class="b b-s" id="invitezMoi" href="mailto:">Invitez-moi sur AIME</a></span>
-  </div>
   <form class="carte-c lgn" id="fEspace"><label class="sr" for="eTitre">Nom du nouveau projet</label><input id="eTitre" maxlength="120" placeholder="Nom d'un nouveau projet (le mariage de…, le séminaire…)" style="flex:1;min-width:220px" required>
    <label class="sr" for="eModele">Domaine du projet</label><select id="eModele"><option value="mariage">Mariage</option><option value="seminaire">Séminaire</option></select>
    <button class="b b-p" type="submit">Créer le projet</button></form>
