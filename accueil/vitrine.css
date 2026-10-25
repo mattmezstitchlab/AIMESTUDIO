@@ -115,6 +115,7 @@ html.calme .v-orbe i{animation:none}
 .v-onglet{flex:1 1 0;min-width:0;min-height:30px;padding:0 8px;border:0;border-radius:8px;background:none;font:600 12.5px/1 var(--ui);color:#4A4A58;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .v-onglet[aria-pressed="true"]{background:#FFFFFF;color:var(--ink);box-shadow:0 1px 2px rgba(17,17,20,.14)}
 .v-onglet:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+@media (max-width:430px){.v-onglet{font-size:11.5px;padding:0 5px}}   /* trois onglets lisibles en entier sur un téléphone */
 /* AI, le tableau de bord : le mois. Le jour J est la seule date pleine ; les autres sont vides */
 .v-p-ecran [hidden]{display:none!important}   /* le niveau fermé ne prend pas de place (display:flex ignorerait [hidden]) */
 .v-p-cal{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:10px 12px 12px;overflow-y:auto;scrollbar-width:none}

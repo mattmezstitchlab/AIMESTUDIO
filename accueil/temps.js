@@ -102,7 +102,7 @@ function resumeMoment(m){
  }
 function monter(){
  if(!root.document||!root.document.getElementById('tempsDemoQui'))return;
- var D=deps.demo,mode='liste',choix='camille',choisi=null,etat=root.document.getElementById('tempsDemoEtat');
+ var D=deps.demo,mode='cercle',choix='camille',choisi=null   /* le cercle d'abord : c'est ce que le titre annonce */,etat=root.document.getElementById('tempsDemoEtat');
  function $(id){return root.document.getElementById(id)}
  function majTexte(texte){if(etat)etat.textContent=texte}
  function momentDe(vue,id){var t=null;((vue&&vue.moments)||[]).some(function(m){if(m.id===id){t=m;return true}return false});return t}
