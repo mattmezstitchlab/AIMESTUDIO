@@ -23,7 +23,9 @@ test('registre : chaque module respecte le contrat universel, et le statut ne me
 });
 
 test('registre : chaque règle citée existe dans permissions.js ; les gabarits servis viennent du registre', () => {
-  for (const m of R.MODULES) for (const [k, a] of Object.entries(m.actions)) assert.ok(P.actions(a.regle[0]).includes(a.regle[1]), m.id + '.' + k + ' → ' + a.regle.join('.'));
+  /* les engagements (V1, P6) ont leurs règles dans synchroview/engagements.js, adossé à permissions.js qui reste intact */
+  const ER = require('../synchroview/engagements.js'), actions = t => (t === 'engagement' ? ER.actions() : P.actions(t));
+  for (const m of R.MODULES) for (const [k, a] of Object.entries(m.actions)) assert.ok(actions(a.regle[0]).includes(a.regle[1]), m.id + '.' + k + ' → ' + a.regle.join('.'));
   assert.deepEqual(R.servis({}), ['acces', 'journal', 'personnes'], 'sans Temps : exactement les pages d\'avant');
   assert.deepEqual(R.servis({ temps: true }), ['acces', 'journal', 'personnes', 'deroule']);
   assert.equal(R.destination('temps', 'abc'), '/projets/?espace=abc&page=deroule');

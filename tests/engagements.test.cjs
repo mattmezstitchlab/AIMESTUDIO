@@ -7,7 +7,7 @@
 //    ne part vers le navigateur ; AI liste mes engagements ouverts ; « Mon accès » et le + du Dock ; sans la migration, 503 dit.
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const P = require('../synchroview/permissions.js');
+const P = require('../synchroview/engagements.js');   /* les règles des engagements ; permissions.js reste intact */
 const REG = require('../modules/registre.js');
 const D = require('../dock/modele.js');
 const URLT = process.env.TEST_DATABASE_URL;
@@ -15,7 +15,7 @@ const opts = { skip: !URLT && 'TEST_DATABASE_URL absent : base de test locale re
 const BASE = 'http://localhost:8781';
 
 /* ---------- 1. les règles ---------- */
-const e = (x) => Object.assign({ type: 'engagement', deQui: 'dj', pourQui: null, creePar: 'dj', etat: 'accepte' }, x);
+const e = (x) => Object.assign({ deQui: 'dj', pourQui: null, creePar: 'dj', etat: 'accepte' }, x);
 const qui = (id, role) => ({ id, role });
 test('règles · lire : les personnes concernées et l\'organisation, personne d\'autre', () => {
   assert.equal(P.can(qui('dj', 'contributor'), 'read', e()).allow, true, 'celui qui s\'engage');
@@ -26,11 +26,11 @@ test('règles · lire : les personnes concernées et l\'organisation, personne d
   assert.equal(P.can(qui('fleur', 'contributor'), 'read', e({ pourQui: 'fleur' })).allow, true, 'celui envers qui on s\'engage');
 });
 test('règles · créer : on s\'engage soi-même ; seule l\'organisation demande à quelqu\'un d\'autre ; ni invité ni lecture seule', () => {
-  assert.equal(P.can(qui('dj', 'contributor'), 'create', { type: 'engagement', deQui: 'dj' }).allow, true);
-  assert.equal(P.can(qui('dj', 'contributor'), 'create', { type: 'engagement', deQui: 'fleur' }).allow, false);
-  assert.equal(P.can(qui('coord', 'editor'), 'create', { type: 'engagement', deQui: 'dj' }).allow, true);
-  assert.equal(P.can(qui('invite', 'guest'), 'create', { type: 'engagement', deQui: 'invite' }).allow, false);
-  assert.equal(P.can(qui('parent', 'viewer'), 'create', { type: 'engagement', deQui: 'parent' }).allow, false);
+  assert.equal(P.can(qui('dj', 'contributor'), 'create', { deQui: 'dj' }).allow, true);
+  assert.equal(P.can(qui('dj', 'contributor'), 'create', { deQui: 'fleur' }).allow, false);
+  assert.equal(P.can(qui('coord', 'editor'), 'create', { deQui: 'dj' }).allow, true);
+  assert.equal(P.can(qui('invite', 'guest'), 'create', { deQui: 'invite' }).allow, false);
+  assert.equal(P.can(qui('parent', 'viewer'), 'create', { deQui: 'parent' }).allow, false);
 });
 test('règles · accepter, refuser, tenir, annuler : chacun son geste, au bon état', () => {
   const dem = e({ etat: 'propose', creePar: 'couple' });
