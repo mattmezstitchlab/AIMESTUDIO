@@ -151,7 +151,7 @@ async function changerStatut(db, boite, cle, statut, par) {
    Rejouable : déjà convertie vers ce projet, rien ne change ; renvoie false si la demande n'existe pas dans cette boîte. */
 async function marquerConvertie(db, boite, cle, espace, par) {
   const rows = await requete(db,
-    `with a as (select id, statut from demandes where boite = $1 and cle = $2),
+    `with a as (select id, statut from demandes where boite = $1 and cle = $2 for update),
      d as (update demandes set statut = 'convertie', derniere_activite = now() from a where demandes.id = a.id and a.statut <> 'convertie' returning demandes.id, a.statut as avant),
      j as (insert into demandes_journal (demande_id, quoi, par, detail) select id, 'statut', $4, jsonb_build_object('de', avant, 'a', 'convertie', 'espace', $3::text) from d)
      select (select count(*) from a)::int as existe`, [boite, cle, String(espace), par]);
