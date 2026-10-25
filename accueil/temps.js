@@ -63,6 +63,34 @@ function resumeMoment(m){
  if(m.aConfirmer)t.push('nouvel horaire à confirmer');
  return t.join(' · ');
 }
+ /* le dessin du cadran, à partir du modèle de modules/temps/cercle.js : le même code sert ici et à l'iPhone de
+    « Chacun son écran » (accueil/vitrine.js). Le cadran reste une image (role="img") : le clavier passe par la légende. */
+ function dessiner(svg,M,o){o=o||{};if(!svg||!M)return;
+  var CENTRE=M.centre,choix=o.choisi,fen=M.fenetre;
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  var titre=svgEl('title',{id:(o.ids&&o.ids.titre)||'tempsDemoSvgT'});
+  titre.textContent=fen.jour?'Circle · journée de 24 heures':'Circle · de '+deps.C.hm(fen.debut)+' à '+deps.C.hm(fen.fin);svg.appendChild(titre);
+  /* dans une fenêtre zoomée, un moment qui s'arrête pile au bord n'a pas de durée visible : il reste dans la légende */
+  var arcs=fen.jour?M.arcs:M.arcs.filter(function(a){return a.a1>a.a0||a.id===choix});
+  var desc=svgEl('desc',{id:(o.ids&&o.ids.desc)||'tempsDemoSvgD'});
+  desc.textContent='Cadran '+(fen.jour?'de 24 heures':'de '+deps.C.hm(fen.debut)+' à '+deps.C.hm(fen.fin))+', dans la vue de '+(o.qui||'cette place')+' : '+arcs.length+' moment'+(arcs.length===1?'':'s')+' représenté'+(arcs.length===1?'':'s')+'. Tous les horaires sont listés après le dessin.';svg.appendChild(desc);
+  svg.appendChild(svgEl('circle',{cx:CENTRE,cy:CENTRE,r:M.rayon+M.epaisseur/2+8,class:'v-td-face'}));
+  svg.appendChild(svgEl('circle',{cx:CENTRE,cy:CENTRE,r:M.rayon+M.epaisseur/2+8,class:'v-td-anneau'}));
+  for(var i=0;i<M.couloirs;i++)svg.appendChild(svgEl('circle',{cx:CENTRE,cy:CENTRE,r:M.rayon-i*(M.epaisseur+M.ecart),class:'v-td-piste',style:'stroke-width:'+M.epaisseur+'px'}));
+  M.graduations.forEach(function(g){svg.appendChild(svgEl('line',{x1:g.x1,y1:g.y1,x2:g.x2,y2:g.y2,class:g.cardinale?'v-td-tick fort':'v-td-tick'}));
+   /* journée entière : les quatre cardinales ; fenêtre zoomée : chaque heure de la fenêtre, sinon rien ne se lit */
+   var texte=g.texte||(fen.jour?'':deps.C.hm(g.minute));
+   if(texte){var t=svgEl('text',{x:g.lx,y:g.ly,'text-anchor':g.ancre,class:g.texte?'v-td-heure':'v-td-heure v-td-heure-zoom'});t.textContent=texte;svg.appendChild(t)}});
+  arcs.forEach(function(a){if(a.id===choix)svg.appendChild(svgEl('path',{d:a.d,class:'v-td-choix'}));
+   var p=svgEl('path',{d:a.d,class:'v-td-arc'+(a.id===choix?' est-choisi':'')});p.setAttribute('data-id',a.id);
+   if(o.choisir)p.onclick=function(){o.choisir(a.id)};
+   if(o.surligner){p.onmouseenter=function(){o.surligner(a.id)};p.onmouseleave=function(){o.surligner(null)}}
+   svg.appendChild(p);if(a.dPrevu)svg.appendChild(svgEl('path',{d:a.dPrevu,class:'v-td-prevu'}))});
+  M.zones.forEach(function(z){svg.appendChild(svgEl('path',{d:z.d,class:'v-td-zone'}))});
+  var centre=svgEl('text',{x:CENTRE,y:CENTRE-4,'text-anchor':'middle',class:'v-td-centre'});centre.textContent=o.centre||'JOUR J';svg.appendChild(centre);
+  var sous=svgEl('text',{x:CENTRE,y:CENTRE+25,'text-anchor':'middle',class:'v-td-sous'});sous.textContent=fen.jour?'24 heures':deps.C.hm(fen.debut)+' → '+deps.C.hm(fen.fin);svg.appendChild(sous);
+  if(M.debordements.length){var plus=svgEl('text',{x:CENTRE,y:CENTRE+54,'text-anchor':'middle',class:'v-td-plus'});plus.textContent='+'+M.debordements.length+' autres moments';svg.appendChild(plus)}
+ }
 function monter(){
  if(!root.document||!root.document.getElementById('tempsDemoQui'))return;
  var D=deps.demo,mode='liste',choix='camille',choisi=null,etat=root.document.getElementById('tempsDemoEtat');
@@ -86,29 +114,9 @@ function monter(){
    li.appendChild(b);L.appendChild(li)})}
  /* choisir le même moment deux fois le relâche : le cadran revient à la journée entière */
  function choisir(id){choisi=choisi===id?null:id;afficherApercu()}
- function dessiner(vue,info){
-  var s=$('tempsDemoSvg');if(!s)return;var m=choisi?momentDe(vue,choisi):null,M=modeleCercle(vue,m?fenetreMoment(m):null),CENTRE=M.centre;
-  while(s.firstChild)s.removeChild(s.firstChild);
-  var fen=M.fenetre,titre=svgEl('title',{id:'tempsDemoSvgT'});titre.textContent=fen.jour?'Circle · journée de 24 heures':'Circle · de '+deps.C.hm(fen.debut)+' à '+deps.C.hm(fen.fin);s.appendChild(titre);
-  /* dans une fenêtre zoomée, un moment qui s'arrête pile au bord n'a pas de durée visible : il reste dans la légende */
-  var arcs=fen.jour?M.arcs:M.arcs.filter(function(a){return a.a1>a.a0||a.id===choisi});
-  var desc=svgEl('desc',{id:'tempsDemoSvgD'});desc.textContent='Cadran '+(fen.jour?'de 24 heures':'de '+deps.C.hm(fen.debut)+' à '+deps.C.hm(fen.fin))+', dans la vue de '+info.personne.nom+' : '+arcs.length+' moment'+(arcs.length===1?'':'s')+' représenté'+(arcs.length===1?'':'s')+'. Tous les horaires sont listés après le dessin.';s.appendChild(desc);
-  s.appendChild(svgEl('circle',{cx:CENTRE,cy:CENTRE,r:M.rayon+M.epaisseur/2+8,class:'v-td-face'}));
-  s.appendChild(svgEl('circle',{cx:CENTRE,cy:CENTRE,r:M.rayon+M.epaisseur/2+8,class:'v-td-anneau'}));
-  for(var i=0;i<M.couloirs;i++)s.appendChild(svgEl('circle',{cx:CENTRE,cy:CENTRE,r:M.rayon-i*(M.epaisseur+M.ecart),class:'v-td-piste',style:'stroke-width:'+M.epaisseur+'px'}));
-  M.graduations.forEach(function(g){s.appendChild(svgEl('line',{x1:g.x1,y1:g.y1,x2:g.x2,y2:g.y2,class:g.cardinale?'v-td-tick fort':'v-td-tick'}));
-   /* journée entière : les quatre cardinales ; fenêtre zoomée : chaque heure de la fenêtre, sinon rien ne se lit */
-   var texte=g.texte||(fen.jour?'':deps.C.hm(g.minute));
-   if(texte){var t=svgEl('text',{x:g.lx,y:g.ly,'text-anchor':g.ancre,class:g.texte?'v-td-heure':'v-td-heure v-td-heure-zoom'});t.textContent=texte;s.appendChild(t)}});
-  arcs.forEach(function(a){if(a.id===choisi)s.appendChild(svgEl('path',{d:a.d,class:'v-td-choix'}));
-   var p=svgEl('path',{d:a.d,class:'v-td-arc'+(a.id===choisi?' est-choisi':'')});p.setAttribute('data-id',a.id);
-   p.onclick=function(){choisir(a.id)};p.onmouseenter=function(){surligner(a.id)};p.onmouseleave=function(){surligner(null)};
-   s.appendChild(p);if(a.dPrevu)s.appendChild(svgEl('path',{d:a.dPrevu,class:'v-td-prevu'}))});
-  M.zones.forEach(function(z){s.appendChild(svgEl('path',{d:z.d,class:'v-td-zone'}))});
-  var centre=svgEl('text',{x:CENTRE,y:CENTRE-4,'text-anchor':'middle',class:'v-td-centre'});centre.textContent='JOUR J';s.appendChild(centre);
-  var sous=svgEl('text',{x:CENTRE,y:CENTRE+25,'text-anchor':'middle',class:'v-td-sous'});sous.textContent=fen.jour?'24 heures':deps.C.hm(fen.debut)+' → '+deps.C.hm(fen.fin);s.appendChild(sous);
-  if(M.debordements.length){var plus=svgEl('text',{x:CENTRE,y:CENTRE+54,'text-anchor':'middle',class:'v-td-plus'});plus.textContent='+'+M.debordements.length+' autres moments';s.appendChild(plus)}
- }
+ /* l'aperçu de l'accueil : la vue du module Temps, et le moment choisi s'il y en a un */
+ function dessinerApercu(vue,info){var s=$('tempsDemoSvg');if(!s)return;var m=choisi?momentDe(vue,choisi):null;
+  dessiner(s,modeleCercle(vue,m?fenetreMoment(m):null),{choisi:choisi,qui:info.personne.nom,surligner:surligner,choisir:choisir,ids:{titre:'tempsDemoSvgT',desc:'tempsDemoSvgD'}})}
  function afficherApercu(){
   if(!D)return;var info;try{info=preparer(D,choix)}catch(e){majTexte(e.message);return}
   var who=$('tempsDemoPlace'),n=$('tempsDemoNombre'),panelL=$('tempsDemoListe'),panelC=$('tempsDemoCercle'),titre=$('tempsDemoTitre');
@@ -121,7 +129,7 @@ function monter(){
   liste(info.vue,'tempsDemoMoments');liste(info.vue,'tempsDemoMomentsCercle');
   if(garde)focaliser(cibler(garde,mode==='cercle'?'tempsDemoMomentsCercle':'tempsDemoMoments'));
   var m=choisi?momentDe(info.vue,choisi):null,jour=$('tempsDemoJour'),det=$('tempsDemoDetail'),cap=$('tempsDemoLegende');
-  if(mode==='cercle')dessiner(info.vue,info);
+  if(mode==='cercle')dessinerApercu(info.vue,info);
   if(det)det.textContent=m?resumeMoment(m):(mode==='cercle'?'Choisissez un moment : le cadran s’y arrête.':'Choisissez un moment : sa ligne et son arc se répondent.');
   if(jour)jour.hidden=!(mode==='cercle'&&m);
   if(cap)cap.textContent=(mode==='cercle'&&m)
@@ -139,5 +147,5 @@ function monter(){
  if(!root.fetch){majTexte('Aperçu indisponible : le programme de démonstration ne peut pas être chargé.');return}
  root.fetch('/modules/temps/demo-camille-gabriel.json',{credentials:'omit',cache:'force-cache'}).then(function(r){if(!r.ok)throw new Error('Aperçu indisponible : le programme de démonstration ne peut pas être chargé.');return r.json()}).then(function(d){D=d;remplirSelect();Array.prototype.forEach.call(modes,function(b){b.disabled=false});afficherApercu()}).catch(function(){majTexte('Aperçu indisponible : le programme de démonstration ne peut pas être chargé.')});
 }
-return{PERSONNES:PERSONNES,preparer:preparer,modeleCercle:modeleCercle,fenetreMoment:fenetreMoment,resumeMoment:resumeMoment,monter:monter};
+return{PERSONNES:PERSONNES,preparer:preparer,modeleCercle:modeleCercle,fenetreMoment:fenetreMoment,resumeMoment:resumeMoment,dessiner:dessiner,monter:monter};
 });

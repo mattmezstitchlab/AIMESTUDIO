@@ -37,15 +37,24 @@ test('la grille : une seule liste (attente/souhaits.json), des icônes du Dock, 
   assert.match(lire('dock/dock.js'), /icone:icone/);
 });
 
-test('accueil : le bloc court sous « Je suis… » (avant les vidéos), la place prise dans « Je suis… », un lien vers /beta/', () => {
-  const s = lire('index.html'), i = s.indexOf('class="at-bloc"');
-  assert.ok(i > s.indexOf('id="jsChoix"') && i > s.indexOf('id="demo"') && i < s.indexOf('<ul class="vg"'));
-  const b = s.slice(i, s.indexOf('</aside>', i));
+test('accueil : la capsule du haut porte « Je suis… » et le seul champ de la bêta, et un lien vers /beta/', () => {
+  const s = lire('index.html'), haut = s.match(/<header class="barre">[\s\S]*?<\/header>/)[0];
+  assert.ok(haut.includes('id="jsChoix"'), '« Je suis… » est dans la capsule, plus dans le corps de page');
+  const i = haut.indexOf('class="at-bloc"');
+  assert.ok(i > 0 && i > haut.indexOf('id="jsChoix"'), 'le champ de la bêta suit « Je suis… », dans la même capsule');
+  const b = haut.slice(i, haut.indexOf('</aside>', i));
   assert.match(texte(b), /La bêta ouvre bientôt\. Soyez prévenu en premier\./);
+  assert.match(b, /<input id="atBlocEmail" type="email"[^>]*required/);
   assert.match(b, /<input type="checkbox" name="consentement"> <span>J'accepte de recevoir un e-mail à l'ouverture de la bêta\.<\/span>/);
   assert.match(b, /name="site_web"/); assert.match(b, /href="\/beta\/"/);
   assert.match(s, /AIMEAttente\.bloc\(f\)/);
   assert.match(lire('attente/attente.js'), /place: choix\.value/);
+  /* rien n'est répété dans le corps de page : une seule liste, un seul bloc, et le logo les ouvre */
+  assert.equal(s.split('id="jsOptions"').length - 1, 1, 'une seule liste « Je suis… »');
+  assert.equal(s.split('class="at-bloc"').length - 1, 1, 'un seul bloc de bêta');
+  assert.match(haut, /<button type="button" class="mk" id="mk" aria-expanded="false" aria-controls="jsListe"/, 'le logo ouvre la liste');
+  assert.match(lire('accueil/capsule.js'), /champ\._ouvrir\(\)/, 'le logo passe par la liste déjà écrite (accueil/liste.js)');
+  assert.ok(!/localStorage|fetch\(/.test(lire('accueil/capsule.js')), 'la capsule n envoie et n enregistre rien');
 });
 
 test('les compteurs du propriétaire : page gardée comme #123, données du serveur sans adresse', () => {

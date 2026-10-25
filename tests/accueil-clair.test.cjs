@@ -18,6 +18,27 @@ function contraste(a, b) {
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
 
+test("l'iPhone de « Chacun son écran » : un fond par place, et le vrai cadran Circle (modules/temps/cercle.js)", () => {
+  const z = lire('index.html'), css = lire('accueil/vitrine.css'), C = require('../modules/temps/cercle.js');
+  assert.match(z, /<div class="v-hero" id="vHero">/, 'un seul écran, plus le grand bloc vertical');
+  assert.deepEqual([...z.matchAll(/data-fond="([a-z]+)"/g)].map(m => m[1]), V.PLACES.map(p => p.id), 'un fond par place, dans l ordre des places');
+  assert.match(z, /<svg class="v-p-cadran" id="vCercle"[^>]*role="img"/, 'le cadran de l iPhone est une image nommée');
+  for (const r of ['.v-fond.on', '.v-p-cadran', '.v-p-ecran']) assert.ok(css.includes(r), r + ' stylé');
+  for (const pl of V.PLACES) {
+    const k = V.cadran(pl.id), M = C.modele(k, { rayon: 352, epaisseur: 40, ecart: 9 });
+    assert.deepEqual(k.moments.map(m => m.id), V.composer(pl.id).vus.map(m => m.id), pl.id + ' : le cadran reçoit exactement la vue de la place');
+    assert.equal(M.arcs.length, k.moments.length, pl.id + ' : un arc par moment reçu');
+    for (const m of k.moments) assert.ok(m.debut && m.fin && m.dm >= 0 && m.fm > m.dm, pl.id + ' · ' + m.id);
+  }
+  const bal = V.cadran('owner').moments.find(m => m.id === 'bal');
+  assert.deepEqual([bal.debut, bal.fin, bal.dm, bal.fm], ['22:00', '01:00', 1320, 1500], 'le bal finit après minuit');
+  assert.equal(V.cadran('guest').moments.length, 4, 'une place ne dessine que ce qu elle reçoit');
+  const js = lire('accueil/temps.js'), v = lire('accueil/vitrine.js');
+  assert.match(v, /AIMETempsAccueil\.dessiner|root\.AIMETempsAccueil\.dessiner/, 'le même dessin que l aperçu public');
+  assert.ok(!/createElementNS|svgEl\(/.test(v), 'aucun cadran recopié dans la vitrine');
+  assert.match(js, /return\{[^}]*dessiner:dessiner/, 'le dessin est partagé');
+});
+
 test('chacun son écran : le couple et la coordination voient tout ; le DJ, sans l\'organisation ; l\'invitée, le public seulement', () => {
   assert.equal(titres('owner').length, V.MOMENTS.length);
   assert.deepEqual(titres('editor'), titres('owner'));

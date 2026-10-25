@@ -1,11 +1,13 @@
 /* AIME · l'accueil clair : les démonstrations vivantes (données fictives, rien n'est envoyé).
    « Un projet. Chacun son écran. » utilise les VRAIES règles : synchroview/permissions.js décide ce que chaque place lit
    (event.read, puis l'audience du moment par item.read) et qui peut décaler (event.edit) ; coeur/roles.js donne la couleur
-   de chaque place. Rien n'est calculé ici qui ne le soit pas aussi au serveur dans un vrai projet.
-   AIMEVitrine.composer(place, etat) : pur, testé sous node (tests/accueil-clair.test.cjs). */
+   de chaque place. Le cadran de l'iPhone est celui du module Temps : MOMENTS passe par synchroview/permissions.js, puis par
+   modules/temps/cercle.js (le modèle) et accueil/temps.js (le même dessin que l'aperçu public). Aucune règle recopiée.
+   AIMEVitrine.composer(place, etat) et AIMEVitrine.cadran(place, etat) : purs, testés sous node (tests/accueil-clair.test.cjs). */
 (function(root,factory){var V=factory(root);if(typeof module==='object'&&module.exports)module.exports=V;else root.AIMEVitrine=V})(typeof self!=='undefined'?self:this,function(root){'use strict';
 var P=(typeof require==='function'&&typeof module==='object')?require('../synchroview/permissions.js'):root.AIMEPerms;
 var RL=(typeof require==='function'&&typeof module==='object')?require('../coeur/roles.js'):root.AIMERoles;
+var C=(typeof require==='function'&&typeof module==='object')?require('../modules/temps/cercle.js'):root.AIMECercle;
 
 /* les quatre places de l'accueil (décision de Matt du 23/10 : le couple, la coordination, le prestataire, l'invité) */
 var PLACES=[
@@ -18,23 +20,30 @@ var FONDS={
  editor:'linear-gradient(140deg,#CEC2FF 0%,#C4E8FF 100%)',
  contributor:'linear-gradient(140deg,#FFD599 0%,#FFC9BE 100%)',
  guest:'linear-gradient(140deg,#ADEBFF 0%,#C2F5DF 100%)'};
+/* dur : la durée du moment, en minutes ; c'est elle qui donne son arc au cadran (le bal finit après minuit) */
 var MOMENTS=[
- {t:'Brief traiteur',m:810,a:'organisation',l:'Cuisine · organisation seulement'},
- {t:'Installation son',m:840,a:'equipe',l:'Jardin · équipe',resp:'contributor'},
- {t:'Cérémonie',m:900,a:'public',l:'Jardin des Aulnes',b:'Orangerie (plan B : il pleut)'},
- {t:'Cocktail',m:960,a:'public',l:'Terrasse',d:1},
- {t:'Set cocktail du DJ',m:960,a:'equipe',l:'Terrasse · équipe',d:1,resp:'contributor'},
- {t:'Dîner',m:1110,a:'public',l:'Grande salle'},
- {t:'Premier bal',m:1320,a:'public',l:'Grande salle'}];
-function hm(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
+ {id:'brief',t:'Brief traiteur',m:810,dur:30,a:'organisation',l:'Cuisine · organisation seulement'},
+ {id:'installation',t:'Installation son',m:840,dur:60,a:'equipe',l:'Jardin · équipe',resp:'contributor'},
+ {id:'ceremonie',t:'Cérémonie',m:900,dur:45,a:'public',l:'Jardin des Aulnes',b:'Orangerie (plan B : il pleut)'},
+ {id:'cocktail',t:'Cocktail',m:960,dur:150,a:'public',l:'Terrasse',d:1},
+ {id:'set',t:'Set cocktail du DJ',m:960,dur:90,a:'equipe',l:'Terrasse · équipe',d:1,resp:'contributor'},
+ {id:'diner',t:'Dîner',m:1110,dur:150,a:'public',l:'Grande salle'},
+ {id:'bal',t:'Premier bal',m:1320,dur:180,a:'public',l:'Grande salle'}];
+function hm(m){m=((Math.round(m)%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
 function sujet(id){return{id:'demo-'+id,role:id}}
 /* ce qu'une place lit : la règle du serveur, appliquée moment par moment */
 function lit(s,x){return P.can(s,'read',{type:'event',public:x.a==='public'}).allow&&P.can(s,'read',{type:'item',audience:x.a==='organisation'?'organisation':x.a==='equipe'?'equipe':'public'}).allow}
 function composer(place,etat){etat=etat||{};var s=sujet(place),pl=PLACES.filter(function(p){return p.id===place})[0]||PLACES[0];
- var vus=MOMENTS.filter(function(x){return lit(s,x)}).map(function(x){var dec=x.d&&etat.decale?15:0,ch=(x.d&&etat.decale)||(x.b&&etat.planB);
-  return{titre:x.t,heure:hm(x.m+dec),lieu:x.b&&etat.planB?x.b:(dec?x.l+' · décalé de 15 min':x.l),change:!!ch}});
+ var vus=MOMENTS.filter(function(x){return lit(s,x)}).map(function(x){var dec=x.d&&etat.decale?15:0,dep=x.m+dec,fin=dep+x.dur,ch=(x.d&&etat.decale)||(x.b&&etat.planB);
+  return{id:x.id,titre:x.t,heure:hm(dep),debut:hm(dep),fin:hm(fin),dm:dep,fm:fin,decalage:dec,
+   lieu:x.b&&etat.planB?x.b:(dec?x.l+' · décalé de 15 min':x.l),change:!!ch}});
  var decaler=P.can(s,'edit',{type:'event'}).allow;
  return{place:pl,couleur:RL.couleur(place),fond:FONDS[place],vus:vus,caches:MOMENTS.length-vus.length,decaler:decaler}}
+/* la vue du cadran : exactement les moments que la place reçoit, au format que modules/temps/cercle.js attend.
+   Rien n'est recalculé : ce sont les mêmes moments, ni plus (une place ne reçoit pas ce qu'elle ne lit pas) ni moins. */
+function cadran(place,etat){var r=composer(place,etat);
+ return{rev:1,role:r.place.id,ligne:r.place.nom,moments:r.vus.map(function(m){
+  return{id:m.id,titre:m.titre,lieu:m.lieu,debut:m.debut,fin:m.fin,dm:m.dm,fm:m.fm,decalage:m.decalage}})}}
 
 /* les sept téléphones : un vrai écran par personne (notification, moments selon ses droits, mission, Dock) */
 var TELS=[
@@ -69,7 +78,7 @@ function telephones(evt){var e=EVTS.filter(function(x){return x.id===evt})[0]||E
    moments:momentsTel(t,e.id),
    dock:t.dock}})}
 
-if(typeof document==='undefined')return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,composer:composer,telephones:telephones};
+if(typeof document==='undefined')return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,composer:composer,cadran:cadran,telephones:telephones};
 
 /* ---------- le navigateur ---------- */
 function $(id){return document.getElementById(id)}
@@ -77,19 +86,28 @@ function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null
 function pastille(c){var p=el('span','v-pt');p.style.setProperty('--pt',c);p.setAttribute('aria-hidden','true');return p}
 var etat={place:'owner',decale:false,planB:false};
 
-function hero(){var z=$('vHero');if(!z)return;var P0=$('vPlaces'),r=composer(etat.place,etat);
- $('vScene').style.backgroundColor='#F3EEFF';$('vScene').style.backgroundImage=r.fond;var t=$('vVous');t.textContent=r.place.nom;$('vVousPt').style.setProperty('--pt',r.couleur);
+function hero(){if(!$('vHero'))return;var r=composer(etat.place,etat);
+ /* le fond : une couche par place, celle de la place choisie s'allume (les autres s'éteignent) */
+ [].forEach.call(document.querySelectorAll('.v-fond'),function(f){var on=f.getAttribute('data-fond')===etat.place;f.classList.toggle('on',on);if(on)f.style.backgroundImage=r.fond});
+ $('vVous').textContent=r.place.nom;$('vVousPt').style.setProperty('--pt',r.couleur);
  $('vNb').textContent=r.vus.length+' moments visibles';
  var L=$('vMoments');L.textContent='';r.vus.forEach(function(m){var li=el('li');li.appendChild(el('span','h',m.heure));var d=el('span','t');d.appendChild(el('b',null,m.titre));d.appendChild(el('small',null,m.lieu));li.appendChild(d);if(m.change){var p=el('span','v-pil','mis à jour');p.style.background='#111114';p.style.color='#FFFFFF';p.style.borderColor='#111114';li.appendChild(p)}L.appendChild(li)});
  $('vCache').textContent=r.caches?r.caches+(r.caches>1?' moments ne sont pas envoyés à cette place : ils ne la concernent pas.':' moment n’est pas envoyé à cette place : il ne la concerne pas.'):'Cette place voit tout le programme.';
- if(!P0.childNodes.length)PLACES.forEach(function(p){var b=el('button','v-place');b.type='button';b.dataset.place=p.id;b.appendChild(pastille(RL.couleur(p.id)));b.appendChild(el('span',null,p.nom));b.appendChild(el('small',null,p.place));
+ dessinerCadran(r);
+ var P0=$('vPlaces');
+ if(P0&&!P0.childNodes.length)PLACES.forEach(function(p){var b=el('button','v-place');b.type='button';b.dataset.place=p.id;b.appendChild(pastille(RL.couleur(p.id)));b.appendChild(el('span',null,p.nom));b.appendChild(el('small',null,p.place));
   b.onclick=function(){etat.place=p.id;hero();dire(p.nom+' : la page se compose pour cette place.')};P0.appendChild(b)});
- [].forEach.call(P0.querySelectorAll('.v-place'),function(b){b.setAttribute('aria-pressed',b.dataset.place===etat.place?'true':'false')});
- var G=$('vGestes');G.textContent='';r.place.gestes.forEach(function(g){G.appendChild(el('li',null,g))});
+ if(P0)[].forEach.call(P0.querySelectorAll('.v-place'),function(b){b.setAttribute('aria-pressed',b.dataset.place===etat.place?'true':'false')});
+ var G=$('vGestes');if(G){G.textContent='';r.place.gestes.forEach(function(g){G.appendChild(el('li',null,g))})}
  $('vDecaler').disabled=!r.decaler;$('vPlanB').disabled=!r.decaler;$('vDecaler').setAttribute('aria-pressed',etat.decale?'true':'false');$('vPlanB').setAttribute('aria-pressed',etat.planB?'true':'false');
  $('vPlanB').textContent=etat.planB?'Revenir au jardin':'Il pleut : basculer en plan B';
  if(!r.decaler)$('vReelDit').textContent='Cette place voit les changements, sans pouvoir les faire.';
  else if(!$('vReelDit').dataset.gardé)$('vReelDit').textContent='Changez quelque chose, puis passez d’une place à l’autre.'}
+/* le cadran de l'iPhone : le modèle de modules/temps/cercle.js, dessiné par accueil/temps.js (le même dessin que l'aperçu) */
+function dessinerCadran(r){var S=$('vCercle');if(!S||!C)return;
+ var dessin=root.AIMETempsAccueil&&root.AIMETempsAccueil.dessiner;
+ if(!dessin)return;
+ dessin(S,C.modele(cadran(etat.place,etat),{rayon:352,epaisseur:40,ecart:9}),{qui:'la place « '+r.place.nom+' »',ids:{titre:'vCercleT',desc:'vCercleD'}})}
 function dire(t){var d=$('vReelDit');if(d){d.textContent=t}}
 
 function tels(evt){var L=$('vTels');if(!L)return;L.textContent='';
@@ -145,5 +163,5 @@ function monter(){if(!$('vHero'))return;hero();
  var ag=$('vAgent');if(ag)ag.onclick=function(){var li=document.querySelectorAll('#vEtapes li');[].forEach.call(li,function(x){x.classList.remove('fait');x.firstChild.textContent='·'});
   [].forEach.call(li,function(x,i){setTimeout(function(){x.classList.add('fait');x.firstChild.textContent='✓'},(i+1)*(document.documentElement.classList.contains('calme')?1:550))})}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',monter);else monter();
-return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,composer:composer,telephones:telephones};
+return{PLACES:PLACES,MOMENTS:MOMENTS,EVTS:EVTS,composer:composer,cadran:cadran,telephones:telephones};
 });

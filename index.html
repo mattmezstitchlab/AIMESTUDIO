@@ -45,18 +45,11 @@ a{color:inherit}
 </head>
 <body class="clair">
 <a class="evite" href="#jsChoix">Aller au choix « Je suis… »</a>
-<!-- en haut, seulement le logo : la navigation est dans le Dock (décision du 24/10) -->
-<header class="barre"><a class="mk" href="#haut" aria-label="AIME, retour en haut"><span class="v-orbe" style="width:24px;height:24px" aria-hidden="true"><i></i><b></b></span>AIME<sup>®</sup></a></header>
-
-<main>
-<!-- 1 · le titre, le manifeste, puis « Je suis… », la démonstration, la liste d'attente et les vidéos (inchangés) -->
-<section class="zero" id="haut" aria-labelledby="t-zero">
- <span class="v-orbe" aria-hidden="true"><i></i><b></b></span>
- <div class="col">
-  <h1 id="t-zero">AIME<sup>®</sup></h1>
-  <p class="intention" data-regie="intention"><span class="gris">On ne peut pas tout être au même moment.</span> Mais on peut être bien plus qu'une seule chose.</p>
-  <p class="trois" data-regie="trois">Créer. Relier. Transformer.</p>
-  <!-- « Je suis… » : un choix, aucun rôle (le rôle vient du serveur, seulement pour qui crée un projet) ; une liste dessinée au style du site (motif ARIA combobox + listbox, accueil/liste.js) ; la valeur reste « maries », « metier:photographe »… -->
+<!-- en haut, la capsule (25/10) : le logo, qui ouvre la liste « Je suis… » ; la place ; le seul champ de la bêta.
+     La navigation reste dans le Dock. Un choix de place ne donne aucun rôle : le rôle vient du serveur. -->
+<header class="barre">
+ <div class="cap" id="cap">
+  <button type="button" class="mk" id="mk" aria-expanded="false" aria-controls="jsListe" aria-label="AIME — ouvrir la liste « Je suis… »"><span class="v-orbe" style="width:24px;height:24px" aria-hidden="true"><i></i><b></b></span>AIME<sup>®</sup></button>
   <div class="js-choix">
    <span class="js-l" id="jsChoixL">Je suis…</span>
    <div class="jl" id="jsListe">
@@ -79,7 +72,27 @@ a{color:inherit}
     </ul>
    </div>
   </div>
+ <aside class="at-bloc" aria-labelledby="atBlocT">
+  <form id="atBloc" class="at-bloc-f" novalidate>
+   <p class="at-titre" id="atBlocT"><b>La bêta ouvre bientôt.</b> Soyez prévenu en premier.</p>
+   <div class="js-champ"><label class="sr" for="atBlocEmail">Adresse e-mail</label><input id="atBlocEmail" type="email" name="email" autocomplete="email" inputmode="email" placeholder="vous@exemple.fr" required maxlength="254"><button type="submit">Me prévenir</button></div>
+   <label class="at-ok"><input type="checkbox" name="consentement"> <span>J'accepte de recevoir un e-mail à l'ouverture de la bêta.</span></label>
+   <div class="piege" aria-hidden="true"><label for="atBlocSite">Ne pas remplir</label><input id="atBlocSite" name="site_web" tabindex="-1" autocomplete="off"></div>
+   <p class="at-etat" role="status" aria-live="polite"></p>
+  </form>
+  <a class="at-plus" href="/beta/">Ce que vous attendez d'AIME</a>
+ </aside>
  </div>
+</header>
+
+<main>
+<!-- 1 · le titre, le manifeste, puis « Je suis… », la démonstration, la liste d'attente et les vidéos (inchangés) -->
+<section class="zero" id="haut" aria-labelledby="t-zero">
+ <span class="v-orbe" aria-hidden="true"><i></i><b></b></span>
+ <div class="col">
+  <h1 id="t-zero">AIME<sup>®</sup></h1>
+  <p class="intention" data-regie="intention"><span class="gris">On ne peut pas tout être au même moment.</span> Mais on peut être bien plus qu'une seule chose.</p>
+  <p class="trois" data-regie="trois">Créer. Relier. Transformer.</p>
  </div>
  <!-- la démo : les téléphones du mariage, le rôle choisi au centre (accueil/demo.js, vitrine/metiers.json) -->
  <section class="dm" id="demo" hidden aria-labelledby="dmTete">
@@ -97,17 +110,6 @@ a{color:inherit}
   </form>
   <p class="vivant" id="jsVivant" role="status" aria-live="polite"></p>
  </section>
- <!-- la liste d'attente de la bêta, en bref : la place vient du « Je suis… » au-dessus ; le formulaire complet est sur /beta/ (attente/attente.js) -->
- <aside class="at-bloc" aria-labelledby="atBlocT">
-  <form id="atBloc" class="at-bloc-f" novalidate>
-   <p class="at-titre" id="atBlocT"><b>La bêta ouvre bientôt.</b> Soyez prévenu en premier.</p>
-   <div class="js-champ"><label class="sr" for="atBlocEmail">Adresse e-mail</label><input id="atBlocEmail" type="email" name="email" autocomplete="email" inputmode="email" placeholder="vous@exemple.fr" required maxlength="254"><button type="submit">Me prévenir</button></div>
-   <label class="at-ok"><input type="checkbox" name="consentement"> <span>J'accepte de recevoir un e-mail à l'ouverture de la bêta.</span></label>
-   <div class="piege" aria-hidden="true"><label for="atBlocSite">Ne pas remplir</label><input id="atBlocSite" name="site_web" tabindex="-1" autocomplete="off"></div>
-   <p class="at-etat" role="status" aria-live="polite"></p>
-  </form>
-  <a class="at-plus" href="/beta/">Dire ce que vous attendez d'AIME</a>
- </aside>
  <!-- deux vidéos, à la place des exemples : rien en lecture automatique, sous-titres par défaut (media/) -->
  <ul class="vg" aria-label="Vidéos">
   <li><button type="button" class="vg-b" data-video="aime-film" data-vtt data-titre="AIME en 2 minutes"><span class="vg-img"><img src="/media/aime-film.jpg" alt="" width="640" height="360" loading="lazy" decoding="async"><span class="vg-play" aria-hidden="true"></span></span><span class="vg-t">AIME en 2 minutes</span><span class="vg-d">2 min 22 · sous-titrée</span></button></li>
@@ -119,29 +121,42 @@ a{color:inherit}
 <section class="v-sec" id="ecrans" aria-labelledby="tEcrans" style="padding-top:48px">
  <div class="v-col">
   <h2 class="v-titre" id="tEcrans"><span class="gris">Un projet.</span> Chacun son écran.</h2>
-  <div class="v-carte v-app" id="vHero">
-   <div class="v-ecran">
-    <div class="v-fen"><span class="v-feux" aria-hidden="true"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i></span><span>Mariage Camille &amp; Gabriel · démonstration, données fictives</span></div>
-    <div class="v-scene" id="vScene">
-     <div class="v-page" aria-live="polite">
-      <div class="v-page-t"><span class="v-pt" id="vVousPt" aria-hidden="true"></span><div style="flex:1;min-width:0"><p style="font-size:12.5px;color:var(--faint)">Vous êtes</p><p class="d" style="font-size:24px" id="vVous">Le couple</p></div><span class="v-pil" id="vNb"></span></div>
-      <ul class="v-moments" id="vMoments"></ul>
-      <p style="margin:0;padding:12px 20px 18px;font-size:13.5px;color:var(--faint)" id="vCache"></p>
+  <!-- un seul iPhone : le fond change avec la place, la page se compose pour elle, et le cadran est celui du module Temps
+       (modules/temps/cercle.js, dessiné par accueil/temps.js). Rien n'est envoyé : les règles sont celles de synchroview/permissions.js. -->
+  <div class="v-hero" id="vHero">
+   <div class="v-p-scene">
+    <div class="v-p-cadre">
+     <div class="v-fonds" aria-hidden="true">
+      <span class="v-fond" data-fond="owner"></span>
+      <span class="v-fond" data-fond="editor"></span>
+      <span class="v-fond" data-fond="contributor"></span>
+      <span class="v-fond" data-fond="guest"></span>
+     </div>
+     <div class="v-p-ecran">
+      <div class="v-p-haut"><span class="v-p-heure">9:41</span><span class="v-p-prj"><span class="v-pt" id="vVousPt" aria-hidden="true"></span>Mariage Camille &amp; Gabriel</span><span class="v-p-ondes" aria-hidden="true"></span></div>
+      <div class="v-p-page" aria-live="polite">
+       <div class="v-page-t"><p style="margin:0;flex:1;min-width:0"><span class="v-k">Vous êtes</span><span class="d" id="vVous">Le couple</span></p><span class="v-pil" id="vNb"></span></div>
+       <figure class="v-p-cadran-figure">
+        <svg class="v-p-cadran" id="vCercle" viewBox="0 0 1000 1000" role="img" aria-labelledby="vCercleT vCercleD"><title id="vCercleT">Circle · journée de 24 heures</title><desc id="vCercleD">Le programme de cette place sur le cadran du module Temps.</desc></svg>
+       </figure>
+       <ul class="v-moments" id="vMoments"></ul>
+       <p class="v-p-cache" id="vCache"></p>
+      </div>
      </div>
     </div>
    </div>
-   <aside class="v-panneau" aria-label="Choisir une place">
-    <p class="v-k" style="font-size:11.5px">Places</p>
+   <div class="v-hero-reglages">
+    <p class="v-k">Places</p>
     <div class="v-places" id="vPlaces" role="group" aria-label="Voir le projet depuis la place de"></div>
-    <p class="v-k" style="font-size:11.5px">Ce que cette place peut faire</p>
+    <p class="v-k">Ce que cette place peut faire</p>
     <ul class="v-gestes" id="vGestes"></ul>
     <div class="v-reel">
-     <p class="v-k" style="font-size:11.5px">Le réel bouge</p>
+     <p class="v-k">Le réel bouge</p>
      <button type="button" class="v-btn2" id="vDecaler" aria-pressed="false">Décaler le cocktail de 15 min</button>
      <button type="button" class="v-btn2" id="vPlanB" aria-pressed="false">Il pleut : basculer en plan B</button>
      <p class="v-dit" id="vReelDit" role="status"></p>
     </div>
-   </aside>
+   </div>
   </div>
   <p class="v-leg" style="text-align:center;margin:18px auto 0;font-size:14px;max-width:760px">Ici, les vraies règles d'accès, avec des données fictives. Dans un vrai projet, le serveur compose la page de chacun selon son rôle, à partir de la même source : ce qu'une place ne voit pas ne lui est jamais envoyé. L'Orbe, elle, explique les droits et propose les gestes.</p>
  </div>
@@ -201,8 +216,8 @@ a{color:inherit}
    <p class="v-leg">Un même programme, en liste ou sur le cadran Circle. Les horaires sont ceux du Jour J : aucune date n'est ajoutée à la démonstration.</p>
   </div>
   <div class="v-carte v-temps-vitrine">
-   <div class="v-temps-produit">
-    <div class="v-temps-fen"><span class="v-feux" aria-hidden="true"><i></i><i></i><i></i></span><span>Mariage Camille &amp; Gabriel · démonstration, données fictives</span></div>
+   <div class="v-temps-produit v-p-produit">
+    <div class="v-temps-fen"><span class="v-p-heure">9:41</span><span>Mariage Camille &amp; Gabriel · démonstration</span><span class="v-p-ondes" aria-hidden="true"></span></div>
     <div class="v-temps-corps">
      <div class="v-temps-haut">
       <div><span class="v-temps-jour">Jour J</span><h3 id="tempsDemoTitre">Programme</h3><p id="tempsDemoPlace">Chargement de la démonstration…</p></div>
@@ -286,6 +301,7 @@ a{color:inherit}
 <script src="/projets/projets.js"></script>
 <script src="/compte/creer.js"></script>
 <script src="/accueil/liste.js"></script>
+<script src="/accueil/capsule.js"></script>
 <script src="/attente/attente.js"></script>
 <script>(function(){var f=document.getElementById('atBloc');if(f&&window.AIMEAttente)AIMEAttente.bloc(f)})();</script>
 <script src="/accueil/demo.js"></script>
