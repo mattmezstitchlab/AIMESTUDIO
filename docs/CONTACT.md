@@ -40,3 +40,11 @@ ouvert sur cette version du site. Rien n'a été envoyé. »
    « Répondre » écrit au visiteur.
 
 Tests automatiques : `node --test tests/contact.test.cjs` (envoi simulé, aucune requête réelle).
+
+## OpenAime — premier raccord
+
+`/contact/openaime/` réutilise le même formulaire et la même API, avec un contexte de message privé et de date souhaitée. Le brouillon arrive dans le fragment `#mot=…` (3 000 caractères maximum), pas dans la query string ; ce fragment est retiré de l'entrée courante de l'historique avant la confirmation. Cela ne chiffre pas le message : l'utilisateur doit garder le lien privé. Aucun consentement ni coordonnée n'est transmis par le lien, aucun envoi n'est automatique. L'origine du message est une indication de contexte, pas une identité authentifiée.
+
+Le visiteur continue sur AIMEStudio : pas de CORS ni de proxy et aucun changement des gardes communes. Les protections, la conservation et les droits existants s'appliquent. Les demandes arrivent dans la boîte existante du site ; le préfixe `[OpenAime · post-it privé]` reste éditable. Pas de nouvelle table ni routage vers un destinataire fourni par le client.
+
+Avant ouverture publique : vérifier que `CONTACT_TO` correspond au destinataire souhaité dans la configuration serveur. La présence des variables ne prouve ni leur valeur ni la réception réelle. Tester un envoi autorisé dans un environnement dédié ; ne pas envoyer de vraies données personnelles dans une preview par défaut. La version OpenAime et cette page doivent être livrées ensemble. La buée/dessin et les post-its publics ne sont pas implémentés dans ce raccord.
