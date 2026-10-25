@@ -218,12 +218,17 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     ok(/Moteurs/.test(await p.textContent('#mc-pan h2')), 'Cube Maître : au clavier, une face ouvre sa fiche');
     await p.goto(B + '/canevas/?maitre=sante&de=/maitre/', { waitUntil: 'networkidle' }); await p.waitForTimeout(2000);
     ok(/Cube Maître/.test(await p.textContent('.cv-titre')), 'Canevas : le Cube Maître s\'ouvre déplié');
-    // Le cœur : un seul projet, quatre écrans ; écrire une fois recompose les quatre, le jour J se recale pour chacun
-    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(800);
-    await p.fill('#srcTitre', 'Inès & Théo'); await p.waitForTimeout(1200);
-    ok((await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /Inès & Théo/.test(document.body.textContent))))).filter(Boolean).length === 4, 'Accueil : le nom écrit une fois apparaît sur les quatre écrans');
-    await p.click('#jourPluie'); await p.waitForTimeout(400); ok(/plan B/.test(await p.textContent('#jourTrace')) && (await p.$$('#jourVues li.change')).length >= 3, 'Accueil : l\'averse recale le jour J pour chacun');
-    ok(!(await deborde()), 'Accueil (cœur) : sans débordement horizontal');
+    // L'accueil clair (25/10) : « Un projet. Chacun son écran. » sur les vraies règles ; le réel bouge, chacun le sait
+    await p.goto(B + '/', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#vMoments li'); await p.waitForTimeout(300);
+    const nb = async () => p.evaluate(() => document.querySelectorAll('#vMoments li').length);
+    const vu = {}; for (const pl of ['owner', 'editor', 'contributor', 'guest']) { await p.click('#vPlaces [data-place="' + pl + '"]'); await p.waitForTimeout(120); vu[pl] = await nb(); }
+    ok(vu.owner === 7 && vu.editor === 7 && vu.contributor === 6 && vu.guest === 4, 'Accueil : chaque place reçoit sa page (7, 7, 6, 4 moments)');
+    ok(await p.evaluate(() => document.getElementById('vDecaler').disabled), 'Accueil : l\'invitée ne peut pas décaler');
+    await p.click('#vPlaces [data-place="editor"]'); await p.click('#vDecaler'); await p.click('#vPlanB'); await p.click('#vPlaces [data-place="guest"]'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => /16:15/.test(document.getElementById('vMoments').textContent) && /Orangerie/.test(document.getElementById('vMoments').textContent)), 'Accueil : écrit une fois par la coordination, vu par l\'invitée (16:15, Orangerie)');
+    await p.click('#vEvts [data-evt="surprise"]'); await p.waitForTimeout(150);
+    ok(await p.evaluate(() => document.querySelectorAll('#vTels .v-tel:not(.eteint)').length === 3 && document.querySelectorAll('#vTels .v-tel').length === 7), 'Accueil : sept téléphones, seuls les trois concernés s\'allument');
+    ok(!(await deborde()), 'Accueil (chacun son écran) : sans débordement horizontal');
     // Les exemples : la même mécanique avec six rôles (World), six écrans composés par le moteur
     await p.goto(B + '/exemples/?u=world', { waitUntil: 'networkidle' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(1200);
     ok((await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /Inès &amp; Théo|Inès & Théo/.test(document.body.textContent))))).filter(Boolean).length === 6, 'Exemples : six écrans composés depuis la même source (World)');
