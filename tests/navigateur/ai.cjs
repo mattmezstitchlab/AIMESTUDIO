@@ -92,6 +92,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok((await pool.query('select statut from demandes where cle = $1', [dm.cle])).rows[0].statut === 'convertie', 'la demande est « transformée en projet »');
     await capture(pd, 'AI__ordinateur__2d-projet-cree');
     await pd.click('#projet [data-vers-ai]'); await pd.waitForSelector('#espaces:not([hidden])');
+    await pd.waitForFunction(() => /Mariage New York · Léa Fictive/.test(document.getElementById('liste').textContent) && !document.getElementById('traitees').hidden, null, { timeout: 8000 }).catch(() => {});   /* AI relit ses listes au retour */
     ok(/Mariage New York · Léa Fictive/.test(await pd.locator('#liste').innerText()), 'retour à AI : le projet est dans « Mes projets et participations »');
     ok(/Demandes traitées \(1\)/.test(await pd.locator('#traitees').innerText()), 'la demande passe dans « Demandes traitées »');
     await pd.goBack(); await pd.goBack(); await pd.waitForSelector('#dTitre');
