@@ -140,7 +140,7 @@ function toISODate(d) { if (typeof d === 'string') return d.slice(0, 10); const 
 async function changerStatut(db, boite, cle, statut, par) {
   if (!STATUTS.includes(statut)) return false;
   const rows = await requete(db,
-    `with a as (select id, statut from demandes where boite = $1 and cle = $2),
+    `with a as (select id, statut from demandes where boite = $1 and cle = $2 for update),
      d as (update demandes set statut = $3, derniere_activite = now() from a where demandes.id = a.id and a.statut <> $3 returning demandes.id, a.statut as avant),
      j as (insert into demandes_journal (demande_id, quoi, par, detail) select id, 'statut', $4, jsonb_build_object('de', avant, 'a', $3::text) from d)
      select (select count(*) from a)::int as existe`, [boite, cle, statut, par]);
