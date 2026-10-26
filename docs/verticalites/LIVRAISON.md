@@ -32,3 +32,9 @@ Dossiers sur cet appareil, non chiffrés, non partagés et non synchronisés par
 La branche Arena est fixe. Le checkout initial était en retard sur sa propre tête distante et contenait les travaux antérieurs non commitées. L’incrément phase 1 doit être poussé **sur la tête distante courante**, sans commit des versions anciennes de `index.html`, du package ou de la Fenêtre et sans forcer le push. Aucun merge de #155 ni nouvelle fusion de branche autorisée.
 
 Voir `AUDIT.md` pour le détail main / #153 / #154 / #155 et `canevas/dossiers/README.md` pour le modèle, les raccourcis et les limitations.
+
+## Preview et PR
+
+La phase 1 est publiée dans la PR #153 existante (branche Arena imposée). L’incrément initial `e379e36` a reçu le statut Vercel **success / Deployment has completed**, ainsi que les contrôles CI Node et socle/base réussis. Les contrôles navigateur, accessibilité et Temps CI poursuivent leur exécution : aucune fusion n’est effectuée sur ce constat.
+
+Preview de branche : https://aimestudio-git-arena-2d-ba3517-matthieulecointre-9534s-projects.vercel.app/studio/verticalites/ . Le statut de déploiement provient de GitHub/Vercel ; les tests d’interaction décrits ci-dessus ont été exécutés sur la preview locale, pas à travers le déploiement Vercel.

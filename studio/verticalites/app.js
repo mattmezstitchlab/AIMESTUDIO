@@ -8,7 +8,7 @@ const E=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=c
 function button(label,fn,cls){const b=E('button',cls,label);b.type='button';b.onclick=fn;return b}
 function image(src,alt,loading='lazy'){const i=E('img');i.src=src;i.alt=alt;i.loading=loading;i.decoding='async';return i}
 function notify(text,persist=false){$('#notice').textContent=text;$('#notice').hidden=false;clearTimeout(noticeTimer);if(!persist)noticeTimer=setTimeout(()=>$('#notice').hidden=true,6000)}
-function state(text){$('#save-state').textContent=text;$('#save-state').title=text}
+function state(text){$('#save-state').textContent=text;$('#save-state').title=text;const b=$('#save-button');if(b){b.textContent=text==='Enregistrement…'?'Sauvegarde…':text==='Enregistré sur cet appareil'?'Enregistré ✓':text.startsWith('Échec')?'Réessayer':'Enregistrer';b.title=text}}
 const V=id=>catalog.verticalities.find(v=>v.id===id),Mod=id=>catalog.modules.find(m=>m.id===id);
 const current=()=>doc?.objects.filter(o=>selection.has(o.id))||[];
 function closeDialogs(){$$('dialog[open]').forEach(d=>d.close())}
