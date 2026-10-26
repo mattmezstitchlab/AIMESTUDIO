@@ -306,5 +306,6 @@
       "destination": "/projets/",
       "permanent": true
     }
-  ]
+  ],
+  "outputDirectory": "."
 }
