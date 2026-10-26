@@ -20,6 +20,8 @@ const COMPTES = process.env.AIME_COMPTES_TEST === '1' && process.env.TEST_DATABA
 const proprietaireDeTest = r => /(?:^|;\s*)aime_test_proprietaire=oui(?:;|$)/.test(r.headers.get('cookie') || '');
 http.createServer((req, res) => {
   for (const h of GLOBAUX) res.setHeader(h.key, h.value);
+  // Local visual preview must not retain earlier HTML, styles or module versions.
+  res.setHeader('Cache-Control', 'no-store');
   const brut = '/' + String(req.url || '/').split(/[?#]/)[0].replace(/^\/+/, m => m.slice(1));   /* le chemin brut : « //regie/ » reste un chemin, pas un hôte */
   ECRANS.then(E => E.garder(new Request('http://localhost' + brut, { headers: { cookie: req.headers.cookie || '' } }), proprietaireDeTest)).then(async r => {
     if (!r) return servir(req, res);

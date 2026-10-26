@@ -1,0 +1,72 @@
+/* Twelve illustrated worlds, one original engine. Black replaces the olive UI. */
+body.editorial-world{--shell-left:0px;--world-accent:#d0baa0;background:#111;color:#f7f2ea}
+body.editorial-world .ruler{background:#080808ec;color:#f4ede2;border-color:#ffffff20}
+body.editorial-world #ruler-time{background:#080808;color:#f4ede2;border-color:#fff5}
+body.editorial-world .ruler{display:none!important}
+body.editorial-world .immersive-nav{left:0;height:100px;padding:22px 3.5vw;background:linear-gradient(#08080880,transparent);backdrop-filter:none;border:0;color:#fffaf2}
+body.editorial-world[data-scene-tone=paper] .immersive-nav{background:#111f;color:#fffaf2;border-bottom:1px solid #fff2;backdrop-filter:blur(16px)}
+body.editorial-world .immersive-brand,body.editorial-world .immersive-brand span{font:400 24px/.95 Playfair,Georgia,serif;letter-spacing:-1px}
+body.editorial-world .immersive-brand span{margin-top:3px}
+body.editorial-world .immersive-nav-center{gap:26px}
+body.editorial-world .immersive-nav-center button,body.editorial-world .immersive-nav-right a{font-size:9px;letter-spacing:1.7px}
+body.editorial-world #immersive{margin:0;min-height:780px;height:100svh;background:#080808}
+body.editorial-world .landscape{transform:none;background-position:center;filter:none!important}
+body.editorial-world .landscape-shade{background:linear-gradient(90deg,#0007,transparent 75%),linear-gradient(#0003,transparent 45%,#0002)}
+body.editorial-world #immersive[data-light=night] .landscape{filter:brightness(.52)!important}
+body.editorial-world #immersive[data-light=twilight] .landscape{filter:brightness(.78)!important}
+body.editorial-world .immersive-title{left:18%;top:28%;max-width:65%;text-shadow:0 2px 30px #0002}
+body.editorial-world .immersive-title h1{font:400 clamp(82px,10.5vw,168px)/.98 Playfair,Georgia,serif;letter-spacing:-.065em;max-width:850px;margin:0 0 25px;text-wrap:balance}
+body.editorial-world .immersive-title>p:first-child{font-size:9px;letter-spacing:2.8px;margin-bottom:22px}
+body.editorial-world .immersive-title #perspective-subtitle{font:400 19px/1.7 Playfair,Georgia,serif;max-width:420px;margin-bottom:25px}
+body.editorial-world .profession-cta{font-size:10px;letter-spacing:1.6px;border:0;border-radius:0;border-bottom:1px solid #fff8;padding:12px 0;backdrop-filter:none;background:none;max-width:max-content;gap:35px;margin-top:20px}
+body.editorial-world .scene-caption-top{top:32%;right:3%;max-width:120px;line-height:2}
+body.editorial-world .immersive-status{left:18%;bottom:155px;font-size:8px;gap:10px}
+body.editorial-world .demo-perspective-pill{left:auto;right:3.5%;bottom:145px;background:#0006;border-color:#fff4;font-size:8px;padding:9px 13px}
+.editorial-index{position:fixed;left:3.5vw;top:35%;z-index:30;display:flex;flex-direction:column;gap:22px;color:#fff9ef;width:120px}
+.editorial-index button{text-align:left;min-height:44px;padding:0;font-size:8px;line-height:1.6;letter-spacing:1.3px;max-width:110px}
+.editorial-index button span{display:block;font:15px/1.5 Playfair,serif;letter-spacing:1px}
+.editorial-index button:first-child:after{content:'';display:block;width:26px;height:1px;background:#fff9;margin-top:9px}
+body.editorial-world[data-at-opening=false] .editorial-index{display:none}
+body.editorial-world .immersive-dock{left:3.5%;right:3.5%;bottom:23px;height:90px;border-radius:50px;padding:11px 26px;background:linear-gradient(120deg,#d2b996a8,#bda1837d);border:1px solid #f8e4c8a8;backdrop-filter:blur(28px);box-shadow:0 8px 40px #0002;color:#fffaf3;gap:18px}
+body.editorial-world .dock-date{font-size:10px;min-width:130px;max-width:200px;border-color:#fff3}
+body.editorial-world .dock-date small{font-size:8px;color:#fff}
+body.editorial-world .light-choices{gap:16px}
+body.editorial-world .light-choices button{font-size:8px;color:#fff9edc9;gap:5px}
+body.editorial-world .light-choices .aime-icon{width:21px;height:21px}
+body.editorial-world .light-choices button.active{color:#fff;text-shadow:none}
+body.editorial-world .light-choices button.active:after{background:#fff;box-shadow:none}
+body.editorial-world .dock-playback{gap:5px}
+body.editorial-world .dock-playback #immersive-play{height:56px;width:56px;background:#1916137a;border:1px solid #f5d8a6;box-shadow:0 0 12px #f4d3a230;color:white}
+body.editorial-world .dock-playback #immersive-play .aime-icon{height:24px;width:24px}
+body.editorial-world .dock-actions{gap:22px;padding-left:18px}
+body.editorial-world .dock-actions button{font-size:8px;letter-spacing:1px;gap:5px}
+body.editorial-world .dock-actions .aime-icon{width:21px;height:21px}
+body.editorial-world #context-plus{color:white;border-color:#fff6;background:#08080855}
+.editorial-progress{display:grid;gap:7px;flex:1;max-width:220px;min-width:60px;text-align:center}
+.editorial-progress input{width:100%;accent-color:#fff;height:2px;cursor:pointer;margin:12px 0}
+.editorial-progress output{font-size:8px;letter-spacing:1px}
+.editorial-moments{background:#111;padding:35px 5vw;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:25px;color:white}
+body.editorial-world .editorial-moments .floating-card{position:static;min-width:0;max-width:none;width:100%;border:0;border-radius:0;border-top:1px solid #fff4;box-shadow:none;background:none;backdrop-filter:none;padding:18px 0;transform:none;align-items:flex-start}
+.editorial-moments .floating-card>i,.editorial-moments .float-icon{display:none}
+body.editorial-world .editorial-moments .floating-card strong{font:20px/1.4 Playfair,serif}
+body.editorial-world .editorial-moments .floating-card small{font-size:9px;line-height:1.8;color:#ddd}
+body.editorial-world .chapter h2{font-family:Playfair,Georgia,serif;font-weight:400;letter-spacing:-.055em}
+body.editorial-world .story-toolbar{background:#141414f5;color:#f3eee7;border-color:#fff3;top:100px}
+body.editorial-world .story-toolbar select{background:#141414;color:#f3eee7}
+body.editorial-world .act-ink,body.editorial-world .act-countdown,body.editorial-world .sequence-ink,body.editorial-world .sequence-night{background:#111;color:#f5f0e8}
+body.editorial-world .act-photo:after{background:linear-gradient(90deg,#000b,#0002)}
+body.editorial-world .sequence-dawn:before,body.editorial-world .sequence-night:before{background:linear-gradient(90deg,#080808eb,#1117),var(--scene-image) center/cover}
+body.editorial-world .sequence-golden .moment,body.editorial-world .sequence-night .moment,body.editorial-world .sequence-dawn .moment{background:#08080840}
+body.editorial-world dialog{background:#111;color:#f4eee5;border:1px solid #fff3;box-shadow:0 20px 80px #0004}
+body.editorial-world dialog::backdrop{background:#0008}
+body.editorial-world dialog :is(p,small,.note,.detail-meta,.profession-result small,.profession-result>span:last-child,.profession-browser aside span){color:#c8c1b7}
+body.editorial-world dialog :is(input,select){background:#181818;color:#fff;border-color:#ffffff40}
+body.editorial-world .profession-browser aside .selected{background:#333;color:#fff}
+body.editorial-world :is(.support-card,.atlas-card){background:#1c1c1c;color:#fff;border-color:#fff3}
+body.editorial-world :is(.support-card p,.support-card small,.support-binding>span,#support-count){color:#ccc}
+body.editorial-world #toast{background:#080808;color:#fff}
+body.editorial-world :is(button,a,input,select):focus-visible{outline:2px solid currentColor;outline-offset:5px}
+@media(max-width:1200px){body.editorial-world .immersive-nav-center{gap:15px}body.editorial-world .light-choices{display:none}body.editorial-world .immersive-title h1{font-size:11vw}body.editorial-world .immersive-title{max-width:72%}.editorial-progress{max-width:200px}}
+@media(max-width:750px){body.editorial-world .immersive-nav{height:82px;padding:17px 22px;gap:12px}body.editorial-world .immersive-brand,body.editorial-world .immersive-brand span{font-size:18px}body.editorial-world .immersive-nav-center{gap:12px}body.editorial-world .immersive-nav-center button{font-size:8px;letter-spacing:.3px}body.editorial-world .immersive-nav-right{display:none}body.editorial-world #immersive{min-height:740px;height:100svh}body.editorial-world .landscape{background-position:61% center}body.editorial-world .landscape-shade{background:linear-gradient(90deg,#0009,#0001),linear-gradient(#0002,transparent,#0004)}body.editorial-world .immersive-title{left:7%;top:25%;max-width:88%}body.editorial-world .immersive-title h1{font-size:clamp(65px,16vw,100px);letter-spacing:-.06em;margin-bottom:22px}body.editorial-world .immersive-title>p:first-child{font-size:8px;letter-spacing:2px}body.editorial-world .immersive-title #perspective-subtitle{font-size:17px;max-width:290px}body.editorial-world .profession-cta{font-size:9px;padding:10px 0;gap:20px}.editorial-index{display:none}body.editorial-world .scene-caption-top{display:none}body.editorial-world .immersive-status{left:7%;bottom:200px;font-size:7px;max-width:86%;flex-wrap:wrap;gap:7px}body.editorial-world .immersive-status button{margin-left:0;font-size:8px}body.editorial-world .demo-perspective-pill{left:7%;right:auto;bottom:153px;font-size:7px}body.editorial-world .immersive-dock{left:12px;right:12px;bottom:14px;height:116px;padding:10px 15px;border-radius:28px;gap:8px;flex-wrap:wrap;justify-content:space-between}body.editorial-world .dock-date{display:none}body.editorial-world .dock-playback{order:0;gap:4px}body.editorial-world .dock-playback #immersive-play{width:44px;height:44px}body.editorial-world .dock-playback>button{min-width:28px;padding:4px}body.editorial-world .dock-speed select{max-width:38px;font-size:9px!important}body.editorial-world .editorial-progress{order:1;max-width:none;min-width:70px}body.editorial-world .dock-actions{order:2;gap:20px;border:0;padding:0;width:100%;justify-content:space-around}body.editorial-world .dock-actions button{flex-direction:row;font-size:8px;min-height:32px}body.editorial-world #context-plus{position:absolute;right:5px;top:-23px;background:#080808;width:40px;min-width:40px;height:40px}body.editorial-world .story-toolbar{top:82px}.editorial-moments{grid-template-columns:1fr 1fr;gap:15px;padding:25px 7%}body.editorial-world .editorial-moments .floating-card strong{font-size:17px}}
+@media(prefers-reduced-motion:reduce){body.editorial-world *,body.editorial-world{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media(max-width:750px){body.editorial-world .immersive-dock{display:flex;align-content:center}body.editorial-world .dock-playback{padding:0;border:0;grid-area:auto}body.editorial-world .dock-actions{grid-area:auto}body.editorial-world .editorial-progress{padding-right:8px}body.editorial-world .dock-actions .aime-icon{display:block;width:18px;height:18px}body.editorial-world .dock-actions button{min-height:36px}}

@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "PORT=3000 HOST=0.0.0.0 node scripts/serveur-test.cjs",
     "start": "PORT=3000 HOST=0.0.0.0 node scripts/serveur-test.cjs",
-    "test": "node --test tests/*.test.cjs"
+    "test": "node --test tests/*.test.cjs",
+    "build": "node scripts/build-union.cjs",
+    "test:union": "node --test tests/union.test.cjs tests/union-perspectives.test.cjs tests/worlds.test.cjs",
+    "test:supports": "node --test tests/supports.test.cjs",
+    "test:fenetre": "node --test tests/fenetre.test.cjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",

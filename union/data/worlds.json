@@ -1,0 +1,536 @@
+{
+  "mariage": {
+    "name": "L’union",
+    "tagline": "Le temps de tout vivre.",
+    "image": "worlds/mariage",
+    "accent": "#d0baa0",
+    "style": "landscape",
+    "activities": [],
+    "examples": []
+  },
+  "spectacle": {
+    "name": "La scène",
+    "tagline": "Avant le silence, la lumière.",
+    "image": "worlds/spectacle",
+    "accent": "#d0baa0",
+    "style": "stage",
+    "activities": [
+      "Production",
+      "Mise en scène",
+      "Régie",
+      "Interprétation"
+    ],
+    "examples": [
+      [
+        "Écrire la note d’intention",
+        "Réunir l’équipe de création"
+      ],
+      [
+        "Composer l’affiche artistique",
+        "Proposer le calendrier des représentations"
+      ],
+      [
+        "Explorer la première scène",
+        "Composer le paysage sonore"
+      ],
+      [
+        "Répéter les enchaînements",
+        "Noter les retours de mise en scène"
+      ],
+      [
+        "Tracer le plan de feu",
+        "Préparer le plateau"
+      ],
+      [
+        "Écouter la balance voix",
+        "Vérifier le retour scène"
+      ],
+      [
+        "Ouvrir les portes",
+        "Donner le signal de lever de rideau"
+      ],
+      [
+        "Mettre les équipements en sécurité",
+        "Inventorier le matériel"
+      ],
+      [
+        "Sélectionner les captations",
+        "Déposer la mémoire du spectacle"
+      ]
+    ]
+  },
+  "seminaire": {
+    "name": "Le partage",
+    "tagline": "Des idées qui nous font avancer.",
+    "image": "worlds/seminaire",
+    "accent": "#d0baa0",
+    "style": "architecture",
+    "activities": [
+      "Organisation",
+      "Intervention",
+      "Technique",
+      "Accueil"
+    ],
+    "examples": [
+      [
+        "Formuler la question commune",
+        "Identifier les participants"
+      ],
+      [
+        "Dessiner le fil des sessions",
+        "Inviter les intervenants"
+      ],
+      [
+        "Préparer le formulaire d’inscription",
+        "Définir les besoins d’accessibilité"
+      ],
+      [
+        "Rassembler les supports",
+        "Relire la feuille de route"
+      ],
+      [
+        "Préparer les espaces de travail",
+        "Tester les microphones"
+      ],
+      [
+        "Ouvrir la conférence",
+        "Explorer le premier atelier"
+      ],
+      [
+        "Partager les questions",
+        "Recueillir les propositions"
+      ],
+      [
+        "Composer la synthèse",
+        "Partager les supports autorisés"
+      ]
+    ]
+  },
+  "formation": {
+    "name": "La transmission",
+    "tagline": "Apprendre. Essayer. Transmettre.",
+    "image": "worlds/formation",
+    "accent": "#d0baa0",
+    "style": "notebook",
+    "activities": [
+      "Formation",
+      "Apprentissage",
+      "Accompagnement"
+    ],
+    "examples": [
+      [
+        "Écouter les attentes",
+        "Identifier les acquis"
+      ],
+      [
+        "Formuler un objectif observable",
+        "Dessiner la progression"
+      ],
+      [
+        "Présenter le parcours",
+        "Recueillir les besoins"
+      ],
+      [
+        "Préparer le carnet de travail",
+        "Sélectionner les supports"
+      ],
+      [
+        "Ouvrir la première séance",
+        "Explorer une notion ensemble"
+      ],
+      [
+        "Réaliser un exercice",
+        "Partager les essais"
+      ],
+      [
+        "Relire les acquis",
+        "Donner un retour constructif"
+      ],
+      [
+        "Composer la fiche de synthèse",
+        "Proposer une suite"
+      ]
+    ]
+  },
+  "exposition": {
+    "name": "L’exposition",
+    "tagline": "Habiter l’espace, déplacer le regard.",
+    "image": "worlds/exposition",
+    "accent": "#d0baa0",
+    "style": "gallery",
+    "activities": [
+      "Commissariat",
+      "Création",
+      "Scénographie",
+      "Médiation"
+    ],
+    "examples": [
+      [
+        "Écrire le propos curatorial",
+        "Choisir une question"
+      ],
+      [
+        "Construire la liste des œuvres",
+        "Recueillir les accords"
+      ],
+      [
+        "Dessiner le parcours des salles",
+        "Explorer la lumière"
+      ],
+      [
+        "Préparer les cartels",
+        "Organiser le transport"
+      ],
+      [
+        "Installer une première œuvre",
+        "Vérifier les circulations"
+      ],
+      [
+        "Accueillir les premiers regards",
+        "Présenter la visite inaugurale"
+      ],
+      [
+        "Conduire une médiation",
+        "Recueillir les impressions"
+      ],
+      [
+        "Constater l’état des œuvres",
+        "Préparer les retours"
+      ],
+      [
+        "Conserver les vues de salle",
+        "Composer le catalogue"
+      ]
+    ]
+  },
+  "site": {
+    "name": "Le site",
+    "tagline": "D’une intention à une expérience.",
+    "image": "worlds/site",
+    "accent": "#d0baa0",
+    "style": "digital",
+    "activities": [
+      "Design",
+      "Développement",
+      "Rédaction",
+      "Accessibilité"
+    ],
+    "examples": [
+      [
+        "Lire le brief",
+        "Définir le problème à résoudre"
+      ],
+      [
+        "Explorer les usages",
+        "Cartographier les contenus"
+      ],
+      [
+        "Composer une piste visuelle",
+        "Choisir le langage typographique"
+      ],
+      [
+        "Dessiner le premier parcours",
+        "Présenter le prototype"
+      ],
+      [
+        "Construire la navigation",
+        "Intégrer les premiers contenus"
+      ],
+      [
+        "Tester au clavier",
+        "Vérifier la lecture sur mobile"
+      ],
+      [
+        "Préparer la revue de lancement",
+        "Publier une version de démonstration"
+      ],
+      [
+        "Recueillir les retours",
+        "Prioriser la prochaine version"
+      ]
+    ]
+  },
+  "broderie": {
+    "name": "La matière",
+    "tagline": "Une idée, un fil, mille gestes.",
+    "image": "worlds/broderie",
+    "accent": "#d0baa0",
+    "style": "textile",
+    "activities": [
+      "Création textile",
+      "Broderie",
+      "Atelier",
+      "Édition"
+    ],
+    "examples": [
+      [
+        "Ouvrir le carnet d’inspiration",
+        "Collecter une texture"
+      ],
+      [
+        "Choisir une image de référence",
+        "Préparer son cadrage"
+      ],
+      [
+        "Dessiner les grandes lignes",
+        "Composer les vides"
+      ],
+      [
+        "Comparer les écheveaux",
+        "Créer une gamme de fils"
+      ],
+      [
+        "Tracer la grille",
+        "Préparer le motif"
+      ],
+      [
+        "Broder un échantillon",
+        "Ajuster la tension"
+      ],
+      [
+        "Commencer la pièce",
+        "Observer le détail des points"
+      ],
+      [
+        "Photographier la matière",
+        "Présenter la pièce terminée"
+      ]
+    ]
+  },
+  "association": {
+    "name": "Le commun",
+    "tagline": "Une intention commune, des gestes concrets.",
+    "image": "worlds/association",
+    "accent": "#d0baa0",
+    "style": "community",
+    "activities": [
+      "Coordination",
+      "Bénévolat",
+      "Partenariat",
+      "Participation"
+    ],
+    "examples": [
+      [
+        "Écouter le territoire",
+        "Décrire un besoin partagé"
+      ],
+      [
+        "Réunir les premières personnes",
+        "Identifier les disponibilités"
+      ],
+      [
+        "Écrire l’action envisagée",
+        "Choisir un objectif commun"
+      ],
+      [
+        "Rencontrer les partenaires",
+        "Préciser les contributions"
+      ],
+      [
+        "Préparer les ressources",
+        "Répartir les responsabilités"
+      ],
+      [
+        "Accueillir les participants",
+        "Mener l’action collective"
+      ],
+      [
+        "Recueillir les retours",
+        "Relire les effets observés"
+      ],
+      [
+        "Partager le bilan",
+        "Préparer le relais"
+      ]
+    ]
+  },
+  "memoire": {
+    "name": "La mémoire",
+    "tagline": "Les traces deviennent une histoire.",
+    "image": "worlds/memoire",
+    "accent": "#d0baa0",
+    "style": "archive",
+    "activities": [
+      "Écriture",
+      "Collecte d’archives",
+      "Témoignage",
+      "Lecture"
+    ],
+    "examples": [
+      [
+        "Ouvrir la première boîte",
+        "Identifier une photographie sans date"
+      ],
+      [
+        "Raconter une rencontre",
+        "Conserver le contexte d’un souvenir"
+      ],
+      [
+        "Choisir un tournant du récit",
+        "Croiser deux versions"
+      ],
+      [
+        "Établir les liens entre les personnes",
+        "Recueillir un accord de publication"
+      ],
+      [
+        "Décrire une pièce d’archive",
+        "Consigner sa provenance"
+      ],
+      [
+        "Préparer un entretien",
+        "Transcrire un témoignage fictif"
+      ],
+      [
+        "Composer un premier chapitre",
+        "Relire les sources"
+      ],
+      [
+        "Partager le livre vivant",
+        "Préparer sa conservation"
+      ]
+    ]
+  },
+  "institution": {
+    "name": "L’institution",
+    "tagline": "Rendre chaque étape lisible.",
+    "image": "worlds/institution",
+    "accent": "#d0baa0",
+    "style": "ledger",
+    "activities": [
+      "Instruction",
+      "Référent",
+      "Contrôle",
+      "Consultation"
+    ],
+    "examples": [
+      [
+        "Décrire la situation fictive",
+        "Définir la question"
+      ],
+      [
+        "Répertorier les pièces",
+        "Noter leur provenance"
+      ],
+      [
+        "Préparer la démarche",
+        "Identifier le bon interlocuteur"
+      ],
+      [
+        "Relire les éléments du dossier",
+        "Signaler une pièce manquante"
+      ],
+      [
+        "Documenter la décision proposée",
+        "Présenter ses motifs"
+      ],
+      [
+        "Préparer une correction",
+        "Conserver la version précédente"
+      ],
+      [
+        "Vérifier la traçabilité",
+        "Relire les autorisations"
+      ],
+      [
+        "Préparer l’index des pièces",
+        "Clore la version de démonstration"
+      ]
+    ]
+  },
+  "festival": {
+    "name": "Le festival",
+    "tagline": "Des lieux, des voix, une même énergie.",
+    "image": "worlds/spectacle",
+    "accent": "#d0baa0",
+    "style": "festival",
+    "activities": [
+      "Direction",
+      "Production",
+      "Régie",
+      "Sécurité",
+      "Accueil public"
+    ],
+    "examples": [
+      [
+        "Formuler la vision artistique",
+        "Choisir le territoire"
+      ],
+      [
+        "Composer les premières scènes",
+        "Explorer les formats"
+      ],
+      [
+        "Rencontrer les partenaires",
+        "Préciser les contributions"
+      ],
+      [
+        "Établir la feuille de route",
+        "Préparer les autorisations"
+      ],
+      [
+        "Installer les premiers espaces",
+        "Vérifier les cheminements"
+      ],
+      [
+        "Accueillir le public",
+        "Ouvrir la scène principale"
+      ],
+      [
+        "Fermer les accès techniques",
+        "Inventorier les équipements"
+      ],
+      [
+        "Réunir les retours",
+        "Composer le bilan collectif"
+      ]
+    ]
+  },
+  "creation": {
+    "name": "La création",
+    "tagline": "Donner forme à ce qui n’existe pas encore.",
+    "image": "worlds/site",
+    "accent": "#d0baa0",
+    "style": "atelier",
+    "activities": [
+      "Création",
+      "Commande",
+      "Production",
+      "Contribution"
+    ],
+    "examples": [
+      [
+        "Lire la commande",
+        "Préciser l’intention"
+      ],
+      [
+        "Ouvrir le carnet de références",
+        "Partager une matière"
+      ],
+      [
+        "Dessiner trois pistes",
+        "Confronter les premiers essais"
+      ],
+      [
+        "Présenter une proposition",
+        "Recueillir les retours"
+      ],
+      [
+        "Produire une première version",
+        "Observer le geste"
+      ],
+      [
+        "Relire le brief ensemble",
+        "Consigner la validation proposée"
+      ],
+      [
+        "Préparer les livrables",
+        "Organiser la transmission"
+      ],
+      [
+        "Choisir les images du projet",
+        "Raconter le processus"
+      ]
+    ]
+  }
+}

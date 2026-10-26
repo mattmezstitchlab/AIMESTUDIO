@@ -1,0 +1,804 @@
+{
+  "format": "aime-verticalites-templates",
+  "version": 1,
+  "origine": {
+    "univers": "AIMESTUDIO/univers.json — identifiants et titres canoniques",
+    "types": "Propositions de parcours, sauf les cinq archétypes signalés issus de AIMESTUDIO/verticale/noyau.js",
+    "mariage": "Les 200 moments canoniques sont dans le jeu de données Manus distinct, ne pas générer 200 faux objets"
+  },
+  "principes": [
+    "Un moteur vertical commun, des configurations différentes",
+    "Univers de capacités distincts des types de projets",
+    "Les phases sont des gabarits suggérés, pas des événements accomplis",
+    "Identité, rôle technique, métier et accès ne sont pas interchangeables",
+    "Données privées filtrées côté serveur avant affichage",
+    "Une même entrée moment conservant son identifiant entre vues",
+    "Séparer prévision, réalité, défilement, et lecture",
+    "Les données de démonstration restent fictives et identifiées"
+  ],
+  "univers_capacites": [
+    {
+      "id": "mariage",
+      "titre": "Mariage"
+    },
+    {
+      "id": "causalite",
+      "titre": "Causalité"
+    },
+    {
+      "id": "broderie",
+      "titre": "Broderie"
+    },
+    {
+      "id": "memoire",
+      "titre": "Mémoire"
+    },
+    {
+      "id": "image",
+      "titre": "Image & couleur"
+    },
+    {
+      "id": "documents",
+      "titre": "Documents"
+    },
+    {
+      "id": "web",
+      "titre": "Web & réseaux"
+    },
+    {
+      "id": "accessibilite",
+      "titre": "Accessibilité"
+    },
+    {
+      "id": "territoires",
+      "titre": "Cartes & mondes"
+    },
+    {
+      "id": "bureau",
+      "titre": "Gestion & IA"
+    }
+  ],
+  "types_projets": [
+    {
+      "id": "mariage",
+      "titre": "Mariage",
+      "statut": "canonique_manus",
+      "echelle_de_temps": "mois>jours>heures>minutes",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "L’idée"
+        },
+        {
+          "id": "p02",
+          "titre": "Les fondations"
+        },
+        {
+          "id": "p03",
+          "titre": "La conception"
+        },
+        {
+          "id": "p04",
+          "titre": "La préparation"
+        },
+        {
+          "id": "p05",
+          "titre": "La dernière semaine"
+        },
+        {
+          "id": "p06",
+          "titre": "La veille"
+        },
+        {
+          "id": "p07",
+          "titre": "Le jour J"
+        },
+        {
+          "id": "p08",
+          "titre": "Le lendemain"
+        },
+        {
+          "id": "p09",
+          "titre": "Les semaines suivantes"
+        },
+        {
+          "id": "p10",
+          "titre": "La transmission"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "couple",
+        "coordination",
+        "prestataires",
+        "invités"
+      ],
+      "univers_capacites": [
+        "mariage",
+        "memoire",
+        "documents",
+        "causalite",
+        "bureau"
+      ],
+      "traitement_visuel": "Éditorial ivoire, temps gradué, scènes panoramiques, cartes de moments",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "spectacle",
+      "titre": "Spectacle et concert",
+      "statut": "proposition",
+      "echelle_de_temps": "mois>jours>heures>minutes>secondes",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "L’idée"
+        },
+        {
+          "id": "p02",
+          "titre": "La programmation"
+        },
+        {
+          "id": "p03",
+          "titre": "La création"
+        },
+        {
+          "id": "p04",
+          "titre": "Les répétitions"
+        },
+        {
+          "id": "p05",
+          "titre": "Le montage technique"
+        },
+        {
+          "id": "p06",
+          "titre": "Les balances"
+        },
+        {
+          "id": "p07",
+          "titre": "La représentation"
+        },
+        {
+          "id": "p08",
+          "titre": "Le démontage"
+        },
+        {
+          "id": "p09",
+          "titre": "Les captations et archives"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "production",
+        "direction artistique",
+        "régie",
+        "artistes",
+        "techniciens",
+        "billetterie",
+        "public"
+      ],
+      "univers_capacites": [
+        "image",
+        "documents",
+        "causalite",
+        "bureau",
+        "accessibilite"
+      ],
+      "traitement_visuel": "Cinéma scénique, lumières changeantes, pistes de régie, marqueurs à la seconde",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "seminaire",
+      "titre": "Séminaire et conférence",
+      "statut": "archetype_existant",
+      "echelle_de_temps": "mois>jours>heures>minutes",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "L’intention"
+        },
+        {
+          "id": "p02",
+          "titre": "Le programme"
+        },
+        {
+          "id": "p03",
+          "titre": "Les inscriptions"
+        },
+        {
+          "id": "p04",
+          "titre": "La préparation"
+        },
+        {
+          "id": "p05",
+          "titre": "L’installation"
+        },
+        {
+          "id": "p06",
+          "titre": "Les sessions"
+        },
+        {
+          "id": "p07",
+          "titre": "Les échanges"
+        },
+        {
+          "id": "p08",
+          "titre": "Le bilan et les supports"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "organisation",
+        "intervenants",
+        "partenaires",
+        "technique",
+        "participants"
+      ],
+      "univers_capacites": [
+        "bureau",
+        "documents",
+        "web",
+        "accessibilite",
+        "causalite"
+      ],
+      "traitement_visuel": "Editorial organisé, salles et sessions, cartes de programme, diversité des perspectives",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "formation",
+      "titre": "Formation et atelier",
+      "statut": "proposition",
+      "echelle_de_temps": "semaines>jours>heures>minutes",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "Le besoin"
+        },
+        {
+          "id": "p02",
+          "titre": "Les objectifs"
+        },
+        {
+          "id": "p03",
+          "titre": "L’inscription"
+        },
+        {
+          "id": "p04",
+          "titre": "Les ressources"
+        },
+        {
+          "id": "p05",
+          "titre": "Les séances"
+        },
+        {
+          "id": "p06",
+          "titre": "La pratique"
+        },
+        {
+          "id": "p07",
+          "titre": "L’évaluation"
+        },
+        {
+          "id": "p08",
+          "titre": "La transmission"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "responsable",
+        "formateurs",
+        "apprenants",
+        "intervenants",
+        "administration"
+      ],
+      "univers_capacites": [
+        "accessibilite",
+        "documents",
+        "memoire",
+        "bureau"
+      ],
+      "traitement_visuel": "Pages de cours, progression accessible, chapitres et ressources pédagogiques",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "exposition",
+      "titre": "Exposition et installation",
+      "statut": "proposition",
+      "echelle_de_temps": "mois>jours>heures>minutes",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "L’intention curatoriale"
+        },
+        {
+          "id": "p02",
+          "titre": "La sélection"
+        },
+        {
+          "id": "p03",
+          "titre": "La scénographie"
+        },
+        {
+          "id": "p04",
+          "titre": "La production"
+        },
+        {
+          "id": "p05",
+          "titre": "Le montage"
+        },
+        {
+          "id": "p06",
+          "titre": "Le vernissage"
+        },
+        {
+          "id": "p07",
+          "titre": "L’exposition"
+        },
+        {
+          "id": "p08",
+          "titre": "Le démontage"
+        },
+        {
+          "id": "p09",
+          "titre": "Les archives"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "commissariat",
+        "artistes",
+        "scénographie",
+        "technique",
+        "médiation",
+        "public"
+      ],
+      "univers_capacites": [
+        "image",
+        "territoires",
+        "memoire",
+        "documents",
+        "accessibilite"
+      ],
+      "traitement_visuel": "Galerie muséale immersive, rythme des salles, plans et étiquettes",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "site",
+      "titre": "Création de site et expérience numérique",
+      "statut": "proposition",
+      "echelle_de_temps": "semaines>jours>heures",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "La demande"
+        },
+        {
+          "id": "p02",
+          "titre": "La recherche"
+        },
+        {
+          "id": "p03",
+          "titre": "La direction artistique"
+        },
+        {
+          "id": "p04",
+          "titre": "Le prototype"
+        },
+        {
+          "id": "p05",
+          "titre": "La construction"
+        },
+        {
+          "id": "p06",
+          "titre": "Les tests"
+        },
+        {
+          "id": "p07",
+          "titre": "La publication"
+        },
+        {
+          "id": "p08",
+          "titre": "Les évolutions"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "client",
+        "designer",
+        "développeur",
+        "rédaction",
+        "accessibilité",
+        "visiteurs"
+      ],
+      "univers_capacites": [
+        "web",
+        "image",
+        "accessibilite",
+        "documents",
+        "bureau"
+      ],
+      "traitement_visuel": "Portfolio animé, aperçus sur appareils, versions, parcours avant/après",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "broderie",
+      "titre": "Création textile et broderie",
+      "statut": "archetype_existant",
+      "echelle_de_temps": "semaines>jours>heures",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "L’inspiration"
+        },
+        {
+          "id": "p02",
+          "titre": "L’image source"
+        },
+        {
+          "id": "p03",
+          "titre": "La composition"
+        },
+        {
+          "id": "p04",
+          "titre": "La palette et les fils"
+        },
+        {
+          "id": "p05",
+          "titre": "Le motif"
+        },
+        {
+          "id": "p06",
+          "titre": "Les essais"
+        },
+        {
+          "id": "p07",
+          "titre": "La fabrication"
+        },
+        {
+          "id": "p08",
+          "titre": "La publication"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "créateur",
+        "brodeuse",
+        "atelier",
+        "éditeur",
+        "client"
+      ],
+      "univers_capacites": [
+        "broderie",
+        "image",
+        "documents",
+        "web"
+      ],
+      "traitement_visuel": "Grille, détail macro, palette, zoom de la matière, progression du motif",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "association",
+      "titre": "Projet associatif et solidaire",
+      "statut": "proposition",
+      "echelle_de_temps": "années>mois>jours",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "Le besoin"
+        },
+        {
+          "id": "p02",
+          "titre": "Les personnes"
+        },
+        {
+          "id": "p03",
+          "titre": "Le projet"
+        },
+        {
+          "id": "p04",
+          "titre": "Les partenaires"
+        },
+        {
+          "id": "p05",
+          "titre": "La préparation"
+        },
+        {
+          "id": "p06",
+          "titre": "L’action"
+        },
+        {
+          "id": "p07",
+          "titre": "L’évaluation"
+        },
+        {
+          "id": "p08",
+          "titre": "La transmission"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "responsable",
+        "bénévoles",
+        "partenaires",
+        "participants",
+        "financeurs"
+      ],
+      "univers_capacites": [
+        "bureau",
+        "documents",
+        "accessibilite",
+        "memoire",
+        "territoires"
+      ],
+      "traitement_visuel": "Récit humain lisible, étapes, contributions, preuves de réalisation",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "memoire",
+      "titre": "Histoire de vie et transmission",
+      "statut": "proposition",
+      "echelle_de_temps": "années>mois>jours>instants",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "Les origines"
+        },
+        {
+          "id": "p02",
+          "titre": "Les rencontres"
+        },
+        {
+          "id": "p03",
+          "titre": "Les tournants"
+        },
+        {
+          "id": "p04",
+          "titre": "Les personnes"
+        },
+        {
+          "id": "p05",
+          "titre": "Les archives"
+        },
+        {
+          "id": "p06",
+          "titre": "Les témoignages"
+        },
+        {
+          "id": "p07",
+          "titre": "La composition"
+        },
+        {
+          "id": "p08",
+          "titre": "La transmission"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "auteur",
+        "contributeurs",
+        "famille",
+        "lecteurs"
+      ],
+      "univers_capacites": [
+        "memoire",
+        "image",
+        "documents",
+        "accessibilite"
+      ],
+      "traitement_visuel": "Livre vivant, photographies, audio et sources, parcours non linéaires reliés au temps",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "institution",
+      "titre": "Dossier institutionnel et parcours administratif",
+      "statut": "archetype_existant",
+      "echelle_de_temps": "années>mois>jours",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "La situation"
+        },
+        {
+          "id": "p02",
+          "titre": "Les sources"
+        },
+        {
+          "id": "p03",
+          "titre": "Les démarches"
+        },
+        {
+          "id": "p04",
+          "titre": "Les vérifications"
+        },
+        {
+          "id": "p05",
+          "titre": "Les décisions"
+        },
+        {
+          "id": "p06",
+          "titre": "Les corrections"
+        },
+        {
+          "id": "p07",
+          "titre": "Le contrôle"
+        },
+        {
+          "id": "p08",
+          "titre": "L’archivage"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "usager",
+        "agent",
+        "référent",
+        "contrôleur",
+        "administration"
+      ],
+      "univers_capacites": [
+        "causalite",
+        "documents",
+        "bureau",
+        "accessibilite"
+      ],
+      "traitement_visuel": "Chronologie probante, décisions traçables, sources et versions, interface sobre",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "festival",
+      "titre": "Festival et événement public",
+      "statut": "proposition",
+      "echelle_de_temps": "mois>jours>heures>minutes",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "La vision"
+        },
+        {
+          "id": "p02",
+          "titre": "La programmation"
+        },
+        {
+          "id": "p03",
+          "titre": "Les partenaires"
+        },
+        {
+          "id": "p04",
+          "titre": "La production"
+        },
+        {
+          "id": "p05",
+          "titre": "Le montage"
+        },
+        {
+          "id": "p06",
+          "titre": "Les journées publiques"
+        },
+        {
+          "id": "p07",
+          "titre": "Le repli"
+        },
+        {
+          "id": "p08",
+          "titre": "Le bilan"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "direction",
+        "production",
+        "artistes",
+        "régie",
+        "sécurité",
+        "public"
+      ],
+      "univers_capacites": [
+        "territoires",
+        "causalite",
+        "documents",
+        "bureau",
+        "accessibilite"
+      ],
+      "traitement_visuel": "Carte des lieux, programmation multi-pistes, basculement jour/nuit, scène",
+      "les_phases_sont_des_propositions": true
+    },
+    {
+      "id": "creation",
+      "titre": "Projet créatif et commande",
+      "statut": "archetype_existant",
+      "echelle_de_temps": "mois>semaines>jours",
+      "phases_suggerees": [
+        {
+          "id": "p01",
+          "titre": "Le brief"
+        },
+        {
+          "id": "p02",
+          "titre": "Les références"
+        },
+        {
+          "id": "p03",
+          "titre": "Les pistes"
+        },
+        {
+          "id": "p04",
+          "titre": "La proposition"
+        },
+        {
+          "id": "p05",
+          "titre": "La production"
+        },
+        {
+          "id": "p06",
+          "titre": "La validation"
+        },
+        {
+          "id": "p07",
+          "titre": "La livraison"
+        },
+        {
+          "id": "p08",
+          "titre": "Le portfolio"
+        }
+      ],
+      "familles_perspectives_suggerees": [
+        "créateur",
+        "client",
+        "équipe",
+        "prestataires"
+      ],
+      "univers_capacites": [
+        "image",
+        "documents",
+        "web",
+        "bureau"
+      ],
+      "traitement_visuel": "Carnet de recherche, variantes, prototypes, livrables et archive",
+      "les_phases_sont_des_propositions": true
+    }
+  ],
+  "contrat_adaptateur": {
+    "requis": [
+      "typeProjet",
+      "projectId",
+      "sourceRef",
+      "revision",
+      "phases",
+      "moments",
+      "perspectives",
+      "presentation",
+      "permissionsRef"
+    ],
+    "moment": [
+      "id",
+      "phaseId",
+      "titre",
+      "description",
+      "datePrevue",
+      "dateReelle",
+      "debut",
+      "fin",
+      "participantsRefs",
+      "metiersRefs",
+      "documentsRefs",
+      "mediasRefs",
+      "dependancesRefs",
+      "audience"
+    ],
+    "presentation": [
+      "hero",
+      "ambiance",
+      "typographie",
+      "transitions",
+      "modeLecture",
+      "niveauZoom"
+    ],
+    "permissions": "serveur, via la matrice existante de AIMESTUDIO ; jamais depuis le menu métier"
+  },
+  "premier_test_transversal": {
+    "types": [
+      "mariage",
+      "spectacle",
+      "seminaire",
+      "site",
+      "memoire"
+    ],
+    "operations": [
+      "changer de type de projet sans dupliquer les données",
+      "parcourir les phases et conserver le moment actif",
+      "passer récit vers immersif et revenir",
+      "prévisualiser un métier en données fictives",
+      "refuser les données privées à un utilisateur non autorisé",
+      "lecture/pause et scroll inversé",
+      "navigation clavier et mobile"
+    ]
+  }
+}
