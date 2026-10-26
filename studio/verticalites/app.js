@@ -32,7 +32,7 @@ function place(w,h,at){if(at)return[at[0]-w/2,at[1]-h/2];const [cx,cy]=center();
 function keepVisible(o){const r=$('#viewport').getBoundingClientRect(),p=C.versEcran(doc.view,o.x,o.y);if(p[0]<0||p[1]<60||p[0]+o.w*doc.view.z>r.width||p[1]+o.h*doc.view.z>r.height-100){doc.view=M.fit(doc,r.width,r.height);markDirty();renderView()}}
 function addSource(type,id,at){const src=type==='verticality'?V(id):Mod(id);if(!src)return;const [x,y]=place(type==='verticality'?380:320,type==='verticality'?300:190,at);const o=M.object(type,{title:src.title,text:type==='verticality'?src.description:src.detail},type==='verticality'?{verticalityId:id}:{moduleId:id},x,y);edit(()=>{doc.objects.push(o);selection=new Set([o.id])});showInspector(true);keepVisible(o)}
 function addBasic(type,at){if(!doc)return;const [x,y]=place(320,type==='note'?230:190,at),o=M.object(type,{title:type==='text'?'Une idée prend forme.':'Une pensée à garder',text:type==='note'?'Écrivez ici votre intention.':''},null,x,y);edit(()=>{doc.objects.push(o);selection=new Set([o.id])});showInspector(true);keepVisible(o);$('#property-title')?.focus()}
-function snapshot(){return M.copy(doc)}
+function snapshot(){const snapshot=M.copy({...doc,resources:[]});snapshot.resources=doc.resources.map(r=>({...r}));return snapshot}
 function begin(){return snapshot()}
 function edited(before){if(history.length>=60)history.shift();history.push(before);future=[];markDirty();renderAll()}
 function edit(fn){if(!doc)return;const before=begin();try{fn();M.validate(doc,catalog);edited(before)}catch(e){doc=before;renderAll();notify(e.message,true)}}

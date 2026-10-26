@@ -25,6 +25,6 @@ function validate(input,catalog){if(!input||input.format!==FORMAT||input.schema!
 function bounds(objects){if(!objects.length)return null;const x=Math.min(...objects.map(o=>o.x)),y=Math.min(...objects.map(o=>o.y));return{x,y,l:Math.max(...objects.map(o=>o.x+o.w))-x,h:Math.max(...objects.map(o=>o.y+o.h))-y}}
 function fit(d,w,h){return C.ajuster(bounds(d.objects),w,h,Math.min(70,w*.08))}
 function cloneObjects(d,ids){const added=d.objects.filter(o=>ids.includes(o.id)).map(o=>({...copy(o),id:uid(),x:o.x+32,y:o.y+32,locked:false,groupId:null}));d.objects.push(...added);return added.map(o=>o.id)}
-function remove(d,ids){d.objects=d.objects.filter(o=>!ids.includes(o.id)||o.locked);const set=new Set(d.objects.map(o=>o.id));d.relations=d.relations.filter(r=>set.has(r.from)&&set.has(r.to))}
+function remove(d,ids){d.objects=d.objects.filter(o=>!ids.includes(o.id)||o.locked);const set=new Set(d.objects.map(o=>o.id));d.relations=d.relations.filter(r=>set.has(r.from)&&set.has(r.to));const used=new Set(d.objects.map(o=>o.source?.resourceId).filter(Boolean));d.resources=d.resources.filter(r=>used.has(r.id))}
 return{FORMAT,VERSION,MAX_BYTES,TYPES,create,object,validate,bounds,fit,cloneObjects,remove,copy,uid,link,text,scene:C};
 });
