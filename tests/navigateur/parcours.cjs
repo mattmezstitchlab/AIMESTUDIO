@@ -238,11 +238,11 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     ok(await p.evaluate(() => document.querySelectorAll('#vTels .v-tel:not(.eteint)').length === 3 && document.querySelectorAll('#vTels .v-tel').length === 7), 'Accueil : sept téléphones, seuls les trois concernés s\'allument');
     ok(!(await deborde()), 'Accueil (chacun son écran) : sans débordement horizontal');
     // Les exemples : la même mécanique avec six rôles (World), six écrans composés par le moteur
-    await p.goto(B + '/exemples/?u=world', { waitUntil: 'domcontentloaded' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(1200);
+    await p.goto(B + '/exemples/?u=world', { waitUntil: 'domcontentloaded' }); await p.waitForSelector('#ecrans', { timeout: 15000 }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(1200);
     ok((await Promise.all(p.frames().filter(f => f.url() === 'about:srcdoc').map(f => f.evaluate(() => /Inès &amp; Théo|Inès & Théo/.test(document.body.textContent))))).filter(Boolean).length === 6, 'Exemples : six écrans composés depuis la même source (World)');
     ok((await p.$$('#droitsTete th')).length === 7, 'Exemples : le tableau des droits a une colonne par rôle');
     // Neuf rôles (Studio) : neuf écrans en rangée ; la quantité écrite une fois ne paraît que chez qui la voit
-    await p.goto(B + '/exemples/?u=studio', { waitUntil: 'domcontentloaded' }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(1200);
+    await p.goto(B + '/exemples/?u=studio', { waitUntil: 'domcontentloaded' }); await p.waitForSelector('#ecrans', { timeout: 15000 }); await p.evaluate(() => document.getElementById('ecrans').scrollIntoView()); await p.waitForSelector('#droitsCorps tr'); await p.waitForTimeout(1200);
     ok((await p.$$('#ecransGrille .tel')).length === 9 && (await p.$$('#droitsTete th')).length === 10, 'Exemples : neuf écrans et neuf colonnes (Studio)');
     ok(!(await deborde()), 'Exemples (Studio) : sans débordement horizontal de la page');
     await p.fill('#src-exemplaires', '4321'); await p.waitForTimeout(900);
