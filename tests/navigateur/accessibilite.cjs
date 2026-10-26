@@ -12,7 +12,7 @@ const PAGES = ['/', '/contact/', '/confidentialite/', '/mentions-legales/', '/ta
     await ctx.addCookies([{ name: 'aime_test_proprietaire', value: 'oui', url: B }]);   /* /regie/ et /maitre/ : réservés au propriétaire (middleware.js) ; le serveur de test reconnaît ce cookie */
     const P1 = new Set(['/', '/compte/', '/projets/', '/c/']);
     for (const u of PAGES) {
-      const p = await ctx.newPage(); await p.goto(B + u, { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
+      const p = await ctx.newPage(); await p.goto(B + u, { waitUntil: 'domcontentloaded' }); await p.waitForTimeout(600);
       for (let y = 0; y < 30; y++) { await p.mouse.wheel(0, 900); await p.waitForTimeout(80); } await p.waitForTimeout(1200);
       await p.addScriptTag({ content: AXE });
       const tags = P1.has(u) ? ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] : ['wcag2a', 'wcag2aa', 'wcag21aa'];

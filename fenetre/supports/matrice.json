@@ -1,0 +1,2232 @@
+{
+  "schema": 1,
+  "catalogue": "/union/integrations/catalogue.json",
+  "scope": "public-source-templates-only",
+  "professions": [
+    {
+      "id": "mariage",
+      "title": "Mariage",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "mariage"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Mini-site",
+        "card": "Faire-part",
+        "std": "Save the date",
+        "menu": "Menu du dîner",
+        "livret": "Livret de cérémonie",
+        "programme": "Programme du jour"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#3E4F3A",
+          "c2": "#F2C9C0",
+          "font": "playfair",
+          "motif": "cercles",
+          "seed": 12
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "sig",
+          "mono"
+        ],
+        "communication": [
+          "story",
+          "post",
+          "an1",
+          "post34",
+          "carousel",
+          "recap",
+          "credits"
+        ],
+        "vente": [],
+        "administratif": [
+          "livret",
+          "programme",
+          "pdc",
+          "boncommande"
+        ],
+        "evenement": [
+          "card",
+          "std",
+          "menu",
+          "place",
+          "tablecard",
+          "enveloppe",
+          "menuind",
+          "seatposter",
+          "signage",
+          "unplugged",
+          "livreor",
+          "merci"
+        ]
+      }
+    },
+    {
+      "id": "anniv",
+      "title": "Anniversaire",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "anniv"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "card": "Invitation",
+        "std": "Save the date"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#111111",
+          "c2": "#E8FF5A",
+          "font": "suisse",
+          "motif": "grille",
+          "seed": 40
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "mono"
+        ],
+        "communication": [
+          "story",
+          "post",
+          "an1",
+          "post34",
+          "carousel",
+          "recap"
+        ],
+        "vente": [],
+        "administratif": [
+          "boncommande"
+        ],
+        "evenement": [
+          "card",
+          "std",
+          "place",
+          "enveloppe",
+          "signage",
+          "merci"
+        ]
+      }
+    },
+    {
+      "id": "hommage",
+      "title": "Hommage · obsèques",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "hommage"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "card": "Faire-part de décès",
+        "livret": "Livret de cérémonie",
+        "livreor": "Registre des souvenirs",
+        "merci": "Carte de remerciement",
+        "site": "Page en mémoire"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#7D8B84",
+          "c2": "#E7E1D6",
+          "font": "luxe",
+          "motif": "ondes",
+          "seed": 12
+        },
+        "ambiance": "h_doux",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm"
+        ],
+        "communication": [
+          "post",
+          "story"
+        ],
+        "vente": [],
+        "administratif": [
+          "livret"
+        ],
+        "evenement": [
+          "avis",
+          "card",
+          "livreor",
+          "merci"
+        ]
+      }
+    },
+    {
+      "id": "naissance",
+      "title": "Naissance · baptême",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "naissance"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "card": "Faire-part de naissance",
+        "livret": "Livret de baptême",
+        "merci": "Carte de remerciement",
+        "std": "Save the date du baptême",
+        "site": "Page de bienvenue"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#8F7BD1",
+          "c2": "#FFD6E0",
+          "font": "minimal",
+          "motif": "cercles",
+          "seed": 7
+        },
+        "ambiance": "pastel",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "mono"
+        ],
+        "communication": [
+          "story",
+          "post",
+          "an1"
+        ],
+        "vente": [],
+        "administratif": [
+          "livret",
+          "pdc"
+        ],
+        "evenement": [
+          "card",
+          "merci",
+          "std"
+        ]
+      }
+    },
+    {
+      "id": "fleuriste",
+      "title": "Fleuriste",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "fleuriste"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "menu": "Tarifs"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#7A1E2C",
+          "c2": "#F3D9A4",
+          "font": "playfair",
+          "motif": "cercles",
+          "seed": 3
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "tent"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "post34",
+          "carousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "devis",
+          "facture",
+          "plaquette",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv",
+          "bonliv",
+          "boncommande"
+        ],
+        "evenement": [
+          "menu",
+          "vitro"
+        ]
+      }
+    },
+    {
+      "id": "traiteur",
+      "title": "Traiteur",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "traiteur"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "menu": "Menu signature"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#0E5E4E",
+          "c2": "#F6C445",
+          "font": "suisse",
+          "motif": "diag",
+          "seed": 21
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "post34"
+        ],
+        "vente": [],
+        "administratif": [
+          "devis",
+          "facture",
+          "plaquette",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv",
+          "bonliv",
+          "allerg",
+          "boncommande"
+        ],
+        "evenement": [
+          "menu",
+          "menuind"
+        ]
+      }
+    },
+    {
+      "id": "photo",
+      "title": "Photographe",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "photo"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "menu": "Formules"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#151515",
+          "c2": "#F5F3EE",
+          "font": "suisse",
+          "motif": "photo",
+          "seed": 8
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "banner",
+          "post34",
+          "carousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "devis",
+          "facture",
+          "plaquette",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv"
+        ],
+        "evenement": [
+          "menu"
+        ]
+      }
+    },
+    {
+      "id": "video",
+      "title": "Vidéaste",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "video"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "menu": "Formules"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#1C1C3A",
+          "c2": "#FF9F5A",
+          "font": "suisse",
+          "motif": "diag",
+          "seed": 15
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "banner",
+          "post34"
+        ],
+        "vente": [],
+        "administratif": [
+          "devis",
+          "facture",
+          "plaquette",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv"
+        ],
+        "evenement": [
+          "menu"
+        ]
+      }
+    },
+    {
+      "id": "dj",
+      "title": "DJ",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "dj"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "menu": "Formules"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#5B2A86",
+          "c2": "#7CF5D3",
+          "font": "suisse",
+          "motif": "ondes",
+          "seed": 30
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "post34",
+          "carousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "devis",
+          "facture",
+          "plaquette",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv"
+        ],
+        "evenement": [
+          "menu"
+        ]
+      }
+    },
+    {
+      "id": "musicien",
+      "title": "Musicien · groupe",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "musicien"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {},
+      "visual": {
+        "palette": {
+          "c1": "#F04E23",
+          "c2": "#FFE7C2",
+          "font": "suisse",
+          "motif": "ondes",
+          "seed": 5
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "banner",
+          "post34",
+          "carousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "devis",
+          "facture",
+          "plaquette",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv",
+          "boncommande"
+        ],
+        "evenement": [
+          "posterdate"
+        ]
+      }
+    },
+    {
+      "id": "concert",
+      "title": "Concert · festival",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "concert"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "programme": "Programme de la soirée"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#1D2BD8",
+          "c2": "#FF8FB1",
+          "font": "suisse",
+          "motif": "ondes",
+          "seed": 7
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "banner",
+          "post34",
+          "carousel",
+          "recap",
+          "credits"
+        ],
+        "vente": [],
+        "administratif": [
+          "programme",
+          "allerg",
+          "boncommande"
+        ],
+        "evenement": [
+          "ticket",
+          "posterdate",
+          "wristband",
+          "photocall",
+          "bache",
+          "signage",
+          "taplabel"
+        ]
+      }
+    },
+    {
+      "id": "musee",
+      "title": "Musée · exposition",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "musee"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "card": "Carton de vernissage",
+        "livret": "Guide de visite"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#F5F3EE",
+          "c2": "#E2342D",
+          "font": "playfair",
+          "motif": "grille",
+          "seed": 18
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "banner",
+          "post34",
+          "carousel",
+          "recap"
+        ],
+        "vente": [],
+        "administratif": [
+          "livret",
+          "plaquette",
+          "grandcar",
+          "boncommande"
+        ],
+        "evenement": [
+          "card",
+          "ticket",
+          "plaque",
+          "signage"
+        ]
+      }
+    },
+    {
+      "id": "conf",
+      "title": "Conférence",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "conf"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "menu": "Programme",
+        "livret": "Livret du participant"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#0E5E4E",
+          "c2": "#E8FF5A",
+          "font": "suisse",
+          "motif": "grille",
+          "seed": 9
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "banner",
+          "post34",
+          "lncarousel",
+          "recap"
+        ],
+        "vente": [],
+        "administratif": [
+          "programme",
+          "livret",
+          "deck",
+          "boncommande"
+        ],
+        "evenement": [
+          "menu",
+          "badge",
+          "certn",
+          "signage",
+          "photocall"
+        ]
+      }
+    },
+    {
+      "id": "instit",
+      "title": "Institutionnel",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "instit"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {},
+      "visual": {
+        "palette": {
+          "c1": "#1D2BD8",
+          "c2": "#F6C445",
+          "font": "suisse",
+          "motif": "diag",
+          "seed": 11
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "banner",
+          "post34",
+          "carousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "plaquette",
+          "cr",
+          "rapport",
+          "grandcar",
+          "declacc",
+          "boncommande"
+        ],
+        "evenement": [
+          "badge",
+          "posterdate",
+          "signage"
+        ]
+      }
+    },
+    {
+      "id": "organisme",
+      "title": "Organisme public",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "organisme"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Page de campagne",
+        "poster": "Affiche de campagne",
+        "flyer": "Flyer de campagne"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#22307A",
+          "c2": "#F2C94C",
+          "font": "suisse",
+          "motif": "diag",
+          "seed": 47
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "tvscreen",
+          "letterhead"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "post34",
+          "carousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "falc",
+          "cr",
+          "rapport",
+          "grandcar",
+          "declacc"
+        ],
+        "evenement": [
+          "agence",
+          "wbadge",
+          "scanpost",
+          "plaque",
+          "signage"
+        ]
+      }
+    },
+    {
+      "id": "intermittent",
+      "title": "Intermittent du spectacle",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "intermittent"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "plaquette": "Dossier artistique",
+        "site": "Site portfolio"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#2B1E3F",
+          "c2": "#FF7A59",
+          "font": "suisse",
+          "motif": "cercles",
+          "seed": 53
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "post34",
+          "lncarousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "plaquette",
+          "fichetech",
+          "releve"
+        ],
+        "evenement": [
+          "wbadge"
+        ]
+      }
+    },
+    {
+      "id": "auteur",
+      "title": "Auteur-compositeur",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "auteur"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "poster": "Affiche de concert",
+        "square": "Pochette de single"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#0F2A2E",
+          "c2": "#E9C46A",
+          "font": "suisse",
+          "motif": "ondes",
+          "seed": 59
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "square",
+          "post34",
+          "carousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "progoeuvres"
+        ],
+        "evenement": [
+          "setlist",
+          "posterdate"
+        ]
+      }
+    },
+    {
+      "id": "formation",
+      "title": "Formation",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "formation"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Page de la formation"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#1C2B4A",
+          "c2": "#F2B544",
+          "font": "archivo",
+          "motif": "grille",
+          "seed": 61
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "post34",
+          "lncarousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "progfo",
+          "convention",
+          "evalq",
+          "devis",
+          "facture",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv",
+          "deck",
+          "grandcar",
+          "boncommande"
+        ],
+        "evenement": [
+          "convoc",
+          "emarg",
+          "attest",
+          "wbadge"
+        ]
+      }
+    },
+    {
+      "id": "immo",
+      "title": "Immobilier",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "immo"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Site de l'agence"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#14322B",
+          "c2": "#E7C873",
+          "font": "archivo",
+          "motif": "grille",
+          "seed": 67
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "post34",
+          "carousel"
+        ],
+        "vente": [
+          "fichebien",
+          "vitrine3",
+          "postbien",
+          "panneau",
+          "dpe",
+          "venduflyer",
+          "bienvenue",
+          "crvisites"
+        ],
+        "administratif": [
+          "boncommande"
+        ],
+        "evenement": []
+      }
+    },
+    {
+      "id": "resto",
+      "title": "Restaurant",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "resto"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "menu": "Menu"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#7A1E2C",
+          "c2": "#FFE7C2",
+          "font": "suisse",
+          "motif": "grille",
+          "seed": 27
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "tent",
+          "placemat"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "post34",
+          "carousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "plaquette",
+          "allerg",
+          "boncommande"
+        ],
+        "evenement": [
+          "menu",
+          "vitro"
+        ]
+      }
+    },
+    {
+      "id": "entreprise",
+      "title": "Entreprise · bureaux",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "entreprise"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Site de l'entreprise"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#1F2A44",
+          "c2": "#7FD1C7",
+          "font": "suisse",
+          "motif": "grille",
+          "seed": 41
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "letterhead"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "lipost",
+          "post34",
+          "lncarousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "cr",
+          "odj",
+          "fposte",
+          "livretacc",
+          "orga",
+          "rapport",
+          "cgv",
+          "deck",
+          "boncommande"
+        ],
+        "evenement": [
+          "wbadge",
+          "cbadge",
+          "scanpost"
+        ]
+      }
+    },
+    {
+      "id": "portfolio",
+      "title": "Portfolio",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "portfolio"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {},
+      "visual": {
+        "palette": {
+          "c1": "#151515",
+          "c2": "#E8FF5A",
+          "font": "suisse",
+          "motif": "grille",
+          "seed": 33
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "banner",
+          "post34",
+          "lncarousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "devis",
+          "facture",
+          "plaquette",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv"
+        ],
+        "evenement": []
+      }
+    },
+    {
+      "id": "religieux",
+      "title": "Communion · bar-mitzvah · fête religieuse",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "religieux"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "card": "Faire-part",
+        "livret": "Livret de cérémonie",
+        "site": "Page de la fête"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#B08D57",
+          "c2": "#F3E9D7",
+          "font": "luxe",
+          "motif": "cercles",
+          "seed": 21
+        },
+        "ambiance": "m_champ",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "mono"
+        ],
+        "communication": [
+          "story",
+          "post",
+          "an1"
+        ],
+        "vente": [],
+        "administratif": [
+          "livret"
+        ],
+        "evenement": [
+          "card",
+          "std",
+          "menu",
+          "place",
+          "merci"
+        ]
+      }
+    },
+    {
+      "id": "fiancailles",
+      "title": "Fiançailles · PACS",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "fiancailles"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "card": "Invitation"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#5F7A61",
+          "c2": "#EDE6D6",
+          "font": "luxe",
+          "motif": "ondes",
+          "seed": 14
+        },
+        "ambiance": "m_sauge",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "mono"
+        ],
+        "communication": [
+          "story",
+          "post",
+          "an1"
+        ],
+        "vente": [],
+        "administratif": [],
+        "evenement": [
+          "card",
+          "std",
+          "menu",
+          "place",
+          "merci"
+        ]
+      }
+    },
+    {
+      "id": "retraite",
+      "title": "Pot de départ · retraite",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "retraite"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "card": "Invitation",
+        "livreor": "Livre d'or des collègues"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#FF5A8A",
+          "c2": "#FFE14D",
+          "font": "playfair",
+          "motif": "cercles",
+          "seed": 9
+        },
+        "ambiance": "p_confetti",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm"
+        ],
+        "communication": [
+          "poster",
+          "story",
+          "post"
+        ],
+        "vente": [],
+        "administratif": [],
+        "evenement": [
+          "card",
+          "livreor",
+          "merci"
+        ]
+      }
+    },
+    {
+      "id": "demenag",
+      "title": "Déménagement · crémaillère",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "demenag"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "card": "Nouvelle adresse",
+        "std": "Invitation à la crémaillère",
+        "label": "Étiquettes de cartons"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#B5653B",
+          "c2": "#F2DCC2",
+          "font": "bota",
+          "motif": "ondes",
+          "seed": 4
+        },
+        "ambiance": "boheme",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm"
+        ],
+        "communication": [
+          "story",
+          "post"
+        ],
+        "vente": [
+          "label"
+        ],
+        "administratif": [],
+        "evenement": [
+          "card",
+          "std",
+          "merci",
+          "label"
+        ]
+      }
+    },
+    {
+      "id": "asso",
+      "title": "Association",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "asso"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Site de l'association",
+        "ucard": "Carte de membre"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#2F5D50",
+          "c2": "#E8D9A8",
+          "font": "bota",
+          "motif": "ondes",
+          "seed": 18
+        },
+        "ambiance": "botanique",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster"
+        ],
+        "vente": [],
+        "administratif": [
+          "adhesion",
+          "convag",
+          "odj",
+          "pv",
+          "recudon",
+          "rapport",
+          "grandcar"
+        ],
+        "evenement": [
+          "ucard"
+        ]
+      }
+    },
+    {
+      "id": "projet",
+      "title": "Projet · startup · pitch",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "projet"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "deck": "Pitch deck",
+        "site": "Site du projet"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#2B59FF",
+          "c2": "#D7F75B",
+          "font": "minimal",
+          "motif": "grille",
+          "seed": 41
+        },
+        "ambiance": "e_tech",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "lncarousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "deck",
+          "onepager",
+          "bp",
+          "bmc",
+          "cp",
+          "roadmap"
+        ],
+        "evenement": []
+      }
+    },
+    {
+      "id": "avocat",
+      "title": "Avocat",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "avocat"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Site du cabinet",
+        "plaquette": "Plaquette du cabinet"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#1F2A44",
+          "c2": "#E9E4D8",
+          "font": "playfair",
+          "motif": "grille",
+          "seed": 52
+        },
+        "ambiance": "c_encre",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "letterhead",
+          "news"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "lncarousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "plaquette",
+          "convhono",
+          "lmission",
+          "bordereau",
+          "pgarde",
+          "chrono",
+          "devis",
+          "facture",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv"
+        ],
+        "evenement": []
+      }
+    },
+    {
+      "id": "notaire",
+      "title": "Notaire",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "notaire"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Site de l'office",
+        "plaquette": "Plaquette de l'office"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#1F2A44",
+          "c2": "#E9E4D8",
+          "font": "playfair",
+          "motif": "grille",
+          "seed": 53
+        },
+        "ambiance": "c_encre",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "letterhead",
+          "news"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster"
+        ],
+        "vente": [],
+        "administratif": [
+          "plaquette",
+          "pieces",
+          "frais",
+          "guide",
+          "convsign"
+        ],
+        "evenement": []
+      }
+    },
+    {
+      "id": "comptable",
+      "title": "Expert-comptable",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "comptable"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Site du cabinet",
+        "plaquette": "Plaquette du cabinet",
+        "pieces": "Pièces à transmettre"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#0B3D91",
+          "c2": "#DDE7F7",
+          "font": "minimal",
+          "motif": "grille",
+          "seed": 54
+        },
+        "ambiance": "e_navy",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "letterhead",
+          "news"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "lncarousel"
+        ],
+        "vente": [],
+        "administratif": [
+          "plaquette",
+          "lmission",
+          "pieces",
+          "calfisc",
+          "tdb",
+          "guidefe",
+          "devis",
+          "facture",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv"
+        ],
+        "evenement": []
+      }
+    },
+    {
+      "id": "detective",
+      "title": "Détective privé",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "detective"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Site de l'agence"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#3B4752",
+          "c2": "#DDE2E6",
+          "font": "minimal",
+          "motif": "grille",
+          "seed": 55
+        },
+        "ambiance": "h_ardoise",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "letterhead"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster"
+        ],
+        "vente": [],
+        "administratif": [
+          "plaquette",
+          "mandat",
+          "devis",
+          "facture",
+          "renq",
+          "cfrais",
+          "avoir",
+          "relance",
+          "recu",
+          "cgv"
+        ],
+        "evenement": []
+      }
+    },
+    {
+      "id": "etudiant",
+      "title": "Étudiant · études",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "etudiant"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "deck": "Exposé · soutenance",
+        "site": "Portfolio en ligne"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#3A3AE0",
+          "c2": "#E4E4FF",
+          "font": "minimal",
+          "motif": "grille",
+          "seed": 61
+        },
+        "ambiance": "e_tech",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard"
+        ],
+        "communication": [
+          "postera0",
+          "edt",
+          "linkedin",
+          "post"
+        ],
+        "vente": [],
+        "administratif": [
+          "deck",
+          "memoire",
+          "rstage",
+          "cv",
+          "lmotiv"
+        ],
+        "evenement": [
+          "fiche"
+        ]
+      }
+    },
+    {
+      "id": "enfance",
+      "title": "Enfance",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "enfance"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "card": "Invitation",
+        "label": "Étiquettes prénom",
+        "livret": "Livret de colo"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#D4400F",
+          "c2": "#FFD23F",
+          "font": "ronde",
+          "motif": "cercles",
+          "seed": 71
+        },
+        "ambiance": "k_jouet",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm"
+        ],
+        "communication": [
+          "routine",
+          "recomp",
+          "edt",
+          "post"
+        ],
+        "vente": [
+          "label"
+        ],
+        "administratif": [
+          "autor",
+          "livret",
+          "pdc"
+        ],
+        "evenement": [
+          "card",
+          "diplome",
+          "label"
+        ]
+      }
+    },
+    {
+      "id": "heberg",
+      "title": "Gîte · location de vacances",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "heberg"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Site du logement",
+        "label": "Étiquettes (placards, clés)"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#B5653B",
+          "c2": "#F2DCC2",
+          "font": "bota",
+          "motif": "ondes",
+          "seed": 81
+        },
+        "ambiance": "boheme",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "wifi"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster"
+        ],
+        "vente": [
+          "label"
+        ],
+        "administratif": [
+          "livretacc",
+          "reglement"
+        ],
+        "evenement": [
+          "label"
+        ]
+      }
+    },
+    {
+      "id": "commerce",
+      "title": "Boutique · commerce",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "commerce"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "poster": "Affiche promotion"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#7A1E2C",
+          "c2": "#F3D9A4",
+          "font": "playfair",
+          "motif": "cercles",
+          "seed": 91
+        },
+        "ambiance": "me_bordeaux",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "loyalty",
+          "gift",
+          "tent"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster"
+        ],
+        "vente": [
+          "etiqprix",
+          "loyalty",
+          "gift"
+        ],
+        "administratif": [],
+        "evenement": [
+          "etiqprix",
+          "vitro"
+        ]
+      }
+    },
+    {
+      "id": "artisan",
+      "title": "Artisan · BTP",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "artisan"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "site": "Site de l'entreprise"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#2F5D50",
+          "c2": "#E8D9A8",
+          "font": "archivo",
+          "motif": "grille",
+          "seed": 95
+        },
+        "ambiance": "botanique",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig",
+          "letterhead"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster"
+        ],
+        "vente": [],
+        "administratif": [
+          "devis",
+          "facture",
+          "avoir",
+          "pvrecep",
+          "relance",
+          "recu",
+          "cgv"
+        ],
+        "evenement": []
+      }
+    },
+    {
+      "id": "sport",
+      "title": "Club de sport",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "sport"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {
+        "posterdate": "Affiches de match",
+        "ucard": "Carte de licencié"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#E2342D",
+          "c2": "#F5F3EE",
+          "font": "suisse",
+          "motif": "diag",
+          "seed": 99
+        },
+        "ambiance": "f_affiche",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster"
+        ],
+        "vente": [],
+        "administratif": [
+          "calsaison",
+          "adhesion"
+        ],
+        "evenement": [
+          "posterdate",
+          "ucard",
+          "ticket"
+        ]
+      }
+    },
+    {
+      "id": "brodeuse",
+      "title": "Brodeuse · point de croix",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "brodeuse"
+      },
+      "universe": null,
+      "verticality": "broderie",
+      "status": "pilot",
+      "names": {
+        "site": "Boutique de grilles",
+        "etiqprix": "Étiquettes de kits"
+      },
+      "visual": {
+        "palette": {
+          "c1": "#7A1E2C",
+          "c2": "#F3D9A4",
+          "font": "playfair",
+          "motif": "cercles",
+          "seed": 66
+        },
+        "ambiance": "me_bordeaux",
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "bcard",
+          "site"
+        ],
+        "vente": [
+          "label",
+          "flyer"
+        ],
+        "administratif": [
+          "devis",
+          "facture"
+        ]
+      },
+      "mappingNote": "Présentation/vente : formats du pack existant. Devis/facture : formats Studio existants proposés en contexte brodeuse, ajout pilote explicite, sans changer le pack original."
+    },
+    {
+      "id": "vierge",
+      "title": "Projet vierge",
+      "source": {
+        "pack": "studio/index.html#PACKS",
+        "id": "vierge"
+      },
+      "universe": null,
+      "verticality": null,
+      "status": "matrix-only",
+      "names": {},
+      "visual": {
+        "palette": {
+          "c1": "#1D2BD8",
+          "c2": "#E8FF5A",
+          "font": "suisse",
+          "motif": "ondes",
+          "seed": 1
+        },
+        "ambiance": null,
+        "status": "source palette, briefs métier à valider"
+      },
+      "sections": {
+        "presentation": [
+          "site",
+          "webd",
+          "webm",
+          "bcard",
+          "sig"
+        ],
+        "communication": [
+          "post",
+          "story",
+          "linkedin",
+          "fbcover",
+          "flyer",
+          "poster",
+          "post34",
+          "carousel"
+        ],
+        "vente": [],
+        "administratif": [],
+        "evenement": []
+      }
+    }
+  ]
+}

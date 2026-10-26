@@ -1,0 +1,1 @@
+const S=require('../../union/server/supports.cjs');module.exports=(req,res)=>{res.setHeader('Cache-Control','no-store');if(req.method!=='POST')return res.status(405).json({error:'POST seulement'});let b=req.body;try{if(typeof b==='string')b=JSON.parse(b)}catch{return res.status(400).json({error:'JSON invalide'})}const r=S.handle(b||{});return res.status(r.status).json(r.body)};

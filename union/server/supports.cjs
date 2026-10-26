@@ -1,0 +1,15 @@
+const P=require('../../synchroview/permissions.js'),D=require('./demo.cjs'),C=require('../world-config.js'),crypto=require('crypto');
+const fixtures=require('../integrations/objects.json'),templates=require('../data/templates.json'),worlds=require('../data/worlds.json'),wedding=require('../data/story.json');
+function context(perspective,universe){const view=D.project(perspective,universe);if(!view)return null;return {view,subject:{id:D.identities[perspective].id,role:view.role},data:C.build(templates,worlds,wedding,universe)}}
+function resource(o){return {type:'document',id:o.id,authorId:'demo-couple',grants:o.grants}}
+function allowed(c,o){return o.universe===c.data.project.id&&c.view.momentIds.includes(o.momentId)&&P.can(c.subject,'read',resource(o)).allow}
+function snapshot(c,o){const m=c.data.moments.find(m=>m.id===o.momentId);return {projectId:c.data.project.id,momentId:m.id,projectTitle:c.data.project.title,title:m.title,start_at:m.start_at,end_at:m.end_at,timezone:'Europe/Paris',location:m.locationLabel,phaseLabel:m.phaseLabel,demo:true}}
+function revision(s){return crypto.createHash('sha256').update(JSON.stringify(s)).digest('hex').slice(0,16)}
+function handle(b){if(b.mode&&b.mode!=='demo')return{status:403,body:{error:'Aucun accès authentifié via la simulation.'}};const c=context(b.perspective,b.universe);if(!c)return {status:403,body:{error:'Perspective inconnue'}};if(!b.objectId)return{status:200,body:{demo:true,authenticated:false,objects:fixtures.filter(o=>allowed(c,o)).map(({grants,...o})=>o),canCreate:P.can(c.subject,'upload',{type:'document'}).allow}};
+const o=fixtures.find(o=>o.id===b.objectId);if(!o||!allowed(c,o))return{status:403,body:{error:'Support non accessible.'}};
+const current=snapshot(c,o),rev=revision(current);const permissions={read:true,edit:P.can(c.subject,'edit',resource(o)).allow,create:P.can(c.subject,'upload',{type:'document'}).allow};
+if(b.action&&b.action!=='preview'&&!permissions.edit)return{status:403,body:{error:'Action réservée à une personne explicitement autorisée à modifier ce support.'}};
+if(b.action==='propose'){if(typeof b.proposedStart!=='string'||!/^\d{4}-\d{2}-\d{2}T/.test(b.proposedStart)||!Number.isFinite(Date.parse(b.proposedStart)))return{status:400,body:{error:'Date proposée invalide'}};return{status:200,body:{demo:true,persisted:false,proposal:{from:current.start_at,to:b.proposedStart,affected:fixtures.filter(x=>allowed(c,x)&&x.momentId===o.momentId).map(x=>x.id)},notice:'Proposition seulement. Aucun horaire, document ou support republié.'}}}
+if(b.action&&!['preview','freeze','edit','associate'].includes(b.action))return{status:400,body:{error:'Action inconnue'}};
+return {status:200,body:{demo:true,persisted:false,object:(({grants,...safe})=>safe)(o),binding:{projectId:current.projectId,momentId:current.momentId,fields:['title','start_at','location'],sourceRevision:rev},snapshot:current,revision:rev,permissions,notice:'Composition fictive. Aucun billet émis, signature, certification, accès sécurisé ou export conforme garanti.'}}}
+module.exports={handle,revision};

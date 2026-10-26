@@ -1,0 +1,6872 @@
+{
+  "generatedFrom": {
+    "studio": "studio/index.html · FL + extensions",
+    "ticketaime": "mattmezstitchlab/ticketaime@43ebb52d13572fa76cb149217c083882cc971e55 · ticketaime/src/data/catalogue.tsx + public/atlas-modules.json"
+  },
+  "audit": {
+    "historicalSupports": 96,
+    "currentSupports": 154,
+    "nonWeb": 147,
+    "supportCategories": [
+      "Web",
+      "Impression",
+      "Événement",
+      "Papeterie",
+      "Réseaux",
+      "Documents",
+      "Série",
+      "Badges",
+      "Signalétique",
+      "Immobilier"
+    ],
+    "tickets": 168,
+    "ticketCategories": 19,
+    "duplicateSupportIds": 0,
+    "duplicateTicketIds": 0,
+    "sharedDimensions": [
+      {
+        "format": "mm:297x420",
+        "ids": [
+          "poster",
+          "posterdate"
+        ]
+      },
+      {
+        "format": "mm:148x105",
+        "ids": [
+          "std",
+          "merci",
+          "bienvenue",
+          "fiche",
+          "wifi"
+        ]
+      },
+      {
+        "format": "mm:148x210",
+        "ids": [
+          "menu",
+          "flyer",
+          "livret",
+          "convoc",
+          "avis",
+          "venduflyer"
+        ]
+      },
+      {
+        "format": "mm:210x297",
+        "ids": [
+          "flyer4",
+          "letterhead",
+          "devis",
+          "facture",
+          "plaquette",
+          "programme",
+          "scanpost",
+          "agence",
+          "falc",
+          "setlist",
+          "progoeuvres",
+          "releve",
+          "fichetech",
+          "progfo",
+          "convention",
+          "emarg",
+          "attest",
+          "evalq",
+          "livreor",
+          "allerg",
+          "boncommande",
+          "fichebien",
+          "vitrine3",
+          "crvisites",
+          "avoir",
+          "relance",
+          "recu",
+          "bonliv",
+          "cr",
+          "odj",
+          "fposte",
+          "cgv",
+          "rapport",
+          "livretacc",
+          "adhesion",
+          "convag",
+          "pv",
+          "recudon",
+          "grandcar",
+          "declacc",
+          "onepager",
+          "bp",
+          "cp",
+          "roadmap",
+          "convhono",
+          "lmission",
+          "bordereau",
+          "pgarde",
+          "chrono",
+          "pieces",
+          "frais",
+          "guide",
+          "convsign",
+          "calfisc",
+          "guidefe",
+          "mandat",
+          "renq",
+          "cfrais",
+          "memoire",
+          "rstage",
+          "lmotiv",
+          "autor",
+          "reglement",
+          "pvrecep",
+          "calsaison",
+          "cv",
+          "routine",
+          "pdc",
+          "tdb"
+        ]
+      },
+      {
+        "format": "mm:85x55",
+        "ids": [
+          "bcard",
+          "gift",
+          "loyalty"
+        ]
+      },
+      {
+        "format": "px:1080x1350",
+        "ids": [
+          "post",
+          "recap",
+          "credits",
+          "postbien",
+          "pdcv",
+          "an1"
+        ]
+      },
+      {
+        "format": "mm:105x148",
+        "ids": [
+          "flyer6",
+          "tablecard",
+          "tent"
+        ]
+      },
+      {
+        "format": "mm:99x210",
+        "ids": [
+          "flyerDL",
+          "menuind"
+        ]
+      },
+      {
+        "format": "mm:420x594",
+        "ids": [
+          "poster2",
+          "unplugged"
+        ]
+      },
+      {
+        "format": "mm:297x210",
+        "ids": [
+          "cert",
+          "certn",
+          "diplome",
+          "recomp",
+          "edt",
+          "orga"
+        ]
+      },
+      {
+        "format": "mm:54x85.6",
+        "ids": [
+          "ucard",
+          "cbadge"
+        ]
+      },
+      {
+        "format": "px:1080x1440",
+        "ids": [
+          "post34",
+          "carousel"
+        ]
+      },
+      {
+        "format": "mm:420x297",
+        "ids": [
+          "signage",
+          "placemat",
+          "bmc"
+        ]
+      },
+      {
+        "format": "mm:70x37",
+        "ids": [
+          "label",
+          "etiqprix"
+        ]
+      }
+    ],
+    "note": "Dimensions partagées ≠ doublons fonctionnels. Aucun modèle supprimé ni importé automatiquement."
+  },
+  "supports": [
+    {
+      "id": "site",
+      "name": "Site web",
+      "category": "Web",
+      "width": 1280,
+      "height": 1900,
+      "print": null,
+      "use": "Page d'accueil, avec les autres supports en partage.",
+      "bleed": null
+    },
+    {
+      "id": "poster",
+      "name": "Affiche A3",
+      "category": "Impression",
+      "width": 840,
+      "height": 1188,
+      "print": {
+        "w": 297,
+        "h": 420
+      },
+      "use": "Impression grand format, avec un QR code vers le site.",
+      "bleed": 3
+    },
+    {
+      "id": "card",
+      "name": "Carte",
+      "category": "Événement",
+      "width": 635,
+      "height": 889,
+      "print": {
+        "w": 127,
+        "h": 178
+      },
+      "use": "Invitation, faire-part ou carton, au format 13 × 18 cm.",
+      "bleed": 3
+    },
+    {
+      "id": "std",
+      "name": "Carte postale",
+      "category": "Événement",
+      "width": 740,
+      "height": 525,
+      "print": {
+        "w": 148,
+        "h": 105
+      },
+      "use": "Format paysage 10,5 × 14,8 cm, idéal pour un save the date.",
+      "bleed": 3
+    },
+    {
+      "id": "menu",
+      "name": "Carte A5",
+      "category": "Événement",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 148,
+        "h": 210
+      },
+      "use": "Menu, programme ou grille de tarifs.",
+      "bleed": 3
+    },
+    {
+      "id": "flyer",
+      "name": "Flyer A5",
+      "category": "Impression",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 148,
+        "h": 210
+      },
+      "use": "Distribution à la main, comptoirs, vitrines.",
+      "bleed": 3
+    },
+    {
+      "id": "flyer4",
+      "name": "Flyer A4",
+      "category": "Impression",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Affichette A4 pour vitrines, panneaux et boîtes aux lettres.",
+      "bleed": 3
+    },
+    {
+      "id": "bcard",
+      "name": "Carte de visite",
+      "category": "Papeterie",
+      "width": 850,
+      "height": 550,
+      "print": {
+        "w": 85,
+        "h": 55
+      },
+      "use": "Carte de visite 85 × 55 mm, avec QR code.",
+      "bleed": 3
+    },
+    {
+      "id": "story",
+      "name": "Story",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1920,
+      "print": null,
+      "use": "Instagram et Facebook. Le haut et le bas sont couverts par l'interface.",
+      "bleed": null
+    },
+    {
+      "id": "post",
+      "name": "Post 4:5",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1350,
+      "print": null,
+      "use": "Fil Instagram et Facebook : le format portrait le plus visible.",
+      "bleed": null
+    },
+    {
+      "id": "banner",
+      "name": "Bannière X",
+      "category": "Réseaux",
+      "width": 1500,
+      "height": 500,
+      "print": null,
+      "use": "En-tête de profil X, ou en-tête de newsletter.",
+      "bleed": null
+    },
+    {
+      "id": "linkedin",
+      "name": "Bannière LinkedIn",
+      "category": "Réseaux",
+      "width": 1584,
+      "height": 396,
+      "print": null,
+      "use": "Fond de profil LinkedIn. La photo de profil recouvre le bas à gauche, le motif y est placé exprès.",
+      "bleed": null
+    },
+    {
+      "id": "fbcover",
+      "name": "Couverture Facebook",
+      "category": "Réseaux",
+      "width": 1702,
+      "height": 630,
+      "print": null,
+      "use": "Couverture de page Facebook. Le texte reste dans la zone centrale visible sur mobile.",
+      "bleed": null
+    },
+    {
+      "id": "sig",
+      "name": "Signature e-mail",
+      "category": "Web",
+      "width": 600,
+      "height": 160,
+      "print": null,
+      "use": "Bas de chaque e-mail envoyé.",
+      "bleed": null
+    },
+    {
+      "id": "square",
+      "name": "Post carré",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1080,
+      "print": null,
+      "use": "Post 1:1 pour Instagram, Facebook et LinkedIn.",
+      "bleed": null
+    },
+    {
+      "id": "lipost",
+      "name": "Post LinkedIn",
+      "category": "Réseaux",
+      "width": 1200,
+      "height": 627,
+      "print": null,
+      "use": "Image de publication LinkedIn, au format paysage.",
+      "bleed": null
+    },
+    {
+      "id": "fbevent",
+      "name": "Couverture d'événement Facebook",
+      "category": "Réseaux",
+      "width": 1920,
+      "height": 1005,
+      "print": null,
+      "use": "Image d'en-tête d'un événement Facebook.",
+      "bleed": null
+    },
+    {
+      "id": "yt",
+      "name": "Miniature YouTube",
+      "category": "Réseaux",
+      "width": 1280,
+      "height": 720,
+      "print": null,
+      "use": "Vignette de vidéo : un titre très lisible, même en petit.",
+      "bleed": null
+    },
+    {
+      "id": "pin",
+      "name": "Épingle Pinterest",
+      "category": "Réseaux",
+      "width": 1000,
+      "height": 1500,
+      "print": null,
+      "use": "Épingle verticale pour Pinterest.",
+      "bleed": null
+    },
+    {
+      "id": "news",
+      "name": "En-tête de newsletter",
+      "category": "Web",
+      "width": 600,
+      "height": 200,
+      "print": null,
+      "use": "Bandeau en haut de vos e-mails et newsletters.",
+      "bleed": null
+    },
+    {
+      "id": "flyer6",
+      "name": "Flyer A6",
+      "category": "Impression",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 105,
+        "h": 148
+      },
+      "use": "Petit flyer à glisser dans un sac, une commande ou une enveloppe.",
+      "bleed": 3
+    },
+    {
+      "id": "flyerDL",
+      "name": "Flyer DL",
+      "category": "Impression",
+      "width": 470,
+      "height": 997,
+      "print": {
+        "w": 99,
+        "h": 210
+      },
+      "use": "Format allongé 10 × 21 cm, pour présentoirs et courriers.",
+      "bleed": 3
+    },
+    {
+      "id": "poster2",
+      "name": "Affiche A2",
+      "category": "Impression",
+      "width": 840,
+      "height": 1188,
+      "print": {
+        "w": 420,
+        "h": 594
+      },
+      "use": "Grande affiche pour vitrines et panneaux. Exportée à 150 dpi, suffisant à cette taille.",
+      "bleed": 3
+    },
+    {
+      "id": "poster4060",
+      "name": "Affiche 40 × 60",
+      "category": "Impression",
+      "width": 800,
+      "height": 1200,
+      "print": {
+        "w": 400,
+        "h": 600
+      },
+      "use": "Format d'affiche courant chez les imprimeurs en ligne.",
+      "bleed": 3
+    },
+    {
+      "id": "kakemono",
+      "name": "Kakémono 85 × 200",
+      "category": "Impression",
+      "width": 600,
+      "height": 1412,
+      "print": {
+        "w": 850,
+        "h": 2000
+      },
+      "use": "Roll-up de salon ou d'accueil. Exporté à 75 dpi, la résolution courante pour ce très grand format.",
+      "bleed": 3
+    },
+    {
+      "id": "letterhead",
+      "name": "Papier à en-tête A4",
+      "category": "Papeterie",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Pour vos courriers, devis imprimés et lettres officielles.",
+      "bleed": 3
+    },
+    {
+      "id": "corresp",
+      "name": "Carte de correspondance",
+      "category": "Papeterie",
+      "width": 877,
+      "height": 413,
+      "print": {
+        "w": 210,
+        "h": 99
+      },
+      "use": "Carte 10 × 21 cm pour un mot manuscrit, un remerciement, une commande.",
+      "bleed": 3
+    },
+    {
+      "id": "gift",
+      "name": "Carte cadeau",
+      "category": "Papeterie",
+      "width": 850,
+      "height": 550,
+      "print": {
+        "w": 85,
+        "h": 55
+      },
+      "use": "Carte cadeau au format carte de visite. La valeur se remplit à la main.",
+      "bleed": 3
+    },
+    {
+      "id": "loyalty",
+      "name": "Carte de fidélité",
+      "category": "Papeterie",
+      "width": 850,
+      "height": 550,
+      "print": {
+        "w": 85,
+        "h": 55
+      },
+      "use": "Dix cases à tamponner, la dernière est offerte.",
+      "bleed": 3
+    },
+    {
+      "id": "bookmark",
+      "name": "Marque-page",
+      "category": "Papeterie",
+      "width": 300,
+      "height": 1080,
+      "print": {
+        "w": 50,
+        "h": 180
+      },
+      "use": "Marque-page 5 × 18 cm, à glisser dans les commandes ou les livres.",
+      "bleed": 3
+    },
+    {
+      "id": "cert",
+      "name": "Certificat A4",
+      "category": "Événement",
+      "width": 877,
+      "height": 620,
+      "print": {
+        "w": 297,
+        "h": 210
+      },
+      "use": "Certificat, attestation ou diplôme simple, au format paysage.",
+      "bleed": 3
+    },
+    {
+      "id": "webd",
+      "name": "Site complet · ordinateur",
+      "category": "Web",
+      "width": 1440,
+      "height": 2200,
+      "print": null,
+      "use": "Le site d'une page assemblé à partir de vos supports. Export HTML adaptatif, prêt à mettre en ligne.",
+      "bleed": null
+    },
+    {
+      "id": "webt",
+      "name": "Site complet · tablette",
+      "category": "Web",
+      "width": 834,
+      "height": 1800,
+      "print": null,
+      "use": "Le même site, vu sur une tablette.",
+      "bleed": null
+    },
+    {
+      "id": "webm",
+      "name": "Site complet · mobile",
+      "category": "Web",
+      "width": 390,
+      "height": 1500,
+      "print": null,
+      "use": "Le même site, vu sur un téléphone.",
+      "bleed": null
+    },
+    {
+      "id": "devis",
+      "name": "Devis",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Devis A4 avec lignes, totaux HT, TVA et TTC, et bloc « bon pour accord ». Plusieurs pages si besoin.",
+      "bleed": 3
+    },
+    {
+      "id": "facture",
+      "name": "Facture",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Facture A4 calculée à partir des mêmes lignes que le devis.",
+      "bleed": 3
+    },
+    {
+      "id": "livret",
+      "name": "Livret A5",
+      "category": "Documents",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 148,
+        "h": 210
+      },
+      "use": "Livret de plusieurs pages : couverture, texte, programme, infos pratiques. Export imposé pour une impression A4 recto-verso pliée.",
+      "bleed": 3
+    },
+    {
+      "id": "plaquette",
+      "name": "Plaquette A4",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Plaquette de présentation de quatre pages : couverture, présentation, offre, contact.",
+      "bleed": 3
+    },
+    {
+      "id": "programme",
+      "name": "Programme A4",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Le programme de la journée sur une page, à afficher ou à distribuer.",
+      "bleed": 3
+    },
+    {
+      "id": "place",
+      "name": "Marque-place",
+      "category": "Série",
+      "width": 900,
+      "height": 600,
+      "print": {
+        "w": 90,
+        "h": 60
+      },
+      "use": "Un marque-place par invité, avec son nom et sa table.",
+      "bleed": 3
+    },
+    {
+      "id": "tablecard",
+      "name": "Numéro de table",
+      "category": "Série",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 105,
+        "h": 148
+      },
+      "use": "Une carte par table, avec la liste des invités qui y sont placés.",
+      "bleed": 3
+    },
+    {
+      "id": "badge",
+      "name": "Badge porte-badge",
+      "category": "Badges",
+      "width": 600,
+      "height": 800,
+      "print": {
+        "w": 90,
+        "h": 120
+      },
+      "use": "Badge pour salons, conférences et équipes, à glisser dans un porte-badge.",
+      "bleed": 3
+    },
+    {
+      "id": "wbadge",
+      "name": "Badge téléphone",
+      "category": "Badges",
+      "width": 720,
+      "height": 1200,
+      "print": null,
+      "use": "Le badge personnel à garder sur le téléphone : nom, rôle et QR code pour badger arrivée, pause, retour et départ.",
+      "bleed": null
+    },
+    {
+      "id": "ucard",
+      "name": "Carte universelle",
+      "category": "Badges",
+      "width": 540,
+      "height": 856,
+      "print": {
+        "w": 54,
+        "h": 85.6
+      },
+      "use": "Une carte par personne, la même dans tous vos projets : son nom, son rôle, ses événements, ses supports et ses pointages. Le QR code ouvre son profil.",
+      "bleed": 3
+    },
+    {
+      "id": "uprof",
+      "name": "Profil à partager",
+      "category": "Badges",
+      "width": 720,
+      "height": 1280,
+      "print": null,
+      "use": "Le profil de la personne en format story : couverture, avatar, chiffres et événements, à publier ou à envoyer.",
+      "bleed": null
+    },
+    {
+      "id": "cbadge",
+      "name": "Badge carte",
+      "category": "Badges",
+      "width": 540,
+      "height": 856,
+      "print": {
+        "w": 54,
+        "h": 85.6
+      },
+      "use": "Badge au format carte bancaire (CR80), avec l'emplacement de perforation pour un cordon. Neuf par planche A4.",
+      "bleed": 3
+    },
+    {
+      "id": "scanpost",
+      "name": "Affiche « Badgez ici »",
+      "category": "Badges",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "À afficher à l'entrée, en salle de pause ou au vestiaire : un QR code pour badger sur place.",
+      "bleed": 3
+    },
+    {
+      "id": "agence",
+      "name": "Affiche par agence",
+      "category": "Série",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Une affiche A4 par agence ou par point d'accueil, avec son adresse et ses horaires. Un seul contenu national, toutes les déclinaisons locales.",
+      "bleed": 3
+    },
+    {
+      "id": "falc",
+      "name": "Notice facile à lire",
+      "category": "Documents",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Notice A4 en phrases courtes et gros caractères, sur le modèle « Facile à lire et à comprendre ».",
+      "bleed": 3
+    },
+    {
+      "id": "tvscreen",
+      "name": "Écran d'accueil 16:9",
+      "category": "Web",
+      "width": 1920,
+      "height": 1080,
+      "print": null,
+      "use": "Pour les écrans de salle d'attente et d'accueil, en image fixe ou en vidéo.",
+      "bleed": null
+    },
+    {
+      "id": "setlist",
+      "name": "Setlist de scène",
+      "category": "Événement",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "La liste des morceaux en très gros caractères, à scotcher au sol de la scène.",
+      "bleed": 3
+    },
+    {
+      "id": "progoeuvres",
+      "name": "Programme des œuvres",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Le relevé des œuvres jouées (titre, auteurs, compositeurs, durée), à reporter dans votre déclaration de droits d'auteur.",
+      "bleed": 3
+    },
+    {
+      "id": "releve",
+      "name": "Relevé d'heures",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Vos contrats des 12 derniers mois, convertis en heures, avec le compteur vers le seuil d'ouverture des droits. Calcul indicatif.",
+      "bleed": 3
+    },
+    {
+      "id": "fichetech",
+      "name": "Fiche technique",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Plateau, lumière, son, loges, montage : ce qu'il vous faut, poste par poste, pour l'accueil technique.",
+      "bleed": 3
+    },
+    {
+      "id": "progfo",
+      "name": "Programme de formation",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Le programme avec toutes les rubriques attendues par Qualiopi : public, prérequis, objectifs, durée, accès, méthodes, évaluation, accessibilité, tarif, contacts.",
+      "bleed": 3
+    },
+    {
+      "id": "convention",
+      "name": "Convention de formation",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "La convention entre l'organisme et l'entreprise cliente : objet, durée, dates, stagiaires, prix, signatures. Modèle à faire relire.",
+      "bleed": 3
+    },
+    {
+      "id": "convoc",
+      "name": "Convocation",
+      "category": "Série",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 148,
+        "h": 210
+      },
+      "use": "Une convocation par stagiaire : dates, horaires, lieu, formateur et contact.",
+      "bleed": 3
+    },
+    {
+      "id": "emarg",
+      "name": "Feuille d'émargement",
+      "category": "Série",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Une feuille par demi-journée, stagiaires et formateur. Les badgeages de la badgeuse s'y inscrivent.",
+      "bleed": 3
+    },
+    {
+      "id": "attest",
+      "name": "Certificat de réalisation",
+      "category": "Série",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Un certificat par stagiaire, avec la durée suivie. Mise en page libre : vérifiez le modèle demandé par le financeur.",
+      "bleed": 3
+    },
+    {
+      "id": "evalq",
+      "name": "Questionnaire de satisfaction",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Questionnaire à chaud sur papier, avec un QR code pour répondre en ligne.",
+      "bleed": 3
+    },
+    {
+      "id": "post34",
+      "name": "Post 3:4",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1440,
+      "print": null,
+      "use": "Le format de la nouvelle grille Instagram (3:4) : rien n'est rogné sur votre profil.",
+      "bleed": null
+    },
+    {
+      "id": "carousel",
+      "name": "Carrousel Instagram",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1440,
+      "print": null,
+      "use": "Une couverture, une diapo par ligne de « Diapos » (ou de votre liste), une diapo de fin avec QR code.",
+      "bleed": null
+    },
+    {
+      "id": "lncarousel",
+      "name": "Carrousel LinkedIn",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1350,
+      "print": {
+        "w": 210,
+        "h": 262.5
+      },
+      "use": "Le même contenu en PDF de plusieurs pages, à publier comme « document » sur LinkedIn.",
+      "bleed": 3
+    },
+    {
+      "id": "enveloppe",
+      "name": "Enveloppe adressée",
+      "category": "Série",
+      "width": 1100,
+      "height": 550,
+      "print": {
+        "w": 220,
+        "h": 110
+      },
+      "use": "Une enveloppe DL par invité, avec son adresse. Remplissez « Adresses » (Nom ; rue ; code postal et ville).",
+      "bleed": 3
+    },
+    {
+      "id": "mono",
+      "name": "Monogramme",
+      "category": "Papeterie",
+      "width": 800,
+      "height": 800,
+      "print": {
+        "w": 80,
+        "h": 80
+      },
+      "use": "Vos initiales dans un cercle : à utiliser comme logo, sceau, tampon ou sticker.",
+      "bleed": 3
+    },
+    {
+      "id": "avis",
+      "name": "Avis de décès",
+      "category": "Événement",
+      "width": 874,
+      "height": 1240,
+      "print": {
+        "w": 148,
+        "h": 210
+      },
+      "use": "L'avis à afficher, à publier ou à envoyer : le nom, les dates, la cérémonie, sobrement.",
+      "bleed": 3
+    },
+    {
+      "id": "merci",
+      "name": "Carte de remerciement",
+      "category": "Événement",
+      "width": 740,
+      "height": 525,
+      "print": {
+        "w": 148,
+        "h": 105
+      },
+      "use": "La carte « Merci » à envoyer après l'événement.",
+      "bleed": 3
+    },
+    {
+      "id": "seatposter",
+      "name": "Plan de table (affiche)",
+      "category": "Événement",
+      "width": 1000,
+      "height": 1400,
+      "print": {
+        "w": 500,
+        "h": 700
+      },
+      "use": "Le grand plan de table de l'entrée, généré depuis la liste des invités et leurs tables.",
+      "bleed": 3
+    },
+    {
+      "id": "menuind",
+      "name": "Menu individuel",
+      "category": "Série",
+      "width": 470,
+      "height": 997,
+      "print": {
+        "w": 99,
+        "h": 210
+      },
+      "use": "Un menu par invité, à son nom, posé sur l'assiette.",
+      "bleed": 3
+    },
+    {
+      "id": "signage",
+      "name": "Signalétique",
+      "category": "Signalétique",
+      "width": 1188,
+      "height": 840,
+      "print": {
+        "w": 420,
+        "h": 297
+      },
+      "use": "Un panneau par ligne de « Panneaux » (texte ; flèche). Fléchage, toilettes, secours, parking, vestiaire…",
+      "bleed": 3
+    },
+    {
+      "id": "unplugged",
+      "name": "Panneau sans téléphone",
+      "category": "Signalétique",
+      "width": 840,
+      "height": 1188,
+      "print": {
+        "w": 420,
+        "h": 594
+      },
+      "use": "Pour une cérémonie sans téléphone : profitez de l'instant, le photographe s'occupe des images.",
+      "bleed": 3
+    },
+    {
+      "id": "livreor",
+      "name": "Page de livre d'or",
+      "category": "Événement",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Une page à imprimer et relier, aux couleurs de l'événement.",
+      "bleed": 3
+    },
+    {
+      "id": "wristband",
+      "name": "Bracelet",
+      "category": "Signalétique",
+      "width": 1270,
+      "height": 125,
+      "print": {
+        "w": 254,
+        "h": 25
+      },
+      "use": "Bracelet d'accès type Tyvek 254 × 25 mm, avec zone de fermeture adhésive.",
+      "bleed": 3
+    },
+    {
+      "id": "photocall",
+      "name": "Photocall",
+      "category": "Signalétique",
+      "width": 1000,
+      "height": 1000,
+      "print": {
+        "w": 2000,
+        "h": 2000
+      },
+      "use": "Fond de photocall 2 × 2 m : votre nom et vos partenaires (champ « Partenaires ») en répétition.",
+      "bleed": 3
+    },
+    {
+      "id": "bache",
+      "name": "Bâche de grille",
+      "category": "Signalétique",
+      "width": 1500,
+      "height": 400,
+      "print": {
+        "w": 3000,
+        "h": 800
+      },
+      "use": "Bâche 3 × 0,8 m pour grilles, barrières et scènes.",
+      "bleed": 3
+    },
+    {
+      "id": "taplabel",
+      "name": "Étiquette de tireuse",
+      "category": "Signalétique",
+      "width": 600,
+      "height": 900,
+      "print": {
+        "w": 60,
+        "h": 90
+      },
+      "use": "Une étiquette par boisson de votre liste (« Nom — prix »), pour les tireuses et frigos.",
+      "bleed": 3
+    },
+    {
+      "id": "allerg",
+      "name": "Tableau des allergènes",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Les 14 allergènes à déclaration obligatoire, plat par plat. Remplissez « Allergènes » (Plat ; gluten, lait…).",
+      "bleed": 3
+    },
+    {
+      "id": "posterdate",
+      "name": "Affiche par date",
+      "category": "Série",
+      "width": 840,
+      "height": 1188,
+      "print": {
+        "w": 297,
+        "h": 420
+      },
+      "use": "Une affiche par ligne de « Dates » (date ; ville ; salle) : tournée, matchs, ateliers, permanences.",
+      "bleed": 3
+    },
+    {
+      "id": "tent",
+      "name": "Chevalet de table",
+      "category": "Papeterie",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 105,
+        "h": 148
+      },
+      "use": "Chevalet A6 avec un grand QR code : carte en ligne, avis, réservation, Wi-Fi.",
+      "bleed": 3
+    },
+    {
+      "id": "vitro",
+      "name": "Vitrophanie ronde",
+      "category": "Signalétique",
+      "width": 1000,
+      "height": 1000,
+      "print": {
+        "w": 200,
+        "h": 200
+      },
+      "use": "Sticker rond de 20 cm pour vitrine ou porte.",
+      "bleed": 3
+    },
+    {
+      "id": "placemat",
+      "name": "Set de table",
+      "category": "Papeterie",
+      "width": 1188,
+      "height": 840,
+      "print": {
+        "w": 420,
+        "h": 297
+      },
+      "use": "Set de table A3, à vos couleurs.",
+      "bleed": 3
+    },
+    {
+      "id": "recap",
+      "name": "Récap « Merci »",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1350,
+      "print": null,
+      "use": "Le post de l'après : photo, merci et les chiffres de l'événement (présents badgés, moments, supports).",
+      "bleed": null
+    },
+    {
+      "id": "credits",
+      "name": "Ils ont fait ce jour",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1350,
+      "print": null,
+      "use": "Le générique de l'événement : chaque prestataire et son rôle, à partager et à taguer.",
+      "bleed": null
+    },
+    {
+      "id": "boncommande",
+      "name": "Bon de commande imprimeur",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Tous vos supports imprimés avec format, quantité calculée depuis vos listes et papier conseillé.",
+      "bleed": 3
+    },
+    {
+      "id": "fichebien",
+      "name": "Fiche vitrine",
+      "category": "Immobilier",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Une fiche A4 par bien : photo, prix, surface, pièces, étiquettes énergie et climat, mentions obligatoires, QR code de visite.",
+      "bleed": 3
+    },
+    {
+      "id": "vitrine3",
+      "name": "Affichette 3 biens",
+      "category": "Immobilier",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Trois biens par page A4 pour la vitrine, avec statut et étiquettes énergie.",
+      "bleed": 3
+    },
+    {
+      "id": "postbien",
+      "name": "Post du bien",
+      "category": "Immobilier",
+      "width": 1080,
+      "height": 1350,
+      "print": null,
+      "use": "Un post par bien : photo, statut, prix, surface, DPE.",
+      "bleed": null
+    },
+    {
+      "id": "panneau",
+      "name": "Panneau À vendre",
+      "category": "Immobilier",
+      "width": 1200,
+      "height": 900,
+      "print": {
+        "w": 800,
+        "h": 600
+      },
+      "use": "Panneau 80 × 60 cm pour la façade ou le jardin, avec un QR code qui ouvre la page de visite du bien.",
+      "bleed": 3
+    },
+    {
+      "id": "dpe",
+      "name": "Étiquettes énergie",
+      "category": "Immobilier",
+      "width": 600,
+      "height": 400,
+      "print": {
+        "w": 150,
+        "h": 100
+      },
+      "use": "Les deux échelles A à G (énergie et climat) du bien, avec le coût énergétique estimé.",
+      "bleed": 3
+    },
+    {
+      "id": "venduflyer",
+      "name": "Flyer « Vendu »",
+      "category": "Immobilier",
+      "width": 620,
+      "height": 877,
+      "print": {
+        "w": 148,
+        "h": 210
+      },
+      "use": "Le flyer de boîtage du quartier après une vente : nous avons des acquéreurs, l'estimation est offerte.",
+      "bleed": 3
+    },
+    {
+      "id": "bienvenue",
+      "name": "Carte « Bienvenue chez vous »",
+      "category": "Immobilier",
+      "width": 740,
+      "height": 525,
+      "print": {
+        "w": 148,
+        "h": 105
+      },
+      "use": "La carte remise avec les clés.",
+      "bleed": 3
+    },
+    {
+      "id": "crvisites",
+      "name": "Compte rendu de visites",
+      "category": "Immobilier",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Pour le propriétaire : nombre de visites, intérêt moyen et remarques, bien par bien, depuis le registre des visites.",
+      "bleed": 3
+    },
+    {
+      "id": "label",
+      "name": "Étiquette",
+      "category": "Série",
+      "width": 700,
+      "height": 370,
+      "print": {
+        "w": 70,
+        "h": 37
+      },
+      "use": "Étiquette 70 × 37 mm, 24 par planche A4 adhésive : cadeaux, colis, bocaux.",
+      "bleed": 3
+    },
+    {
+      "id": "ticket",
+      "name": "Billet numéroté",
+      "category": "Série",
+      "width": 900,
+      "height": 360,
+      "print": {
+        "w": 150,
+        "h": 60
+      },
+      "use": "Billet ou entrée numérotée, au nom de chaque personne.",
+      "bleed": 3
+    },
+    {
+      "id": "certn",
+      "name": "Certificats nominatifs",
+      "category": "Série",
+      "width": 877,
+      "height": 620,
+      "print": {
+        "w": 297,
+        "h": 210
+      },
+      "use": "Un certificat A4 par personne de la liste.",
+      "bleed": 3
+    },
+    {
+      "id": "welcome",
+      "name": "Panneau de bienvenue",
+      "category": "Événement",
+      "width": 750,
+      "height": 1000,
+      "print": {
+        "w": 600,
+        "h": 800
+      },
+      "use": "Panneau 60 × 80 cm pour l'entrée d'un événement.",
+      "bleed": 3
+    },
+    {
+      "id": "avoir",
+      "name": "Avoir",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Avoir A4 qui annule tout ou partie d'une facture, avec les mêmes lignes et totaux.",
+      "bleed": 3
+    },
+    {
+      "id": "relance",
+      "name": "Relance de paiement",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Lettre de relance reprenant le numéro et le montant de la facture, avec les mentions de pénalités.",
+      "bleed": 3
+    },
+    {
+      "id": "recu",
+      "name": "Reçu de paiement",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Reçu signé qui confirme un paiement.",
+      "bleed": 3
+    },
+    {
+      "id": "bonliv",
+      "name": "Bon de livraison",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Liste des articles livrés, avec signatures du livreur et du client.",
+      "bleed": 3
+    },
+    {
+      "id": "cr",
+      "name": "Compte rendu de réunion",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Présents, points abordés, décisions et tableau des actions.",
+      "bleed": 3
+    },
+    {
+      "id": "odj",
+      "name": "Ordre du jour",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Ordre du jour d'une réunion ou d'une assemblée.",
+      "bleed": 3
+    },
+    {
+      "id": "fposte",
+      "name": "Offre d'emploi",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Fiche de poste ou offre d'emploi : missions, profil, conditions.",
+      "bleed": 3
+    },
+    {
+      "id": "cgv",
+      "name": "Conditions générales de vente",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "CGV sur deux colonnes, modèle à faire relire.",
+      "bleed": 3
+    },
+    {
+      "id": "rapport",
+      "name": "Rapport d'activité",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Rapport annuel avec couverture, sommaire, chiffres clés et photos.",
+      "bleed": 3
+    },
+    {
+      "id": "livretacc",
+      "name": "Livret d'accueil",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Livret d'accueil des salariés ou des voyageurs, avec couverture.",
+      "bleed": 3
+    },
+    {
+      "id": "adhesion",
+      "name": "Bulletin d'adhésion",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Bulletin à remplir à la main : coordonnées, cotisation, règlement, signature.",
+      "bleed": 3
+    },
+    {
+      "id": "convag",
+      "name": "Convocation à l'AG",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Convocation à l'assemblée générale avec ordre du jour et pouvoir détachable.",
+      "bleed": 3
+    },
+    {
+      "id": "pv",
+      "name": "Procès-verbal d'AG",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Procès-verbal avec quorum, résolutions et votes, signé par la présidence.",
+      "bleed": 3
+    },
+    {
+      "id": "recudon",
+      "name": "Reçu de don",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Reçu fiscal de don reprenant les mentions du modèle Cerfa 11580.",
+      "bleed": 3
+    },
+    {
+      "id": "grandcar",
+      "name": "Version gros caractères",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Version A4 en très gros caractères, contraste maximal, police très lisible : pour les personnes malvoyantes.",
+      "bleed": 3
+    },
+    {
+      "id": "declacc",
+      "name": "Déclaration d'accessibilité",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Déclaration d'accessibilité du site, sur le modèle officiel, à compléter après audit.",
+      "bleed": 3
+    },
+    {
+      "id": "onepager",
+      "name": "One-pager",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Le projet sur une page, en deux colonnes : problème, solution, marché, traction, équipe.",
+      "bleed": 3
+    },
+    {
+      "id": "bp",
+      "name": "Business plan",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Business plan avec couverture, sommaire, tableaux et prévisionnel.",
+      "bleed": 3
+    },
+    {
+      "id": "cp",
+      "name": "Communiqué de presse",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Communiqué de presse daté avec contact presse.",
+      "bleed": 3
+    },
+    {
+      "id": "roadmap",
+      "name": "Feuille de route",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Feuille de route trimestrielle : objectifs et statut.",
+      "bleed": 3
+    },
+    {
+      "id": "convhono",
+      "name": "Convention d'honoraires",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Convention d'honoraires écrite entre l'avocat et son client.",
+      "bleed": 3
+    },
+    {
+      "id": "lmission",
+      "name": "Lettre de mission",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Lettre de mission : objet, engagements, honoraires, signatures.",
+      "bleed": 3
+    },
+    {
+      "id": "bordereau",
+      "name": "Bordereau de pièces",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Bordereau de communication de pièces numérotées automatiquement.",
+      "bleed": 3
+    },
+    {
+      "id": "pgarde",
+      "name": "Conclusions · page de garde",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Page de garde de conclusions (juridiction, RG, parties) suivie du corps.",
+      "bleed": 3
+    },
+    {
+      "id": "chrono",
+      "name": "Chronologie du dossier",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Frise chronologique verticale, pour un dossier ou une plaidoirie.",
+      "bleed": 3
+    },
+    {
+      "id": "pieces",
+      "name": "Pièces à fournir",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Liste des pièces à cocher, par démarche.",
+      "bleed": 3
+    },
+    {
+      "id": "frais",
+      "name": "Les frais expliqués",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Fiche pédagogique pour les clients.",
+      "bleed": 3
+    },
+    {
+      "id": "guide",
+      "name": "Guide client",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Guide pas à pas avec couverture.",
+      "bleed": 3
+    },
+    {
+      "id": "convsign",
+      "name": "Rendez-vous de signature",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Lettre de convocation à la signature.",
+      "bleed": 3
+    },
+    {
+      "id": "calfisc",
+      "name": "Calendrier fiscal",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Échéances fiscales et sociales de l'année.",
+      "bleed": 3
+    },
+    {
+      "id": "guidefe",
+      "name": "Guide facturation électronique",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Guide pour les clients : calendrier 2026-2027, nouvelles mentions, plateformes agréées.",
+      "bleed": 3
+    },
+    {
+      "id": "mandat",
+      "name": "Mandat de recherches",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Mandat écrit entre l'agence et son client.",
+      "bleed": 3
+    },
+    {
+      "id": "renq",
+      "name": "Rapport d'enquête",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Rapport confidentiel : chronologie horodatée, planches photos légendées, conclusion.",
+      "bleed": 3
+    },
+    {
+      "id": "cfrais",
+      "name": "Compte détaillé des frais",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Compte détaillé des frais et honoraires, à remettre avant tout règlement.",
+      "bleed": 3
+    },
+    {
+      "id": "memoire",
+      "name": "Mémoire",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Mémoire ou thèse : couverture, sommaire automatique, parties, bibliographie.",
+      "bleed": 3
+    },
+    {
+      "id": "rstage",
+      "name": "Rapport de stage",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Rapport de stage avec couverture et sommaire automatique.",
+      "bleed": 3
+    },
+    {
+      "id": "lmotiv",
+      "name": "Lettre de motivation",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Lettre de motivation mise en page.",
+      "bleed": 3
+    },
+    {
+      "id": "autor",
+      "name": "Autorisation parentale",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Autorisation de sortie ou de photo à remplir par les parents.",
+      "bleed": 3
+    },
+    {
+      "id": "reglement",
+      "name": "Règlement intérieur",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Règlement sur deux colonnes.",
+      "bleed": 3
+    },
+    {
+      "id": "pvrecep",
+      "name": "PV de réception de travaux",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Procès-verbal de réception avec ou sans réserves.",
+      "bleed": 3
+    },
+    {
+      "id": "calsaison",
+      "name": "Calendrier de la saison",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Les rencontres de la saison.",
+      "bleed": 3
+    },
+    {
+      "id": "deck",
+      "name": "Diapositives",
+      "category": "Documents",
+      "width": 1280,
+      "height": 720,
+      "print": {
+        "w": 297,
+        "h": 167
+      },
+      "use": "Présentation 16:9 : pitch, exposé, soutenance. Couverture, parties, chiffres, listes et photo, puis PDF.",
+      "bleed": 3
+    },
+    {
+      "id": "bmc",
+      "name": "Business Model Canvas",
+      "category": "Documents",
+      "width": 1190,
+      "height": 842,
+      "print": {
+        "w": 420,
+        "h": 297
+      },
+      "use": "Les neuf cases du modèle économique, en affiche A3. Le Lean Canvas en variante.",
+      "bleed": 3
+    },
+    {
+      "id": "cv",
+      "name": "CV",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "CV A4 en deux colonnes : photo, contact, compétences, expériences, formation.",
+      "bleed": 3
+    },
+    {
+      "id": "postera0",
+      "name": "Poster scientifique A0",
+      "category": "Impression",
+      "width": 1123,
+      "height": 1587,
+      "print": {
+        "w": 841,
+        "h": 1189
+      },
+      "use": "Poster A0 pour un colloque ou une soutenance, en trois colonnes.",
+      "bleed": 3
+    },
+    {
+      "id": "fiche",
+      "name": "Fiches de révision",
+      "category": "Série",
+      "width": 874,
+      "height": 620,
+      "print": {
+        "w": 148,
+        "h": 105
+      },
+      "use": "Une fiche A6 par notion, avec l'encadré « À retenir ».",
+      "bleed": 3
+    },
+    {
+      "id": "diplome",
+      "name": "Diplôme",
+      "category": "Série",
+      "width": 1123,
+      "height": 794,
+      "print": {
+        "w": 297,
+        "h": 210
+      },
+      "use": "Un diplôme par enfant de la liste. La version coloriage se colorie à la main.",
+      "bleed": 3
+    },
+    {
+      "id": "routine",
+      "name": "Tableau de routine",
+      "category": "Impression",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Les étapes de la journée en pictogrammes, avec une case à cocher.",
+      "bleed": 3
+    },
+    {
+      "id": "recomp",
+      "name": "Tableau de réussite",
+      "category": "Impression",
+      "width": 1123,
+      "height": 794,
+      "print": {
+        "w": 297,
+        "h": 210
+      },
+      "use": "Les tâches de la semaine, une étoile à colorier par jour.",
+      "bleed": 3
+    },
+    {
+      "id": "edt",
+      "name": "Emploi du temps",
+      "category": "Impression",
+      "width": 1123,
+      "height": 794,
+      "print": {
+        "w": 297,
+        "h": 210
+      },
+      "use": "La semaine en colonnes, pour la maison, l'école ou les révisions.",
+      "bleed": 3
+    },
+    {
+      "id": "wifi",
+      "name": "Carte Wi-Fi",
+      "category": "Papeterie",
+      "width": 874,
+      "height": 620,
+      "print": {
+        "w": 148,
+        "h": 105
+      },
+      "use": "Le réseau et le mot de passe, avec un QR code qui connecte le téléphone.",
+      "bleed": 3
+    },
+    {
+      "id": "etiqprix",
+      "name": "Étiquettes prix",
+      "category": "Série",
+      "width": 700,
+      "height": 370,
+      "print": {
+        "w": 70,
+        "h": 37
+      },
+      "use": "Une étiquette par produit, 24 par planche adhésive.",
+      "bleed": 3
+    },
+    {
+      "id": "plaque",
+      "name": "Plaques de porte braille",
+      "category": "Signalétique",
+      "width": 1000,
+      "height": 400,
+      "print": {
+        "w": 200,
+        "h": 80
+      },
+      "use": "Plaques de porte contrastées avec la transcription braille, à remettre à un fabricant de plaques en relief.",
+      "bleed": 3
+    },
+    {
+      "id": "orga",
+      "name": "Organigramme",
+      "category": "Documents",
+      "width": 1123,
+      "height": 794,
+      "print": {
+        "w": 297,
+        "h": 210
+      },
+      "use": "L'organigramme dessiné à partir d'une simple liste.",
+      "bleed": 3
+    },
+    {
+      "id": "pdc",
+      "name": "Grille point de croix",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Patron complet à partir d'une photo ou d'un texte : couverture avec aperçu brodé, légende DMC avec métrage et écheveaux, grilles de 50 × 70 points, mode d'emploi. PDF vectoriel et fichier OXS.",
+      "bleed": 3
+    },
+    {
+      "id": "pdcv",
+      "name": "Visuel de vente du patron",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1350,
+      "print": null,
+      "use": "Le motif brodé dans un tambour, pour une fiche Etsy, une boutique ou Instagram.",
+      "bleed": null
+    },
+    {
+      "id": "an1",
+      "name": "1 an déjà",
+      "category": "Réseaux",
+      "width": 1080,
+      "height": 1350,
+      "print": null,
+      "use": "Un an après : le souvenir, et le QR de la capsule temporelle qui s'ouvre ce jour-là.",
+      "bleed": null
+    },
+    {
+      "id": "tdb",
+      "name": "Tableau de bord",
+      "category": "Documents",
+      "width": 794,
+      "height": 1123,
+      "print": {
+        "w": 210,
+        "h": 297
+      },
+      "use": "Indicateurs du mois comparés à l'an dernier, avec commentaire.",
+      "bleed": 3
+    }
+  ],
+  "tickets": [
+    {
+      "id": "rose-stamp",
+      "name": "Timbre rose « Billet 1 »",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 340,
+      "height": 190,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=rose-stamp",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Stamps.tsx",
+      "component": "RoseStamp"
+    },
+    {
+      "id": "orange-label",
+      "name": "Étiquette vierge à cadre orange",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 370,
+      "height": 230,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=orange-label",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Labels.tsx",
+      "component": "OrangeFrameLabel"
+    },
+    {
+      "id": "red-plane",
+      "name": "Billet d'avion rouge CCS AIA",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 300,
+      "height": 180,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=red-plane",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Stamps.tsx",
+      "component": "RedPlaneTicket"
+    },
+    {
+      "id": "eagle-pass",
+      "name": "Étiquette par avion avec aigle",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 285,
+      "height": 175,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=eagle-pass",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Labels.tsx",
+      "component": "AirmailEaglePass"
+    },
+    {
+      "id": "explore",
+      "name": "Billet « Explorer »",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 405,
+      "height": 225,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=explore",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Stamps.tsx",
+      "component": "ExploreTicket"
+    },
+    {
+      "id": "kraft-pass",
+      "name": "Carte d'embarquement kraft - New York → Paris",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 555,
+      "height": 325,
+      "fields": [
+        {
+          "cle": "depart",
+          "label": "Départ",
+          "defaut": "NEW YORK"
+        },
+        {
+          "cle": "destination",
+          "label": "Destination",
+          "defaut": "PARIS"
+        },
+        {
+          "cle": "date",
+          "label": "Date",
+          "defaut": "18 SEPT"
+        },
+        {
+          "cle": "heure",
+          "label": "Heure",
+          "defaut": "10H30"
+        },
+        {
+          "cle": "porte",
+          "label": "Porte",
+          "defaut": "3"
+        },
+        {
+          "cle": "vol",
+          "label": "Vol",
+          "defaut": "AB815"
+        },
+        {
+          "cle": "siege",
+          "label": "Siège",
+          "defaut": "A22"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=kraft-pass",
+      "version": "1.0.0",
+      "source": "src/components/tickets/BoardingPasses.tsx",
+      "component": "KraftBoardingPass"
+    },
+    {
+      "id": "rose-pass",
+      "name": "Carte d'embarquement rose - vol 304",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 565,
+      "height": 365,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=rose-pass",
+      "version": "1.0.0",
+      "source": "src/components/tickets/BoardingPasses.tsx",
+      "component": "RoseTypewriterPass"
+    },
+    {
+      "id": "blank-ticket",
+      "name": "Ticket numéroté vierge",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 510,
+      "height": 175,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=blank-ticket",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Stamps.tsx",
+      "component": "BlankNumberedTicket"
+    },
+    {
+      "id": "blue-stamp",
+      "name": "Timbre bleu gravé avec avion",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 360,
+      "height": 216,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=blue-stamp",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Stamps.tsx",
+      "component": "BlueStamp"
+    },
+    {
+      "id": "mail-pink",
+      "name": "Étiquette « Courrier » rose",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 325,
+      "height": 225,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=mail-pink",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Labels.tsx",
+      "component": "MailLabelPink"
+    },
+    {
+      "id": "airmail-small",
+      "name": "Petite étiquette par avion",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 335,
+      "height": 205,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=airmail-small",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Labels.tsx",
+      "component": "AirmailSmallLabel"
+    },
+    {
+      "id": "cream-pass",
+      "name": "Carte d'embarquement crème - Edwards / Susan",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 425,
+      "height": 585,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=cream-pass",
+      "version": "1.0.0",
+      "source": "src/components/tickets/BoardingPasses.tsx",
+      "component": "CreamTypewriterPass"
+    },
+    {
+      "id": "arrival",
+      "name": "Billet « Arrivée »",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 375,
+      "height": 215,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=arrival",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Stamps.tsx",
+      "component": "ArrivalTicket"
+    },
+    {
+      "id": "tall-kraft",
+      "name": "Carte d'embarquement kraft - Los Angeles → New York",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 430,
+      "height": 680,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=tall-kraft",
+      "version": "1.0.0",
+      "source": "src/components/tickets/BoardingPasses.tsx",
+      "component": "TallKraftPass"
+    },
+    {
+      "id": "transair",
+      "name": "Carte d'embarquement Trans Air - Paris → New York",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 425,
+      "height": 620,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=transair",
+      "version": "1.0.0",
+      "source": "src/components/tickets/BoardingPasses.tsx",
+      "component": "TransAirPass"
+    },
+    {
+      "id": "baggage",
+      "name": "Ticket « Retrait bagages »",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 375,
+      "height": 245,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=baggage",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Stamps.tsx",
+      "component": "BaggageClaimTicket"
+    },
+    {
+      "id": "airmail-large",
+      "name": "Grande étiquette par avion",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 535,
+      "height": 200,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=airmail-large",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Labels.tsx",
+      "component": "AirmailLargeLabel"
+    },
+    {
+      "id": "mail-small",
+      "name": "Petit laissez-passer « Courrier »",
+      "category": "Voyage",
+      "categoryId": "voyage",
+      "width": 275,
+      "height": 215,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation / compagnie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi de vol",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=mail-small",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Labels.tsx",
+      "component": "MailPassSmall"
+    },
+    {
+      "id": "roll",
+      "name": "Ticket de rouleau « Entrée »",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 380,
+      "height": 175,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre du ticket",
+          "defaut": "ENTRÉE"
+        },
+        {
+          "cle": "organisation",
+          "label": "Organisation",
+          "defaut": "CINÉMA PARADIS"
+        },
+        {
+          "cle": "numero",
+          "label": "Numéro",
+          "defaut": "004217"
+        },
+        {
+          "cle": "sousTitre",
+          "label": "Sous-titre",
+          "defaut": "UNE PERSONNE"
+        },
+        {
+          "cle": "mention",
+          "label": "Mention",
+          "defaut": "NI REPRIS NI ÉCHANGÉ"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=roll",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "RollTicket"
+    },
+    {
+      "id": "stub",
+      "name": "Billet de salle à talon - Le Dernier Train",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 600,
+      "height": 235,
+      "fields": [
+        {
+          "cle": "cinema",
+          "label": "Cinéma",
+          "defaut": "LE GRAND ROYAL"
+        },
+        {
+          "cle": "film",
+          "label": "Film",
+          "defaut": "LE DERNIER TRAIN"
+        },
+        {
+          "cle": "date",
+          "label": "Date",
+          "defaut": "SAM 14 JUIN"
+        },
+        {
+          "cle": "heure",
+          "label": "Heure",
+          "defaut": "20H45"
+        },
+        {
+          "cle": "place",
+          "label": "Place",
+          "defaut": "F 12"
+        },
+        {
+          "cle": "salle",
+          "label": "Salle",
+          "defaut": "4"
+        },
+        {
+          "cle": "prix",
+          "label": "Tarif",
+          "defaut": "9,50 €"
+        },
+        {
+          "cle": "holder",
+          "label": "Invité",
+          "defaut": ""
+        }
+      ],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=stub",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "CinemaStub"
+    },
+    {
+      "id": "threed",
+      "name": "Séance en relief 3D",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 440,
+      "height": 220,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=threed",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "ThreeDTicket"
+    },
+    {
+      "id": "member",
+      "name": "Carte de membre du ciné-club",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 430,
+      "height": 270,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=member",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "MemberCard"
+    },
+    {
+      "id": "film",
+      "name": "Bande de pellicule « Le Dernier Train »",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 780,
+      "height": 190,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=film",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "FilmStripTicket"
+    },
+    {
+      "id": "midnight",
+      "name": "Séance de minuit - art déco",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 320,
+      "height": 460,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=midnight",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "MidnightTicket"
+    },
+    {
+      "id": "clap",
+      "name": "Claquette - entrée plateau VIP",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 430,
+      "height": 330,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=clap",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "ClapperTicket"
+    },
+    {
+      "id": "popcorn",
+      "name": "Bon pour un pop-corn",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 340,
+      "height": 280,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=popcorn",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "PopcornVoucher"
+    },
+    {
+      "id": "drivein",
+      "name": "Billet de drive-in",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 580,
+      "height": 285,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=drivein",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "DriveInTicket"
+    },
+    {
+      "id": "stub-blue",
+      "name": "Billet de salle à talon - Roman d'été",
+      "category": "Cinéma",
+      "categoryId": "cinema",
+      "width": 600,
+      "height": 235,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "bandeAnnonceUrl",
+          "label": "Lien bande-annonce",
+          "type": "url",
+          "placeholder": "https://youtube.com/…"
+        },
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=stub-blue",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Cinema.tsx",
+      "component": "CinemaBlueStub"
+    },
+    {
+      "id": "coaster",
+      "name": "Sous-bock - Brasserie du Coin",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 300,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=coaster",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "Coaster"
+    },
+    {
+      "id": "coupons",
+      "name": "Carnet de tickets de consommation",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 560,
+      "height": 170,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=coupons",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "DrinkCoupons"
+    },
+    {
+      "id": "menu",
+      "name": "Carte des cocktails",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 380,
+      "height": 570,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=menu",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "CocktailMenu"
+    },
+    {
+      "id": "receipt",
+      "name": "L'addition - Le Zinc",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 310,
+      "height": 580,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=receipt",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "BarReceipt"
+    },
+    {
+      "id": "matchbook",
+      "name": "Pochette d'allumettes - Le Zinc",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 190,
+      "height": 270,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=matchbook",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "Matchbook"
+    },
+    {
+      "id": "speakeasy",
+      "name": "Carte d'accès du speakeasy",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 480,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "venue",
+          "label": "Établissement",
+          "defaut": "LA CAVE N° 7"
+        },
+        {
+          "cle": "motto",
+          "label": "Mot de passe",
+          "defaut": "Frappez trois fois"
+        },
+        {
+          "cle": "holder",
+          "label": "Invité",
+          "defaut": "Mme Élise Marchand"
+        },
+        {
+          "cle": "number",
+          "label": "Numéro",
+          "defaut": "0007"
+        },
+        {
+          "cle": "until",
+          "label": "Validité",
+          "defaut": "31 DÉC."
+        }
+      ],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=speakeasy",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "SpeakeasyCard"
+    },
+    {
+      "id": "tag",
+      "name": "Jeton de vestiaire n° 47",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 230,
+      "height": 340,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=tag",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "CloakroomTag"
+    },
+    {
+      "id": "happy",
+      "name": "Ticket Happy Hour",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 560,
+      "height": 260,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=happy",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "HappyHourTicket"
+    },
+    {
+      "id": "coaster-green",
+      "name": "Sous-bock - Cave du Moulin",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 280,
+      "height": 280,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=coaster-green",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "CoasterGreen"
+    },
+    {
+      "id": "coupons-green",
+      "name": "Tickets de dégustation",
+      "category": "Bar",
+      "categoryId": "bar",
+      "width": 560,
+      "height": 170,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "carteUrl",
+          "label": "Lien carte / menu",
+          "type": "url",
+          "placeholder": "https://…/carte"
+        },
+        {
+          "cle": "resaUrl",
+          "label": "Lien réservation de table",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=coupons-green",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Bar.tsx",
+      "component": "CouponsGreen"
+    },
+    {
+      "id": "opera",
+      "name": "Billet d'opéra - La Traviata",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 640,
+      "height": 250,
+      "fields": [
+        {
+          "cle": "title",
+          "label": "Titre ou noms des mariés",
+          "defaut": "La Traviata"
+        },
+        {
+          "cle": "venue",
+          "label": "Lieu / en-tête",
+          "defaut": "OPÉRA NATIONAL"
+        },
+        {
+          "cle": "composer",
+          "label": "Message d'invitation",
+          "defaut": "Opéra en trois actes · Giuseppe Verdi"
+        },
+        {
+          "cle": "date",
+          "label": "Date",
+          "defaut": "SAM 12 OCT."
+        },
+        {
+          "cle": "heure",
+          "label": "Heure",
+          "defaut": "20H00"
+        },
+        {
+          "cle": "place",
+          "label": "Place / table",
+          "defaut": "LOGE 3 · FAUTEUIL 14"
+        },
+        {
+          "cle": "prix",
+          "label": "Mention du talon",
+          "defaut": "45 €"
+        },
+        {
+          "cle": "holder",
+          "label": "Invité",
+          "defaut": ""
+        }
+      ],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=opera",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "OperaTicket"
+    },
+    {
+      "id": "cabaret",
+      "name": "Cabaret - Le Chat Noir",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 440,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=cabaret",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "CabaretTicket"
+    },
+    {
+      "id": "circus",
+      "name": "Billet du Grand Cirque Lumière",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 420,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=circus",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "CircusTicket"
+    },
+    {
+      "id": "magic",
+      "name": "Le Grand Illusionniste",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 330,
+      "height": 480,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=magic",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "MagicTicket"
+    },
+    {
+      "id": "jazz",
+      "name": "Festival - Nuit du Jazz",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 660,
+      "height": 240,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=jazz",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "JazzFestivalTicket"
+    },
+    {
+      "id": "masks",
+      "name": "Théâtre des Deux Masques",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 420,
+      "height": 280,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=masks",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "MasksTicket"
+    },
+    {
+      "id": "seatplan",
+      "name": "Plan de salle - Orchestre, rang D",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 460,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=seatplan",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "SeatPlanTicket"
+    },
+    {
+      "id": "backstage",
+      "name": "Pass backstage - Tous accès",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 240,
+      "height": 350,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=backstage",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "BackstagePass"
+    },
+    {
+      "id": "opera-black",
+      "name": "Billet d'opéra - Carmen",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 640,
+      "height": 250,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=opera-black",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "OperaBlack"
+    },
+    {
+      "id": "ballet",
+      "name": "Billet de ballet - Le Lac des Cygnes",
+      "category": "Spectacle",
+      "categoryId": "spectacle",
+      "width": 640,
+      "height": 250,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "programmeUrl",
+          "label": "Lien programme (PDF)",
+          "type": "url",
+          "placeholder": "https://…/programme.pdf"
+        }
+      ],
+      "previewUrl": "?module=ballet",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Show.tsx",
+      "component": "BalletRose"
+    },
+    {
+      "id": "rail-edmondson",
+      "name": "Chemin de fer - Paris à Rouen",
+      "category": "Transport",
+      "categoryId": "transport",
+      "width": 360,
+      "height": 170,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "horaireUrl",
+          "label": "Lien horaires / réseau",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "billetUrl",
+          "label": "Lien achat du titre",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=rail-edmondson",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Transport.tsx",
+      "component": "RailwayTicket"
+    },
+    {
+      "id": "tram-transfer",
+      "name": "Correspondance de tramway",
+      "category": "Transport",
+      "categoryId": "transport",
+      "width": 190,
+      "height": 320,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "horaireUrl",
+          "label": "Lien horaires / réseau",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "billetUrl",
+          "label": "Lien achat du titre",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=tram-transfer",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Transport.tsx",
+      "component": "TramTransfer"
+    },
+    {
+      "id": "bus-conductor",
+      "name": "Ticket d'autobus à poinçonner",
+      "category": "Transport",
+      "categoryId": "transport",
+      "width": 280,
+      "height": 210,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "horaireUrl",
+          "label": "Lien horaires / réseau",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "billetUrl",
+          "label": "Lien achat du titre",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=bus-conductor",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Transport.tsx",
+      "component": "BusConductorTicket"
+    },
+    {
+      "id": "metro-carnet",
+      "name": "Carnet de cinq tickets de métro",
+      "category": "Transport",
+      "categoryId": "transport",
+      "width": 560,
+      "height": 180,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "horaireUrl",
+          "label": "Lien horaires / réseau",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "billetUrl",
+          "label": "Lien achat du titre",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=metro-carnet",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Transport.tsx",
+      "component": "MetroCarnet"
+    },
+    {
+      "id": "ferry",
+      "name": "Traversée maritime - Le Havre à Douvres",
+      "category": "Transport",
+      "categoryId": "transport",
+      "width": 520,
+      "height": 220,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "horaireUrl",
+          "label": "Lien horaires / réseau",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "billetUrl",
+          "label": "Lien achat du titre",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=ferry",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Transport.tsx",
+      "component": "FerryTicket"
+    },
+    {
+      "id": "platform",
+      "name": "Billet d'accès au quai",
+      "category": "Transport",
+      "categoryId": "transport",
+      "width": 290,
+      "height": 190,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "horaireUrl",
+          "label": "Lien horaires / réseau",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "billetUrl",
+          "label": "Lien achat du titre",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=platform",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Transport.tsx",
+      "component": "PlatformTicket"
+    },
+    {
+      "id": "toll",
+      "name": "Reçu de péage autoroutier",
+      "category": "Transport",
+      "categoryId": "transport",
+      "width": 270,
+      "height": 340,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "horaireUrl",
+          "label": "Lien horaires / réseau",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "billetUrl",
+          "label": "Lien achat du titre",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=toll",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Transport.tsx",
+      "component": "TollTicket"
+    },
+    {
+      "id": "sleeper",
+      "name": "Coupon de couchette - Wagons-Lits",
+      "category": "Transport",
+      "categoryId": "transport",
+      "width": 520,
+      "height": 220,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "horaireUrl",
+          "label": "Lien horaires / réseau",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "billetUrl",
+          "label": "Lien achat du titre",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=sleeper",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Transport.tsx",
+      "component": "SleeperCoupon"
+    },
+    {
+      "id": "telegram",
+      "name": "Formulaire de télégramme PTT",
+      "category": "Poste",
+      "categoryId": "poste",
+      "width": 520,
+      "height": 260,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi d'envoi",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=telegram",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postal.tsx",
+      "component": "TelegramForm"
+    },
+    {
+      "id": "postcard",
+      "name": "Carte postale manuscrite",
+      "category": "Poste",
+      "categoryId": "poste",
+      "width": 500,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi d'envoi",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=postcard",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postal.tsx",
+      "component": "PicturePostcard"
+    },
+    {
+      "id": "first-day-cover",
+      "name": "Enveloppe premier jour - Tour Eiffel",
+      "category": "Poste",
+      "categoryId": "poste",
+      "width": 520,
+      "height": 270,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi d'envoi",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=first-day-cover",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postal.tsx",
+      "component": "FirstDayCover"
+    },
+    {
+      "id": "registered",
+      "name": "Récépissé d'envoi recommandé",
+      "category": "Poste",
+      "categoryId": "poste",
+      "width": 300,
+      "height": 400,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi d'envoi",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=registered",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postal.tsx",
+      "component": "RegisteredReceipt"
+    },
+    {
+      "id": "parcel-label",
+      "name": "Étiquette de colis postal express",
+      "category": "Poste",
+      "categoryId": "poste",
+      "width": 520,
+      "height": 240,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi d'envoi",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=parcel-label",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postal.tsx",
+      "component": "ParcelLabel"
+    },
+    {
+      "id": "aerogramme",
+      "name": "Aérogramme par avion",
+      "category": "Poste",
+      "categoryId": "poste",
+      "width": 560,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi d'envoi",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=aerogramme",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postal.tsx",
+      "component": "Aerogramme"
+    },
+    {
+      "id": "savings-book",
+      "name": "Livret de Caisse d'épargne postale",
+      "category": "Poste",
+      "categoryId": "poste",
+      "width": 300,
+      "height": 400,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi d'envoi",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=savings-book",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postal.tsx",
+      "component": "PostalSavingsBook"
+    },
+    {
+      "id": "calling-card",
+      "name": "Carte de visite - Madame Laurent",
+      "category": "Poste",
+      "categoryId": "poste",
+      "width": 440,
+      "height": 210,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "suiviUrl",
+          "label": "Lien suivi d'envoi",
+          "type": "url",
+          "placeholder": "https://…/suivi"
+        }
+      ],
+      "previewUrl": "?module=calling-card",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postal.tsx",
+      "component": "CallingCard"
+    },
+    {
+      "id": "museum",
+      "name": "Entrée au Musée des Antiquités",
+      "category": "Loisirs & sport",
+      "categoryId": "loisirs",
+      "width": 330,
+      "height": 270,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie / entrée",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=museum",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Leisure.tsx",
+      "component": "MuseumAdmission"
+    },
+    {
+      "id": "world-fair",
+      "name": "Exposition universelle de Paris",
+      "category": "Loisirs & sport",
+      "categoryId": "loisirs",
+      "width": 560,
+      "height": 220,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie / entrée",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=world-fair",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Leisure.tsx",
+      "component": "WorldFairTicket"
+    },
+    {
+      "id": "ride-coupons",
+      "name": "Bons de manèges détachables",
+      "category": "Loisirs & sport",
+      "categoryId": "loisirs",
+      "width": 600,
+      "height": 180,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie / entrée",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=ride-coupons",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Leisure.tsx",
+      "component": "RideCoupons"
+    },
+    {
+      "id": "pool",
+      "name": "Entrée à la piscine municipale",
+      "category": "Loisirs & sport",
+      "categoryId": "loisirs",
+      "width": 520,
+      "height": 220,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie / entrée",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=pool",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Leisure.tsx",
+      "component": "PoolTicket"
+    },
+    {
+      "id": "skating",
+      "name": "Palais de la Glisse - patins inclus",
+      "category": "Loisirs & sport",
+      "categoryId": "loisirs",
+      "width": 500,
+      "height": 240,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie / entrée",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=skating",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Leisure.tsx",
+      "component": "SkatingTicket"
+    },
+    {
+      "id": "boxing",
+      "name": "Grand combat au Palais des Sports",
+      "category": "Loisirs & sport",
+      "categoryId": "loisirs",
+      "width": 580,
+      "height": 220,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie / entrée",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=boxing",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Leisure.tsx",
+      "component": "BoxingTicket"
+    },
+    {
+      "id": "race-bet",
+      "name": "Bulletin de pari hippique",
+      "category": "Loisirs & sport",
+      "categoryId": "loisirs",
+      "width": 310,
+      "height": 430,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie / entrée",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=race-bet",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Leisure.tsx",
+      "component": "RaceBetSlip"
+    },
+    {
+      "id": "stadium",
+      "name": "Finale au Stade Municipal",
+      "category": "Loisirs & sport",
+      "categoryId": "loisirs",
+      "width": 480,
+      "height": 260,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "billetsUrl",
+          "label": "Lien billetterie / entrée",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=stadium",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Leisure.tsx",
+      "component": "StadiumTicket"
+    },
+    {
+      "id": "pawn",
+      "name": "Reconnaissance du Mont-de-Piété",
+      "category": "Commerce & services",
+      "categoryId": "services",
+      "width": 420,
+      "height": 310,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact / devis",
+          "type": "url",
+          "placeholder": "https://… ou tel:"
+        }
+      ],
+      "previewUrl": "?module=pawn",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Services.tsx",
+      "component": "PawnTicket"
+    },
+    {
+      "id": "laundry",
+      "name": "Triptyque de blanchisserie",
+      "category": "Commerce & services",
+      "categoryId": "services",
+      "width": 560,
+      "height": 180,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact / devis",
+          "type": "url",
+          "placeholder": "https://… ou tel:"
+        }
+      ],
+      "previewUrl": "?module=laundry",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Services.tsx",
+      "component": "LaundryClaim"
+    },
+    {
+      "id": "shoe-repair",
+      "name": "Étiquette de cordonnerie",
+      "category": "Commerce & services",
+      "categoryId": "services",
+      "width": 230,
+      "height": 360,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact / devis",
+          "type": "url",
+          "placeholder": "https://… ou tel:"
+        }
+      ],
+      "previewUrl": "?module=shoe-repair",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Services.tsx",
+      "component": "ShoeRepairTag"
+    },
+    {
+      "id": "photobooth",
+      "name": "Bande de quatre photos d'identité",
+      "category": "Commerce & services",
+      "categoryId": "services",
+      "width": 180,
+      "height": 520,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact / devis",
+          "type": "url",
+          "placeholder": "https://… ou tel:"
+        }
+      ],
+      "previewUrl": "?module=photobooth",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Services.tsx",
+      "component": "PhotoBoothStrip"
+    },
+    {
+      "id": "parcel-receipt",
+      "name": "Récépissé des Messageries nationales",
+      "category": "Commerce & services",
+      "categoryId": "services",
+      "width": 300,
+      "height": 420,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact / devis",
+          "type": "url",
+          "placeholder": "https://… ou tel:"
+        }
+      ],
+      "previewUrl": "?module=parcel-receipt",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Services.tsx",
+      "component": "ParcelReceipt"
+    },
+    {
+      "id": "barber",
+      "name": "Carte de rendez-vous du coiffeur",
+      "category": "Commerce & services",
+      "categoryId": "services",
+      "width": 330,
+      "height": 250,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact / devis",
+          "type": "url",
+          "placeholder": "https://… ou tel:"
+        }
+      ],
+      "previewUrl": "?module=barber",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Services.tsx",
+      "component": "BarberAppointment"
+    },
+    {
+      "id": "repair-order",
+      "name": "Ordre de réparation - poste de radio",
+      "category": "Commerce & services",
+      "categoryId": "services",
+      "width": 420,
+      "height": 330,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact / devis",
+          "type": "url",
+          "placeholder": "https://… ou tel:"
+        }
+      ],
+      "previewUrl": "?module=repair-order",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Services.tsx",
+      "component": "RepairOrder"
+    },
+    {
+      "id": "valet",
+      "name": "Ticket de voiturier - Garage Central",
+      "category": "Commerce & services",
+      "categoryId": "services",
+      "width": 520,
+      "height": 220,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact / devis",
+          "type": "url",
+          "placeholder": "https://… ou tel:"
+        }
+      ],
+      "previewUrl": "?module=valet",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Services.tsx",
+      "component": "ValetParkingClaim"
+    },
+    {
+      "id": "library",
+      "name": "Fiche de prêt de bibliothèque",
+      "category": "Vie sociale",
+      "categoryId": "social",
+      "width": 420,
+      "height": 290,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "infoUrl",
+          "label": "Lien d'information",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=library",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Social.tsx",
+      "component": "LibraryCard"
+    },
+    {
+      "id": "ration",
+      "name": "Coupons de rationnement alimentaire",
+      "category": "Vie sociale",
+      "categoryId": "social",
+      "width": 560,
+      "height": 190,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "infoUrl",
+          "label": "Lien d'information",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=ration",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Social.tsx",
+      "component": "RationCoupons"
+    },
+    {
+      "id": "wedding",
+      "name": "Faire-part de mariage",
+      "category": "Vie sociale",
+      "categoryId": "social",
+      "width": 430,
+      "height": 310,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "infoUrl",
+          "label": "Lien d'information",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=wedding",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Social.tsx",
+      "component": "WeddingInvitation"
+    },
+    {
+      "id": "funeral",
+      "name": "Image souvenir funéraire",
+      "category": "Vie sociale",
+      "categoryId": "social",
+      "width": 280,
+      "height": 400,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "infoUrl",
+          "label": "Lien d'information",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=funeral",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Social.tsx",
+      "component": "FuneralCard"
+    },
+    {
+      "id": "dance-card",
+      "name": "Carnet de bal annoté",
+      "category": "Vie sociale",
+      "categoryId": "social",
+      "width": 300,
+      "height": 430,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "infoUrl",
+          "label": "Lien d'information",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=dance-card",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Social.tsx",
+      "component": "DanceCard"
+    },
+    {
+      "id": "membership",
+      "name": "Carte de sociétaire du Cercle Athlétique",
+      "category": "Vie sociale",
+      "categoryId": "social",
+      "width": 430,
+      "height": 280,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "infoUrl",
+          "label": "Lien d'information",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=membership",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Social.tsx",
+      "component": "ClubMembership"
+    },
+    {
+      "id": "ballot",
+      "name": "Bulletin de vote municipal",
+      "category": "Vie sociale",
+      "categoryId": "social",
+      "width": 350,
+      "height": 400,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "infoUrl",
+          "label": "Lien d'information",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=ballot",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Social.tsx",
+      "component": "BallotPaper"
+    },
+    {
+      "id": "union-card",
+      "name": "Carte syndicale de cotisations",
+      "category": "Vie sociale",
+      "categoryId": "social",
+      "width": 420,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "infoUrl",
+          "label": "Lien d'information",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=union-card",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Social.tsx",
+      "component": "UnionDuesCard"
+    },
+    {
+      "id": "trade-card",
+      "name": "Carte réclame chromolithographiée",
+      "category": "Publicité & emballages",
+      "categoryId": "publicite",
+      "width": 480,
+      "height": 280,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / marque",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=trade-card",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Advertising.tsx",
+      "component": "TradeCard"
+    },
+    {
+      "id": "seed-packet",
+      "name": "Sachet de graines - Zinnia géant",
+      "category": "Publicité & emballages",
+      "categoryId": "publicite",
+      "width": 280,
+      "height": 400,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / marque",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=seed-packet",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Advertising.tsx",
+      "component": "SeedPacket"
+    },
+    {
+      "id": "apothecary",
+      "name": "Étiquette d'apothicaire - Élixir tonique",
+      "category": "Publicité & emballages",
+      "categoryId": "publicite",
+      "width": 460,
+      "height": 260,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / marque",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=apothecary",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Advertising.tsx",
+      "component": "ApothecaryLabel"
+    },
+    {
+      "id": "cigar-band",
+      "name": "Bague de cigare - Don Carlos",
+      "category": "Publicité & emballages",
+      "categoryId": "publicite",
+      "width": 620,
+      "height": 180,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / marque",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=cigar-band",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Advertising.tsx",
+      "component": "CigarBand"
+    },
+    {
+      "id": "soap-wrapper",
+      "name": "Papier de savon - Le Cygne",
+      "category": "Publicité & emballages",
+      "categoryId": "publicite",
+      "width": 380,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / marque",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=soap-wrapper",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Advertising.tsx",
+      "component": "SoapWrapper"
+    },
+    {
+      "id": "perfume",
+      "name": "Étiquette de parfum - Étoile de Paris",
+      "category": "Publicité & emballages",
+      "categoryId": "publicite",
+      "width": 290,
+      "height": 390,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / marque",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=perfume",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Advertising.tsx",
+      "component": "PerfumeLabel"
+    },
+    {
+      "id": "milk-cap",
+      "name": "Capsule de bouteille de lait",
+      "category": "Publicité & emballages",
+      "categoryId": "publicite",
+      "width": 300,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / marque",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=milk-cap",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Advertising.tsx",
+      "component": "MilkBottleCap"
+    },
+    {
+      "id": "business-card",
+      "name": "Carte commerciale d'imprimeur",
+      "category": "Publicité & emballages",
+      "categoryId": "publicite",
+      "width": 460,
+      "height": 230,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / marque",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=business-card",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Advertising.tsx",
+      "component": "BusinessCard"
+    },
+    {
+      "id": "acte-naissance",
+      "name": "Acte de naissance - Mairie de Paris",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 520,
+      "height": 320,
+      "fields": [
+        {
+          "cle": "nom",
+          "label": "Nom",
+          "defaut": "DURAND"
+        },
+        {
+          "cle": "prenoms",
+          "label": "Prénoms",
+          "defaut": "JEAN-PIERRE MARIE"
+        },
+        {
+          "cle": "date",
+          "label": "Date de naissance",
+          "defaut": "15 MARS 1948"
+        },
+        {
+          "cle": "lieu",
+          "label": "Lieu de naissance",
+          "defaut": "PARIS 12E"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=acte-naissance",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "ActeNaissance"
+    },
+    {
+      "id": "certificat-mariage",
+      "name": "Certificat de mariage",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 520,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=certificat-mariage",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "CertificatMariage"
+    },
+    {
+      "id": "declaration-impots",
+      "name": "Déclaration annuelle des revenus",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 480,
+      "height": 340,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=declaration-impots",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "DeclarationImpots"
+    },
+    {
+      "id": "bulletin-paie",
+      "name": "Bulletin de paie",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 480,
+      "height": 300,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=bulletin-paie",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "BulletinPaie"
+    },
+    {
+      "id": "carte-identite",
+      "name": "Carte nationale d'identité",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 420,
+      "height": 290,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=carte-identite",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "CarteIdentite"
+    },
+    {
+      "id": "passeport",
+      "name": "Passeport français",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 520,
+      "height": 330,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=passeport",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "Passeport"
+    },
+    {
+      "id": "certificat-scolarite",
+      "name": "Certificat de scolarité",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 480,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre",
+          "defaut": "CERTIFICAT DE SCOLARITÉ"
+        },
+        {
+          "cle": "emetteur",
+          "label": "Émetteur",
+          "defaut": "ÉTABLISSEMENT SCOLAIRE"
+        },
+        {
+          "cle": "etablissement",
+          "label": "Établissement",
+          "defaut": "LYCÉE HENRI IV"
+        },
+        {
+          "cle": "eleve",
+          "label": "Bénéficiaire",
+          "defaut": "SOPHIE DUPONT"
+        },
+        {
+          "cle": "classe",
+          "label": "Classe / statut",
+          "defaut": "SECONDE C"
+        },
+        {
+          "cle": "annee",
+          "label": "Année",
+          "defaut": "1985-1986"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=certificat-scolarite",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "CertificatScolarite"
+    },
+    {
+      "id": "livret-famille",
+      "name": "Livret de famille",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 420,
+      "height": 320,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=livret-famille",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "LivretFamille"
+    },
+    {
+      "id": "declaration-revenus",
+      "name": "Déclaration de revenus 2047",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 480,
+      "height": 320,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=declaration-revenus",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "DeclarationRevenus"
+    },
+    {
+      "id": "permis-conduire",
+      "name": "Permis de conduire",
+      "category": "Administratif",
+      "categoryId": "administratif",
+      "width": 420,
+      "height": 290,
+      "fields": [],
+      "actions": [
+        {
+          "cle": "demarcheUrl",
+          "label": "Lien démarche en ligne",
+          "type": "url",
+          "placeholder": "https://service-public.fr/…"
+        }
+      ],
+      "previewUrl": "?module=permis-conduire",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Admin.tsx",
+      "component": "PermisConduire"
+    },
+    {
+      "id": "timbre-marianne",
+      "name": "Timbres-poste Marianne",
+      "category": "Timbres",
+      "categoryId": "timbre",
+      "width": 300,
+      "height": 200,
+      "fields": [
+        {
+          "cle": "valeur",
+          "label": "Valeur faciale",
+          "defaut": "1,20 F"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / catalogue",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=timbre-marianne",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Timbres.tsx",
+      "component": "TimbreMarianne"
+    },
+    {
+      "id": "timbre-fiscal",
+      "name": "Timbre fiscal",
+      "category": "Timbres",
+      "categoryId": "timbre",
+      "width": 300,
+      "height": 200,
+      "fields": [
+        {
+          "cle": "valeur",
+          "label": "Valeur faciale",
+          "defaut": "10 F"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / catalogue",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=timbre-fiscal",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Timbres.tsx",
+      "component": "TimbreFiscal"
+    },
+    {
+      "id": "timbre-oiseau",
+      "name": "Timbre faune sauvage",
+      "category": "Timbres",
+      "categoryId": "timbre",
+      "width": 300,
+      "height": 200,
+      "fields": [
+        {
+          "cle": "valeur",
+          "label": "Valeur faciale",
+          "defaut": "0,90 F"
+        },
+        {
+          "cle": "annee",
+          "label": "Année",
+          "defaut": "1982"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / catalogue",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=timbre-oiseau",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Timbres.tsx",
+      "component": "TimbreOiseau"
+    },
+    {
+      "id": "timbre-monument",
+      "name": "Timbre monument historique",
+      "category": "Timbres",
+      "categoryId": "timbre",
+      "width": 300,
+      "height": 200,
+      "fields": [
+        {
+          "cle": "valeur",
+          "label": "Valeur faciale",
+          "defaut": "1,50 F"
+        },
+        {
+          "cle": "nom",
+          "label": "Monument",
+          "defaut": "TOUR EIFFEL"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / catalogue",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=timbre-monument",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Timbres.tsx",
+      "component": "TimbreMonument"
+    },
+    {
+      "id": "carnet-timbres",
+      "name": "Carnet de timbres",
+      "category": "Timbres",
+      "categoryId": "timbre",
+      "width": 400,
+      "height": 220,
+      "fields": [
+        {
+          "cle": "total",
+          "label": "Valeur totale",
+          "defaut": "6 F"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / catalogue",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=carnet-timbres",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Timbres.tsx",
+      "component": "CarnetTimbres"
+    },
+    {
+      "id": "enveloppe-pre-timbre",
+      "name": "Enveloppe pré-timbrée",
+      "category": "Timbres",
+      "categoryId": "timbre",
+      "width": 560,
+      "height": 260,
+      "fields": [
+        {
+          "cle": "valeur",
+          "label": "Valeur du timbre",
+          "defaut": "0,80"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / catalogue",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=enveloppe-pre-timbre",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Timbres.tsx",
+      "component": "EnveloppePreTimbre"
+    },
+    {
+      "id": "taxe-timbre",
+      "name": "Taxe de timbre mobile",
+      "category": "Timbres",
+      "categoryId": "timbre",
+      "width": 300,
+      "height": 200,
+      "fields": [
+        {
+          "cle": "valeur",
+          "label": "Valeur de la taxe",
+          "defaut": "50 c"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / catalogue",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=taxe-timbre",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Timbres.tsx",
+      "component": "TaxeTimbre"
+    },
+    {
+      "id": "timbre-aerien",
+      "name": "Timbres-poste aérien",
+      "category": "Timbres",
+      "categoryId": "timbre",
+      "width": 300,
+      "height": 200,
+      "fields": [
+        {
+          "cle": "valeur",
+          "label": "Valeur faciale",
+          "defaut": "2,40 F"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / catalogue",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=timbre-aerien",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Timbres.tsx",
+      "component": "TimbreAerien"
+    },
+    {
+      "id": "carte-mer",
+      "name": "Carte postale - bord de mer",
+      "category": "Cartes postales",
+      "categoryId": "postale",
+      "width": 480,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "message",
+          "label": "Message manuscrit",
+          "defaut": "Chère Maman, Le soleil brille sur la plage. À bientôt, Luc"
+        },
+        {
+          "cle": "destinataire",
+          "label": "Destinataire",
+          "defaut": "MLLE DURAND"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / édition",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-mer",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postales.tsx",
+      "component": "CarteMer"
+    },
+    {
+      "id": "carte-tour-eiffel",
+      "name": "Carte postale - Tour Eiffel",
+      "category": "Cartes postales",
+      "categoryId": "postale",
+      "width": 480,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "message",
+          "label": "Message manuscrit",
+          "defaut": "Bonjour de Paris, La tour est magnifique. Paul"
+        },
+        {
+          "cle": "destinataire",
+          "label": "Destinataire",
+          "defaut": "MME MARTIN"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / édition",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-tour-eiffel",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postales.tsx",
+      "component": "CarteTourEiffel"
+    },
+    {
+      "id": "carte-montagne",
+      "name": "Carte postale - montagne",
+      "category": "Cartes postales",
+      "categoryId": "postale",
+      "width": 480,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "message",
+          "label": "Message manuscrit",
+          "defaut": "Air pur, paysages superbes. Claire"
+        },
+        {
+          "cle": "destinataire",
+          "label": "Destinataire",
+          "defaut": "MLLE LEROUX"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / édition",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-montagne",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postales.tsx",
+      "component": "CarteMontagne"
+    },
+    {
+      "id": "carte-humour",
+      "name": "Carte postale - humour",
+      "category": "Cartes postales",
+      "categoryId": "postale",
+      "width": 400,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre de la carte",
+          "defaut": "CARTES POSTALES EN VACANCES"
+        },
+        {
+          "cle": "destinataire",
+          "label": "Destinataire",
+          "defaut": "M. PETIT"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / édition",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-humour",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postales.tsx",
+      "component": "CarteHumour"
+    },
+    {
+      "id": "carte-ville",
+      "name": "Carte postale - ville ancienne",
+      "category": "Cartes postales",
+      "categoryId": "postale",
+      "width": 480,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "message",
+          "label": "Message manuscrit",
+          "defaut": "Vieux quartiers, pavés et histoires. Marc"
+        },
+        {
+          "cle": "destinataire",
+          "label": "Destinataire",
+          "defaut": "MME LEFEBVRE"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / édition",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-ville",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postales.tsx",
+      "component": "CarteVille"
+    },
+    {
+      "id": "carte-campagne",
+      "name": "Carte postale - campagne",
+      "category": "Cartes postales",
+      "categoryId": "postale",
+      "width": 480,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "message",
+          "label": "Message manuscrit",
+          "defaut": "Bonjour de la ferme, les champs sont verts. Sophie"
+        },
+        {
+          "cle": "destinataire",
+          "label": "Destinataire",
+          "defaut": "M. BERNARD"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / édition",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-campagne",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postales.tsx",
+      "component": "CarteCampagne"
+    },
+    {
+      "id": "carte-anniversaire",
+      "name": "Carte postale - anniversaire",
+      "category": "Cartes postales",
+      "categoryId": "postale",
+      "width": 480,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "message",
+          "label": "Message manuscrit",
+          "defaut": "Joyeux anniversaire, plein de bisous. Tom"
+        },
+        {
+          "cle": "destinataire",
+          "label": "Destinataire",
+          "defaut": "MME DUVAL"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / édition",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-anniversaire",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postales.tsx",
+      "component": "CarteAnniversaire"
+    },
+    {
+      "id": "carte-exposition",
+      "name": "Carte postale - exposition",
+      "category": "Cartes postales",
+      "categoryId": "postale",
+      "width": 480,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "message",
+          "label": "Message manuscrit",
+          "defaut": "Magnifique musée, œuvres surprenantes. Clara"
+        },
+        {
+          "cle": "destinataire",
+          "label": "Destinataire",
+          "defaut": "MLLE MOREAU"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "boutiqueUrl",
+          "label": "Lien boutique / édition",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-exposition",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Postales.tsx",
+      "component": "CarteExposition"
+    },
+    {
+      "id": "polaroid-plage",
+      "name": "Polaroid - la plage, 1957",
+      "category": "Photo",
+      "categoryId": "photo",
+      "width": 300,
+      "height": 380,
+      "fields": [
+        {
+          "cle": "legende",
+          "label": "Légende manuscrite",
+          "defaut": "La plage, juillet 1957"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "tirageUrl",
+          "label": "Lien tirage / galerie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=polaroid-plage",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Photo.tsx",
+      "component": "PolaroidPlage"
+    },
+    {
+      "id": "polaroid-portrait",
+      "name": "Polaroid - portrait, rue des Martyrs",
+      "category": "Photo",
+      "categoryId": "photo",
+      "width": 300,
+      "height": 380,
+      "fields": [
+        {
+          "cle": "legende",
+          "label": "Légende manuscrite",
+          "defaut": "Paris, rue des Martyrs"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "tirageUrl",
+          "label": "Lien tirage / galerie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=polaroid-portrait",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Photo.tsx",
+      "component": "PolaroidPortrait"
+    },
+    {
+      "id": "photo-vieille",
+      "name": "Vieux tirage sépia abîmé",
+      "category": "Photo",
+      "categoryId": "photo",
+      "width": 340,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "legende",
+          "label": "Légende",
+          "defaut": "Les Dupont, au jardin"
+        },
+        {
+          "cle": "annee",
+          "label": "Année",
+          "defaut": "été 1949"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "tirageUrl",
+          "label": "Lien tirage / galerie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=photo-vieille",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Photo.tsx",
+      "component": "PhotoVieille"
+    },
+    {
+      "id": "photo-carte",
+      "name": "Carte photo timbrée et tamponnée",
+      "category": "Photo",
+      "categoryId": "photo",
+      "width": 340,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "legende",
+          "label": "Légende",
+          "defaut": "La promenade au bois"
+        },
+        {
+          "cle": "annee",
+          "label": "Année du tampon",
+          "defaut": "1936"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "tirageUrl",
+          "label": "Lien tirage / galerie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=photo-carte",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Photo.tsx",
+      "component": "PhotoCarte"
+    },
+    {
+      "id": "photo-identite",
+      "name": "Photo d'identité - bande de quatre",
+      "category": "Photo",
+      "categoryId": "photo",
+      "width": 300,
+      "height": 400,
+      "fields": [
+        {
+          "cle": "nom",
+          "label": "Nom du titulaire",
+          "defaut": "MARTIN JEANNE"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "tirageUrl",
+          "label": "Lien tirage / galerie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=photo-identite",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Photo.tsx",
+      "component": "PhotoIdentite"
+    },
+    {
+      "id": "ticket-cabine",
+      "name": "Ticket de cabine photo",
+      "category": "Photo",
+      "categoryId": "photo",
+      "width": 280,
+      "height": 220,
+      "fields": [
+        {
+          "cle": "nom",
+          "label": "Nom (pré-rempli)",
+          "defaut": ""
+        }
+      ],
+      "actions": [
+        {
+          "cle": "tirageUrl",
+          "label": "Lien tirage / galerie",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=ticket-cabine",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Photo.tsx",
+      "component": "TicketCabine"
+    },
+    {
+      "id": "carte-postier",
+      "name": "Carte de travail - Postier",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Métier",
+          "defaut": "Postier"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "DUPONT ANDRÉ"
+        },
+        {
+          "cle": "numero",
+          "label": "Matricule",
+          "defaut": "04821"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-postier",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CartePostier"
+    },
+    {
+      "id": "carte-conducteur",
+      "name": "Carte de travail - Conducteur de train",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Métier",
+          "defaut": "Conducteur de train"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "LEFEVRE JEAN"
+        },
+        {
+          "cle": "numero",
+          "label": "Matricule",
+          "defaut": "11207"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-conducteur",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CarteConducteur"
+    },
+    {
+      "id": "carte-conciergerie",
+      "name": "Carte de travail - Concierge",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Métier",
+          "defaut": "Concierge"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "MOREAU HENRI"
+        },
+        {
+          "cle": "numero",
+          "label": "Matricule",
+          "defaut": "00314"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-conciergerie",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CarteConciergerie"
+    },
+    {
+      "id": "carte-pharmacien",
+      "name": "Carte de travail - Pharmacien",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Métier",
+          "defaut": "Pharmacien"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "DURAND MARIE"
+        },
+        {
+          "cle": "numero",
+          "label": "Matricule",
+          "defaut": "07789"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-pharmacien",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CartePharmacien"
+    },
+    {
+      "id": "carte-journaliste",
+      "name": "Carte de travail - Journaliste",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Rôle",
+          "defaut": "Journaliste"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "LEROY CLAUDE"
+        },
+        {
+          "cle": "numero",
+          "label": "Numéro de carte",
+          "defaut": "02951"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-journaliste",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CarteJournaliste"
+    },
+    {
+      "id": "carte-pilote",
+      "name": "Carte de travail - Pilote",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Rôle",
+          "defaut": "Pilote"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "BERNARD PAUL"
+        },
+        {
+          "cle": "numero",
+          "label": "Matricule",
+          "defaut": "00118"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-pilote",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CartePilote"
+    },
+    {
+      "id": "carte-infirmiere",
+      "name": "Carte de travail - Infirmière",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Rôle",
+          "defaut": "Infirmière"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "MARTIN JEANNE"
+        },
+        {
+          "cle": "numero",
+          "label": "Matricule",
+          "defaut": "06342"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-infirmiere",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CarteInfirmiere"
+    },
+    {
+      "id": "carte-boulanger",
+      "name": "Carte de travail - Boulanger",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Métier",
+          "defaut": "Boulanger"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "PETIT LOUIS"
+        },
+        {
+          "cle": "numero",
+          "label": "Matricule",
+          "defaut": "03956"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-boulanger",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CarteBoulanger"
+    },
+    {
+      "id": "carte-instituteur",
+      "name": "Carte de travail - Instituteur",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Rôle",
+          "defaut": "Instituteur"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "ROUSSEAU MARIE"
+        },
+        {
+          "cle": "numero",
+          "label": "Matricule",
+          "defaut": "08417"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-instituteur",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CarteInstituteur"
+    },
+    {
+      "id": "carte-pompier",
+      "name": "Carte de travail - Pompier",
+      "category": "Cartes de travail",
+      "categoryId": "travail",
+      "width": 440,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "metier",
+          "label": "Rôle",
+          "defaut": "Pompier"
+        },
+        {
+          "cle": "nom",
+          "label": "Titulaire",
+          "defaut": "GARCIA PIERRE"
+        },
+        {
+          "cle": "numero",
+          "label": "Matricule",
+          "defaut": "01764"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "contactUrl",
+          "label": "Lien contact professionnel",
+          "type": "url",
+          "placeholder": "mailto:… ou https://…"
+        }
+      ],
+      "previewUrl": "?module=carte-pompier",
+      "version": "1.0.0",
+      "source": "src/components/tickets/CartesTravail.tsx",
+      "component": "CartePompier"
+    },
+    {
+      "id": "web-hero",
+      "name": "Module web - section hero",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre",
+          "defaut": "L'atelier du matin"
+        },
+        {
+          "cle": "sous",
+          "label": "Sous-titre",
+          "defaut": "Des pièces d'exception, composées à la main et prêtes à imprimer."
+        },
+        {
+          "cle": "cta",
+          "label": "Bouton principal",
+          "defaut": "Découvrir la collection"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "ctaUrl",
+          "label": "Lien du bouton principal",
+          "type": "url",
+          "placeholder": "https://… ou #collection",
+          "defaut": "#collection"
+        },
+        {
+          "cle": "secondUrl",
+          "label": "Lien du bouton secondaire",
+          "type": "url",
+          "placeholder": "https://…",
+          "defaut": "#atelier"
+        },
+        {
+          "cle": "cible",
+          "label": "Ouverture des liens",
+          "type": "select",
+          "defaut": "_self"
+        }
+      ],
+      "previewUrl": "?module=web-hero",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebHero"
+    },
+    {
+      "id": "web-navbar",
+      "name": "Module web - barre de navigation",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 112,
+      "fields": [
+        {
+          "cle": "marque",
+          "label": "Nom de la marque",
+          "defaut": "MAISON"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "lien1Url",
+          "label": "Lien « Collection »",
+          "type": "url",
+          "placeholder": "#collection",
+          "defaut": "#collection"
+        },
+        {
+          "cle": "lien2Url",
+          "label": "Lien « Atelier »",
+          "type": "url",
+          "placeholder": "#atelier",
+          "defaut": "#atelier"
+        },
+        {
+          "cle": "lien3Url",
+          "label": "Lien « À propos »",
+          "type": "url",
+          "placeholder": "#apropos",
+          "defaut": "#apropos"
+        },
+        {
+          "cle": "ctaUrl",
+          "label": "Lien du bouton Commander",
+          "type": "url",
+          "placeholder": "https://…",
+          "defaut": "#commander"
+        }
+      ],
+      "previewUrl": "?module=web-navbar",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebNavbar"
+    },
+    {
+      "id": "web-features",
+      "name": "Module web - caractéristiques",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre de section",
+          "defaut": "Trois raisons de rester"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "lien1Url",
+          "label": "Lien carte 1",
+          "type": "url",
+          "placeholder": "https://… (optionnel)"
+        },
+        {
+          "cle": "lien2Url",
+          "label": "Lien carte 2",
+          "type": "url",
+          "placeholder": "https://… (optionnel)"
+        },
+        {
+          "cle": "lien3Url",
+          "label": "Lien carte 3",
+          "type": "url",
+          "placeholder": "https://… (optionnel)"
+        }
+      ],
+      "previewUrl": "?module=web-features",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebFeatures"
+    },
+    {
+      "id": "web-stats",
+      "name": "Module web - chiffres clés",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 168,
+      "fields": [
+        {
+          "cle": "valeur",
+          "label": "Premier chiffre",
+          "defaut": "152"
+        },
+        {
+          "cle": "label",
+          "label": "Sa légende",
+          "defaut": "pièces"
+        }
+      ],
+      "actions": [],
+      "previewUrl": "?module=web-stats",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebStats"
+    },
+    {
+      "id": "web-pricing",
+      "name": "Module web - tarifs",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 360,
+      "fields": [
+        {
+          "cle": "plan",
+          "label": "Nom du plan",
+          "defaut": "Essentiel"
+        },
+        {
+          "cle": "prix",
+          "label": "Prix mensuel",
+          "defaut": "29 €"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "plan1Url",
+          "label": "Lien bouton plan 1",
+          "type": "url",
+          "placeholder": "https://…/offre-essentiel",
+          "defaut": "#offre-essentiel"
+        },
+        {
+          "cle": "plan2Url",
+          "label": "Lien bouton plan 2",
+          "type": "url",
+          "placeholder": "https://…/offre-atelier",
+          "defaut": "#offre-atelier"
+        }
+      ],
+      "previewUrl": "?module=web-pricing",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebPricing"
+    },
+    {
+      "id": "web-testimonial",
+      "name": "Module web - témoignage",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 232,
+      "fields": [
+        {
+          "cle": "cite",
+          "label": "Citation",
+          "defaut": "J'ai retrouvé le ticket de mon premier cinéma, et je l'ai re-composé à mon nom."
+        },
+        {
+          "cle": "auteur",
+          "label": "Auteur",
+          "defaut": "H. Moreau"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "avisUrl",
+          "label": "Lien « tous les avis »",
+          "type": "url",
+          "placeholder": "https://…/avis"
+        }
+      ],
+      "previewUrl": "?module=web-testimonial",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebTestimonial"
+    },
+    {
+      "id": "web-contact",
+      "name": "Module web - bloc contact",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 360,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre",
+          "defaut": "Nous écrire"
+        },
+        {
+          "cle": "email",
+          "label": "Adresse e-mail",
+          "defaut": "bonjour@maison.fr"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "destinataire",
+          "label": "E-mail destinataire du formulaire",
+          "type": "email",
+          "placeholder": "bonjour@maison.fr",
+          "defaut": "bonjour@maison.fr"
+        },
+        {
+          "cle": "tel",
+          "label": "Téléphone cliquable (optionnel)",
+          "type": "tel",
+          "placeholder": "+33 1 23 45 67 89"
+        },
+        {
+          "cle": "adresseUrl",
+          "label": "Lien de l'adresse (plan)",
+          "type": "url",
+          "placeholder": "https://maps.google.com/?q=…"
+        }
+      ],
+      "previewUrl": "?module=web-contact",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebContact"
+    },
+    {
+      "id": "web-newsletter",
+      "name": "Module web - newsletter",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 168,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre",
+          "defaut": "Le bulletin du dimanche"
+        },
+        {
+          "cle": "cta",
+          "label": "Bouton",
+          "defaut": "S'abonner"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "actionUrl",
+          "label": "URL d'inscription",
+          "type": "url",
+          "placeholder": "https://…/newsletter",
+          "defaut": "#newsletter"
+        }
+      ],
+      "previewUrl": "?module=web-newsletter",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebNewsletter"
+    },
+    {
+      "id": "web-cta",
+      "name": "Module web - appel à l'action",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 190,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre",
+          "defaut": "Prêt à composer votre pièce ?"
+        },
+        {
+          "cle": "cta",
+          "label": "Bouton",
+          "defaut": "Commencer gratuitement"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "ctaUrl",
+          "label": "Lien du bouton",
+          "type": "url",
+          "placeholder": "https://…",
+          "defaut": "#commencer"
+        }
+      ],
+      "previewUrl": "?module=web-cta",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebCta"
+    },
+    {
+      "id": "web-faq",
+      "name": "Module web - questions fréquentes",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 300,
+      "fields": [
+        {
+          "cle": "question",
+          "label": "Première question",
+          "defaut": "Puis-je imprimer mes pièces ?"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "aideUrl",
+          "label": "Lien « Centre d'aide »",
+          "type": "url",
+          "placeholder": "https://…/aide"
+        }
+      ],
+      "previewUrl": "?module=web-faq",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebFaq"
+    },
+    {
+      "id": "web-footer",
+      "name": "Module web - pied de page",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 240,
+      "fields": [
+        {
+          "cle": "marque",
+          "label": "Marque",
+          "defaut": "MAISON"
+        },
+        {
+          "cle": "annee",
+          "label": "Mention légale",
+          "defaut": "© 1962"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "mentionsUrl",
+          "label": "Lien Mentions légales",
+          "type": "url",
+          "placeholder": "/mentions",
+          "defaut": "#mentions"
+        },
+        {
+          "cle": "confUrl",
+          "label": "Lien Confidentialité",
+          "type": "url",
+          "placeholder": "/confidentialite",
+          "defaut": "#confidentialite"
+        }
+      ],
+      "previewUrl": "?module=web-footer",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebFooter"
+    },
+    {
+      "id": "web-buttons",
+      "name": "Module web - jeu de boutons",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 180,
+      "fields": [
+        {
+          "cle": "label",
+          "label": "Libellé principal",
+          "defaut": "Valider"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "primaireUrl",
+          "label": "Lien bouton principal",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "dangerUrl",
+          "label": "Lien bouton danger",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=web-buttons",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebButtons"
+    },
+    {
+      "id": "web-login",
+      "name": "Module web - connexion",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 320,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre",
+          "defaut": "Se connecter"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "actionUrl",
+          "label": "URL de connexion (POST)",
+          "type": "url",
+          "placeholder": "https://…/login",
+          "defaut": "#login"
+        },
+        {
+          "cle": "oublieUrl",
+          "label": "Lien mot de passe oublié",
+          "type": "url",
+          "placeholder": "https://…/reset",
+          "defaut": "#reset"
+        }
+      ],
+      "previewUrl": "?module=web-login",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebLogin"
+    },
+    {
+      "id": "web-logos",
+      "name": "Module web - bande de références",
+      "category": "Modules web",
+      "categoryId": "web",
+      "width": 560,
+      "height": 140,
+      "fields": [
+        {
+          "cle": "titre",
+          "label": "Titre",
+          "defaut": "Ils composent avec la Maison"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "lien1Url",
+          "label": "Lien logo 1",
+          "type": "url",
+          "placeholder": "https://…"
+        },
+        {
+          "cle": "lien2Url",
+          "label": "Lien logo 2",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=web-logos",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Web.tsx",
+      "component": "WebLogos"
+    },
+    {
+      "id": "token-nyc-1953",
+      "name": "Token NYC 1953 - Small Y percé au centre",
+      "category": "Monnaies & Tokens",
+      "categoryId": "monnaies",
+      "width": 260,
+      "height": 260,
+      "fields": [
+        {
+          "cle": "annee",
+          "label": "Année frappée",
+          "defaut": "1953"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote numismatique",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=token-nyc-1953",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Numismatics.tsx",
+      "component": "TokenNYC1953"
+    },
+    {
+      "id": "token-nyc-1970",
+      "name": "Token NYC 1970 - Large Y percé au centre",
+      "category": "Monnaies & Tokens",
+      "categoryId": "monnaies",
+      "width": 260,
+      "height": 260,
+      "fields": [
+        {
+          "cle": "annee",
+          "label": "Année frappée",
+          "defaut": "1970"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote numismatique",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=token-nyc-1970",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Numismatics.tsx",
+      "component": "TokenNYC1970"
+    },
+    {
+      "id": "piece-10c-lindauer",
+      "name": "10 Centimes Lindauer 1917 - Pièce percée au centre",
+      "category": "Monnaies & Tokens",
+      "categoryId": "monnaies",
+      "width": 260,
+      "height": 260,
+      "fields": [
+        {
+          "cle": "annee",
+          "label": "Millésime",
+          "defaut": "1917"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote numismatique",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=piece-10c-lindauer",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Numismatics.tsx",
+      "component": "Piece10CentimesLindauer"
+    },
+    {
+      "id": "piece-1f-semeuse",
+      "name": "1 Franc Semeuse - Oscar Roty (Argent)",
+      "category": "Monnaies & Tokens",
+      "categoryId": "monnaies",
+      "width": 260,
+      "height": 260,
+      "fields": [
+        {
+          "cle": "annee",
+          "label": "Millésime",
+          "defaut": "1960"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote numismatique",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=piece-1f-semeuse",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Numismatics.tsx",
+      "component": "Piece1FrancSemeuse"
+    },
+    {
+      "id": "piece-2f-chambre-commerce",
+      "name": "2 Francs Chambre de Commerce 1923 - Bon pour 2 Francs",
+      "category": "Monnaies & Tokens",
+      "categoryId": "monnaies",
+      "width": 260,
+      "height": 260,
+      "fields": [
+        {
+          "cle": "annee",
+          "label": "Millésime",
+          "defaut": "1923"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote numismatique",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=piece-2f-chambre-commerce",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Numismatics.tsx",
+      "component": "Piece2FrancsChambreCommerce"
+    },
+    {
+      "id": "piece-10f-hercule",
+      "name": "10 Francs Hercule - Argent massif",
+      "category": "Monnaies & Tokens",
+      "categoryId": "monnaies",
+      "width": 270,
+      "height": 270,
+      "fields": [
+        {
+          "cle": "annee",
+          "label": "Millésime",
+          "defaut": "1965"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote numismatique",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=piece-10f-hercule",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Numismatics.tsx",
+      "component": "Piece10FrancsHercule"
+    },
+    {
+      "id": "billet-100f-delacroix",
+      "name": "100 Francs Delacroix - La Liberté guidant le peuple",
+      "category": "Billets de banque",
+      "categoryId": "billets",
+      "width": 560,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "serie",
+          "label": "Numéro de série",
+          "defaut": "Y.184 07482"
+        },
+        {
+          "cle": "date",
+          "label": "Date d'émission",
+          "defaut": "06-05-1982"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / référence",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=billet-100f-delacroix",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Numismatics.tsx",
+      "component": "Billet100FrancsDelacroix"
+    },
+    {
+      "id": "billet-50f-st-exupery",
+      "name": "50 Francs Saint-Exupéry - Le Petit Prince & B612",
+      "category": "Billets de banque",
+      "categoryId": "billets",
+      "width": 540,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "serie",
+          "label": "Numéro de série",
+          "defaut": "T.042 19827"
+        },
+        {
+          "cle": "date",
+          "label": "Date de création",
+          "defaut": "18-03-1993"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / référence",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=billet-50f-st-exupery",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Numismatics.tsx",
+      "component": "Billet50FrancsSaintExupery"
+    },
+    {
+      "id": "billet-200f-eiffel",
+      "name": "200 Francs Gustave Eiffel - Tour Eiffel",
+      "category": "Billets de banque",
+      "categoryId": "billets",
+      "width": 560,
+      "height": 280,
+      "fields": [
+        {
+          "cle": "serie",
+          "label": "Numéro de série",
+          "defaut": "E.014 83921"
+        },
+        {
+          "cle": "date",
+          "label": "Date d'émission",
+          "defaut": "12-10-1995"
+        }
+      ],
+      "actions": [
+        {
+          "cle": "coteUrl",
+          "label": "Lien cote / référence",
+          "type": "url",
+          "placeholder": "https://…"
+        }
+      ],
+      "previewUrl": "?module=billet-200f-eiffel",
+      "version": "1.0.0",
+      "source": "src/components/tickets/Numismatics.tsx",
+      "component": "Billet200FrancsEiffel"
+    },
+    {
+      "id": "sceau-fleur-de-lys",
+      "name": "Sceau de cire rouge - Fleur de Lys avec ruban de soie",
+      "category": "Tampons & Cire",
+      "categoryId": "sceaux",
+      "width": 220,
+      "height": 290,
+      "fields": [
+        {
+          "cle": "devise",
+          "label": "Devise royale circulaire",
+          "defaut": "SEMPER FIDELIS"
+        }
+      ],
+      "actions": [],
+      "previewUrl": "?module=sceau-fleur-de-lys",
+      "version": "1.0.0",
+      "source": "src/components/tickets/SealsAndStamps.tsx",
+      "component": "SceauCireFleurDeLys"
+    },
+    {
+      "id": "sceau-monogramme-rf",
+      "name": "Sceau de cire carmin - Monogramme R.F. avec ruban",
+      "category": "Tampons & Cire",
+      "categoryId": "sceaux",
+      "width": 220,
+      "height": 290,
+      "fields": [
+        {
+          "cle": "initiales",
+          "label": "Initiales ciselées",
+          "defaut": "R · F"
+        }
+      ],
+      "actions": [],
+      "previewUrl": "?module=sceau-monogramme-rf",
+      "version": "1.0.0",
+      "source": "src/components/tickets/SealsAndStamps.tsx",
+      "component": "SceauCireMonogrammeRF"
+    },
+    {
+      "id": "tampon-paye",
+      "name": "Tampon d'atelier - PAYÉ avec date",
+      "category": "Tampons & Cire",
+      "categoryId": "sceaux",
+      "width": 320,
+      "height": 180,
+      "fields": [
+        {
+          "cle": "date",
+          "label": "Date acquittée",
+          "defaut": "14 OCT. 1958"
+        },
+        {
+          "cle": "montant",
+          "label": "Mention de règlement",
+          "defaut": "ACQUITTÉ"
+        }
+      ],
+      "actions": [],
+      "previewUrl": "?module=tampon-paye",
+      "version": "1.0.0",
+      "source": "src/components/tickets/SealsAndStamps.tsx",
+      "component": "TamponPaye"
+    },
+    {
+      "id": "tampon-confidentiel",
+      "name": "Tampon d'atelier - CONFIDENTIEL",
+      "category": "Tampons & Cire",
+      "categoryId": "sceaux",
+      "width": 320,
+      "height": 160,
+      "fields": [
+        {
+          "cle": "mention",
+          "label": "Niveau d'accréditation",
+          "defaut": "DIFFUSION RESTREINTE"
+        }
+      ],
+      "actions": [],
+      "previewUrl": "?module=tampon-confidentiel",
+      "version": "1.0.0",
+      "source": "src/components/tickets/SealsAndStamps.tsx",
+      "component": "TamponConfidentiel"
+    },
+    {
+      "id": "tampon-vu-approuve",
+      "name": "Tampon de bureau - VU ET APPROUVÉ",
+      "category": "Tampons & Cire",
+      "categoryId": "sceaux",
+      "width": 320,
+      "height": 180,
+      "fields": [
+        {
+          "cle": "signataire",
+          "label": "Titre du signataire",
+          "defaut": "LE DIRECTEUR"
+        },
+        {
+          "cle": "date",
+          "label": "Date de validation",
+          "defaut": "12 MAI 1963"
+        }
+      ],
+      "actions": [],
+      "previewUrl": "?module=tampon-vu-approuve",
+      "version": "1.0.0",
+      "source": "src/components/tickets/SealsAndStamps.tsx",
+      "component": "TamponVuApprouve"
+    },
+    {
+      "id": "tampon-archives",
+      "name": "Tampon officiel - ARCHIVES NATIONALES",
+      "category": "Tampons & Cire",
+      "categoryId": "sceaux",
+      "width": 240,
+      "height": 240,
+      "fields": [
+        {
+          "cle": "annee",
+          "label": "Millésime d'archivage",
+          "defaut": "1954"
+        }
+      ],
+      "actions": [],
+      "previewUrl": "?module=tampon-archives",
+      "version": "1.0.0",
+      "source": "src/components/tickets/SealsAndStamps.tsx",
+      "component": "TamponArchives"
+    },
+    {
+      "id": "tampon-prioritaire",
+      "name": "Tampon d'expédition - PRIORITAIRE",
+      "category": "Tampons & Cire",
+      "categoryId": "sceaux",
+      "width": 320,
+      "height": 150,
+      "fields": [
+        {
+          "cle": "service",
+          "label": "Mention de service",
+          "defaut": "SERVICE RAPIDE"
+        }
+      ],
+      "actions": [],
+      "previewUrl": "?module=tampon-prioritaire",
+      "version": "1.0.0",
+      "source": "src/components/tickets/SealsAndStamps.tsx",
+      "component": "TamponPrioritaire"
+    }
+  ]
+}

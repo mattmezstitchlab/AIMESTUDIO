@@ -6,6 +6,7 @@
      TEST_DATABASE_URL=postgresql://…/aime_test node tests/navigateur/temps.cjs     (CAPTURES=dossier pour garder les captures) */
 const { chromium, devices } = require('playwright'); const fs = require('fs'), path = require('path'), os = require('os'), { spawn } = require('child_process');
 const URLT = process.env.TEST_DATABASE_URL; if (!URLT) { console.log('TEST_DATABASE_URL absent : parcours Temps non lancé'); process.exit(0); }
+const historique = url => { const u = new URL(url); if (/^\/(?:compte|projets)\//.test(u.pathname)) {u.searchParams.set('historique','1');return u.toString();}return url; };
 const PORT = 8790, B = 'http://localhost:' + PORT, LIENS = path.join(os.tmpdir(), 'aime-liens-' + process.pid + '.txt'), CAP = process.env.CAPTURES || null;
 const AXE = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'), DEMO = require('../../modules/temps/demo-camille-gabriel.json');
 const APPAREILS = { camille: { viewport: { width: 1440, height: 900 } }, gabriel: { viewport: { width: 1440, height: 900 } }, lea: { viewport: { width: 1440, height: 900 } },
@@ -30,7 +31,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
       if (r.status() !== 200) throw new Error('lien magique ' + p.cle + ' : ' + r.status());
       await attendre(150);
       const lien = fs.readFileSync(LIENS, 'utf8').trim().split('\n').map(JSON.parse).filter(x => x.to === p.email).pop().lien;
-      page[p.cle] = await ctx[p.cle].newPage(); await page[p.cle].goto(lien, { waitUntil: 'networkidle' });
+      page[p.cle] = await ctx[p.cle].newPage(); await page[p.cle].goto(historique(lien), { waitUntil: 'networkidle' });
       await pool.query('update "user" set name = $1 where email = $2', [p.nom, p.email]);
     }
     /* 2. le projet de démonstration, semé par le même code que scripts/temps-demo.mjs */
@@ -42,7 +43,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     const capture = async (k, nom) => { if (CAP) { fs.mkdirSync(CAP, { recursive: true }); await page[k].screenshot({ path: path.join(CAP, nom + '.png'), fullPage: true });
       const y = await page[k].evaluate(() => scrollY); await page[k].evaluate(() => scrollTo(0, 0)); await page[k].screenshot({ path: path.join(CAP, nom + '__ecran.png') }); await page[k].evaluate(v => scrollTo(0, v), y); } };   /* la page entière, et ce que l'écran montre (Dock compris) */
     const texte = k => page[k].locator('#pCorps').innerText();
-    for (const k of Object.keys(page)) { await page[k].goto(programme, { waitUntil: 'networkidle' }); await page[k].waitForSelector('.tp-m', { timeout: 8000 }); }
+    for (const k of Object.keys(page)) { await page[k].goto(historique(programme), { waitUntil: 'networkidle' }); await page[k].waitForSelector('.tp-m', { timeout: 8000 }); }
 
     console.log('Vues de départ');
     ok((await page.camille.locator('.tp-m').count()) === 9, 'Camille : 9 moments');
@@ -73,10 +74,10 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(/page=deroule/.test(cam.url()) && (await cam.locator('#pTitre').textContent()) === 'Programme', 'Camille : le retour du navigateur revient au Programme');
     await cam.goForward(); await cam.waitForFunction(() => document.querySelector('#pTitre') && document.querySelector('#pTitre').textContent === 'Journal');
     ok(true, 'Camille : l\'avance du navigateur rouvre le Journal');
-    await cam.goto(B + '/projets/?espace=' + espace + '&page=personnes', { waitUntil: 'networkidle' }); await cam.waitForFunction(() => document.querySelector('#pTitre') && document.querySelector('#pTitre').textContent === 'Personnes');
+    await cam.goto(historique(B + '/projets/?espace=' + espace + '&page=personnes'), { waitUntil: 'networkidle' }); await cam.waitForFunction(() => document.querySelector('#pTitre') && document.querySelector('#pTitre').textContent === 'Personnes');
     ok(true, 'lien direct vers Personnes');
     ok(await cam.evaluate(() => [...document.querySelectorAll('#dock-site nav.dock [aria-current="page"]')].some(n => /Personnes/.test(n.textContent))), 'le Dock marque la page en cours (aria-current)');
-    await cam.goto(programme, { waitUntil: 'networkidle' }); await cam.waitForSelector('.tp-m');
+    await cam.goto(historique(programme), { waitUntil: 'networkidle' }); await cam.waitForSelector('.tp-m');
     /* iPhone : rien sous le Dock en bas de page, pas de défilement horizontal */
     for (const k of ['emma', 'alex']) {
       const r = await page[k].evaluate(async () => { scrollTo(0, document.documentElement.scrollHeight); await new Promise(f => setTimeout(f, 300));
@@ -87,10 +88,10 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     /* repli : sans le Dock universel (script absent), la rangée d'onglets revient et chaque page reste atteignable */
     const sans = await b.newContext({ locale: 'fr-FR', viewport: { width: 1440, height: 900 }, storageState: await ctx.lea.storageState(), extraHTTPHeaders: { 'x-forwarded-for': '203.0.113.40' } });
     await sans.route('**/dock/dock.js', r => r.abort());
-    const ps = await sans.newPage(); await ps.goto(programme, { waitUntil: 'networkidle' }); await ps.waitForSelector('.tp-m');
+    const ps = await sans.newPage(); await ps.goto(historique(programme), { waitUntil: 'networkidle' }); await ps.waitForSelector('.tp-m');
     const liens = await ps.locator('.p-onglets a').allTextContents();
     ok(['Mon accès', 'Journal', 'Programme', 'Personnes'].every(n => liens.includes(n)), 'sans Dock : les quatre pages restent atteignables (' + liens.join(', ') + ')');
-    await ps.locator('.p-onglets a', { hasText: 'Journal' }).click(); await ps.waitForFunction(() => document.querySelector('#pTitre').textContent === 'Journal');
+    await ps.locator('.p-onglets a', { hasText: 'Journal' }).evaluate(a => {const u=new URL(a.href);u.searchParams.set('historique','1');a.href=u.pathname+u.search+u.hash}); await ps.locator('.p-onglets a', { hasText: 'Journal' }).click(); await ps.waitForFunction(() => document.querySelector('#pTitre').textContent === 'Journal');
     ok(true, 'sans Dock : le repli ouvre le Journal'); await sans.close();
 
     console.log('Léa décale le cocktail de 15 minutes');
@@ -114,7 +115,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await page.sarah.waitForFunction(() => !document.querySelector('.tp-confirmer'), null, { timeout: 5000 }); ok(true, 'Sarah a confirmé');
     const refus = await page.emma.evaluate(async e => (await fetch('/api/temps', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'geste', espace: e, geste: { action: 'retarder', p: { moment: 'cocktail', minutes: 60 } }, rev: 99 }) })).status, espace);
     ok(refus === 403, 'Emma force un geste à la main : refusé par le serveur (' + refus + ')');
-    await page.emma.reload({ waitUntil: 'networkidle' }); await page.emma.waitForSelector('.tp-m');
+    await page.emma.goto(historique(page.emma.url()), { waitUntil: 'networkidle' }); await page.emma.waitForSelector('.tp-m');
     ok(/16:15 – 18:45/.test(await texte('emma')), 'Emma recharge : la modification est toujours là');
 
     console.log('Circle : la même ressource sur un cadran de 24 heures');
@@ -145,7 +146,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     /* changer de mode garde le moment ; recharger garde tout */
     await page.lea.getByRole('button', { name: 'Liste', exact: true }).click(); await page.lea.waitForSelector('.tp-m.choisi');
     ok((await page.lea.locator('.tp-m.choisi').getAttribute('data-id')) === 'cocktail' && /moment=cocktail/.test(page.lea.url()) && !/vue=/.test(page.lea.url()), 'Léa : en Liste, le cocktail reste choisi');
-    await page.lea.getByRole('button', { name: 'Circle', exact: true }).click(); await page.lea.reload({ waitUntil: 'networkidle' }); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="cocktail"]');
+    await page.lea.getByRole('button', { name: 'Circle', exact: true }).click(); await page.lea.goto(historique(page.lea.url()), { waitUntil: 'networkidle' }); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="cocktail"]');
     ok(true, 'Léa recharge : Circle et le cocktail sont rouverts depuis l\'adresse');
     /* clavier : flèches de moment en moment, Entrée ouvre */
     await arc('lea', 'cocktail').focus(); await page.lea.keyboard.press('ArrowRight');
@@ -215,7 +216,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     }
     /* Circle lui-même, sur ordinateur (Léa) et sur iPhone (Emma), un moment ouvert : mêmes règles WCAG 2.2 AA */
     for (const k of ['lea', 'emma']) {
-      await page[k].goto(programme + '&vue=cercle&moment=cocktail', { waitUntil: 'networkidle' }); await page[k].waitForSelector('.tp-arc'); await page[k].waitForSelector('.tp-detail .tp-m');
+      await page[k].goto(historique(programme + '&vue=cercle&moment=cocktail'), { waitUntil: 'networkidle' }); await page[k].waitForSelector('.tp-arc'); await page[k].waitForSelector('.tp-detail .tp-m');
       await page[k].addScriptTag({ content: AXE });
       const v = await page[k].evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } })).violations.filter(x => x.impact === 'critical' || x.impact === 'serious').map(x => x.id + ' (' + x.nodes.length + ') ' + x.nodes.slice(0, 3).map(n => n.target.join(' ')).join(' | ')));
       ok(!v.length, k + ' (Circle, un moment ouvert) : ' + (v.length ? v.join(', ') : 'aucune anomalie bloquante'));

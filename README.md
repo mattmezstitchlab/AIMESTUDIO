@@ -61,3 +61,11 @@ L'ancien Bureau à fenêtres a été retiré le 20 octobre 2026. Ses réglages r
 - Site statique, sans étape de build : Vercel, preset *Other*. Les redirections sont dans `vercel.json`.
 - `npm test` lance `node --test tests/*.test.cjs`. `tests/bureau.test.cjs` vérifie que les redirections ne bouclent pas et que chaque entrée du registre aboutit.
 - `health.test` demande `@neondatabase/serverless`.
+
+## Expérimentation : verticalités, Tickets et Supports
+
+[L’architecture des douze verticalités](union/MONDE-AIME.md) et [l’audit / raccord limité à cinq objets](union/integrations/README.md) décrivent les moteurs réutilisés, les tests exécutés et les limites de démonstration.
+
+## Fenêtre personnelle et Renaissance — prototype de convergence
+
+L’entrée de démonstration ouvre désormais `/fenetre/`. Les liens `/compte/` et `/projets/` rejoignent les contextes correspondants sans remplacer leurs moteurs. Le lecteur précédent reste à `/?univers=mariage` ; les cinq nouveaux tableaux sont à `/?scene=renaissance`. [Architecture, inventaire Carte/Studio, preuves et limites](fenetre/ARCHITECTURE.md).

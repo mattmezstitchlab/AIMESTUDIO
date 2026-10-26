@@ -1,0 +1,7 @@
+[
+ {"id":"union-invitation","universe":"mariage","name":"Invitation à la cérémonie","family":"Événement","engine":"studio","format":"card","momentId":"day-ceremony-welcome","usage":"Invitation, faire-part","dimensions":"127 × 178 mm","grants":["demo-coordination","demo-invite"]},
+ {"id":"scene-billet","universe":"spectacle","name":"Billet de spectacle · spécimen","family":"Spectacle","engine":"ticketaime","format":"opera","momentId":"spectacle-p07-1","usage":"Billet décoratif, sans émission ni contrôle d’accès","dimensions":"640 × 250 px de dessin · format papier non certifié","grants":["demo-coordination","demo-invite"]},
+ {"id":"rencontre-badge","universe":"seminaire","name":"Badge de participation · spécimen","family":"Badges","engine":"studio","format":"badge","momentId":"seminaire-p03-1","usage":"Accueil, badge de démonstration","dimensions":"90 × 120 mm","grants":["demo-coordination","demo-traiteur"]},
+ {"id":"apprendre-programme","universe":"formation","name":"Programme pédagogique","family":"Documents","engine":"studio","format":"progfo","momentId":"formation-p05-1","usage":"Programme, support de formation","dimensions":"210 × 297 mm","grants":["demo-coordination","demo-sax","demo-invite"]},
+ {"id":"atelier-publication","universe":"creation","name":"Carnet de création","family":"Publication","engine":"publication","format":"page-texte","momentId":"creation-p08-1","usage":"Publication, portfolio, transmission","dimensions":"Grille Publication 12 × 16 · pas de dimension d’impression garantie","grants":["demo-coordination","demo-sax"]}
+]

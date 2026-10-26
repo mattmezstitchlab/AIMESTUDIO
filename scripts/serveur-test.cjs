@@ -6,6 +6,7 @@ const VERCEL = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'
 const REDIRECTS = (VERCEL.redirects || []).map(r => ({ re: new RegExp('^' + r.source.replace(/:[a-z]+\*/gi, '\0').replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\0/g, '.*') + '$'), dst: r.destination, code: r.permanent ? 308 : 307 }));
 const REWRITES = new Map((VERCEL.rewrites || []).filter(r => !r.source.includes(':') && !r.destination.startsWith('/api/')).map(r => [r.source, r.destination]));
 /* les en-têtes de tout le site (vercel.json, source « /(.*) ») : CSP, Referrer-Policy, nosniff, Permissions-Policy, comme sur Vercel */
+const PREVIEW_ENTRY = ['/studio/verticalites/', '/fenetre/supports/'].includes(process.env.AIME_PREVIEW_ENTRY) ? process.env.AIME_PREVIEW_ENTRY : null;
 const GLOBAUX = (VERCEL.headers || []).filter(h => h.source === '/(.*)').flatMap(h => h.headers);
 const T = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.pdf': 'application/pdf', '.xml': 'application/xml', '.mp4': 'video/mp4', '.vtt': 'text/vtt; charset=utf-8' };
 /* les écrans gardés (middleware.js sur Vercel) : la même fonction garder(), mais le « propriétaire » est ici un cookie de test,
@@ -19,7 +20,14 @@ const COMPTES = process.env.AIME_COMPTES_TEST === '1' && process.env.TEST_DATABA
 })() : null;
 const proprietaireDeTest = r => /(?:^|;\s*)aime_test_proprietaire=oui(?:;|$)/.test(r.headers.get('cookie') || '');
 http.createServer((req, res) => {
-  for (const h of GLOBAUX) res.setHeader(h.key, h.value);
+  for (const h of GLOBAUX) {
+    // Only the explicitly requested sandbox preview may be framed by Arena.
+    // Production headers and normal CI responses stay identical to vercel.json.
+    const previewCsp = !!PREVIEW_ENTRY && h.key.toLowerCase() === 'content-security-policy';
+    res.setHeader(h.key, previewCsp ? h.value + ' https://arena.ai https://*.arena.ai https://lmarena.ai https://*.lmarena.ai https://*.e2b.app' : h.value);
+  }
+  // Local visual preview must not retain earlier HTML, styles or module versions.
+  res.setHeader('Cache-Control', 'no-store');
   const brut = '/' + String(req.url || '/').split(/[?#]/)[0].replace(/^\/+/, m => m.slice(1));   /* le chemin brut : « //regie/ » reste un chemin, pas un hôte */
   ECRANS.then(E => E.garder(new Request('http://localhost' + brut, { headers: { cookie: req.headers.cookie || '' } }), proprietaireDeTest)).then(async r => {
     if (!r) return servir(req, res);
@@ -27,7 +35,10 @@ http.createServer((req, res) => {
   }, () => { res.writeHead(500); res.end(); });
 }).listen(PORT, HOST, () => console.log('serveur de test sur ' + HOST + ':' + PORT));
 function servir(req, res) {
-  const u = new URL(req.url, 'http://x'); let p; try { p = decodeURIComponent(u.pathname); } catch { res.writeHead(400); return res.end(); }
+  const u = new URL(req.url, 'http://x');
+  // Optional development-only entry; historical/production root routes are unchanged.
+  if (u.pathname === '/' && !u.search && !!PREVIEW_ENTRY) { res.writeHead(302, { Location: PREVIEW_ENTRY }); return res.end(); }
+  let p; try { p = decodeURIComponent(u.pathname); } catch { res.writeHead(400); return res.end(); }
   const red = REDIRECTS.find(r => r.re.test(p));
   if (red) { res.writeHead(red.code, { Location: red.dst }); return res.end(); }
   const pCle = p.length > 1 ? p.replace(/\/+$/, '') : p;

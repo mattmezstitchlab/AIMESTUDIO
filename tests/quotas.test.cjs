@@ -13,7 +13,8 @@ before(async () => { if (!URLT) return; pg = require('pg'); a = new pg.Pool({ co
 after(async () => { if (a) await a.end(); if (b) await b.end(); });
 
 test('deux instances (deux connexions distinctes) partagent le même compteur ; la limite tombe pour les deux', opts, async () => {
-  Q._oublier(); const t = Date.UTC(2026, 9, 24, 10, 0, 5);
+  Q._oublier(); // La fenêtre testée doit rester dans la rétention réelle (48 h), même des années après ce commit.
+  const t = Math.floor(Date.now() / 600000) * 600000 + 5000;
   const r = [];
   for (let i = 0; i < 4; i++) r.push(await Q.compter('essai:ip', '203.0.113.9', { max: 3, fenetre: 600 }, { db: i % 2 ? b : a, maintenant: t + i }));
   assert.deepEqual(r.map(x => [x.n, x.ok, x.partage]), [[1, true, true], [2, true, true], [3, true, true], [4, false, true]]);
