@@ -19,7 +19,12 @@ const COMPTES = process.env.AIME_COMPTES_TEST === '1' && process.env.TEST_DATABA
 })() : null;
 const proprietaireDeTest = r => /(?:^|;\s*)aime_test_proprietaire=oui(?:;|$)/.test(r.headers.get('cookie') || '');
 http.createServer((req, res) => {
-  for (const h of GLOBAUX) res.setHeader(h.key, h.value);
+  for (const h of GLOBAUX) {
+    // Only the explicitly requested sandbox preview may be framed by Arena.
+    // Production headers and normal CI responses stay identical to vercel.json.
+    const previewCsp = process.env.AIME_PREVIEW_ENTRY === '/studio/verticalites/' && h.key.toLowerCase() === 'content-security-policy';
+    res.setHeader(h.key, previewCsp ? h.value + ' https://arena.ai https://*.arena.ai https://lmarena.ai https://*.lmarena.ai https://*.e2b.app' : h.value);
+  }
   // Local visual preview must not retain earlier HTML, styles or module versions.
   res.setHeader('Cache-Control', 'no-store');
   const brut = '/' + String(req.url || '/').split(/[?#]/)[0].replace(/^\/+/, m => m.slice(1));   /* le chemin brut : « //regie/ » reste un chemin, pas un hôte */
