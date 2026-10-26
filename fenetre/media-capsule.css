@@ -1,0 +1,19 @@
+/* Médias AIME : les polaroids sont des objets sur les lames, sans panneau de site. */
+.oa-media-capsule[hidden],.oa-polaroid[hidden]{display:none!important}
+.oa-media-capsule{width:100%;gap:8px;min-width:0;align-items:center;padding-inline:6px}
+.oa-media-capsule .oa-media-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 13px/1 var(--font-display)}
+.oa-media-capsule .oa-media-number{font:500 11px var(--font-mono);white-space:nowrap;color:var(--ink)}
+.oa-media-capsule button{touch-action:manipulation}
+.oa-media-capsule .oa-media-step{min-width:29px}
+.oa-media-capsule .oa-media-auto{font:600 12px var(--font-display);border:1px solid var(--hud-line);border-radius:999px;background:transparent;color:var(--ink);padding:5px 10px;min-width:66px;cursor:pointer}
+.oa-media-capsule .oa-media-auto[aria-pressed=true]{background:var(--ink);color:var(--hud-solid,#fff)}
+.oa-media-capsule .oa-media-description{position:absolute;bottom:calc(100% + 7px);left:8px;right:8px;pointer-events:none;display:none;font:500 12px var(--font-display);background:var(--hud-bg);border-radius:9px;padding:6px 8px}
+.oa-media-capsule:focus-within .oa-media-description{display:block}
+.oa-polaroid{position:absolute;z-index:6;left:var(--left,50%);top:50%;width:clamp(86px,12.5vw,156px);padding:7px 7px 13px;border:0;border-radius:3px;background:#faf9f2;color:#242121;box-shadow:0 4px 13px #0006,0 1px 1px #0004;transform:translate(-50%,-50%) rotate(var(--rotation,-5deg));transition:opacity .45s ease,filter .45s ease;opacity:.92;cursor:pointer;pointer-events:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.oa-polaroid img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;pointer-events:none;border-radius:1px;background:#e7e4db}
+.oa-polaroid .oa-polaroid-label{display:block;margin:7px 0 0;font:500 clamp(11px,1.3vw,15px)/1.08 "Caveat","Segoe Print",cursive;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.oa-polaroid[data-selected=true]{opacity:1;box-shadow:0 8px 24px #0006,0 0 0 2px #fff7;filter:saturate(1.08)}
+.oa-polaroid:focus-visible{outline:3px solid #5632ca;outline-offset:3px}
+body:not(.oa-gallery-open) .oa-polaroid{display:none!important}
+@media(max-width:620px){.oa-polaroid:not([data-selected=true]){display:none!important}.oa-polaroid[data-selected=true]{width:clamp(106px,30vw,152px)}.oa-media-capsule .oa-media-auto{min-width:53px;padding:5px 6px;font-size:11px}.oa-media-capsule .oa-media-name{font-size:11px}.oa-media-capsule .oa-media-number{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.oa-polaroid{transition:none!important;animation:none!important}}
