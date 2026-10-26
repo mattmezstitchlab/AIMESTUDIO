@@ -29,7 +29,10 @@ http.createServer((req, res) => {
   }, () => { res.writeHead(500); res.end(); });
 }).listen(PORT, HOST, () => console.log('serveur de test sur ' + HOST + ':' + PORT));
 function servir(req, res) {
-  const u = new URL(req.url, 'http://x'); let p; try { p = decodeURIComponent(u.pathname); } catch { res.writeHead(400); return res.end(); }
+  const u = new URL(req.url, 'http://x');
+  // Optional development-only entry; historical/production root routes are unchanged.
+  if (u.pathname === '/' && !u.search && process.env.AIME_PREVIEW_ENTRY === '/studio/verticalites/') { res.writeHead(302, { Location: process.env.AIME_PREVIEW_ENTRY }); return res.end(); }
+  let p; try { p = decodeURIComponent(u.pathname); } catch { res.writeHead(400); return res.end(); }
   const red = REDIRECTS.find(r => r.re.test(p));
   if (red) { res.writeHead(red.code, { Location: red.dst }); return res.end(); }
   const pCle = p.length > 1 ? p.replace(/\/+$/, '') : p;

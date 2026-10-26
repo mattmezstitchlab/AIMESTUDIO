@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const cp = require('node:child_process');
 const assert = require('node:assert/strict');
 const required = [
-  'index.html', 'union/index.html', 'fenetre/index.html', 'fenetre/fenetre.css', 'fenetre/media/provence.jpg',
+  'studio/verticalites/index.html', 'studio/verticalites/interface.html', 'studio/verticalites/studio.css', 'studio/verticalites/catalogue.json', 'canevas/dossiers/index.html', 'canevas/dossiers/model.js', 'canevas/dossiers/store.js', 'index.html', 'union/index.html', 'fenetre/index.html', 'fenetre/fenetre.css', 'fenetre/media/provence.jpg',
   'union/app.js', 'union/model.js', 'union/style.css', 'union/immersive.js',
   'union/immersive.css', 'union/editorial.css', 'union/compact.css', 'union/navigation.css',
   'fenetre/editorial.css', 'union/media/terrace.jpg', 'union/data/story.json',
@@ -14,7 +14,7 @@ const required = [
 ];
 for (const path of required) assert.ok(fs.statSync(path).size > 0, path);
 const modules = [
-  'union/app.js', 'union/model.js', 'union/editorial.js', 'union/navigation.js',
+  'studio/verticalites/app.js', 'canevas/dossiers/model.js', 'canevas/dossiers/store.js', 'union/app.js', 'union/model.js', 'union/editorial.js', 'union/navigation.js',
   'union/immersive.js', 'union/world-config.js', 'union/projects.js',
   'union/render-story.js', 'union/icons.js', 'union/scenography.js',
   'union/atlas.js', 'union/supports.js', 'union/support-renderers.js',

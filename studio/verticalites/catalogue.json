@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "title": "Un studio. Tous vos possibles.",
+  "modules": [
+    {"id":"programme","registry":"temps","title":"Programme partagé","href":"/projets/","state":"source","detail":"Outil existant, dans un projet autorisé. Connexion et droits serveur requis."},
+    {"id":"son","title":"Création sonore","href":"/capacites/","state":"planned","detail":"Inventaire des capacités ; aucun mini-studio audio raccordé ici."},
+    {"id":"formation","title":"Supports de formation","href":"/docs/","state":"source","detail":"Atelier Docs existant. Pas de plateforme LMS intégrée."},
+    {"id":"stitch","title":"Stitchlab","href":"/stitch/","state":"source","detail":"Moteur de broderie original, données et sauvegardes natives."},
+    {"id":"publication","title":"Studio Publication","href":"/canevas/?publication=nouvelle","state":"source","detail":"Composition dans le Canevas d’origine ; sauvegarde locale native."},
+    {"id":"site","title":"Mini-sites","href":"/sites/","state":"source","detail":"Éditeur de pages existant. L’export n’est pas un hébergement."},
+    {"id":"accessibilite","title":"Atelier Accessibilité","href":"/accessibilite/","state":"source","detail":"Atelier original de supports accessibles ; pas de certification automatique."},
+    {"id":"timbre","title":"Timbre","href":"/studio/","state":"preview","detail":"Adaptateur de lecture seule identifié ; aucun mini-studio Timbre modifiable raccordé. Ne pas confondre le lien vers Studio avec une intégration."},
+    {"id":"atlas","title":"Atlas des capacités","href":"/capacites/","state":"source","detail":"Exploration du registre existant. Les écrans réservés gardent leurs permissions."},
+    {"id":"documents","registry":"documents","title":"Documents","href":"/docs/","state":"source","detail":"Atelier Docs local disponible ; service documentaire serveur encore composant dans le registre."},
+    {"id":"finances","registry":"finances","title":"Budget et gestion","href":"/buro/","state":"preview","detail":"Supports Buro existants ; moteur financier partagé non raccordé, statut composant."},
+    {"id":"carte","title":"Identité et Carte","href":"/compte/","state":"source","detail":"Compte et Carte d’origine ; aucune donnée privée copiée dans le dossier."},
+    {"id":"supports","title":"Supports du Studio","href":"/studio/","state":"source","detail":"Éditeur original de supports. Pas d’émission officielle de billets."}
+  ],
+  "verticalities": [
+    {"id":"evenements","title":"Mariage et événements","description":"Donner une place aux moments, aux lieux et à celles et ceux qui les font vivre.","image":"/union/media/worlds/mariage.jpg","accent":"#ac7357","state":"source","modules":["programme","supports","site"]},
+    {"id":"musique","title":"Musique et création sonore","description":"Rassembler une intention sonore, des références et les fragments d’une scène à inventer.","image":"/union/media/worlds/spectacle.jpg","accent":"#97644e","state":"partial","modules":["son","supports"]},
+    {"id":"formation","title":"Formation","description":"Composer un parcours, organiser les ressources et préparer leur transmission.","image":"/union/media/worlds/formation.jpg","accent":"#a07b56","state":"partial","modules":["formation","publication"]},
+    {"id":"broderie","title":"Broderie","description":"Du premier motif à la matière : retrouver les outils et les projets de Stitchlab.","image":"/union/media/worlds/broderie.jpg","accent":"#a06a50","state":"source","modules":["stitch"]},
+    {"id":"publication","title":"Mini-sites et publication","description":"Mettre en page une idée, dessiner un mini-site et relier des contenus réutilisables.","image":"/union/media/worlds/site.jpg","accent":"#706a81","state":"source","modules":["site","publication"]},
+    {"id":"accessibilite","title":"Accessibilité","description":"Penser les supports pour différents usages, lectures et situations d’accès.","image":"/union/media/worlds/association.jpg","accent":"#88765e","state":"source","modules":["accessibilite"]},
+    {"id":"impression","title":"Timbres et impression","description":"Préparer un objet imprimé, ses intentions et ses ressources sans promettre un éditeur absent.","image":"/union/media/studio.jpg","accent":"#8c6558","state":"preview","modules":["timbre","supports"]},
+    {"id":"atlas","title":"Atlas et mosaïque","description":"Explorer les capacités, rapprocher des fragments et ouvrir de nouvelles perspectives.","image":"/union/media/worlds/exposition.jpg","accent":"#9b775b","state":"source","modules":["atlas"]},
+    {"id":"documents","title":"Documents","description":"Rédiger, classer et mettre en forme les pièces qui donnent corps à un projet.","image":"/union/media/worlds/memoire.jpg","accent":"#8a7161","state":"source","modules":["documents","publication"]},
+    {"id":"gestion","title":"Budget et gestion","description":"Faire de la place aux décisions, aux moyens et aux documents de suivi.","image":"/union/media/worlds/institution.jpg","accent":"#827464","state":"partial","modules":["finances","documents"]},
+    {"id":"identite","title":"Identité et Carte","description":"Garder un lien avec votre présence AIME, sans déplacer les données de votre compte.","image":"/union/media/worlds/seminaire.jpg","accent":"#986c52","state":"source","modules":["carte"]},
+    {"id":"supports","title":"Supports et tickets","description":"Faire dialoguer invitations, programmes et supports dans leur atelier d’origine.","image":"/union/media/stage.jpg","accent":"#8a6257","state":"source","modules":["supports"]}
+  ]
+}
