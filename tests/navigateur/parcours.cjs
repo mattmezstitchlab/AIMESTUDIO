@@ -112,12 +112,12 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
       ok(!api.some(x => /espaces|sign-in/.test(x)), 'accueil : rien n\'est créé ni envoyé avant l\'adresse');
       // pied légal (393×659) : en bas de chaque page publique, la ligne reste au-dessus du Dock, lisible et cliquable ; Speed Insights chargé sans erreur
       for (const u of ['/', '/exemples/', '/exemples/mosaique/', '/contact/', '/compte/', '/projets/', '/confidentialite/', '/mentions-legales/', '/tarifs/']) {
-        await t.goto(B + u, { waitUntil: 'domcontentloaded' }); await t.waitForTimeout(300); await t.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })); await t.waitForTimeout(300);
+        await t.goto(B + (['/','/compte/','/projets/'].includes(u) ? u + '?historique=1' : u), { waitUntil: 'domcontentloaded' }); await t.waitForTimeout(300); await t.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })); await t.waitForTimeout(300);
         ok(await t.evaluate(() => { const n = document.querySelector('.pied-legal'), d = document.querySelector('#dock-site .dock'); if (!n) return false; const r = n.getBoundingClientRect(), bas = d ? d.getBoundingClientRect().top : innerHeight; const liens = [...n.querySelectorAll('a')]; return r.height > 0 && r.bottom <= bas + 1 && r.left >= 0 && r.right <= innerWidth && liens.length === 4 && liens.every(a => { const q = a.getBoundingClientRect(), x = q.left + q.width / 2, y = q.top + q.height / 2; return document.elementFromPoint(x, y) === a; }); }), u + ' (393×659) : « Tarifs · Mentions légales · Confidentialité · Contact » au-dessus du Dock, chaque lien cliquable');
         ok(await t.evaluate(() => typeof window.si === 'function' && !!document.querySelector('script[src="/_vercel/speed-insights/script.js"]')), u + ' : Speed Insights présent');
       }
       /* Compte : la photo de fond reste derrière, sans déplacer l'en-tête collant, le lien d'évitement ni le toast */
-      await t.goto(B + '/compte/', { waitUntil: 'domcontentloaded' });
+      await t.goto(B + '/compte/?historique=1', { waitUntil: 'domcontentloaded' });
       ok(await t.evaluate(() => { const st = s => getComputedStyle(document.querySelector(s)).position; const e = document.querySelector('.cpt h1') || document.querySelector('.cpt'), r = e.getBoundingClientRect();
         return st('.cpt-fond') === 'fixed' && st('.tete') === 'sticky' && st('.evite') === 'absolute' && st('.toast') === 'fixed' && document.querySelector('.tete').getBoundingClientRect().top === 0 && !document.elementFromPoint(r.left + 4, r.top + 4).closest('.cpt-fond'); }), '/compte/ (393×659) : fond derrière, en-tête collant en haut, lien d\'évitement et toast à leur place');
       await t.goto(B + '/mentions-legales/', { waitUntil: 'domcontentloaded' });
