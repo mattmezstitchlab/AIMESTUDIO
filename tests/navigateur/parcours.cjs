@@ -72,7 +72,7 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     ok(new URL(p.url()).pathname === '/' && await p.evaluate(() => !!document.querySelector('#dock-site .dock-inv-e').textContent), 'invitation : un texte qui n\'est pas un lien est refusé, sans quitter la page');
     const T = 'AbCdEfGhIjKlMnOpQrStUvWxYz012345';
     await p.fill('#dock-site [data-invitation] input', B + '/projets/?invitation=' + T); await p.keyboard.press('Enter'); await p.waitForURL(/invitation=/, { timeout: 5000 }).catch(() => {});
-    ok(/\/projets\/\?invitation=AbCdEfGhIjKlMnOpQrStUvWxYz012345$/.test(p.url()), 'invitation : le lien collé mène à /projets/?invitation=…');
+    ok((() => {const u=new URL(p.url()),dest=u.searchParams.get('cible');return u.pathname==='/fenetre/'&&u.searchParams.get('panneau')==='activite'&&dest&&new URL(dest,B).searchParams.get('invitation')===T;})(), 'invitation : le lien ouvre la Fenêtre avec le jeton inchangé dans Activité');
     await p.goto(B + '/exemples/?commencer=1', { waitUntil: 'domcontentloaded' }).catch(() => {});
     await p.goto(B + '/?commencer=1', { waitUntil: 'domcontentloaded' }); await p.waitForTimeout(900);
     ok(await p.evaluate(() => document.activeElement && document.activeElement.id === 'jsChoix'), '/?commencer=1 : le curseur est dans « Je suis… »');
@@ -288,10 +288,10 @@ const outil = m => /a string as JavaScript[\s\S]*'unsafe-eval'/.test(m.text()) &
     ok(await p.evaluate(() => !document.getElementById('lecteur').open && document.activeElement && document.activeElement.getAttribute('data-video') === 'aime-film'), 'Accueil : Échap ferme le lecteur et rend le focus à la vignette');
     ok(await p.evaluate(() => !document.getElementById('acApercu') && ![...document.querySelectorAll('a[href]')].some(a => /\/(sites|studio|canevas|bureau|lab|aime)\//.test(a.getAttribute('href')))), 'Accueil : ni aperçu de mini-site ni lien vers les outils mis de côté');
     // les anciens essais de ce navigateur : rien ne se perd, ils paraissent dans Mes projets, « Sur cet appareil », sans être envoyés
-    await p.goto(B + '/projets/', { waitUntil: 'domcontentloaded' });
+    await p.goto(B + '/projets/?historique=1', { waitUntil: 'domcontentloaded' });
     await p.evaluate(() => { const P = window.AIMEProjets; P.Depot(localStorage).enregistrer(P.versProjet({ titre: 'Léa & Marc', date: '2027-06-14', lieu: 'Chantilly', type: 'mariage', modele: 'mariage' })); });
     { const api2 = []; const h = r => { if (/\/api\/espaces/.test(r.url())) api2.push(r.url()); }; p.on('request', h);
-      await p.goto(B + '/projets/', { waitUntil: 'domcontentloaded' }); await p.waitForTimeout(400);
+      await p.goto(B + '/projets/?historique=1', { waitUntil: 'domcontentloaded' }); await p.waitForTimeout(400);
       ok(await p.evaluate(() => !document.getElementById('local').hidden && /Léa & Marc/.test(document.getElementById('localListe').textContent) && /sur cet appareil/.test(document.getElementById('localListe').textContent)), 'Mes projets : les anciens essais paraissent « Sur cet appareil »');
       ok(api2.length === 0, 'Mes projets : les essais ne sont pas envoyés au serveur sans geste'); p.off('request', h);
       await p.evaluate(() => localStorage.removeItem('aime-projets')); }
