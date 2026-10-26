@@ -115,7 +115,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     await page.sarah.waitForFunction(() => !document.querySelector('.tp-confirmer'), null, { timeout: 5000 }); ok(true, 'Sarah a confirmé');
     const refus = await page.emma.evaluate(async e => (await fetch('/api/temps', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'geste', espace: e, geste: { action: 'retarder', p: { moment: 'cocktail', minutes: 60 } }, rev: 99 }) })).status, espace);
     ok(refus === 403, 'Emma force un geste à la main : refusé par le serveur (' + refus + ')');
-    await page.emma.reload({ waitUntil: 'networkidle' }); await page.emma.waitForSelector('.tp-m');
+    await page.emma.goto(historique(page.emma.url()), { waitUntil: 'networkidle' }); await page.emma.waitForSelector('.tp-m');
     ok(/16:15 – 18:45/.test(await texte('emma')), 'Emma recharge : la modification est toujours là');
 
     console.log('Circle : la même ressource sur un cadran de 24 heures');
@@ -146,7 +146,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     /* changer de mode garde le moment ; recharger garde tout */
     await page.lea.getByRole('button', { name: 'Liste', exact: true }).click(); await page.lea.waitForSelector('.tp-m.choisi');
     ok((await page.lea.locator('.tp-m.choisi').getAttribute('data-id')) === 'cocktail' && /moment=cocktail/.test(page.lea.url()) && !/vue=/.test(page.lea.url()), 'Léa : en Liste, le cocktail reste choisi');
-    await page.lea.getByRole('button', { name: 'Circle', exact: true }).click(); await page.lea.reload({ waitUntil: 'networkidle' }); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="cocktail"]');
+    await page.lea.getByRole('button', { name: 'Circle', exact: true }).click(); await page.lea.goto(historique(page.lea.url()), { waitUntil: 'networkidle' }); await page.lea.waitForSelector('.tp-detail .tp-m[data-id="cocktail"]');
     ok(true, 'Léa recharge : Circle et le cocktail sont rouverts depuis l\'adresse');
     /* clavier : flèches de moment en moment, Entrée ouvre */
     await arc('lea', 'cocktail').focus(); await page.lea.keyboard.press('ArrowRight');
