@@ -150,7 +150,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(await pm.locator('#aTraiter').isHidden(), 'son AI : pas de « À traiter »');
     ok((await memb.request.get(B + '/api/demandes')).status() === 404, 'GET /api/demandes : 404 pour elle');
     ok((await memb.request.get(B + '/api/demandes?cle=' + dm.cle)).status() === 404, 'le détail : 404 pour elle');
-    await pm.goto(B + '/projets/?historique=1&demande= + dm.cle, { waitUntil: 'networkidle' }); await pm.waitForSelector('#dCorps .alerte');
+    await pm.goto(B + '/projets/?historique=1&demande=' + dm.cle, { waitUntil: 'networkidle' }); await pm.waitForSelector('#dCorps .alerte');
     ok(!/Léa|saxophoniste/.test(await pm.locator('main').innerText()), 'par l\'adresse directe : aucune donnée de la demande');
     await capture(pm, 'AI__iphone__invitee-ai'); await axe(pm, 'AI de l\'invitée (iPhone)');
 
@@ -160,11 +160,11 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(await po.locator('#aTraiter').isHidden(), 'pas de « À traiter »');
     ok(/Aucun projet/.test(await po.locator('#liste').innerText()), 'aucun projet : ceux des autres ne lui sont pas montrés');
     ok((await ord.request.get(B + '/api/demandes')).status() === 404 && (await ord.request.post(B + '/api/demandes', { data: { action: 'statut', cle: dm.cle, statut: 'classee' }, headers: { origin: B } })).status() === 404, '/api/demandes : 404 en lecture et en écriture');
-    await po.goto(B + '/projets/?historique=1&espace= + A, { waitUntil: 'networkidle' }); await po.waitForSelector('#pCorps .alerte');
+    await po.goto(B + '/projets/?historique=1&espace=' + A, { waitUntil: 'networkidle' }); await po.waitForSelector('#pCorps .alerte');
     ok(!/Mariage New York/.test(await po.locator('#pCorps').innerText()), 'le projet d\'un autre, par l\'adresse directe : refusé, rien affiché');
     const anon = await contexte({ viewport: { width: 1280, height: 860 } });
     ok((await anon.request.get(B + '/api/demandes')).status() === 404, 'visiteur sans compte : /api/demandes 404');
-    const pa = await anon.newPage(); await pa.goto(B + '/projets/?historique=1&demande= + dm.cle, { waitUntil: 'networkidle' });
+    const pa = await anon.newPage(); await pa.goto(B + '/projets/?historique=1&demande=' + dm.cle, { waitUntil: 'networkidle' });
     ok(await pa.locator('#connexion').isVisible() && !/Léa|saxophoniste/.test(await pa.locator('main').innerText()), 'visiteur sans compte : la connexion, aucune donnée');
 
     console.log('8. Le propriétaire sur iPhone : AI, le détail, ME');
