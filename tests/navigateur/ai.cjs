@@ -28,7 +28,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
   let ip = 20;
   const contexte = (app) => b.newContext(Object.assign({ locale: 'fr-FR', extraHTTPHeaders: { 'x-forwarded-for': '203.0.113.' + (ip++) } }, app));
   async function connecter(ctx, qui, retour) {
-    const r = await ctx.request.post(B + '/api/auth/sign-in/magic-link', { data: { email: qui.email, name: qui.nom, callbackURL: retour || '/projets/' }, headers: { origin: B } });
+    const r = await ctx.request.post(B + '/api/auth/sign-in/magic-link', { data: { email: qui.email, name: qui.nom, callbackURL: retour || '/projets/?historique=1' }, headers: { origin: B } });
     if (r.status() !== 200) throw new Error('lien magique ' + qui.email + ' : ' + r.status());
     await attendre(150);
     const lien = fs.readFileSync(LIENS, 'utf8').trim().split('\n').map(JSON.parse).filter(x => x.to === qui.email).pop().lien;
@@ -142,7 +142,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
 
     console.log('7. Une personne invitée : sa perspective, ni « À traiter » ni demandes');
     const inv = await (await proD.request.post(B + '/api/espaces', { data: { action: 'inviter', espace: A, role: 'guest', email: MEMBRE.email }, headers: { origin: B } })).json();
-    const memb = await contexte(devices['iPhone 13']), pm = await connecter(memb, MEMBRE, '/projets/?invitation=' + new URL(inv.lien).searchParams.get('invitation'));
+    const memb = await contexte(devices['iPhone 13']), pm = await connecter(memb, MEMBRE, '/projets/?historique=1&invitation=' + new URL(inv.lien).searchParams.get('invitation'));
     await pm.waitForFunction(() => /Mariage New York/.test(document.getElementById('tTitre').textContent), null, { timeout: 8000 });
     const dM = await dock(pm); ok(!dM.includes('AI'), 'l\'invitée arrive dans le projet, avec le Dock de son rôle : ' + dM.join(' · '));
     await capture(pm, 'AI__iphone__invitee-projet');
@@ -150,7 +150,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(await pm.locator('#aTraiter').isHidden(), 'son AI : pas de « À traiter »');
     ok((await memb.request.get(B + '/api/demandes')).status() === 404, 'GET /api/demandes : 404 pour elle');
     ok((await memb.request.get(B + '/api/demandes?cle=' + dm.cle)).status() === 404, 'le détail : 404 pour elle');
-    await pm.goto(B + '/projets/?demande=' + dm.cle, { waitUntil: 'networkidle' }); await pm.waitForSelector('#dCorps .alerte');
+    await pm.goto(B + '/projets/?historique=1&demande= + dm.cle, { waitUntil: 'networkidle' }); await pm.waitForSelector('#dCorps .alerte');
     ok(!/Léa|saxophoniste/.test(await pm.locator('main').innerText()), 'par l\'adresse directe : aucune donnée de la demande');
     await capture(pm, 'AI__iphone__invitee-ai'); await axe(pm, 'AI de l\'invitée (iPhone)');
 
@@ -160,11 +160,11 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(await po.locator('#aTraiter').isHidden(), 'pas de « À traiter »');
     ok(/Aucun projet/.test(await po.locator('#liste').innerText()), 'aucun projet : ceux des autres ne lui sont pas montrés');
     ok((await ord.request.get(B + '/api/demandes')).status() === 404 && (await ord.request.post(B + '/api/demandes', { data: { action: 'statut', cle: dm.cle, statut: 'classee' }, headers: { origin: B } })).status() === 404, '/api/demandes : 404 en lecture et en écriture');
-    await po.goto(B + '/projets/?espace=' + A, { waitUntil: 'networkidle' }); await po.waitForSelector('#pCorps .alerte');
+    await po.goto(B + '/projets/?historique=1&espace= + A, { waitUntil: 'networkidle' }); await po.waitForSelector('#pCorps .alerte');
     ok(!/Mariage New York/.test(await po.locator('#pCorps').innerText()), 'le projet d\'un autre, par l\'adresse directe : refusé, rien affiché');
     const anon = await contexte({ viewport: { width: 1280, height: 860 } });
     ok((await anon.request.get(B + '/api/demandes')).status() === 404, 'visiteur sans compte : /api/demandes 404');
-    const pa = await anon.newPage(); await pa.goto(B + '/projets/?demande=' + dm.cle, { waitUntil: 'networkidle' });
+    const pa = await anon.newPage(); await pa.goto(B + '/projets/?historique=1&demande= + dm.cle, { waitUntil: 'networkidle' });
     ok(await pa.locator('#connexion').isVisible() && !/Léa|saxophoniste/.test(await pa.locator('main').innerText()), 'visiteur sans compte : la connexion, aucune donnée');
 
     console.log('8. Le propriétaire sur iPhone : AI, le détail, ME');
@@ -201,7 +201,7 @@ const attendre = ms => new Promise(r => setTimeout(r, ms));
     ok(await pt.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'ME sur iPhone : aucun défilement horizontal');
     await pt.click('#dock-site a[data-lieu="ai"]'); await pt.waitForURL(/\/projets\/$/); await pt.waitForSelector('#espaces:not([hidden])');
     ok(await pt.locator('#activites').isHidden(), 'AI ne montre pas les activités (elles vivent dans ME)');
-    const meD = await proD.newPage(); await meD.goto(B + '/compte/', { waitUntil: 'networkidle' }); await meD.waitForSelector('#profil:not([hidden])');
+    const meD = await proD.newPage(); await meD.goto(B + '/compte/?historique=1', { waitUntil: 'networkidle' }); await meD.waitForSelector('#profil:not([hidden])');
     await capture(meD, 'AI__ordinateur__4-me'); await axe(meD, 'ME (ordinateur)');
   } catch (e) { echecs++; console.error(e); }
   await b.close(); await pool.end(); try { srv.kill(); } catch {}
