@@ -6,7 +6,8 @@
      TEST_DATABASE_URL=postgresql://…/aime_test node tests/navigateur/temps.cjs     (CAPTURES=dossier pour garder les captures) */
 const { chromium, devices } = require('playwright'); const fs = require('fs'), path = require('path'), os = require('os'), { spawn } = require('child_process');
 const URLT = process.env.TEST_DATABASE_URL; if (!URLT) { console.log('TEST_DATABASE_URL absent : parcours Temps non lancé'); process.exit(0); }
-const historique = url => { const u = new URL(url); if (/^\/(?:compte|projets)\//.test(u.pathname)) {u.searchParams.set('historique','1');return u.toString();}return url; };\nconst PORT = 8790, B = 'http://localhost:' + PORT, LIENS = path.join(os.tmpdir(), 'aime-liens-' + process.pid + '.txt'), CAP = process.env.CAPTURES || null;
+const historique = url => { const u = new URL(url); if (/^\/(?:compte|projets)\//.test(u.pathname)) {u.searchParams.set('historique','1');return u.toString();}return url; };
+const PORT = 8790, B = 'http://localhost:' + PORT, LIENS = path.join(os.tmpdir(), 'aime-liens-' + process.pid + '.txt'), CAP = process.env.CAPTURES || null;
 const AXE = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'), DEMO = require('../../modules/temps/demo-camille-gabriel.json');
 const APPAREILS = { camille: { viewport: { width: 1440, height: 900 } }, gabriel: { viewport: { width: 1440, height: 900 } }, lea: { viewport: { width: 1440, height: 900 } },
   alex: devices['iPhone 13'], sarah: devices['iPad Mini'], emma: devices['iPhone 13'] };
