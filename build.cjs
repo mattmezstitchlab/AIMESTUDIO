@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const cp = require('node:child_process');
 const assert = require('node:assert/strict');
 const required = [
-  'index.html', 'fenetre/index.html', 'fenetre/fenetre.css', 'fenetre/media/provence.jpg',
+  'index.html', 'union/index.html', 'fenetre/index.html', 'fenetre/fenetre.css', 'fenetre/media/provence.jpg',
   'union/app.js', 'union/model.js', 'union/style.css', 'union/immersive.js',
   'union/immersive.css', 'union/editorial.css', 'union/compact.css', 'union/navigation.css',
   'fenetre/editorial.css', 'union/media/terrace.jpg', 'union/data/story.json',
