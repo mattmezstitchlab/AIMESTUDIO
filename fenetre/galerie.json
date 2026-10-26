@@ -6,7 +6,7 @@
     {
       "id": "mariage",
       "type": "image",
-      "src": "/media/visuels/maries.webp",
+      "src": "/union/media/worlds/mariage.jpg",
       "title": "Le grand jour",
       "description": "Une image de démonstration du parcours mariage AIME.",
       "alt": "Scène de mariage illustrant l'univers AIME"
@@ -14,7 +14,7 @@
     {
       "id": "trio",
       "type": "image",
-      "src": "/media/visuels/cour-trio.webp",
+      "src": "/union/media/stage.jpg",
       "title": "La musique",
       "description": "Un instant musical dans la galerie de démonstration.",
       "alt": "Scène musicale en plein air"
@@ -22,7 +22,7 @@
     {
       "id": "coordination",
       "type": "image",
-      "src": "/media/visuels/coordinatrice.webp",
+      "src": "/union/media/terrace.jpg",
       "title": "Les rencontres",
       "description": "Des personnes et leurs projets, chacun depuis sa place.",
       "alt": "Illustration d'une personne assurant la coordination"
@@ -30,7 +30,7 @@
     {
       "id": "photographie",
       "type": "image",
-      "src": "/media/visuels/photographe.webp",
+      "src": "/union/media/archive.jpg",
       "title": "Le regard",
       "description": "La photographie accompagne un projet.",
       "alt": "Illustration de l'activité de photographe"
@@ -38,7 +38,7 @@
     {
       "id": "fleurs",
       "type": "image",
-      "src": "/media/visuels/fleuriste-terrasse.webp",
+      "src": "/union/media/studio.jpg",
       "title": "Le vivant",
       "description": "Un autre regard sur les moments que l'on prépare.",
       "alt": "Composition florale et terrasse"
@@ -46,7 +46,7 @@
     {
       "id": "invites",
       "type": "image",
-      "src": "/media/visuels/invitee.webp",
+      "src": "/union/media/worlds/exposition.jpg",
       "title": "Les invités",
       "description": "Une même histoire et des perspectives différentes.",
       "alt": "Illustration de la place d'une invitée"
