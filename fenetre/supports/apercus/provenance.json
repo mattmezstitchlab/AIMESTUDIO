@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "kind": "native-engine-example",
+  "source": "studio/index.html",
+  "engineSha256": "f1a9ce22fcf7341b1f38003a59c6fa28dc68568d31f2ac6f9711379798adac20",
+  "bridge": "fenetre/supports/preview-bridge.js",
+  "bridgeSha256": "09e605e34c7cefb1ab1e1c5636a198a10db29b8343581d5815277bd77e56df69",
+  "profession": "brodeuse",
+  "fictional": true,
+  "images": [
+    {
+      "sourceId": "bcard",
+      "path": "/fenetre/supports/apercus/bcard.png",
+      "sha256": "32455be0add78d0867643150871919b6bac75250589219024f9d8ead3624b73a",
+      "bytes": 29832
+    },
+    {
+      "sourceId": "site",
+      "path": "/fenetre/supports/apercus/site.png",
+      "sha256": "a0f72e3bf9ca94baab6199cecb1e1a08ac6f0aa7c42e749881823fdc0c86038f",
+      "bytes": 34837
+    },
+    {
+      "sourceId": "label",
+      "path": "/fenetre/supports/apercus/label.png",
+      "sha256": "a3e7f3d16db8e2ca372c26c628e80db74e7a8779d2ebd158d8e7794a0516fca2",
+      "bytes": 21837
+    },
+    {
+      "sourceId": "flyer",
+      "path": "/fenetre/supports/apercus/flyer.png",
+      "sha256": "499f17b2666e994665a9126558e1f7b15b846805e3020c750f4736982399a692",
+      "bytes": 32033
+    },
+    {
+      "sourceId": "devis",
+      "path": "/fenetre/supports/apercus/devis.png",
+      "sha256": "059922ebd6ab53691dc0edda0edc6022a30cd1bfca4c0ce75b20d3414e8f4055",
+      "bytes": 28129
+    },
+    {
+      "sourceId": "facture",
+      "path": "/fenetre/supports/apercus/facture.png",
+      "sha256": "5d120b4abb4ba6f6bf600846361f23b0d5e7c50e58e9cd58eb64e5f0c6f311f1",
+      "bytes": 27730
+    }
+  ]
+}

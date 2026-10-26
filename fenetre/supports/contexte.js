@@ -1,0 +1,9 @@
+/* Projection editoriale uniquement. Aucune lecture/autorisation de données privées. */
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.AIMESupportContext=factory()})(typeof window==='object'?window:globalThis,function(){
+'use strict';
+function resolve(catalogue,matrix,context){if(context.scope!=='public-source-templates-only')return[];const p=matrix.professions.find(p=>p.id===context.profession&&p.status==='pilot');if(!p||p.verticality!==context.verticality)return[];const ids=p.sections[context.section]||[];return [...new Set(ids)].flatMap(id=>{const s=catalogue.supports.find(s=>s.id===id);return s?[{...s,key:'studio:'+id+':'+p.id+':source',sourceId:id,profession:p.id,engine:'studio',scope:'public-template',title:p.names[id]||s.name,status:'Modèle éditable · copie locale',visualKind:'engine-preview'}]:[]})}
+function store(initial){let current=Object.freeze({...initial}),pending=null;const locks=new Set(),listeners=new Set();function emit(){for(const f of listeners)f(current)}return{get:()=>current,pending:()=>pending,locked:()=>locks.size>0,subscribe:f=>{listeners.add(f);return()=>listeners.delete(f)},set:patch=>{const next={...(pending||current),...patch};if(locks.size){pending=next;return false}current=Object.freeze(next);emit();return true},lock:reason=>locks.add(reason),unlock:reason=>{locks.delete(reason);if(!locks.size&&pending){current=Object.freeze(pending);pending=null;emit()}},reasons:()=>[...locks]}}
+// Stable activation line, not maximum intersection ratio (unstable for sections of different heights).
+function visible(sections,line){let found=null;for(const s of sections){if(s.top<=line&&s.bottom>line)found=s.id}return found||sections.filter(s=>s.top>line).sort((a,b)=>a.top-b.top)[0]?.id||sections.at(-1)?.id||null}
+return {resolve,store,visible};
+});
