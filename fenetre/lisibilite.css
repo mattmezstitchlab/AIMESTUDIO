@@ -1,0 +1,28 @@
+/* AIME Studio · Pass de lisibilité, sans modifier la navigation ni les moteurs.
+   Réglages fluides pour conserver la hiérarchie à 320px comme à 4K. */
+:root{--aime-readable-xs:clamp(11px,.78vw,13px);--aime-readable-sm:clamp(12px,.9vw,15px);--aime-readable-md:clamp(15px,1.04vw,18px)}
+.world-header nav button,.world-sidebar>button{font-size:var(--aime-readable-sm);letter-spacing:.015em;line-height:1.25}
+.world-header nav button{min-height:44px}
+.home-overline,.home-overline button,.home-meta,.home-meta>time,.home-story-note>span,.home-story-note button,.section-label h2,.section-label button{font-size:var(--aime-readable-xs);letter-spacing:.045em}
+.home-story-note p{font-size:clamp(21px,1.6vw,27px);line-height:1.3}
+.window-card small,.window-new small,.window-card>span small{font-size:var(--aime-readable-xs);line-height:1.45}
+.window-card>span{font-size:clamp(20px,1.65vw,29px);line-height:1.18}
+.home-bottom>button,.home-bottom>button span{font-size:var(--aime-readable-sm);line-height:1.45}
+.capsule-heading,.capsule-real,.capsule-context>span,.capsule-light>span,.capsule-light button small,#capsule-position{font-size:var(--aime-readable-xs);letter-spacing:.02em}
+.capsule-reader button,.capsule-light button,#capsule-size,#capsule-reduce{min-width:44px;min-height:44px}
+.panel-heading span,.return-window,#workspace-status,.universe-card small,.local-list small,.studio-welcome p{font-size:var(--aime-readable-sm);line-height:1.5}
+.universe-card strong{font-size:clamp(35px,3.1vw,56px);line-height:1.08}
+dialog p,dialog label,dialog button,#orb-explanation,#orb-actions button{font-size:var(--aime-readable-md);line-height:1.5}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #d5a956;outline-offset:3px}
+@media(max-width:760px){
+ .world-header nav button{font-size:11px;min-height:44px}
+ .world-sidebar>button{font-size:11px;min-height:52px}
+ .home-overline,.home-overline button,.home-meta,.home-story-note>span,.section-label h2,.section-label button{font-size:11px}
+ .window-card>span{font-size:20px}
+ .window-card small,.window-new small{font-size:12px}
+ .home-bottom>button,.home-bottom>button span{font-size:13px}
+ .capsule-heading,.capsule-real,.capsule-context>span,.capsule-light button small,#capsule-position{font-size:11px}
+ .panel-heading span,.return-window,#workspace-status,.universe-card small{font-size:12px}
+ .capsule-reader button,.capsule-light button{min-height:42px}
+ .world-capsule[data-state=reduced]{width:min(280px,calc(100vw - 24px))}
+}
