@@ -1,71 +1,85 @@
-/* AIME Design Core — restored from /exemples/ original dark identity.
-   This file is scoped to the public landing; native role and demonstration scripts stay intact. */
-:root{--desk:#0A0A0C!important;--ink:#EDEDF0!important;--soft:#A7A7B2!important;--faint:#8B8B98!important;--line:#292930!important;color-scheme:dark}
-html,html body,body.clair{background:#0A0A0C!important;color:#EDEDF0!important}
-body.clair{font-family:"Inter Variable",Inter,-apple-system,system-ui,sans-serif!important}
-body.clair .zero{min-height:100svh!important;padding-top:clamp(108px,12vh,156px)!important;padding-bottom:calc(128px + env(safe-area-inset-bottom,0px))!important;justify-content:flex-start!important;border-bottom:1px solid #222228!important}
-body.clair .zero>.v-orbe{width:clamp(125px,15vw,193px)!important;height:clamp(125px,15vw,193px)!important;margin:clamp(14px,4vh,45px) auto 38px!important;flex:none!important}
-body.clair .zero>.col{width:100%;max-width:1120px}
-body.clair .zero h1{font:600 clamp(50px,7.2vw,99px)/1 "Cal Sans","Inter Variable",system-ui,sans-serif!important;letter-spacing:-.055em!important;max-width:100%;text-wrap:balance}
-body.clair .zero .intention{margin:18px auto 0!important;max-width:730px!important;font-size:clamp(20px,2vw,27px)!important;line-height:1.37!important;color:#EDEDF0!important}
-body.clair .zero .intention .gris{color:#EDEDF0!important}
-body.clair .zero .trois{font-size:11px!important;letter-spacing:.34em!important;color:#A7A7B2!important;margin:0 auto 16px!important}
-body.clair .barre{background:transparent!important;color:#eee!important}
-body.clair .barre .mk{color:#eee!important}
-body.clair .js-choix{margin-top:40px!important}
-body.clair .jl-champ{background:#17171C!important;border-color:#33333D!important;color:#EEE!important}
-body.clair .jl-liste{background:#17171C!important;border-color:#33333D!important}
-body.clair .dm,body.clair .ac-projet{background:#0C0C0F!important;color:#EDEDF0!important}
-body.clair section,body.clair main{color:inherit}
-body.clair .ac-grille input,body.clair .ac-grille select{color:#eee!important;background:#18181C!important}
-body.clair #dock-site{z-index:60}
-body.clair .dock-zone{--dk-fond:#0F0F12;--dk-bord:#2B2B33;--dk-ic:#EDEDF0;--dk-lib:#9C9CA8;--dk-actif:#EDEDF0;--dk-surf:#17171C}
-body.clair .pied-legal,body.clair footer{border-color:#27272D!important}
-body.clair a:focus-visible,body.clair button:focus-visible{outline:2px solid #B4B4FF;outline-offset:3px}
-@media(max-width:700px){body.clair .zero{padding-top:105px!important}body.clair .zero>.v-orbe{margin-top:10px!important;margin-bottom:27px!important}body.clair .zero h1{font-size:clamp(48px,12.5vw,76px)!important}body.clair .zero .intention{font-size:19px!important}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}body.clair *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-
-/* Overrides for the old bright home, deliberately after vitrine.css. */
-html:has(body.aime-core),html:has(body.aime-core) body.aime-core{background:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important}
-body.aime-core .zero,body.aime-core #haut,body.aime-core #ecrans,body.aime-core #mosaique,body.aime-core #capacites,body.aime-core #protection,body.aime-core #domaines{
- background:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important
+/* AIME CORE / public landing — source de vérité pour l'habillage sombre.
+   Chargé après les CSS historiques. Les téléphones et documents restent sur papier clair.
+   Moteurs, rôles et permissions ne sont jamais modifiés par ce thème. */
+html:has(body.aime-core),body.aime-core{
+ --desk:#0A0A0C;--ink:#EDEDF0;--soft:#B7B7C2;--faint:#9595A4;
+ --line:#303039;--conic:conic-gradient(#FB7185,#F59E0B,#6D4AFF,#22D3EE,#FB7185);
+ background:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important;color-scheme:dark;
 }
-body.aime-core .zero h1,body.aime-core .zero .intention,body.aime-core .zero .intention .gris{color:#EDEDF0!important}
-body.aime-core .zero .trois,body.aime-core .zero .js-l{color:#A7A7B2!important}
-body.aime-core .clair .barre .mk,body.aime-core .barre .mk{color:#EDEDF0!important;background:#16161B!important;border-color:#33333D!important}
+body.aime-core{font-family:"Inter Variable",Inter,system-ui,sans-serif}
+body.aime-core .zero,body.aime-core #haut,body.aime-core #ecrans,
+body.aime-core #mosaique,body.aime-core #capacites,
+body.aime-core #protection,body.aime-core #domaines,
+body.aime-core #entree,body.aime-core .v-sec,
+body.aime-core .pied-legal,body.aime-core footer{
+ background:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important;
+}
+body.aime-core .zero{
+ min-height:100svh!important;padding:clamp(100px,12vh,150px) 0 calc(128px + env(safe-area-inset-bottom))!important;
+ justify-content:flex-start!important;gap:22px!important;border-bottom:1px solid #24242C!important;
+}
+body.aime-core .zero>.v-orbe{
+ width:clamp(125px,15vw,193px)!important;height:clamp(125px,15vw,193px)!important;
+ margin:clamp(12px,4vh,40px) auto 35px!important;flex:none!important;
+}
+body.aime-core .zero>.col{width:100%;max-width:1120px}
+body.aime-core .zero h1{
+ font:600 clamp(50px,7.2vw,99px)/1 "Cal Sans","Inter Variable",system-ui,sans-serif!important;
+ letter-spacing:-.055em!important;max-width:100%;text-wrap:balance;color:#EDEDF0!important;
+}
+body.aime-core .zero .intention,body.aime-core .zero .intention .gris{
+ color:#EDEDF0!important;
+}
+body.aime-core .zero .intention{
+ margin:18px auto 0!important;max-width:730px!important;
+ font-size:clamp(20px,2vw,27px)!important;line-height:1.37!important;
+}
+body.aime-core .zero .trois,body.aime-core .zero .js-l{
+ color:#B7B7C2!important;font-size:12px!important;
+}
+body.aime-core .zero .trois{letter-spacing:.3em!important;margin:0 auto 16px!important}
+body.aime-core .js-choix{margin-top:36px!important}
+body.aime-core .barre{background:transparent!important;color:#EDEDF0!important}
 body.aime-core .barre::before{background:rgba(10,10,12,.85)!important}
-body.aime-core .js-lien,body.aime-core .at-bloc,body.aime-core .attente,body.aime-core #atBloc{color:#EDEDF0}
-body.aime-core .zero .jl-champ{color:#EDEDF0!important}
-body.aime-core .zero .v-orbe{filter:none!important}
-
-
-/* Contrast pass — keep white demo cards readable, but all outer editorial text is light. */
-body.aime-core{--ink:#EDEDF0;--soft:#B6B6C1;--faint:#9494A2;--line:#303038;color-scheme:dark}
-body.aime-core #entree,body.aime-core .ex-pied,body.aime-core .pied-legal,
-body.aime-core .v-sec{background-color:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important}
-body.aime-core .v-tete h2,body.aime-core .v-titre,
-body.aime-core .v-sec>.v-col>h2,body.aime-core .v-sec>.v-col>p,
-body.aime-core .v-tete>p,body.aime-core .v-leg,
-body.aime-core .v-k,body.aime-core .v-tel>.nom,
-body.aime-core .v-tel>p,body.aime-core .v-tel>.v-leg,
-body.aime-core .v-sec a:not(.v-btn):not(.v-btn2):not(.bouton){
- color:#EDEDF0!important
+body.aime-core .barre .mk{
+ background:#16161B!important;border-color:#33333D!important;color:#EDEDF0!important;
 }
-body.aime-core .v-tete>p,body.aime-core .v-tel>p,
-body.aime-core .v-tel>.v-leg,body.aime-core .v-leg{color:#B6B6C1!important}
-body.aime-core .v-tel .cadre,body.aime-core .v-page,
-body.aime-core .v-app,body.aime-core .v-ecran,
-body.aime-core .v-panneau,body.aime-core .v-fen,
-body.aime-core .v-carte{color:#111114;--ink:#111114;--soft:#4B4B55;--faint:#5B5B66;--line:#E4E4E9;color-scheme:light}
-body.aime-core .v-carte .v-leg,body.aime-core .v-carte a,
-body.aime-core .v-panneau .v-leg,body.aime-core .v-app .v-leg{color:#4B4B55!important}
-body.aime-core .v-app .v-btn,body.aime-core .v-panneau .v-btn{color:#fff!important}
-body.aime-core .v-tel .cadre .vt-bloc,body.aime-core .v-tel .cadre .vt-bloc *,
-body.aime-core .v-tel .cadre .nom{color:#141416}
-body.aime-core .v-tel .cadre .vt-bloc{background:#F6F6FA}
-body.aime-core .v-evts button:not([aria-pressed="true"]){background:#18181E!important;color:#EDEDF0!important;border:1px solid #363641!important}
+body.aime-core .jl-champ,body.aime-core .jl-liste{
+ background:#17171C!important;border-color:#393941!important;color:#EDEDF0!important;
+}
+body.aime-core .jl-champ .jl-v{color:#EDEDF0!important}
+body.aime-core .v-tete h2,body.aime-core .v-titre,
+body.aime-core .v-tete>p,body.aime-core .v-k,
+body.aime-core .v-tel>.nom,body.aime-core .v-tel>p,
+body.aime-core .v-tel>.v-leg,
+body.aime-core .v-sec>.v-col>h2{
+ color:#EDEDF0!important;
+}
+body.aime-core .v-leg,body.aime-core .v-tete>p,
+body.aime-core .v-tel>p,body.aime-core .v-tel>.v-leg{
+ color:#B7B7C2!important;
+}
+/* Only the embedded product representations use dark ink on light paper. */
+body.aime-core :is(.v-app,.v-ecran,.v-page,.v-panneau,.v-fen,.v-carte,.v-tel .cadre){
+ --ink:#111114;--soft:#4B4B55;--faint:#5B5B66;--line:#E4E4E9;
+ color:#111114;color-scheme:light;
+}
+body.aime-core :is(.v-app,.v-ecran,.v-page,.v-panneau,.v-fen,.v-carte) .v-leg{color:#4B4B55!important}
+body.aime-core .v-tel .cadre .vt-bloc{background:#F6F6FA;color:#141416}
+body.aime-core .v-evts button:not([aria-pressed="true"]){
+ background:#18181E!important;color:#EDEDF0!important;border:1px solid #363641!important;
+}
 body.aime-core .v-evts button[aria-pressed="true"]{background:#EEE!important;color:#111!important}
-body.aime-core .pied-legal{border-top:1px solid #27272D!important}
-body.aime-core .pied-legal a,body.aime-core .pied a,
-body.aime-core .ex-pied a,body.aime-core #calme{color:#C3C3CF!important}
-body.aime-core .v-tel .cadre *{color-scheme:light}
+body.aime-core :is(.dm,.ac-projet){background:#0C0C0F!important;color:#EDEDF0!important}
+body.aime-core :is(.ac-grille input,.ac-grille select){background:#18181C!important;color:#eee!important}
+body.aime-core :is(.pied-legal a,.pied a,#calme){color:#C3C3CF!important}
+body.aime-core .pied-legal{border-color:#27272D!important}
+body.aime-core .dock-zone{--dk-fond:#0F0F12;--dk-bord:#2B2B33;--dk-ic:#EDEDF0;--dk-lib:#9C9CA8}
+body.aime-core a:focus-visible,body.aime-core button:focus-visible{outline:2px solid #B4B4FF;outline-offset:3px}
+@media(max-width:700px){
+ body.aime-core .zero{padding-top:105px!important}
+ body.aime-core .zero>.v-orbe{margin-top:10px!important;margin-bottom:27px!important}
+ body.aime-core .zero h1{font-size:clamp(48px,12.5vw,76px)!important}
+ body.aime-core .zero .intention{font-size:19px!important}
+}
+@media(prefers-reduced-motion:reduce){html:has(body.aime-core){scroll-behavior:auto!important}}
