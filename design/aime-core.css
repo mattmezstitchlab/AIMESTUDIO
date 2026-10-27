@@ -1,0 +1,26 @@
+/* AIME Design Core — restored from /exemples/ original dark identity.
+   This file is scoped to the public landing; native role and demonstration scripts stay intact. */
+:root{--desk:#0A0A0C!important;--ink:#EDEDF0!important;--soft:#A7A7B2!important;--faint:#8B8B98!important;--line:#292930!important;color-scheme:dark}
+html,html body,body.clair{background:#0A0A0C!important;color:#EDEDF0!important}
+body.clair{font-family:"Inter Variable",Inter,-apple-system,system-ui,sans-serif!important}
+body.clair .zero{min-height:100svh!important;padding-top:clamp(108px,12vh,156px)!important;padding-bottom:calc(128px + env(safe-area-inset-bottom,0px))!important;justify-content:flex-start!important;border-bottom:1px solid #222228!important}
+body.clair .zero>.v-orbe{width:clamp(125px,15vw,193px)!important;height:clamp(125px,15vw,193px)!important;margin:clamp(14px,4vh,45px) auto 38px!important;flex:none!important}
+body.clair .zero>.col{width:100%;max-width:1120px}
+body.clair .zero h1{font:600 clamp(50px,7.2vw,99px)/1 "Cal Sans","Inter Variable",system-ui,sans-serif!important;letter-spacing:-.055em!important;max-width:100%;text-wrap:balance}
+body.clair .zero .intention{margin:18px auto 0!important;max-width:730px!important;font-size:clamp(20px,2vw,27px)!important;line-height:1.37!important;color:#EDEDF0!important}
+body.clair .zero .intention .gris{color:#EDEDF0!important}
+body.clair .zero .trois{font-size:11px!important;letter-spacing:.34em!important;color:#A7A7B2!important;margin:0 auto 16px!important}
+body.clair .barre{background:transparent!important;color:#eee!important}
+body.clair .barre .mk{color:#eee!important}
+body.clair .js-choix{margin-top:40px!important}
+body.clair .jl-champ{background:#17171C!important;border-color:#33333D!important;color:#EEE!important}
+body.clair .jl-liste{background:#17171C!important;border-color:#33333D!important}
+body.clair .dm,body.clair .ac-projet{background:#0C0C0F!important;color:#EDEDF0!important}
+body.clair section,body.clair main{color:inherit}
+body.clair .ac-grille input,body.clair .ac-grille select{color:#eee!important;background:#18181C!important}
+body.clair #dock-site{z-index:60}
+body.clair .dock-zone{--dk-fond:#0F0F12;--dk-bord:#2B2B33;--dk-ic:#EDEDF0;--dk-lib:#9C9CA8;--dk-actif:#EDEDF0;--dk-surf:#17171C}
+body.clair .pied-legal,body.clair footer{border-color:#27272D!important}
+body.clair a:focus-visible,body.clair button:focus-visible{outline:2px solid #B4B4FF;outline-offset:3px}
+@media(max-width:700px){body.clair .zero{padding-top:105px!important}body.clair .zero>.v-orbe{margin-top:10px!important;margin-bottom:27px!important}body.clair .zero h1{font-size:clamp(48px,12.5vw,76px)!important}body.clair .zero .intention{font-size:19px!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}body.clair *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
