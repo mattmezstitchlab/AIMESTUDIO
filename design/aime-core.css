@@ -37,3 +37,35 @@ body.aime-core .barre::before{background:rgba(10,10,12,.85)!important}
 body.aime-core .js-lien,body.aime-core .at-bloc,body.aime-core .attente,body.aime-core #atBloc{color:#EDEDF0}
 body.aime-core .zero .jl-champ{color:#EDEDF0!important}
 body.aime-core .zero .v-orbe{filter:none!important}
+
+
+/* Contrast pass — keep white demo cards readable, but all outer editorial text is light. */
+body.aime-core{--ink:#EDEDF0;--soft:#B6B6C1;--faint:#9494A2;--line:#303038;color-scheme:dark}
+body.aime-core #entree,body.aime-core .ex-pied,body.aime-core .pied-legal,
+body.aime-core .v-sec{background-color:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important}
+body.aime-core .v-tete h2,body.aime-core .v-titre,
+body.aime-core .v-sec>.v-col>h2,body.aime-core .v-sec>.v-col>p,
+body.aime-core .v-tete>p,body.aime-core .v-leg,
+body.aime-core .v-k,body.aime-core .v-tel>.nom,
+body.aime-core .v-tel>p,body.aime-core .v-tel>.v-leg,
+body.aime-core .v-sec a:not(.v-btn):not(.v-btn2):not(.bouton){
+ color:#EDEDF0!important
+}
+body.aime-core .v-tete>p,body.aime-core .v-tel>p,
+body.aime-core .v-tel>.v-leg,body.aime-core .v-leg{color:#B6B6C1!important}
+body.aime-core .v-tel .cadre,body.aime-core .v-page,
+body.aime-core .v-app,body.aime-core .v-ecran,
+body.aime-core .v-panneau,body.aime-core .v-fen,
+body.aime-core .v-carte{color:#111114;--ink:#111114;--soft:#4B4B55;--faint:#5B5B66;--line:#E4E4E9;color-scheme:light}
+body.aime-core .v-carte .v-leg,body.aime-core .v-carte a,
+body.aime-core .v-panneau .v-leg,body.aime-core .v-app .v-leg{color:#4B4B55!important}
+body.aime-core .v-app .v-btn,body.aime-core .v-panneau .v-btn{color:#fff!important}
+body.aime-core .v-tel .cadre .vt-bloc,body.aime-core .v-tel .cadre .vt-bloc *,
+body.aime-core .v-tel .cadre .nom{color:#141416}
+body.aime-core .v-tel .cadre .vt-bloc{background:#F6F6FA}
+body.aime-core .v-evts button:not([aria-pressed="true"]){background:#18181E!important;color:#EDEDF0!important;border:1px solid #363641!important}
+body.aime-core .v-evts button[aria-pressed="true"]{background:#EEE!important;color:#111!important}
+body.aime-core .pied-legal{border-top:1px solid #27272D!important}
+body.aime-core .pied-legal a,body.aime-core .pied a,
+body.aime-core .ex-pied a,body.aime-core #calme{color:#C3C3CF!important}
+body.aime-core .v-tel .cadre *{color-scheme:light}
