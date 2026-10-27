@@ -24,3 +24,16 @@ body.clair .pied-legal,body.clair footer{border-color:#27272D!important}
 body.clair a:focus-visible,body.clair button:focus-visible{outline:2px solid #B4B4FF;outline-offset:3px}
 @media(max-width:700px){body.clair .zero{padding-top:105px!important}body.clair .zero>.v-orbe{margin-top:10px!important;margin-bottom:27px!important}body.clair .zero h1{font-size:clamp(48px,12.5vw,76px)!important}body.clair .zero .intention{font-size:19px!important}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}body.clair *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Overrides for the old bright home, deliberately after vitrine.css. */
+html:has(body.aime-core),html:has(body.aime-core) body.aime-core{background:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important}
+body.aime-core .zero,body.aime-core #haut,body.aime-core #ecrans,body.aime-core #mosaique,body.aime-core #capacites,body.aime-core #protection,body.aime-core #domaines{
+ background:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important
+}
+body.aime-core .zero h1,body.aime-core .zero .intention,body.aime-core .zero .intention .gris{color:#EDEDF0!important}
+body.aime-core .zero .trois,body.aime-core .zero .js-l{color:#A7A7B2!important}
+body.aime-core .clair .barre .mk,body.aime-core .barre .mk{color:#EDEDF0!important;background:#16161B!important;border-color:#33333D!important}
+body.aime-core .barre::before{background:rgba(10,10,12,.85)!important}
+body.aime-core .js-lien,body.aime-core .at-bloc,body.aime-core .attente,body.aime-core #atBloc{color:#EDEDF0}
+body.aime-core .zero .jl-champ{color:#EDEDF0!important}
+body.aime-core .zero .v-orbe{filter:none!important}
