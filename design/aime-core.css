@@ -1,0 +1,85 @@
+/* AIME CORE / public landing — source de vérité pour l'habillage sombre.
+   Chargé après les CSS historiques. Les téléphones et documents restent sur papier clair.
+   Moteurs, rôles et permissions ne sont jamais modifiés par ce thème. */
+html:has(body.aime-core),body.aime-core{
+ --desk:#0A0A0C;--ink:#EDEDF0;--soft:#B7B7C2;--faint:#9595A4;
+ --line:#303039;--conic:conic-gradient(#FB7185,#F59E0B,#6D4AFF,#22D3EE,#FB7185);
+ background:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important;color-scheme:dark;
+}
+body.aime-core{font-family:"Inter Variable",Inter,system-ui,sans-serif}
+body.aime-core .zero,body.aime-core #haut,body.aime-core #ecrans,
+body.aime-core #mosaique,body.aime-core #capacites,
+body.aime-core #protection,body.aime-core #domaines,
+body.aime-core #entree,body.aime-core .v-sec,
+body.aime-core .pied-legal,body.aime-core footer{
+ background:#0A0A0C!important;background-image:none!important;color:#EDEDF0!important;
+}
+body.aime-core .zero{
+ min-height:100svh!important;padding:clamp(100px,12vh,150px) 0 calc(128px + env(safe-area-inset-bottom))!important;
+ justify-content:flex-start!important;gap:22px!important;border-bottom:1px solid #24242C!important;
+}
+body.aime-core .zero>.v-orbe{
+ width:clamp(125px,15vw,193px)!important;height:clamp(125px,15vw,193px)!important;
+ margin:clamp(12px,4vh,40px) auto 35px!important;flex:none!important;
+}
+body.aime-core .zero>.col{width:100%;max-width:1120px}
+body.aime-core .zero h1{
+ font:600 clamp(50px,7.2vw,99px)/1 "Cal Sans","Inter Variable",system-ui,sans-serif!important;
+ letter-spacing:-.055em!important;max-width:100%;text-wrap:balance;color:#EDEDF0!important;
+}
+body.aime-core .zero .intention,body.aime-core .zero .intention .gris{
+ color:#EDEDF0!important;
+}
+body.aime-core .zero .intention{
+ margin:18px auto 0!important;max-width:730px!important;
+ font-size:clamp(20px,2vw,27px)!important;line-height:1.37!important;
+}
+body.aime-core .zero .trois,body.aime-core .zero .js-l{
+ color:#B7B7C2!important;font-size:12px!important;
+}
+body.aime-core .zero .trois{letter-spacing:.3em!important;margin:0 auto 16px!important}
+body.aime-core .js-choix{margin-top:36px!important}
+body.aime-core .barre{background:transparent!important;color:#EDEDF0!important}
+body.aime-core .barre::before{background:rgba(10,10,12,.85)!important}
+body.aime-core .barre .mk{
+ background:#16161B!important;border-color:#33333D!important;color:#EDEDF0!important;
+}
+body.aime-core .jl-champ,body.aime-core .jl-liste{
+ background:#17171C!important;border-color:#393941!important;color:#EDEDF0!important;
+}
+body.aime-core .jl-champ .jl-v{color:#EDEDF0!important}
+body.aime-core .v-tete h2,body.aime-core .v-titre,
+body.aime-core .v-tete>p,body.aime-core .v-k,
+body.aime-core .v-tel>.nom,body.aime-core .v-tel>p,
+body.aime-core .v-tel>.v-leg,
+body.aime-core .v-sec>.v-col>h2{
+ color:#EDEDF0!important;
+}
+body.aime-core .v-leg,body.aime-core .v-tete>p,
+body.aime-core .v-tel>p,body.aime-core .v-tel>.v-leg{
+ color:#B7B7C2!important;
+}
+/* Only the embedded product representations use dark ink on light paper. */
+body.aime-core :is(.v-app,.v-ecran,.v-page,.v-panneau,.v-fen,.v-carte,.v-tel .cadre){
+ --ink:#111114;--soft:#4B4B55;--faint:#5B5B66;--line:#E4E4E9;
+ color:#111114;color-scheme:light;
+}
+body.aime-core :is(.v-app,.v-ecran,.v-page,.v-panneau,.v-fen,.v-carte) .v-leg{color:#4B4B55!important}
+body.aime-core .v-tel .cadre .vt-bloc{background:#F6F6FA;color:#141416}
+body.aime-core .v-evts button:not([aria-pressed="true"]){
+ background:#18181E!important;color:#EDEDF0!important;border:1px solid #363641!important;
+}
+body.aime-core .v-evts button[aria-pressed="true"]{background:#EEE!important;color:#111!important}
+body.aime-core :is(.dm,.ac-projet){background:#0C0C0F!important;color:#EDEDF0!important}
+body.aime-core :is(.ac-grille input,.ac-grille select){background:#18181C!important;color:#eee!important}
+body.aime-core :is(.pied-legal a,.pied a,#calme){color:#C3C3CF!important}
+body.aime-core .pied-legal{border-color:#27272D!important}
+body.aime-core .dock-zone{--dk-fond:#0F0F12;--dk-bord:#2B2B33;--dk-ic:#EDEDF0;--dk-lib:#9C9CA8}
+body.aime-core a:focus-visible,body.aime-core button:focus-visible{outline:2px solid #B4B4FF;outline-offset:3px}
+@media(max-width:700px){
+ body.aime-core .zero{padding-top:105px!important}
+ body.aime-core .zero>.v-orbe{margin-top:10px!important;margin-bottom:27px!important}
+ body.aime-core .zero h1{font-size:clamp(48px,12.5vw,76px)!important}
+ body.aime-core .zero .intention{font-size:19px!important}
+}
+@media(prefers-reduced-motion:reduce){html:has(body.aime-core){scroll-behavior:auto!important}}
